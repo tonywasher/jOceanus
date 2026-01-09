@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisXAnalysisTypeWildcard.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.themis.xanalysis.parser.type</a> &gt; <span class="el_source">ThemisXAnalysisTypeWildcard.java</span></div><h1>ThemisXAnalysisTypeWildcard.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Themis: Java Project Framework
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.themis.xanalysis.parser.type;
+
+import com.github.javaparser.ast.type.WildcardType;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisParserDef;
+
+import java.util.List;
+
+/**
+ * Wildcard Type Declaration.
+ */
+public class ThemisXAnalysisTypeWildcard
+        extends ThemisXAnalysisBaseType&lt;WildcardType&gt; {
+    /**
+     * The extended type.
+     */
+    private final ThemisXAnalysisTypeInstance theExtended;
+
+    /**
+     * The super type.
+     */
+    private final ThemisXAnalysisTypeInstance theSuper;
+
+    /**
+     * The annotations.
+     */
+    private final List&lt;ThemisXAnalysisExpressionInstance&gt; theAnnotations;
+
+    /**
+     * Constructor.
+     * @param pParser the parser
+     * @param pType the type
+     * @throws OceanusException on error
+     */
+    ThemisXAnalysisTypeWildcard(final ThemisXAnalysisParserDef pParser,
+                                final WildcardType pType) throws OceanusException {
+<span class="fc" id="L53">        super(pParser, pType);</span>
+<span class="fc" id="L54">        theExtended = pParser.parseType(pType.getExtendedType().orElse(null));</span>
+<span class="fc" id="L55">        theSuper = pParser.parseType(pType.getSuperType().orElse(null));</span>
+<span class="fc" id="L56">        theAnnotations = pParser.parseExprList(pType.getAnnotations());</span>
+<span class="fc" id="L57">    }</span>
+
+    /**
+     * Obtain the extended.
+     * @return the extended
+     */
+    public ThemisXAnalysisTypeInstance getExtended() {
+<span class="nc" id="L64">        return theExtended;</span>
+    }
+
+    /**
+     * Obtain the super.
+     * @return the super
+     */
+    public ThemisXAnalysisTypeInstance getSuper() {
+<span class="nc" id="L72">        return theSuper;</span>
+    }
+
+    /**
+     * Obtain the annotations.
+     * @return the annotations
+     */
+    public List&lt;ThemisXAnalysisExpressionInstance&gt; getAnnotations() {
+<span class="nc" id="L80">        return theAnnotations;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

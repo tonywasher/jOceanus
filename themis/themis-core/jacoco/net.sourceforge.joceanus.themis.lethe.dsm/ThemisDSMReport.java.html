@@ -1,0 +1,381 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisDSMReport.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.themis.lethe.dsm</a> &gt; <span class="el_source">ThemisDSMReport.java</span></div><h1>ThemisDSMReport.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Themis: Java Project Framework
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.themis.lethe.dsm;
+
+import java.util.Iterator;
+import java.util.List;
+import javax.swing.text.html.HTML.Tag;
+
+/**
+ * DSM report.
+ */
+public final class ThemisDSMReport {
+    /**
+     * The reference separator.
+     */
+    public static final String SEP_REF = &quot;-&quot;;
+
+    /**
+     * Private constructor.
+     */
+    private ThemisDSMReport() {
+    }
+
+    /**
+     * report on a module.
+     * @param pModule the module to report on
+     * @return the report
+     */
+    public static String reportOnModule(final ThemisDSMModule pModule) {
+        /* Create a stringBuilder */
+<span class="nc" id="L45">        final StringBuilder myBuilder = new StringBuilder();</span>
+
+        /* Start document */
+<span class="nc" id="L48">        addStartElement(myBuilder, Tag.HTML);</span>
+<span class="nc" id="L49">        addStartElement(myBuilder, Tag.BODY);</span>
+
+        /* Build table */
+<span class="nc" id="L52">        addStartElement(myBuilder, Tag.TABLE);</span>
+<span class="nc" id="L53">        buildTableHeader(myBuilder, pModule);</span>
+
+        /* Loop through the packages */
+<span class="nc" id="L56">        int myKey = 0;</span>
+<span class="nc" id="L57">        int myRowNo = 0;</span>
+<span class="nc" id="L58">        final Iterator&lt;ThemisDSMPackage&gt; myIterator = pModule.packageIterator();</span>
+<span class="nc bnc" id="L59" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L60">            final ThemisDSMPackage myPackage = myIterator.next();</span>
+<span class="nc" id="L61">            buildTableRow(myBuilder, pModule, myPackage, myRowNo++, myKey++);</span>
+<span class="nc" id="L62">        }</span>
+
+        /* Finish the table */
+<span class="nc" id="L65">        addEndElement(myBuilder, Tag.TABLE);</span>
+
+        /* Finish document */
+<span class="nc" id="L68">        addEndElement(myBuilder, Tag.BODY);</span>
+<span class="nc" id="L69">        addEndElement(myBuilder, Tag.HTML);</span>
+<span class="nc" id="L70">        return myBuilder.toString();</span>
+    }
+
+    /**
+     * build the table header.
+     * @param pBuilder the builder
+     * @param pModule the module to report on
+     */
+    private static void buildTableHeader(final StringBuilder pBuilder,
+                                        final ThemisDSMModule pModule) {
+        /* Start the row */
+<span class="nc" id="L81">        addStartElementWithClass(pBuilder, Tag.TR, &quot;dsm-row-header&quot;);</span>
+
+        /* Build the initial headers */
+<span class="nc" id="L84">        addTextElementWithClass(pBuilder, Tag.TH, &quot;dsm-package&quot;, &quot;Package&quot;);</span>
+<span class="nc" id="L85">        addTextElementWithClass(pBuilder, Tag.TH, &quot;dsm-key&quot;, &quot;Key&quot;);</span>
+
+        /* Loop through the packages */
+<span class="nc" id="L88">        int myKey = 0;</span>
+<span class="nc" id="L89">        final int myCount = pModule.getPackageCount();</span>
+<span class="nc bnc" id="L90" title="All 2 branches missed.">        for (int i = 0; i &lt; myCount; i++) {</span>
+            /* Add the key */
+<span class="nc" id="L92">            addTextElementWithClass(pBuilder, Tag.TH, &quot;dsm-col-count&quot;, getKeyForIndex(myKey++));</span>
+        }
+
+        /* Complete the row */
+<span class="nc" id="L96">        addEndElement(pBuilder, Tag.TR);</span>
+<span class="nc" id="L97">    }</span>
+
+    /**
+     * build a row for the table.
+     * @param pBuilder the builder
+     * @param pModule the module to report on
+     * @param pPackage the package to report on
+     * @param pRowNo the row number
+     * @param pKey the package key
+     */
+    private static void buildTableRow(final StringBuilder pBuilder,
+                                      final ThemisDSMModule pModule,
+                                      final ThemisDSMPackage pPackage,
+                                      final int pRowNo,
+                                      final int pKey) {
+        /* Start the row */
+<span class="nc bnc" id="L113" title="All 2 branches missed.">        final String myClass = (pRowNo % 2 == 0) ? &quot;dsm-row-even&quot; : &quot;dsm-row-odd&quot;;</span>
+<span class="nc" id="L114">        addStartElementWithClass(pBuilder, Tag.TR, myClass);</span>
+
+        /* Build the initial cells */
+<span class="nc" id="L117">        addTextElementWithClass(pBuilder, Tag.TD, &quot;dsm-cell-name-left&quot;, pPackage.getPackageName());</span>
+<span class="nc" id="L118">        final String myKeyTo = getKeyForIndex(pKey);</span>
+<span class="nc" id="L119">        addTextElement(pBuilder, Tag.TD, myKeyTo);</span>
+
+        /* Loop through the packages */
+<span class="nc" id="L122">        int myKey = 0;</span>
+<span class="nc" id="L123">        final Iterator&lt;ThemisDSMPackage&gt; myIterator = pModule.packageIterator();</span>
+<span class="nc bnc" id="L124" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L125">            final ThemisDSMPackage myPackage = myIterator.next();</span>
+
+            /* Add the key */
+<span class="nc" id="L128">            final boolean isSelf = pPackage.equals(myPackage);</span>
+<span class="nc" id="L129">            final boolean isCircular = myPackage.isCircular();</span>
+<span class="nc" id="L130">            final int myCount = myPackage.getReferencesTo(pPackage).size();</span>
+<span class="nc bnc" id="L131" title="All 2 branches missed.">            if (isSelf) {</span>
+<span class="nc bnc" id="L132" title="All 2 branches missed.">                final String myCellClass = isCircular ? &quot;dsm-cell-circular&quot; : &quot;dsm-cell-self&quot;;</span>
+<span class="nc" id="L133">                addTextElementWithClass(pBuilder, Tag.TD, myCellClass, &quot;&quot;);</span>
+<span class="nc bnc" id="L134" title="All 2 branches missed.">            } else if (myCount == 0) {</span>
+<span class="nc" id="L135">                addTextElement(pBuilder, Tag.TD, &quot;&quot;);</span>
+            } else {
+<span class="nc" id="L137">                final String myKeyFrom = getKeyForIndex(myKey);</span>
+<span class="nc" id="L138">                addTextElementWithLink(pBuilder, Tag.TD, Integer.toString(myCount),</span>
+                        myKeyFrom + SEP_REF + myKeyTo);
+            }
+<span class="nc" id="L141">            myKey++;</span>
+<span class="nc" id="L142">        }</span>
+
+        /* Complete the row */
+<span class="nc" id="L145">        addEndElement(pBuilder, Tag.TR);</span>
+<span class="nc" id="L146">    }</span>
+
+    /**
+     * Obtain key for index.
+     * @param pIndex the index
+     * @return the key
+     */
+    static String getKeyForIndex(final int pIndex) {
+        /* Handle simple index */
+<span class="nc" id="L155">        final int myRadix = 'Z' - 'A' + 1;</span>
+<span class="nc bnc" id="L156" title="All 2 branches missed.">        if (pIndex &lt; myRadix) {</span>
+<span class="nc" id="L157">            return Character.toString('A' + pIndex);</span>
+        }
+
+        /* Handle double index */
+<span class="nc" id="L161">        final int myFirst = pIndex / myRadix - 1;</span>
+<span class="nc" id="L162">        final int mySecond = pIndex % myRadix;</span>
+<span class="nc" id="L163">        return new String(new char[] { (char) ('A' + myFirst), (char) ('A' + mySecond) });</span>
+    }
+
+    /**
+     * Obtain index for key.
+     * @param pKey the key
+     * @return the index
+     */
+    public static int getIndexForKey(final String pKey) {
+        /* Handle simple key */
+<span class="nc bnc" id="L173" title="All 2 branches missed.">        if (pKey.length() == 1) {</span>
+<span class="nc" id="L174">            return pKey.charAt(0) - 'A';</span>
+        }
+
+        /* Handle double index */
+<span class="nc" id="L178">        final int myRadix = 'Z' - 'A' + 1;</span>
+<span class="nc" id="L179">        final int myFirst = pKey.charAt(0) - 'A' + 1;</span>
+<span class="nc" id="L180">        final int mySecond = pKey.charAt(1) - 'A';</span>
+<span class="nc" id="L181">        return myFirst * myRadix + mySecond;</span>
+    }
+
+    /**
+     * report on package links.
+     * @param pSource the source package to report on
+     * @param pTarget the target package to report on
+     * @return the report
+     */
+    public static String reportOnPackageLinks(final ThemisDSMPackage pSource,
+                                              final ThemisDSMPackage pTarget) {
+        /* Create a stringBuilder */
+<span class="nc" id="L193">        final StringBuilder myBuilder = new StringBuilder();</span>
+
+        /* Build table */
+<span class="nc" id="L196">        addStartElement(myBuilder, Tag.TABLE);</span>
+
+        /* Table header */
+<span class="nc" id="L199">        addStartElementWithClass(myBuilder, Tag.TR, &quot;dsm-row-header&quot;);</span>
+<span class="nc" id="L200">        addTextElement(myBuilder, Tag.TH, &quot;Class&quot;);</span>
+<span class="nc" id="L201">        addTextElement(myBuilder, Tag.TH, &quot;References&quot;);</span>
+<span class="nc" id="L202">        addEndElement(myBuilder, Tag.TR);</span>
+
+        /* Loop through the packages */
+<span class="nc" id="L205">        int myRowNo = 0;</span>
+<span class="nc bnc" id="L206" title="All 2 branches missed.">        for (ThemisDSMClass myClass : pSource.getReferencesTo(pTarget)) {</span>
+            /* Access list of references */
+<span class="nc" id="L208">            final List&lt;ThemisDSMClass&gt; myClasses = myClass.getReferencesTo(pTarget);</span>
+
+            /* Table header */
+<span class="nc bnc" id="L211" title="All 2 branches missed.">            final String myRowClass = (myRowNo++ % 2 == 0) ? &quot;dsm-row-even&quot; : &quot;dsm-row-odd&quot;;</span>
+<span class="nc" id="L212">            addStartElementWithClass(myBuilder, Tag.TR, myRowClass);</span>
+<span class="nc" id="L213">            addTextElementWithSpan(myBuilder, Tag.TD, myClass.getClassName(), myClasses.size());</span>
+<span class="nc" id="L214">            boolean bFirst = true;</span>
+<span class="nc bnc" id="L215" title="All 2 branches missed.">            for (ThemisDSMClass myRef : myClasses) {</span>
+<span class="nc bnc" id="L216" title="All 2 branches missed.">                if (!bFirst) {</span>
+<span class="nc" id="L217">                    addStartElementWithClass(myBuilder, Tag.TR, myRowClass);</span>
+                }
+<span class="nc" id="L219">                bFirst = false;</span>
+<span class="nc" id="L220">                addTextElement(myBuilder, Tag.TD, myRef.getClassName());</span>
+<span class="nc" id="L221">                addEndElement(myBuilder, Tag.TR);</span>
+<span class="nc" id="L222">            }</span>
+<span class="nc" id="L223">        }</span>
+
+        /* Finish the table */
+<span class="nc" id="L226">        addEndElement(myBuilder, Tag.TABLE);</span>
+
+        /* Finish document */
+<span class="nc" id="L229">        addEndElement(myBuilder, Tag.BODY);</span>
+<span class="nc" id="L230">        addEndElement(myBuilder, Tag.HTML);</span>
+<span class="nc" id="L231">        return myBuilder.toString();</span>
+    }
+
+    /**
+     * Add text element.
+     * @param pBuilder the builder
+     * @param pElement the element
+     * @param pText the text
+     */
+    private static void addTextElement(final StringBuilder pBuilder,
+                                       final Tag pElement,
+                                       final String pText) {
+        /* Add the text element */
+<span class="nc" id="L244">        addStartElement(pBuilder, pElement);</span>
+<span class="nc" id="L245">        pBuilder.append(pText);</span>
+<span class="nc" id="L246">        addEndElement(pBuilder, pElement);</span>
+<span class="nc" id="L247">    }</span>
+
+    /**
+     * Add text element.
+     * @param pBuilder the builder
+     * @param pElement the element
+     * @param pText the text
+     * @param pLink the link
+     */
+    private static void addTextElementWithLink(final StringBuilder pBuilder,
+                                               final Tag pElement,
+                                               final String pText,
+                                               final String pLink) {
+        /* Add the text element */
+<span class="nc" id="L261">        addStartElement(pBuilder, pElement);</span>
+<span class="nc" id="L262">        addStartElementWithLink(pBuilder, Tag.A, pLink);</span>
+<span class="nc" id="L263">        pBuilder.append(pText);</span>
+<span class="nc" id="L264">        addEndElement(pBuilder, Tag.A);</span>
+<span class="nc" id="L265">        addEndElement(pBuilder, pElement);</span>
+<span class="nc" id="L266">    }</span>
+    /**
+     * Add text element with Clas.
+     * @param pBuilder the builder
+     * @param pElement the element
+     * @param pClass the class of the element
+     * @param pText the text
+     */
+    private static void addTextElementWithClass(final StringBuilder pBuilder,
+                                                final Tag pElement,
+                                                final String pClass,
+                                                final String pText) {
+        /* Add the text element */
+<span class="nc" id="L279">        addStartElementWithClass(pBuilder, pElement, pClass);</span>
+<span class="nc" id="L280">        pBuilder.append(pText);</span>
+<span class="nc" id="L281">        addEndElement(pBuilder, pElement);</span>
+<span class="nc" id="L282">    }</span>
+
+    /**
+     * Add text element with span.
+     * @param pBuilder the builder
+     * @param pElement the element
+     * @param pText the text
+     * @param pSpan the span count
+     */
+    private static void addTextElementWithSpan(final StringBuilder pBuilder,
+                                               final Tag pElement,
+                                               final String pText,
+                                               final int pSpan) {
+        /* Add the text element */
+<span class="nc" id="L296">        addStartElementWithSpan(pBuilder, pElement, pSpan);</span>
+<span class="nc" id="L297">        pBuilder.append(pText);</span>
+<span class="nc" id="L298">        addEndElement(pBuilder, pElement);</span>
+<span class="nc" id="L299">    }</span>
+
+    /**
+     * Add start element with class.
+     * @param pBuilder the builder
+     * @param pElement the element
+     * @param pClass the class of the element
+     */
+    private static void addStartElementWithClass(final StringBuilder pBuilder,
+                                                 final Tag pElement,
+                                                 final String pClass) {
+        /* Start the element */
+<span class="nc" id="L311">        pBuilder.append(&quot;&lt;&quot;);</span>
+<span class="nc" id="L312">        pBuilder.append(pElement);</span>
+<span class="nc" id="L313">        pBuilder.append(&quot; class=\&quot;&quot;);</span>
+<span class="nc" id="L314">        pBuilder.append(pClass);</span>
+<span class="nc" id="L315">        pBuilder.append(&quot;\&quot;&gt;&quot;);</span>
+<span class="nc" id="L316">    }</span>
+
+    /**
+     * Add start element with link.
+     * @param pBuilder the builder
+     * @param pElement the element
+     * @param pLink the link
+     */
+    private static void addStartElementWithLink(final StringBuilder pBuilder,
+                                                final Tag pElement,
+                                                final String pLink) {
+        /* Start the element */
+<span class="nc" id="L328">        pBuilder.append(&quot;&lt;&quot;);</span>
+<span class="nc" id="L329">        pBuilder.append(pElement);</span>
+<span class="nc" id="L330">        pBuilder.append(&quot; href=\&quot;&quot;);</span>
+<span class="nc" id="L331">        pBuilder.append(pLink);</span>
+<span class="nc" id="L332">        pBuilder.append(&quot;\&quot;&gt;&quot;);</span>
+<span class="nc" id="L333">    }</span>
+
+    /**
+     * Add start element with span.
+     * @param pBuilder the builder
+     * @param pElement the element
+     * @param pSpan the span count
+     */
+    private static void addStartElementWithSpan(final StringBuilder pBuilder,
+                                                final Tag pElement,
+                                                final int pSpan) {
+        /* Start the element */
+<span class="nc" id="L345">        pBuilder.append(&quot;&lt;&quot;);</span>
+<span class="nc" id="L346">        pBuilder.append(pElement);</span>
+<span class="nc bnc" id="L347" title="All 2 branches missed.">        if (pSpan &gt; 1) {</span>
+<span class="nc" id="L348">            pBuilder.append(&quot; rowspan=\&quot;&quot;);</span>
+<span class="nc" id="L349">            pBuilder.append(pSpan);</span>
+<span class="nc" id="L350">            pBuilder.append(&quot;\&quot;&quot;);</span>
+        }
+<span class="nc" id="L352">        pBuilder.append(&quot;&gt;&quot;);</span>
+<span class="nc" id="L353">    }</span>
+
+    /**
+     * Add start element.
+     * @param pBuilder the builder
+     * @param pElement the element
+     */
+    private static void addStartElement(final StringBuilder pBuilder,
+                                        final Tag pElement) {
+        /* Start the element */
+<span class="nc" id="L363">        pBuilder.append(&quot;&lt;&quot;);</span>
+<span class="nc" id="L364">        pBuilder.append(pElement);</span>
+<span class="nc" id="L365">        pBuilder.append(&quot;&gt;&quot;);</span>
+<span class="nc" id="L366">    }</span>
+
+    /**
+     * Add end element.
+     * @param pBuilder the builder
+     * @param pElement the element
+     */
+    private static void addEndElement(final StringBuilder pBuilder,
+                                      final Tag pElement) {
+        /* Start the element */
+<span class="nc" id="L376">        pBuilder.append(&quot;&lt;/&quot;);</span>
+<span class="nc" id="L377">        pBuilder.append(pElement);</span>
+<span class="nc" id="L378">        pBuilder.append(&quot;&gt;&quot;);</span>
+<span class="nc" id="L379">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

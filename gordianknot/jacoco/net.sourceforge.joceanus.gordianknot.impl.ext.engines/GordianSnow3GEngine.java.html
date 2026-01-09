@@ -1,0 +1,561 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianSnow3GEngine.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.gordianknot.impl.ext.engines</a> &gt; <span class="el_source">GordianSnow3GEngine.java</span></div><h1>GordianSnow3GEngine.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * GordianKnot: Security Suite
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.gordianknot.impl.ext.engines;
+
+import org.bouncycastle.crypto.CipherParameters;
+import org.bouncycastle.crypto.DataLengthException;
+import org.bouncycastle.crypto.OutputLengthException;
+import org.bouncycastle.crypto.StreamCipher;
+import org.bouncycastle.crypto.params.KeyParameter;
+import org.bouncycastle.crypto.params.ParametersWithIV;
+import org.bouncycastle.util.Memoable;
+
+/**
+ * Snow3GEngine implementation.
+ * Based on https://www.gsma.com/aboutus/wp-content/uploads/2014/12/snow3gspec.pdf
+ */
+@SuppressWarnings(&quot;checkstyle:MagicNumber&quot;)
+public class GordianSnow3GEngine
+        implements StreamCipher, Memoable {
+    /**
+     * Rijndael S-box SR.
+     */
+<span class="fc" id="L37">    private static final byte[] SR = {</span>
+            (byte) 0x63, (byte) 0x7C, (byte) 0x77, (byte) 0x7B, (byte) 0xF2, (byte) 0x6B, (byte) 0x6F, (byte) 0xC5,
+            (byte) 0x30, (byte) 0x01, (byte) 0x67, (byte) 0x2B, (byte) 0xFE, (byte) 0xD7, (byte) 0xAB, (byte) 0x76,
+            (byte) 0xCA, (byte) 0x82, (byte) 0xC9, (byte) 0x7D, (byte) 0xFA, (byte) 0x59, (byte) 0x47, (byte) 0xF0,
+            (byte) 0xAD, (byte) 0xD4, (byte) 0xA2, (byte) 0xAF, (byte) 0x9C, (byte) 0xA4, (byte) 0x72, (byte) 0xC0,
+            (byte) 0xB7, (byte) 0xFD, (byte) 0x93, (byte) 0x26, (byte) 0x36, (byte) 0x3F, (byte) 0xF7, (byte) 0xCC,
+            (byte) 0x34, (byte) 0xA5, (byte) 0xE5, (byte) 0xF1, (byte) 0x71, (byte) 0xD8, (byte) 0x31, (byte) 0x15,
+            (byte) 0x04, (byte) 0xC7, (byte) 0x23, (byte) 0xC3, (byte) 0x18, (byte) 0x96, (byte) 0x05, (byte) 0x9A,
+            (byte) 0x07, (byte) 0x12, (byte) 0x80, (byte) 0xE2, (byte) 0xEB, (byte) 0x27, (byte) 0xB2, (byte) 0x75,
+            (byte) 0x09, (byte) 0x83, (byte) 0x2C, (byte) 0x1A, (byte) 0x1B, (byte) 0x6E, (byte) 0x5A, (byte) 0xA0,
+            (byte) 0x52, (byte) 0x3B, (byte) 0xD6, (byte) 0xB3, (byte) 0x29, (byte) 0xE3, (byte) 0x2F, (byte) 0x84,
+            (byte) 0x53, (byte) 0xD1, (byte) 0x00, (byte) 0xED, (byte) 0x20, (byte) 0xFC, (byte) 0xB1, (byte) 0x5B,
+            (byte) 0x6A, (byte) 0xCB, (byte) 0xBE, (byte) 0x39, (byte) 0x4A, (byte) 0x4C, (byte) 0x58, (byte) 0xCF,
+            (byte) 0xD0, (byte) 0xEF, (byte) 0xAA, (byte) 0xFB, (byte) 0x43, (byte) 0x4D, (byte) 0x33, (byte) 0x85,
+            (byte) 0x45, (byte) 0xF9, (byte) 0x02, (byte) 0x7F, (byte) 0x50, (byte) 0x3C, (byte) 0x9F, (byte) 0xA8,
+            (byte) 0x51, (byte) 0xA3, (byte) 0x40, (byte) 0x8F, (byte) 0x92, (byte) 0x9D, (byte) 0x38, (byte) 0xF5,
+            (byte) 0xBC, (byte) 0xB6, (byte) 0xDA, (byte) 0x21, (byte) 0x10, (byte) 0xFF, (byte) 0xF3, (byte) 0xD2,
+            (byte) 0xCD, (byte) 0x0C, (byte) 0x13, (byte) 0xEC, (byte) 0x5F, (byte) 0x97, (byte) 0x44, (byte) 0x17,
+            (byte) 0xC4, (byte) 0xA7, (byte) 0x7E, (byte) 0x3D, (byte) 0x64, (byte) 0x5D, (byte) 0x19, (byte) 0x73,
+            (byte) 0x60, (byte) 0x81, (byte) 0x4F, (byte) 0xDC, (byte) 0x22, (byte) 0x2A, (byte) 0x90, (byte) 0x88,
+            (byte) 0x46, (byte) 0xEE, (byte) 0xB8, (byte) 0x14, (byte) 0xDE, (byte) 0x5E, (byte) 0x0B, (byte) 0xDB,
+            (byte) 0xE0, (byte) 0x32, (byte) 0x3A, (byte) 0x0A, (byte) 0x49, (byte) 0x06, (byte) 0x24, (byte) 0x5C,
+            (byte) 0xC2, (byte) 0xD3, (byte) 0xAC, (byte) 0x62, (byte) 0x91, (byte) 0x95, (byte) 0xE4, (byte) 0x79,
+            (byte) 0xE7, (byte) 0xC8, (byte) 0x37, (byte) 0x6D, (byte) 0x8D, (byte) 0xD5, (byte) 0x4E, (byte) 0xA9,
+            (byte) 0x6C, (byte) 0x56, (byte) 0xF4, (byte) 0xEA, (byte) 0x65, (byte) 0x7A, (byte) 0xAE, (byte) 0x08,
+            (byte) 0xBA, (byte) 0x78, (byte) 0x25, (byte) 0x2E, (byte) 0x1C, (byte) 0xA6, (byte) 0xB4, (byte) 0xC6,
+            (byte) 0xE8, (byte) 0xDD, (byte) 0x74, (byte) 0x1F, (byte) 0x4B, (byte) 0xBD, (byte) 0x8B, (byte) 0x8A,
+            (byte) 0x70, (byte) 0x3E, (byte) 0xB5, (byte) 0x66, (byte) 0x48, (byte) 0x03, (byte) 0xF6, (byte) 0x0E,
+            (byte) 0x61, (byte) 0x35, (byte) 0x57, (byte) 0xB9, (byte) 0x86, (byte) 0xC1, (byte) 0x1D, (byte) 0x9E,
+            (byte) 0xE1, (byte) 0xF8, (byte) 0x98, (byte) 0x11, (byte) 0x69, (byte) 0xD9, (byte) 0x8E, (byte) 0x94,
+            (byte) 0x9B, (byte) 0x1E, (byte) 0x87, (byte) 0xE9, (byte) 0xCE, (byte) 0x55, (byte) 0x28, (byte) 0xDF,
+            (byte) 0x8C, (byte) 0xA1, (byte) 0x89, (byte) 0x0D, (byte) 0xBF, (byte) 0xE6, (byte) 0x42, (byte) 0x68,
+            (byte) 0x41, (byte) 0x99, (byte) 0x2D, (byte) 0x0F, (byte) 0xB0, (byte) 0x54, (byte) 0xBB, (byte) 0x16
+    };
+
+    /**
+     * S-box SQ.
+     */
+<span class="fc" id="L75">    private static final byte[] SQ = {</span>
+            (byte) 0x25, (byte) 0x24, (byte) 0x73, (byte) 0x67, (byte) 0xD7, (byte) 0xAE, (byte) 0x5C, (byte) 0x30,
+            (byte) 0xA4, (byte) 0xEE, (byte) 0x6E, (byte) 0xCB, (byte) 0x7D, (byte) 0xB5, (byte) 0x82, (byte) 0xDB,
+            (byte) 0xE4, (byte) 0x8E, (byte) 0x48, (byte) 0x49, (byte) 0x4F, (byte) 0x5D, (byte) 0x6A, (byte) 0x78,
+            (byte) 0x70, (byte) 0x88, (byte) 0xE8, (byte) 0x5F, (byte) 0x5E, (byte) 0x84, (byte) 0x65, (byte) 0xE2,
+            (byte) 0xD8, (byte) 0xE9, (byte) 0xCC, (byte) 0xED, (byte) 0x40, (byte) 0x2F, (byte) 0x11, (byte) 0x28,
+            (byte) 0x57, (byte) 0xD2, (byte) 0xAC, (byte) 0xE3, (byte) 0x4A, (byte) 0x15, (byte) 0x1B, (byte) 0xB9,
+            (byte) 0xB2, (byte) 0x80, (byte) 0x85, (byte) 0xA6, (byte) 0x2E, (byte) 0x02, (byte) 0x47, (byte) 0x29,
+            (byte) 0x07, (byte) 0x4B, (byte) 0x0E, (byte) 0xC1, (byte) 0x51, (byte) 0xAA, (byte) 0x89, (byte) 0xD4,
+            (byte) 0xCA, (byte) 0x01, (byte) 0x46, (byte) 0xB3, (byte) 0xEF, (byte) 0xDD, (byte) 0x44, (byte) 0x7B,
+            (byte) 0xC2, (byte) 0x7F, (byte) 0xBE, (byte) 0xC3, (byte) 0x9F, (byte) 0x20, (byte) 0x4C, (byte) 0x64,
+            (byte) 0x83, (byte) 0xA2, (byte) 0x68, (byte) 0x42, (byte) 0x13, (byte) 0xB4, (byte) 0x41, (byte) 0xCD,
+            (byte) 0xBA, (byte) 0xC6, (byte) 0xBB, (byte) 0x6D, (byte) 0x4D, (byte) 0x71, (byte) 0x21, (byte) 0xF4,
+            (byte) 0x8D, (byte) 0xB0, (byte) 0xE5, (byte) 0x93, (byte) 0xFE, (byte) 0x8F, (byte) 0xE6, (byte) 0xCF,
+            (byte) 0x43, (byte) 0x45, (byte) 0x31, (byte) 0x22, (byte) 0x37, (byte) 0x36, (byte) 0x96, (byte) 0xFA,
+            (byte) 0xBC, (byte) 0x0F, (byte) 0x08, (byte) 0x52, (byte) 0x1D, (byte) 0x55, (byte) 0x1A, (byte) 0xC5,
+            (byte) 0x4E, (byte) 0x23, (byte) 0x69, (byte) 0x7A, (byte) 0x92, (byte) 0xFF, (byte) 0x5B, (byte) 0x5A,
+            (byte) 0xEB, (byte) 0x9A, (byte) 0x1C, (byte) 0xA9, (byte) 0xD1, (byte) 0x7E, (byte) 0x0D, (byte) 0xFC,
+            (byte) 0x50, (byte) 0x8A, (byte) 0xB6, (byte) 0x62, (byte) 0xF5, (byte) 0x0A, (byte) 0xF8, (byte) 0xDC,
+            (byte) 0x03, (byte) 0x3C, (byte) 0x0C, (byte) 0x39, (byte) 0xF1, (byte) 0xB8, (byte) 0xF3, (byte) 0x3D,
+            (byte) 0xF2, (byte) 0xD5, (byte) 0x97, (byte) 0x66, (byte) 0x81, (byte) 0x32, (byte) 0xA0, (byte) 0x00,
+            (byte) 0x06, (byte) 0xCE, (byte) 0xF6, (byte) 0xEA, (byte) 0xB7, (byte) 0x17, (byte) 0xF7, (byte) 0x8C,
+            (byte) 0x79, (byte) 0xD6, (byte) 0xA7, (byte) 0xBF, (byte) 0x8B, (byte) 0x3F, (byte) 0x1F, (byte) 0x53,
+            (byte) 0x63, (byte) 0x75, (byte) 0x35, (byte) 0x2C, (byte) 0x60, (byte) 0xFD, (byte) 0x27, (byte) 0xD3,
+            (byte) 0x94, (byte) 0xA5, (byte) 0x7C, (byte) 0xA1, (byte) 0x05, (byte) 0x58, (byte) 0x2D, (byte) 0xBD,
+            (byte) 0xD9, (byte) 0xC7, (byte) 0xAF, (byte) 0x6B, (byte) 0x54, (byte) 0x0B, (byte) 0xE0, (byte) 0x38,
+            (byte) 0x04, (byte) 0xC8, (byte) 0x9D, (byte) 0xE7, (byte) 0x14, (byte) 0xB1, (byte) 0x87, (byte) 0x9C,
+            (byte) 0xDF, (byte) 0x6F, (byte) 0xF9, (byte) 0xDA, (byte) 0x2A, (byte) 0xC4, (byte) 0x59, (byte) 0x16,
+            (byte) 0x74, (byte) 0x91, (byte) 0xAB, (byte) 0x26, (byte) 0x61, (byte) 0x76, (byte) 0x34, (byte) 0x2B,
+            (byte) 0xAD, (byte) 0x99, (byte) 0xFB, (byte) 0x72, (byte) 0xEC, (byte) 0x33, (byte) 0x12, (byte) 0xDE,
+            (byte) 0x98, (byte) 0x3B, (byte) 0xC0, (byte) 0x9B, (byte) 0x3E, (byte) 0x18, (byte) 0x10, (byte) 0x3A,
+            (byte) 0x56, (byte) 0xE1, (byte) 0x77, (byte) 0xC9, (byte) 0x1E, (byte) 0x9E, (byte) 0x95, (byte) 0xA3,
+            (byte) 0x90, (byte) 0x19, (byte) 0xA8, (byte) 0x6C, (byte) 0x09, (byte) 0xD0, (byte) 0xF0, (byte) 0x86
+    };
+
+    /**
+     * LFSR State.
+     */
+<span class="fc" id="L113">    private final int[] lfsrState = new int[16];</span>
+
+    /**
+     * FSM State.
+     */
+<span class="fc" id="L118">    private final int[] fsmState = new int[3];</span>
+
+    /**
+     * index of next byte in keyStream.
+     */
+    private int theIndex;
+
+    /**
+     * Advanced stream.
+     */
+<span class="fc" id="L128">    private final byte[] keyStream = new byte[Integer.BYTES];</span>
+
+    /**
+     * The iterations.
+     */
+    private int theIterations;
+
+    /**
+     * Reset state.
+     */
+    private GordianSnow3GEngine theResetState;
+
+    /**
+     * Constructor.
+     */
+<span class="fc" id="L143">    public GordianSnow3GEngine() {</span>
+<span class="fc" id="L144">    }</span>
+
+    /**
+     * Constructor.
+     * @param pSource the source engine
+     */
+<span class="fc" id="L150">    private GordianSnow3GEngine(final GordianSnow3GEngine pSource) {</span>
+<span class="fc" id="L151">        reset(pSource);</span>
+<span class="fc" id="L152">    }</span>
+
+    /**
+     * initialise a Snow3G cipher.
+     * @param forEncryption whether or not we are for encryption.
+     * @param params the parameters required to set up the cipher.
+     * @exception IllegalArgumentException if the params argument is inappropriate.
+     */
+    public void init(final boolean forEncryption,
+                     final CipherParameters params) {
+        /*
+         * encryption and decryption is completely symmetrical, so the 'forEncryption' is
+         * irrelevant. (Like 90% of stream ciphers)
+         */
+
+        /* Determine parameters */
+<span class="fc" id="L168">        CipherParameters myParams = params;</span>
+<span class="fc" id="L169">        byte[] newKey = null;</span>
+<span class="fc" id="L170">        byte[] newIV = null;</span>
+<span class="pc bpc" id="L171" title="1 of 2 branches missed.">        if ((myParams instanceof ParametersWithIV)) {</span>
+<span class="fc" id="L172">            final ParametersWithIV ivParams = (ParametersWithIV) myParams;</span>
+<span class="fc" id="L173">            newIV = ivParams.getIV();</span>
+<span class="fc" id="L174">            myParams = ivParams.getParameters();</span>
+        }
+<span class="pc bpc" id="L176" title="1 of 2 branches missed.">        if (myParams instanceof KeyParameter) {</span>
+<span class="fc" id="L177">            final KeyParameter keyParam = (KeyParameter) myParams;</span>
+<span class="fc" id="L178">            newKey = keyParam.getKey();</span>
+        }
+
+        /* Initialise engine and mark as initialised */
+<span class="fc" id="L182">        theIndex = 0;</span>
+<span class="fc" id="L183">        theIterations = 0;</span>
+<span class="fc" id="L184">        setKeyAndIV(newKey, newIV);</span>
+
+        /* Save reset state */
+<span class="fc" id="L187">        theResetState = copy();</span>
+<span class="fc" id="L188">    }</span>
+
+    /**
+     * Obtain Max iterations.
+     * @return the maximum iterations
+     */
+    protected int getMaxIterations() {
+<span class="fc" id="L195">        return 625;</span>
+    }
+
+    @Override
+    public String getAlgorithmName() {
+<span class="nc" id="L200">        return &quot;Snow3G&quot;;</span>
+    }
+
+    @Override
+    public int processBytes(final byte[] in,
+                            final int inOff,
+                            final int len,
+                            final byte[] out,
+                            final int outOff) {
+        /* Check for errors */
+<span class="pc bpc" id="L210" title="1 of 2 branches missed.">        if (theResetState == null) {</span>
+<span class="nc" id="L211">            throw new IllegalStateException(getAlgorithmName() + &quot; not initialised&quot;);</span>
+        }
+<span class="pc bpc" id="L213" title="1 of 2 branches missed.">        if ((inOff + len) &gt; in.length) {</span>
+<span class="nc" id="L214">            throw new DataLengthException(&quot;input buffer too short&quot;);</span>
+        }
+<span class="pc bpc" id="L216" title="1 of 2 branches missed.">        if ((outOff + len) &gt; out.length) {</span>
+<span class="nc" id="L217">            throw new OutputLengthException(&quot;output buffer too short&quot;);</span>
+        }
+
+        /* Loop through the input bytes */
+<span class="fc bfc" id="L221" title="All 2 branches covered.">        for (int i = 0; i &lt; len; i++) {</span>
+<span class="fc" id="L222">            out[i + outOff] = returnByte(in[i + inOff]);</span>
+        }
+<span class="fc" id="L224">        return len;</span>
+    }
+
+    @Override
+    public void reset() {
+<span class="pc bpc" id="L229" title="1 of 2 branches missed.">        if (theResetState != null) {</span>
+<span class="fc" id="L230">            reset(theResetState);</span>
+        }
+<span class="fc" id="L232">    }</span>
+
+    @Override
+    public byte returnByte(final byte in) {
+        /* Make the keyStream if required */
+<span class="fc bfc" id="L237" title="All 2 branches covered.">        if (theIndex == 0) {</span>
+<span class="fc" id="L238">            makeKeyStream();</span>
+        }
+
+        /* Map the next byte and adjust index */
+<span class="fc" id="L242">        final byte out = (byte) (keyStream[theIndex] ^ in);</span>
+<span class="fc" id="L243">        theIndex = (theIndex + 1) % Integer.BYTES;</span>
+
+        /* Return the mapped character */
+<span class="fc" id="L246">        return out;</span>
+    }
+
+    /**
+     * Decode a 32-bit value from a buffer (little-endian).
+     *
+     * @param buf the input buffer
+     * @param off the input offset
+     * @return the decoded value
+     */
+    private static int decode32be(final byte[] buf, final int off) {
+<span class="fc" id="L257">        return ((buf[off] &amp; 0xFF) &lt;&lt; 24)</span>
+                | ((buf[off + 1] &amp; 0xFF) &lt;&lt; 16)
+                | ((buf[off + 2] &amp; 0xFF) &lt;&lt; 8)
+                | (buf[off + 3] &amp; 0xFF);
+    }
+
+    /**
+     * Encode a 32-bit value into a buffer (little-endian).
+     *
+     * @param val the value to encode
+     * @param buf the output buffer
+     * @param off the output offset
+     */
+    private static void encode32be(final int val, final byte[] buf, final int off) {
+<span class="fc" id="L271">        buf[off] = (byte) (val &gt;&gt; 24);</span>
+<span class="fc" id="L272">        buf[off + 1] = (byte) (val &gt;&gt; 16);</span>
+<span class="fc" id="L273">        buf[off + 2] = (byte) (val &gt;&gt; 8);</span>
+<span class="fc" id="L274">        buf[off + 3] = (byte) (val);</span>
+<span class="fc" id="L275">    }</span>
+
+    /* MULx.
+     * Input v: an 8-bit input.
+     * Input c: an 8-bit input.
+     * Output : an 8-bit output.
+     * See section 3.1.1 for details.
+     */
+    int mulX(final byte v, final int c) {
+<span class="fc bfc" id="L284" title="All 2 branches covered.">        if ((v &amp; 0x80) != 0) {</span>
+<span class="fc" id="L285">            return ((v &lt;&lt; 1) ^ c) &amp; 0xFF;</span>
+        } else {
+<span class="fc" id="L287">            return (v &lt;&lt; 1) &amp; 0xFF;</span>
+        }
+    }
+
+    /* MULxPOW.
+     * Input v: an 8-bit input.
+     * Input i: a positive integer.
+     * Input c: an 8-bit input.
+     * Output : an 8-bit output.
+     * See section 3.1.2 for details.
+     */
+    int mulXpow(final byte v, final int i, final int c) {
+<span class="fc bfc" id="L299" title="All 2 branches covered.">        if (i == 0) {</span>
+<span class="fc" id="L300">            return v &amp; 0xFF;</span>
+        } else {
+<span class="fc" id="L302">            return mulX((byte) mulXpow(v, i - 1, c), c);</span>
+        }
+    }
+
+    /* The function MUL alpha.
+     * Input c: 8-bit input.
+     * Output : 32-bit output.
+     * See section 3.4.2 for details.
+     */
+    int mulAlpha(final byte c) {
+<span class="fc" id="L312">        return ((mulXpow(c, 23, 0xa9) &lt;&lt; 24)</span>
+<span class="fc" id="L313">                | (mulXpow(c, 245, 0xa9) &lt;&lt; 16)</span>
+<span class="fc" id="L314">                | (mulXpow(c, 48, 0xa9) &lt;&lt; 8)</span>
+<span class="fc" id="L315">                | (mulXpow(c, 239, 0xa9)));</span>
+    }
+
+    /* The function DIV alpha.
+     * Input c: 8-bit input.
+     * Output : 32-bit output.
+     * See section 3.4.3 for details.
+     */
+    int divAlpha(final byte c) {
+<span class="fc" id="L324">        return ((mulXpow(c, 16, 0xa9) &lt;&lt; 24)</span>
+<span class="fc" id="L325">                | (mulXpow(c, 39, 0xa9) &lt;&lt; 16)</span>
+<span class="fc" id="L326">                | (mulXpow(c, 6, 0xa9) &lt;&lt; 8)</span>
+<span class="fc" id="L327">                | (mulXpow(c, 64, 0xa9)));</span>
+    }
+
+    /* The 32x32-bit S-Box S1
+     * Input: a 32-bit input.
+     * Output: a 32-bit output of S1 box.
+     * See section 3.3.1.
+     */
+    int s1(final int w) {
+<span class="fc" id="L336">        final byte srw0 = SR[((w &gt;&gt; 24) &amp; 0xff)];</span>
+<span class="fc" id="L337">        final byte srw1 = SR[((w &gt;&gt; 16) &amp; 0xff)];</span>
+<span class="fc" id="L338">        final byte srw2 = SR[((w &gt;&gt; 8) &amp; 0xff)];</span>
+<span class="fc" id="L339">        final byte srw3 = SR[((w) &amp; 0xff)];</span>
+<span class="fc" id="L340">        final int r0 = ((mulX(srw0, 0x1b))</span>
+                ^ (srw1)
+                ^ (srw2)
+<span class="fc" id="L343">                ^ ((mulX(srw3, 0x1b)) ^ srw3)</span>
+        ) &amp; 0xFF;
+<span class="fc" id="L345">        final int r1 = (((mulX(srw0, 0x1b)) ^ srw0)</span>
+<span class="fc" id="L346">                ^ (mulX(srw1, 0x1b))</span>
+                ^ (srw2)
+                ^ (srw3)
+        ) &amp; 0xFF;
+<span class="fc" id="L350">        final int r2 = ((srw0)</span>
+<span class="fc" id="L351">                ^ ((mulX(srw1, 0x1b)) ^ srw1)</span>
+<span class="fc" id="L352">                ^ (mulX(srw2, 0x1b))</span>
+                ^ (srw3)
+        ) &amp; 0xFF;
+<span class="fc" id="L355">        final int r3 = ((srw0)</span>
+                ^ (srw1)
+<span class="fc" id="L357">                ^ ((mulX(srw2, 0x1b)) ^ srw2)</span>
+<span class="fc" id="L358">                ^ (mulX(srw3, 0x1b))</span>
+        ) &amp; 0xFF;
+<span class="fc" id="L360">        return (((r0) &lt;&lt; 24) | ((r1) &lt;&lt; 16) | ((r2) &lt;&lt; 8)</span>
+                | (r3));
+    }
+
+    /* The 32x32-bit S-Box S2
+     * Input: a 32-bit input.
+     * Output: a 32-bit output of S2 box.
+     * See section 3.3.2.
+     */
+    int s2(final int w) {
+<span class="fc" id="L370">        final byte sqw0 = SQ[((w &gt;&gt; 24) &amp; 0xff)];</span>
+<span class="fc" id="L371">        final byte sqw1 = SQ[((w &gt;&gt; 16) &amp; 0xff)];</span>
+<span class="fc" id="L372">        final byte sqw2 = SQ[((w &gt;&gt; 8) &amp; 0xff)];</span>
+<span class="fc" id="L373">        final byte sqw3 = SQ[((w) &amp; 0xff)];</span>
+<span class="fc" id="L374">        final int r0 = ((mulX(sqw0, 0x69))</span>
+                ^ (sqw1)
+                ^ (sqw2)
+<span class="fc" id="L377">                ^ ((mulX(sqw3, 0x69)) ^ sqw3)</span>
+        ) &amp; 0xFF;
+<span class="fc" id="L379">        final int r1 = (((mulX(sqw0, 0x69)) ^ sqw0)</span>
+<span class="fc" id="L380">                ^ (mulX(sqw1, 0x69))</span>
+                ^ (sqw2)
+                ^ (sqw3)
+        ) &amp; 0xFF;
+<span class="fc" id="L384">        final int r2 = ((sqw0)</span>
+<span class="fc" id="L385">                ^ ((mulX(sqw1, 0x69)) ^ sqw1)</span>
+<span class="fc" id="L386">                ^ (mulX(sqw2, 0x69))</span>
+                ^ (sqw3)
+        ) &amp; 0xFF;
+<span class="fc" id="L389">        final int r3 = ((sqw0)</span>
+                ^ (sqw1)
+<span class="fc" id="L391">                ^ ((mulX(sqw2, 0x69)) ^ sqw2)</span>
+<span class="fc" id="L392">                ^ (mulX(sqw3, 0x69))</span>
+        ) &amp; 0xFF;
+<span class="fc" id="L394">        return (((r0) &lt;&lt; 24) | ((r1) &lt;&lt; 16) | ((r2) &lt;&lt; 8)</span>
+                | (r3));
+    }
+
+    /* Clocking LFSR in initialization mode.
+     * LFSR Registers S0 to S15 are updated as the LFSR receives a single clock.
+     * Input f: a 32-bit word comes from output of FSM.
+     * See section 3.4.4.
+     */
+    void clockLFSRInitializationMode(final int f) {
+<span class="fc" id="L404">        final int v = (((lfsrState[0] &lt;&lt; 8) &amp; 0xffffff00)</span>
+<span class="fc" id="L405">                ^ (mulAlpha((byte) ((lfsrState[0] &gt;&gt;&gt; 24) &amp; 0xff)))</span>
+                ^ (lfsrState[2])
+                ^ ((lfsrState[11] &gt;&gt;&gt; 8) &amp; 0x00ffffff)
+<span class="fc" id="L408">                ^ (divAlpha((byte) ((lfsrState[11]) &amp; 0xff)))</span>
+                ^ (f)
+        );
+<span class="fc" id="L411">        lfsrState[0] = lfsrState[1];</span>
+<span class="fc" id="L412">        lfsrState[1] = lfsrState[2];</span>
+<span class="fc" id="L413">        lfsrState[2] = lfsrState[3];</span>
+<span class="fc" id="L414">        lfsrState[3] = lfsrState[4];</span>
+<span class="fc" id="L415">        lfsrState[4] = lfsrState[5];</span>
+<span class="fc" id="L416">        lfsrState[5] = lfsrState[6];</span>
+<span class="fc" id="L417">        lfsrState[6] = lfsrState[7];</span>
+<span class="fc" id="L418">        lfsrState[7] = lfsrState[8];</span>
+<span class="fc" id="L419">        lfsrState[8] = lfsrState[9];</span>
+<span class="fc" id="L420">        lfsrState[9] = lfsrState[10];</span>
+<span class="fc" id="L421">        lfsrState[10] = lfsrState[11];</span>
+<span class="fc" id="L422">        lfsrState[11] = lfsrState[12];</span>
+<span class="fc" id="L423">        lfsrState[12] = lfsrState[13];</span>
+<span class="fc" id="L424">        lfsrState[13] = lfsrState[14];</span>
+<span class="fc" id="L425">        lfsrState[14] = lfsrState[15];</span>
+<span class="fc" id="L426">        lfsrState[15] = v;</span>
+<span class="fc" id="L427">    }</span>
+
+    /* Clocking LFSR in keystream mode.
+     * LFSR Registers S0 to S15 are updated as the LFSR receives a single clock.
+     * See section 3.4.5.
+     */
+    void clockLFSRKeyStreamMode() {
+<span class="fc" id="L434">        final int v = (((lfsrState[0] &lt;&lt; 8) &amp; 0xffffff00)</span>
+<span class="fc" id="L435">                ^ (mulAlpha((byte) ((lfsrState[0] &gt;&gt;&gt; 24) &amp; 0xff)))</span>
+                ^ (lfsrState[2])
+                ^ ((lfsrState[11] &gt;&gt;&gt; 8) &amp; 0x00ffffff)
+<span class="fc" id="L438">                ^ (divAlpha((byte) ((lfsrState[11]) &amp; 0xff)))</span>
+        );
+<span class="fc" id="L440">        lfsrState[0] = lfsrState[1];</span>
+<span class="fc" id="L441">        lfsrState[1] = lfsrState[2];</span>
+<span class="fc" id="L442">        lfsrState[2] = lfsrState[3];</span>
+<span class="fc" id="L443">        lfsrState[3] = lfsrState[4];</span>
+<span class="fc" id="L444">        lfsrState[4] = lfsrState[5];</span>
+<span class="fc" id="L445">        lfsrState[5] = lfsrState[6];</span>
+<span class="fc" id="L446">        lfsrState[6] = lfsrState[7];</span>
+<span class="fc" id="L447">        lfsrState[7] = lfsrState[8];</span>
+<span class="fc" id="L448">        lfsrState[8] = lfsrState[9];</span>
+<span class="fc" id="L449">        lfsrState[9] = lfsrState[10];</span>
+<span class="fc" id="L450">        lfsrState[10] = lfsrState[11];</span>
+<span class="fc" id="L451">        lfsrState[11] = lfsrState[12];</span>
+<span class="fc" id="L452">        lfsrState[12] = lfsrState[13];</span>
+<span class="fc" id="L453">        lfsrState[13] = lfsrState[14];</span>
+<span class="fc" id="L454">        lfsrState[14] = lfsrState[15];</span>
+<span class="fc" id="L455">        lfsrState[15] = v;</span>
+<span class="fc" id="L456">    }</span>
+
+    /* Clocking FSM.
+     * Produces a 32-bit word F.
+     * Updates FSM registers R1, R2, R3.
+     * See Section 3.4.6.
+     */
+    int clockFSM() {
+<span class="fc" id="L464">        final int f = ((lfsrState[15] + fsmState[0]) &amp; 0xffffffff) ^ fsmState[1];</span>
+<span class="fc" id="L465">        final int r = (fsmState[1] + (fsmState[2] ^ lfsrState[5])) &amp; 0xffffffff;</span>
+<span class="fc" id="L466">        fsmState[2] = s2(fsmState[1]);</span>
+<span class="fc" id="L467">        fsmState[1] = s1(fsmState[0]);</span>
+<span class="fc" id="L468">        fsmState[0] = r;</span>
+<span class="fc" id="L469">        return f;</span>
+    }
+
+    /* Initialization.
+     * Input k[4]: Four 32-bit words making up 128-bit key.
+     * Input IV[4]: Four 32-bit words making 128-bit initialization variable.
+     * Output: All the LFSRs and FSM are initialized for key generation.
+     * See Section 4.1.
+     */
+    void setKeyAndIV(final byte[] key, final byte[] iv) {
+        /* Check lengths */
+<span class="pc bpc" id="L480" title="2 of 4 branches missed.">        if (key == null || key.length != 16) {</span>
+<span class="nc" id="L481">            throw new IllegalArgumentException(&quot;A key of 16 bytes is needed&quot;);</span>
+        }
+<span class="pc bpc" id="L483" title="2 of 4 branches missed.">        if (iv == null || iv.length != 16) {</span>
+<span class="nc" id="L484">            throw new IllegalArgumentException(&quot;An IV of 16 bytes is needed&quot;);</span>
+        }
+
+        /* Generate four subkeys */
+<span class="fc" id="L488">        final int k0 = decode32be(key, 12);</span>
+<span class="fc" id="L489">        final int k1 = decode32be(key, 8);</span>
+<span class="fc" id="L490">        final int k2 = decode32be(key, 4);</span>
+<span class="fc" id="L491">        final int k3 = decode32be(key, 0);</span>
+
+        /* Generate four subvectors */
+<span class="fc" id="L494">        final int i0 = decode32be(iv, 12);</span>
+<span class="fc" id="L495">        final int i1 = decode32be(iv, 8);</span>
+<span class="fc" id="L496">        final int i2 = decode32be(iv, 4);</span>
+<span class="fc" id="L497">        final int i3 = decode32be(iv, 0);</span>
+
+<span class="fc" id="L499">        lfsrState[15] = k3 ^ i0;</span>
+<span class="fc" id="L500">        lfsrState[14] = k2;</span>
+<span class="fc" id="L501">        lfsrState[13] = k1;</span>
+<span class="fc" id="L502">        lfsrState[12] = k0 ^ i1;</span>
+<span class="fc" id="L503">        lfsrState[11] = k3 ^ 0xffffffff;</span>
+<span class="fc" id="L504">        lfsrState[10] = k2 ^ 0xffffffff ^ i2;</span>
+<span class="fc" id="L505">        lfsrState[9] = k1 ^ 0xffffffff ^ i3;</span>
+<span class="fc" id="L506">        lfsrState[8] = k0 ^ 0xffffffff;</span>
+<span class="fc" id="L507">        lfsrState[7] = k3;</span>
+<span class="fc" id="L508">        lfsrState[6] = k2;</span>
+<span class="fc" id="L509">        lfsrState[5] = k1;</span>
+<span class="fc" id="L510">        lfsrState[4] = k0;</span>
+<span class="fc" id="L511">        lfsrState[3] = k3 ^ 0xffffffff;</span>
+<span class="fc" id="L512">        lfsrState[2] = k2 ^ 0xffffffff;</span>
+<span class="fc" id="L513">        lfsrState[1] = k1 ^ 0xffffffff;</span>
+<span class="fc" id="L514">        lfsrState[0] = k0 ^ 0xffffffff;</span>
+<span class="fc" id="L515">        fsmState[0] = 0x0;</span>
+<span class="fc" id="L516">        fsmState[1] = 0x0;</span>
+<span class="fc" id="L517">        fsmState[2] = 0x0;</span>
+<span class="fc bfc" id="L518" title="All 2 branches covered.">        for (int i = 0; i &lt; 32; i++) {</span>
+<span class="fc" id="L519">            final int f = clockFSM();</span>
+<span class="fc" id="L520">            clockLFSRInitializationMode(f);</span>
+        }
+        /* Clock FSM once. Discard the output. */
+<span class="fc" id="L523">        clockFSM();</span>
+        /* Clock LFSR in keystream mode once. */
+<span class="fc" id="L525">        clockLFSRKeyStreamMode();</span>
+<span class="fc" id="L526">     }</span>
+
+    /* Generation of Keystream.
+     * input n: number of 32-bit words of keystream.
+     * input z: space for the generated keystream, assumes
+     * memory is allocated already.
+     * output: generated keystream which is filled in z
+     * See section 4.2.
+     */
+    void makeKeyStream() {
+<span class="fc bfc" id="L536" title="All 2 branches covered.">        if (theIterations++ &gt;= getMaxIterations()) {</span>
+<span class="fc" id="L537">            throw new IllegalStateException(&quot;Too much data processed by singleKey/IV&quot;);</span>
+        }
+
+<span class="fc" id="L540">        final int f = clockFSM(); // STEP 1 */</span>
+<span class="fc" id="L541">        encode32be(f ^ lfsrState[0], keyStream, 0); // STEP 2 */</span>
+        /* Note that ks[t] corresponds to z_{t+1} in section 4.2 */
+<span class="fc" id="L543">        clockLFSRKeyStreamMode(); // STEP 3 */</span>
+<span class="fc" id="L544">    }</span>
+
+    @Override
+    public GordianSnow3GEngine copy() {
+<span class="fc" id="L548">        return new GordianSnow3GEngine(this);</span>
+    }
+
+    @Override
+    public void reset(final Memoable pState) {
+<span class="fc" id="L553">        final GordianSnow3GEngine e = (GordianSnow3GEngine) pState;</span>
+<span class="fc" id="L554">        System.arraycopy(e.lfsrState, 0, lfsrState, 0, lfsrState.length);</span>
+<span class="fc" id="L555">        System.arraycopy(e.fsmState, 0, fsmState, 0, fsmState.length);</span>
+<span class="fc" id="L556">        System.arraycopy(e.keyStream, 0, keyStream, 0, keyStream.length);</span>
+<span class="fc" id="L557">        theIterations = e.theIterations;</span>
+<span class="fc" id="L558">        theIndex = e.theIndex;</span>
+<span class="fc" id="L559">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

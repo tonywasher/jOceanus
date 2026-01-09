@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseValidatePayee.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.data.validate</a> &gt; <span class="el_source">MoneyWiseValidatePayee.java</span></div><h1>MoneyWiseValidatePayee.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.data.validate;
+
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee.MoneyWisePayeeDataMap;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee.MoneyWisePayeeList;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePayeeClass;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePayeeType;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePayeeType.MoneyWisePayeeTypeList;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
+
+import java.util.Iterator;
+
+/**
+ * Validator for Payee.
+ */
+public class MoneyWiseValidatePayee
+        extends MoneyWiseValidateAccount&lt;MoneyWisePayee&gt; {
+    /**
+     * New Account name.
+     */
+<span class="fc" id="L41">    private static final String NAME_NEWACCOUNT = MoneyWiseBasicResource.PAYEE_NEWACCOUNT.getValue();</span>
+
+    /**
+     * The infoSet validator.
+     */
+    private final MoneyWiseValidatePayeeInfoSet theInfoSet;
+
+    /**
+     * Constructor.
+     */
+<span class="fc" id="L51">    MoneyWiseValidatePayee() {</span>
+<span class="fc" id="L52">        theInfoSet = new MoneyWiseValidatePayeeInfoSet();</span>
+<span class="fc" id="L53">    }</span>
+
+    @Override
+    public void validate(final PrometheusDataItem pPayee) {
+<span class="fc" id="L57">        final MoneyWisePayee myPayee = (MoneyWisePayee) pPayee;</span>
+<span class="fc" id="L58">        final MoneyWisePayeeList myList = myPayee.getList();</span>
+<span class="fc" id="L59">        final MoneyWisePayeeType myPayeeType = myPayee.getCategory();</span>
+<span class="fc" id="L60">        final MoneyWisePayee myParent = myPayee.getParent();</span>
+<span class="fc" id="L61">        final MoneyWiseCurrency myCurrency = myPayee.getAssetCurrency();</span>
+
+        /* Validate base components */
+<span class="fc" id="L64">        super.validate(pPayee);</span>
+
+        /* PayeeType must be non-null */
+<span class="pc bpc" id="L67" title="1 of 2 branches missed.">        if (myPayeeType == null) {</span>
+<span class="nc" id="L68">            pPayee.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.CATEGORY_NAME);</span>
+        } else {
+            /* Access the class */
+<span class="fc" id="L71">            final MoneyWisePayeeClass myClass = myPayeeType.getPayeeClass();</span>
+
+            /* PayeeType must be enabled */
+<span class="pc bpc" id="L74" title="1 of 2 branches missed.">            if (!myPayeeType.getEnabled()) {</span>
+<span class="nc" id="L75">                pPayee.addError(PrometheusDataItem.ERROR_DISABLED, MoneyWiseBasicResource.CATEGORY_NAME);</span>
+            }
+
+            /* If the PayeeType is singular */
+<span class="fc bfc" id="L79" title="All 2 branches covered.">            if (myClass.isSingular()) {</span>
+                /* Count the elements of this class */
+<span class="fc" id="L81">                final MoneyWisePayeeDataMap myMap = myList.getDataMap();</span>
+<span class="pc bpc" id="L82" title="1 of 2 branches missed.">                if (!myMap.validSingularCount(myClass)) {</span>
+<span class="nc" id="L83">                    pPayee.addError(PrometheusDataItem.ERROR_MULT, MoneyWiseBasicResource.CATEGORY_NAME);</span>
+                }
+            }
+        }
+
+        /* Parent must be null */
+<span class="pc bpc" id="L89" title="1 of 2 branches missed.">        if (myParent != null) {</span>
+<span class="nc" id="L90">            pPayee.addError(PrometheusDataItem.ERROR_EXIST, MoneyWiseBasicResource.ASSET_PARENT);</span>
+        }
+
+        /* Currency must be null */
+<span class="pc bpc" id="L94" title="1 of 2 branches missed.">        if (myCurrency != null) {</span>
+<span class="nc" id="L95">            pPayee.addError(PrometheusDataItem.ERROR_EXIST, MoneyWiseStaticDataType.CURRENCY);</span>
+        }
+
+        /* If we have an infoSet */
+<span class="pc bpc" id="L99" title="1 of 2 branches missed.">        if (myPayee.getInfoSet() != null) {</span>
+            /* Validate the InfoSet */
+<span class="fc" id="L101">            theInfoSet.validate(myPayee.getInfoSet());</span>
+        }
+
+        /* Set validation flag */
+<span class="pc bpc" id="L105" title="1 of 2 branches missed.">        if (!pPayee.hasErrors()) {</span>
+<span class="fc" id="L106">            pPayee.setValidEdit();</span>
+        }
+<span class="fc" id="L108">    }</span>
+
+    @Override
+    public void setDefaults(final MoneyWisePayee pPayee) throws OceanusException {
+        /* Set values */
+<span class="nc" id="L113">        final MoneyWisePayeeList myList = pPayee.getList();</span>
+<span class="nc" id="L114">        pPayee.setCategory(getDefaultPayeeType());</span>
+<span class="nc" id="L115">        pPayee.setName(getUniqueName(myList, NAME_NEWACCOUNT));</span>
+<span class="nc" id="L116">        pPayee.setClosed(Boolean.FALSE);</span>
+<span class="nc" id="L117">    }</span>
+
+    @Override
+    public void autoCorrect(final MoneyWisePayee pItem) throws OceanusException {
+<span class="nc" id="L121">        theInfoSet.autoCorrect(pItem.getInfoSet());</span>
+<span class="nc" id="L122">    }</span>
+
+    /**
+     * Obtain payee type for new payee account.
+     * @return the payee type
+     */
+    private MoneyWisePayeeType getDefaultPayeeType() {
+        /* Access payee types */
+<span class="nc" id="L130">        final MoneyWisePayeeTypeList myTypes</span>
+<span class="nc" id="L131">                = getEditSet().getDataList(MoneyWiseStaticDataType.PAYEETYPE, MoneyWisePayeeTypeList.class);</span>
+
+        /* loop through the payee types */
+<span class="nc" id="L134">        final Iterator&lt;MoneyWisePayeeType&gt; myIterator = myTypes.iterator();</span>
+<span class="nc bnc" id="L135" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L136">            final MoneyWisePayeeType myType = myIterator.next();</span>
+
+            /* Ignore deleted and singular types */
+<span class="nc bnc" id="L139" title="All 4 branches missed.">            if (!myType.isDeleted() &amp;&amp; !myType.getPayeeClass().isSingular()) {</span>
+<span class="nc" id="L140">                return myType;</span>
+            }
+<span class="nc" id="L142">        }</span>
+
+        /* Return no category */
+<span class="nc" id="L145">        return null;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

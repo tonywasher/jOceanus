@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianBlake3Mac.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.gordianknot.impl.ext.macs</a> &gt; <span class="el_source">GordianBlake3Mac.java</span></div><h1>GordianBlake3Mac.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * GordianKnot: Security Suite
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.gordianknot.impl.ext.macs;
+
+import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianBlake3Digest;
+import net.sourceforge.joceanus.gordianknot.impl.ext.params.GordianBlake3Parameters;
+import org.bouncycastle.crypto.CipherParameters;
+import org.bouncycastle.crypto.Mac;
+import org.bouncycastle.crypto.Xof;
+import org.bouncycastle.crypto.params.KeyParameter;
+
+/**
+ * Bouncy implementation of Blake3Mac.
+ */
+public class GordianBlake3Mac
+        implements Mac, Xof {
+    /**
+     * Digest.
+     */
+    private final GordianBlake3Digest theDigest;
+
+    /**
+     * Create a blake2Mac with the specified digest.
+     * @param pDigest the base digest.
+     */
+<span class="fc" id="L40">    public GordianBlake3Mac(final GordianBlake3Digest pDigest) {</span>
+        /* Store the digest */
+<span class="fc" id="L42">        theDigest = pDigest;</span>
+<span class="fc" id="L43">    }</span>
+
+    @Override
+    public String getAlgorithmName() {
+<span class="nc" id="L47">        return theDigest.getAlgorithmName() + &quot;Mac&quot;;</span>
+    }
+
+    @Override
+    public void init(final CipherParameters pParams) {
+<span class="fc" id="L52">        CipherParameters myParams = pParams;</span>
+<span class="pc bpc" id="L53" title="1 of 2 branches missed.">        if (myParams instanceof KeyParameter) {</span>
+<span class="fc" id="L54">            myParams = GordianBlake3Parameters.key(((KeyParameter) myParams).getKey());</span>
+        }
+<span class="pc bpc" id="L56" title="1 of 2 branches missed.">        if (!(myParams instanceof GordianBlake3Parameters)) {</span>
+<span class="nc" id="L57">            throw new IllegalArgumentException(&quot;Invalid parameter passed to Blake3Mac init - &quot;</span>
+<span class="nc" id="L58">                    + pParams.getClass().getName());</span>
+        }
+<span class="fc" id="L60">        final GordianBlake3Parameters myBlakeParams = (GordianBlake3Parameters) myParams;</span>
+<span class="pc bpc" id="L61" title="1 of 2 branches missed.">        if (myBlakeParams.getKey() == null) {</span>
+<span class="nc" id="L62">            throw new IllegalArgumentException(&quot;Blake3Mac requires a key parameter.&quot;);</span>
+        }
+
+        /* Configure the digest */
+<span class="fc" id="L66">        theDigest.init(myBlakeParams);</span>
+<span class="fc" id="L67">    }</span>
+
+    @Override
+    public int getMacSize() {
+<span class="fc" id="L71">        return theDigest.getDigestSize();</span>
+    }
+
+    @Override
+    public void update(final byte in) {
+<span class="nc" id="L76">        theDigest.update(in);</span>
+<span class="nc" id="L77">    }</span>
+
+    @Override
+    public void update(final byte[] in, final int inOff, final int len) {
+<span class="fc" id="L81">        theDigest.update(in, inOff, len);</span>
+<span class="fc" id="L82">    }</span>
+
+    @Override
+    public int doFinal(final byte[] out, final int outOff) {
+<span class="fc" id="L86">        return theDigest.doFinal(out, outOff);</span>
+    }
+
+    @Override
+    public void reset() {
+<span class="nc" id="L91">        theDigest.reset();</span>
+<span class="nc" id="L92">    }</span>
+
+    @Override
+    public int doFinal(final byte[] out, final int outOff, final int outLen) {
+<span class="fc" id="L96">        return theDigest.doFinal(out, outOff, outLen);</span>
+    }
+
+    @Override
+    public int doOutput(final byte[] out, final int outOff, final int outLen) {
+<span class="fc" id="L101">        return theDigest.doOutput(out, outOff, outLen);</span>
+    }
+
+    @Override
+    public int getByteLength() {
+<span class="nc" id="L106">        return theDigest.getByteLength();</span>
+    }
+
+    @Override
+    public int getDigestSize() {
+<span class="nc" id="L111">        return theDigest.getDigestSize();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

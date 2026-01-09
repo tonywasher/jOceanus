@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianByteArrayInteger.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.gordianknot.impl.core.base</a> &gt; <span class="el_source">GordianByteArrayInteger.java</span></div><h1>GordianByteArrayInteger.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * GordianKnot: Security Suite
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.gordianknot.impl.core.base;
+
+import org.bouncycastle.util.Arrays;
+
+/**
+ * Simple class that handles a byte array as an integer housing an integer of max value 2
+ * &lt;sup&gt;8n&lt;/sup&gt; where n is the length of the byte array.
+ */
+public final class GordianByteArrayInteger {
+    /**
+     * The default counter length.
+     */
+    private static final int COUNTER_LEN = Integer.BYTES;
+
+    /**
+     * The counter length.
+     */
+    private final int theLength;
+
+    /**
+     * The buffer.
+     */
+    private final byte[] theBuffer;
+
+    /**
+     * Constructor.
+     */
+    public GordianByteArrayInteger() {
+        /* use default length */
+<span class="fc" id="L46">        this(COUNTER_LEN);</span>
+<span class="fc" id="L47">    }</span>
+
+    /**
+     * Constructor.
+     * @param pLen the length of the counter
+     */
+<span class="fc" id="L53">    public GordianByteArrayInteger(final int pLen) {</span>
+        /* initialise the buffer */
+<span class="fc" id="L55">        theBuffer = new byte[pLen];</span>
+<span class="fc" id="L56">        theLength = pLen;</span>
+<span class="fc" id="L57">        reset();</span>
+<span class="fc" id="L58">    }</span>
+
+    /**
+     * Constructor.
+     * @param pSource the source byte array
+     */
+<span class="fc" id="L64">    public GordianByteArrayInteger(final byte[] pSource) {</span>
+        /* initialise the buffer */
+<span class="fc" id="L66">        theLength = pSource.length;</span>
+<span class="fc" id="L67">        theBuffer = new byte[theLength];</span>
+<span class="fc" id="L68">        System.arraycopy(pSource, 0, theBuffer, 0, theLength);</span>
+<span class="fc" id="L69">    }</span>
+
+    /**
+     * get buffer pointer.
+     * @return the buffer
+     */
+    public byte[] getBuffer() {
+<span class="fc" id="L76">        return theBuffer;</span>
+    }
+
+    /**
+     * Reset counter to zero.
+     */
+    public void reset() {
+<span class="fc" id="L83">        Arrays.fill(theBuffer, (byte) 0);</span>
+<span class="fc" id="L84">    }</span>
+
+    /**
+     * Compare counter limit.
+     * @param pLimit the limit to check against
+     * @return true/false the limit has been reached
+     */
+    public boolean compareLimit(final long pLimit) {
+        /* Check that we are long length */
+<span class="pc bpc" id="L93" title="1 of 2 branches missed.">        if (theLength != Long.BYTES) {</span>
+<span class="nc" id="L94">            return false;</span>
+        }
+
+        /* Calculate existing value */
+<span class="fc" id="L98">        long myVal = 0;</span>
+<span class="fc bfc" id="L99" title="All 2 branches covered.">        for (int i = 0; i &lt; theLength; i++) {</span>
+<span class="fc" id="L100">            myVal &lt;&lt;= GordianDataConverter.NYBBLE_SHIFT;</span>
+<span class="fc" id="L101">            myVal += theBuffer[i]</span>
+                    &amp; GordianDataConverter.BYTE_MASK;
+        }
+
+        /* Determine whether we have reached the limit */
+<span class="pc bpc" id="L106" title="1 of 2 branches missed.">        return myVal &gt;= pLimit;</span>
+    }
+
+    /**
+     * Iterate.
+     * @return the buffer
+     */
+    public byte[] iterate() {
+        /* Loop through the bytes */
+<span class="pc bpc" id="L115" title="1 of 2 branches missed.">        for (int i = theLength - 1; i &gt;= 0; i--) {</span>
+            /* Increment the element */
+<span class="fc" id="L117">            byte myByte = theBuffer[i];</span>
+<span class="fc" id="L118">            theBuffer[i] = ++myByte;</span>
+<span class="fc bfc" id="L119" title="All 2 branches covered.">            if (myByte != 0) {</span>
+<span class="fc" id="L120">                break;</span>
+            }
+        }
+
+        /* Return the buffer */
+<span class="fc" id="L125">        return theBuffer;</span>
+    }
+
+    /**
+     * Add a byte array as a counter.
+     * @param pAdjust the array to add.
+     * @return the buffer
+     */
+    public byte[] addTo(final byte[] pAdjust) {
+        /* Access length of adjusting array */
+<span class="fc" id="L135">        final int myLength = Math.min(pAdjust.length, theLength);</span>
+
+        /* Loop through the adjustment bytes */
+<span class="fc" id="L138">        boolean doCarry = false;</span>
+<span class="fc" id="L139">        int myOffset = 1;</span>
+<span class="fc bfc" id="L140" title="All 2 branches covered.">        while (myOffset &lt;= myLength) {</span>
+            /* Calculate sum at offset */
+<span class="fc" id="L142">            int myNext = (theBuffer[theLength</span>
+                    - myOffset] &amp; GordianDataConverter.BYTE_MASK)
+                    + (pAdjust[myLength
+                    - myOffset] &amp; GordianDataConverter.BYTE_MASK);
+<span class="fc bfc" id="L146" title="All 2 branches covered.">            if (doCarry) {</span>
+<span class="fc" id="L147">                myNext++;</span>
+            }
+
+            /* Store result and adjust offset */
+<span class="fc" id="L151">            theBuffer[theLength</span>
+                    - myOffset] = (byte) myNext;
+<span class="fc" id="L153">            myOffset++;</span>
+
+            /* Determine the carry */
+<span class="fc bfc" id="L156" title="All 2 branches covered.">            doCarry = (myNext &amp; ~GordianDataConverter.BYTE_MASK) != 0;</span>
+<span class="fc" id="L157">        }</span>
+
+        /* Adjust remaining bytes for carry */
+<span class="fc bfc" id="L160" title="All 2 branches covered.">        if (doCarry) {</span>
+<span class="fc bfc" id="L161" title="All 2 branches covered.">            while (myOffset &lt;= theLength) {</span>
+                /* Increment the element */
+<span class="fc" id="L163">                byte myByte = theBuffer[theLength</span>
+                        - myOffset];
+<span class="fc" id="L165">                theBuffer[theLength</span>
+                        - myOffset] = ++myByte;
+<span class="fc bfc" id="L167" title="All 2 branches covered.">                if (myByte != 0) {</span>
+<span class="fc" id="L168">                    break;</span>
+                }
+
+                /* Adjust offset */
+<span class="fc" id="L172">                myOffset++;</span>
+<span class="fc" id="L173">            }</span>
+        }
+
+        /* Return the buffer */
+<span class="fc" id="L177">        return theBuffer;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

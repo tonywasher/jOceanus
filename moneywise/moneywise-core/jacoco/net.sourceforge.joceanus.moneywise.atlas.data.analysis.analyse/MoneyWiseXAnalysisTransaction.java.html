@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseXAnalysisTransaction.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.atlas.data.analysis.analyse</a> &gt; <span class="el_source">MoneyWiseXAnalysisTransaction.java</span></div><h1>MoneyWiseXAnalysisTransaction.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.atlas.data.analysis.analyse;
+
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEvent;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetDirection;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePortfolio;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
+
+/**
+ * Transaction details.
+ */
+public class MoneyWiseXAnalysisTransaction {
+    /**
+     * The event.
+     */
+    private final MoneyWiseXAnalysisEvent theEvent;
+
+    /**
+     * The transaction.
+     */
+    private final MoneyWiseTransaction theTrans;
+
+    /**
+     * The direction.
+     */
+    private boolean isTo;
+
+    /**
+     * The debit amount.
+     */
+    private OceanusMoney theDebitAmount;
+
+    /**
+     * The credit amount.
+     */
+    private OceanusMoney theCreditAmount;
+
+    /**
+     * The debit account.
+     */
+    private MoneyWiseTransAsset theDebit;
+
+    /**
+     * The credit account.
+     */
+    private MoneyWiseTransAsset theCredit;
+
+    /**
+     * The child asset.
+     */
+    private MoneyWiseTransAsset theChild;
+
+    /**
+     * The category.
+     */
+    private MoneyWiseTransCategory theCategory;
+
+    /**
+     * The debitUnitsDelta.
+     */
+    private final OceanusUnits theDebitUnitsDelta;
+
+    /**
+     * The creditUnitsDelta.
+     */
+    private final OceanusUnits theCreditUnitsDelta;
+
+    /**
+     * Constructor.
+     * @param pEvent the event
+     */
+<span class="fc" id="L95">    MoneyWiseXAnalysisTransaction(final MoneyWiseXAnalysisEvent pEvent) {</span>
+        /* Store the base */
+<span class="fc" id="L97">        theEvent = pEvent;</span>
+<span class="fc" id="L98">        theTrans = theEvent.getTransaction();</span>
+
+        /* Access account and partner */
+<span class="fc" id="L101">        isTo = MoneyWiseAssetDirection.TO.equals(theTrans.getDirection());</span>
+<span class="fc" id="L102">        final MoneyWiseTransAsset myAccount = theTrans.getAccount();</span>
+<span class="fc" id="L103">        MoneyWiseTransAsset myPartner = theTrans.getPartner();</span>
+<span class="pc bpc" id="L104" title="1 of 2 branches missed.">        myPartner = myPartner == null ? myAccount : myPartner;</span>
+<span class="fc bfc" id="L105" title="All 2 branches covered.">        theDebit = isTo ? myAccount : myPartner;</span>
+<span class="fc bfc" id="L106" title="All 2 branches covered.">        theCredit = isTo ? myPartner : myAccount;</span>
+
+        /* Store the category */
+<span class="fc" id="L109">        theCategory = theTrans.getCategory();</span>
+
+        /* Sort out amounts */
+<span class="fc" id="L112">        OceanusMoney myAmount = theTrans.getAmount();</span>
+<span class="fc bfc" id="L113" title="All 2 branches covered.">        myAmount = myAmount == null ? new OceanusMoney() : myAmount;</span>
+<span class="fc" id="L114">        OceanusMoney myPartnerAmount = theTrans.getPartnerAmount();</span>
+<span class="fc bfc" id="L115" title="All 2 branches covered.">        myPartnerAmount = myPartnerAmount == null ? myAmount : myPartnerAmount;</span>
+<span class="fc bfc" id="L116" title="All 2 branches covered.">        if (isTo) {</span>
+<span class="fc" id="L117">            theDebitAmount = new OceanusMoney(myAmount);</span>
+<span class="fc" id="L118">            theCreditAmount = myPartnerAmount;</span>
+        } else {
+<span class="fc" id="L120">            theDebitAmount = new OceanusMoney(myPartnerAmount);</span>
+<span class="fc" id="L121">            theCreditAmount = myAmount;</span>
+        }
+<span class="fc" id="L123">        theDebitAmount.negate();</span>
+
+        /* Access delta units */
+<span class="fc bfc" id="L126" title="All 2 branches covered.">        theDebitUnitsDelta = isTo ? theTrans.getAccountDeltaUnits() : theTrans.getPartnerDeltaUnits();</span>
+<span class="fc bfc" id="L127" title="All 2 branches covered.">        theCreditUnitsDelta = isTo ? theTrans.getPartnerDeltaUnits() : theTrans.getAccountDeltaUnits();</span>
+<span class="fc" id="L128">    }</span>
+
+    /**
+     * Obtain the event.
+     * @return the event
+     */
+    MoneyWiseXAnalysisEvent getEvent() {
+<span class="fc" id="L135">        return theEvent;</span>
+    }
+
+    /**
+     * Obtain the transaction.
+     * @return the transaction
+     */
+    MoneyWiseTransaction getTransaction() {
+<span class="fc" id="L143">        return theTrans;</span>
+    }
+
+    /**
+     * Is this transaction Account -&gt; partner?
+     * @return true/false
+     */
+    boolean isTo() {
+<span class="fc" id="L151">        return isTo;</span>
+    }
+
+    /**
+     * Obtain the debit account.
+     * @return the debit account
+     */
+    MoneyWiseTransAsset getDebitAccount() {
+<span class="fc" id="L159">        return theDebit;</span>
+    }
+
+    /**
+     * Obtain the credit account.
+     * @return the credit account
+     */
+    MoneyWiseTransAsset getCreditAccount() {
+<span class="fc" id="L167">        return theCredit;</span>
+    }
+
+    /**
+     * Obtain the child account.
+     * @return the child account
+     */
+    public MoneyWiseTransAsset getChildAccount() {
+<span class="nc" id="L175">        return theChild;</span>
+    }
+
+    /**
+     * Obtain the category.
+     * @return the category
+     */
+    MoneyWiseTransCategory getCategory() {
+<span class="fc" id="L183">        return theCategory;</span>
+    }
+
+    /**
+     * Obtain the categoryClass.
+     * @return the categoryClass
+     */
+    MoneyWiseTransCategoryClass getCategoryClass() {
+<span class="pc bpc" id="L191" title="1 of 2 branches missed.">        return theCategory == null ? null : theCategory.getCategoryTypeClass();</span>
+    }
+
+    /**
+     * Obtain the debit unitsDelta.
+     * @return the delta
+     */
+    OceanusUnits getDebitUnitsDelta() {
+<span class="fc" id="L199">        return theDebitUnitsDelta;</span>
+    }
+
+    /**
+     * Obtain the credit unitsDelta.
+     * @return the delta
+     */
+    OceanusUnits getCreditUnitsDelta() {
+<span class="fc" id="L207">        return theCreditUnitsDelta;</span>
+    }
+
+    /**
+     * is this an income Category?
+     * @return true/false
+     */
+    boolean isIncomeCategory() {
+<span class="fc" id="L215">        final MoneyWiseTransCategoryClass myClass = getCategoryClass();</span>
+<span class="pc bpc" id="L216" title="1 of 4 branches missed.">        return myClass != null &amp;&amp; myClass.isIncome();</span>
+    }
+
+    /**
+     * is this an expense Category?
+     * @return true/false
+     */
+    boolean isExpenseCategory() {
+<span class="fc" id="L224">        final MoneyWiseTransCategoryClass myClass = getCategoryClass();</span>
+<span class="pc bpc" id="L225" title="1 of 4 branches missed.">        return myClass != null &amp;&amp; myClass.isExpense();</span>
+    }
+
+    /**
+     * is this a refund?
+     * @return true/false
+     */
+    boolean isRefund() {
+<span class="fc bfc" id="L233" title="All 2 branches covered.">        return isIncomeCategory() ? theCredit instanceof MoneyWisePayee : theDebit instanceof MoneyWisePayee;</span>
+    }
+
+    /**
+     * Obtain the transaction value.
+     * @return the value
+     */
+    OceanusMoney getTransactionValue() {
+<span class="fc bfc" id="L241" title="All 2 branches covered.">        return isRefund() ? theDebitAmount : theCreditAmount;</span>
+    }
+
+    /**
+     * Obtain the debit amount.
+     * @return the debit amount
+     */
+    OceanusMoney getDebitAmount() {
+<span class="fc" id="L249">        return theDebitAmount;</span>
+    }
+
+    /**
+     * Obtain the credit amount.
+     * @return the credit amount
+     */
+    OceanusMoney getCreditAmount() {
+<span class="fc" id="L257">        return theCreditAmount;</span>
+    }
+
+    /**
+     * Set the debit amount.
+     * @param pAmount the amount
+     */
+    void setDebitAmount(final OceanusMoney pAmount) {
+<span class="fc" id="L265">        theDebitAmount = pAmount;</span>
+<span class="fc bfc" id="L266" title="All 2 branches covered.">        if (!theCredit.getAssetType().isValued()) {</span>
+<span class="fc" id="L267">            theCreditAmount = new OceanusMoney(pAmount);</span>
+<span class="fc" id="L268">            theCreditAmount.negate();</span>
+        }
+<span class="fc" id="L270">    }</span>
+
+    /**
+     * Set the credit amount.
+     * @param pAmount the amount
+     */
+    void setCreditAmount(final OceanusMoney pAmount) {
+<span class="fc" id="L277">        theCreditAmount = pAmount;</span>
+<span class="fc bfc" id="L278" title="All 2 branches covered.">        if (!theDebit.getAssetType().isValued()) {</span>
+<span class="fc" id="L279">            theDebitAmount = new OceanusMoney(pAmount);</span>
+<span class="fc" id="L280">            theDebitAmount.negate();</span>
+        }
+<span class="fc" id="L282">    }</span>
+
+    /**
+     * Adjust parent/child.
+     */
+    void adjustParent() {
+        /* Switch on category class */
+<span class="pc bpc" id="L289" title="1 of 5 branches missed.">        switch (getCategoryClass()) {</span>
+            case INTEREST:
+            case LOYALTYBONUS:
+                /* Obtain detailed category */
+<span class="fc" id="L293">                theCategory = ((MoneyWiseAssetBase) theDebit).getDetailedCategory(theCategory, theTrans.getTaxYear());</span>
+
+                /* The interest bearing account should be replaced by its parent */
+<span class="pc bpc" id="L296" title="1 of 2 branches missed.">                theChild = theDebit.equals(theCredit)</span>
+<span class="fc" id="L297">                        ? null</span>
+<span class="pc" id="L298">                        : theTrans.getAccount();</span>
+<span class="fc bfc" id="L299" title="All 2 branches covered.">                if (isTo) {</span>
+<span class="fc" id="L300">                    theDebit = theDebit.getParent();</span>
+                } else {
+<span class="fc" id="L302">                    theCredit = theCredit.getParent();</span>
+                }
+<span class="fc bfc" id="L304" title="All 2 branches covered.">                isTo = !isTo;</span>
+<span class="fc" id="L305">                break;</span>
+            case DIVIDEND:
+                /* Obtain detailed category */
+<span class="fc" id="L308">                final MoneyWisePortfolio myPortfolio = ((MoneyWiseSecurityHolding) theDebit).getPortfolio();</span>
+<span class="fc" id="L309">                theCategory = myPortfolio.getDetailedCategory(theCategory, theTrans.getTaxYear());</span>
+
+                /* The dividend generating account should be replaced by its parent */
+<span class="fc bfc" id="L312" title="All 2 branches covered.">                theChild = theDebit.equals(theCredit)</span>
+<span class="fc" id="L313">                        ? null</span>
+<span class="fc" id="L314">                        : theTrans.getAccount();</span>
+<span class="pc bpc" id="L315" title="1 of 2 branches missed.">                if (isTo) {</span>
+<span class="fc" id="L316">                    theDebit = theDebit.getParent();</span>
+                } else {
+<span class="nc" id="L318">                    theCredit = theCredit.getParent();</span>
+                }
+<span class="pc bpc" id="L320" title="1 of 2 branches missed.">                isTo = !isTo;</span>
+<span class="fc" id="L321">                break;</span>
+            case LOANINTERESTEARNED:
+            case CASHBACK:
+            case WRITEOFF:
+            case LOANINTERESTCHARGED:
+                /* True debit account is the parent of the asset */
+                /* Note that debit and credit must be identical */
+<span class="fc bfc" id="L328" title="All 2 branches covered.">                if (isTo) {</span>
+<span class="fc" id="L329">                    theDebit = theDebit.getParent();</span>
+                } else {
+<span class="fc" id="L331">                    theCredit = theCredit.getParent();</span>
+                }
+<span class="fc bfc" id="L333" title="All 2 branches covered.">                isTo = !isTo;</span>
+<span class="fc" id="L334">                break;</span>
+            case RENTALINCOME:
+            case ROOMRENTALINCOME:
+                /* True debit account is the parent of the security */
+<span class="nc bnc" id="L338" title="All 2 branches missed.">                theChild = theDebit.equals(theCredit)</span>
+<span class="nc" id="L339">                        ? null</span>
+<span class="nc" id="L340">                        : theDebit;</span>
+<span class="nc" id="L341">                theDebit = theCredit.getParent();</span>
+<span class="nc" id="L342">                break;</span>
+            default:
+                break;
+        }
+<span class="fc" id="L346">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PrometheusUIResource.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Prometheus Core Application Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.prometheus.ui</a> &gt; <span class="el_source">PrometheusUIResource.java</span></div><h1>PrometheusUIResource.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Prometheus: Application Framework
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.prometheus.ui;
+
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
+
+import java.util.ResourceBundle;
+
+/**
+ * Resource IDs for Prometheus UI Fields.
+ */
+<span class="nc" id="L27">public enum PrometheusUIResource implements OceanusBundleId {</span>
+    /**
+     * Menu Data.
+     */
+<span class="nc" id="L31">    MENU_DATA(&quot;Menu.Data&quot;),</span>
+
+    /**
+     * Menu Backup.
+     */
+<span class="nc" id="L36">    MENU_BACKUP(&quot;Menu.Backup&quot;),</span>
+
+    /**
+     * Menu Edit.
+     */
+<span class="nc" id="L41">    MENU_EDIT(&quot;Menu.Edit&quot;),</span>
+
+    /**
+     * Menu Security.
+     */
+<span class="nc" id="L46">    MENU_SECURITY(&quot;Menu.Security&quot;),</span>
+
+    /**
+     * Menu Help.
+     */
+<span class="nc" id="L51">    MENU_HELP(&quot;Menu.Help&quot;),</span>
+
+    /**
+     * MenuItem Undo.
+     */
+<span class="nc" id="L56">    MENUITEM_UNDO(&quot;MenuItem.UnDo&quot;),</span>
+
+    /**
+     * MenuItem Reset.
+     */
+<span class="nc" id="L61">    MENUITEM_RESET(&quot;MenuItem.Reset&quot;),</span>
+
+    /**
+     * MenuItem Help.
+     */
+<span class="nc" id="L66">    MENUITEM_HELP(&quot;MenuItem.Help&quot;),</span>
+
+    /**
+     * MenuItem DataViewer.
+     */
+<span class="nc" id="L71">    MENUITEM_DATAVIEWER(&quot;MenuItem.DataViewer&quot;),</span>
+
+    /**
+     * MenuItem About.
+     */
+<span class="nc" id="L76">    MENUITEM_ABOUT(&quot;MenuItem.About&quot;),</span>
+
+    /**
+     * Discard Changes Prompt.
+     */
+<span class="nc" id="L81">    PROMPT_DISCARD(&quot;Prompt.Discard&quot;),</span>
+
+    /**
+     * Close Title.
+     */
+<span class="nc" id="L86">    TITLE_CLOSE(&quot;Title.Close&quot;),</span>
+
+    /**
+     * ActionButtons Title.
+     */
+<span class="nc" id="L91">    ACTION_TITLE_SAVE(&quot;Action.Title.Save&quot;),</span>
+
+    /**
+     * StatusBar Cancel Button.
+     */
+<span class="nc" id="L96">    STATUSBAR_BUTTON_CANCEL(&quot;StatusBar.Button.Cancel&quot;),</span>
+
+    /**
+     * StatusBar Clear Button.
+     */
+<span class="nc" id="L101">    STATUSBAR_BUTTON_CLEAR(&quot;StatusBar.Button.Clear&quot;),</span>
+
+    /**
+     * StatusBar Progress Title.
+     */
+<span class="nc" id="L106">    STATUSBAR_TITLE_PROGRESS(&quot;StatusBar.Title.Progress&quot;),</span>
+
+    /**
+     * StatusBar Status Title.
+     */
+<span class="nc" id="L111">    STATUSBAR_TITLE_STATUS(&quot;StatusBar.Title.Status&quot;),</span>
+
+    /**
+     * StatusBar Success Status.
+     */
+<span class="nc" id="L116">    STATUSBAR_STATUS_SUCCESS(&quot;StatusBar.Status.Succeeded&quot;),</span>
+
+    /**
+     * StatusBar Success Status.
+     */
+<span class="nc" id="L121">    STATUSBAR_STATUS_FAIL(&quot;StatusBar.Status.Failed&quot;),</span>
+
+    /**
+     * StatusBar Cancel Status.
+     */
+<span class="nc" id="L126">    STATUSBAR_STATUS_CANCEL(&quot;StatusBar.Status.Cancelled&quot;),</span>
+
+    /**
+     * Icon Enable Tip.
+     */
+<span class="nc" id="L131">    ICON_TIP_ENABLE(&quot;Icon.Tip.Enable&quot;),</span>
+
+    /**
+     * Icon Disable Tip.
+     */
+<span class="nc" id="L136">    ICON_TIP_DISABLE(&quot;Icon.Tip.Disable&quot;),</span>
+
+    /**
+     * Icon GoTo Tip.
+     */
+<span class="nc" id="L141">    ICON_TIP_GOTO(&quot;Icon.Tip.GoTo&quot;),</span>
+
+    /**
+     * Table Row Column Title.
+     */
+<span class="nc" id="L146">    TABLE_TITLE_ROW(&quot;Table.Title.Row&quot;),</span>
+
+    /**
+     * Panel Details Tab.
+     */
+<span class="nc" id="L151">    PANEL_TAB_DETAILS(&quot;Panel.Tab.Details&quot;),</span>
+
+    /**
+     * Panel Account Tab.
+     */
+<span class="nc" id="L156">    PANEL_TAB_ACCOUNT(&quot;Panel.Tab.Account&quot;),</span>
+
+    /**
+     * Panel Web Tab.
+     */
+<span class="nc" id="L161">    PANEL_TAB_WEB(&quot;Panel.Tab.Web&quot;),</span>
+
+    /**
+     * Panel Notes Tab.
+     */
+<span class="nc" id="L166">    PANEL_TAB_NOTES(&quot;Panel.Tab.Notes&quot;),</span>
+
+    /**
+     * Static Select Title.
+     */
+<span class="nc" id="L171">    STATIC_TITLE_SELECT(&quot;Static.Title.Select&quot;),</span>
+
+    /**
+     * Static Data Prompt.
+     */
+<span class="nc" id="L176">    STATIC_PROMPT_DATA(&quot;Static.Prompt.Data&quot;),</span>
+
+    /**
+     * Static Disabled Prompt.
+     */
+<span class="nc" id="L181">    STATIC_PROMPT_DISABLED(&quot;Static.Prompt.Disabled&quot;),</span>
+
+    /**
+     * Static Active Column Title.
+     */
+<span class="nc" id="L186">    STATIC_TITLE_ACTIVE(&quot;Static.Title.Active&quot;);</span>
+
+    /**
+     * The Resource Loader.
+     */
+<span class="nc" id="L191">    private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getLoader(PrometheusUIResource.class.getCanonicalName(),</span>
+            ResourceBundle::getBundle);
+
+    /**
+     * The Id.
+     */
+    private final String theKeyName;
+
+    /**
+     * The Value.
+     */
+    private String theValue;
+
+    /**
+     * Constructor.
+     * @param pKeyName the key name
+     */
+<span class="nc" id="L208">    PrometheusUIResource(final String pKeyName) {</span>
+<span class="nc" id="L209">        theKeyName = pKeyName;</span>
+<span class="nc" id="L210">    }</span>
+
+    @Override
+    public String getKeyName() {
+<span class="nc" id="L214">        return theKeyName;</span>
+    }
+
+    @Override
+    public String getNameSpace() {
+<span class="nc" id="L219">        return &quot;Prometheus.ui&quot;;</span>
+    }
+
+    @Override
+    public String getValue() {
+        /* If we have not initialised the value */
+<span class="nc bnc" id="L225" title="All 2 branches missed.">        if (theValue == null) {</span>
+            /* Derive the value */
+<span class="nc" id="L227">            theValue = LOADER.getValue(this);</span>
+        }
+
+        /* return the value */
+<span class="nc" id="L231">        return theValue;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

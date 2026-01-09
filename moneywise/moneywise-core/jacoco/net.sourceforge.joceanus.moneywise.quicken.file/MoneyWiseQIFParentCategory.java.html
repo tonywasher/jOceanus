@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseQIFParentCategory.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.quicken.file</a> &gt; <span class="el_source">MoneyWiseQIFParentCategory.java</span></div><h1>MoneyWiseQIFParentCategory.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.quicken.file;
+
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+
+/**
+ * Parent category registration.
+ * @author Tony Washer
+ */
+public class MoneyWiseQIFParentCategory
+        implements Comparable&lt;MoneyWiseQIFParentCategory&gt; {
+    /**
+     * Self definition.
+     */
+    private final MoneyWiseQIFEventCategory theSelf;
+
+    /**
+     * Children.
+     */
+    private final List&lt;MoneyWiseQIFEventCategory&gt; theChildren;
+
+    /**
+     * Constructor.
+     * @param pFile the file definition
+     * @param pParent the parent category
+     */
+    protected MoneyWiseQIFParentCategory(final MoneyWiseQIFFile pFile,
+                                         final MoneyWiseTransCategory pParent) {
+<span class="nc" id="L50">        this(new MoneyWiseQIFEventCategory(pFile, pParent));</span>
+<span class="nc" id="L51">    }</span>
+
+    /**
+     * Constructor.
+     * @param pParent the parent category
+     */
+<span class="nc" id="L57">    protected MoneyWiseQIFParentCategory(final MoneyWiseQIFEventCategory pParent) {</span>
+        /* Record self definition */
+<span class="nc" id="L59">        theSelf = pParent;</span>
+
+        /* Create child list */
+<span class="nc" id="L62">        theChildren = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L63">    }</span>
+
+    @Override
+    public String toString() {
+<span class="nc" id="L67">        return theSelf.toString();</span>
+    }
+
+    /**
+     * Obtain number of children.
+     * @return the number of children
+     */
+    protected int numChildren() {
+<span class="nc" id="L75">        return theChildren.size();</span>
+    }
+
+    /**
+     * Obtain the security.
+     * @return the security
+     */
+    public MoneyWiseQIFEventCategory getParent() {
+<span class="nc" id="L83">        return theSelf;</span>
+    }
+
+    /**
+     * Obtain the children.
+     * @return the children
+     */
+    public List&lt;MoneyWiseQIFEventCategory&gt; getChildren() {
+<span class="nc" id="L91">        return theChildren;</span>
+    }
+
+    /**
+     * Register child.
+     * @param pChild the child
+     */
+    protected void registerChild(final MoneyWiseQIFEventCategory pChild) {
+        /* Add the child */
+<span class="nc" id="L100">        theChildren.add(pChild);</span>
+<span class="nc" id="L101">    }</span>
+
+    /**
+     * Sort the children.
+     */
+    protected void sortChildren() {
+<span class="nc" id="L107">        Collections.sort(theChildren);</span>
+<span class="nc" id="L108">    }</span>
+
+    /**
+     * Format record.
+     * @param pFormatter the data formatter
+     * @param pBuilder the string builder
+     */
+    public void formatRecord(final OceanusDataFormatter pFormatter,
+                             final StringBuilder pBuilder) {
+        /* Format own record */
+<span class="nc" id="L118">        theSelf.formatRecord(pFormatter, pBuilder);</span>
+
+        /* Loop through the children */
+<span class="nc" id="L121">        final Iterator&lt;MoneyWiseQIFEventCategory&gt; myIterator = theChildren.iterator();</span>
+<span class="nc bnc" id="L122" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L123">            final MoneyWiseQIFEventCategory myCategory = myIterator.next();</span>
+
+            /* Format the child */
+<span class="nc" id="L126">            myCategory.formatRecord(pFormatter, pBuilder);</span>
+<span class="nc" id="L127">        }</span>
+<span class="nc" id="L128">    }</span>
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle trivial cases */
+<span class="nc bnc" id="L133" title="All 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L134">            return true;</span>
+        }
+<span class="nc bnc" id="L136" title="All 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L137">            return false;</span>
+        }
+
+        /* Check class */
+<span class="nc bnc" id="L141" title="All 2 branches missed.">        if (!getClass().equals(pThat.getClass())) {</span>
+<span class="nc" id="L142">            return false;</span>
+        }
+
+        /* Cast correctly */
+<span class="nc" id="L146">        final MoneyWiseQIFParentCategory myParent = (MoneyWiseQIFParentCategory) pThat;</span>
+
+        /* Check parent */
+<span class="nc bnc" id="L149" title="All 2 branches missed.">        if (!theSelf.equals(myParent.getParent())) {</span>
+<span class="nc" id="L150">            return false;</span>
+        }
+
+        /* Check children */
+<span class="nc" id="L154">        return theChildren.equals(myParent.getChildren());</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="nc" id="L159">        final int myResult = MoneyWiseQIFFile.HASH_BASE * theSelf.hashCode();</span>
+<span class="nc" id="L160">        return myResult + theChildren.hashCode();</span>
+    }
+
+    @Override
+    public int compareTo(final MoneyWiseQIFParentCategory pThat) {
+<span class="nc" id="L165">        return theSelf.compareTo(pThat.getParent());</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

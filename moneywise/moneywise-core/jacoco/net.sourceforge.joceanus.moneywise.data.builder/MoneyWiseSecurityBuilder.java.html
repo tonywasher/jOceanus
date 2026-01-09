@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseSecurityBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.data.builder</a> &gt; <span class="el_source">MoneyWiseSecurityBuilder.java</span></div><h1>MoneyWiseSecurityBuilder.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.data.builder;
+
+import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseRegion;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurity;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrencyClass;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseSecurityClass;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseSecurityType;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
+
+/**
+ * Security Builder.
+ */
+public class MoneyWiseSecurityBuilder {
+    /**
+     * DataSet.
+     */
+    private final MoneyWiseDataSet theDataSet;
+
+    /**
+     * The SecurityName.
+     */
+    private String theName;
+
+    /**
+     * The Parent.
+     */
+    private MoneyWisePayee theParent;
+
+    /**
+     * The SecurityType.
+     */
+    private MoneyWiseSecurityType theType;
+
+    /**
+     * The Currency.
+     */
+    private MoneyWiseCurrency theCurrency;
+
+    /**
+     * The Symbol.
+     */
+    private String theSymbol;
+
+    /**
+     * The Region.
+     */
+    private MoneyWiseRegion theRegion;
+
+    /**
+     * The Underlying.
+     */
+    private MoneyWiseSecurity theUnderlying;
+
+    /**
+     * The OptionPrice.
+     */
+    private OceanusPrice theOptionPrice;
+
+    /**
+     * Constructor.
+     * @param pDataSet the dataSet
+     */
+<span class="fc" id="L84">    public MoneyWiseSecurityBuilder(final MoneyWiseDataSet pDataSet) {</span>
+<span class="fc" id="L85">        theDataSet = pDataSet;</span>
+<span class="fc" id="L86">        theDataSet.getSecurities().ensureMap();</span>
+<span class="fc" id="L87">        reportingCurrency();</span>
+<span class="fc" id="L88">    }</span>
+
+    /**
+     * Set Name.
+     * @param pName the name of the loan.
+     * @return the builder
+     */
+    public MoneyWiseSecurityBuilder name(final String pName) {
+<span class="fc" id="L96">        theName = pName;</span>
+<span class="fc" id="L97">        return this;</span>
+    }
+
+    /**
+     * Set Parent.
+     * @param pParent the parent.
+     * @return the builder
+     */
+    public MoneyWiseSecurityBuilder parent(final MoneyWisePayee pParent) {
+<span class="fc" id="L106">        theParent = pParent;</span>
+<span class="fc" id="L107">        return this;</span>
+    }
+
+    /**
+     * Set Parent.
+     * @param pParent the parent.
+     * @return the builder
+     */
+    public MoneyWiseSecurityBuilder parent(final String pParent) {
+<span class="fc" id="L116">        return parent(theDataSet.getPayees().findItemByName(pParent));</span>
+    }
+
+    /**
+     * Set the securityType.
+     * @param pType the type of the security.
+     * @return the builder
+     */
+    public MoneyWiseSecurityBuilder type(final MoneyWiseSecurityType pType) {
+<span class="fc" id="L125">        theType = pType;</span>
+<span class="fc" id="L126">        return this;</span>
+    }
+
+    /**
+     * Set the securityType.
+     * @param pType the type of the security.
+     * @return the builder
+     */
+    public MoneyWiseSecurityBuilder type(final MoneyWiseSecurityClass pType) {
+<span class="fc" id="L135">        return type(theDataSet.getSecurityTypes().findItemByClass(pType));</span>
+    }
+
+    /**
+     * Set the currency.
+     * @param pCurrency the currency of the loan.
+     * @return the builder
+     */
+    public MoneyWiseSecurityBuilder currency(final MoneyWiseCurrency pCurrency) {
+<span class="fc" id="L144">        theCurrency = pCurrency;</span>
+<span class="fc" id="L145">        return this;</span>
+    }
+
+    /**
+     * Set the currency.
+     * @param pCurrency the currency of the cash.
+     * @return the builder
+     */
+    public MoneyWiseSecurityBuilder currency(final MoneyWiseCurrencyClass pCurrency) {
+<span class="fc" id="L154">        return currency(theDataSet.getAccountCurrencies().findItemByClass(pCurrency));</span>
+    }
+
+    /**
+     * Set the reporting currency.
+     */
+    private void reportingCurrency() {
+<span class="fc" id="L161">        currency(lookupReportingCurrency());</span>
+<span class="fc" id="L162">    }</span>
+
+    /**
+     * Obtain the reporting currency.
+     * @return the currency
+     */
+    private MoneyWiseCurrency lookupReportingCurrency() {
+<span class="fc" id="L169">        return theDataSet.getReportingCurrency();</span>
+    }
+
+    /**
+     * Set Symbol.
+     * @param pSymbol the symbol of the security.
+     * @return the builder
+     */
+    public MoneyWiseSecurityBuilder symbol(final String pSymbol) {
+<span class="fc" id="L178">        theSymbol = pSymbol;</span>
+<span class="fc" id="L179">        return this;</span>
+    }
+
+    /**
+     * Set Region.
+     * @param pRegion the region.
+     * @return the builder
+     */
+    public MoneyWiseSecurityBuilder region(final MoneyWiseRegion pRegion) {
+<span class="nc" id="L188">        theRegion = pRegion;</span>
+<span class="nc" id="L189">        return this;</span>
+    }
+
+    /**
+     * Set Region.
+     * @param pRegion the region.
+     * @return the builder
+     */
+    public MoneyWiseSecurityBuilder region(final String pRegion) {
+<span class="nc" id="L198">        return region(theDataSet.getRegions().findItemByName(pRegion));</span>
+    }
+
+    /**
+     * Set Underlying.
+     * @param pUnderlying the underlying.
+     * @return the builder
+     */
+    public MoneyWiseSecurityBuilder underlying(final MoneyWiseSecurity pUnderlying) {
+<span class="nc" id="L207">        theUnderlying = pUnderlying;</span>
+<span class="nc" id="L208">        return this;</span>
+    }
+
+    /**
+     * Set optionPrice.
+     * @param pPrice the optionPrice of the security.
+     * @return the builder
+     */
+    public MoneyWiseSecurityBuilder optionPrice(final OceanusPrice pPrice) {
+<span class="nc" id="L217">        theOptionPrice = pPrice;</span>
+<span class="nc" id="L218">        return this;</span>
+    }
+
+    /**
+     * Build the deposit.
+     * @return the new Deposit
+     * @throws OceanusException on error
+     */
+    public MoneyWiseSecurity build() throws OceanusException {
+        /* Create the security */
+<span class="fc" id="L228">        final MoneyWiseSecurity mySecurity = theDataSet.getSecurities().addNewItem();</span>
+<span class="fc" id="L229">        mySecurity.setName(theName);</span>
+<span class="fc" id="L230">        mySecurity.setParent(theParent);</span>
+<span class="fc" id="L231">        mySecurity.setCategory(theType);</span>
+<span class="fc" id="L232">        mySecurity.setAssetCurrency(theCurrency);</span>
+<span class="fc" id="L233">        mySecurity.setSymbol(theSymbol);</span>
+<span class="fc" id="L234">        mySecurity.setRegion(theRegion);</span>
+<span class="fc" id="L235">        mySecurity.setUnderlyingStock(theUnderlying);</span>
+<span class="fc" id="L236">        mySecurity.setOptionPrice(theOptionPrice);</span>
+<span class="fc" id="L237">        mySecurity.setClosed(Boolean.FALSE);</span>
+
+        /* Reset the values */
+<span class="fc" id="L240">        reset();</span>
+
+        /* Check for errors */
+<span class="fc" id="L243">        mySecurity.adjustMapForItem();</span>
+<span class="fc" id="L244">        mySecurity.validate();</span>
+<span class="pc bpc" id="L245" title="1 of 2 branches missed.">        if (mySecurity.hasErrors()) {</span>
+<span class="nc" id="L246">            mySecurity.removeItem();</span>
+<span class="nc" id="L247">            throw new MoneyWiseDataException(mySecurity, &quot;Failed validation&quot;);</span>
+        }
+
+        /* Return the security */
+<span class="fc" id="L251">        return mySecurity;</span>
+    }
+    /**
+     * Reset the builder.
+     */
+    public void reset() {
+        /* Reset values */
+<span class="fc" id="L258">        theName = null;</span>
+<span class="fc" id="L259">        theType = null;</span>
+<span class="fc" id="L260">        theParent = null;</span>
+<span class="fc" id="L261">        theSymbol = null;</span>
+<span class="fc" id="L262">        theRegion = null;</span>
+<span class="fc" id="L263">        theUnderlying = null;</span>
+<span class="fc" id="L264">        theOptionPrice = null;</span>
+<span class="fc" id="L265">        reportingCurrency();</span>
+<span class="fc" id="L266">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

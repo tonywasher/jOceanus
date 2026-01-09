@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCipher.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.gordianknot.api.cipher</a> &gt; <span class="el_source">GordianCipher.java</span></div><h1>GordianCipher.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * GordianKnot: Security Suite
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.gordianknot.api.cipher;
+
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
+
+import java.util.Arrays;
+
+/**
+ * GordianKnot base for Cipher.
+ */
+public interface GordianCipher {
+    /**
+     * Determine the maximum number of output bytes that will be produced for the given number of
+     * input bytes.
+     * @param pLength the number of input bytes
+     * @return # of output bytes
+     */
+    int getOutputLength(int pLength);
+
+    /**
+     * Process the passed data and return intermediate results.
+     * @param pBytes Bytes to update cipher with
+     * @return the intermediate processed data
+     * @throws GordianException on error
+     */
+    default byte[] update(final byte[] pBytes) throws GordianException {
+<span class="nc bnc" id="L42" title="All 2 branches missed.">        return update(pBytes, 0, pBytes == null ? 0 : pBytes.length);</span>
+    }
+
+    /**
+     * Process the passed data and return intermediate results.
+     * @param pBytes Bytes to update cipher with
+     * @param pOffset offset within pBytes to read bytes from
+     * @param pLength length of data to update with
+     * @return the intermediate processed data
+     * @throws GordianException on error
+     */
+    default byte[] update(final byte[] pBytes,
+                          final int pOffset,
+                          final int pLength) throws GordianException {
+        /* Create output buffer */
+<span class="nc" id="L57">        final int myLen = getOutputLength(pLength);</span>
+<span class="nc" id="L58">        final byte[] myOutput = new byte[myLen];</span>
+
+        /* Process the data */
+<span class="nc" id="L61">        final int myOut = update(pBytes, pOffset, pLength, myOutput, 0);</span>
+
+        /* Return full buffer if possible */
+<span class="nc bnc" id="L64" title="All 2 branches missed.">        if (myOut == myLen) {</span>
+<span class="nc" id="L65">            return myOutput;</span>
+        }
+
+        /* Cut down buffer */
+<span class="nc" id="L69">        final byte[] myReturn = Arrays.copyOf(myOutput, myOut);</span>
+<span class="nc" id="L70">        Arrays.fill(myOutput, (byte) 0);</span>
+<span class="nc" id="L71">        return myReturn;</span>
+    }
+
+    /**
+     * Process the passed data and return intermediate results.
+     * @param pBytes Bytes to update cipher with
+     * @param pOffset offset within pBytes to read bytes from
+     * @param pLength length of data to update with
+     * @param pOutput the output buffer to receive processed data
+     * @return the number of bytes transferred to the output buffer
+     * @throws GordianException on error
+     */
+    default int update(final byte[] pBytes,
+                       final int pOffset,
+                       final int pLength,
+                       final byte[] pOutput) throws GordianException {
+<span class="nc" id="L87">        return update(pBytes, pOffset, pLength, pOutput, 0);</span>
+    }
+
+    /**
+     * Process the passed data and return intermediate results.
+     * @param pBytes Bytes to update cipher with
+     * @param pOffset offset within pBytes to read bytes from
+     * @param pLength length of data to update with
+     * @param pOutput the output buffer to receive processed data
+     * @param pOutOffset offset within pOutput to write bytes to
+     * @return the number of bytes transferred to the output buffer
+     * @throws GordianException on error
+     */
+    int update(byte[] pBytes,
+               int pOffset,
+               int pLength,
+               byte[] pOutput,
+               int pOutOffset) throws GordianException;
+
+    /**
+     * Complete the Cipher operation and return final results.
+     * @return the remaining processed data
+     * @throws GordianException on error
+     */
+    default byte[] finish() throws GordianException {
+        /* Create output buffer */
+<span class="nc" id="L113">        final int myLen = getOutputLength(0);</span>
+<span class="nc" id="L114">        final byte[] myOutput = new byte[myLen];</span>
+
+        /* Process the data */
+<span class="nc" id="L117">        final int myOut = finish(myOutput, 0);</span>
+
+        /* Return full buffer if possible */
+<span class="nc bnc" id="L120" title="All 2 branches missed.">        if (myOut == myLen) {</span>
+<span class="nc" id="L121">            return myOutput;</span>
+        }
+
+        /* Cut down buffer */
+<span class="nc" id="L125">        final byte[] myReturn = Arrays.copyOf(myOutput, myOut);</span>
+<span class="nc" id="L126">        Arrays.fill(myOutput, (byte) 0);</span>
+<span class="nc" id="L127">        return myReturn;</span>
+    }
+
+    /**
+     * Process the passed data and return final results.
+     * @param pBytes Bytes to update cipher with
+     * @return the remaining processed data
+     * @throws GordianException on error
+     */
+    default byte[] finish(final byte[] pBytes) throws GordianException {
+<span class="pc bpc" id="L137" title="1 of 2 branches missed.">        return finish(pBytes, 0, pBytes == null ? 0 : pBytes.length);</span>
+    }
+
+    /**
+     * Process the passed data and return final results.
+     * @param pBytes Bytes to update cipher with
+     * @param pOffset offset within pBytes to read bytes from
+     * @param pLength length of data to update with
+     * @return the remaining processed data
+     * @throws GordianException on error
+     */
+    default byte[] finish(final byte[] pBytes,
+                          final int pOffset,
+                          final int pLength) throws GordianException {
+        /* Create output buffer */
+<span class="fc" id="L152">        final int myLen = getOutputLength(pLength);</span>
+<span class="fc" id="L153">        final byte[] myOutput = new byte[myLen];</span>
+
+        /* Process the data */
+<span class="fc" id="L156">        final int myOut = finish(pBytes, pOffset, pLength, myOutput, 0);</span>
+
+        /* Return full buffer if possible */
+<span class="fc bfc" id="L159" title="All 2 branches covered.">        if (myOut == myLen) {</span>
+<span class="fc" id="L160">            return myOutput;</span>
+        }
+
+        /* Cut down buffer */
+<span class="fc" id="L164">        final byte[] myReturn = Arrays.copyOf(myOutput, myOut);</span>
+<span class="fc" id="L165">        Arrays.fill(myOutput, (byte) 0);</span>
+<span class="fc" id="L166">        return myReturn;</span>
+    }
+
+    /**
+     * Process the passed data and return final results.
+     * @param pBytes Bytes to update cipher with
+     * @param pOffset offset within pBytes to read bytes from
+     * @param pLength length of data to update with
+     * @param pOutput the output buffer to receive processed data
+     * @return the number of bytes transferred to the output buffer
+     * @throws GordianException on error
+     */
+    default int finish(final byte[] pBytes,
+                       final int pOffset,
+                       final int pLength,
+                       final byte[] pOutput) throws GordianException {
+<span class="fc" id="L182">        return finish(pBytes, pOffset, pLength, pOutput, 0);</span>
+    }
+
+    /**
+     * Process the passed data and return final results.
+     * @param pBytes Bytes to update cipher with
+     * @param pOffset offset within pBytes to read bytes from
+     * @param pLength length of data to update with
+     * @param pOutput the output buffer to receive processed data
+     * @param pOutOffset offset within pOutput to write bytes to
+     * @return the number of bytes transferred to the output buffer
+     * @throws GordianException on error
+     */
+    default int finish(final byte[] pBytes,
+                       final int pOffset,
+                       final int pLength,
+                       final byte[] pOutput,
+                       final int pOutOffset) throws GordianException {
+        /* Update the data */
+<span class="fc" id="L201">        final int myLen = update(pBytes, pOffset, pLength, pOutput, pOutOffset);</span>
+
+        /* Complete the operation */
+<span class="fc" id="L204">        return myLen + finish(pOutput, pOutOffset + myLen);</span>
+    }
+
+    /**
+     * Complete the Cipher operation and return final results.
+     * @param pOutput the output buffer to receive processed data
+     * @param pOutOffset offset within pOutput to write bytes to
+     * @return the number of bytes transferred to the output buffer
+     * @throws GordianException on error
+     */
+    int finish(byte[] pOutput,
+               int pOutOffset) throws GordianException;
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

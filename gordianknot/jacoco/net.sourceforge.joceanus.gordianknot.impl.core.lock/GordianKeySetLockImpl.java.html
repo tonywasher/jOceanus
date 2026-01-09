@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianKeySetLockImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.gordianknot.impl.core.lock</a> &gt; <span class="el_source">GordianKeySetLockImpl.java</span></div><h1>GordianKeySetLockImpl.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * GordianKnot: Security Suite
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.gordianknot.impl.core.lock;
+
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
+import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
+import net.sourceforge.joceanus.gordianknot.api.lock.GordianKeySetLock;
+import net.sourceforge.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataConverter;
+import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySet;
+
+import java.util.Arrays;
+import java.util.Objects;
+
+/**
+ * Factory Lock implementation.
+ */
+public class GordianKeySetLockImpl
+        implements GordianKeySetLock {
+    /**
+     * The keySet.
+     */
+    private final GordianCoreKeySet theKeySet;
+
+    /**
+     * The lockASN1.
+     */
+    private final GordianPasswordLockASN1 theLockASN1;
+
+    /**
+     * The lockBytes.
+     */
+    private final byte[] theLockBytes;
+
+    /**
+     * Locking constructor.
+     * @param pLockingFactory the locking factory
+     * @param pKeySetToLock the keySet to lock
+     * @param pLockSpec the passwordLockSpec
+     * @param pPassword the password
+     * @throws GordianException on error
+     */
+    public GordianKeySetLockImpl(final GordianBaseFactory pLockingFactory,
+                                 final GordianCoreKeySet pKeySetToLock,
+                                 final GordianPasswordLockSpec pLockSpec,
+<span class="fc" id="L61">                                 final char[] pPassword) throws GordianException {</span>
+        /* Protect from exceptions */
+<span class="fc" id="L63">        byte[] myPassword = null;</span>
+        try {
+            /* Store the KeySet */
+<span class="fc" id="L66">            theKeySet = pKeySetToLock;</span>
+
+            /* Create a recipe */
+<span class="fc" id="L69">            final GordianPasswordLockRecipe myRecipe = new GordianPasswordLockRecipe(pLockingFactory, pLockSpec);</span>
+
+            /* Generate the hash */
+<span class="fc" id="L72">            myPassword = GordianDataConverter.charsToByteArray(pPassword);</span>
+<span class="fc" id="L73">            final GordianCoreKeySet myKeySet = myRecipe.processPassword(pLockingFactory, myPassword);</span>
+<span class="fc" id="L74">            final byte[] myPayload = myKeySet.secureKeySet(pKeySetToLock);</span>
+<span class="fc" id="L75">            theLockASN1 = myRecipe.buildLockASN1(myPassword.length, myPayload);</span>
+<span class="fc" id="L76">            theLockBytes = theLockASN1.getEncodedBytes();</span>
+
+        } finally {
+<span class="pc bpc" id="L79" title="1 of 2 branches missed.">            if (myPassword != null) {</span>
+<span class="fc" id="L80">                Arrays.fill(myPassword, (byte) 0);</span>
+            }
+        }
+<span class="fc" id="L83">    }</span>
+
+    /**
+     * UnLocking constructor.
+     * @param pLockingFactory the locking factory
+     * @param pLockBytes the lockBytes
+     * @param pPassword the password
+     * @throws GordianException on error
+     */
+    public GordianKeySetLockImpl(final GordianBaseFactory pLockingFactory,
+                                 final byte[] pLockBytes,
+                                 final char[] pPassword) throws GordianException {
+<span class="fc" id="L95">        this(pLockingFactory, GordianPasswordLockASN1.getInstance(pLockBytes), pLockBytes, pPassword);</span>
+<span class="fc" id="L96">    }</span>
+
+    /**
+     * UnLocking constructor.
+     * @param pLockingFactory the locking factory
+     * @param pLockASN1 the lockASN1
+     * @param pPassword the password
+     * @throws GordianException on error
+     */
+    public GordianKeySetLockImpl(final GordianBaseFactory pLockingFactory,
+                                 final GordianPasswordLockASN1 pLockASN1,
+                                 final char[] pPassword) throws GordianException {
+<span class="fc" id="L108">        this(pLockingFactory, pLockASN1, pLockASN1.getEncodedBytes(), pPassword);</span>
+<span class="fc" id="L109">    }</span>
+
+    /**
+     * UnLocking constructor.
+     * @param pLockingFactory the locking factory
+     * @param pLockASN1 the lockASN1
+     * @param pLockBytes the lockBytes
+     * @param pPassword the password
+     * @throws GordianException on error
+     */
+    public GordianKeySetLockImpl(final GordianBaseFactory pLockingFactory,
+                                 final GordianPasswordLockASN1 pLockASN1,
+                                 final byte[] pLockBytes,
+<span class="fc" id="L122">                                 final char[] pPassword) throws GordianException {</span>
+        /* Protect from exceptions */
+<span class="fc" id="L124">        byte[] myPassword = null;</span>
+        try {
+            /* Store the LockBytes */
+<span class="fc" id="L127">            theLockBytes = pLockBytes;</span>
+<span class="fc" id="L128">            theLockASN1 = pLockASN1;</span>
+
+            /* Resolve the recipe */
+<span class="fc" id="L131">            myPassword = GordianDataConverter.charsToByteArray(pPassword);</span>
+<span class="fc" id="L132">            final GordianPasswordLockRecipe myRecipe = new GordianPasswordLockRecipe(pLockingFactory, myPassword.length, theLockASN1);</span>
+
+            /* Process the password, create parameters and factory */
+<span class="fc" id="L135">            final GordianCoreKeySet myKeySet = myRecipe.processPassword(pLockingFactory, myPassword);</span>
+<span class="fc" id="L136">            theKeySet = myKeySet.deriveKeySet(myRecipe.getPayload());</span>
+
+        } finally {
+<span class="pc bpc" id="L139" title="1 of 2 branches missed.">            if (myPassword != null) {</span>
+<span class="fc" id="L140">                Arrays.fill(myPassword, (byte) 0);</span>
+            }
+        }
+<span class="fc" id="L143">    }</span>
+
+    @Override
+    public GordianKeySet getLockedObject() {
+<span class="fc" id="L147">        return theKeySet;</span>
+    }
+
+    @Override
+    public GordianPasswordLockASN1 getLockASN1() {
+<span class="fc" id="L152">        return theLockASN1;</span>
+    }
+
+    @Override
+    public byte[] getLockBytes() {
+<span class="fc" id="L157">        return theLockBytes;</span>
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+<span class="nc bnc" id="L163" title="All 2 branches missed.">        if (pThat == this) {</span>
+<span class="nc" id="L164">            return true;</span>
+        }
+<span class="nc bnc" id="L166" title="All 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L167">            return false;</span>
+        }
+
+        /* Make sure that the object is the same class */
+<span class="nc bnc" id="L171" title="All 2 branches missed.">        if (!(pThat instanceof GordianKeySetLockImpl)) {</span>
+<span class="nc" id="L172">            return false;</span>
+        }
+
+        /* Access the target field */
+<span class="nc" id="L176">        final GordianKeySetLockImpl myThat = (GordianKeySetLockImpl) pThat;</span>
+
+        /* Check differences */
+<span class="nc bnc" id="L179" title="All 2 branches missed.">        return theKeySet.equals(myThat.getLockedObject())</span>
+<span class="nc bnc" id="L180" title="All 2 branches missed.">                &amp;&amp; Arrays.equals(theLockBytes, myThat.getLockBytes());</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="nc" id="L185">        return Objects.hash(theKeySet, Arrays.hashCode(theLockBytes));</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

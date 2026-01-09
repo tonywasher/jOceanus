@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCoreZipFileContents.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.gordianknot.impl.core.zip</a> &gt; <span class="el_source">GordianCoreZipFileContents.java</span></div><h1>GordianCoreZipFileContents.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * GordianKnot: Security Suite
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.gordianknot.impl.core.zip;
+
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
+import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipFileContents;
+import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipFileEntry;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.zip.ZipEntry;
+
+/**
+ * Class represents the contents of an encrypted Zip file.
+ */
+public class GordianCoreZipFileContents
+    implements GordianZipFileContents {
+    /**
+     * The Header file name.
+     */
+    protected static final String NAME_HEADER = &quot;jGordianKnotHeader&quot;;
+
+    /**
+     * The Buffer length.
+     */
+    private static final int BUFFER_LEN = 100;
+
+    /**
+     * The file separator.
+     */
+    private static final char SEPARATOR_FILE = ';';
+
+    /**
+     * Zip File Header.
+     */
+    private GordianCoreZipFileEntry theHeader;
+
+    /**
+     * List of files.
+     */
+    private final List&lt;GordianZipFileEntry&gt; theList;
+
+    /**
+     * Constructor.
+     */
+<span class="fc" id="L61">    GordianCoreZipFileContents() {</span>
+        /* Allocate the list */
+<span class="fc" id="L63">        theList = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L64">    }</span>
+
+    /**
+     * Constructor from encoded string.
+     * @param pCodedString the encoded string
+     * @throws GordianException on error
+     */
+    GordianCoreZipFileContents(final String pCodedString) throws GordianException {
+        /* Initialise normally */
+<span class="fc" id="L73">        this();</span>
+
+        /* Wrap string in a string builder */
+<span class="fc" id="L76">        final StringBuilder myString = new StringBuilder(pCodedString);</span>
+<span class="fc" id="L77">        final String myFileSep = Character.toString(SEPARATOR_FILE);</span>
+
+        /* while we have separators in the string */
+        for (;;) {
+            /* Locate End of entry and break loop if not found */
+<span class="fc" id="L82">            final int myLoc = myString.indexOf(myFileSep);</span>
+<span class="fc bfc" id="L83" title="All 2 branches covered.">            if (myLoc == -1) {</span>
+<span class="fc" id="L84">                break;</span>
+            }
+
+            /* Parse the encoded entry and remove it from the buffer */
+<span class="fc" id="L88">            parseEncodedEntry(myString.substring(0, myLoc));</span>
+<span class="fc" id="L89">            myString.delete(0, myLoc + 1);</span>
+<span class="fc" id="L90">        }</span>
+
+        /* Parse the remaining entry */
+<span class="fc" id="L93">        parseEncodedEntry(myString.toString());</span>
+<span class="fc" id="L94">    }</span>
+
+    /**
+     * Obtain the header.
+     * @return the header
+     */
+    protected GordianCoreZipFileEntry getHeader() {
+<span class="fc" id="L101">        return theHeader;</span>
+    }
+
+    @Override
+    public Iterator&lt;GordianZipFileEntry&gt; iterator() {
+<span class="fc" id="L106">        return theList.iterator();</span>
+    }
+
+    /**
+     * Add a header entry to the contents.
+     * @return the newly added entry
+     */
+    protected GordianCoreZipFileEntry addZipFileHeader() {
+        /* Create the new entry */
+<span class="fc" id="L115">        theHeader = new GordianCoreZipFileEntry(NAME_HEADER);</span>
+<span class="fc" id="L116">        theHeader.setHeader();</span>
+<span class="fc" id="L117">        theHeader.setParent(this);</span>
+
+        /* Return it */
+<span class="fc" id="L120">        return theHeader;</span>
+    }
+
+    /**
+     * Add a File entry to the contents.
+     * @param pName the file name
+     * @return the newly added entry
+     */
+    final GordianCoreZipFileEntry addZipFileEntry(final String pName) {
+        /* Create the new entry */
+<span class="fc" id="L130">        final GordianCoreZipFileEntry myEntry = new GordianCoreZipFileEntry(pName);</span>
+
+        /* Add it to the list */
+<span class="fc" id="L133">        addZipFileEntry(myEntry);</span>
+
+        /* Return it */
+<span class="fc" id="L136">        return myEntry;</span>
+    }
+
+    /**
+     * Add a File entry to the contents.
+     * @param pEntry the zip entry
+     */
+    protected final void addZipFileEntry(final ZipEntry pEntry) {
+        /* Create the new entry */
+<span class="fc" id="L145">        final GordianCoreZipFileEntry myEntry = addZipFileEntry(pEntry.getName());</span>
+
+        /* Record details */
+<span class="fc" id="L148">        myEntry.setZipEntry(pEntry);</span>
+<span class="fc" id="L149">    }</span>
+
+    /**
+     * Add a File entry to the contents.
+     * @param pEntry the file entry
+     */
+    final void addZipFileEntry(final GordianCoreZipFileEntry pEntry) {
+        /* Access the name */
+<span class="fc" id="L157">        final String myName = pEntry.getFileName();</span>
+
+        /* Loop through the files in the list in the list */
+<span class="fc" id="L160">        int iIndex = 0;</span>
+<span class="fc" id="L161">        final Iterator&lt;GordianZipFileEntry&gt; myIterator = theList.iterator();</span>
+<span class="pc bpc" id="L162" title="1 of 2 branches missed.">        while (myIterator.hasNext()) {</span>
+            /* Access next entry */
+<span class="nc" id="L164">            final GordianZipFileEntry myEntry = myIterator.next();</span>
+
+            /* Check the entry name */
+<span class="nc" id="L167">            final int iDiff = myName.compareTo(myEntry.getFileName());</span>
+
+            /* If this file is later than us */
+<span class="nc bnc" id="L170" title="All 2 branches missed.">            if (iDiff &lt; 0) {</span>
+<span class="nc" id="L171">                break;</span>
+            }
+
+            /* Reject attempt to add duplicate name */
+<span class="nc bnc" id="L175" title="All 2 branches missed.">            if (iDiff == 0) {</span>
+<span class="nc" id="L176">                throw new IllegalArgumentException(&quot;Duplicate filename - &quot;</span>
+                        + myName);
+            }
+
+            /* Increment index */
+<span class="nc" id="L181">            iIndex++;</span>
+<span class="nc" id="L182">        }</span>
+
+        /* Set as child of these contents */
+<span class="fc" id="L185">        pEntry.setParent(this);</span>
+
+        /* Add into the list at the correct point */
+<span class="fc" id="L188">        theList.add(iIndex, pEntry);</span>
+<span class="fc" id="L189">    }</span>
+
+    @Override
+    public GordianZipFileEntry findFileEntry(final String pName) {
+        /* Loop through the file entries */
+<span class="fc" id="L194">        final Iterator&lt;GordianZipFileEntry&gt; myIterator = theList.iterator();</span>
+<span class="pc bpc" id="L195" title="1 of 2 branches missed.">        while (myIterator.hasNext()) {</span>
+            /* Access the entry */
+<span class="fc" id="L197">            final GordianZipFileEntry myEntry = myIterator.next();</span>
+
+            /* Check the entry name */
+<span class="fc" id="L200">            final int iDiff = pName.compareTo(myEntry.getFileName());</span>
+
+            /* If this is the required entry, return it */
+<span class="pc bpc" id="L203" title="1 of 2 branches missed.">            if (iDiff == 0) {</span>
+<span class="fc" id="L204">                return myEntry;</span>
+            }
+
+            /* If this entry is later than the required name, no such entry */
+<span class="nc bnc" id="L208" title="All 2 branches missed.">            if (iDiff &lt; 0) {</span>
+<span class="nc" id="L209">                break;</span>
+            }
+<span class="nc" id="L211">        }</span>
+
+        /* Return not found */
+<span class="nc" id="L214">        return null;</span>
+    }
+
+    /**
+     * Encode the contents.
+     * @return the encoded string
+     */
+    protected String encodeContents() {
+<span class="fc" id="L222">        final StringBuilder myString = new StringBuilder(BUFFER_LEN);</span>
+        GordianZipFileProperties myProperties;
+
+        /* Loop through the file entries */
+<span class="fc" id="L226">        final Iterator&lt;GordianZipFileEntry&gt; myIterator = theList.iterator();</span>
+<span class="fc bfc" id="L227" title="All 2 branches covered.">        while (myIterator.hasNext()) {</span>
+            /* Access the entry */
+<span class="fc" id="L229">            final GordianCoreZipFileEntry myEntry = (GordianCoreZipFileEntry) myIterator.next();</span>
+
+            /* Access the properties */
+<span class="fc" id="L232">            myProperties = myEntry.allocateProperties();</span>
+
+            /* Add the value to the string */
+<span class="pc bpc" id="L235" title="1 of 2 branches missed.">            if (myString.length() &gt; 0) {</span>
+<span class="nc" id="L236">                myString.append(SEPARATOR_FILE);</span>
+            }
+
+            /* Encode the properties */
+<span class="fc" id="L240">            myString.append(myProperties.encodeProperties());</span>
+<span class="fc" id="L241">        }</span>
+
+        /* Add the value to the string */
+<span class="pc bpc" id="L244" title="1 of 2 branches missed.">        if (myString.length() &gt; 0) {</span>
+<span class="fc" id="L245">            myString.append(SEPARATOR_FILE);</span>
+        }
+
+        /* Encode the header */
+<span class="fc" id="L249">        myProperties = theHeader.allocateProperties();</span>
+<span class="fc" id="L250">        myString.append(myProperties.encodeProperties());</span>
+
+        /* Return the encoded string */
+<span class="fc" id="L253">        return myString.toString();</span>
+    }
+
+    /**
+     * Add a File Entry from encoded string.
+     * @param pCodedString the encoded string
+     * @throws GordianException on error
+     */
+    private void parseEncodedEntry(final String pCodedString) throws GordianException {
+        /* Parse the properties */
+<span class="fc" id="L263">        final GordianZipFileProperties myProperties = new GordianZipFileProperties(pCodedString);</span>
+
+        /* Add the zip file entry */
+<span class="fc" id="L266">        final GordianCoreZipFileEntry myEntry = new GordianCoreZipFileEntry(myProperties);</span>
+
+        /* If this is a header */
+<span class="fc bfc" id="L269" title="All 2 branches covered.">        if (myEntry.isHeader()) {</span>
+            /* Store as header */
+<span class="fc" id="L271">            theHeader = myEntry;</span>
+<span class="fc" id="L272">            theHeader.setParent(this);</span>
+
+            /* else standard file */
+        } else {
+            /* Add the entry to the list */
+<span class="fc" id="L277">            addZipFileEntry(myEntry);</span>
+        }
+<span class="fc" id="L279">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,1097 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OceanusDecimal.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Oceanus Java Core Utilities</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.oceanus.decimal</a> &gt; <span class="el_source">OceanusDecimal.java</span></div><h1>OceanusDecimal.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Oceanus: Java Utilities
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.oceanus.decimal;
+
+import net.sourceforge.joceanus.oceanus.convert.OceanusDataConverter;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.math.RoundingMode;
+import java.util.Arrays;
+import java.util.Objects;
+
+/**
+ * Provides classes to represent decimal numbers with fixed numbers of decimal digits
+ * {@link #theScale} as Long integers. The decimal value is multiplied by 10 to the power of the
+ * number of decimals for the number ({@link #theFactor}). The integral part of the number can be
+ * expressed as (Value / Factor) and the fractional part as (Value % Factor). Arithmetic is then
+ * performed as whole number arithmetic on these values, with due care taken on multiplication and
+ * division to express the result to the correct number of decimals without losing any part of the
+ * answer to overflow.
+ */
+public class OceanusDecimal
+        implements Comparable&lt;OceanusDecimal&gt; {
+    /**
+     * Decimal Byte length.
+     */
+    public static final int BYTE_LEN = Long.BYTES + 1;
+
+    /**
+     * The Decimal radix.
+     */
+    public static final int RADIX_TEN = 10;
+
+    /**
+     * The Maximum # of Decimals.
+     */
+    public static final int MAX_DECIMALS = 10;
+
+    /**
+     * Powers of Ten.
+     */
+<span class="fc" id="L56">    private static final long[] POWERS_OF_TEN = getPowersOfTen(MAX_DECIMALS);</span>
+
+    /**
+     * The Shift factor to move top part of long to an integer.
+     */
+    private static final int INT_SHIFT = 32;
+
+    /**
+     * Out of range error text.
+     */
+    private static final String ERROR_RANGE = &quot;Value out of range&quot;;
+
+    /**
+     * The unscaled value.
+     */
+    private long theValue;
+
+    /**
+     * The scale.
+     */
+    private int theScale;
+
+    /**
+     * The Decimal factor, used for isolating integral and fractional parts.
+     */
+    private long theFactor;
+
+    /**
+     * Standard constructor.
+     */
+<span class="fc" id="L86">    protected OceanusDecimal() {</span>
+<span class="fc" id="L87">        theValue = 0;</span>
+<span class="fc" id="L88">        theScale = 0;</span>
+<span class="fc" id="L89">        theFactor = 1;</span>
+<span class="fc" id="L90">    }</span>
+
+    /**
+     * Constructor.
+     * @param pSource the decimal as a string
+     * @throws IllegalArgumentException on invalidly formatted argument
+     */
+<span class="fc" id="L97">    public OceanusDecimal(final String pSource) {</span>
+        /* Parse the string */
+<span class="fc" id="L99">        OceanusDecimalParser.parseDecimalValue(pSource, this);</span>
+
+        /* Remove redundant decimals */
+<span class="fc" id="L102">        reduceScale(0);</span>
+<span class="fc" id="L103">    }</span>
+
+    /**
+     * Constructor.
+     * @param pSource the decimal as a double
+     */
+    public OceanusDecimal(final double pSource) {
+        /* Convert to string and parse */
+<span class="nc" id="L111">        this(Double.toString(pSource));</span>
+<span class="nc" id="L112">    }</span>
+
+    /**
+     * Constructor.
+     * @param pSource the source decimal
+     */
+<span class="fc" id="L118">    public OceanusDecimal(final OceanusDecimal pSource) {</span>
+        /* Copy value and scale */
+<span class="fc" id="L120">        setValue(pSource.unscaledValue(), pSource.scale());</span>
+<span class="fc" id="L121">    }</span>
+
+    /**
+     * Constructor.
+     * @param pUnscaledValue the unscaled value
+     * @param pScale the scale
+     */
+    public OceanusDecimal(final long pUnscaledValue,
+<span class="nc" id="L129">                          final int pScale) {</span>
+        /* Store value and scale */
+<span class="nc" id="L131">        setValue(pUnscaledValue, pScale);</span>
+<span class="nc" id="L132">    }</span>
+
+    /**
+     * Create the decimal from a byte array.
+     * @param pBuffer the buffer
+     */
+<span class="fc" id="L138">    public OceanusDecimal(final byte[] pBuffer) {</span>
+<span class="pc bpc" id="L139" title="2 of 4 branches missed.">        if (pBuffer == null || pBuffer.length &lt; Long.BYTES + 1) {</span>
+<span class="nc" id="L140">            throw new IllegalArgumentException();</span>
+        }
+<span class="fc" id="L142">        final byte[] myValue = Arrays.copyOf(pBuffer, Long.BYTES);</span>
+<span class="fc" id="L143">        final long myUnscaled = OceanusDataConverter.byteArrayToLong(myValue);</span>
+<span class="fc" id="L144">        final int myScale = pBuffer[Long.BYTES];</span>
+<span class="fc" id="L145">        setValue(myUnscaled, myScale);</span>
+<span class="fc" id="L146">    }</span>
+
+    /**
+     * Obtain the unscaled value of the decimal.
+     * @return the unscaled value
+     */
+    public long unscaledValue() {
+<span class="fc" id="L153">        return theValue;</span>
+    }
+
+    /**
+     * Obtain the scale of the decimal.
+     * @return the scale
+     */
+    public int scale() {
+<span class="fc" id="L161">        return theScale;</span>
+    }
+
+    /**
+     * Set the value and scale.
+     * @param pUnscaledValue the unscaled value
+     * @param pScale the scale
+     */
+    protected final void setValue(final long pUnscaledValue,
+                                  final int pScale) {
+        /* Validate the scale */
+<span class="fc" id="L172">        recordScale(pScale);</span>
+
+        /* Store value and scale */
+<span class="fc" id="L175">        theValue = pUnscaledValue;</span>
+<span class="fc" id="L176">    }</span>
+
+    /**
+     * Record the scale. The unscaled value is unchanged.
+     * @param pScale the scale
+     */
+    protected final void recordScale(final int pScale) {
+        /* Validate the scale */
+<span class="fc" id="L184">        validateScale(pScale);</span>
+
+        /* Store scale */
+<span class="fc" id="L187">        theScale = pScale;</span>
+
+        /* Calculate decimal factor */
+<span class="fc" id="L190">        theFactor = getFactor(theScale);</span>
+<span class="fc" id="L191">    }</span>
+
+    /**
+     * Adjust to scale.
+     * @param pScale required scale
+     */
+    protected void adjustToScale(final int pScale) {
+        /* If the scale is not correct */
+<span class="fc bfc" id="L199" title="All 2 branches covered.">        if (theScale != pScale) {</span>
+            /* Adjust the value appropriately */
+<span class="fc" id="L201">            movePointLeft(pScale</span>
+                          - theScale);
+        }
+<span class="fc" id="L204">    }</span>
+
+    /**
+     * Obtain factor.
+     * @param pDecimals the number of decimals
+     * @return the decimal part of the number
+     */
+    protected static long getFactor(final int pDecimals) {
+<span class="fc" id="L212">        return POWERS_OF_TEN[pDecimals];</span>
+    }
+
+    /**
+     * Validate the scale.
+     * @param pScale the scale
+     */
+    private static void validateScale(final int pScale) {
+        /* Throw exception on invalid decimals */
+<span class="pc bpc" id="L221" title="2 of 4 branches missed.">        if (pScale &lt; 0</span>
+            || pScale &gt; MAX_DECIMALS) {
+<span class="nc" id="L223">            throw new IllegalArgumentException(&quot;Decimals must be in the range 0 to &quot;</span>
+                                               + MAX_DECIMALS);
+        }
+<span class="fc" id="L226">    }</span>
+
+    /**
+     * Obtain integral part of number.
+     * @return the integer part of the number
+     */
+    private long getIntegral() {
+<span class="fc" id="L233">        return theValue</span>
+               / theFactor;
+    }
+
+    /**
+     * Obtain fractional part of number.
+     * @return the decimal part of the number
+     */
+    private long getFractional() {
+<span class="fc" id="L242">        return theValue</span>
+               % theFactor;
+    }
+
+    /**
+     * Determine whether we have a non-zero value.
+     * @return &lt;code&gt;true&lt;/code&gt; if the value is non-zero, &lt;code&gt;false&lt;/code&gt; otherwise.
+     */
+    public boolean isNonZero() {
+<span class="nc bnc" id="L251" title="All 2 branches missed.">        return theValue != 0;</span>
+    }
+
+    /**
+     * Determine whether we have a zero value.
+     * @return &lt;code&gt;true&lt;/code&gt; if the value is zero, &lt;code&gt;false&lt;/code&gt; otherwise.
+     */
+    public boolean isZero() {
+<span class="nc bnc" id="L259" title="All 2 branches missed.">        return theValue == 0;</span>
+    }
+
+    /**
+     * Determine whether we have a positive (or zero) value.
+     * @return &lt;code&gt;true&lt;/code&gt; if the value is non-negative, &lt;code&gt;false&lt;/code&gt; otherwise.
+     */
+    public boolean isPositive() {
+<span class="fc bfc" id="L267" title="All 2 branches covered.">        return theValue &gt;= 0;</span>
+    }
+
+    /**
+     * Negate the value.
+     */
+    public void negate() {
+<span class="fc" id="L274">        theValue = -theValue;</span>
+<span class="fc" id="L275">    }</span>
+
+    /**
+     * Set to zero value.
+     */
+    public void setZero() {
+<span class="nc" id="L281">        theValue = 0;</span>
+<span class="nc" id="L282">    }</span>
+
+    /**
+     * Returns the sign function.
+     * @return -1, 0, or 1 as the value of this Decimal is negative, zero, or positive.
+     */
+    public int signum() {
+<span class="nc bnc" id="L289" title="All 2 branches missed.">        if (theValue == 0) {</span>
+<span class="nc" id="L290">            return 0;</span>
+        }
+<span class="nc bnc" id="L292" title="All 2 branches missed.">        return theValue &lt; 0</span>
+<span class="nc" id="L293">                              ? -1</span>
+<span class="nc" id="L294">                              : 1;</span>
+    }
+
+    /**
+     * Reduce scale. Remove redundant zero digits in scale.
+     * @param pDesiredScale the desired scale.
+     */
+    protected final void reduceScale(final int pDesiredScale) {
+        /* While we have a large scale */
+<span class="pc bpc" id="L303" title="1 of 2 branches missed.">        while (theScale &gt; pDesiredScale) {</span>
+            /* If we have relevant digits, break loop */
+<span class="pc bpc" id="L305" title="1 of 2 branches missed.">            if ((theValue % RADIX_TEN) != 0) {</span>
+<span class="fc" id="L306">                break;</span>
+            }
+
+            /* Adjust the value appropriately */
+<span class="nc" id="L310">            movePointRight(1);</span>
+        }
+<span class="fc" id="L312">    }</span>
+
+    /**
+     * Adjust a value to a different number of decimals.
+     * &lt;p&gt;
+     * If the adjustment is to reduce the number of decimals, the most significant digit of the
+     * discarded digits is examined to determine whether to round up. If the number of decimals is
+     * to be increased, zeros are simply added to the end.
+     * @param pValue the value to adjust
+     * @param iAdjust the adjustment (positive if # of decimals are to increase, negative if they
+     * are to decrease)
+     * @return the adjusted value
+     */
+    protected static long adjustDecimals(final long pValue,
+                                         final int iAdjust) {
+        /* Take a copy of the value */
+<span class="fc" id="L328">        long myValue = pValue;</span>
+
+        /* If we need to reduce decimals */
+<span class="fc bfc" id="L331" title="All 2 branches covered.">        if (iAdjust &lt; 0) {</span>
+            /* If we have more than one decimal to remove */
+<span class="fc bfc" id="L333" title="All 2 branches covered.">            if (iAdjust + 1 &lt; 0) {</span>
+                /* Calculate division factor (minus one) */
+<span class="fc" id="L335">                final long myFactor = getFactor(-(iAdjust + 1));</span>
+
+                /* Reduce to 10 times required value */
+<span class="fc" id="L338">                myValue /= myFactor;</span>
+            }
+
+            /* Access last digit */
+<span class="fc" id="L342">            long myDigit = myValue</span>
+                             % RADIX_TEN;
+
+            /* Handle negatiove values */
+<span class="fc" id="L346">            int myAdjust = 1;</span>
+<span class="fc bfc" id="L347" title="All 2 branches covered.">            if (myDigit &lt; 0) {</span>
+<span class="fc" id="L348">                myAdjust = -1;</span>
+<span class="fc" id="L349">                myDigit = -myDigit;</span>
+            }
+
+            /* Reduce final decimal and round up if required */
+<span class="fc" id="L353">            myValue /= RADIX_TEN;</span>
+<span class="fc bfc" id="L354" title="All 2 branches covered.">            if (myDigit &gt;= (RADIX_TEN &gt;&gt; 1)) {</span>
+<span class="fc" id="L355">                myValue += myAdjust;</span>
+            }
+
+            /* else if we need to expand fractional product */
+<span class="fc bfc" id="L359" title="All 2 branches covered.">        } else if (iAdjust &gt; 0) {</span>
+<span class="fc" id="L360">            myValue *= getFactor(iAdjust);</span>
+        }
+
+        /* Return the adjusted value */
+<span class="fc" id="L364">        return myValue;</span>
+    }
+
+    /**
+     * Multiply two decimals together to produce a third.
+     * &lt;p&gt;
+     * This function splits each part of the multiplication into integral and fractional parts (a,b)
+     * and (c,d). It then treats each factor as the sum of the two parts (a+b) etc. and calculates
+     * the product as (a.c + a.d + b.c + b.d). To avoid losing significant digits at either end of
+     * the calculation each partial product is split into integral and fractional parts. The
+     * integers are summed together and the fractional parts are summed together at combined decimal
+     * places of the two factors. Once all partial products have been calculated, the integral and
+     * fractional totals are adjusted to the correct number of decimal places and combined. This
+     * allows the multiplication to be built without risk of unnecessary arithmetic overflow.
+     * @param pFirst the first factor
+     * @param pSecond the second factor
+     */
+    protected void calculateProduct(final OceanusDecimal pFirst,
+                                    final OceanusDecimal pSecond) {
+        /* Access information about first factor */
+<span class="fc" id="L384">        final long myIntFirst = pFirst.getIntegral();</span>
+<span class="fc" id="L385">        final long myFracFirst = pFirst.getFractional();</span>
+<span class="fc" id="L386">        final int myScaleFirst = pFirst.scale();</span>
+
+        /* Access information about second factor */
+<span class="fc" id="L389">        final long myIntSecond = pSecond.getIntegral();</span>
+<span class="fc" id="L390">        final long myFracSecond = pSecond.getFractional();</span>
+<span class="fc" id="L391">        final int myScaleSecond = pSecond.scale();</span>
+
+        /*
+         * Calculate (a.c) the integral part of the answer and initialise the fractional part (at
+         * maxScale)
+         */
+<span class="fc" id="L397">        int maxScale = myScaleFirst</span>
+                       + myScaleSecond;
+<span class="fc" id="L399">        long myIntegral = myIntFirst</span>
+                          * myIntSecond;
+<span class="fc" id="L401">        long myFractional = 0;</span>
+
+        /* Calculate (a.d) (@myScaleSecond scale) and split off fractions */
+<span class="fc" id="L404">        long myIntermediate = myIntFirst</span>
+                              * myFracSecond;
+<span class="fc" id="L406">        long myFractions = myIntermediate</span>
+<span class="fc" id="L407">                           % getFactor(myScaleSecond);</span>
+<span class="fc" id="L408">        myIntermediate -= myFractions;</span>
+<span class="fc" id="L409">        myIntegral += adjustDecimals(myIntermediate, -myScaleSecond);</span>
+<span class="fc" id="L410">        myFractional += adjustDecimals(myFractions, maxScale</span>
+                                                    - myScaleSecond);
+
+        /* Calculate (b.c) (@myScaleFirst scale) and split off fractions */
+<span class="fc" id="L414">        myIntermediate = myIntSecond</span>
+                         * myFracFirst;
+<span class="fc" id="L416">        myFractions = myIntermediate</span>
+<span class="fc" id="L417">                      % getFactor(myScaleFirst);</span>
+<span class="fc" id="L418">        myIntermediate -= myFractions;</span>
+<span class="fc" id="L419">        myIntegral += adjustDecimals(myIntermediate, -myScaleFirst);</span>
+<span class="fc" id="L420">        myFractional += adjustDecimals(myFractions, maxScale</span>
+                                                    - myScaleFirst);
+
+        /* Calculate (b.d) (@maxScale scale) */
+<span class="fc" id="L424">        myIntermediate = myFracFirst</span>
+                         * myFracSecond;
+<span class="fc" id="L426">        myFractional += myIntermediate;</span>
+
+        /* If the maxScale is too large, reduce it */
+<span class="pc bpc" id="L429" title="1 of 2 branches missed.">        if (maxScale &gt; MAX_DECIMALS) {</span>
+            /* Adjust the decimals */
+<span class="nc" id="L431">            myFractional = adjustDecimals(myFractional, MAX_DECIMALS</span>
+                                                        - maxScale);
+
+            /* Reduce maxScale */
+<span class="nc" id="L435">            maxScale = MAX_DECIMALS;</span>
+        }
+
+        /* Adjust and combine the two calculations */
+<span class="fc" id="L439">        myIntegral = adjustDecimals(myIntegral, theScale);</span>
+<span class="fc" id="L440">        myFractional = adjustDecimals(myFractional, theScale</span>
+                                                    - maxScale);
+<span class="fc" id="L442">        theValue = myIntegral</span>
+                   + myFractional;
+<span class="fc" id="L444">    }</span>
+
+    /**
+     * Divide a decimal by another decimal to produce a third.
+     * &lt;p&gt;
+     * The calculation can be written as
+     * &lt;code&gt;x.10&lt;sup&gt;a&lt;/sup&gt;/y.10&lt;sup&gt;b&lt;/sup&gt; = (x/y).10&lt;sup&gt;a-b&lt;/sup&gt; = z.10&lt;sup&gt;c&lt;/sup&gt;&lt;/code&gt;.
+     * &lt;p&gt;
+     * where x is the unscaled dividend, y the unscaled divisor and z the unscaled result, and a,b,c
+     * the relevant scales.
+     * &lt;p&gt;
+     * In order to avoid losing significant digits at either end of the calculation we calculate
+     * (x/y) in integer arithmetic.
+     * &lt;p&gt;
+     * &lt;code&gt;x/y = m, x%y = n =&amp;gt; x=my + n&lt;/code&gt; where m and n are integers, and
+     * &lt;p&gt;
+     * &lt;code&gt;(x/y).10&lt;sup&gt;a-b&lt;/sup&gt; = (my +n).10&lt;sup&gt;a-b&lt;/sup&gt;/y = (m + (n/y)).10&lt;sup&gt;a-b&lt;/sup&gt;&lt;/code&gt;
+     * &lt;p&gt;
+     * To obtain the result in the correct scale we find
+     * &lt;p&gt;
+     * &lt;code&gt;z.10&lt;sup&gt;c&lt;/sup&gt; = m.10&lt;sup&gt;c-(a-b)&lt;/sup&gt; + IntegralPart(n.10&lt;sup&gt;c-(a-b)&lt;/sup&gt;/y)&lt;/code&gt;
+     * &lt;p&gt;
+     * taking care to round the IntegralPart calculation correctly.
+     * &lt;p&gt;
+     * In the case where it is not possible to avoid overflow, the slower safeQuotient method is used.
+     * @param pDividend the number to divide
+     * @param pDivisor the number to divide
+     */
+    protected void calculateQuotient(final OceanusDecimal pDividend,
+                                     final OceanusDecimal pDivisor) {
+        /* Access the two values */
+<span class="fc" id="L475">        final long myDividend = pDividend.unscaledValue();</span>
+<span class="fc" id="L476">        final long myDivisor = pDivisor.unscaledValue();</span>
+
+        /* Check for possible overflow */
+<span class="fc bfc" id="L479" title="All 2 branches covered.">        final int numDivisorBits = 1 + Long.SIZE - Long.numberOfLeadingZeros(pDivisor.isPositive() ? myDivisor : -myDivisor);</span>
+<span class="fc" id="L480">        final int numScaleBits = 1 + Long.SIZE - Long.numberOfLeadingZeros(POWERS_OF_TEN[theScale + 1]);</span>
+<span class="fc bfc" id="L481" title="All 2 branches covered.">        if (numDivisorBits + numScaleBits &gt;= Long.SIZE) {</span>
+<span class="fc" id="L482">            calculateSafeQuotient(pDividend, pDivisor);</span>
+<span class="fc" id="L483">            return;</span>
+        }
+
+        /* Calculate fractions (m,n) */
+<span class="fc" id="L487">        long myInteger = myDividend</span>
+                         / myDivisor;
+<span class="fc" id="L489">        long myRemainder = myDividend</span>
+                           % myDivisor;
+
+        /* Calculate the required shift (c-(a-b)) */
+<span class="fc" id="L493">        int myShift = scale();</span>
+<span class="fc" id="L494">        myShift += pDivisor.scale()</span>
+<span class="fc" id="L495">                   - pDividend.scale();</span>
+
+        /* If the shift is positive */
+<span class="pc bpc" id="L498" title="1 of 2 branches missed.">        if (myShift &gt; 0) {</span>
+            /* Adjust integer and remainder taking care of rounding for remainder */
+<span class="fc" id="L500">            myInteger = adjustDecimals(myInteger, myShift);</span>
+<span class="fc" id="L501">            myRemainder = adjustDecimals(myRemainder, myShift + 1);</span>
+<span class="fc" id="L502">            myRemainder /= myDivisor;</span>
+<span class="fc" id="L503">            myRemainder = adjustDecimals(myRemainder, -1);</span>
+
+            /* Combine values */
+<span class="fc" id="L506">            theValue = myInteger</span>
+                       + myRemainder;
+<span class="nc bnc" id="L508" title="All 2 branches missed.">        } else if (myShift == 0) {</span>
+            /* Only need to adjust remainder for rounding */
+<span class="nc" id="L510">            myRemainder = adjustDecimals(myRemainder, 1);</span>
+<span class="nc" id="L511">            myRemainder /= myDivisor;</span>
+<span class="nc" id="L512">            myRemainder = adjustDecimals(myRemainder, -1);</span>
+
+            /* Combine values */
+<span class="nc" id="L515">            theValue = myInteger</span>
+                       + myRemainder;
+        } else {
+            /* Integer value also rounds so add in prior to rounding */
+<span class="nc" id="L519">            myInteger = adjustDecimals(myInteger, myShift + 1);</span>
+<span class="nc" id="L520">            myRemainder = adjustDecimals(myRemainder, myShift + 1);</span>
+<span class="nc" id="L521">            myRemainder /= myDivisor;</span>
+<span class="nc" id="L522">            myInteger += myRemainder;</span>
+<span class="nc" id="L523">            myInteger = adjustDecimals(myInteger, -1);</span>
+
+            /* Combine values */
+<span class="nc" id="L526">            theValue = adjustDecimals(myInteger, -1);</span>
+        }
+<span class="fc" id="L528">    }</span>
+
+    /**
+     * Divide a decimal by another decimal to produce a third using slow BigDecimal arithmetic.
+     * &lt;p&gt;
+     * This is necessary when the quotient is large since there is a danger of overflow in the standard method
+     * @param pDividend the number to divide
+     * @param pDivisor the number to divide
+     */
+    protected void calculateSafeQuotient(final OceanusDecimal pDividend,
+                                         final OceanusDecimal pDivisor) {
+<span class="fc" id="L539">        final BigDecimal myDividend = pDividend.toBigDecimal();</span>
+<span class="fc" id="L540">        final BigDecimal myDivisor = pDivisor.toBigDecimal();</span>
+<span class="fc" id="L541">        BigDecimal myResult = myDividend.divide(myDivisor, theScale, RoundingMode.HALF_UP);</span>
+<span class="fc" id="L542">        myResult = myResult.movePointRight(theScale);</span>
+<span class="fc" id="L543">        theValue = myResult.longValue();</span>
+<span class="fc" id="L544">    }</span>
+
+    /**
+     * Add a Decimal to the value. The value of this Decimal is updated and the scale is
+     * maintained.
+     * @param pValue The Decimal to add to this one.
+     */
+    public void addValue(final OceanusDecimal pValue) {
+        /* Access the parameter at the correct scale */
+<span class="fc" id="L553">        long myDelta = pValue.unscaledValue();</span>
+<span class="fc" id="L554">        final int myScale = pValue.scale();</span>
+<span class="pc bpc" id="L555" title="1 of 2 branches missed.">        if (theScale != myScale) {</span>
+<span class="fc" id="L556">            myDelta = adjustDecimals(myDelta, theScale</span>
+                                              - myScale);
+        }
+
+        /* Adjust the value accordingly */
+<span class="fc" id="L561">        theValue += myDelta;</span>
+<span class="fc" id="L562">    }</span>
+
+    /**
+     * Subtract a Decimal from the value. The value of this Decimal is updated and the scale is
+     * maintained.
+     * @param pValue The decimal to subtract from this one.
+     */
+    public void subtractValue(final OceanusDecimal pValue) {
+        /* Access the parameter at the correct scale */
+<span class="fc" id="L571">        long myDelta = pValue.unscaledValue();</span>
+<span class="fc" id="L572">        final int myScale = pValue.scale();</span>
+<span class="pc bpc" id="L573" title="1 of 2 branches missed.">        if (theScale != myScale) {</span>
+<span class="fc" id="L574">            myDelta = adjustDecimals(myDelta, theScale</span>
+                                              - myScale);
+        }
+
+        /* Adjust the value accordingly */
+<span class="fc" id="L579">        theValue -= myDelta;</span>
+<span class="fc" id="L580">    }</span>
+
+    /**
+     * Move decimal point to the left.
+     * @param pPlaces number of places to move the decimal point
+     */
+    public final void movePointLeft(final int pPlaces) {
+        /* Calculate the new scale */
+<span class="fc" id="L588">        final int myNewScale = theScale</span>
+                               + pPlaces;
+
+        /* record the scale */
+<span class="fc" id="L592">        recordScale(myNewScale);</span>
+
+        /* Adjust the value and record the new scale */
+<span class="fc" id="L595">        theValue = adjustDecimals(theValue, pPlaces);</span>
+<span class="fc" id="L596">    }</span>
+
+    /**
+     * Move decimal point to the right.
+     * @param pPlaces number of places to move the decimal point
+     */
+    public final void movePointRight(final int pPlaces) {
+        /* Call movePointLeft */
+<span class="nc" id="L604">        movePointLeft(-pPlaces);</span>
+<span class="nc" id="L605">    }</span>
+
+    @Override
+    public String toString() {
+        /* Format the value */
+<span class="fc" id="L610">        return OceanusDecimalFormatter.toString(this);</span>
+    }
+
+    /**
+     * Returns the maximum of this Decimal and pValue.
+     * @param pValue the value to compare.
+     * @return the Decimal whose value is the greater of this Decimal and pValue. If they are
+     * equal, as defined by the compareTo method, this is returned
+     */
+    public OceanusDecimal max(final OceanusDecimal pValue) {
+        /* return the BigDecimal value */
+<span class="nc bnc" id="L621" title="All 2 branches missed.">        return (compareTo(pValue) &lt; 0)</span>
+<span class="nc" id="L622">                                       ? pValue</span>
+<span class="nc" id="L623">                                       : this;</span>
+    }
+
+    /**
+     * Returns the minimum of this Decimal and pValue.
+     * @param pValue the value to compare.
+     * @return the Decimal whose value is the lesser of this Decimal and pValue. If they are
+     * equal, as defined by the compareTo method, this is returned
+     */
+    public OceanusDecimal min(final OceanusDecimal pValue) {
+        /* return the BigDecimal value */
+<span class="nc bnc" id="L634" title="All 2 branches missed.">        return (compareTo(pValue) &gt; 0)</span>
+<span class="nc" id="L635">                                       ? pValue</span>
+<span class="nc" id="L636">                                       : this;</span>
+    }
+
+    /**
+     * Returns a new Decimal which is the sum of this Decimal and pValue, and whose scale is the
+     * maximum of the two.
+     * @param pValue the value to add.
+     * @return the resulting Decimal
+     * @see BigDecimal#add(BigDecimal)
+     */
+    public OceanusDecimal add(final OceanusDecimal pValue) {
+        /* Create the new decimal */
+        final OceanusDecimal myResult;
+
+        /* If the operand has the higher scale */
+<span class="nc bnc" id="L651" title="All 2 branches missed.">        if (theScale &lt; pValue.scale()) {</span>
+            /* Initialise from operand and add this value */
+<span class="nc" id="L653">            myResult = new OceanusDecimal(pValue);</span>
+<span class="nc" id="L654">            myResult.addValue(this);</span>
+        } else {
+            /* Initialise from operand and add this value */
+<span class="nc" id="L657">            myResult = new OceanusDecimal(this);</span>
+<span class="nc" id="L658">            myResult.addValue(pValue);</span>
+        }
+
+        /* return the result */
+<span class="nc" id="L662">        return myResult;</span>
+    }
+
+    /**
+     * Returns a new Decimal which is the difference of this Decimal and pValue, and whose scale
+     * is the maximum of the two.
+     * @param pValue the value to subtract.
+     * @return the resulting Decimal
+     * @see BigDecimal#subtract
+     */
+    public OceanusDecimal subtract(final OceanusDecimal pValue) {
+        /* Create the new decimal */
+        final OceanusDecimal myResult;
+
+        /* If the operand has the higher scale */
+<span class="nc bnc" id="L677" title="All 2 branches missed.">        if (theScale &lt; pValue.scale()) {</span>
+            /* Initialise from operand and subtract this value */
+<span class="nc" id="L679">            myResult = new OceanusDecimal(pValue);</span>
+<span class="nc" id="L680">            myResult.subtractValue(this);</span>
+        } else {
+            /* Initialise from operand and subtract this value */
+<span class="nc" id="L683">            myResult = new OceanusDecimal(this);</span>
+<span class="nc" id="L684">            myResult.subtractValue(pValue);</span>
+        }
+
+        /* return the result */
+<span class="nc" id="L688">        return myResult;</span>
+    }
+
+    /**
+     * Returns a new Decimal which is the product of this Decimal and pValue, and whose scale is
+     * the sum of the two.
+     * @param pValue the value to multiply by.
+     * @return the resulting Decimal
+     * @see BigDecimal#multiply(BigDecimal)
+     */
+    public OceanusDecimal multiply(final OceanusDecimal pValue) {
+        /* Create the new decimal at the correct scale */
+<span class="fc" id="L700">        final OceanusDecimal myResult = new OceanusDecimal();</span>
+<span class="fc" id="L701">        myResult.setValue(0, theScale</span>
+<span class="fc" id="L702">                             + pValue.scale());</span>
+
+        /* Calculate the product */
+<span class="fc" id="L705">        myResult.calculateProduct(this, pValue);</span>
+
+        /* return the result */
+<span class="fc" id="L708">        return myResult;</span>
+    }
+
+    /**
+     * Multiplies the value by the amount given. The scale remains the same.
+     * @param pValue the value to multiply by.
+     */
+    public void multiply(final long pValue) {
+        /* Multiply the value */
+<span class="nc" id="L717">        theValue *= pValue;</span>
+<span class="nc" id="L718">    }</span>
+
+    /**
+     * Returns a new Decimal whose value is (this / pValue), and whose scale is the same as this
+     * Decimal.
+     * @param pValue the value to divide by.
+     * @return the resulting Decimal
+     * @see BigDecimal#divide(BigDecimal)
+     */
+    public OceanusDecimal divide(final OceanusDecimal pValue) {
+        /* Create the new decimal at the correct scale */
+<span class="fc" id="L729">        final OceanusDecimal myResult = new OceanusDecimal();</span>
+<span class="fc" id="L730">        myResult.setValue(0, theScale);</span>
+
+        /* Calculate the quotient */
+<span class="fc" id="L733">        myResult.calculateQuotient(this, pValue);</span>
+
+        /* return the result */
+<span class="fc" id="L736">        return myResult;</span>
+    }
+
+    /**
+     * Divides the value by the amount given. The scale remains the same.
+     * @param pValue the value to divide by.
+     */
+    public void divide(final long pValue) {
+        /* Multiply the value */
+<span class="nc" id="L745">        theValue /= pValue;</span>
+<span class="nc" id="L746">    }</span>
+
+    /**
+     * Returns a new Decimal whose value is the integral part of (this / pValue).
+     * @param pValue the value to divide by.
+     * @return the resulting Decimal
+     * @see BigDecimal#divide(BigDecimal)
+     */
+    public OceanusDecimal divideToIntegralValue(final OceanusDecimal pValue) {
+        /* Create the new decimal at the correct scale */
+<span class="nc" id="L756">        final OceanusDecimal myResult = new OceanusDecimal();</span>
+<span class="nc" id="L757">        myResult.setValue(0, theScale);</span>
+
+        /* Calculate the quotient */
+<span class="nc" id="L760">        myResult.calculateQuotient(this, pValue);</span>
+
+        /* Extract the integral part of the result */
+<span class="nc" id="L763">        myResult.setValue(getIntegral(), 0);</span>
+
+        /* return the result */
+<span class="nc" id="L766">        return myResult;</span>
+    }
+
+    /**
+     * Returns a new Decimal whose value is (this / pValue), and whose scale is the same as this
+     * Decimal.
+     * @param pValue the value to divide by.
+     * @return the resulting Decimal
+     * @see BigDecimal#remainder
+     */
+    public OceanusDecimal remainder(final OceanusDecimal pValue) {
+        /* Create the new decimal at the correct scale */
+<span class="nc" id="L778">        final OceanusDecimal myQuotient = new OceanusDecimal();</span>
+<span class="nc" id="L779">        myQuotient.setValue(0, theScale);</span>
+
+        /* Calculate the quotient */
+<span class="nc" id="L782">        myQuotient.calculateQuotient(this, pValue);</span>
+
+        /* Extract the integral part of the result */
+<span class="nc" id="L785">        myQuotient.setValue(getIntegral(), 0);</span>
+
+        /* Re-multiply by the divisor and adjust to correct scale */
+<span class="nc" id="L788">        final OceanusDecimal myWhole = myQuotient.multiply(pValue);</span>
+<span class="nc" id="L789">        myWhole.setValue(adjustDecimals(myWhole.unscaledValue(), theScale</span>
+<span class="nc" id="L790">                                                                 - pValue.scale()), theScale);</span>
+
+        /* Calculate the result */
+<span class="nc" id="L793">        final OceanusDecimal myResult = new OceanusDecimal(this);</span>
+<span class="nc" id="L794">        myResult.subtractValue(myWhole);</span>
+
+        /* return the result */
+<span class="nc" id="L797">        return myResult;</span>
+    }
+
+    /**
+     * Convert the value into a BigDecimal.
+     * @return the value as a BigDecimal
+     */
+    public BigDecimal toBigDecimal() {
+        /* return the BigDecimal value */
+<span class="fc" id="L806">        return new BigDecimal(toString());</span>
+    }
+
+    /**
+     * Convert the value into a Double.
+     * @return the value as a double
+     * @see BigDecimal#doubleValue
+     */
+    public double doubleValue() {
+        /* Format the string */
+<span class="nc" id="L816">        final String myString = toString();</span>
+
+        /* return the double value */
+<span class="nc" id="L819">        return Double.parseDouble(myString);</span>
+    }
+
+    /**
+     * Convert the value into a Float.
+     * @return the value as a float
+     * @see BigDecimal#floatValue
+     */
+    public float floatValue() {
+        /* Format the string */
+<span class="nc" id="L829">        final String myString = toString();</span>
+
+        /* return the float value */
+<span class="nc" id="L832">        return Float.parseFloat(myString);</span>
+    }
+
+    /**
+     * Convert the value into a BigInteger.
+     * @return the value as a BigInteger
+     * @see BigDecimal#toBigInteger
+     */
+    public BigInteger toBigInteger() {
+        /* return the BigInteger value */
+<span class="nc" id="L842">        return new BigInteger(Long.toString(getIntegral()));</span>
+    }
+
+    /**
+     * Convert the value into a long.
+     * @return the value as a long
+     * @see BigDecimal#longValue
+     */
+    public long longValue() {
+        /* return the long value */
+<span class="nc" id="L852">        return getIntegral();</span>
+    }
+
+    /**
+     * Convert the value into an integer.
+     * @return the value as an integer
+     * @see BigDecimal#intValue
+     */
+    public int intValue() {
+        /* return the integer value */
+<span class="nc" id="L862">        return (int) getIntegral();</span>
+    }
+
+    /**
+     * Convert the value into a short.
+     * @return the value as a short
+     * @see BigDecimal#shortValue
+     */
+    public short shortValue() {
+        /* return the short value */
+<span class="nc" id="L872">        return (short) getIntegral();</span>
+    }
+
+    /**
+     * Convert the value into a byte.
+     * @return the value as a byte
+     * @see BigDecimal#byteValue
+     */
+    public byte byteValue() {
+        /* return the byte value */
+<span class="nc" id="L882">        return (byte) getIntegral();</span>
+    }
+
+    /**
+     * Check for fractional part on conversion.
+     */
+    public void checkFractionalZero() {
+        /* If we have a fractional part */
+<span class="nc bnc" id="L890" title="All 2 branches missed.">        if (getFractional() != 0) {</span>
+<span class="nc" id="L891">            throw new ArithmeticException(&quot;Decimal has fractional part&quot;);</span>
+        }
+<span class="nc" id="L893">    }</span>
+
+    /**
+     * Convert the value into a BigInteger, checking for loss of information.
+     * @return the value as a BigInteger
+     * @see BigDecimal#toBigIntegerExact
+     */
+    public BigInteger toBigIntegerExact() {
+        /* Check fractional is zero */
+<span class="nc" id="L902">        checkFractionalZero();</span>
+
+        /* return the BigInteger value */
+<span class="nc" id="L905">        return toBigInteger();</span>
+    }
+
+    /**
+     * Convert the value into a long, checking for loss of information.
+     * @return the value as a long
+     * @see BigDecimal#longValueExact
+     */
+    public long longValueExact() {
+        /* Check fractional is zero */
+<span class="nc" id="L915">        checkFractionalZero();</span>
+
+        /* return the long value */
+<span class="nc" id="L918">        return longValue();</span>
+    }
+
+    /**
+     * Convert the value into an integer, checking for loss of information.
+     * @return the value as an integer
+     * @see BigDecimal#intValueExact
+     */
+    public int intValueExact() {
+        /* Check fractional is zero */
+<span class="nc" id="L928">        checkFractionalZero();</span>
+
+        /* If we have a fractional part */
+<span class="nc" id="L931">        final long myValue = getIntegral();</span>
+<span class="nc bnc" id="L932" title="All 4 branches missed.">        if ((myValue &gt; Integer.MAX_VALUE)</span>
+            || (myValue &lt; Integer.MIN_VALUE)) {
+<span class="nc" id="L934">            throw new ArithmeticException(ERROR_RANGE);</span>
+        }
+
+        /* return the integer value */
+<span class="nc" id="L938">        return (int) myValue;</span>
+    }
+
+    /**
+     * Convert the value into a short, checking for loss of information.
+     * @return the value as a short
+     * @see BigDecimal#shortValueExact
+     */
+    public short shortValueExact() {
+        /* Check fractional is zero */
+<span class="nc" id="L948">        checkFractionalZero();</span>
+
+        /* If we have a fractional part */
+<span class="nc" id="L951">        final long myValue = getIntegral();</span>
+<span class="nc bnc" id="L952" title="All 4 branches missed.">        if ((myValue &gt; Short.MAX_VALUE)</span>
+            || (myValue &lt; Short.MIN_VALUE)) {
+<span class="nc" id="L954">            throw new ArithmeticException(ERROR_RANGE);</span>
+        }
+
+        /* return the short value */
+<span class="nc" id="L958">        return (short) myValue;</span>
+    }
+
+    /**
+     * Convert the value into a byte, checking for loss of information.
+     * @return the value as a byte
+     * @see BigDecimal#byteValueExact
+     */
+    public byte byteValueExact() {
+        /* Check fractional is zero */
+<span class="nc" id="L968">        checkFractionalZero();</span>
+
+        /* If we have a fractional part */
+<span class="nc" id="L971">        final long myValue = getIntegral();</span>
+<span class="nc bnc" id="L972" title="All 4 branches missed.">        if ((myValue &gt; Byte.MAX_VALUE)</span>
+            || (myValue &lt; Byte.MIN_VALUE)) {
+<span class="nc" id="L974">            throw new ArithmeticException(ERROR_RANGE);</span>
+        }
+
+        /* return the byte value */
+<span class="nc" id="L978">        return (byte) myValue;</span>
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle trivial cases */
+<span class="pc bpc" id="L984" title="1 of 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L985">            return true;</span>
+        }
+<span class="pc bpc" id="L987" title="1 of 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L988">            return false;</span>
+        }
+
+        /* Make sure that the object is the same class */
+<span class="pc bpc" id="L992" title="1 of 2 branches missed.">        if (getClass() != pThat.getClass()) {</span>
+<span class="nc" id="L993">            return false;</span>
+        }
+
+        /* Cast as decimal */
+<span class="fc" id="L997">        final OceanusDecimal myThat = (OceanusDecimal) pThat;</span>
+
+        /* Check value and scale */
+<span class="pc bpc" id="L1000" title="2 of 4 branches missed.">        return theValue == myThat.theValue</span>
+               &amp;&amp; theScale == myThat.theScale;
+    }
+
+    @Override
+    public int hashCode() {
+<span class="nc" id="L1006">        return Objects.hash(theValue, theScale);</span>
+    }
+
+    @Override
+    public int compareTo(final OceanusDecimal pThat) {
+        /* Handle trivial case */
+<span class="nc bnc" id="L1012" title="All 2 branches missed.">        if (this.equals(pThat)) {</span>
+<span class="nc" id="L1013">            return 0;</span>
+        }
+
+        /* If there is no difference in scale */
+<span class="nc" id="L1017">        final int myScaleDiff = scale()</span>
+<span class="nc" id="L1018">                                - pThat.scale();</span>
+<span class="nc bnc" id="L1019" title="All 2 branches missed.">        if (myScaleDiff == 0) {</span>
+            /* Just compare unscaled value */
+<span class="nc bnc" id="L1021" title="All 2 branches missed.">            if (theValue == pThat.theValue) {</span>
+<span class="nc" id="L1022">                return 0;</span>
+            }
+<span class="nc bnc" id="L1024" title="All 2 branches missed.">            return (theValue &lt; pThat.theValue)</span>
+<span class="nc" id="L1025">                                               ? -1</span>
+<span class="nc" id="L1026">                                               : 1;</span>
+        }
+
+        /* Compare integral values */
+<span class="nc" id="L1030">        long myDiff = getIntegral()</span>
+<span class="nc" id="L1031">                      - pThat.getIntegral();</span>
+<span class="nc bnc" id="L1032" title="All 2 branches missed.">        if (myDiff != 0) {</span>
+<span class="nc bnc" id="L1033" title="All 2 branches missed.">            return (myDiff &lt; 0)</span>
+<span class="nc" id="L1034">                                ? -1</span>
+<span class="nc" id="L1035">                                : 1;</span>
+        }
+
+        /* Access fractional parts */
+<span class="nc" id="L1039">        long myFirst = getFractional();</span>
+<span class="nc" id="L1040">        long mySecond = pThat.getFractional();</span>
+
+        /* Adjust to same maximum scale */
+<span class="nc bnc" id="L1043" title="All 2 branches missed.">        if (myScaleDiff &lt; 0) {</span>
+<span class="nc" id="L1044">            myFirst = adjustDecimals(myFirst, -myScaleDiff);</span>
+        } else {
+<span class="nc" id="L1046">            mySecond = adjustDecimals(mySecond, myScaleDiff);</span>
+        }
+
+        /* Compare fractional values */
+<span class="nc" id="L1050">        myDiff = myFirst</span>
+                 - mySecond;
+<span class="nc bnc" id="L1052" title="All 2 branches missed.">        if (myDiff != 0) {</span>
+<span class="nc bnc" id="L1053" title="All 2 branches missed.">            return (myDiff &lt; 0)</span>
+<span class="nc" id="L1054">                                ? -1</span>
+<span class="nc" id="L1055">                                : 1;</span>
+        }
+
+        /* Equal to all intents and purposes */
+<span class="nc" id="L1059">        return 0;</span>
+    }
+
+    /**
+     * Build powers of ten.
+     * @param pMax maximum power of ten
+     * @return array of powers of ten
+     */
+    private static long[] getPowersOfTen(final int pMax) {
+        /* Allocate the array */
+<span class="fc" id="L1069">        final long[] myArray = new long[pMax + 2];</span>
+
+        /* Initialise array */
+<span class="fc" id="L1072">        long myValue = 1;</span>
+<span class="fc" id="L1073">        myArray[0] = myValue;</span>
+
+        /* Loop through array */
+<span class="fc bfc" id="L1076" title="All 2 branches covered.">        for (int i = 1; i &lt;= pMax + 1; i++) {</span>
+            /* Adjust value and record it */
+<span class="fc" id="L1078">            myValue *= RADIX_TEN;</span>
+<span class="fc" id="L1079">            myArray[i] = myValue;</span>
+        }
+
+        /* Return the array */
+<span class="fc" id="L1083">        return myArray;</span>
+    }
+
+    /**
+     * Convert the Decimal to a byte array.
+     * @return the byte array
+     */
+    public byte[] toBytes() {
+<span class="fc" id="L1091">        final byte[] myValue = OceanusDataConverter.longToByteArray(unscaledValue());</span>
+<span class="fc" id="L1092">        final byte[] myResult = Arrays.copyOf(myValue, myValue.length + 1);</span>
+<span class="fc" id="L1093">        myResult[myValue.length] = (byte) scale();</span>
+<span class="fc" id="L1094">        return myResult;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

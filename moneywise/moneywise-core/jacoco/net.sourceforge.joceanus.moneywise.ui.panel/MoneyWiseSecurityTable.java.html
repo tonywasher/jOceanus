@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseSecurityTable.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.ui.panel</a> &gt; <span class="el_source">MoneyWiseSecurityTable.java</span></div><h1>MoneyWiseSecurityTable.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.ui.panel;
+
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.metis.ui.MetisErrorPanel;
+import net.sourceforge.joceanus.metis.data.MetisDataDifference;
+import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurity;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurity.MoneyWiseSecurityList;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice.MoneyWiseSecurityPriceList;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoClass;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAssetCategory;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
+import net.sourceforge.joceanus.moneywise.ui.base.MoneyWiseAssetTable;
+import net.sourceforge.joceanus.moneywise.ui.dialog.MoneyWiseSecurityDialog;
+import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
+import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
+import net.sourceforge.joceanus.prometheus.views.PrometheusEditEntry;
+import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
+import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollMenu;
+import net.sourceforge.joceanus.tethys.api.table.TethysUITableManager;
+
+/**
+ * MoneyWise Security Table.
+ */
+public class MoneyWiseSecurityTable
+        extends MoneyWiseAssetTable&lt;MoneyWiseSecurity&gt; {
+    /**
+     * The Info UpdateEntry.
+     */
+    private final PrometheusEditEntry&lt;MoneyWiseSecurityPrice&gt; thePriceEntry;
+
+    /**
+     * The Security dialog.
+     */
+    private final MoneyWiseSecurityDialog theActiveSecurity;
+
+    /**
+     * The edit list.
+     */
+    private MoneyWiseSecurityList theSecurities;
+
+    /**
+     * Constructor.
+     * @param pView the view
+     * @param pEditSet the editSet
+     * @param pError the error panel
+     */
+    MoneyWiseSecurityTable(final MoneyWiseView pView,
+                           final PrometheusEditSet pEditSet,
+                           final MetisErrorPanel pError) {
+        /* Store parameters */
+<span class="nc" id="L75">        super(pView, pEditSet, pError, MoneyWiseBasicDataType.SECURITY);</span>
+
+        /* register the info/priceEntries */
+<span class="nc" id="L78">        getEditSet().registerType(MoneyWiseBasicDataType.SECURITYINFO);</span>
+<span class="nc" id="L79">        thePriceEntry = getEditSet().registerType(MoneyWiseBasicDataType.SECURITYPRICE);</span>
+
+        /* Access Gui factory */
+<span class="nc" id="L82">        final TethysUIFactory&lt;?&gt; myGuiFactory = pView.getGuiFactory();</span>
+<span class="nc" id="L83">        final TethysUITableManager&lt;MetisDataFieldId, MoneyWiseSecurity&gt; myTable = getTable();</span>
+
+        /* Create a security panel */
+<span class="nc" id="L86">        theActiveSecurity = new MoneyWiseSecurityDialog(myGuiFactory, pView, pEditSet, this);</span>
+<span class="nc" id="L87">        declareItemPanel(theActiveSecurity);</span>
+
+        /* Create the symbol column */
+<span class="nc" id="L90">        myTable.declareStringColumn(MoneyWiseAccountInfoClass.SYMBOL)</span>
+<span class="nc" id="L91">                .setValidator(this::isValidSymbol)</span>
+<span class="nc" id="L92">                .setCellValueFactory(MoneyWiseSecurity::getSymbol)</span>
+<span class="nc" id="L93">                .setEditable(true)</span>
+<span class="nc" id="L94">                .setColumnWidth(WIDTH_NAME)</span>
+<span class="nc" id="L95">                .setOnCommit((r, v) -&gt; updateField(MoneyWiseSecurity::setSymbol, r, v));</span>
+
+        /* Finish the table */
+<span class="nc" id="L98">        finishTable(true, true, false);</span>
+
+        /* Add listeners */
+<span class="nc" id="L101">        theActiveSecurity.getEventRegistrar().addEventListener(PrometheusDataEvent.ADJUSTVISIBILITY, e -&gt; handlePanelState());</span>
+<span class="nc" id="L102">    }</span>
+
+    @Override
+    protected boolean isItemEditing() {
+<span class="nc" id="L106">        return theActiveSecurity.isEditing();</span>
+    }
+
+    @Override
+    protected void refreshData() throws OceanusException {
+        /* Obtain the active profile */
+<span class="nc" id="L112">        OceanusProfile myTask = getView().getActiveTask();</span>
+<span class="nc" id="L113">        myTask = myTask.startTask(&quot;Securities&quot;);</span>
+
+        /* Access list */
+<span class="nc" id="L116">        final MoneyWiseDataSet myData = getView().getData();</span>
+<span class="nc" id="L117">        final MoneyWiseSecurityList myBase = myData.getSecurities();</span>
+<span class="nc" id="L118">        theSecurities = myBase.deriveEditList(getEditSet());</span>
+<span class="nc" id="L119">        getTable().setItems(theSecurities.getUnderlyingList());</span>
+
+        /* Get the Security prices list */
+<span class="nc" id="L122">        MoneyWiseSecurityPriceList myPrices = myData.getSecurityPrices();</span>
+<span class="nc" id="L123">        myPrices = myPrices.deriveEditList(getEditSet());</span>
+<span class="nc" id="L124">        thePriceEntry.setDataList(myPrices);</span>
+
+        /* Notify panel of refresh */
+<span class="nc" id="L127">        theActiveSecurity.refreshData();</span>
+<span class="nc" id="L128">        restoreSelected();</span>
+
+        /* Complete the task */
+<span class="nc" id="L131">        myTask.end();</span>
+<span class="nc" id="L132">    }</span>
+
+    @Override
+    public void cancelEditing() {
+<span class="nc" id="L136">        super.cancelEditing();</span>
+<span class="nc" id="L137">        theActiveSecurity.setEditable(false);</span>
+<span class="nc" id="L138">    }</span>
+
+    /**
+     * Select security.
+     * @param pSecurity the security to select
+     */
+    void selectSecurity(final MoneyWiseSecurity pSecurity) {
+        /* Check whether we need to showAll */
+<span class="nc" id="L146">        checkShowAll(pSecurity);</span>
+
+        /* If we are changing the selection */
+<span class="nc" id="L149">        final MoneyWiseSecurity myCurrent = theActiveSecurity.getSelectedItem();</span>
+<span class="nc bnc" id="L150" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(myCurrent, pSecurity)) {</span>
+            /* Select the row */
+<span class="nc" id="L152">            getTable().selectRow(pSecurity);</span>
+        }
+<span class="nc" id="L154">    }</span>
+
+    @Override
+    protected void handleRewind() {
+        /* Only action if we are not editing */
+<span class="nc bnc" id="L159" title="All 2 branches missed.">        if (!theActiveSecurity.isEditing()) {</span>
+            /* Handle the reWind */
+<span class="nc" id="L161">            setEnabled(true);</span>
+<span class="nc" id="L162">            super.handleRewind();</span>
+        }
+
+        /* Adjust for changes */
+<span class="nc" id="L166">        notifyChanges();</span>
+<span class="nc" id="L167">    }</span>
+
+    /**
+     * Handle panel state.
+     */
+    private void handlePanelState() {
+        /* Only action if we are not editing */
+<span class="nc bnc" id="L174" title="All 2 branches missed.">        if (!theActiveSecurity.isEditing()) {</span>
+            /* handle the edit transition */
+<span class="nc" id="L176">            setEnabled(true);</span>
+<span class="nc" id="L177">            final MoneyWiseSecurity mySecurity = theActiveSecurity.getSelectedItem();</span>
+<span class="nc" id="L178">            updateTableData();</span>
+<span class="nc bnc" id="L179" title="All 2 branches missed.">            if (mySecurity != null) {</span>
+<span class="nc" id="L180">                getTable().selectRow(mySecurity);</span>
+            } else {
+<span class="nc" id="L182">                restoreSelected();</span>
+            }
+<span class="nc" id="L184">        } else {</span>
+<span class="nc" id="L185">            getTable().cancelEditing();</span>
+        }
+
+        /* Note changes */
+<span class="nc" id="L189">        notifyChanges();</span>
+<span class="nc" id="L190">    }</span>
+
+    @Override
+    protected void buildCategoryMenu(final MoneyWiseSecurity pSecurity,
+                                     final TethysUIScrollMenu&lt;MoneyWiseAssetCategory&gt; pMenu) {
+        /* Build the menu */
+<span class="nc" id="L196">        theActiveSecurity.buildSecTypeMenu(pMenu, pSecurity);</span>
+<span class="nc" id="L197">    }</span>
+
+    @Override
+    protected void buildParentMenu(final MoneyWiseSecurity pSecurity,
+                                   final TethysUIScrollMenu&lt;MoneyWisePayee&gt; pMenu) {
+        /* Build the menu */
+<span class="nc" id="L203">        theActiveSecurity.buildParentMenu(pMenu, pSecurity);</span>
+<span class="nc" id="L204">    }</span>
+
+    @Override
+    protected void buildCurrencyMenu(final MoneyWiseSecurity pSecurity,
+                                     final TethysUIScrollMenu&lt;MoneyWiseCurrency&gt; pMenu) {
+        /* Build the menu */
+<span class="nc" id="L210">        theActiveSecurity.buildCurrencyMenu(pMenu, pSecurity);</span>
+<span class="nc" id="L211">    }</span>
+
+    @Override
+    protected void addNewItem() {
+        /* Protect against Exceptions */
+        try {
+            /* Make sure that we have finished editing */
+<span class="nc" id="L218">            cancelEditing();</span>
+
+            /* Create a new profile */
+<span class="nc" id="L221">            final OceanusProfile myTask = getView().getNewProfile(&quot;addNewItem&quot;);</span>
+
+            /* Create the new asset */
+<span class="nc" id="L224">            myTask.startTask(&quot;buildItem&quot;);</span>
+<span class="nc" id="L225">            final MoneyWiseSecurity mySecurity = theSecurities.addNewItem();</span>
+<span class="nc" id="L226">            mySecurity.setDefaults();</span>
+
+            /* Set as new and adjust map */
+<span class="nc" id="L229">            myTask.startTask(&quot;incrementVersion&quot;);</span>
+<span class="nc" id="L230">            mySecurity.setNewVersion();</span>
+<span class="nc" id="L231">            mySecurity.adjustMapForItem();</span>
+<span class="nc" id="L232">            getEditSet().incrementVersion();</span>
+
+            /* Validate the new item */
+<span class="nc" id="L235">            myTask.startTask(&quot;validate&quot;);</span>
+<span class="nc" id="L236">            mySecurity.validate();</span>
+
+            /* update panel */
+<span class="nc" id="L239">            myTask.startTask(&quot;setItem&quot;);</span>
+<span class="nc" id="L240">            theActiveSecurity.setNewItem(mySecurity);</span>
+
+            /* Lock the table */
+<span class="nc" id="L243">            setTableEnabled(false);</span>
+<span class="nc" id="L244">            myTask.end();</span>
+
+            /* Handle Exceptions */
+<span class="nc" id="L247">        } catch (OceanusException e) {</span>
+            /* Build the error */
+<span class="nc" id="L249">            final OceanusException myError = new MoneyWiseDataException(&quot;Failed to create new security&quot;, e);</span>
+
+            /* Show the error */
+<span class="nc" id="L252">            setError(myError);</span>
+<span class="nc" id="L253">        }</span>
+<span class="nc" id="L254">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

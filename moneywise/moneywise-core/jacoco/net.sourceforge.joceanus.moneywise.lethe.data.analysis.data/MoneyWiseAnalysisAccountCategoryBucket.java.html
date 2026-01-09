@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseAnalysisAccountCategoryBucket.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.lethe.data.analysis.data</a> &gt; <span class="el_source">MoneyWiseAnalysisAccountCategoryBucket.java</span></div><h1>MoneyWiseAnalysisAccountCategoryBucket.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.lethe.data.analysis.data;
+
+import net.sourceforge.joceanus.metis.data.MetisDataFieldValue;
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldTableItem;
+import net.sourceforge.joceanus.metis.field.MetisFieldSet;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisAccountAttr;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisAccountValues;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisSecurityAttr;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisSecurityValues;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+
+import java.util.Currency;
+
+/**
+ * Account Category Bucket.
+ * @param &lt;T&gt; the account data type
+ * @param &lt;C&gt; the account category data type
+ */
+public abstract class MoneyWiseAnalysisAccountCategoryBucket&lt;T extends MoneyWiseAssetBase, C&gt;
+        implements MetisFieldTableItem {
+    /**
+     * Report fields.
+     */
+    @SuppressWarnings(&quot;rawtypes&quot;)
+<span class="fc" id="L45">    private static final MetisFieldSet&lt;MoneyWiseAnalysisAccountCategoryBucket&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseAnalysisAccountCategoryBucket.class);</span>
+
+    /*
+     * Declare Fields.
+     */
+    static {
+<span class="fc" id="L51">        FIELD_DEFS.declareLocalField(MoneyWiseAnalysisDataResource.BUCKET_BASEVALUES, MoneyWiseAnalysisAccountCategoryBucket::getBaseValues);</span>
+<span class="fc" id="L52">        FIELD_DEFS.declareLocalFieldsForEnum(MoneyWiseAnalysisAccountAttr.class, MoneyWiseAnalysisAccountCategoryBucket::getAttributeValue);</span>
+    }
+
+    /**
+     * Totals bucket name.
+     */
+<span class="fc" id="L58">    protected static final MetisDataFieldId NAME_TOTALS = MoneyWiseAnalysisDataResource.ANALYSIS_TOTALS;</span>
+
+    /**
+     * Values.
+     */
+    private final MoneyWiseAnalysisAccountValues theValues;
+
+    /**
+     * The base values.
+     */
+    private final MoneyWiseAnalysisAccountValues theBaseValues;
+
+    /**
+     * Does this bucket have foreign currency values?
+     */
+    private boolean hasForeignCurrency;
+
+    /**
+     * Constructor.
+     * @param pCurrency the currency
+     */
+<span class="fc" id="L79">    protected MoneyWiseAnalysisAccountCategoryBucket(final MoneyWiseCurrency pCurrency) {</span>
+        /* Create the value maps */
+<span class="pc bpc" id="L81" title="1 of 2 branches missed.">        final Currency myCurrency = pCurrency == null</span>
+<span class="fc" id="L82">                ? MoneyWiseAnalysisAccountBucket.DEFAULT_CURRENCY</span>
+<span class="pc" id="L83">                : pCurrency.getCurrency();</span>
+<span class="fc" id="L84">        theValues = new MoneyWiseAnalysisAccountValues(myCurrency);</span>
+<span class="fc" id="L85">        theBaseValues = new MoneyWiseAnalysisAccountValues(myCurrency);</span>
+<span class="fc" id="L86">    }</span>
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L90">        return toString();</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L95">        return getName();</span>
+    }
+
+    /**
+     * Obtain the name.
+     * @return the name
+     */
+    public abstract String getName();
+
+    /**
+     * Obtain the account category.
+     * @return the account category
+     */
+    public abstract C getAccountCategory();
+
+    /**
+     * Obtain the values.
+     * @return the values
+     */
+    public MoneyWiseAnalysisAccountValues getValues() {
+<span class="nc" id="L115">        return theValues;</span>
+    }
+
+    /**
+     * Obtain the base values.
+     * @return the base values
+     */
+    public MoneyWiseAnalysisAccountValues getBaseValues() {
+<span class="nc" id="L123">        return theBaseValues;</span>
+    }
+
+    /**
+     * Set Value.
+     * @param pAttr the attribute
+     * @param pValue the value of the attribute
+     */
+    protected void setValue(final MoneyWiseAnalysisAccountAttr pAttr,
+                            final OceanusMoney pValue) {
+        /* Set the value into the list */
+<span class="fc" id="L134">        theValues.setValue(pAttr, pValue);</span>
+<span class="fc" id="L135">    }</span>
+
+    /**
+     * Get an attribute value.
+     * @param pAttr the attribute
+     * @return the value to set
+     */
+    private Object getAttributeValue(final MoneyWiseAnalysisAccountAttr pAttr) {
+        /* Access value of object */
+<span class="nc" id="L144">        final Object myValue = getValue(pAttr);</span>
+
+        /* Return the value */
+<span class="nc bnc" id="L147" title="All 2 branches missed.">        return myValue != null</span>
+<span class="nc" id="L148">                ? myValue</span>
+<span class="nc" id="L149">                : MetisDataFieldValue.SKIP;</span>
+    }
+
+    /**
+     * Obtain an attribute value.
+     * @param pAttr the attribute
+     * @return the value of the attribute or null
+     */
+    private Object getValue(final MoneyWiseAnalysisAccountAttr pAttr) {
+        /* Obtain the attribute */
+<span class="nc" id="L159">        return theValues.getValue(pAttr);</span>
+    }
+
+    /**
+     * Does this category hold foreign currency accounts?
+     * @return true/false
+     */
+    public Boolean hasForeignCurrency() {
+<span class="nc" id="L167">        return hasForeignCurrency;</span>
+    }
+
+    /**
+     * Calculate delta.
+     */
+    protected void calculateDelta() {
+        /* Obtain a copy of the value */
+<span class="fc" id="L175">        OceanusMoney myValue = theValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION);</span>
+<span class="fc" id="L176">        myValue = new OceanusMoney(myValue);</span>
+
+        /* Subtract any base value */
+<span class="fc" id="L179">        final OceanusMoney myBase = theBaseValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION);</span>
+<span class="fc" id="L180">        myValue.subtractAmount(myBase);</span>
+
+        /* Set the delta */
+<span class="fc" id="L183">        setValue(MoneyWiseAnalysisAccountAttr.VALUEDELTA, myValue);</span>
+<span class="fc" id="L184">    }</span>
+
+    /**
+     * Add account category bucket to totals.
+     * @param pBucket the underlying bucket
+     */
+    protected void addValues(final MoneyWiseAnalysisAccountCategoryBucket&lt;T, C&gt; pBucket) {
+        /* Add values */
+<span class="nc" id="L192">        addValues(theValues, pBucket.getValues());</span>
+
+        /* Add base values */
+<span class="nc" id="L195">        addValues(theBaseValues, pBucket.getBaseValues());</span>
+<span class="nc" id="L196">    }</span>
+
+    /**
+     * Add account bucket to totals.
+     * @param pBucket the underlying bucket
+     */
+    protected void addValues(final MoneyWiseAnalysisAccountBucket&lt;T&gt; pBucket) {
+        /* Add values */
+<span class="nc" id="L204">        addValues(theValues, pBucket.getValues());</span>
+
+        /* Add base values */
+<span class="nc" id="L207">        addValues(theBaseValues, pBucket.getBaseValues());</span>
+
+        /* Adjust foreign currency indication */
+<span class="nc" id="L210">        hasForeignCurrency |= pBucket.isForeignCurrency();</span>
+<span class="nc" id="L211">    }</span>
+
+    /**
+     * Add portfolio bucket to totals.
+     * @param pBucket the underlying bucket
+     */
+    protected void addValues(final MoneyWiseAnalysisPortfolioBucket pBucket) {
+        /* Add values */
+<span class="nc" id="L219">        addValues(theValues, pBucket.getValues());</span>
+
+        /* Add base values */
+<span class="nc" id="L222">        addValues(theBaseValues, pBucket.getBaseValues());</span>
+<span class="nc" id="L223">    }</span>
+
+    /**
+     * Add bucket to totals.
+     * @param pTotals the totals
+     * @param pSource the values to add
+     */
+    private static void addValues(final MoneyWiseAnalysisAccountValues pTotals,
+                                  final MoneyWiseAnalysisAccountValues pSource) {
+        /* Add base values */
+<span class="nc" id="L233">        final OceanusMoney myValue = pTotals.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION);</span>
+<span class="nc" id="L234">        final OceanusMoney mySrcValue = pSource.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION);</span>
+<span class="nc" id="L235">        myValue.addAmount(mySrcValue);</span>
+<span class="nc" id="L236">    }</span>
+
+    /**
+     * Add bucket to totals.
+     * @param pTotals the totals
+     * @param pSource the values to add
+     */
+    private static void addValues(final MoneyWiseAnalysisAccountValues pTotals,
+                                  final MoneyWiseAnalysisSecurityValues pSource) {
+        /* Add base values */
+<span class="nc" id="L246">        final OceanusMoney myValue = pTotals.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION);</span>
+<span class="nc" id="L247">        final OceanusMoney mySrcValue = pSource.getMoneyValue(MoneyWiseAnalysisSecurityAttr.VALUATION);</span>
+<span class="nc" id="L248">        myValue.addAmount(mySrcValue);</span>
+<span class="nc" id="L249">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

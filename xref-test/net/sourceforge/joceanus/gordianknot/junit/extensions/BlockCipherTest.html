@@ -1,0 +1,858 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="" lang="">
+<head><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<title>BlockCipherTest xref</title>
+<link type="text/css" rel="stylesheet" href="../../../../../../stylesheet.css" />
+</head>
+<body>
+<div id="overview"><a href="../../../../../../../testapidocs/net/sourceforge/joceanus/gordianknot/junit/extensions/BlockCipherTest.html">View Javadoc</a></div><pre>
+<a class="jxr_linenumber" name="L1" href="#L1">1</a>   <em class="jxr_javadoccomment">/*******************************************************************************</em>
+<a class="jxr_linenumber" name="L2" href="#L2">2</a>   <em class="jxr_javadoccomment"> * GordianKnot: Security Suite</em>
+<a class="jxr_linenumber" name="L3" href="#L3">3</a>   <em class="jxr_javadoccomment"> * Copyright 2012,2025 Tony Washer</em>
+<a class="jxr_linenumber" name="L4" href="#L4">4</a>   <em class="jxr_javadoccomment"> *</em>
+<a class="jxr_linenumber" name="L5" href="#L5">5</a>   <em class="jxr_javadoccomment"> * Licensed under the Apache License, Version 2.0 (the "License"); you may not</em>
+<a class="jxr_linenumber" name="L6" href="#L6">6</a>   <em class="jxr_javadoccomment"> * use this file except in compliance with the License.  You may obtain a copy</em>
+<a class="jxr_linenumber" name="L7" href="#L7">7</a>   <em class="jxr_javadoccomment"> * of the License at</em>
+<a class="jxr_linenumber" name="L8" href="#L8">8</a>   <em class="jxr_javadoccomment"> *</em>
+<a class="jxr_linenumber" name="L9" href="#L9">9</a>   <em class="jxr_javadoccomment"> *   <a href="http://www.apache.org/licenses/LICENSE-2.0" target="alexandria_uri">http://www.apache.org/licenses/LICENSE-2.0</a></em>
+<a class="jxr_linenumber" name="L10" href="#L10">10</a>  <em class="jxr_javadoccomment"> *</em>
+<a class="jxr_linenumber" name="L11" href="#L11">11</a>  <em class="jxr_javadoccomment"> * Unless required by applicable law or agreed to in writing, software</em>
+<a class="jxr_linenumber" name="L12" href="#L12">12</a>  <em class="jxr_javadoccomment"> * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT</em>
+<a class="jxr_linenumber" name="L13" href="#L13">13</a>  <em class="jxr_javadoccomment"> * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the</em>
+<a class="jxr_linenumber" name="L14" href="#L14">14</a>  <em class="jxr_javadoccomment"> * License for the specific language governing permissions and limitations under</em>
+<a class="jxr_linenumber" name="L15" href="#L15">15</a>  <em class="jxr_javadoccomment"> * the License.</em>
+<a class="jxr_linenumber" name="L16" href="#L16">16</a>  <em class="jxr_javadoccomment"> ******************************************************************************/</em>
+<a class="jxr_linenumber" name="L17" href="#L17">17</a>  <strong class="jxr_keyword">package</strong> net.sourceforge.joceanus.gordianknot.junit.extensions;
+<a class="jxr_linenumber" name="L18" href="#L18">18</a>  
+<a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">import</strong> net.sourceforge.joceanus.gordianknot.api.base.GordianException;
+<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">import</strong> net.sourceforge.joceanus.gordianknot.impl.ext.engines.GordianAnubisEngine;
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> net.sourceforge.joceanus.gordianknot.impl.ext.engines.GordianLeaEngine;
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> net.sourceforge.joceanus.gordianknot.impl.ext.engines.GordianMARSEngine;
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> net.sourceforge.joceanus.gordianknot.impl.ext.engines.GordianSimonEngine;
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> net.sourceforge.joceanus.gordianknot.impl.ext.engines.GordianSpeckEngine;
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> net.sourceforge.joceanus.gordianknot.impl.ext.modes.GordianGCMSIVBlockCipher;
+<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> org.bouncycastle.crypto.BlockCipher;
+<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> org.bouncycastle.crypto.InvalidCipherTextException;
+<a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> org.bouncycastle.crypto.params.AEADParameters;
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> org.bouncycastle.crypto.params.KeyParameter;
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> org.bouncycastle.util.encoders.Hex;
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> org.junit.jupiter.api.Assertions;
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> org.junit.jupiter.api.DynamicContainer;
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> org.junit.jupiter.api.DynamicNode;
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> org.junit.jupiter.api.DynamicTest;
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> org.junit.jupiter.api.TestFactory;
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>  
+<a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> java.util.stream.Stream;
+<a class="jxr_linenumber" name="L38" href="#L38">38</a>  
+<a class="jxr_linenumber" name="L39" href="#L39">39</a>  <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L40" href="#L40">40</a>  <em class="jxr_javadoccomment"> * BlockCipher Tests.</em>
+<a class="jxr_linenumber" name="L41" href="#L41">41</a>  <em class="jxr_javadoccomment"> */</em>
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>  <strong class="jxr_keyword">class</strong> <a name="BlockCipherTest" href="../../../../../../net/sourceforge/joceanus/gordianknot/junit/extensions/BlockCipherTest.html#BlockCipherTest">BlockCipherTest</a> {
+<a class="jxr_linenumber" name="L43" href="#L43">43</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L44" href="#L44">44</a>  <em class="jxr_javadoccomment">     * The 128 byte key.</em>
+<a class="jxr_linenumber" name="L45" href="#L45">45</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L46" href="#L46">46</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String KEY128 = <span class="jxr_string">"000102030405060708090a0b0c0d0e0f"</span>;
+<a class="jxr_linenumber" name="L47" href="#L47">47</a>  
+<a class="jxr_linenumber" name="L48" href="#L48">48</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>  <em class="jxr_javadoccomment">     * The 192 byte key.</em>
+<a class="jxr_linenumber" name="L50" href="#L50">50</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L51" href="#L51">51</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String KEY192 = <span class="jxr_string">"000102030405060708090a0b0c0d0e0f1011121314151617"</span>;
+<a class="jxr_linenumber" name="L52" href="#L52">52</a>  
+<a class="jxr_linenumber" name="L53" href="#L53">53</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L54" href="#L54">54</a>  <em class="jxr_javadoccomment">     * The 256 byte key.</em>
+<a class="jxr_linenumber" name="L55" href="#L55">55</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L56" href="#L56">56</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String KEY256 = <span class="jxr_string">"000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f"</span>;
+<a class="jxr_linenumber" name="L57" href="#L57">57</a>  
+<a class="jxr_linenumber" name="L58" href="#L58">58</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L59" href="#L59">59</a>  <em class="jxr_javadoccomment">     * The testData</em>
+<a class="jxr_linenumber" name="L60" href="#L60">60</a>  <em class="jxr_javadoccomment">    */</em>
+<a class="jxr_linenumber" name="L61" href="#L61">61</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String TESTDATA = <span class="jxr_string">"00112233445566778899aabbccddeeff"</span>;
+<a class="jxr_linenumber" name="L62" href="#L62">62</a>  
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>  <em class="jxr_javadoccomment">     * Create the blockCipher test suite.</em>
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>  <em class="jxr_javadoccomment">     * @return the test stream</em>
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>  <em class="jxr_javadoccomment">     * @throws GordianException on error</em>
+<a class="jxr_linenumber" name="L67" href="#L67">67</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>      @TestFactory
+<a class="jxr_linenumber" name="L69" href="#L69">69</a>      Stream&lt;DynamicNode&gt; blockCipherTests() <strong class="jxr_keyword">throws</strong> GordianException {
+<a class="jxr_linenumber" name="L70" href="#L70">70</a>          <em class="jxr_comment">/* Create tests */</em>
+<a class="jxr_linenumber" name="L71" href="#L71">71</a>          <strong class="jxr_keyword">return</strong> Stream.of(DynamicContainer.dynamicContainer(<span class="jxr_string">"BlockCiphers"</span>, Stream.of(
+<a class="jxr_linenumber" name="L72" href="#L72">72</a>                  DynamicContainer.dynamicContainer(<span class="jxr_string">"Anubis"</span>, Stream.of(
+<a class="jxr_linenumber" name="L73" href="#L73">73</a>                          DynamicTest.dynamicTest(<span class="jxr_string">"128"</span>, () -&gt; <strong class="jxr_keyword">new</strong> Anubis128Test().testTheCipher()),
+<a class="jxr_linenumber" name="L74" href="#L74">74</a>                          DynamicTest.dynamicTest(<span class="jxr_string">"192"</span>, () -&gt; <strong class="jxr_keyword">new</strong> Anubis192Test().testTheCipher()),
+<a class="jxr_linenumber" name="L75" href="#L75">75</a>                          DynamicTest.dynamicTest(<span class="jxr_string">"256"</span>, () -&gt; <strong class="jxr_keyword">new</strong> Anubis256Test().testTheCipher())
+<a class="jxr_linenumber" name="L76" href="#L76">76</a>                  )),
+<a class="jxr_linenumber" name="L77" href="#L77">77</a>                  DynamicContainer.dynamicContainer(<span class="jxr_string">"MARS"</span>, Stream.of(
+<a class="jxr_linenumber" name="L78" href="#L78">78</a>                          DynamicTest.dynamicTest(<span class="jxr_string">"128"</span>, () -&gt; <strong class="jxr_keyword">new</strong> MARS128Test().testTheCipher()),
+<a class="jxr_linenumber" name="L79" href="#L79">79</a>                          DynamicTest.dynamicTest(<span class="jxr_string">"192"</span>, () -&gt; <strong class="jxr_keyword">new</strong> MARS192Test().testTheCipher()),
+<a class="jxr_linenumber" name="L80" href="#L80">80</a>                          DynamicTest.dynamicTest(<span class="jxr_string">"256"</span>, () -&gt; <strong class="jxr_keyword">new</strong> MARS256Test().testTheCipher())
+<a class="jxr_linenumber" name="L81" href="#L81">81</a>                  )),
+<a class="jxr_linenumber" name="L82" href="#L82">82</a>                  DynamicContainer.dynamicContainer(<span class="jxr_string">"LEA"</span>, Stream.of(
+<a class="jxr_linenumber" name="L83" href="#L83">83</a>                          DynamicTest.dynamicTest(<span class="jxr_string">"128"</span>, () -&gt; <strong class="jxr_keyword">new</strong> LEA128Test().testTheCipher()),
+<a class="jxr_linenumber" name="L84" href="#L84">84</a>                          DynamicTest.dynamicTest(<span class="jxr_string">"192"</span>, () -&gt; <strong class="jxr_keyword">new</strong> LEA192Test().testTheCipher()),
+<a class="jxr_linenumber" name="L85" href="#L85">85</a>                          DynamicTest.dynamicTest(<span class="jxr_string">"256"</span>, () -&gt; <strong class="jxr_keyword">new</strong> LEA256Test().testTheCipher())
+<a class="jxr_linenumber" name="L86" href="#L86">86</a>                  )),
+<a class="jxr_linenumber" name="L87" href="#L87">87</a>                  DynamicContainer.dynamicContainer(<span class="jxr_string">"Speck"</span>, Stream.of(
+<a class="jxr_linenumber" name="L88" href="#L88">88</a>                          DynamicTest.dynamicTest(<span class="jxr_string">"128"</span>, () -&gt; <strong class="jxr_keyword">new</strong> Speck128Test().testTheCipher()),
+<a class="jxr_linenumber" name="L89" href="#L89">89</a>                          DynamicTest.dynamicTest(<span class="jxr_string">"192"</span>, () -&gt; <strong class="jxr_keyword">new</strong> Speck192Test().testTheCipher()),
+<a class="jxr_linenumber" name="L90" href="#L90">90</a>                          DynamicTest.dynamicTest(<span class="jxr_string">"256"</span>, () -&gt; <strong class="jxr_keyword">new</strong> Speck256Test().testTheCipher())
+<a class="jxr_linenumber" name="L91" href="#L91">91</a>                  )),
+<a class="jxr_linenumber" name="L92" href="#L92">92</a>                  DynamicContainer.dynamicContainer(<span class="jxr_string">"Simon"</span>, Stream.of(
+<a class="jxr_linenumber" name="L93" href="#L93">93</a>                          DynamicTest.dynamicTest(<span class="jxr_string">"128"</span>, () -&gt; <strong class="jxr_keyword">new</strong> Simon128Test().testTheCipher()),
+<a class="jxr_linenumber" name="L94" href="#L94">94</a>                          DynamicTest.dynamicTest(<span class="jxr_string">"192"</span>, () -&gt; <strong class="jxr_keyword">new</strong> Simon192Test().testTheCipher()),
+<a class="jxr_linenumber" name="L95" href="#L95">95</a>                          DynamicTest.dynamicTest(<span class="jxr_string">"256"</span>, () -&gt; <strong class="jxr_keyword">new</strong> Simon256Test().testTheCipher())
+<a class="jxr_linenumber" name="L96" href="#L96">96</a>                  )),
+<a class="jxr_linenumber" name="L97" href="#L97">97</a>                  DynamicContainer.dynamicContainer(<span class="jxr_string">"SIV"</span>, Stream.of(
+<a class="jxr_linenumber" name="L98" href="#L98">98</a>                          DynamicContainer.dynamicContainer(<span class="jxr_string">"128"</span>, Stream.of(
+<a class="jxr_linenumber" name="L99" href="#L99">99</a>                                  DynamicTest.dynamicTest(<span class="jxr_string">"NoAEAD"</span>, () -&gt; <strong class="jxr_keyword">new</strong> AESGCMSIV128Test1().testTheCipher()),
+<a class="jxr_linenumber" name="L100" href="#L100">100</a>                                 DynamicTest.dynamicTest(<span class="jxr_string">"SingleAEAD"</span>, () -&gt; <strong class="jxr_keyword">new</strong> AESGCMSIV128Test2().testTheCipher()),
+<a class="jxr_linenumber" name="L101" href="#L101">101</a>                                 DynamicTest.dynamicTest(<span class="jxr_string">"Various"</span>, () -&gt; <strong class="jxr_keyword">new</strong> AESGCMSIV128Test3().testTheCipher())
+<a class="jxr_linenumber" name="L102" href="#L102">102</a>                         )),
+<a class="jxr_linenumber" name="L103" href="#L103">103</a>                         DynamicContainer.dynamicContainer(<span class="jxr_string">"256"</span>, Stream.of(
+<a class="jxr_linenumber" name="L104" href="#L104">104</a>                                 DynamicTest.dynamicTest(<span class="jxr_string">"NoAEAD"</span>, () -&gt; <strong class="jxr_keyword">new</strong> AESGCMSIV256Test1().testTheCipher()),
+<a class="jxr_linenumber" name="L105" href="#L105">105</a>                                 DynamicTest.dynamicTest(<span class="jxr_string">"SingleAEAD"</span>, () -&gt; <strong class="jxr_keyword">new</strong> AESGCMSIV256Test2().testTheCipher()),
+<a class="jxr_linenumber" name="L106" href="#L106">106</a>                                 DynamicTest.dynamicTest(<span class="jxr_string">"Various"</span>, () -&gt; <strong class="jxr_keyword">new</strong> AESGCMSIV256Test3().testTheCipher()),
+<a class="jxr_linenumber" name="L107" href="#L107">107</a>                                 DynamicTest.dynamicTest(<span class="jxr_string">"Wrap"</span>, () -&gt; <strong class="jxr_keyword">new</strong> AESGCMSIV256Test4().testTheCipher())
+<a class="jxr_linenumber" name="L108" href="#L108">108</a>                         ))
+<a class="jxr_linenumber" name="L109" href="#L109">109</a>                 ))
+<a class="jxr_linenumber" name="L110" href="#L110">110</a>         )));
+<a class="jxr_linenumber" name="L111" href="#L111">111</a>     }
+<a class="jxr_linenumber" name="L112" href="#L112">112</a> 
+<a class="jxr_linenumber" name="L113" href="#L113">113</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L114" href="#L114">114</a> <em class="jxr_javadoccomment">     * Test the Cipher against the results.</em>
+<a class="jxr_linenumber" name="L115" href="#L115">115</a> <em class="jxr_javadoccomment">     * @param pCipher the cipher to test.</em>
+<a class="jxr_linenumber" name="L116" href="#L116">116</a> <em class="jxr_javadoccomment">     * @param pKey the key to test</em>
+<a class="jxr_linenumber" name="L117" href="#L117">117</a> <em class="jxr_javadoccomment">     * @param pData the data to test</em>
+<a class="jxr_linenumber" name="L118" href="#L118">118</a> <em class="jxr_javadoccomment">     * @param pExpected the expected results</em>
+<a class="jxr_linenumber" name="L119" href="#L119">119</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L120" href="#L120">120</a>     <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> testCipher(<strong class="jxr_keyword">final</strong> BlockCipher pCipher,
+<a class="jxr_linenumber" name="L121" href="#L121">121</a>                            <strong class="jxr_keyword">final</strong> String pKey,
+<a class="jxr_linenumber" name="L122" href="#L122">122</a>                            <strong class="jxr_keyword">final</strong> String pData,
+<a class="jxr_linenumber" name="L123" href="#L123">123</a>                            <strong class="jxr_keyword">final</strong> String pExpected) {
+<a class="jxr_linenumber" name="L124" href="#L124">124</a>         <em class="jxr_comment">/* Create the output buffer */</em>
+<a class="jxr_linenumber" name="L125" href="#L125">125</a>         <strong class="jxr_keyword">final</strong> byte[] myOutput = <strong class="jxr_keyword">new</strong> byte[pCipher.getBlockSize()];
+<a class="jxr_linenumber" name="L126" href="#L126">126</a>         <strong class="jxr_keyword">final</strong> byte[] myFinal = <strong class="jxr_keyword">new</strong> byte[pCipher.getBlockSize()];
+<a class="jxr_linenumber" name="L127" href="#L127">127</a> 
+<a class="jxr_linenumber" name="L128" href="#L128">128</a>         <em class="jxr_comment">/* Access the key and the data */</em>
+<a class="jxr_linenumber" name="L129" href="#L129">129</a>         <strong class="jxr_keyword">final</strong> KeyParameter myKey = <strong class="jxr_keyword">new</strong> KeyParameter(Hex.decode(pKey));
+<a class="jxr_linenumber" name="L130" href="#L130">130</a>         <strong class="jxr_keyword">final</strong> byte[] myData = Hex.decode(pData);
+<a class="jxr_linenumber" name="L131" href="#L131">131</a> 
+<a class="jxr_linenumber" name="L132" href="#L132">132</a>         <em class="jxr_comment">/* Initialise the cipher */</em>
+<a class="jxr_linenumber" name="L133" href="#L133">133</a>         pCipher.init(<strong class="jxr_keyword">true</strong>, myKey);
+<a class="jxr_linenumber" name="L134" href="#L134">134</a>         pCipher.processBlock(myData, 0, myOutput, 0);
+<a class="jxr_linenumber" name="L135" href="#L135">135</a> 
+<a class="jxr_linenumber" name="L136" href="#L136">136</a>         <em class="jxr_comment">/* Check the encryption */</em>
+<a class="jxr_linenumber" name="L137" href="#L137">137</a>         <strong class="jxr_keyword">final</strong> byte[] myExpected = Hex.decode(pExpected);
+<a class="jxr_linenumber" name="L138" href="#L138">138</a>         Assertions.assertArrayEquals(myExpected, myOutput, <span class="jxr_string">"Encryption mismatch"</span>);
+<a class="jxr_linenumber" name="L139" href="#L139">139</a> 
+<a class="jxr_linenumber" name="L140" href="#L140">140</a>         <em class="jxr_comment">/* Initialise the cipher */</em>
+<a class="jxr_linenumber" name="L141" href="#L141">141</a>         pCipher.init(false, myKey);
+<a class="jxr_linenumber" name="L142" href="#L142">142</a>         pCipher.processBlock(myOutput, 0, myFinal, 0);
+<a class="jxr_linenumber" name="L143" href="#L143">143</a>         Assertions.assertArrayEquals(myData, myFinal, <span class="jxr_string">"Decryption mismatch"</span>);
+<a class="jxr_linenumber" name="L144" href="#L144">144</a>     }
+<a class="jxr_linenumber" name="L145" href="#L145">145</a> 
+<a class="jxr_linenumber" name="L146" href="#L146">146</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L147" href="#L147">147</a> <em class="jxr_javadoccomment">     * Anubis128.</em>
+<a class="jxr_linenumber" name="L148" href="#L148">148</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L149" href="#L149">149</a>     <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> Anubis128Test {
+<a class="jxr_linenumber" name="L150" href="#L150">150</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L151" href="#L151">151</a> <em class="jxr_javadoccomment">         * Expected results.</em>
+<a class="jxr_linenumber" name="L152" href="#L152">152</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="L153" href="#L153">153</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED =
+<a class="jxr_linenumber" name="L154" href="#L154">154</a>                 <span class="jxr_string">"4d384bf9eaeb03cc6507971c04cde7bb"</span>;
+<a class="jxr_linenumber" name="L155" href="#L155">155</a> 
+<a class="jxr_linenumber" name="L156" href="#L156">156</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L157" href="#L157">157</a> <em class="jxr_javadoccomment">         * Test cipher.</em>
+<a class="jxr_linenumber" name="L158" href="#L158">158</a> <em class="jxr_javadoccomment">         * @throws GordianException on error</em>
+<a class="jxr_linenumber" name="L159" href="#L159">159</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="L160" href="#L160">160</a>         <strong class="jxr_keyword">void</strong> testTheCipher() <strong class="jxr_keyword">throws</strong> GordianException {
+<a class="jxr_linenumber" name="L161" href="#L161">161</a>             testCipher(<strong class="jxr_keyword">new</strong> GordianAnubisEngine(), KEY128, TESTDATA, EXPECTED);
+<a class="jxr_linenumber" name="L162" href="#L162">162</a>         }
+<a class="jxr_linenumber" name="L163" href="#L163">163</a>     }
+<a class="jxr_linenumber" name="L164" href="#L164">164</a> 
+<a class="jxr_linenumber" name="L165" href="#L165">165</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L166" href="#L166">166</a> <em class="jxr_javadoccomment">     * Anubis192.</em>
+<a class="jxr_linenumber" name="L167" href="#L167">167</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L168" href="#L168">168</a>     <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> Anubis192Test {
+<a class="jxr_linenumber" name="L169" href="#L169">169</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L170" href="#L170">170</a> <em class="jxr_javadoccomment">         * Expected results.</em>
+<a class="jxr_linenumber" name="L171" href="#L171">171</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="L172" href="#L172">172</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED =
+<a class="jxr_linenumber" name="L173" href="#L173">173</a>                 <span class="jxr_string">"213c3d791c6d403d9e9288fce3f61794"</span>;
+<a class="jxr_linenumber" name="L174" href="#L174">174</a> 
+<a class="jxr_linenumber" name="L175" href="#L175">175</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L176" href="#L176">176</a> <em class="jxr_javadoccomment">         * Test cipher.</em>
+<a class="jxr_linenumber" name="L177" href="#L177">177</a> <em class="jxr_javadoccomment">         * @throws GordianException on error</em>
+<a class="jxr_linenumber" name="L178" href="#L178">178</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="L179" href="#L179">179</a>         <strong class="jxr_keyword">void</strong> testTheCipher() <strong class="jxr_keyword">throws</strong> GordianException {
+<a class="jxr_linenumber" name="L180" href="#L180">180</a>             testCipher(<strong class="jxr_keyword">new</strong> GordianAnubisEngine(), KEY192, TESTDATA, EXPECTED);
+<a class="jxr_linenumber" name="L181" href="#L181">181</a>         }
+<a class="jxr_linenumber" name="L182" href="#L182">182</a>     }
+<a class="jxr_linenumber" name="L183" href="#L183">183</a> 
+<a class="jxr_linenumber" name="L184" href="#L184">184</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L185" href="#L185">185</a> <em class="jxr_javadoccomment">     * Anubis256.</em>
+<a class="jxr_linenumber" name="L186" href="#L186">186</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L187" href="#L187">187</a>     <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> Anubis256Test {
+<a class="jxr_linenumber" name="L188" href="#L188">188</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L189" href="#L189">189</a> <em class="jxr_javadoccomment">         * Expected results.</em>
+<a class="jxr_linenumber" name="L190" href="#L190">190</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="L191" href="#L191">191</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED =
+<a class="jxr_linenumber" name="L192" href="#L192">192</a>                 <span class="jxr_string">"f0ce4d9a173f71c61e46926f643db171"</span>;
+<a class="jxr_linenumber" name="L193" href="#L193">193</a> 
+<a class="jxr_linenumber" name="L194" href="#L194">194</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L195" href="#L195">195</a> <em class="jxr_javadoccomment">         * Test cipher.</em>
+<a class="jxr_linenumber" name="L196" href="#L196">196</a> <em class="jxr_javadoccomment">         * @throws GordianException on error</em>
+<a class="jxr_linenumber" name="L197" href="#L197">197</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="L198" href="#L198">198</a>         <strong class="jxr_keyword">void</strong> testTheCipher() <strong class="jxr_keyword">throws</strong> GordianException {
+<a class="jxr_linenumber" name="L199" href="#L199">199</a>             testCipher(<strong class="jxr_keyword">new</strong> GordianAnubisEngine(), KEY256, TESTDATA, EXPECTED);
+<a class="jxr_linenumber" name="L200" href="#L200">200</a>         }
+<a class="jxr_linenumber" name="L201" href="#L201">201</a>     }
+<a class="jxr_linenumber" name="L202" href="#L202">202</a> 
+<a class="jxr_linenumber" name="L203" href="#L203">203</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L204" href="#L204">204</a> <em class="jxr_javadoccomment">     * MARS128.</em>
+<a class="jxr_linenumber" name="L205" href="#L205">205</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L206" href="#L206">206</a>     <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> MARS128Test {
+<a class="jxr_linenumber" name="L207" href="#L207">207</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L208" href="#L208">208</a> <em class="jxr_javadoccomment">         * Expected results.</em>
+<a class="jxr_linenumber" name="L209" href="#L209">209</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="L210" href="#L210">210</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED =
+<a class="jxr_linenumber" name="L211" href="#L211">211</a>                 <span class="jxr_string">"672db14c7714fd2477ca8499b0808ff7"</span>;
+<a class="jxr_linenumber" name="L212" href="#L212">212</a> 
+<a class="jxr_linenumber" name="L213" href="#L213">213</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L214" href="#L214">214</a> <em class="jxr_javadoccomment">         * Test cipher.</em>
+<a class="jxr_linenumber" name="L215" href="#L215">215</a> <em class="jxr_javadoccomment">         * @throws GordianException on error</em>
+<a class="jxr_linenumber" name="L216" href="#L216">216</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="L217" href="#L217">217</a>         <strong class="jxr_keyword">void</strong> testTheCipher() <strong class="jxr_keyword">throws</strong> GordianException {
+<a class="jxr_linenumber" name="L218" href="#L218">218</a>             testCipher(<strong class="jxr_keyword">new</strong> GordianMARSEngine(), KEY128, TESTDATA, EXPECTED);
+<a class="jxr_linenumber" name="L219" href="#L219">219</a>         }
+<a class="jxr_linenumber" name="L220" href="#L220">220</a>     }
+<a class="jxr_linenumber" name="L221" href="#L221">221</a> 
+<a class="jxr_linenumber" name="L222" href="#L222">222</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L223" href="#L223">223</a> <em class="jxr_javadoccomment">     * MARS128.</em>
+<a class="jxr_linenumber" name="L224" href="#L224">224</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L225" href="#L225">225</a>     <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> MARS192Test {
+<a class="jxr_linenumber" name="L226" href="#L226">226</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L227" href="#L227">227</a> <em class="jxr_javadoccomment">         * Expected results.</em>
+<a class="jxr_linenumber" name="L228" href="#L228">228</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="L229" href="#L229">229</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED =
+<a class="jxr_linenumber" name="L230" href="#L230">230</a>                 <span class="jxr_string">"98fde4ef2eef3386bf81b9434aa8b6dd"</span>;
+<a class="jxr_linenumber" name="L231" href="#L231">231</a> 
+<a class="jxr_linenumber" name="L232" href="#L232">232</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L233" href="#L233">233</a> <em class="jxr_javadoccomment">         * Test cipher.</em>
+<a class="jxr_linenumber" name="L234" href="#L234">234</a> <em class="jxr_javadoccomment">         * @throws GordianException on error</em>
+<a class="jxr_linenumber" name="L235" href="#L235">235</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="L236" href="#L236">236</a>         <strong class="jxr_keyword">void</strong> testTheCipher() <strong class="jxr_keyword">throws</strong> GordianException {
+<a class="jxr_linenumber" name="L237" href="#L237">237</a>             testCipher(<strong class="jxr_keyword">new</strong> GordianMARSEngine(), KEY192, TESTDATA, EXPECTED);
+<a class="jxr_linenumber" name="L238" href="#L238">238</a>         }
+<a class="jxr_linenumber" name="L239" href="#L239">239</a>     }
+<a class="jxr_linenumber" name="L240" href="#L240">240</a> 
+<a class="jxr_linenumber" name="L241" href="#L241">241</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L242" href="#L242">242</a> <em class="jxr_javadoccomment">     * MARS256.</em>
+<a class="jxr_linenumber" name="L243" href="#L243">243</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L244" href="#L244">244</a>     <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> MARS256Test {
+<a class="jxr_linenumber" name="L245" href="#L245">245</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L246" href="#L246">246</a> <em class="jxr_javadoccomment">         * Expected results.</em>
+<a class="jxr_linenumber" name="L247" href="#L247">247</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="L248" href="#L248">248</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED =
+<a class="jxr_linenumber" name="L249" href="#L249">249</a>                 <span class="jxr_string">"fc7e7ca35ed9fe729635cbdf078c8f1c"</span>;
+<a class="jxr_linenumber" name="L250" href="#L250">250</a> 
+<a class="jxr_linenumber" name="L251" href="#L251">251</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L252" href="#L252">252</a> <em class="jxr_javadoccomment">         * Test cipher.</em>
+<a class="jxr_linenumber" name="L253" href="#L253">253</a> <em class="jxr_javadoccomment">         * @throws GordianException on error</em>
+<a class="jxr_linenumber" name="L254" href="#L254">254</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="L255" href="#L255">255</a>         <strong class="jxr_keyword">void</strong> testTheCipher() <strong class="jxr_keyword">throws</strong> GordianException {
+<a class="jxr_linenumber" name="L256" href="#L256">256</a>             testCipher(<strong class="jxr_keyword">new</strong> GordianMARSEngine(), KEY256, TESTDATA, EXPECTED);
+<a class="jxr_linenumber" name="L257" href="#L257">257</a>         }
+<a class="jxr_linenumber" name="L258" href="#L258">258</a>     }
+<a class="jxr_linenumber" name="L259" href="#L259">259</a> 
+<a class="jxr_linenumber" name="L260" href="#L260">260</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L261" href="#L261">261</a> <em class="jxr_javadoccomment">     * LEA128.</em>
+<a class="jxr_linenumber" name="L262" href="#L262">262</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L263" href="#L263">263</a>     <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> LEA128Test {
+<a class="jxr_linenumber" name="L264" href="#L264">264</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L265" href="#L265">265</a> <em class="jxr_javadoccomment">         * Test details.</em>
+<a class="jxr_linenumber" name="L266" href="#L266">266</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="L267" href="#L267">267</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String KEY = <span class="jxr_string">"0f1e2d3c4b5a69788796a5b4c3d2e1f0"</span>;
+<a class="jxr_linenumber" name="L268" href="#L268">268</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String TESTDATA = <span class="jxr_string">"101112131415161718191a1b1c1d1e1f"</span>;
+<a class="jxr_linenumber" name="L269" href="#L269">269</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED = <span class="jxr_string">"9fc84e3528c6c6185532c7a704648bfd"</span>;
+<a class="jxr_linenumber" name="L270" href="#L270">270</a> 
+<a class="jxr_linenumber" name="L271" href="#L271">271</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L272" href="#L272">272</a> <em class="jxr_javadoccomment">         * Test cipher.</em>
+<a class="jxr_linenumber" name="L273" href="#L273">273</a> <em class="jxr_javadoccomment">         * @throws GordianException on error</em>
+<a class="jxr_linenumber" name="L274" href="#L274">274</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="L275" href="#L275">275</a>         <strong class="jxr_keyword">void</strong> testTheCipher() <strong class="jxr_keyword">throws</strong> GordianException {
+<a class="jxr_linenumber" name="L276" href="#L276">276</a>             testCipher(<strong class="jxr_keyword">new</strong> GordianLeaEngine(), KEY, TESTDATA, EXPECTED);
+<a class="jxr_linenumber" name="L277" href="#L277">277</a>         }
+<a class="jxr_linenumber" name="L278" href="#L278">278</a>     }
+<a class="jxr_linenumber" name="L279" href="#L279">279</a> 
+<a class="jxr_linenumber" name="L280" href="#L280">280</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L281" href="#L281">281</a> <em class="jxr_javadoccomment">     * LEA192.</em>
+<a class="jxr_linenumber" name="L282" href="#L282">282</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L283" href="#L283">283</a>     <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> LEA192Test {
+<a class="jxr_linenumber" name="L284" href="#L284">284</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L285" href="#L285">285</a> <em class="jxr_javadoccomment">         * Test details.</em>
+<a class="jxr_linenumber" name="L286" href="#L286">286</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="L287" href="#L287">287</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String KEY = <span class="jxr_string">"0f1e2d3c4b5a69788796a5b4c3d2e1f0f0e1d2c3b4a59687"</span>;
+<a class="jxr_linenumber" name="L288" href="#L288">288</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String TESTDATA = <span class="jxr_string">"202122232425262728292a2b2c2d2e2f"</span>;
+<a class="jxr_linenumber" name="L289" href="#L289">289</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED = <span class="jxr_string">"6fb95e325aad1b878cdcf5357674c6f2"</span>;
+<a class="jxr_linenumber" name="L290" href="#L290">290</a> 
+<a class="jxr_linenumber" name="L291" href="#L291">291</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L292" href="#L292">292</a> <em class="jxr_javadoccomment">         * Test cipher.</em>
+<a class="jxr_linenumber" name="L293" href="#L293">293</a> <em class="jxr_javadoccomment">         * @throws GordianException on error</em>
+<a class="jxr_linenumber" name="L294" href="#L294">294</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="L295" href="#L295">295</a>         <strong class="jxr_keyword">void</strong> testTheCipher() <strong class="jxr_keyword">throws</strong> GordianException {
+<a class="jxr_linenumber" name="L296" href="#L296">296</a>             testCipher(<strong class="jxr_keyword">new</strong> GordianLeaEngine(), KEY, TESTDATA, EXPECTED);
+<a class="jxr_linenumber" name="L297" href="#L297">297</a>         }
+<a class="jxr_linenumber" name="L298" href="#L298">298</a>     }
+<a class="jxr_linenumber" name="L299" href="#L299">299</a> 
+<a class="jxr_linenumber" name="L300" href="#L300">300</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L301" href="#L301">301</a> <em class="jxr_javadoccomment">     * LEA256.</em>
+<a class="jxr_linenumber" name="L302" href="#L302">302</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L303" href="#L303">303</a>     <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> LEA256Test {
+<a class="jxr_linenumber" name="L304" href="#L304">304</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L305" href="#L305">305</a> <em class="jxr_javadoccomment">         * Test details.</em>
+<a class="jxr_linenumber" name="L306" href="#L306">306</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="L307" href="#L307">307</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String KEY = <span class="jxr_string">"0f1e2d3c4b5a69788796a5b4c3d2e1f0f0e1d2c3b4a5968778695a4b3c2d1e0f"</span>;
+<a class="jxr_linenumber" name="L308" href="#L308">308</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String TESTDATA = <span class="jxr_string">"303132333435363738393a3b3c3d3e3f"</span>;
+<a class="jxr_linenumber" name="L309" href="#L309">309</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED = <span class="jxr_string">"d651aff647b189c13a8900ca27f9e197"</span>;
+<a class="jxr_linenumber" name="L310" href="#L310">310</a> 
+<a class="jxr_linenumber" name="L311" href="#L311">311</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L312" href="#L312">312</a> <em class="jxr_javadoccomment">         * Test cipher.</em>
+<a class="jxr_linenumber" name="L313" href="#L313">313</a> <em class="jxr_javadoccomment">         * @throws GordianException on error</em>
+<a class="jxr_linenumber" name="L314" href="#L314">314</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="L315" href="#L315">315</a>         <strong class="jxr_keyword">void</strong> testTheCipher() <strong class="jxr_keyword">throws</strong> GordianException {
+<a class="jxr_linenumber" name="L316" href="#L316">316</a>             testCipher(<strong class="jxr_keyword">new</strong> GordianLeaEngine(), KEY, TESTDATA, EXPECTED);
+<a class="jxr_linenumber" name="L317" href="#L317">317</a>         }
+<a class="jxr_linenumber" name="L318" href="#L318">318</a>     }
+<a class="jxr_linenumber" name="L319" href="#L319">319</a> 
+<a class="jxr_linenumber" name="L320" href="#L320">320</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L321" href="#L321">321</a> <em class="jxr_javadoccomment">     * Speck128.</em>
+<a class="jxr_linenumber" name="L322" href="#L322">322</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L323" href="#L323">323</a>     <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> Speck128Test {
+<a class="jxr_linenumber" name="L324" href="#L324">324</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L325" href="#L325">325</a> <em class="jxr_javadoccomment">         * Test details.</em>
+<a class="jxr_linenumber" name="L326" href="#L326">326</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="L327" href="#L327">327</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String KEY = <span class="jxr_string">"0f0e0d0c0b0a09080706050403020100"</span>;
+<a class="jxr_linenumber" name="L328" href="#L328">328</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String TESTDATA = <span class="jxr_string">"6c617669757165207469206564616d20"</span>;
+<a class="jxr_linenumber" name="L329" href="#L329">329</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED = <span class="jxr_string">"a65d9851797832657860fedf5c570d18"</span>;
+<a class="jxr_linenumber" name="L330" href="#L330">330</a> 
+<a class="jxr_linenumber" name="L331" href="#L331">331</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L332" href="#L332">332</a> <em class="jxr_javadoccomment">         * Test cipher.</em>
+<a class="jxr_linenumber" name="L333" href="#L333">333</a> <em class="jxr_javadoccomment">         * @throws GordianException on error</em>
+<a class="jxr_linenumber" name="L334" href="#L334">334</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="L335" href="#L335">335</a>         <strong class="jxr_keyword">void</strong> testTheCipher() <strong class="jxr_keyword">throws</strong> GordianException {
+<a class="jxr_linenumber" name="L336" href="#L336">336</a>             testCipher(<strong class="jxr_keyword">new</strong> GordianSpeckEngine(), KEY, TESTDATA, EXPECTED);
+<a class="jxr_linenumber" name="L337" href="#L337">337</a>         }
+<a class="jxr_linenumber" name="L338" href="#L338">338</a>     }
+<a class="jxr_linenumber" name="L339" href="#L339">339</a> 
+<a class="jxr_linenumber" name="L340" href="#L340">340</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L341" href="#L341">341</a> <em class="jxr_javadoccomment">     * Speck192.</em>
+<a class="jxr_linenumber" name="L342" href="#L342">342</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L343" href="#L343">343</a>     <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> Speck192Test {
+<a class="jxr_linenumber" name="L344" href="#L344">344</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L345" href="#L345">345</a> <em class="jxr_javadoccomment">         * Test details.</em>
+<a class="jxr_linenumber" name="L346" href="#L346">346</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="L347" href="#L347">347</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String KEY = <span class="jxr_string">"17161514131211100f0e0d0c0b0a09080706050403020100"</span>;
+<a class="jxr_linenumber" name="L348" href="#L348">348</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String TESTDATA = <span class="jxr_string">"726148206665696843206f7420746e65"</span>;
+<a class="jxr_linenumber" name="L349" href="#L349">349</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED = <span class="jxr_string">"1be4cf3a13135566f9bc185de03c1886"</span>;
+<a class="jxr_linenumber" name="L350" href="#L350">350</a> 
+<a class="jxr_linenumber" name="L351" href="#L351">351</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L352" href="#L352">352</a> <em class="jxr_javadoccomment">         * Test cipher.</em>
+<a class="jxr_linenumber" name="L353" href="#L353">353</a> <em class="jxr_javadoccomment">         * @throws GordianException on error</em>
+<a class="jxr_linenumber" name="L354" href="#L354">354</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="L355" href="#L355">355</a>         <strong class="jxr_keyword">void</strong> testTheCipher() <strong class="jxr_keyword">throws</strong> GordianException {
+<a class="jxr_linenumber" name="L356" href="#L356">356</a>             testCipher(<strong class="jxr_keyword">new</strong> GordianSpeckEngine(), KEY, TESTDATA, EXPECTED);
+<a class="jxr_linenumber" name="L357" href="#L357">357</a>         }
+<a class="jxr_linenumber" name="L358" href="#L358">358</a>     }
+<a class="jxr_linenumber" name="L359" href="#L359">359</a> 
+<a class="jxr_linenumber" name="L360" href="#L360">360</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L361" href="#L361">361</a> <em class="jxr_javadoccomment">     * Speck256.</em>
+<a class="jxr_linenumber" name="L362" href="#L362">362</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L363" href="#L363">363</a>     <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> Speck256Test {
+<a class="jxr_linenumber" name="L364" href="#L364">364</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L365" href="#L365">365</a> <em class="jxr_javadoccomment">         * Test details.</em>
+<a class="jxr_linenumber" name="L366" href="#L366">366</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="L367" href="#L367">367</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String KEY = <span class="jxr_string">"1f1e1d1c1b1a191817161514131211100f0e0d0c0b0a09080706050403020100"</span>;
+<a class="jxr_linenumber" name="L368" href="#L368">368</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String TESTDATA = <span class="jxr_string">"65736f6874206e49202e72656e6f6f70"</span>;
+<a class="jxr_linenumber" name="L369" href="#L369">369</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED = <span class="jxr_string">"4109010405c0f53e4eeeb48d9c188f43"</span>;
+<a class="jxr_linenumber" name="L370" href="#L370">370</a> 
+<a class="jxr_linenumber" name="L371" href="#L371">371</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L372" href="#L372">372</a> <em class="jxr_javadoccomment">         * Test cipher.</em>
+<a class="jxr_linenumber" name="L373" href="#L373">373</a> <em class="jxr_javadoccomment">         * @throws GordianException on error</em>
+<a class="jxr_linenumber" name="L374" href="#L374">374</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="L375" href="#L375">375</a>         <strong class="jxr_keyword">void</strong> testTheCipher() <strong class="jxr_keyword">throws</strong> GordianException {
+<a class="jxr_linenumber" name="L376" href="#L376">376</a>             testCipher(<strong class="jxr_keyword">new</strong> GordianSpeckEngine(), KEY, TESTDATA, EXPECTED);
+<a class="jxr_linenumber" name="L377" href="#L377">377</a>         }
+<a class="jxr_linenumber" name="L378" href="#L378">378</a>     }
+<a class="jxr_linenumber" name="L379" href="#L379">379</a> 
+<a class="jxr_linenumber" name="L380" href="#L380">380</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L381" href="#L381">381</a> <em class="jxr_javadoccomment">     * Speck128.</em>
+<a class="jxr_linenumber" name="L382" href="#L382">382</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L383" href="#L383">383</a>     <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> Simon128Test {
+<a class="jxr_linenumber" name="L384" href="#L384">384</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L385" href="#L385">385</a> <em class="jxr_javadoccomment">         * Test details.</em>
+<a class="jxr_linenumber" name="L386" href="#L386">386</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="L387" href="#L387">387</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String KEY = <span class="jxr_string">"0f0e0d0c0b0a09080706050403020100"</span>;
+<a class="jxr_linenumber" name="L388" href="#L388">388</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String TESTDATA = <span class="jxr_string">"63736564207372656c6c657661727420"</span>;
+<a class="jxr_linenumber" name="L389" href="#L389">389</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED = <span class="jxr_string">"49681b1e1e54fe3f65aa832af84e0bbc"</span>;
+<a class="jxr_linenumber" name="L390" href="#L390">390</a> 
+<a class="jxr_linenumber" name="L391" href="#L391">391</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L392" href="#L392">392</a> <em class="jxr_javadoccomment">         * Test cipher.</em>
+<a class="jxr_linenumber" name="L393" href="#L393">393</a> <em class="jxr_javadoccomment">         * @throws GordianException on error</em>
+<a class="jxr_linenumber" name="L394" href="#L394">394</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="L395" href="#L395">395</a>         <strong class="jxr_keyword">void</strong> testTheCipher() <strong class="jxr_keyword">throws</strong> GordianException {
+<a class="jxr_linenumber" name="L396" href="#L396">396</a>             testCipher(<strong class="jxr_keyword">new</strong> GordianSimonEngine(), KEY, TESTDATA, EXPECTED);
+<a class="jxr_linenumber" name="L397" href="#L397">397</a>         }
+<a class="jxr_linenumber" name="L398" href="#L398">398</a>     }
+<a class="jxr_linenumber" name="L399" href="#L399">399</a> 
+<a class="jxr_linenumber" name="L400" href="#L400">400</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L401" href="#L401">401</a> <em class="jxr_javadoccomment">     * Simon192.</em>
+<a class="jxr_linenumber" name="L402" href="#L402">402</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L403" href="#L403">403</a>     <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> Simon192Test {
+<a class="jxr_linenumber" name="L404" href="#L404">404</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L405" href="#L405">405</a> <em class="jxr_javadoccomment">         * Test details.</em>
+<a class="jxr_linenumber" name="L406" href="#L406">406</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="L407" href="#L407">407</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String KEY = <span class="jxr_string">"17161514131211100f0e0d0c0b0a09080706050403020100"</span>;
+<a class="jxr_linenumber" name="L408" href="#L408">408</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String TESTDATA = <span class="jxr_string">"206572656874206e6568772065626972"</span>;
+<a class="jxr_linenumber" name="L409" href="#L409">409</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED = <span class="jxr_string">"c4ac61effcdc0d4f6c9c8d6e2597b85b"</span>;
+<a class="jxr_linenumber" name="L410" href="#L410">410</a> 
+<a class="jxr_linenumber" name="L411" href="#L411">411</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L412" href="#L412">412</a> <em class="jxr_javadoccomment">         * Test cipher.</em>
+<a class="jxr_linenumber" name="L413" href="#L413">413</a> <em class="jxr_javadoccomment">         * @throws GordianException on error</em>
+<a class="jxr_linenumber" name="L414" href="#L414">414</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="L415" href="#L415">415</a>         <strong class="jxr_keyword">void</strong> testTheCipher() <strong class="jxr_keyword">throws</strong> GordianException {
+<a class="jxr_linenumber" name="L416" href="#L416">416</a>             testCipher(<strong class="jxr_keyword">new</strong> GordianSimonEngine(), KEY, TESTDATA, EXPECTED);
+<a class="jxr_linenumber" name="L417" href="#L417">417</a>         }
+<a class="jxr_linenumber" name="L418" href="#L418">418</a>     }
+<a class="jxr_linenumber" name="L419" href="#L419">419</a> 
+<a class="jxr_linenumber" name="L420" href="#L420">420</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L421" href="#L421">421</a> <em class="jxr_javadoccomment">     * Simon256.</em>
+<a class="jxr_linenumber" name="L422" href="#L422">422</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L423" href="#L423">423</a>     <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> Simon256Test {
+<a class="jxr_linenumber" name="L424" href="#L424">424</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L425" href="#L425">425</a> <em class="jxr_javadoccomment">         * Test details.</em>
+<a class="jxr_linenumber" name="L426" href="#L426">426</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="L427" href="#L427">427</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String KEY = <span class="jxr_string">"1f1e1d1c1b1a191817161514131211100f0e0d0c0b0a09080706050403020100"</span>;
+<a class="jxr_linenumber" name="L428" href="#L428">428</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String TESTDATA = <span class="jxr_string">"74206e69206d6f6f6d69732061207369"</span>;
+<a class="jxr_linenumber" name="L429" href="#L429">429</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED = <span class="jxr_string">"8d2b5579afc8a3a03bf72a87efe7b868"</span>;
+<a class="jxr_linenumber" name="L430" href="#L430">430</a> 
+<a class="jxr_linenumber" name="L431" href="#L431">431</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L432" href="#L432">432</a> <em class="jxr_javadoccomment">         * Test cipher.</em>
+<a class="jxr_linenumber" name="L433" href="#L433">433</a> <em class="jxr_javadoccomment">         * @throws GordianException on error</em>
+<a class="jxr_linenumber" name="L434" href="#L434">434</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="L435" href="#L435">435</a>         <strong class="jxr_keyword">void</strong> testTheCipher() <strong class="jxr_keyword">throws</strong> GordianException {
+<a class="jxr_linenumber" name="L436" href="#L436">436</a>             testCipher(<strong class="jxr_keyword">new</strong> GordianSimonEngine(), KEY, TESTDATA, EXPECTED);
+<a class="jxr_linenumber" name="L437" href="#L437">437</a>         }
+<a class="jxr_linenumber" name="L438" href="#L438">438</a>     }
+<a class="jxr_linenumber" name="L439" href="#L439">439</a> 
+<a class="jxr_linenumber" name="L440" href="#L440">440</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L441" href="#L441">441</a> <em class="jxr_javadoccomment">     * AES-GCM-SIV-128.</em>
+<a class="jxr_linenumber" name="L442" href="#L442">442</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L443" href="#L443">443</a>     <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> AESGCMSIV128Test1 {
+<a class="jxr_linenumber" name="L444" href="#L444">444</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EMPTY       = <span class="jxr_string">""</span>;
+<a class="jxr_linenumber" name="L445" href="#L445">445</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String KEY_1       = <span class="jxr_string">"01000000000000000000000000000000"</span>;
+<a class="jxr_linenumber" name="L446" href="#L446">446</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String NONCE_1     = <span class="jxr_string">"030000000000000000000000"</span>;
+<a class="jxr_linenumber" name="L447" href="#L447">447</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String DATA_8      = <span class="jxr_string">"0100000000000000"</span>;
+<a class="jxr_linenumber" name="L448" href="#L448">448</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String DATA_12     = <span class="jxr_string">"010000000000000000000000"</span>;
+<a class="jxr_linenumber" name="L449" href="#L449">449</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String DATA_16     = <span class="jxr_string">"01000000000000000000000000000000"</span>;
+<a class="jxr_linenumber" name="L450" href="#L450">450</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String DATA_32     = <span class="jxr_string">"01000000000000000000000000000000"</span> + <span class="jxr_string">"02000000000000000000000000000000"</span>;
+<a class="jxr_linenumber" name="L451" href="#L451">451</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String DATA_48     = <span class="jxr_string">"01000000000000000000000000000000"</span> + <span class="jxr_string">"02000000000000000000000000000000"</span>
+<a class="jxr_linenumber" name="L452" href="#L452">452</a>                                                     + <span class="jxr_string">"03000000000000000000000000000000"</span>;
+<a class="jxr_linenumber" name="L453" href="#L453">453</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String DATA_64     = <span class="jxr_string">"01000000000000000000000000000000"</span> + <span class="jxr_string">"02000000000000000000000000000000"</span>
+<a class="jxr_linenumber" name="L454" href="#L454">454</a>                                                     + <span class="jxr_string">"03000000000000000000000000000000"</span> + <span class="jxr_string">"04000000000000000000000000000000"</span>;
+<a class="jxr_linenumber" name="L455" href="#L455">455</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED_1  = <span class="jxr_string">"dc20e2d83f25705bb49e439eca56de25"</span>;
+<a class="jxr_linenumber" name="L456" href="#L456">456</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED_2  = <span class="jxr_string">"b5d839330ac7b786578782fff6013b81"</span> + <span class="jxr_string">"5b287c22493a364c"</span>;
+<a class="jxr_linenumber" name="L457" href="#L457">457</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED_3  = <span class="jxr_string">"7323ea61d05932260047d942a4978db3"</span> + <span class="jxr_string">"57391a0bc4fdec8b0d106639"</span>;
+<a class="jxr_linenumber" name="L458" href="#L458">458</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED_4  = <span class="jxr_string">"743f7c8077ab25f8624e2e948579cf77"</span> + <span class="jxr_string">"303aaf90f6fe21199c6068577437a0c4"</span>;
+<a class="jxr_linenumber" name="L459" href="#L459">459</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED_5  = <span class="jxr_string">"84e07e62ba83a6585417245d7ec413a9"</span> + <span class="jxr_string">"fe427d6315c09b57ce45f2e3936a9445"</span>
+<a class="jxr_linenumber" name="L460" href="#L460">460</a>                                                    + <span class="jxr_string">"1a8e45dcd4578c667cd86847bf6155ff"</span>;
+<a class="jxr_linenumber" name="L461" href="#L461">461</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED_6  = <span class="jxr_string">"3fd24ce1f5a67b75bf2351f181a475c7"</span> + <span class="jxr_string">"b800a5b4d3dcf70106b1eea82fa1d64d"</span>
+<a class="jxr_linenumber" name="L462" href="#L462">462</a>                                                    + <span class="jxr_string">"f42bf7226122fa92e17a40eeaac1201b"</span> + <span class="jxr_string">"5e6e311dbf395d35b0fe39c2714388f8"</span>;
+<a class="jxr_linenumber" name="L463" href="#L463">463</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED_7  = <span class="jxr_string">"2433668f1058190f6d43e360f4f35cd8"</span> + <span class="jxr_string">"e475127cfca7028ea8ab5c20f7ab2af0"</span>
+<a class="jxr_linenumber" name="L464" href="#L464">464</a>                                                    + <span class="jxr_string">"2516a2bdcbc08d521be37ff28c152bba"</span> + <span class="jxr_string">"36697f25b4cd169c6590d1dd39566d3f"</span>
+<a class="jxr_linenumber" name="L465" href="#L465">465</a>                                                    + <span class="jxr_string">"8a263dd317aa88d56bdf3936dba75bb8"</span>;
+<a class="jxr_linenumber" name="L466" href="#L466">466</a> 
+<a class="jxr_linenumber" name="L467" href="#L467">467</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L468" href="#L468">468</a> <em class="jxr_javadoccomment">         * Test cipher.</em>
+<a class="jxr_linenumber" name="L469" href="#L469">469</a> <em class="jxr_javadoccomment">         * @throws GordianException on error</em>
+<a class="jxr_linenumber" name="L470" href="#L470">470</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="L471" href="#L471">471</a>         <strong class="jxr_keyword">void</strong> testTheCipher() <strong class="jxr_keyword">throws</strong> GordianException {
+<a class="jxr_linenumber" name="L472" href="#L472">472</a>             testSIVCipher(<strong class="jxr_keyword">new</strong> GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, EMPTY, EMPTY, EXPECTED_1);
+<a class="jxr_linenumber" name="L473" href="#L473">473</a>             testSIVCipher(<strong class="jxr_keyword">new</strong> GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, EMPTY, DATA_8, EXPECTED_2);
+<a class="jxr_linenumber" name="L474" href="#L474">474</a>             testSIVCipher(<strong class="jxr_keyword">new</strong> GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, EMPTY, DATA_12, EXPECTED_3);
+<a class="jxr_linenumber" name="L475" href="#L475">475</a>             testSIVCipher(<strong class="jxr_keyword">new</strong> GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, EMPTY, DATA_16, EXPECTED_4);
+<a class="jxr_linenumber" name="L476" href="#L476">476</a>             testSIVCipher(<strong class="jxr_keyword">new</strong> GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, EMPTY, DATA_32, EXPECTED_5);
+<a class="jxr_linenumber" name="L477" href="#L477">477</a>             testSIVCipher(<strong class="jxr_keyword">new</strong> GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, EMPTY, DATA_48, EXPECTED_6);
+<a class="jxr_linenumber" name="L478" href="#L478">478</a>             testSIVCipher(<strong class="jxr_keyword">new</strong> GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, EMPTY, DATA_64, EXPECTED_7);
+<a class="jxr_linenumber" name="L479" href="#L479">479</a>         }
+<a class="jxr_linenumber" name="L480" href="#L480">480</a>     }
+<a class="jxr_linenumber" name="L481" href="#L481">481</a> 
+<a class="jxr_linenumber" name="L482" href="#L482">482</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L483" href="#L483">483</a> <em class="jxr_javadoccomment">     * AES-GCM-SIV-128.</em>
+<a class="jxr_linenumber" name="L484" href="#L484">484</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L485" href="#L485">485</a>     <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> AESGCMSIV128Test2 {
+<a class="jxr_linenumber" name="L486" href="#L486">486</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String KEY_1       = <span class="jxr_string">"01000000000000000000000000000000"</span>;
+<a class="jxr_linenumber" name="L487" href="#L487">487</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String NONCE_1     = <span class="jxr_string">"030000000000000000000000"</span>;
+<a class="jxr_linenumber" name="L488" href="#L488">488</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String AEAD_1      = <span class="jxr_string">"01"</span>;
+<a class="jxr_linenumber" name="L489" href="#L489">489</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String AEAD_12     = <span class="jxr_string">"010000000000000000000000"</span>;
+<a class="jxr_linenumber" name="L490" href="#L490">490</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String AEAD_18     = <span class="jxr_string">"01000000000000000000000000000000"</span> + <span class="jxr_string">"0200"</span>;
+<a class="jxr_linenumber" name="L491" href="#L491">491</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String AEAD_20     = <span class="jxr_string">"01000000000000000000000000000000"</span> + <span class="jxr_string">"02000000"</span>;
+<a class="jxr_linenumber" name="L492" href="#L492">492</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String DATA_4      = <span class="jxr_string">"02000000"</span>;
+<a class="jxr_linenumber" name="L493" href="#L493">493</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String DATA_8      = <span class="jxr_string">"0200000000000000"</span>;
+<a class="jxr_linenumber" name="L494" href="#L494">494</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String DATA_12     = <span class="jxr_string">"020000000000000000000000"</span>;
+<a class="jxr_linenumber" name="L495" href="#L495">495</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String DATA_16     = <span class="jxr_string">"02000000000000000000000000000000"</span>;
+<a class="jxr_linenumber" name="L496" href="#L496">496</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String DATA_18     = <span class="jxr_string">"03000000000000000000000000000000"</span> + <span class="jxr_string">"0400"</span>;
+<a class="jxr_linenumber" name="L497" href="#L497">497</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String DATA_20     = <span class="jxr_string">"03000000000000000000000000000000"</span> + <span class="jxr_string">"04000000"</span>;
+<a class="jxr_linenumber" name="L498" href="#L498">498</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String DATA_32     = <span class="jxr_string">"02000000000000000000000000000000"</span> + <span class="jxr_string">"03000000000000000000000000000000"</span>;
+<a class="jxr_linenumber" name="L499" href="#L499">499</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String DATA_48     = <span class="jxr_string">"02000000000000000000000000000000"</span> + <span class="jxr_string">"03000000000000000000000000000000"</span>
+<a class="jxr_linenumber" name="L500" href="#L500">500</a>                                                         + <span class="jxr_string">"04000000000000000000000000000000"</span>;
+<a class="jxr_linenumber" name="L501" href="#L501">501</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String DATA_64     = <span class="jxr_string">"02000000000000000000000000000000"</span> + <span class="jxr_string">"03000000000000000000000000000000"</span>
+<a class="jxr_linenumber" name="L502" href="#L502">502</a>                                                         + <span class="jxr_string">"04000000000000000000000000000000"</span> + <span class="jxr_string">"05000000000000000000000000000000"</span>;
+<a class="jxr_linenumber" name="L503" href="#L503">503</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED_1  = <span class="jxr_string">"1e6daba35669f4273b0a1a2560969cdf"</span> + <span class="jxr_string">"790d99759abd1508"</span>;
+<a class="jxr_linenumber" name="L504" href="#L504">504</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED_2  = <span class="jxr_string">"296c7889fd99f41917f4462008299c51"</span> + <span class="jxr_string">"02745aaa3a0c469fad9e075a"</span>;
+<a class="jxr_linenumber" name="L505" href="#L505">505</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED_3  = <span class="jxr_string">"e2b0c5da79a901c1745f700525cb335b"</span> + <span class="jxr_string">"8f8936ec039e4e4bb97ebd8c4457441f"</span>;
+<a class="jxr_linenumber" name="L506" href="#L506">506</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED_4  = <span class="jxr_string">"620048ef3c1e73e57e02bb8562c416a3"</span> + <span class="jxr_string">"19e73e4caac8e96a1ecb2933145a1d71"</span>
+<a class="jxr_linenumber" name="L507" href="#L507">507</a>                                                      + <span class="jxr_string">"e6af6a7f87287da059a71684ed3498e1"</span>;
+<a class="jxr_linenumber" name="L508" href="#L508">508</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED_5  = <span class="jxr_string">"50c8303ea93925d64090d07bd109dfd9"</span> + <span class="jxr_string">"515a5a33431019c17d93465999a8b005"</span>
+<a class="jxr_linenumber" name="L509" href="#L509">509</a>                                                      + <span class="jxr_string">"3201d723120a8562b838cdff25bf9d1e"</span> + <span class="jxr_string">"6a8cc3865f76897c2e4b245cf31c51f2"</span>;
+<a class="jxr_linenumber" name="L510" href="#L510">510</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED_6  = <span class="jxr_string">"2f5c64059db55ee0fb847ed513003746"</span> + <span class="jxr_string">"aca4e61c711b5de2e7a77ffd02da42fe"</span>
+<a class="jxr_linenumber" name="L511" href="#L511">511</a>                                                      + <span class="jxr_string">"ec601910d3467bb8b36ebbaebce5fba3"</span> + <span class="jxr_string">"0d36c95f48a3e7980f0e7ac299332a80"</span>
+<a class="jxr_linenumber" name="L512" href="#L512">512</a>                                                      + <span class="jxr_string">"cdc46ae475563de037001ef84ae21744"</span>;
+<a class="jxr_linenumber" name="L513" href="#L513">513</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED_7  = <span class="jxr_string">"a8fe3e8707eb1f84fb28f8cb73de8e99"</span> + <span class="jxr_string">"e2f48a14"</span>;
+<a class="jxr_linenumber" name="L514" href="#L514">514</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED_8  = <span class="jxr_string">"6bb0fecf5ded9b77f902c7d5da236a43"</span> + <span class="jxr_string">"91dd029724afc9805e976f451e6d87f6"</span>
+<a class="jxr_linenumber" name="L515" href="#L515">515</a>                                                      + <span class="jxr_string">"fe106514"</span>;
+<a class="jxr_linenumber" name="L516" href="#L516">516</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED_9  = <span class="jxr_string">"44d0aaf6fb2f1f34add5e8064e83e12a"</span> + <span class="jxr_string">"2adabff9b2ef00fb47920cc72a0c0f13"</span>
+<a class="jxr_linenumber" name="L517" href="#L517">517</a>                                                      + <span class="jxr_string">"b9fd"</span>;
+<a class="jxr_linenumber" name="L518" href="#L518">518</a> 
+<a class="jxr_linenumber" name="L519" href="#L519">519</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L520" href="#L520">520</a> <em class="jxr_javadoccomment">         * Test cipher.</em>
+<a class="jxr_linenumber" name="L521" href="#L521">521</a> <em class="jxr_javadoccomment">         * @throws GordianException on error</em>
+<a class="jxr_linenumber" name="L522" href="#L522">522</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="L523" href="#L523">523</a>         <strong class="jxr_keyword">void</strong> testTheCipher() <strong class="jxr_keyword">throws</strong> GordianException {
+<a class="jxr_linenumber" name="L524" href="#L524">524</a>             testSIVCipher(<strong class="jxr_keyword">new</strong> GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, AEAD_1, DATA_8, EXPECTED_1);
+<a class="jxr_linenumber" name="L525" href="#L525">525</a>             testSIVCipher(<strong class="jxr_keyword">new</strong> GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, AEAD_1, DATA_12, EXPECTED_2);
+<a class="jxr_linenumber" name="L526" href="#L526">526</a>             testSIVCipher(<strong class="jxr_keyword">new</strong> GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, AEAD_1, DATA_16, EXPECTED_3);
+<a class="jxr_linenumber" name="L527" href="#L527">527</a>             testSIVCipher(<strong class="jxr_keyword">new</strong> GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, AEAD_1, DATA_32, EXPECTED_4);
+<a class="jxr_linenumber" name="L528" href="#L528">528</a>             testSIVCipher(<strong class="jxr_keyword">new</strong> GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, AEAD_1, DATA_48, EXPECTED_5);
+<a class="jxr_linenumber" name="L529" href="#L529">529</a>             testSIVCipher(<strong class="jxr_keyword">new</strong> GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, AEAD_1, DATA_64, EXPECTED_6);
+<a class="jxr_linenumber" name="L530" href="#L530">530</a>             testSIVCipher(<strong class="jxr_keyword">new</strong> GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, AEAD_12, DATA_4, EXPECTED_7);
+<a class="jxr_linenumber" name="L531" href="#L531">531</a>             testSIVCipher(<strong class="jxr_keyword">new</strong> GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, AEAD_18, DATA_20, EXPECTED_8);
+<a class="jxr_linenumber" name="L532" href="#L532">532</a>             testSIVCipher(<strong class="jxr_keyword">new</strong> GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, AEAD_20, DATA_18, EXPECTED_9);
+<a class="jxr_linenumber" name="L533" href="#L533">533</a>         }
+<a class="jxr_linenumber" name="L534" href="#L534">534</a>     }
+<a class="jxr_linenumber" name="L535" href="#L535">535</a> 
+<a class="jxr_linenumber" name="L536" href="#L536">536</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L537" href="#L537">537</a> <em class="jxr_javadoccomment">     * AES-GCM-SIV-256.</em>
+<a class="jxr_linenumber" name="L538" href="#L538">538</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L539" href="#L539">539</a>     <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> AESGCMSIV128Test3 {
+<a class="jxr_linenumber" name="L540" href="#L540">540</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EMPTY       = <span class="jxr_string">""</span>;
+<a class="jxr_linenumber" name="L541" href="#L541">541</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String KEY_1       = <span class="jxr_string">"e66021d5eb8e4f4066d4adb9c33560e4"</span>;
+<a class="jxr_linenumber" name="L542" href="#L542">542</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String KEY_2       = <span class="jxr_string">"36864200e0eaf5284d884a0e77d31646"</span>;
+<a class="jxr_linenumber" name="L543" href="#L543">543</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String KEY_3       = <span class="jxr_string">"aedb64a6c590bc84d1a5e269e4b47801"</span>;
+<a class="jxr_linenumber" name="L544" href="#L544">544</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String KEY_4       = <span class="jxr_string">"d5cc1fd161320b6920ce07787f86743b"</span>;
+<a class="jxr_linenumber" name="L545" href="#L545">545</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String KEY_5       = <span class="jxr_string">"b3fed1473c528b8426a582995929a149"</span>;
+<a class="jxr_linenumber" name="L546" href="#L546">546</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String KEY_6       = <span class="jxr_string">"2d4ed87da44102952ef94b02b805249b"</span>;
+<a class="jxr_linenumber" name="L547" href="#L547">547</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String KEY_7       = <span class="jxr_string">"bde3b2f204d1e9f8b06bc47f9745b3d1"</span>;
+<a class="jxr_linenumber" name="L548" href="#L548">548</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String KEY_8       = <span class="jxr_string">"f901cfe8a69615a93fdf7a98cad48179"</span>;
+<a class="jxr_linenumber" name="L549" href="#L549">549</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String NONCE_1     = <span class="jxr_string">"f46e44bb3da0015c94f70887"</span>;
+<a class="jxr_linenumber" name="L550" href="#L550">550</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String NONCE_2     = <span class="jxr_string">"bae8e37fc83441b16034566b"</span>;
+<a class="jxr_linenumber" name="L551" href="#L551">551</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String NONCE_3     = <span class="jxr_string">"afc0577e34699b9e671fdd4f"</span>;
+<a class="jxr_linenumber" name="L552" href="#L552">552</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String NONCE_4     = <span class="jxr_string">"275d1ab32f6d1f0434d8848c"</span>;
+<a class="jxr_linenumber" name="L553" href="#L553">553</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String NONCE_5     = <span class="jxr_string">"9e9ad8780c8d63d0ab4149c0"</span>;
+<a class="jxr_linenumber" name="L554" href="#L554">554</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String NONCE_6     = <span class="jxr_string">"ac80e6f61455bfac8308a2d4"</span>;
+<a class="jxr_linenumber" name="L555" href="#L555">555</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String NONCE_7     = <span class="jxr_string">"ae06556fb6aa7890bebc18fe"</span>;
+<a class="jxr_linenumber" name="L556" href="#L556">556</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String NONCE_8     = <span class="jxr_string">"6245709fb18853f68d833640"</span>;
+<a class="jxr_linenumber" name="L557" href="#L557">557</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String AEAD_2      = <span class="jxr_string">"46bb91c3c5"</span>;
+<a class="jxr_linenumber" name="L558" href="#L558">558</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String AEAD_3      = <span class="jxr_string">"fc880c94a95198874296"</span>;
+<a class="jxr_linenumber" name="L559" href="#L559">559</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String AEAD_4      = <span class="jxr_string">"046787f3ea22c127aaf195d1894728"</span>;
+<a class="jxr_linenumber" name="L560" href="#L560">560</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String AEAD_5      = <span class="jxr_string">"c9882e5386fd9f92ec489c8fde2be2cf"</span> + <span class="jxr_string">"97e74e93"</span>;
+<a class="jxr_linenumber" name="L561" href="#L561">561</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String AEAD_6      = <span class="jxr_string">"2950a70d5a1db2316fd568378da107b5"</span> + <span class="jxr_string">"2b0da55210cc1c1b0a"</span>;
+<a class="jxr_linenumber" name="L562" href="#L562">562</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String AEAD_7      = <span class="jxr_string">"1860f762ebfbd08284e421702de0de18"</span> + <span class="jxr_string">"baa9c9596291b08466f37de21c7f"</span>;
+<a class="jxr_linenumber" name="L563" href="#L563">563</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String AEAD_8      = <span class="jxr_string">"7576f7028ec6eb5ea7e298342a94d4b2"</span> + <span class="jxr_string">"02b370ef9768ec6561c4fe6b7e7296fa"</span>
+<a class="jxr_linenumber" name="L564" href="#L564">564</a>                                                     + <span class="jxr_string">"859c21"</span>;
+<a class="jxr_linenumber" name="L565" href="#L565">565</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String DATA_2      = <span class="jxr_string">"7a806c"</span>;
+<a class="jxr_linenumber" name="L566" href="#L566">566</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String DATA_3      = <span class="jxr_string">"bdc66f146545"</span>;
+<a class="jxr_linenumber" name="L567" href="#L567">567</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String DATA_4      = <span class="jxr_string">"1177441f195495860f"</span>;
+<a class="jxr_linenumber" name="L568" href="#L568">568</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String DATA_5      = <span class="jxr_string">"9f572c614b4745914474e7c7"</span>;
+<a class="jxr_linenumber" name="L569" href="#L569">569</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String DATA_6      = <span class="jxr_string">"0d8c8451178082355c9e940fea2f58"</span>;
+<a class="jxr_linenumber" name="L570" href="#L570">570</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String DATA_7      = <span class="jxr_string">"6b3db4da3d57aa94842b9803a96e07fb"</span> + <span class="jxr_string">"6de7"</span>;
+<a class="jxr_linenumber" name="L571" href="#L571">571</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String DATA_8      = <span class="jxr_string">"e42a3c02c25b64869e146d7b233987bd"</span> + <span class="jxr_string">"dfc240871d"</span>;
+<a class="jxr_linenumber" name="L572" href="#L572">572</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED_1  = <span class="jxr_string">"a4194b79071b01a87d65f706e3949578"</span>;
+<a class="jxr_linenumber" name="L573" href="#L573">573</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED_2  = <span class="jxr_string">"af60eb711bd85bc1e4d3e0a462e074ee"</span> + <span class="jxr_string">"a428a8"</span>;
+<a class="jxr_linenumber" name="L574" href="#L574">574</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED_3  = <span class="jxr_string">"bb93a3e34d3cd6a9c45545cfc11f03ad"</span> + <span class="jxr_string">"743dba20f966"</span>;
+<a class="jxr_linenumber" name="L575" href="#L575">575</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED_4  = <span class="jxr_string">"4f37281f7ad12949d01d02fd0cd174c8"</span> + <span class="jxr_string">"4fc5dae2f60f52fd2b"</span>;
+<a class="jxr_linenumber" name="L576" href="#L576">576</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED_5  = <span class="jxr_string">"f54673c5ddf710c745641c8bc1dc2f87"</span> + <span class="jxr_string">"1fb7561da1286e655e24b7b0"</span>;
+<a class="jxr_linenumber" name="L577" href="#L577">577</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED_6  = <span class="jxr_string">"c9ff545e07b88a015f05b274540aa183"</span> + <span class="jxr_string">"b3449b9f39552de99dc214a1190b0b"</span>;
+<a class="jxr_linenumber" name="L578" href="#L578">578</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED_7  = <span class="jxr_string">"6298b296e24e8cc35dce0bed484b7f30"</span> + <span class="jxr_string">"d5803e377094f04709f64d7b985310a4"</span>
+<a class="jxr_linenumber" name="L579" href="#L579">579</a>                                                     + <span class="jxr_string">"db84"</span>;
+<a class="jxr_linenumber" name="L580" href="#L580">580</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED_8  = <span class="jxr_string">"391cc328d484a4f46406181bcd62efd9"</span> + <span class="jxr_string">"b3ee197d052d15506c84a9edd65e13e9"</span>
+<a class="jxr_linenumber" name="L581" href="#L581">581</a>                                                     + <span class="jxr_string">"d24a2a6e70"</span>;
+<a class="jxr_linenumber" name="L582" href="#L582">582</a> 
+<a class="jxr_linenumber" name="L583" href="#L583">583</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L584" href="#L584">584</a> <em class="jxr_javadoccomment">         * Test cipher.</em>
+<a class="jxr_linenumber" name="L585" href="#L585">585</a> <em class="jxr_javadoccomment">         * @throws GordianException on error</em>
+<a class="jxr_linenumber" name="L586" href="#L586">586</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="L587" href="#L587">587</a>         <strong class="jxr_keyword">void</strong> testTheCipher() <strong class="jxr_keyword">throws</strong> GordianException {
+<a class="jxr_linenumber" name="L588" href="#L588">588</a>             testSIVCipher(<strong class="jxr_keyword">new</strong> GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, EMPTY, EMPTY, EXPECTED_1);
+<a class="jxr_linenumber" name="L589" href="#L589">589</a>             testSIVCipher(<strong class="jxr_keyword">new</strong> GordianGCMSIVBlockCipher(), KEY_2, NONCE_2, AEAD_2, DATA_2, EXPECTED_2);
+<a class="jxr_linenumber" name="L590" href="#L590">590</a>             testSIVCipher(<strong class="jxr_keyword">new</strong> GordianGCMSIVBlockCipher(), KEY_3, NONCE_3, AEAD_3, DATA_3, EXPECTED_3);
+<a class="jxr_linenumber" name="L591" href="#L591">591</a>             testSIVCipher(<strong class="jxr_keyword">new</strong> GordianGCMSIVBlockCipher(), KEY_4, NONCE_4, AEAD_4, DATA_4, EXPECTED_4);
+<a class="jxr_linenumber" name="L592" href="#L592">592</a>             testSIVCipher(<strong class="jxr_keyword">new</strong> GordianGCMSIVBlockCipher(), KEY_5, NONCE_5, AEAD_5, DATA_5, EXPECTED_5);
+<a class="jxr_linenumber" name="L593" href="#L593">593</a>             testSIVCipher(<strong class="jxr_keyword">new</strong> GordianGCMSIVBlockCipher(), KEY_6, NONCE_6, AEAD_6, DATA_6, EXPECTED_6);
+<a class="jxr_linenumber" name="L594" href="#L594">594</a>             testSIVCipher(<strong class="jxr_keyword">new</strong> GordianGCMSIVBlockCipher(), KEY_7, NONCE_7, AEAD_7, DATA_7, EXPECTED_7);
+<a class="jxr_linenumber" name="L595" href="#L595">595</a>             testSIVCipher(<strong class="jxr_keyword">new</strong> GordianGCMSIVBlockCipher(), KEY_8, NONCE_8, AEAD_8, DATA_8, EXPECTED_8);
+<a class="jxr_linenumber" name="L596" href="#L596">596</a>         }
+<a class="jxr_linenumber" name="L597" href="#L597">597</a>     }
+<a class="jxr_linenumber" name="L598" href="#L598">598</a> 
+<a class="jxr_linenumber" name="L599" href="#L599">599</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L600" href="#L600">600</a> <em class="jxr_javadoccomment">     * AES-GCM-SIV-256.</em>
+<a class="jxr_linenumber" name="L601" href="#L601">601</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L602" href="#L602">602</a>     <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> AESGCMSIV256Test1 {
+<a class="jxr_linenumber" name="L603" href="#L603">603</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EMPTY       = <span class="jxr_string">""</span>;
+<a class="jxr_linenumber" name="L604" href="#L604">604</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String KEY_1       = <span class="jxr_string">"01000000000000000000000000000000"</span> + <span class="jxr_string">"00000000000000000000000000000000"</span>;
+<a class="jxr_linenumber" name="L605" href="#L605">605</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String NONCE_1     = <span class="jxr_string">"030000000000000000000000"</span>;
+<a class="jxr_linenumber" name="L606" href="#L606">606</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String DATA_8      = <span class="jxr_string">"0100000000000000"</span>;
+<a class="jxr_linenumber" name="L607" href="#L607">607</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String DATA_12     = <span class="jxr_string">"010000000000000000000000"</span>;
+<a class="jxr_linenumber" name="L608" href="#L608">608</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String DATA_16     = <span class="jxr_string">"01000000000000000000000000000000"</span>;
+<a class="jxr_linenumber" name="L609" href="#L609">609</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String DATA_32     = <span class="jxr_string">"01000000000000000000000000000000"</span> + <span class="jxr_string">"02000000000000000000000000000000"</span>;
+<a class="jxr_linenumber" name="L610" href="#L610">610</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String DATA_48     = <span class="jxr_string">"01000000000000000000000000000000"</span> + <span class="jxr_string">"02000000000000000000000000000000"</span>
+<a class="jxr_linenumber" name="L611" href="#L611">611</a>                                                         + <span class="jxr_string">"03000000000000000000000000000000"</span>;
+<a class="jxr_linenumber" name="L612" href="#L612">612</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String DATA_64     = <span class="jxr_string">"01000000000000000000000000000000"</span> + <span class="jxr_string">"02000000000000000000000000000000"</span>
+<a class="jxr_linenumber" name="L613" href="#L613">613</a>                                                         + <span class="jxr_string">"03000000000000000000000000000000"</span> + <span class="jxr_string">"04000000000000000000000000000000"</span>;
+<a class="jxr_linenumber" name="L614" href="#L614">614</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED_1  = <span class="jxr_string">"07f5f4169bbf55a8400cd47ea6fd400f"</span>;
+<a class="jxr_linenumber" name="L615" href="#L615">615</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED_2  = <span class="jxr_string">"c2ef328e5c71c83b843122130f7364b7"</span> + <span class="jxr_string">"61e0b97427e3df28"</span>;
+<a class="jxr_linenumber" name="L616" href="#L616">616</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED_3  = <span class="jxr_string">"9aab2aeb3faa0a34aea8e2b18ca50da9"</span> + <span class="jxr_string">"ae6559e48fd10f6e5c9ca17e"</span>;
+<a class="jxr_linenumber" name="L617" href="#L617">617</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED_4  = <span class="jxr_string">"85a01b63025ba19b7fd3ddfc033b3e76"</span> + <span class="jxr_string">"c9eac6fa700942702e90862383c6c366"</span>;
+<a class="jxr_linenumber" name="L618" href="#L618">618</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED_5  = <span class="jxr_string">"4a6a9db4c8c6549201b9edb53006cba8"</span> + <span class="jxr_string">"21ec9cf850948a7c86c68ac7539d027f"</span>
+<a class="jxr_linenumber" name="L619" href="#L619">619</a>                                                         + <span class="jxr_string">"e819e63abcd020b006a976397632eb5d"</span>;
+<a class="jxr_linenumber" name="L620" href="#L620">620</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED_6  = <span class="jxr_string">"c00d121893a9fa603f48ccc1ca3c57ce"</span> + <span class="jxr_string">"7499245ea0046db16c53c7c66fe717e3"</span>
+<a class="jxr_linenumber" name="L621" href="#L621">621</a>                                                         + <span class="jxr_string">"9cf6c748837b61f6ee3adcee17534ed5"</span> + <span class="jxr_string">"790bc96880a99ba804bd12c0e6a22cc4"</span>;
+<a class="jxr_linenumber" name="L622" href="#L622">622</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED_7  = <span class="jxr_string">"c2d5160a1f8683834910acdafc41fbb1"</span> + <span class="jxr_string">"632d4a353e8b905ec9a5499ac34f96c7"</span>
+<a class="jxr_linenumber" name="L623" href="#L623">623</a>                                                         + <span class="jxr_string">"e1049eb080883891a4db8caaa1f99dd0"</span> + <span class="jxr_string">"04d80487540735234e3744512c6f90ce"</span>
+<a class="jxr_linenumber" name="L624" href="#L624">624</a>                                                         + <span class="jxr_string">"112864c269fc0d9d88c61fa47e39aa08"</span>;
+<a class="jxr_linenumber" name="L625" href="#L625">625</a> 
+<a class="jxr_linenumber" name="L626" href="#L626">626</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L627" href="#L627">627</a> <em class="jxr_javadoccomment">         * Test cipher.</em>
+<a class="jxr_linenumber" name="L628" href="#L628">628</a> <em class="jxr_javadoccomment">         * @throws GordianException on error</em>
+<a class="jxr_linenumber" name="L629" href="#L629">629</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="L630" href="#L630">630</a>         <strong class="jxr_keyword">void</strong> testTheCipher() <strong class="jxr_keyword">throws</strong> GordianException {
+<a class="jxr_linenumber" name="L631" href="#L631">631</a>             testSIVCipher(<strong class="jxr_keyword">new</strong> GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, EMPTY, EMPTY, EXPECTED_1);
+<a class="jxr_linenumber" name="L632" href="#L632">632</a>             testSIVCipher(<strong class="jxr_keyword">new</strong> GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, EMPTY, DATA_8, EXPECTED_2);
+<a class="jxr_linenumber" name="L633" href="#L633">633</a>             testSIVCipher(<strong class="jxr_keyword">new</strong> GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, EMPTY, DATA_12, EXPECTED_3);
+<a class="jxr_linenumber" name="L634" href="#L634">634</a>             testSIVCipher(<strong class="jxr_keyword">new</strong> GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, EMPTY, DATA_16, EXPECTED_4);
+<a class="jxr_linenumber" name="L635" href="#L635">635</a>             testSIVCipher(<strong class="jxr_keyword">new</strong> GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, EMPTY, DATA_32, EXPECTED_5);
+<a class="jxr_linenumber" name="L636" href="#L636">636</a>             testSIVCipher(<strong class="jxr_keyword">new</strong> GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, EMPTY, DATA_48, EXPECTED_6);
+<a class="jxr_linenumber" name="L637" href="#L637">637</a>             testSIVCipher(<strong class="jxr_keyword">new</strong> GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, EMPTY, DATA_64, EXPECTED_7);
+<a class="jxr_linenumber" name="L638" href="#L638">638</a>         }
+<a class="jxr_linenumber" name="L639" href="#L639">639</a>     }
+<a class="jxr_linenumber" name="L640" href="#L640">640</a> 
+<a class="jxr_linenumber" name="L641" href="#L641">641</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L642" href="#L642">642</a> <em class="jxr_javadoccomment">     * AES-GCM-SIV-256.</em>
+<a class="jxr_linenumber" name="L643" href="#L643">643</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L644" href="#L644">644</a>     <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> AESGCMSIV256Test2 {
+<a class="jxr_linenumber" name="L645" href="#L645">645</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String KEY_1       = <span class="jxr_string">"01000000000000000000000000000000"</span> + <span class="jxr_string">"00000000000000000000000000000000"</span>;
+<a class="jxr_linenumber" name="L646" href="#L646">646</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String NONCE_1     = <span class="jxr_string">"030000000000000000000000"</span>;
+<a class="jxr_linenumber" name="L647" href="#L647">647</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String AEAD_1      = <span class="jxr_string">"01"</span>;
+<a class="jxr_linenumber" name="L648" href="#L648">648</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String AEAD_12     = <span class="jxr_string">"010000000000000000000000"</span>;
+<a class="jxr_linenumber" name="L649" href="#L649">649</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String AEAD_18     = <span class="jxr_string">"01000000000000000000000000000000"</span> + <span class="jxr_string">"0200"</span>;
+<a class="jxr_linenumber" name="L650" href="#L650">650</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String AEAD_20     = <span class="jxr_string">"01000000000000000000000000000000"</span> + <span class="jxr_string">"02000000"</span>;
+<a class="jxr_linenumber" name="L651" href="#L651">651</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String DATA_4      = <span class="jxr_string">"02000000"</span>;
+<a class="jxr_linenumber" name="L652" href="#L652">652</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String DATA_8      = <span class="jxr_string">"0200000000000000"</span>;
+<a class="jxr_linenumber" name="L653" href="#L653">653</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String DATA_12     = <span class="jxr_string">"020000000000000000000000"</span>;
+<a class="jxr_linenumber" name="L654" href="#L654">654</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String DATA_16     = <span class="jxr_string">"02000000000000000000000000000000"</span>;
+<a class="jxr_linenumber" name="L655" href="#L655">655</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String DATA_18     = <span class="jxr_string">"03000000000000000000000000000000"</span> + <span class="jxr_string">"0400"</span>;
+<a class="jxr_linenumber" name="L656" href="#L656">656</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String DATA_20     = <span class="jxr_string">"03000000000000000000000000000000"</span> + <span class="jxr_string">"04000000"</span>;
+<a class="jxr_linenumber" name="L657" href="#L657">657</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String DATA_32     = <span class="jxr_string">"02000000000000000000000000000000"</span> + <span class="jxr_string">"03000000000000000000000000000000"</span>;
+<a class="jxr_linenumber" name="L658" href="#L658">658</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String DATA_48     = <span class="jxr_string">"02000000000000000000000000000000"</span> + <span class="jxr_string">"03000000000000000000000000000000"</span>
+<a class="jxr_linenumber" name="L659" href="#L659">659</a>                                                         + <span class="jxr_string">"04000000000000000000000000000000"</span>;
+<a class="jxr_linenumber" name="L660" href="#L660">660</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String DATA_64     = <span class="jxr_string">"02000000000000000000000000000000"</span> + <span class="jxr_string">"03000000000000000000000000000000"</span>
+<a class="jxr_linenumber" name="L661" href="#L661">661</a>                                                         + <span class="jxr_string">"04000000000000000000000000000000"</span> + <span class="jxr_string">"05000000000000000000000000000000"</span>;
+<a class="jxr_linenumber" name="L662" href="#L662">662</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED_1  = <span class="jxr_string">"1de22967237a813291213f267e3b452f"</span> + <span class="jxr_string">"02d01ae33e4ec854"</span>;
+<a class="jxr_linenumber" name="L663" href="#L663">663</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED_2  = <span class="jxr_string">"163d6f9cc1b346cd453a2e4cc1a4a19a"</span> + <span class="jxr_string">"e800941ccdc57cc8413c277f"</span>;
+<a class="jxr_linenumber" name="L664" href="#L664">664</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED_3  = <span class="jxr_string">"c91545823cc24f17dbb0e9e807d5ec17"</span> + <span class="jxr_string">"b292d28ff61189e8e49f3875ef91aff7"</span>;
+<a class="jxr_linenumber" name="L665" href="#L665">665</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED_4  = <span class="jxr_string">"07dad364bfc2b9da89116d7bef6daaaf"</span> + <span class="jxr_string">"6f255510aa654f920ac81b94e8bad365"</span>
+<a class="jxr_linenumber" name="L666" href="#L666">666</a>                                                         + <span class="jxr_string">"aea1bad12702e1965604374aab96dbbc"</span>;
+<a class="jxr_linenumber" name="L667" href="#L667">667</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED_5  = <span class="jxr_string">"c67a1f0f567a5198aa1fcc8e3f213143"</span> + <span class="jxr_string">"36f7f51ca8b1af61feac35a86416fa47"</span>
+<a class="jxr_linenumber" name="L668" href="#L668">668</a>                                                         + <span class="jxr_string">"fbca3b5f749cdf564527f2314f42fe25"</span> + <span class="jxr_string">"03332742b228c647173616cfd44c54eb"</span>;
+<a class="jxr_linenumber" name="L669" href="#L669">669</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED_6  = <span class="jxr_string">"67fd45e126bfb9a79930c43aad2d3696"</span> + <span class="jxr_string">"7d3f0e4d217c1e551f59727870beefc9"</span>
+<a class="jxr_linenumber" name="L670" href="#L670">670</a>                                                         + <span class="jxr_string">"8cb933a8fce9de887b1e40799988db1f"</span> + <span class="jxr_string">"c3f91880ed405b2dd298318858467c89"</span>
+<a class="jxr_linenumber" name="L671" href="#L671">671</a>                                                         + <span class="jxr_string">"5bde0285037c5de81e5b570a049b62a0"</span>;
+<a class="jxr_linenumber" name="L672" href="#L672">672</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED_7  = <span class="jxr_string">"22b3f4cd1835e517741dfddccfa07fa4"</span> + <span class="jxr_string">"661b74cf"</span>;
+<a class="jxr_linenumber" name="L673" href="#L673">673</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED_8  = <span class="jxr_string">"43dd0163cdb48f9fe3212bf61b201976"</span> + <span class="jxr_string">"067f342bb879ad976d8242acc188ab59"</span>
+<a class="jxr_linenumber" name="L674" href="#L674">674</a>                                                         + <span class="jxr_string">"cabfe307"</span>;
+<a class="jxr_linenumber" name="L675" href="#L675">675</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED_9  = <span class="jxr_string">"462401724b5ce6588d5a54aae5375513"</span> + <span class="jxr_string">"a075cfcdf5042112aa29685c912fc205"</span>
+<a class="jxr_linenumber" name="L676" href="#L676">676</a>                                                         + <span class="jxr_string">"6543"</span>;
+<a class="jxr_linenumber" name="L677" href="#L677">677</a> 
+<a class="jxr_linenumber" name="L678" href="#L678">678</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L679" href="#L679">679</a> <em class="jxr_javadoccomment">         * Test cipher.</em>
+<a class="jxr_linenumber" name="L680" href="#L680">680</a> <em class="jxr_javadoccomment">         * @throws GordianException on error</em>
+<a class="jxr_linenumber" name="L681" href="#L681">681</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="L682" href="#L682">682</a>         <strong class="jxr_keyword">void</strong> testTheCipher() <strong class="jxr_keyword">throws</strong> GordianException {
+<a class="jxr_linenumber" name="L683" href="#L683">683</a>             testSIVCipher(<strong class="jxr_keyword">new</strong> GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, AEAD_1, DATA_8, EXPECTED_1);
+<a class="jxr_linenumber" name="L684" href="#L684">684</a>             testSIVCipher(<strong class="jxr_keyword">new</strong> GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, AEAD_1, DATA_12, EXPECTED_2);
+<a class="jxr_linenumber" name="L685" href="#L685">685</a>             testSIVCipher(<strong class="jxr_keyword">new</strong> GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, AEAD_1, DATA_16, EXPECTED_3);
+<a class="jxr_linenumber" name="L686" href="#L686">686</a>             testSIVCipher(<strong class="jxr_keyword">new</strong> GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, AEAD_1, DATA_32, EXPECTED_4);
+<a class="jxr_linenumber" name="L687" href="#L687">687</a>             testSIVCipher(<strong class="jxr_keyword">new</strong> GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, AEAD_1, DATA_48, EXPECTED_5);
+<a class="jxr_linenumber" name="L688" href="#L688">688</a>             testSIVCipher(<strong class="jxr_keyword">new</strong> GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, AEAD_1, DATA_64, EXPECTED_6);
+<a class="jxr_linenumber" name="L689" href="#L689">689</a>             testSIVCipher(<strong class="jxr_keyword">new</strong> GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, AEAD_12, DATA_4, EXPECTED_7);
+<a class="jxr_linenumber" name="L690" href="#L690">690</a>             testSIVCipher(<strong class="jxr_keyword">new</strong> GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, AEAD_18, DATA_20, EXPECTED_8);
+<a class="jxr_linenumber" name="L691" href="#L691">691</a>             testSIVCipher(<strong class="jxr_keyword">new</strong> GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, AEAD_20, DATA_18, EXPECTED_9);
+<a class="jxr_linenumber" name="L692" href="#L692">692</a>         }
+<a class="jxr_linenumber" name="L693" href="#L693">693</a>     }
+<a class="jxr_linenumber" name="L694" href="#L694">694</a> 
+<a class="jxr_linenumber" name="L695" href="#L695">695</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L696" href="#L696">696</a> <em class="jxr_javadoccomment">     * AES-GCM-SIV-256.</em>
+<a class="jxr_linenumber" name="L697" href="#L697">697</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L698" href="#L698">698</a>     <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> AESGCMSIV256Test3 {
+<a class="jxr_linenumber" name="L699" href="#L699">699</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EMPTY       = <span class="jxr_string">""</span>;
+<a class="jxr_linenumber" name="L700" href="#L700">700</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String KEY_1       = <span class="jxr_string">"e66021d5eb8e4f4066d4adb9c33560e4"</span> + <span class="jxr_string">"f46e44bb3da0015c94f7088736864200"</span>;
+<a class="jxr_linenumber" name="L701" href="#L701">701</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String KEY_2       = <span class="jxr_string">"bae8e37fc83441b16034566b7a806c46"</span> + <span class="jxr_string">"bb91c3c5aedb64a6c590bc84d1a5e269"</span>;
+<a class="jxr_linenumber" name="L702" href="#L702">702</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String KEY_3       = <span class="jxr_string">"6545fc880c94a95198874296d5cc1fd1"</span> + <span class="jxr_string">"61320b6920ce07787f86743b275d1ab3"</span>;
+<a class="jxr_linenumber" name="L703" href="#L703">703</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String KEY_4       = <span class="jxr_string">"d1894728b3fed1473c528b8426a58299"</span> + <span class="jxr_string">"5929a1499e9ad8780c8d63d0ab4149c0"</span>;
+<a class="jxr_linenumber" name="L704" href="#L704">704</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String KEY_5       = <span class="jxr_string">"a44102952ef94b02b805249bac80e6f6"</span> + <span class="jxr_string">"1455bfac8308a2d40d8c845117808235"</span>;
+<a class="jxr_linenumber" name="L705" href="#L705">705</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String KEY_6       = <span class="jxr_string">"9745b3d1ae06556fb6aa7890bebc18fe"</span> + <span class="jxr_string">"6b3db4da3d57aa94842b9803a96e07fb"</span>;
+<a class="jxr_linenumber" name="L706" href="#L706">706</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String KEY_7       = <span class="jxr_string">"b18853f68d833640e42a3c02c25b6486"</span> + <span class="jxr_string">"9e146d7b233987bddfc240871d7576f7"</span>;
+<a class="jxr_linenumber" name="L707" href="#L707">707</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String KEY_8       = <span class="jxr_string">"3c535de192eaed3822a2fbbe2ca9dfc8"</span> + <span class="jxr_string">"8255e14a661b8aa82cc54236093bbc23"</span>;
+<a class="jxr_linenumber" name="L708" href="#L708">708</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String NONCE_1     = <span class="jxr_string">"e0eaf5284d884a0e77d31646"</span>;
+<a class="jxr_linenumber" name="L709" href="#L709">709</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String NONCE_2     = <span class="jxr_string">"e4b47801afc0577e34699b9e"</span>;
+<a class="jxr_linenumber" name="L710" href="#L710">710</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String NONCE_3     = <span class="jxr_string">"2f6d1f0434d8848c1177441f"</span>;
+<a class="jxr_linenumber" name="L711" href="#L711">711</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String NONCE_4     = <span class="jxr_string">"9f572c614b4745914474e7c7"</span>;
+<a class="jxr_linenumber" name="L712" href="#L712">712</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String NONCE_5     = <span class="jxr_string">"5c9e940fea2f582950a70d5a"</span>;
+<a class="jxr_linenumber" name="L713" href="#L713">713</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String NONCE_6     = <span class="jxr_string">"6de71860f762ebfbd08284e4"</span>;
+<a class="jxr_linenumber" name="L714" href="#L714">714</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String NONCE_7     = <span class="jxr_string">"028ec6eb5ea7e298342a94d4"</span>;
+<a class="jxr_linenumber" name="L715" href="#L715">715</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String NONCE_8     = <span class="jxr_string">"688089e55540db1872504e1c"</span>;
+<a class="jxr_linenumber" name="L716" href="#L716">716</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String AEAD_2      = <span class="jxr_string">"4fbdc66f14"</span>;
+<a class="jxr_linenumber" name="L717" href="#L717">717</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String AEAD_3      = <span class="jxr_string">"6787f3ea22c127aaf195"</span>;
+<a class="jxr_linenumber" name="L718" href="#L718">718</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String AEAD_4      = <span class="jxr_string">"489c8fde2be2cf97e74e932d4ed87d"</span>;
+<a class="jxr_linenumber" name="L719" href="#L719">719</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String AEAD_5      = <span class="jxr_string">"0da55210cc1c1b0abde3b2f204d1e9f8"</span> + <span class="jxr_string">"b06bc47f"</span>;
+<a class="jxr_linenumber" name="L720" href="#L720">720</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String AEAD_6      = <span class="jxr_string">"f37de21c7ff901cfe8a69615a93fdf7a"</span> + <span class="jxr_string">"98cad481796245709f"</span>;
+<a class="jxr_linenumber" name="L721" href="#L721">721</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String AEAD_7      = <span class="jxr_string">"9c2159058b1f0fe91433a5bdc20e214e"</span> + <span class="jxr_string">"ab7fecef4454a10ef0657df21ac7"</span>;
+<a class="jxr_linenumber" name="L722" href="#L722">722</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String AEAD_8      = <span class="jxr_string">"734320ccc9d9bbbb19cb81b2af4ecbc3"</span> + <span class="jxr_string">"e72834321f7aa0f70b7282b4f33df23f"</span>
+<a class="jxr_linenumber" name="L723" href="#L723">723</a>                                                         + <span class="jxr_string">"167541"</span>;
+<a class="jxr_linenumber" name="L724" href="#L724">724</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String DATA_2      = <span class="jxr_string">"671fdd"</span>;
+<a class="jxr_linenumber" name="L725" href="#L725">725</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String DATA_3      = <span class="jxr_string">"195495860f04"</span>;
+<a class="jxr_linenumber" name="L726" href="#L726">726</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String DATA_4      = <span class="jxr_string">"c9882e5386fd9f92ec"</span>;
+<a class="jxr_linenumber" name="L727" href="#L727">727</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String DATA_5      = <span class="jxr_string">"1db2316fd568378da107b52b"</span>;
+<a class="jxr_linenumber" name="L728" href="#L728">728</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String DATA_6      = <span class="jxr_string">"21702de0de18baa9c9596291b08466"</span>;
+<a class="jxr_linenumber" name="L729" href="#L729">729</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String DATA_7      = <span class="jxr_string">"b202b370ef9768ec6561c4fe6b7e7296"</span> + <span class="jxr_string">"fa85"</span>;
+<a class="jxr_linenumber" name="L730" href="#L730">730</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String DATA_8      = <span class="jxr_string">"ced532ce4159b035277d4dfbb7db6296"</span> + <span class="jxr_string">"8b13cd4eec"</span>;
+<a class="jxr_linenumber" name="L731" href="#L731">731</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED_1  = <span class="jxr_string">"169fbb2fbf389a995f6390af22228a62"</span>;
+<a class="jxr_linenumber" name="L732" href="#L732">732</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED_2  = <span class="jxr_string">"0eaccb93da9bb81333aee0c785b240d3"</span> + <span class="jxr_string">"19719d"</span>;
+<a class="jxr_linenumber" name="L733" href="#L733">733</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED_3  = <span class="jxr_string">"a254dad4f3f96b62b84dc40c84636a5e"</span> + <span class="jxr_string">"c12020ec8c2c"</span>;
+<a class="jxr_linenumber" name="L734" href="#L734">734</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED_4  = <span class="jxr_string">"0df9e308678244c44bc0fd3dc6628dfe"</span> + <span class="jxr_string">"55ebb0b9fb2295c8c2"</span>;
+<a class="jxr_linenumber" name="L735" href="#L735">735</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED_5  = <span class="jxr_string">"8dbeb9f7255bf5769dd56692404099c2"</span> + <span class="jxr_string">"587f64979f21826706d497d5"</span>;
+<a class="jxr_linenumber" name="L736" href="#L736">736</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED_6  = <span class="jxr_string">"793576dfa5c0f88729a7ed3c2f1bffb3"</span> + <span class="jxr_string">"080d28f6ebb5d3648ce97bd5ba67fd"</span>;
+<a class="jxr_linenumber" name="L737" href="#L737">737</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED_7  = <span class="jxr_string">"857e16a64915a787637687db4a951963"</span> + <span class="jxr_string">"5cdd454fc2a154fea91f8363a39fec7d"</span>
+<a class="jxr_linenumber" name="L738" href="#L738">738</a>                                                         + <span class="jxr_string">"0a49"</span>;
+<a class="jxr_linenumber" name="L739" href="#L739">739</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED_8  = <span class="jxr_string">"626660c26ea6612fb17ad91e8e767639"</span> + <span class="jxr_string">"edd6c9faee9d6c7029675b89eaf4ba1d"</span>
+<a class="jxr_linenumber" name="L740" href="#L740">740</a>                                                         + <span class="jxr_string">"ed1a286594"</span>;
+<a class="jxr_linenumber" name="L741" href="#L741">741</a> 
+<a class="jxr_linenumber" name="L742" href="#L742">742</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L743" href="#L743">743</a> <em class="jxr_javadoccomment">         * Test cipher.</em>
+<a class="jxr_linenumber" name="L744" href="#L744">744</a> <em class="jxr_javadoccomment">         * @throws GordianException on error</em>
+<a class="jxr_linenumber" name="L745" href="#L745">745</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="L746" href="#L746">746</a>         <strong class="jxr_keyword">void</strong> testTheCipher() <strong class="jxr_keyword">throws</strong> GordianException {
+<a class="jxr_linenumber" name="L747" href="#L747">747</a>             testSIVCipher(<strong class="jxr_keyword">new</strong> GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, EMPTY, EMPTY, EXPECTED_1);
+<a class="jxr_linenumber" name="L748" href="#L748">748</a>             testSIVCipher(<strong class="jxr_keyword">new</strong> GordianGCMSIVBlockCipher(), KEY_2, NONCE_2, AEAD_2, DATA_2, EXPECTED_2);
+<a class="jxr_linenumber" name="L749" href="#L749">749</a>             testSIVCipher(<strong class="jxr_keyword">new</strong> GordianGCMSIVBlockCipher(), KEY_3, NONCE_3, AEAD_3, DATA_3, EXPECTED_3);
+<a class="jxr_linenumber" name="L750" href="#L750">750</a>             testSIVCipher(<strong class="jxr_keyword">new</strong> GordianGCMSIVBlockCipher(), KEY_4, NONCE_4, AEAD_4, DATA_4, EXPECTED_4);
+<a class="jxr_linenumber" name="L751" href="#L751">751</a>             testSIVCipher(<strong class="jxr_keyword">new</strong> GordianGCMSIVBlockCipher(), KEY_5, NONCE_5, AEAD_5, DATA_5, EXPECTED_5);
+<a class="jxr_linenumber" name="L752" href="#L752">752</a>             testSIVCipher(<strong class="jxr_keyword">new</strong> GordianGCMSIVBlockCipher(), KEY_6, NONCE_6, AEAD_6, DATA_6, EXPECTED_6);
+<a class="jxr_linenumber" name="L753" href="#L753">753</a>             testSIVCipher(<strong class="jxr_keyword">new</strong> GordianGCMSIVBlockCipher(), KEY_7, NONCE_7, AEAD_7, DATA_7, EXPECTED_7);
+<a class="jxr_linenumber" name="L754" href="#L754">754</a>             testSIVCipher(<strong class="jxr_keyword">new</strong> GordianGCMSIVBlockCipher(), KEY_8, NONCE_8, AEAD_8, DATA_8, EXPECTED_8);
+<a class="jxr_linenumber" name="L755" href="#L755">755</a>         }
+<a class="jxr_linenumber" name="L756" href="#L756">756</a>     }
+<a class="jxr_linenumber" name="L757" href="#L757">757</a> 
+<a class="jxr_linenumber" name="L758" href="#L758">758</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L759" href="#L759">759</a> <em class="jxr_javadoccomment">     * AES-GCM-SIV-256.</em>
+<a class="jxr_linenumber" name="L760" href="#L760">760</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L761" href="#L761">761</a>     <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> AESGCMSIV256Test4 {
+<a class="jxr_linenumber" name="L762" href="#L762">762</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EMPTY       = <span class="jxr_string">""</span>;
+<a class="jxr_linenumber" name="L763" href="#L763">763</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String KEY_1       = <span class="jxr_string">"00000000000000000000000000000000"</span> + <span class="jxr_string">"00000000000000000000000000000000"</span>;
+<a class="jxr_linenumber" name="L764" href="#L764">764</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String NONCE_1     = <span class="jxr_string">"000000000000000000000000"</span>;
+<a class="jxr_linenumber" name="L765" href="#L765">765</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String DATA_1      = <span class="jxr_string">"00000000000000000000000000000000"</span> + <span class="jxr_string">"4db923dc793ee6497c76dcc03a98e108"</span>;
+<a class="jxr_linenumber" name="L766" href="#L766">766</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String DATA_2      = <span class="jxr_string">"eb3640277c7ffd1303c7a542d02d3e4c"</span> + <span class="jxr_string">"0000000000000000"</span>;
+<a class="jxr_linenumber" name="L767" href="#L767">767</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED_1  = <span class="jxr_string">"f3f80f2cf0cb2dd9c5984fcda908456c"</span> + <span class="jxr_string">"c537703b5ba70324a6793a7bf218d3ea"</span>
+<a class="jxr_linenumber" name="L768" href="#L768">768</a>                                                         + <span class="jxr_string">"ffffffff000000000000000000000000"</span>;
+<a class="jxr_linenumber" name="L769" href="#L769">769</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXPECTED_2  = <span class="jxr_string">"18ce4f0b8cb4d0cac65fea8f79257b20"</span> + <span class="jxr_string">"888e53e72299e56dffffffff00000000"</span>
+<a class="jxr_linenumber" name="L770" href="#L770">770</a>                                                         + <span class="jxr_string">"0000000000000000"</span>;
+<a class="jxr_linenumber" name="L771" href="#L771">771</a> 
+<a class="jxr_linenumber" name="L772" href="#L772">772</a>         <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L773" href="#L773">773</a> <em class="jxr_javadoccomment">         * Test cipher.</em>
+<a class="jxr_linenumber" name="L774" href="#L774">774</a> <em class="jxr_javadoccomment">         * @throws GordianException on error</em>
+<a class="jxr_linenumber" name="L775" href="#L775">775</a> <em class="jxr_javadoccomment">         */</em>
+<a class="jxr_linenumber" name="L776" href="#L776">776</a>         <strong class="jxr_keyword">void</strong> testTheCipher() <strong class="jxr_keyword">throws</strong> GordianException {
+<a class="jxr_linenumber" name="L777" href="#L777">777</a>             testSIVCipher(<strong class="jxr_keyword">new</strong> GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, EMPTY, DATA_1, EXPECTED_1);
+<a class="jxr_linenumber" name="L778" href="#L778">778</a>             testSIVCipher(<strong class="jxr_keyword">new</strong> GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, EMPTY, DATA_2, EXPECTED_2);
+<a class="jxr_linenumber" name="L779" href="#L779">779</a>         }
+<a class="jxr_linenumber" name="L780" href="#L780">780</a>     }
+<a class="jxr_linenumber" name="L781" href="#L781">781</a> 
+<a class="jxr_linenumber" name="L782" href="#L782">782</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L783" href="#L783">783</a> <em class="jxr_javadoccomment">     * Test the GCMSIVCipher against the results.</em>
+<a class="jxr_linenumber" name="L784" href="#L784">784</a> <em class="jxr_javadoccomment">     * @param pCipher the cipher to test.</em>
+<a class="jxr_linenumber" name="L785" href="#L785">785</a> <em class="jxr_javadoccomment">     * @param pKey the key to test</em>
+<a class="jxr_linenumber" name="L786" href="#L786">786</a> <em class="jxr_javadoccomment">     * @param pNonce the nonce</em>
+<a class="jxr_linenumber" name="L787" href="#L787">787</a> <em class="jxr_javadoccomment">     * @param pAEAD the AEAD</em>
+<a class="jxr_linenumber" name="L788" href="#L788">788</a> <em class="jxr_javadoccomment">     * @param pData the data to test</em>
+<a class="jxr_linenumber" name="L789" href="#L789">789</a> <em class="jxr_javadoccomment">     * @param pExpected the expected results</em>
+<a class="jxr_linenumber" name="L790" href="#L790">790</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L791" href="#L791">791</a>     <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> testSIVCipher(<strong class="jxr_keyword">final</strong> GordianGCMSIVBlockCipher pCipher,
+<a class="jxr_linenumber" name="L792" href="#L792">792</a>                               <strong class="jxr_keyword">final</strong> String pKey,
+<a class="jxr_linenumber" name="L793" href="#L793">793</a>                               <strong class="jxr_keyword">final</strong> String pNonce,
+<a class="jxr_linenumber" name="L794" href="#L794">794</a>                               <strong class="jxr_keyword">final</strong> String pAEAD,
+<a class="jxr_linenumber" name="L795" href="#L795">795</a>                               <strong class="jxr_keyword">final</strong> String pData,
+<a class="jxr_linenumber" name="L796" href="#L796">796</a>                               <strong class="jxr_keyword">final</strong> String pExpected) {
+<a class="jxr_linenumber" name="L797" href="#L797">797</a>         <em class="jxr_comment">/* protect against exceptions */</em>
+<a class="jxr_linenumber" name="L798" href="#L798">798</a>         <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L799" href="#L799">799</a>             <em class="jxr_comment">/* Access the key and the data */</em>
+<a class="jxr_linenumber" name="L800" href="#L800">800</a>             <strong class="jxr_keyword">final</strong> KeyParameter myKey = <strong class="jxr_keyword">new</strong> KeyParameter(Hex.decode(pKey));
+<a class="jxr_linenumber" name="L801" href="#L801">801</a>             <strong class="jxr_keyword">final</strong> byte[] myNonce = Hex.decode(pNonce);
+<a class="jxr_linenumber" name="L802" href="#L802">802</a>             <strong class="jxr_keyword">final</strong> byte[] myAEAD = Hex.decode(pAEAD);
+<a class="jxr_linenumber" name="L803" href="#L803">803</a>             <strong class="jxr_keyword">final</strong> byte[] myData = Hex.decode(pData);
+<a class="jxr_linenumber" name="L804" href="#L804">804</a> 
+<a class="jxr_linenumber" name="L805" href="#L805">805</a>             <em class="jxr_comment">/* Initialise the cipher with AEAD */</em>
+<a class="jxr_linenumber" name="L806" href="#L806">806</a>             AEADParameters myParamsA = <strong class="jxr_keyword">new</strong> AEADParameters(myKey, 128, myNonce, myAEAD);
+<a class="jxr_linenumber" name="L807" href="#L807">807</a>             AEADParameters myParamsB = <strong class="jxr_keyword">new</strong> AEADParameters(myKey, 128, myNonce);
+<a class="jxr_linenumber" name="L808" href="#L808">808</a>             pCipher.init(<strong class="jxr_keyword">true</strong>, myParamsA);
+<a class="jxr_linenumber" name="L809" href="#L809">809</a> 
+<a class="jxr_linenumber" name="L810" href="#L810">810</a>             <em class="jxr_comment">/* Create the output buffers */</em>
+<a class="jxr_linenumber" name="L811" href="#L811">811</a>             <strong class="jxr_keyword">final</strong> byte[] myOutput = <strong class="jxr_keyword">new</strong> byte[pCipher.getOutputSize(myData.length)];
+<a class="jxr_linenumber" name="L812" href="#L812">812</a>             <strong class="jxr_keyword">final</strong> byte[] myFinal = <strong class="jxr_keyword">new</strong> byte[myData.length];
+<a class="jxr_linenumber" name="L813" href="#L813">813</a> 
+<a class="jxr_linenumber" name="L814" href="#L814">814</a>             <em class="jxr_comment">/* Process the data */</em>
+<a class="jxr_linenumber" name="L815" href="#L815">815</a>             pCipher.processBytes(myData, 0, myData.length, <strong class="jxr_keyword">null</strong>, 0);
+<a class="jxr_linenumber" name="L816" href="#L816">816</a>             pCipher.doFinal(myOutput, 0);
+<a class="jxr_linenumber" name="L817" href="#L817">817</a> 
+<a class="jxr_linenumber" name="L818" href="#L818">818</a>             <em class="jxr_comment">/* Check the encryption */</em>
+<a class="jxr_linenumber" name="L819" href="#L819">819</a>             <strong class="jxr_keyword">final</strong> byte[] myExpected = Hex.decode(pExpected);
+<a class="jxr_linenumber" name="L820" href="#L820">820</a>             Assertions.assertArrayEquals(myExpected, myOutput, <span class="jxr_string">"Encryption mismatch"</span>);
+<a class="jxr_linenumber" name="L821" href="#L821">821</a> 
+<a class="jxr_linenumber" name="L822" href="#L822">822</a>             <em class="jxr_comment">/* Repeat processing one byte at a time */</em>
+<a class="jxr_linenumber" name="L823" href="#L823">823</a>             <strong class="jxr_keyword">for</strong> (byte b : myData) {
+<a class="jxr_linenumber" name="L824" href="#L824">824</a>                 pCipher.processByte(b, <strong class="jxr_keyword">null</strong>, 0);
+<a class="jxr_linenumber" name="L825" href="#L825">825</a>             }
+<a class="jxr_linenumber" name="L826" href="#L826">826</a>             pCipher.doFinal(myOutput, 0);
+<a class="jxr_linenumber" name="L827" href="#L827">827</a>             Assertions.assertArrayEquals(myExpected, myOutput, <span class="jxr_string">"Encryption mismatch"</span>);
+<a class="jxr_linenumber" name="L828" href="#L828">828</a> 
+<a class="jxr_linenumber" name="L829" href="#L829">829</a>             <em class="jxr_comment">/* Re-initialise the cipher with no AEAD */</em>
+<a class="jxr_linenumber" name="L830" href="#L830">830</a>             pCipher.init(false, myParamsB);
+<a class="jxr_linenumber" name="L831" href="#L831">831</a> 
+<a class="jxr_linenumber" name="L832" href="#L832">832</a>             <em class="jxr_comment">/* Process AEAD one byte at a time */</em>
+<a class="jxr_linenumber" name="L833" href="#L833">833</a>             <strong class="jxr_keyword">for</strong> (byte b : myAEAD) {
+<a class="jxr_linenumber" name="L834" href="#L834">834</a>                 pCipher.processAADByte(b);
+<a class="jxr_linenumber" name="L835" href="#L835">835</a>             }
+<a class="jxr_linenumber" name="L836" href="#L836">836</a>             pCipher.processBytes(myOutput, 0, myOutput.length, <strong class="jxr_keyword">null</strong>, 0);
+<a class="jxr_linenumber" name="L837" href="#L837">837</a>             pCipher.doFinal(myFinal, 0);
+<a class="jxr_linenumber" name="L838" href="#L838">838</a>             Assertions.assertArrayEquals(myData, myFinal, <span class="jxr_string">"Decryption mismatch"</span>);
+<a class="jxr_linenumber" name="L839" href="#L839">839</a> 
+<a class="jxr_linenumber" name="L840" href="#L840">840</a>             <em class="jxr_comment">/* Catch exceptions */</em>
+<a class="jxr_linenumber" name="L841" href="#L841">841</a>         } <strong class="jxr_keyword">catch</strong> (InvalidCipherTextException e) {
+<a class="jxr_linenumber" name="L842" href="#L842">842</a>             e.printStackTrace();
+<a class="jxr_linenumber" name="L843" href="#L843">843</a>         }
+<a class="jxr_linenumber" name="L844" href="#L844">844</a>     }
+<a class="jxr_linenumber" name="L845" href="#L845">845</a> }
+</pre>
+<hr/>
+<div id="footer">© 2012–2026</div>
+</body>
+</html>

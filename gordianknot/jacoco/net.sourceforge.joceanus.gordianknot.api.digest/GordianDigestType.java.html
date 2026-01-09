@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianDigestType.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.gordianknot.api.digest</a> &gt; <span class="el_source">GordianDigestType.java</span></div><h1>GordianDigestType.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * GordianKnot: Security Suite
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.gordianknot.api.digest;
+
+import net.sourceforge.joceanus.gordianknot.api.base.GordianBundleLoader.GordianBundleId;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
+
+/**
+ * DataDigest types. Available algorithms.
+ */
+<span class="fc" id="L25">public enum GordianDigestType {</span>
+    /**
+     * SHA2.
+     */
+<span class="fc" id="L29">    SHA2(GordianLength.LEN_224, GordianLength.LEN_256, GordianLength.LEN_384, GordianLength.LEN_512),</span>
+
+    /**
+     * Tiger.
+     */
+<span class="fc" id="L34">    TIGER(GordianLength.LEN_192),</span>
+
+    /**
+     * WhirlPool.
+     */
+<span class="fc" id="L39">    WHIRLPOOL(GordianLength.LEN_512),</span>
+
+    /**
+     * RIPEMD.
+     */
+<span class="fc" id="L44">    RIPEMD(GordianLength.LEN_128, GordianLength.LEN_160, GordianLength.LEN_256, GordianLength.LEN_320),</span>
+
+    /**
+     * GOST2012.
+     */
+<span class="fc" id="L49">    STREEBOG(GordianLength.LEN_256, GordianLength.LEN_512),</span>
+
+    /**
+     * GOST.
+     */
+<span class="fc" id="L54">    GOST(GordianLength.LEN_256),</span>
+
+    /**
+     * SHA3.
+     */
+<span class="fc" id="L59">    SHA3(GordianLength.LEN_224, GordianLength.LEN_256, GordianLength.LEN_384, GordianLength.LEN_512),</span>
+
+    /**
+     * SHAKE.
+     */
+<span class="fc" id="L64">    SHAKE(GordianLength.LEN_256, GordianLength.LEN_512),</span>
+
+    /**
+     * Skein.
+     */
+<span class="fc" id="L69">    SKEIN(GordianLength.LEN_128, GordianLength.LEN_160, GordianLength.LEN_224, GordianLength.LEN_256, GordianLength.LEN_384, GordianLength.LEN_512, GordianLength.LEN_1024),</span>
+
+    /**
+     * Kupyna.
+     */
+<span class="fc" id="L74">    KUPYNA(GordianLength.LEN_256, GordianLength.LEN_384, GordianLength.LEN_512),</span>
+
+    /**
+     * SM3.
+     */
+<span class="fc" id="L79">    SM3(GordianLength.LEN_256),</span>
+
+    /**
+     * Blake2.
+     */
+<span class="fc" id="L84">    BLAKE2(GordianLength.LEN_128, GordianLength.LEN_160, GordianLength.LEN_224, GordianLength.LEN_256, GordianLength.LEN_384, GordianLength.LEN_512),</span>
+
+    /**
+     * SHA1.
+     */
+<span class="fc" id="L89">    SHA1(GordianLength.LEN_160),</span>
+
+    /**
+     * MD5.
+     */
+<span class="fc" id="L94">    MD5(GordianLength.LEN_128),</span>
+
+    /**
+     * MD4.
+     */
+<span class="fc" id="L99">    MD4(GordianLength.LEN_128),</span>
+
+    /**
+     * MD2.
+     */
+<span class="fc" id="L104">    MD2(GordianLength.LEN_128),</span>
+
+    /**
+     * JH.
+     */
+<span class="fc" id="L109">    JH(GordianLength.LEN_224, GordianLength.LEN_256, GordianLength.LEN_384, GordianLength.LEN_512),</span>
+
+    /**
+     * GROESTL.
+     */
+<span class="fc" id="L114">    GROESTL(GordianLength.LEN_224, GordianLength.LEN_256, GordianLength.LEN_384, GordianLength.LEN_512),</span>
+
+    /**
+     * CubeHash.
+     */
+<span class="fc" id="L119">    CUBEHASH(GordianLength.LEN_224, GordianLength.LEN_256, GordianLength.LEN_384, GordianLength.LEN_512),</span>
+
+    /**
+     * Kangaroo.
+     */
+<span class="fc" id="L124">    KANGAROO(GordianLength.LEN_256, GordianLength.LEN_512),</span>
+
+    /**
+     * Haraka.
+     */
+<span class="fc" id="L129">    HARAKA(GordianLength.LEN_256),</span>
+
+    /**
+     * Blake3.
+     */
+<span class="fc" id="L134">    BLAKE3(GordianLength.LEN_256),</span>
+
+    /**
+     * Ascon.
+     */
+<span class="fc" id="L139">    ASCON(GordianLength.LEN_256),</span>
+
+    /**
+     * ISAP.
+     */
+<span class="fc" id="L144">    ISAP(GordianLength.LEN_256),</span>
+
+    /**
+     * PhotonBeetle.
+     */
+<span class="fc" id="L149">    PHOTONBEETLE(GordianLength.LEN_256),</span>
+
+    /**
+     * Romulus.
+     */
+<span class="fc" id="L154">    ROMULUS(GordianLength.LEN_256),</span>
+
+    /**
+     * Sparkle.
+     */
+<span class="fc" id="L159">    SPARKLE(GordianLength.LEN_256, GordianLength.LEN_384),</span>
+
+    /**
+     * Xoodyak.
+     */
+<span class="fc" id="L164">    XOODYAK(GordianLength.LEN_256);</span>
+
+    /**
+     * The Supported lengths.
+     */
+    private final GordianLength[] theLengths;
+
+    /**
+     * The String name.
+     */
+    private String theName;
+
+    /**
+     * Constructor.
+     * @param pLengths the supported lengths
+     */
+<span class="fc" id="L180">    GordianDigestType(final GordianLength... pLengths) {</span>
+<span class="fc" id="L181">        theLengths = pLengths;</span>
+<span class="fc" id="L182">     }</span>
+
+    @Override
+    public String toString() {
+<span class="fc bfc" id="L186" title="All 2 branches covered.">        if (theName == null) {</span>
+<span class="fc" id="L187">            theName = bundleIdForDigestType().getValue();</span>
+        }
+<span class="fc" id="L189">        return theName;</span>
+    }
+
+    /**
+     * Obtain default length.
+     * @return the default length
+     */
+    public GordianLength getDefaultLength() {
+
+<span class="fc bfc" id="L198" title="All 2 branches covered.">        switch (this) {</span>
+            case MD2:
+            case MD4:
+            case MD5:
+            case SHA1:
+            case TIGER:
+            case SM3:
+            case GOST:
+            case WHIRLPOOL:
+            case HARAKA:
+            case BLAKE3:
+            case ASCON:
+            case ISAP:
+            case PHOTONBEETLE:
+            case XOODYAK:
+<span class="fc" id="L213">                return theLengths[0];</span>
+            case SHA2:
+            case RIPEMD:
+            case SHA3:
+            case STREEBOG:
+            case SHAKE:
+            case SKEIN:
+            case KUPYNA:
+            case BLAKE2:
+            case GROESTL:
+            case JH:
+            case CUBEHASH:
+            case KANGAROO:
+            case SPARKLE:
+            default:
+<span class="fc" id="L228">                return GordianLength.LEN_256;</span>
+        }
+    }
+
+    /**
+     * Obtain supported lengths.
+     * @return the supported lengths (first is default)
+     */
+    public GordianLength[] getSupportedLengths() {
+<span class="fc" id="L237">        return theLengths;</span>
+    }
+
+    /**
+     * is length valid?
+     * @param pLength the length
+     * @return true/false
+     */
+    public boolean isLengthValid(final GordianLength pLength) {
+<span class="fc bfc" id="L246" title="All 2 branches covered.">        for (final GordianLength myLength : theLengths) {</span>
+<span class="fc bfc" id="L247" title="All 2 branches covered.">            if (myLength.equals(pLength)) {</span>
+<span class="fc" id="L248">                return true;</span>
+            }
+        }
+<span class="fc" id="L251">        return false;</span>
+    }
+
+    /**
+     * does this digest support large amounts of data?
+     * @return true/false
+     */
+    public boolean supportsLargeData() {
+<span class="fc bfc" id="L259" title="All 2 branches covered.">        return this != HARAKA;</span>
+    }
+
+    /**
+     * Is this digestType a natural Xof?
+     * @return true/false
+     */
+    public boolean isXof() {
+<span class="fc bfc" id="L267" title="All 2 branches covered.">        switch (this) {</span>
+            case SHAKE:
+            case KANGAROO:
+            case BLAKE3:
+<span class="fc" id="L271">                return true;</span>
+            default:
+<span class="fc" id="L273">                return false;</span>
+        }
+    }
+
+    /**
+     * Obtain the resource bundleId for this digestType.
+     * @return the resource bundleId
+     */
+    private GordianBundleId bundleIdForDigestType() {
+        /* Create the map and return it */
+<span class="pc bpc" id="L283" title="1 of 29 branches missed.">        switch (this) {</span>
+            case SHA2:
+<span class="fc" id="L285">                return GordianDigestResource.DIGEST_SHA2;</span>
+            case TIGER:
+<span class="fc" id="L287">                return GordianDigestResource.DIGEST_TIGER;</span>
+            case WHIRLPOOL:
+<span class="fc" id="L289">                return GordianDigestResource.DIGEST_WHIRLPOOL;</span>
+            case RIPEMD:
+<span class="fc" id="L291">                return GordianDigestResource.DIGEST_RIPEMD;</span>
+            case STREEBOG:
+<span class="fc" id="L293">                return GordianDigestResource.DIGEST_STREEBOG;</span>
+            case GOST:
+<span class="fc" id="L295">                return GordianDigestResource.DIGEST_GOST;</span>
+            case SHA3:
+<span class="fc" id="L297">                return GordianDigestResource.DIGEST_SHA3;</span>
+            case SHAKE:
+<span class="fc" id="L299">                return GordianDigestResource.DIGEST_SHAKE;</span>
+            case SKEIN:
+<span class="fc" id="L301">                return GordianDigestResource.DIGEST_SKEIN;</span>
+            case SM3:
+<span class="fc" id="L303">                return GordianDigestResource.DIGEST_SM3;</span>
+            case BLAKE2:
+<span class="fc" id="L305">                return GordianDigestResource.DIGEST_BLAKE2;</span>
+            case BLAKE3:
+<span class="fc" id="L307">                return GordianDigestResource.DIGEST_BLAKE3;</span>
+            case KUPYNA:
+<span class="fc" id="L309">                return GordianDigestResource.DIGEST_KUPYNA;</span>
+            case SHA1:
+<span class="fc" id="L311">                return GordianDigestResource.DIGEST_SHA1;</span>
+            case MD5:
+<span class="fc" id="L313">                return GordianDigestResource.DIGEST_MD5;</span>
+            case MD4:
+<span class="fc" id="L315">                return GordianDigestResource.DIGEST_MD4;</span>
+            case MD2:
+<span class="fc" id="L317">                return GordianDigestResource.DIGEST_MD2;</span>
+            case JH:
+<span class="fc" id="L319">                return GordianDigestResource.DIGEST_JH;</span>
+            case GROESTL:
+<span class="fc" id="L321">                return GordianDigestResource.DIGEST_GROESTL;</span>
+            case CUBEHASH:
+<span class="fc" id="L323">                return GordianDigestResource.DIGEST_CUBEHASH;</span>
+            case KANGAROO:
+<span class="fc" id="L325">                return GordianDigestResource.DIGEST_KANGAROO;</span>
+            case HARAKA:
+<span class="fc" id="L327">                return GordianDigestResource.DIGEST_HARAKA;</span>
+            case ASCON:
+<span class="fc" id="L329">                return GordianDigestResource.DIGEST_ASCON;</span>
+            case ISAP:
+<span class="fc" id="L331">                return GordianDigestResource.DIGEST_ISAP;</span>
+            case PHOTONBEETLE:
+<span class="fc" id="L333">                return GordianDigestResource.DIGEST_PHOTONBEETLE;</span>
+            case ROMULUS:
+<span class="fc" id="L335">                return GordianDigestResource.DIGEST_ROMULUS;</span>
+            case SPARKLE:
+<span class="fc" id="L337">                return GordianDigestResource.DIGEST_SPARKLE;</span>
+            case XOODYAK:
+<span class="fc" id="L339">                return GordianDigestResource.DIGEST_XOODYAK;</span>
+            default:
+<span class="nc" id="L341">                throw new IllegalArgumentException();</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

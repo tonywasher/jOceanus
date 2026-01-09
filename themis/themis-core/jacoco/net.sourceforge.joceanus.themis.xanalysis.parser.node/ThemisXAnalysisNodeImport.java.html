@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisXAnalysisNodeImport.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.themis.xanalysis.parser.node</a> &gt; <span class="el_source">ThemisXAnalysisNodeImport.java</span></div><h1>ThemisXAnalysisNodeImport.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Themis: Java Project Framework
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.themis.xanalysis.parser.node;
+
+import com.github.javaparser.ast.ImportDeclaration;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisParserDef;
+
+/**
+ * Import.
+ */
+public class ThemisXAnalysisNodeImport
+        extends ThemisXAnalysisBaseNode&lt;ImportDeclaration&gt; {
+    /**
+     * The shortName of the import.
+     */
+    private final String theShortName;
+
+    /**
+     * The fullName of the import.
+     */
+    private final String theFullName;
+
+    /**
+     * The package of the import.
+     */
+    private final String thePackage;
+
+    /**
+     * The Import.
+     */
+    private final ThemisXAnalysisNodeInstance theImport;
+
+    /**
+     * Constructor.
+     * @param pParser the parser
+     * @param pImport the import
+     * @throws OceanusException on error
+     */
+    ThemisXAnalysisNodeImport(final ThemisXAnalysisParserDef pParser,
+                              final ImportDeclaration pImport) throws OceanusException {
+<span class="fc" id="L56">        super(pParser, pImport);</span>
+<span class="fc" id="L57">        theImport = pParser.parseNode(pImport.getName());</span>
+<span class="fc" id="L58">        final ThemisXAnalysisNodeName myName = (ThemisXAnalysisNodeName) theImport;</span>
+<span class="fc" id="L59">        theShortName = myName.getName();</span>
+<span class="fc" id="L60">        final ThemisXAnalysisNodeName myQualifier = ((ThemisXAnalysisNodeName) myName.getQualifier());</span>
+<span class="fc" id="L61">        thePackage = myQualifier.getNode().asString();</span>
+<span class="fc" id="L62">        theFullName = myName.getNode().asString();</span>
+
+        /* Reject imports of wildcards */
+<span class="pc bpc" id="L65" title="1 of 2 branches missed.">        if (pImport.isAsterisk()) {</span>
+<span class="nc" id="L66">            throw pParser.buildException(&quot;Wildcard in import&quot;, pImport);</span>
+        }
+<span class="fc" id="L68">    }</span>
+
+    /**
+     * Obtain the shortName.
+     * @return the shortName
+     */
+    public String getShortName() {
+<span class="fc" id="L75">        return theShortName;</span>
+    }
+
+    /**
+     * Obtain the fullName.
+     * @return the fullName
+     */
+    public String getFullName() {
+<span class="fc" id="L83">        return theFullName;</span>
+    }
+
+    /**
+     * Obtain the package.
+     * @return the package
+     */
+    public String getPackage() {
+<span class="nc" id="L91">        return thePackage;</span>
+    }
+
+    /**
+     * Obtain the import.
+     * @return the import
+     */
+    public ThemisXAnalysisNodeInstance getImport() {
+<span class="nc" id="L99">        return theImport;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

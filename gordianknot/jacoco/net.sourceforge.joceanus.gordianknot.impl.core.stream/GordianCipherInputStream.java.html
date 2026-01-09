@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCipherInputStream.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.gordianknot.impl.core.stream</a> &gt; <span class="el_source">GordianCipherInputStream.java</span></div><h1>GordianCipherInputStream.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * GordianKnot: Security Suite
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.gordianknot.impl.core.stream;
+
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
+import net.sourceforge.joceanus.gordianknot.api.cipher.GordianKeyedCipher;
+import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipher;
+import org.bouncycastle.util.Arrays;
+
+import java.io.InputStream;
+
+/**
+ * Input stream Cipher implementation.
+ * @param &lt;T&gt; the key type
+ */
+class GordianCipherInputStream&lt;T extends GordianKeySpec&gt;
+        extends GordianInputStream {
+    /**
+     * Constructor.
+     * @param pCipher the decryption cipher
+     * @param pInput the underlying input stream
+     */
+    GordianCipherInputStream(final GordianKeyedCipher&lt;T&gt; pCipher,
+                             final InputStream pInput) {
+<span class="fc" id="L40">        super(pInput);</span>
+<span class="fc" id="L41">        setProcessedBuffer(new GordianCipherBuffer&lt;T&gt;(pCipher));</span>
+<span class="fc" id="L42">    }</span>
+
+    /**
+     * Buffer to hold the processed data prior to returning it to the caller.
+     * @param &lt;T&gt; the key type
+     */
+    private static final class GordianCipherBuffer&lt;T extends GordianKeySpec&gt;
+            extends GordianProcessedBuffer {
+        /**
+         * The cipher.
+         */
+        private final GordianCoreCipher&lt;T&gt; theCipher;
+
+        /**
+         * The buffer.
+         */
+<span class="fc" id="L58">        private byte[] theBuffer = new byte[BUFSIZE];</span>
+
+        /**
+         * Constructor.
+         * @param pCipher the decryption cipher
+         */
+<span class="fc" id="L64">        GordianCipherBuffer(final GordianKeyedCipher&lt;T&gt; pCipher) {</span>
+<span class="fc" id="L65">            theCipher = (GordianCoreCipher&lt;T&gt;) pCipher;</span>
+<span class="fc" id="L66">        }</span>
+
+        /**
+         * Check buffer length.
+         * @param pLength the length of the data to use
+         * @return the number of bytes to process
+         */
+        private int checkBufferLength(final int pLength) {
+            /* Check how long a buffer we need to handle the data */
+<span class="fc" id="L75">            final int iNumBytes = theCipher.getOutputLength(pLength);</span>
+
+            /* Extend the buffer if required */
+<span class="pc bpc" id="L78" title="1 of 2 branches missed.">            if (iNumBytes &gt; theBuffer.length) {</span>
+<span class="nc" id="L79">                Arrays.fill(theBuffer, (byte) 0);</span>
+<span class="nc" id="L80">                theBuffer = new byte[iNumBytes];</span>
+            }
+
+            /* return number of bytes to process */
+<span class="fc" id="L84">            return iNumBytes;</span>
+        }
+
+        @Override
+        public int processBytes(final byte[] pBuffer,
+                                final int pLength) throws GordianException {
+            /* Initialise variables */
+            int iNumBytes;
+<span class="fc" id="L92">            final int iLength = pLength;</span>
+
+            /* If we have EOF from the input stream */
+<span class="fc bfc" id="L95" title="All 2 branches covered.">            if (iLength == -1) {</span>
+                /* If we have already seen EOF */
+<span class="fc bfc" id="L97" title="All 2 branches covered.">                if (hasEOFbeenSeen()) {</span>
+                    /* signal true EOF */
+<span class="fc" id="L99">                    return -1;</span>
+                }
+
+                /* Record EOF */
+<span class="fc" id="L103">                setEOFSeen();</span>
+
+                /* Make sure the buffer is large enough */
+<span class="fc" id="L106">                iNumBytes = checkBufferLength(0);</span>
+
+                /* Finish the decryption if there is work to do */
+<span class="fc bfc" id="L109" title="All 2 branches covered.">                if (iNumBytes &gt; 0) {</span>
+<span class="fc" id="L110">                    iNumBytes = theCipher.finish(theBuffer, 0);</span>
+                }
+
+                /* else we have bytes to process */
+            } else {
+                /* Make sure the buffer is large enough */
+<span class="fc" id="L116">                checkBufferLength(iLength);</span>
+
+                /* Decrypt the data */
+<span class="fc" id="L119">                iNumBytes = theCipher.update(pBuffer, 0, pLength, theBuffer, 0);</span>
+            }
+
+            /* Set up buffer variables */
+<span class="fc" id="L123">            setBuffer(theBuffer, iNumBytes);</span>
+<span class="fc" id="L124">            return iNumBytes;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

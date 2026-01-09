@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseLoanTable.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.ui.panel</a> &gt; <span class="el_source">MoneyWiseLoanTable.java</span></div><h1>MoneyWiseLoanTable.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.ui.panel;
+
+import net.sourceforge.joceanus.metis.data.MetisDataDifference;
+import net.sourceforge.joceanus.metis.ui.MetisErrorPanel;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseLoan;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseLoan.MoneyWiseLoanList;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAssetCategory;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
+import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
+import net.sourceforge.joceanus.moneywise.ui.base.MoneyWiseAssetTable;
+import net.sourceforge.joceanus.moneywise.ui.dialog.MoneyWiseLoanDialog;
+import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
+import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
+import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
+import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollMenu;
+
+import java.util.Iterator;
+
+/**
+ * MoneyWise Loan Table.
+ */
+public class MoneyWiseLoanTable
+        extends MoneyWiseAssetTable&lt;MoneyWiseLoan&gt; {
+    /**
+     * The Loan dialog.
+     */
+    private final MoneyWiseLoanDialog theActiveLoan;
+
+    /**
+     * The edit list.
+     */
+    private MoneyWiseLoanList theLoans;
+
+    /**
+     * Constructor.
+     * @param pView the view
+     * @param pEditSet the editSet
+     * @param pError the error panel
+     */
+    MoneyWiseLoanTable(final MoneyWiseView pView,
+                       final PrometheusEditSet pEditSet,
+                       final MetisErrorPanel pError) {
+        /* Store parameters */
+<span class="nc" id="L67">        super(pView, pEditSet, pError, MoneyWiseBasicDataType.LOAN);</span>
+
+        /* register the infoEntry */
+<span class="nc" id="L70">        getEditSet().registerType(MoneyWiseBasicDataType.LOANINFO);</span>
+
+        /* Access Gui factory */
+<span class="nc" id="L73">        final TethysUIFactory&lt;?&gt; myGuiFactory = pView.getGuiFactory();</span>
+
+        /* Create a Loan panel */
+<span class="nc" id="L76">        theActiveLoan = new MoneyWiseLoanDialog(myGuiFactory, pEditSet, this);</span>
+<span class="nc" id="L77">        declareItemPanel(theActiveLoan);</span>
+
+        /* Finish the table */
+<span class="nc" id="L80">        finishTable(true, true, true);</span>
+
+        /* Add listeners */
+<span class="nc" id="L83">        theActiveLoan.getEventRegistrar().addEventListener(PrometheusDataEvent.ADJUSTVISIBILITY, e -&gt; handlePanelState());</span>
+<span class="nc" id="L84">    }</span>
+
+    @Override
+    protected boolean isItemEditing() {
+<span class="nc" id="L88">        return theActiveLoan.isEditing();</span>
+    }
+
+    @Override
+    protected void refreshData() throws OceanusException {
+        /* Obtain the active profile */
+<span class="nc" id="L94">        OceanusProfile myTask = getView().getActiveTask();</span>
+<span class="nc" id="L95">        myTask = myTask.startTask(&quot;Loans&quot;);</span>
+
+        /* Access list */
+<span class="nc" id="L98">        final MoneyWiseDataSet myData = getView().getData();</span>
+<span class="nc" id="L99">        final MoneyWiseLoanList myBase = myData.getLoans();</span>
+<span class="nc" id="L100">        theLoans = myBase.deriveEditList(getEditSet());</span>
+<span class="nc" id="L101">        getTable().setItems(theLoans.getUnderlyingList());</span>
+
+        /* Notify panel of refresh */
+<span class="nc" id="L104">        theActiveLoan.refreshData();</span>
+<span class="nc" id="L105">        restoreSelected();</span>
+
+        /* Complete the task */
+<span class="nc" id="L108">        myTask.end();</span>
+<span class="nc" id="L109">    }</span>
+
+    @Override
+    public void cancelEditing() {
+<span class="nc" id="L113">        super.cancelEditing();</span>
+<span class="nc" id="L114">        theActiveLoan.setEditable(false);</span>
+<span class="nc" id="L115">    }</span>
+
+    /**
+     * Select Loan.
+     * @param pLoan the Loan to select
+     */
+    void selectLoan(final MoneyWiseLoan pLoan) {
+        /* Check whether we need to showAll */
+<span class="nc" id="L123">        checkShowAll(pLoan);</span>
+
+        /* If we are changing the selection */
+<span class="nc" id="L126">        final MoneyWiseLoan myCurrent = theActiveLoan.getSelectedItem();</span>
+<span class="nc bnc" id="L127" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(myCurrent, pLoan)) {</span>
+            /* Select the row and ensure that it is visible */
+<span class="nc" id="L129">            getTable().selectRow(pLoan);</span>
+        }
+<span class="nc" id="L131">    }</span>
+
+    @Override
+    protected void handleRewind() {
+        /* Only action if we are not editing */
+<span class="nc bnc" id="L136" title="All 2 branches missed.">        if (!theActiveLoan.isEditing()) {</span>
+            /* Handle the reWind */
+<span class="nc" id="L138">            setEnabled(true);</span>
+<span class="nc" id="L139">            super.handleRewind();</span>
+        }
+
+        /* Adjust for changes */
+<span class="nc" id="L143">        notifyChanges();</span>
+<span class="nc" id="L144">    }</span>
+
+    /**
+     * Handle panel state.
+     */
+    private void handlePanelState() {
+        /* Only action if we are not editing */
+<span class="nc bnc" id="L151" title="All 2 branches missed.">        if (!theActiveLoan.isEditing()) {</span>
+            /* handle the edit transition */
+<span class="nc" id="L153">            setEnabled(true);</span>
+<span class="nc" id="L154">            final MoneyWiseLoan myLoan = theActiveLoan.getSelectedItem();</span>
+<span class="nc" id="L155">            updateTableData();</span>
+<span class="nc bnc" id="L156" title="All 2 branches missed.">            if (myLoan != null) {</span>
+<span class="nc" id="L157">                getTable().selectRow(myLoan);</span>
+            } else {
+<span class="nc" id="L159">                restoreSelected();</span>
+            }
+<span class="nc" id="L161">        } else {</span>
+<span class="nc" id="L162">            getTable().cancelEditing();</span>
+        }
+
+        /* Note changes */
+<span class="nc" id="L166">        notifyChanges();</span>
+<span class="nc" id="L167">    }</span>
+
+    @Override
+    protected void buildCategoryMenu(final MoneyWiseLoan pLoan,
+                                     final TethysUIScrollMenu&lt;MoneyWiseAssetCategory&gt; pMenu) {
+        /* Build the menu */
+<span class="nc" id="L173">        theActiveLoan.buildCategoryMenu(pMenu, pLoan);</span>
+<span class="nc" id="L174">    }</span>
+
+    @Override
+    protected void buildParentMenu(final MoneyWiseLoan pLoan,
+                                   final TethysUIScrollMenu&lt;MoneyWisePayee&gt; pMenu) {
+        /* Build the menu */
+<span class="nc" id="L180">        theActiveLoan.buildParentMenu(pMenu, pLoan);</span>
+<span class="nc" id="L181">    }</span>
+
+    @Override
+    protected void buildCurrencyMenu(final MoneyWiseLoan pLoan,
+                                     final TethysUIScrollMenu&lt;MoneyWiseCurrency&gt; pMenu) {
+        /* Build the menu */
+<span class="nc" id="L187">        theActiveLoan.buildCurrencyMenu(pMenu, pLoan);</span>
+<span class="nc" id="L188">    }</span>
+
+    @Override
+    protected void addNewItem() {
+        /* Protect against Exceptions */
+        try {
+            /* Make sure that we have finished editing */
+<span class="nc" id="L195">            cancelEditing();</span>
+
+            /* Create a new profile */
+<span class="nc" id="L198">            final OceanusProfile myTask = getView().getNewProfile(&quot;addNewItem&quot;);</span>
+
+            /* Create the new asset */
+<span class="nc" id="L201">            myTask.startTask(&quot;buildItem&quot;);</span>
+<span class="nc" id="L202">            final MoneyWiseLoan myLoan = theLoans.addNewItem();</span>
+<span class="nc" id="L203">            myLoan.setDefaults();</span>
+
+            /* Set as new and adjust map */
+<span class="nc" id="L206">            myTask.startTask(&quot;incrementVersion&quot;);</span>
+<span class="nc" id="L207">            myLoan.setNewVersion();</span>
+<span class="nc" id="L208">            myLoan.adjustMapForItem();</span>
+<span class="nc" id="L209">            getEditSet().incrementVersion();</span>
+
+            /* Validate the new item */
+<span class="nc" id="L212">            myTask.startTask(&quot;validate&quot;);</span>
+<span class="nc" id="L213">            myLoan.validate();</span>
+
+            /* update panel */
+<span class="nc" id="L216">            myTask.startTask(&quot;setItem&quot;);</span>
+<span class="nc" id="L217">            theActiveLoan.setNewItem(myLoan);</span>
+
+            /* Lock the table */
+<span class="nc" id="L220">            setTableEnabled(false);</span>
+<span class="nc" id="L221">            myTask.end();</span>
+
+            /* Handle Exceptions */
+<span class="nc" id="L224">        } catch (OceanusException e) {</span>
+            /* Build the error */
+<span class="nc" id="L226">            final OceanusException myError = new MoneyWiseDataException(&quot;Failed to create new loan&quot;, e);</span>
+
+            /* Show the error */
+<span class="nc" id="L229">            setError(myError);</span>
+<span class="nc" id="L230">        }</span>
+<span class="nc" id="L231">    }</span>
+
+    @Override
+    protected Iterator&lt;PrometheusDataItem&gt; nameSpaceIterator() {
+<span class="nc" id="L235">        return assetNameSpaceIterator();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

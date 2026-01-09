@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisXAnalysisNodeCompilationUnit.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.themis.xanalysis.parser.node</a> &gt; <span class="el_source">ThemisXAnalysisNodeCompilationUnit.java</span></div><h1>ThemisXAnalysisNodeCompilationUnit.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Themis: Java Project Framework
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.themis.xanalysis.parser.node;
+
+import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.NodeList;
+import com.github.javaparser.ast.body.TypeDeclaration;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisParserDef;
+
+import java.util.List;
+
+/**
+ * Compilation Unit.
+ */
+public class ThemisXAnalysisNodeCompilationUnit
+        extends ThemisXAnalysisBaseNode&lt;CompilationUnit&gt; {
+    /**
+     * The Package.
+     */
+    private final ThemisXAnalysisNodeInstance thePackageDef;
+
+    /**
+     * The Imports.
+     */
+    private final List&lt;ThemisXAnalysisNodeInstance&gt; theImports;
+
+    /**
+     * The Contents.
+     */
+    private final ThemisXAnalysisClassInstance theContents;
+
+    /**
+     * Constructor.
+     * @param pParser the parser
+     * @param pUnit the unit
+     * @throws OceanusException on error
+     */
+    ThemisXAnalysisNodeCompilationUnit(final ThemisXAnalysisParserDef pParser,
+                                       final CompilationUnit pUnit) throws OceanusException {
+<span class="fc" id="L55">        super(pParser, pUnit);</span>
+<span class="fc" id="L56">        thePackageDef = pParser.parseNode(pUnit.getPackageDeclaration().orElse(null));</span>
+<span class="fc" id="L57">        theImports = pParser.parseNodeList(pUnit.getImports());</span>
+<span class="fc" id="L58">        final NodeList&lt;TypeDeclaration&lt;?&gt;&gt; myTypes = pUnit.getTypes();</span>
+<span class="pc bpc" id="L59" title="1 of 2 branches missed.">        if (myTypes.size() &gt; 1) {</span>
+<span class="nc" id="L60">            throw pParser.buildException(&quot;More than one class definition in file&quot;, pUnit);</span>
+        }
+<span class="pc bpc" id="L62" title="1 of 2 branches missed.">        if (myTypes.isEmpty()) {</span>
+<span class="nc" id="L63">            throw pParser.buildException(&quot;No class definition found in file&quot;, pUnit);</span>
+        }
+<span class="fc" id="L65">        theContents = (ThemisXAnalysisClassInstance) pParser.parseDeclaration(pUnit.getType(0));</span>
+<span class="fc" id="L66">    }</span>
+
+    /**
+     * Obtain the package.
+     * @return the package
+     */
+    public ThemisXAnalysisNodeInstance getPackage() {
+<span class="nc" id="L73">        return thePackageDef;</span>
+    }
+
+    /**
+     * Obtain the imports.
+     * @return the imports
+     */
+    public List&lt;ThemisXAnalysisNodeInstance&gt; getImports() {
+<span class="fc" id="L81">        return theImports;</span>
+    }
+
+    /**
+     * Obtain the contents.
+     * @return the contents
+     */
+    public ThemisXAnalysisClassInstance getContents() {
+<span class="fc" id="L89">        return theContents;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

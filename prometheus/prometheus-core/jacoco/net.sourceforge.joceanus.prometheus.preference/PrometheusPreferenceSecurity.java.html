@@ -1,0 +1,399 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PrometheusPreferenceSecurity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Prometheus Core Application Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.prometheus.preference</a> &gt; <span class="el_source">PrometheusPreferenceSecurity.java</span></div><h1>PrometheusPreferenceSecurity.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Prometheus: Application Framework
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.prometheus.preference;
+
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
+import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
+import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryType;
+import net.sourceforge.joceanus.gordianknot.api.lock.GordianLockFactory;
+import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
+import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
+import net.sourceforge.joceanus.gordianknot.api.lock.GordianKeySetLock;
+import net.sourceforge.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
+import net.sourceforge.joceanus.gordianknot.util.GordianGenerator;
+import net.sourceforge.joceanus.metis.preference.MetisPreferenceKey;
+import net.sourceforge.joceanus.metis.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.metis.preference.MetisPreferenceResource;
+import net.sourceforge.joceanus.oceanus.convert.OceanusDataConverter;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
+import net.sourceforge.joceanus.prometheus.exc.PrometheusSecurityException;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.EnumSet;
+import java.util.Set;
+
+/**
+ * Security for Preferences.
+ */
+public class PrometheusPreferenceSecurity {
+    /**
+     * Logger.
+     */
+<span class="nc" id="L50">    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(PrometheusPreferenceSecurity.class);</span>
+
+    /**
+     * Default KeyLength.
+     */
+<span class="nc" id="L55">    private static final GordianLength DEFAULT_KEYLEN = GordianLength.LEN_256;</span>
+
+    /**
+     * The KeySet.
+     */
+    private final GordianKeySet theKeySet;
+
+    /**
+     * Constructor.
+     *
+     * @param pManager the preference manager
+     * @throws OceanusException on error
+     */
+<span class="nc" id="L68">    PrometheusPreferenceSecurity(final PrometheusPreferenceManager pManager) throws OceanusException {</span>
+        /* Protect against exceptions */
+        try {
+            /* Create a Security Factory */
+<span class="nc" id="L72">            final GordianFactory myFactory = GordianGenerator.createFactory(GordianFactoryType.BC);</span>
+<span class="nc" id="L73">            final GordianLockFactory myLocks = myFactory.getLockFactory();</span>
+
+            /* Obtain the hash as a preference */
+<span class="nc" id="L76">            final PrometheusBaseSecurityPreferences myPrefs = pManager.getPreferenceSet(PrometheusBaseSecurityPreferences.class);</span>
+<span class="nc" id="L77">            final byte[] myLock = myPrefs.getByteArrayValue(PrometheusSecurityPreferenceKey.LOCK);</span>
+
+            /* Derive the password */
+<span class="nc" id="L80">            final char[] myHost = getHostName();</span>
+<span class="nc" id="L81">            final char[] myUser = System.getProperty(&quot;user.name&quot;).toCharArray();</span>
+<span class="nc" id="L82">            final char[] myPassword = new char[myHost.length + myUser.length];</span>
+<span class="nc" id="L83">            System.arraycopy(myHost, 0, myPassword, 0, myHost.length);</span>
+<span class="nc" id="L84">            System.arraycopy(myUser, 0, myPassword, myHost.length, myUser.length);</span>
+
+            /* Derive or create the lock */
+<span class="nc bnc" id="L87" title="All 2 branches missed.">            final GordianKeySetLock myKeySetLock = myLock == null</span>
+<span class="nc" id="L88">                    ? myLocks.newKeySetLock(new GordianPasswordLockSpec(), myPassword)</span>
+<span class="nc" id="L89">                    : myLocks.resolveKeySetLock(myLock, myPassword);</span>
+
+            /* record the KeySet */
+<span class="nc" id="L92">            theKeySet = myKeySetLock.getKeySet();</span>
+
+            /* If we have created a new lock */
+<span class="nc bnc" id="L95" title="All 2 branches missed.">            if (myLock == null) {</span>
+                /* Record the lock */
+<span class="nc" id="L97">                myPrefs.setHash(myKeySetLock.getLockBytes());</span>
+<span class="nc" id="L98">                myPrefs.storeChanges();</span>
+            }
+<span class="nc" id="L100">        } catch (GordianException e) {</span>
+<span class="nc" id="L101">            throw new PrometheusSecurityException(e);</span>
+<span class="nc" id="L102">        }</span>
+<span class="nc" id="L103">    }</span>
+
+    /**
+     * Encrypt the value.
+     *
+     * @param pValue the value to encrypt
+     * @return the encrypted value
+     * @throws OceanusException on error
+     */
+    protected byte[] encryptValue(final char[] pValue) throws OceanusException {
+        /* Protect against exceptions */
+        try {
+<span class="nc" id="L115">            final byte[] myBytes = OceanusDataConverter.charsToByteArray(pValue);</span>
+<span class="nc" id="L116">            return theKeySet.encryptBytes(myBytes);</span>
+<span class="nc" id="L117">        } catch (GordianException e) {</span>
+<span class="nc" id="L118">            throw new PrometheusSecurityException(e);</span>
+        }
+    }
+
+    /**
+     * Decrypt the value.
+     *
+     * @param pValue the value to decrypt
+     * @return the decrypted value
+     * @throws OceanusException on error
+     */
+    protected char[] decryptValue(final byte[] pValue) throws OceanusException {
+        /* Protect against exceptions */
+        try {
+<span class="nc" id="L132">            final byte[] myBytes = theKeySet.decryptBytes(pValue);</span>
+<span class="nc" id="L133">            return OceanusDataConverter.bytesToCharArray(myBytes);</span>
+<span class="nc" id="L134">        } catch (GordianException e) {</span>
+<span class="nc" id="L135">            throw new PrometheusSecurityException(e);</span>
+        }
+    }
+
+    /**
+     * determine hostName.
+     *
+     * @return the hostName
+     */
+    private static char[] getHostName() {
+        /* Protect against exceptions */
+        try {
+<span class="nc" id="L147">            final InetAddress myAddr = InetAddress.getLocalHost();</span>
+<span class="nc" id="L148">            return myAddr.getHostName().toCharArray();</span>
+
+<span class="nc" id="L150">        } catch (UnknownHostException e) {</span>
+<span class="nc" id="L151">            LOGGER.error(&quot;Hostname can not be resolved&quot;, e);</span>
+<span class="nc" id="L152">            return &quot;localhost&quot;.toCharArray();</span>
+        }
+    }
+
+    /**
+     * SecurityPreferenceKey.
+     */
+<span class="nc" id="L159">    public enum PrometheusSecurityPreferenceKey implements MetisPreferenceKey {</span>
+        /**
+         * Lock.
+         */
+<span class="nc" id="L163">        LOCK(&quot;Lock&quot;, null),</span>
+
+        /**
+         * Factory.
+         */
+<span class="nc" id="L168">        FACTORY(&quot;FactoryType&quot;, MetisPreferenceResource.SECPREF_FACTORY),</span>
+
+        /**
+         * KeyLength.
+         */
+<span class="nc" id="L173">        KEYLENGTH(&quot;KeyLength&quot;, MetisPreferenceResource.SECPREF_KEYLEN),</span>
+
+        /**
+         * Cipher Steps.
+         */
+<span class="nc" id="L178">        CIPHERSTEPS(&quot;CipherSteps&quot;, MetisPreferenceResource.SECPREF_CIPHERSTEPS),</span>
+
+        /**
+         * Hash Iterations.
+         */
+<span class="nc" id="L183">        HASHITERATIONS(&quot;HashIterations&quot;, MetisPreferenceResource.SECPREF_ITERATIONS),</span>
+
+        /**
+         * ActiveKeySets.
+         */
+<span class="nc" id="L188">        ACTIVEKEYSETS(&quot;NumActiveKeySets&quot;, MetisPreferenceResource.SECPREF_KEYSETS);</span>
+
+        /**
+         * The name of the Preference.
+         */
+        private final String theName;
+
+        /**
+         * The display string.
+         */
+        private final String theDisplay;
+
+        /**
+         * Constructor.
+         *
+         * @param pName    the name
+         * @param pDisplay the display resource
+         */
+        PrometheusSecurityPreferenceKey(final String pName,
+<span class="nc" id="L207">                                        final MetisPreferenceResource pDisplay) {</span>
+<span class="nc" id="L208">            theName = pName;</span>
+<span class="nc bnc" id="L209" title="All 2 branches missed.">            theDisplay = pDisplay != null</span>
+<span class="nc" id="L210">                    ? pDisplay.getValue()</span>
+<span class="nc" id="L211">                    : null;</span>
+<span class="nc" id="L212">        }</span>
+
+        @Override
+        public String getName() {
+<span class="nc" id="L216">            return theName;</span>
+        }
+
+        @Override
+        public String getDisplay() {
+<span class="nc" id="L221">            return theDisplay;</span>
+        }
+    }
+
+    /**
+     * PrefSecurityPreferences.
+     */
+    public static class PrometheusBaseSecurityPreferences
+            extends PrometheusPreferenceSet {
+        /**
+         * Constructor.
+         *
+         * @param pManager the preference manager
+         * @throws OceanusException on error
+         */
+        public PrometheusBaseSecurityPreferences(final MetisPreferenceManager pManager) throws OceanusException {
+<span class="nc" id="L237">            super((PrometheusPreferenceManager) pManager, MetisPreferenceResource.SECPREF_BASEPREFNAME);</span>
+<span class="nc" id="L238">            setHidden();</span>
+<span class="nc" id="L239">        }</span>
+
+        /**
+         * Set lock.
+         *
+         * @param pHash the lock
+         */
+        protected void setHash(final byte[] pHash) {
+<span class="nc" id="L247">            getByteArrayPreference(PrometheusSecurityPreferenceKey.LOCK).setValue(pHash);</span>
+<span class="nc" id="L248">        }</span>
+
+        @Override
+        protected void definePreferences() {
+<span class="nc" id="L252">            defineByteArrayPreference(PrometheusSecurityPreferenceKey.LOCK);</span>
+<span class="nc" id="L253">        }</span>
+
+        @Override
+        public void autoCorrectPreferences() {
+            /* No-OP */
+<span class="nc" id="L258">        }</span>
+    }
+
+    /**
+     * PrefSecurityPreferences.
+     */
+    public static class PrometheusSecurityPreferences
+            extends PrometheusPreferenceSet {
+        /**
+         * Valid lengths.
+         */
+<span class="nc" id="L269">        private static final Set&lt;GordianLength&gt; VALID_LENGTHS = EnumSet.of(GordianLength.LEN_128, GordianLength.LEN_192, GordianLength.LEN_256);</span>
+
+        /**
+         * Default Security Phrase.
+         */
+        private static final String DEFAULT_SECURITY_PHRASE = &quot;PleaseChangeMeToSomethingMoreUnique&quot;;
+
+        /**
+         * Minimum Number of Active KeySets.
+         */
+        private static final int MINIMUM_ACTIVE_KEYSETS = 4;
+
+        /**
+         * Maximum Number of Active KeySets.
+         */
+        private static final int MAXIMUM_ACTIVE_KEYSETS = 64;
+
+        /**
+         * Default Number of Active KeySets.
+         */
+        private static final int DEFAULT_ACTIVE_KEYSETS = 8;
+
+        /**
+         * Constructor.
+         *
+         * @param pManager the preference manager
+         * @throws OceanusException on error
+         */
+        public PrometheusSecurityPreferences(final MetisPreferenceManager pManager) throws OceanusException {
+<span class="nc" id="L298">            super((PrometheusPreferenceManager) pManager, MetisPreferenceResource.SECPREF_PREFNAME);</span>
+<span class="nc" id="L299">        }</span>
+
+        /**
+         * Get FactoryType.
+         *
+         * @return the factoryType
+         */
+        public GordianFactoryType getFactoryType() {
+<span class="nc" id="L307">            return getEnumValue(PrometheusSecurityPreferenceKey.FACTORY, GordianFactoryType.class);</span>
+        }
+
+        /**
+         * Get KeySetSpec.
+         *
+         * @return the spec
+         */
+        public GordianKeySetSpec getKeySetSpec() {
+            /* Build and return keySetSpec */
+<span class="nc" id="L317">            final GordianLength myKeyLen = getEnumValue(PrometheusSecurityPreferenceKey.KEYLENGTH, GordianLength.class);</span>
+<span class="nc" id="L318">            final int mySteps = getIntegerValue(PrometheusSecurityPreferenceKey.CIPHERSTEPS);</span>
+<span class="nc" id="L319">            return new GordianKeySetSpec(myKeyLen, mySteps);</span>
+        }
+
+        /**
+         * Get PasswordLockSpec.
+         *
+         * @return the spec
+         */
+        public GordianPasswordLockSpec getPasswordLockSpec() {
+            /* Build and return keySetSpec */
+<span class="nc" id="L329">            final int myIterations = getIntegerValue(PrometheusSecurityPreferenceKey.HASHITERATIONS);</span>
+<span class="nc" id="L330">            return new GordianPasswordLockSpec(myIterations, getKeySetSpec());</span>
+        }
+
+        @Override
+        protected void definePreferences() throws OceanusException {
+<span class="nc" id="L335">            defineEnumPreference(PrometheusSecurityPreferenceKey.FACTORY, GordianFactoryType.class);</span>
+<span class="nc" id="L336">            defineEnumPreference(PrometheusSecurityPreferenceKey.KEYLENGTH, GordianLength.class);</span>
+<span class="nc" id="L337">            defineIntegerPreference(PrometheusSecurityPreferenceKey.CIPHERSTEPS);</span>
+<span class="nc" id="L338">            defineIntegerPreference(PrometheusSecurityPreferenceKey.HASHITERATIONS);</span>
+<span class="nc" id="L339">            defineIntegerPreference(PrometheusSecurityPreferenceKey.ACTIVEKEYSETS);</span>
+<span class="nc" id="L340">        }</span>
+
+        @Override
+        public void autoCorrectPreferences() {
+            /* Make sure that the factory is specified */
+<span class="nc" id="L345">            final MetisEnumPreference&lt;GordianFactoryType&gt; myFactPref</span>
+<span class="nc" id="L346">                    = getEnumPreference(PrometheusSecurityPreferenceKey.FACTORY, GordianFactoryType.class);</span>
+<span class="nc bnc" id="L347" title="All 2 branches missed.">            if (!myFactPref.isAvailable()) {</span>
+<span class="nc" id="L348">                myFactPref.setValue(GordianFactoryType.BC);</span>
+            }
+
+            /* Make sure that the restricted state is specified */
+<span class="nc" id="L352">            final MetisEnumPreference&lt;GordianLength&gt; myLengthPref</span>
+<span class="nc" id="L353">                    = getEnumPreference(PrometheusSecurityPreferenceKey.KEYLENGTH, GordianLength.class);</span>
+<span class="nc bnc" id="L354" title="All 2 branches missed.">            if (!myLengthPref.isAvailable()) {</span>
+<span class="nc" id="L355">                myLengthPref.setValue(DEFAULT_KEYLEN);</span>
+            }
+
+            /* Make sure that the length is restricted */
+<span class="nc" id="L359">            myLengthPref.setFilter(VALID_LENGTHS::contains);</span>
+
+            /* Make sure that the cipherSteps is specified */
+<span class="nc" id="L362">            MetisIntegerPreference myPref = getIntegerPreference(PrometheusSecurityPreferenceKey.CIPHERSTEPS);</span>
+<span class="nc bnc" id="L363" title="All 2 branches missed.">            if (!myPref.isAvailable()) {</span>
+<span class="nc" id="L364">                myPref.setValue(GordianKeySetSpec.DEFAULT_CIPHER_STEPS);</span>
+            }
+
+            /* Define the range */
+<span class="nc" id="L368">            myPref.setRange(GordianKeySetSpec.MINIMUM_CIPHER_STEPS, GordianKeySetSpec.MAXIMUM_CIPHER_STEPS);</span>
+<span class="nc bnc" id="L369" title="All 2 branches missed.">            if (!myPref.validate()) {</span>
+<span class="nc" id="L370">                myPref.setValue(GordianKeySetSpec.DEFAULT_CIPHER_STEPS);</span>
+            }
+
+            /* Make sure that the hashIterations is specified */
+<span class="nc" id="L374">            myPref = getIntegerPreference(PrometheusSecurityPreferenceKey.HASHITERATIONS);</span>
+<span class="nc bnc" id="L375" title="All 2 branches missed.">            if (!myPref.isAvailable()) {</span>
+<span class="nc" id="L376">                myPref.setValue(GordianPasswordLockSpec.DEFAULT_ITERATIONS);</span>
+            }
+
+            /* Define the range */
+<span class="nc" id="L380">            myPref.setRange(GordianPasswordLockSpec.MINIMUM_ITERATIONS, GordianPasswordLockSpec.MAXIMUM_ITERATIONS);</span>
+<span class="nc bnc" id="L381" title="All 2 branches missed.">            if (!myPref.validate()) {</span>
+<span class="nc" id="L382">                myPref.setValue(GordianPasswordLockSpec.DEFAULT_ITERATIONS);</span>
+            }
+
+            /* Make sure that the activeKeySets is specified */
+<span class="nc" id="L386">            myPref = getIntegerPreference(PrometheusSecurityPreferenceKey.ACTIVEKEYSETS);</span>
+<span class="nc bnc" id="L387" title="All 2 branches missed.">            if (!myPref.isAvailable()) {</span>
+<span class="nc" id="L388">                myPref.setValue(DEFAULT_ACTIVE_KEYSETS);</span>
+            }
+
+            /* Define the range */
+<span class="nc" id="L392">            myPref.setRange(MINIMUM_ACTIVE_KEYSETS, MAXIMUM_ACTIVE_KEYSETS);</span>
+<span class="nc bnc" id="L393" title="All 2 branches missed.">            if (!myPref.validate()) {</span>
+<span class="nc" id="L394">                myPref.setValue(DEFAULT_ACTIVE_KEYSETS);</span>
+            }
+<span class="nc" id="L396">        }</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

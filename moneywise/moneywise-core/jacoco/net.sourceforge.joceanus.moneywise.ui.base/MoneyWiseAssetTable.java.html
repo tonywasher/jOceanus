@@ -1,0 +1,399 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseAssetTable.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.ui.base</a> &gt; <span class="el_source">MoneyWiseAssetTable.java</span></div><h1>MoneyWiseAssetTable.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.ui.base;
+
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.metis.list.MetisListKey;
+import net.sourceforge.joceanus.metis.ui.MetisAction;
+import net.sourceforge.joceanus.metis.ui.MetisErrorPanel;
+import net.sourceforge.joceanus.metis.ui.MetisIcon;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurity;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoClass;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAssetCategory;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseSecurityType;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
+import net.sourceforge.joceanus.moneywise.ui.MoneyWiseIcon;
+import net.sourceforge.joceanus.moneywise.ui.MoneyWiseUIResource;
+import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
+import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
+import net.sourceforge.joceanus.tethys.api.button.TethysUIButton;
+import net.sourceforge.joceanus.tethys.api.control.TethysUICheckBox;
+import net.sourceforge.joceanus.tethys.api.control.TethysUIControl.TethysUIIconMapSet;
+import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollMenu;
+import net.sourceforge.joceanus.tethys.api.pane.TethysUIBoxPaneManager;
+import net.sourceforge.joceanus.tethys.api.table.TethysUITableColumn;
+import net.sourceforge.joceanus.tethys.api.table.TethysUITableManager;
+
+import java.util.Iterator;
+import java.util.Map;
+
+/**
+ * MoneyWise Asset Table.
+ * @param &lt;T&gt; the Asset Data type
+ */
+public abstract class MoneyWiseAssetTable&lt;T extends MoneyWiseAssetBase&gt;
+        extends MoneyWiseBaseTable&lt;T&gt; {
+    /**
+     * ShowClosed prompt.
+     */
+<span class="nc" id="L63">    private static final String PROMPT_CLOSED = MoneyWiseUIResource.UI_PROMPT_SHOWCLOSED.getValue();</span>
+
+    /**
+     * The filter panel.
+     */
+    private final TethysUIBoxPaneManager theFilterPanel;
+
+    /**
+     * The locked check box.
+     */
+    private final TethysUICheckBox theLockedCheckBox;
+
+    /**
+     * The closed column.
+     */
+    private TethysUITableColumn&lt;Boolean, MetisDataFieldId, T&gt; theClosedColumn;
+
+    /**
+     * Are we showing closed accounts?
+     */
+    private boolean doShowClosed;
+
+    /**
+     * Constructor.
+     * @param pView      the view
+     * @param pEditSet   the editSet
+     * @param pError     the error panel
+     * @param pDataType  the dataType
+     */
+    protected MoneyWiseAssetTable(final MoneyWiseView pView,
+                                  final PrometheusEditSet pEditSet,
+                                  final MetisErrorPanel pError,
+                                  final MetisListKey pDataType) {
+        /* Store parameters */
+<span class="nc" id="L97">        super(pView, pEditSet, pError, pDataType);</span>
+
+        /* Access Gui factory and table */
+<span class="nc" id="L100">        final TethysUIFactory&lt;?&gt; myGuiFactory = pView.getGuiFactory();</span>
+<span class="nc" id="L101">        final TethysUITableManager&lt;MetisDataFieldId, T&gt; myTable = getTable();</span>
+
+        /* Create new button */
+<span class="nc" id="L104">        final TethysUIButton myNewButton = myGuiFactory.buttonFactory().newButton();</span>
+<span class="nc" id="L105">        MetisIcon.configureNewIconButton(myNewButton);</span>
+
+        /* Create the CheckBox */
+<span class="nc" id="L108">        theLockedCheckBox = myGuiFactory.controlFactory().newCheckBox(PROMPT_CLOSED);</span>
+
+        /* Create a filter panel */
+<span class="nc" id="L111">        theFilterPanel = myGuiFactory.paneFactory().newHBoxPane();</span>
+<span class="nc" id="L112">        theFilterPanel.addSpacer();</span>
+<span class="nc" id="L113">        theFilterPanel.addNode(theLockedCheckBox);</span>
+<span class="nc" id="L114">        theFilterPanel.addSpacer();</span>
+<span class="nc" id="L115">        theFilterPanel.addNode(myNewButton);</span>
+
+        /* Set table configuration */
+<span class="nc" id="L118">        myTable.setDisabled(MoneyWiseAssetBase::isDisabled)</span>
+<span class="nc" id="L119">                .setComparator(MoneyWiseAssetBase::compareTo);</span>
+
+        /* Create the name column */
+<span class="nc" id="L122">        myTable.declareStringColumn(PrometheusDataResource.DATAITEM_FIELD_NAME)</span>
+<span class="nc" id="L123">                .setValidator(this::isValidName)</span>
+<span class="nc" id="L124">                .setCellValueFactory(MoneyWiseAssetBase::getName)</span>
+<span class="nc" id="L125">                .setEditable(true)</span>
+<span class="nc" id="L126">                .setColumnWidth(WIDTH_NAME)</span>
+<span class="nc" id="L127">                .setOnCommit((r, v) -&gt; updateField(MoneyWiseAssetBase::setName, r, v));</span>
+
+        /* Create the Category column */
+<span class="nc" id="L130">        myTable.declareScrollColumn(MoneyWiseBasicResource.CATEGORY_NAME, MoneyWiseAssetCategory.class)</span>
+<span class="nc" id="L131">                .setMenuConfigurator(this::buildCategoryMenu)</span>
+<span class="nc" id="L132">                .setCellValueFactory(MoneyWiseAssetBase::getCategory)</span>
+<span class="nc" id="L133">                .setEditable(true)</span>
+<span class="nc bnc" id="L134" title="All 2 branches missed.">                .setCellEditable(r -&gt; !r.isActive())</span>
+<span class="nc" id="L135">                .setColumnWidth(WIDTH_NAME)</span>
+<span class="nc" id="L136">                .setOnCommit((r, v) -&gt; updateField(MoneyWiseAssetBase::setCategory, r, v));</span>
+
+        /* Create the description column */
+<span class="nc" id="L139">        myTable.declareStringColumn(PrometheusDataResource.DATAITEM_FIELD_DESC)</span>
+<span class="nc" id="L140">                .setValidator(this::isValidDesc)</span>
+<span class="nc" id="L141">                .setCellValueFactory(MoneyWiseAssetBase::getDesc)</span>
+<span class="nc" id="L142">                .setEditable(true)</span>
+<span class="nc" id="L143">                .setColumnWidth(WIDTH_DESC)</span>
+<span class="nc" id="L144">                .setOnCommit((r, v) -&gt; updateField(MoneyWiseAssetBase::setDescription, r, v));</span>
+
+        /* Add listeners */
+<span class="nc" id="L147">        myNewButton.getEventRegistrar().addEventListener(e -&gt; addNewItem());</span>
+<span class="nc" id="L148">        theLockedCheckBox.getEventRegistrar().addEventListener(e -&gt; setShowAll(theLockedCheckBox.isSelected()));</span>
+<span class="nc" id="L149">    }</span>
+
+    /**
+     * finish the table.
+     * @param pParent create parent column
+     * @param pCurrency create currency column
+     * @param pEvent create event column
+     */
+    protected void finishTable(final boolean pParent,
+                               final boolean pCurrency,
+                               final boolean pEvent) {
+        /* Access Table */
+<span class="nc" id="L161">        final TethysUITableManager&lt;MetisDataFieldId, T&gt; myTable = getTable();</span>
+
+        /* Create the parent column */
+<span class="nc bnc" id="L164" title="All 2 branches missed.">        if (pParent) {</span>
+<span class="nc" id="L165">            myTable.declareScrollColumn(MoneyWiseBasicResource.ASSET_PARENT, MoneyWisePayee.class)</span>
+<span class="nc" id="L166">                    .setMenuConfigurator(this::buildParentMenu)</span>
+<span class="nc" id="L167">                    .setCellValueFactory(MoneyWiseAssetBase::getParent)</span>
+<span class="nc" id="L168">                    .setEditable(true)</span>
+<span class="nc bnc" id="L169" title="All 2 branches missed.">                    .setCellEditable(r -&gt; !r.isActive())</span>
+<span class="nc" id="L170">                    .setColumnWidth(WIDTH_NAME)</span>
+<span class="nc" id="L171">                    .setOnCommit((r, v) -&gt; updateField(MoneyWiseAssetBase::setParent, r, v));</span>
+        }
+
+        /* Create the currency column */
+<span class="nc bnc" id="L175" title="All 2 branches missed.">        if (pCurrency) {</span>
+<span class="nc" id="L176">            myTable.declareScrollColumn(MoneyWiseStaticDataType.CURRENCY, MoneyWiseCurrency.class)</span>
+<span class="nc" id="L177">                    .setMenuConfigurator(this::buildCurrencyMenu)</span>
+<span class="nc" id="L178">                    .setCellValueFactory(MoneyWiseAssetBase::getAssetCurrency)</span>
+<span class="nc" id="L179">                    .setEditable(true)</span>
+<span class="nc bnc" id="L180" title="All 2 branches missed.">                    .setCellEditable(r -&gt; !r.isActive())</span>
+<span class="nc" id="L181">                    .setColumnWidth(WIDTH_CURR)</span>
+<span class="nc" id="L182">                    .setOnCommit((r, v) -&gt; updateField(MoneyWiseAssetBase::setAssetCurrency, r, v));</span>
+        }
+
+        /* Create the Closed column */
+<span class="nc" id="L186">        final Map&lt;Boolean, TethysUIIconMapSet&lt;Boolean&gt;&gt; myClosedMapSets = MoneyWiseIcon.configureLockedIconButton(getView().getGuiFactory());</span>
+<span class="nc" id="L187">        final TethysUITableColumn&lt;Boolean, MetisDataFieldId, T&gt; myClosedColumn</span>
+<span class="nc" id="L188">                = myTable.declareIconColumn(MoneyWiseBasicResource.ASSET_CLOSED, Boolean.class)</span>
+<span class="nc" id="L189">                .setIconMapSet(r -&gt; myClosedMapSets.get(determineClosedState(r)))</span>
+<span class="nc" id="L190">                .setCellValueFactory(MoneyWiseAssetBase::isClosed)</span>
+<span class="nc" id="L191">                .setEditable(true)</span>
+<span class="nc" id="L192">                .setCellEditable(this::determineClosedState)</span>
+<span class="nc" id="L193">                .setColumnWidth(WIDTH_ICON)</span>
+<span class="nc" id="L194">                .setOnCommit((r, v) -&gt; updateField(MoneyWiseAssetBase::setClosed, r, v));</span>
+<span class="nc" id="L195">        declareClosedColumn(myClosedColumn);</span>
+<span class="nc" id="L196">        setShowAll(false);</span>
+
+        /* Create the Active column */
+<span class="nc" id="L199">        final TethysUIIconMapSet&lt;MetisAction&gt; myActionMapSet = MetisIcon.configureStatusIconButton(getView().getGuiFactory());</span>
+<span class="nc" id="L200">        myTable.declareIconColumn(PrometheusDataResource.DATAITEM_TOUCH, MetisAction.class)</span>
+<span class="nc" id="L201">                .setIconMapSet(r -&gt; myActionMapSet)</span>
+<span class="nc bnc" id="L202" title="All 2 branches missed.">                .setCellValueFactory(r -&gt; r.isActive() ? MetisAction.ACTIVE : MetisAction.DELETE)</span>
+<span class="nc" id="L203">                .setName(MoneyWiseUIResource.STATICDATA_ACTIVE.getValue())</span>
+<span class="nc" id="L204">                .setEditable(true)</span>
+<span class="nc bnc" id="L205" title="All 2 branches missed.">                .setCellEditable(r -&gt; !r.isActive())</span>
+<span class="nc" id="L206">                .setColumnWidth(WIDTH_ICON)</span>
+<span class="nc" id="L207">                .setOnCommit((r, v) -&gt; updateField(this::deleteRow, r, v));</span>
+
+        /* Create the latest event column */
+<span class="nc bnc" id="L210" title="All 2 branches missed.">        if (pEvent) {</span>
+<span class="nc" id="L211">            myTable.declareDateColumn(MoneyWiseBasicResource.ASSET_LASTEVENT)</span>
+<span class="nc" id="L212">                    .setCellValueFactory(this::getLatestTranDate)</span>
+<span class="nc" id="L213">                    .setName(MoneyWiseUIResource.ASSET_COLUMN_LATEST.getValue())</span>
+<span class="nc" id="L214">                    .setEditable(false);</span>
+        }
+<span class="nc" id="L216">    }</span>
+
+    /**
+     * Obtain the filter panel.
+     * @return the filter panel
+     */
+    public TethysUIBoxPaneManager getFilterPanel() {
+<span class="nc" id="L223">        return theFilterPanel;</span>
+    }
+
+    /**
+     * Declare the closed column.
+     * @param pColumn the column
+     */
+    protected void declareClosedColumn(final TethysUITableColumn&lt;Boolean, MetisDataFieldId, T&gt; pColumn) {
+<span class="nc" id="L231">        theClosedColumn = pColumn;</span>
+<span class="nc" id="L232">    }</span>
+
+    /**
+     * Determine closed state.
+     * @param pAsset the asset
+     * @return the state
+     */
+    protected boolean determineClosedState(final T pAsset) {
+<span class="nc bnc" id="L240" title="All 4 branches missed.">        return pAsset.isClosed() || !pAsset.isRelevant();</span>
+    }
+
+    /**
+     * Obtain the date of the latest transaction.
+     * @param pAsset the asset
+     * @return the date or null
+     */
+    protected OceanusDate getLatestTranDate(final T pAsset) {
+<span class="nc" id="L249">        final MoneyWiseTransaction myTran = pAsset.getLatest();</span>
+<span class="nc bnc" id="L250" title="All 2 branches missed.">        return myTran == null ? null : myTran.getDate();</span>
+    }
+
+    /**
+     * Set the showAll indicator.
+     * @param pShowAll show closed accounts?
+     */
+    public void setShowAll(final boolean pShowAll) {
+<span class="nc" id="L258">        doShowClosed = pShowAll;</span>
+<span class="nc" id="L259">        cancelEditing();</span>
+<span class="nc" id="L260">        getTable().setFilter(this::isFiltered);</span>
+<span class="nc" id="L261">        theClosedColumn.setVisible(pShowAll);</span>
+<span class="nc" id="L262">        restoreSelected();</span>
+<span class="nc" id="L263">    }</span>
+
+    /**
+     * check whether we need to enable showAll.
+     * @param pAsset the asset to check
+     */
+    protected void checkShowAll(final T pAsset) {
+        /* If the item is closed, but we are not showing closed items */
+<span class="nc bnc" id="L271" title="All 2 branches missed.">        if (pAsset != null</span>
+<span class="nc bnc" id="L272" title="All 2 branches missed.">                &amp;&amp; pAsset.isClosed()</span>
+<span class="nc bnc" id="L273" title="All 2 branches missed.">                &amp;&amp; !theLockedCheckBox.isSelected()) {</span>
+<span class="nc" id="L274">            theLockedCheckBox.setSelected(true);</span>
+<span class="nc" id="L275">            setShowAll(true);</span>
+        }
+<span class="nc" id="L277">    }</span>
+
+    /**
+     * Build the Category list for the item.
+     * @param pAsset the item
+     * @param pMenu the menu to build
+     */
+    protected abstract void buildCategoryMenu(T pAsset,
+                                              TethysUIScrollMenu&lt;MoneyWiseAssetCategory&gt; pMenu);
+
+    /**
+     * Build the Parent list for the item.
+     * @param pAsset the item
+     * @param pMenu the menu to build
+     */
+    protected void buildParentMenu(final T pAsset,
+                                   final TethysUIScrollMenu&lt;MoneyWisePayee&gt; pMenu) {
+        /* No-Op */
+<span class="nc" id="L295">    }</span>
+
+    /**
+     * Build the currency list for the item.
+     * @param pAsset the item
+     * @param pMenu the menu to build
+     */
+    protected void buildCurrencyMenu(final T pAsset,
+                                     final TethysUIScrollMenu&lt;MoneyWiseCurrency&gt; pMenu) {
+        /* No-Op */
+<span class="nc" id="L305">    }</span>
+
+    /**
+     * New item.
+     */
+    protected abstract void addNewItem();
+
+    @Override
+    protected boolean isFiltered(final T pRow) {
+        /* Handle filter */
+<span class="nc bnc" id="L315" title="All 6 branches missed.">        return super.isFiltered(pRow) &amp;&amp; (doShowClosed || !pRow.isDisabled());</span>
+    }
+
+    @Override
+    protected String getInvalidNameChars() {
+<span class="nc" id="L320">        return &quot;:&quot;;</span>
+    }
+
+    /**
+     * Obtain a new asset nameSpaceIterator.
+     * @return the iterator
+     */
+    protected Iterator&lt;PrometheusDataItem&gt; assetNameSpaceIterator() {
+<span class="nc" id="L328">        return new MoneyWiseNameSpaceIterator(getEditSet(),</span>
+                MoneyWiseBasicDataType.PAYEE,
+                MoneyWiseBasicDataType.DEPOSIT,
+                MoneyWiseBasicDataType.CASH,
+                MoneyWiseBasicDataType.LOAN,
+                MoneyWiseBasicDataType.PORTFOLIO);
+    }
+
+    /**
+     * is Valid data?
+     * @param pNewData the new data
+     * @param pClazz the class
+     * @return error message or null
+     */
+    public String isValidData(final char[] pNewData,
+                              final MoneyWiseAccountInfoClass pClazz) {
+        /* Reject data that is too long */
+<span class="nc bnc" id="L345" title="All 2 branches missed.">        if (pNewData.length &gt; pClazz.getMaximumLength()) {</span>
+<span class="nc" id="L346">            return &quot;Data too long&quot;;</span>
+        }
+
+        /* Valid notes */
+<span class="nc" id="L350">        return null;</span>
+    }
+
+    /**
+     * is Valid symbol?
+     * @param pNewSymbol the new symbol
+     * @param pRow the row
+     * @return error message or null
+     */
+    public String isValidSymbol(final String pNewSymbol,
+                                final T pRow) {
+        /* Reject null symbol */
+<span class="nc bnc" id="L362" title="All 2 branches missed.">        if (pNewSymbol == null) {</span>
+<span class="nc" id="L363">            return &quot;Null Symbol not allowed&quot;;</span>
+        }
+
+        /* Reject invalid symbol */
+<span class="nc bnc" id="L367" title="All 2 branches missed.">        if (!PrometheusDataItem.validString(pNewSymbol, getInvalidNameChars())) {</span>
+<span class="nc" id="L368">            return &quot;Invalid characters in symbol&quot;;</span>
+        }
+
+        /* Reject symbol that is too long */
+<span class="nc bnc" id="L372" title="All 2 branches missed.">        if (PrometheusDataItem.byteLength(pNewSymbol) &gt; MoneyWiseSecurityType.SYMBOL_LEN) {</span>
+<span class="nc" id="L373">            return &quot;Symbol too long&quot;;</span>
+        }
+
+        /* Loop through the existing values */
+<span class="nc" id="L377">        final Iterator&lt;PrometheusDataItem&gt; myIterator = nameSpaceIterator();</span>
+<span class="nc bnc" id="L378" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L379">            final PrometheusDataItem myValue = myIterator.next();</span>
+
+            /* Ignore self and deleted */
+<span class="nc bnc" id="L382" title="All 2 branches missed.">            if (!(myValue instanceof MoneyWiseSecurity)</span>
+<span class="nc bnc" id="L383" title="All 2 branches missed.">                    || myValue.isDeleted()</span>
+<span class="nc bnc" id="L384" title="All 2 branches missed.">                    || myValue.equals(pRow)) {</span>
+<span class="nc" id="L385">                continue;</span>
+            }
+
+            /* Check for duplicate */
+<span class="nc" id="L389">            final MoneyWiseSecurity mySecurity = (MoneyWiseSecurity) myValue;</span>
+<span class="nc bnc" id="L390" title="All 2 branches missed.">            if (pNewSymbol.equals(mySecurity.getSymbol())) {</span>
+<span class="nc" id="L391">                return &quot;Duplicate symbol&quot;;</span>
+            }
+<span class="nc" id="L393">        }</span>
+
+        /* Valid symbol */
+<span class="nc" id="L396">        return null;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

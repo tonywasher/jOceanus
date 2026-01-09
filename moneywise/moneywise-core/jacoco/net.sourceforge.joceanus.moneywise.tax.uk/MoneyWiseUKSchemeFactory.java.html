@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseUKSchemeFactory.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.tax.uk</a> &gt; <span class="el_source">MoneyWiseUKSchemeFactory.java</span></div><h1>MoneyWiseUKSchemeFactory.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.tax.uk;
+
+import net.sourceforge.joceanus.moneywise.tax.uk.MoneyWiseUKCapitalScheme.MoneyWiseUKCapitalAsIncomeScheme;
+import net.sourceforge.joceanus.moneywise.tax.uk.MoneyWiseUKCapitalScheme.MoneyWiseUKCapitalFlatRateScheme;
+import net.sourceforge.joceanus.moneywise.tax.uk.MoneyWiseUKCapitalScheme.MoneyWiseUKCapitalResidentialScheme;
+import net.sourceforge.joceanus.moneywise.tax.uk.MoneyWiseUKCapitalScheme.MoneyWiseUKCapitalSplitRateScheme;
+import net.sourceforge.joceanus.moneywise.tax.uk.MoneyWiseUKDividendScheme.MoneyWiseUKDividendAdditionalRateScheme;
+import net.sourceforge.joceanus.moneywise.tax.uk.MoneyWiseUKDividendScheme.MoneyWiseUKDividendAsIncomeScheme;
+import net.sourceforge.joceanus.moneywise.tax.uk.MoneyWiseUKDividendScheme.MoneyWiseUKDividendBaseRateScheme;
+import net.sourceforge.joceanus.moneywise.tax.uk.MoneyWiseUKDividendScheme.MoneyWiseUKDividendHigherRateScheme;
+import net.sourceforge.joceanus.moneywise.tax.uk.MoneyWiseUKDividendScheme.MoneyWiseUKDividendLoHigherRateScheme;
+import net.sourceforge.joceanus.moneywise.tax.uk.MoneyWiseUKInterestScheme.MoneyWiseUKInterestAsIncomeScheme;
+import net.sourceforge.joceanus.moneywise.tax.uk.MoneyWiseUKInterestScheme.MoneyWiseUKInterestBaseRateScheme;
+import net.sourceforge.joceanus.moneywise.tax.uk.MoneyWiseUKInterestScheme.MoneyWiseUKInterestLoBaseRateScheme;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
+
+/**
+ * The scheme factory.
+ */
+public final class MoneyWiseUKSchemeFactory {
+    /**
+     * The Dividends asIncome Scheme.
+     */
+<span class="fc" id="L40">    static final MoneyWiseUKDividendScheme DIVIDEND_ASINCOME = new MoneyWiseUKDividendAsIncomeScheme();</span>
+
+    /**
+     * The Dividends TaxCredit Scheme.
+     */
+<span class="fc" id="L45">    static final MoneyWiseUKDividendScheme DIVIDEND_TAXCREDIT = new MoneyWiseUKDividendBaseRateScheme(getRate(20));</span>
+
+    /**
+     * The Dividends Non-refund-able TaxCredit Scheme.
+     */
+<span class="fc" id="L50">    static final MoneyWiseUKDividendScheme DIVIDEND_FIXEDTAXCREDIT = new MoneyWiseUKDividendBaseRateScheme(getRate(20), false);</span>
+
+    /**
+     * The Dividends Low TaxCredit Scheme.
+     */
+<span class="fc" id="L55">    static final MoneyWiseUKDividendScheme DIVIDEND_LOTAXCREDIT = new MoneyWiseUKDividendLoHigherRateScheme(getRate(10), getFractionalRate(325));</span>
+
+    /**
+     * The Dividends Low TaxCredit Scheme Mark 2.
+     */
+<span class="fc" id="L60">    static final MoneyWiseUKDividendScheme DIVIDEND_LOTAXCREDIT2 = new MoneyWiseUKDividendHigherRateScheme(getRate(10), getFractionalRate(325));</span>
+
+    /**
+     * The Dividends Additional Rate Scheme.
+     */
+<span class="fc" id="L65">    static final MoneyWiseUKDividendScheme DIVIDEND_ADDTAXCREDIT = new MoneyWiseUKDividendAdditionalRateScheme(getRate(10),</span>
+<span class="fc" id="L66">            getFractionalRate(325), getFractionalRate(425));</span>
+
+    /**
+     * The Dividends Additional Rate Scheme Mark 2.
+     */
+<span class="fc" id="L71">    static final MoneyWiseUKDividendScheme DIVIDEND_ADDTAXCREDIT2 = new MoneyWiseUKDividendAdditionalRateScheme(getRate(10),</span>
+<span class="fc" id="L72">            getFractionalRate(325), getFractionalRate(375));</span>
+
+    /**
+     * The Dividends Additional Rate Scheme with no TaxCredit.
+     */
+<span class="fc" id="L77">    static final MoneyWiseUKDividendScheme DIVIDEND_NOTAXCREDIT = new MoneyWiseUKDividendAdditionalRateScheme(getFractionalRate(75),</span>
+<span class="fc" id="L78">            getFractionalRate(325), getFractionalRate(381), Boolean.TRUE);</span>
+
+    /**
+     * The Dividends Additional Rate Scheme with no TaxCredit and new rates.
+     */
+<span class="fc" id="L83">    static final MoneyWiseUKDividendScheme DIVIDEND_NOTAXCREDIT1 = new MoneyWiseUKDividendAdditionalRateScheme(getTenthFractionalRate(875),</span>
+<span class="fc" id="L84">            getTenthFractionalRate(3375), getTenthFractionalRate(3935), Boolean.TRUE);</span>
+
+    /**
+     * The Interest asIncome Scheme.
+     */
+<span class="fc" id="L89">    static final MoneyWiseUKInterestScheme INTEREST_ASINCOME = new MoneyWiseUKInterestAsIncomeScheme();</span>
+
+    /**
+     * The Interest base Scheme.
+     */
+<span class="fc" id="L94">    static final MoneyWiseUKInterestScheme INTEREST_BASE = new MoneyWiseUKInterestBaseRateScheme(getRate(20));</span>
+
+    /**
+     * The LowInterest base Scheme.
+     */
+<span class="fc" id="L99">    static final MoneyWiseUKInterestScheme INTEREST_LOBASE = new MoneyWiseUKInterestLoBaseRateScheme(getRate(20));</span>
+
+    /**
+     * The Old Capital Gains Scheme.
+     */
+<span class="fc" id="L104">    static final MoneyWiseUKCapitalScheme CAPITAL_OLD = new MoneyWiseUKCapitalFlatRateScheme(getRate(30));</span>
+
+    /**
+     * The Capital Gains asIncome Scheme.
+     */
+<span class="fc" id="L109">    static final MoneyWiseUKCapitalScheme CAPITAL_ASINCOME = new MoneyWiseUKCapitalAsIncomeScheme();</span>
+
+    /**
+     * The New Capital Gains Scheme.
+     */
+<span class="fc" id="L114">    static final MoneyWiseUKCapitalScheme CAPITAL_NEW = new MoneyWiseUKCapitalFlatRateScheme(getRate(18));</span>
+
+    /**
+     * The Split Capital Gains Scheme.
+     */
+<span class="fc" id="L119">    static final MoneyWiseUKCapitalScheme CAPITAL_SPLIT = new MoneyWiseUKCapitalSplitRateScheme(getRate(18), getRate(28));</span>
+
+    /**
+     * The Residential Capital Gains Scheme.
+     */
+<span class="fc" id="L124">    static final MoneyWiseUKCapitalScheme CAPITAL_RESIDENTIAL = new MoneyWiseUKCapitalResidentialScheme(getRate(10),</span>
+<span class="fc" id="L125">            getRate(20), getRate(18), getRate(28));</span>
+
+    /**
+     * The Residential Capital Gains Scheme2.
+     */
+<span class="fc" id="L130">    static final MoneyWiseUKCapitalScheme CAPITAL_RESIDENTIAL2 = new MoneyWiseUKCapitalResidentialScheme(getRate(10),</span>
+<span class="fc" id="L131">            getRate(20), getRate(18), getRate(24));</span>
+
+    /**
+     * The Split Capital Gains Scheme2.
+     */
+<span class="fc" id="L136">    static final MoneyWiseUKCapitalScheme CAPITAL_SPLIT2 = new MoneyWiseUKCapitalSplitRateScheme(getRate(18), getRate(24));</span>
+
+    /**
+     * Constructor.
+     */
+    private MoneyWiseUKSchemeFactory() {
+    }
+
+    /**
+     * Create a rate.
+     * @param pUnits the number of whole units
+     * @return the amount
+     */
+    private static OceanusRate getRate(final int pUnits) {
+<span class="fc" id="L150">        return MoneyWiseUKTaxBandsFactory.getRate(pUnits);</span>
+    }
+
+    /**
+     * Create a fractional rate.
+     * @param pUnits the number of whole units
+     * @return the amount
+     */
+    private static OceanusRate getFractionalRate(final int pUnits) {
+<span class="fc" id="L159">        return OceanusRate.getWholePermille(pUnits);</span>
+    }
+
+    /**
+     * Create a fractional rate.
+     * @param pUnits the number of tenth units
+     * @return the amount
+     */
+    private static OceanusRate getTenthFractionalRate(final int pUnits) {
+<span class="fc" id="L168">        return OceanusRate.getTenthPermille(pUnits);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

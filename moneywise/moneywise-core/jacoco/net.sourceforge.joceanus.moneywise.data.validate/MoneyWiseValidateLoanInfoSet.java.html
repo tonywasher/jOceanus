@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseValidateLoanInfoSet.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.data.validate</a> &gt; <span class="el_source">MoneyWiseValidateLoanInfoSet.java</span></div><h1>MoneyWiseValidateLoanInfoSet.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.data.validate;
+
+import net.sourceforge.joceanus.metis.field.MetisFieldRequired;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDepositInfoSet;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseLoan;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseLoanCategory;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseLoanInfo;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseLoanInfoSet;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoClass;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoClass;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
+import net.sourceforge.joceanus.prometheus.validate.PrometheusValidateInfoSet;
+
+import java.util.Currency;
+
+/**
+ * Validate LoanInfoSet.
+ */
+<span class="fc" id="L38">public class MoneyWiseValidateLoanInfoSet</span>
+        extends PrometheusValidateInfoSet&lt;MoneyWiseLoanInfo&gt; {
+    @Override
+    public MoneyWiseLoan getOwner() {
+<span class="fc" id="L42">        return (MoneyWiseLoan) super.getOwner();</span>
+    }
+
+    @Override
+    public MoneyWiseLoanInfoSet getInfoSet() {
+<span class="nc" id="L47">        return (MoneyWiseLoanInfoSet) super.getInfoSet();</span>
+    }
+
+    @Override
+    public MetisFieldRequired isClassRequired(final PrometheusDataInfoClass pClass) {
+        /* Access details about the Loan */
+<span class="fc" id="L53">        final MoneyWiseLoan myLoan = getOwner();</span>
+<span class="fc" id="L54">        final MoneyWiseLoanCategory myCategory = myLoan.getCategory();</span>
+
+        /* If we have no Category, no class is allowed */
+<span class="pc bpc" id="L57" title="1 of 2 branches missed.">        if (myCategory == null) {</span>
+<span class="nc" id="L58">            return MetisFieldRequired.NOTALLOWED;</span>
+        }
+
+        /* Switch on class */
+<span class="fc bfc" id="L62" title="All 2 branches covered.">        switch ((MoneyWiseAccountInfoClass) pClass) {</span>
+            /* Allowed set */
+            case NOTES:
+            case SORTCODE:
+            case ACCOUNT:
+            case REFERENCE:
+            case OPENINGBALANCE:
+<span class="fc" id="L69">                return MetisFieldRequired.CANEXIST;</span>
+
+            /* Not allowed */
+            case WEBSITE:
+            case CUSTOMERNO:
+            case USERID:
+            case PASSWORD:
+            case MATURITY:
+            case AUTOEXPENSE:
+            case AUTOPAYEE:
+            case SYMBOL:
+            case REGION:
+            case UNDERLYINGSTOCK:
+            case OPTIONPRICE:
+            default:
+<span class="fc" id="L84">                return MetisFieldRequired.NOTALLOWED;</span>
+        }
+    }
+
+    @Override
+    public void validateClass(final MoneyWiseLoanInfo pInfo,
+                              final PrometheusDataInfoClass pClass) {
+        /* Switch on class */
+<span class="pc bpc" id="L92" title="2 of 3 branches missed.">        switch ((MoneyWiseAccountInfoClass) pClass) {</span>
+            case OPENINGBALANCE:
+<span class="fc" id="L94">                validateOpeningBalance(pInfo);</span>
+<span class="fc" id="L95">                break;</span>
+            case SORTCODE:
+            case ACCOUNT:
+            case NOTES:
+            case REFERENCE:
+<span class="nc" id="L100">                validateInfoLength(pInfo);</span>
+<span class="nc" id="L101">                break;</span>
+            default:
+                break;
+        }
+<span class="fc" id="L105">    }</span>
+
+    /**
+     * Validate the opening balance.
+     * @param pInfo the info
+     */
+    private void validateOpeningBalance(final MoneyWiseLoanInfo pInfo) {
+<span class="fc" id="L112">        final OceanusMoney myBalance = pInfo.getValue(OceanusMoney.class);</span>
+<span class="pc bpc" id="L113" title="1 of 2 branches missed.">        if (!myBalance.getCurrency().equals(getOwner().getCurrency())) {</span>
+<span class="nc" id="L114">            getOwner().addError(MoneyWiseDepositInfoSet.ERROR_CURRENCY, MoneyWiseLoanInfoSet.getFieldForClass(MoneyWiseAccountInfoClass.OPENINGBALANCE));</span>
+        }
+<span class="fc" id="L116">    }</span>
+
+    /**
+     * Validate the info length.
+     * @param pInfo the info
+     */
+    private void validateInfoLength(final MoneyWiseLoanInfo pInfo) {
+<span class="nc" id="L123">        final char[] myArray = pInfo.getValue(char[].class);</span>
+<span class="nc" id="L124">        final MoneyWiseAccountInfoClass myClass = pInfo.getInfoClass();</span>
+<span class="nc bnc" id="L125" title="All 2 branches missed.">        if (myArray.length &gt; myClass.getMaximumLength()) {</span>
+<span class="nc" id="L126">            getOwner().addError(PrometheusDataItem.ERROR_LENGTH, MoneyWiseLoanInfoSet.getFieldForClass(myClass));</span>
+        }
+<span class="nc" id="L128">    }</span>
+
+    @Override
+    protected void autoCorrect(final PrometheusDataInfoClass pClass) throws OceanusException {
+        /* If the info is Opening balance */
+<span class="nc bnc" id="L133" title="All 2 branches missed.">        if (MoneyWiseAccountInfoClass.OPENINGBALANCE.equals(pClass)) {</span>
+            /* Access the value */
+<span class="nc" id="L135">            final MoneyWiseLoan myOwner = getOwner();</span>
+<span class="nc" id="L136">            OceanusMoney myOpening = myOwner.getOpeningBalance();</span>
+<span class="nc" id="L137">            final MoneyWiseCurrency myAssetCurrency = myOwner.getAssetCurrency();</span>
+<span class="nc" id="L138">            final Currency myCurrency = myAssetCurrency.getCurrency();</span>
+
+            /* If we need to change currency */
+<span class="nc bnc" id="L141" title="All 2 branches missed.">            if (!myCurrency.equals(myOpening.getCurrency())) {</span>
+<span class="nc" id="L142">                myOpening = myOpening.changeCurrency(myCurrency);</span>
+<span class="nc" id="L143">                getInfoSet().setValue(pClass, myOpening);</span>
+            }
+        }
+<span class="nc" id="L146">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

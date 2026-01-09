@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseValidatePortfolio.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.data.validate</a> &gt; <span class="el_source">MoneyWiseValidatePortfolio.java</span></div><h1>MoneyWiseValidatePortfolio.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.data.validate;
+
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataValidator.MoneyWiseDataValidatorAutoCorrect;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee.MoneyWisePayeeList;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePortfolio;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePortfolio.MoneyWisePortfolioDataMap;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePortfolio.MoneyWisePortfolioList;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePayeeClass;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePortfolioClass;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePortfolioType;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePortfolioType.MoneyWisePortfolioTypeList;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
+import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
+
+import java.util.Iterator;
+
+/**
+ * Validator for Payee.
+ */
+public class MoneyWiseValidatePortfolio
+        extends MoneyWiseValidateAccount&lt;MoneyWisePortfolio&gt;
+        implements MoneyWiseDataValidatorAutoCorrect&lt;MoneyWisePortfolio&gt; {
+    /**
+     * New Account name.
+     */
+<span class="fc" id="L51">    private static final String NAME_NEWACCOUNT = MoneyWiseBasicResource.PORTFOLIO_NEWACCOUNT.getValue();</span>
+
+    /**
+     * Portfolio Cash account.
+     */
+<span class="fc" id="L56">    static final String NAME_CASHACCOUNT = MoneyWiseBasicResource.PORTFOLIO_CASHACCOUNT.getValue();</span>
+
+    /**
+     * The infoSet validator.
+     */
+    private final MoneyWiseValidatePortfolioInfoSet theInfoSet;
+
+    /**
+     * Constructor.
+     */
+<span class="fc" id="L66">    MoneyWiseValidatePortfolio() {</span>
+<span class="fc" id="L67">        theInfoSet = new MoneyWiseValidatePortfolioInfoSet();</span>
+<span class="fc" id="L68">    }</span>
+
+    @Override
+    public void setEditSet(final PrometheusEditSet pEditSet) {
+<span class="fc" id="L72">        super.setEditSet(pEditSet);</span>
+<span class="fc" id="L73">        theInfoSet.storeEditSet(pEditSet);</span>
+<span class="fc" id="L74">    }</span>
+
+    @Override
+    public void validate(final PrometheusDataItem pPortfolio) {
+<span class="fc" id="L78">        final MoneyWisePortfolio myPortfolio = (MoneyWisePortfolio) pPortfolio;</span>
+<span class="fc" id="L79">        final MoneyWisePortfolioList myList = myPortfolio.getList();</span>
+<span class="fc" id="L80">        final MoneyWisePayee myParent = myPortfolio.getParent();</span>
+<span class="fc" id="L81">        final MoneyWisePortfolioType myPortType = myPortfolio.getCategory();</span>
+<span class="fc" id="L82">        final MoneyWiseCurrency myCurrency = myPortfolio.getAssetCurrency();</span>
+
+        /* Validate base components */
+<span class="fc" id="L85">        super.validate(pPortfolio);</span>
+
+        /* PortfolioType must be non-null */
+<span class="pc bpc" id="L88" title="1 of 2 branches missed.">        if (myPortType == null) {</span>
+<span class="nc" id="L89">            pPortfolio.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.CATEGORY_NAME);</span>
+        } else {
+            /* Access the class */
+<span class="fc" id="L92">            final MoneyWisePortfolioClass myClass = myPortType.getPortfolioClass();</span>
+
+            /* PortfolioType must be enabled */
+<span class="pc bpc" id="L95" title="1 of 2 branches missed.">            if (!myPortType.getEnabled()) {</span>
+<span class="nc" id="L96">                pPortfolio.addError(PrometheusDataItem.ERROR_DISABLED, MoneyWiseBasicResource.CATEGORY_NAME);</span>
+            }
+
+            /* If the PortfolioType is singular */
+<span class="fc bfc" id="L100" title="All 2 branches covered.">            if (myClass.isSingular()) {</span>
+                /* Count the elements of this class */
+<span class="fc" id="L102">                final MoneyWisePortfolioDataMap myMap = myList.getDataMap();</span>
+<span class="pc bpc" id="L103" title="1 of 2 branches missed.">                if (!myMap.validSingularCount(myClass)) {</span>
+<span class="nc" id="L104">                    pPortfolio.addError(PrometheusDataItem.ERROR_MULT, MoneyWiseBasicResource.CATEGORY_NAME);</span>
+                }
+            }
+        }
+
+        /* Parent account must exist */
+<span class="pc bpc" id="L110" title="1 of 2 branches missed.">        if (myParent == null) {</span>
+<span class="nc" id="L111">            pPortfolio.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.ASSET_PARENT);</span>
+        } else {
+            /* Parent must be suitable */
+<span class="fc" id="L114">            final MoneyWisePayeeClass myParClass = myParent.getCategoryClass();</span>
+<span class="pc bpc" id="L115" title="1 of 2 branches missed.">            if (!myParClass.canParentPortfolio()) {</span>
+<span class="nc" id="L116">                pPortfolio.addError(ERROR_BADPARENT, MoneyWiseBasicResource.ASSET_PARENT);</span>
+            }
+
+            /* If we are open then parent must be open */
+<span class="pc bpc" id="L120" title="2 of 4 branches missed.">            if (!myPortfolio.isClosed() &amp;&amp; Boolean.TRUE.equals(myParent.isClosed())) {</span>
+<span class="nc" id="L121">                pPortfolio.addError(ERROR_PARCLOSED, MoneyWiseBasicResource.ASSET_CLOSED);</span>
+            }
+        }
+
+        /* Currency must be non-null and enabled */
+<span class="pc bpc" id="L126" title="1 of 2 branches missed.">        if (myCurrency == null) {</span>
+<span class="nc" id="L127">            pPortfolio.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseStaticDataType.CURRENCY);</span>
+<span class="pc bpc" id="L128" title="1 of 2 branches missed.">        } else if (!myCurrency.getEnabled()) {</span>
+<span class="nc" id="L129">            pPortfolio.addError(PrometheusDataItem.ERROR_DISABLED, MoneyWiseStaticDataType.CURRENCY);</span>
+        }
+
+        /* If we have an infoSet */
+<span class="pc bpc" id="L133" title="1 of 2 branches missed.">        if (myPortfolio.getInfoSet() != null) {</span>
+            /* Validate the InfoSet */
+<span class="fc" id="L135">            theInfoSet.validate(myPortfolio.getInfoSet());</span>
+        }
+
+        /* Set validation flag */
+<span class="pc bpc" id="L139" title="1 of 2 branches missed.">        if (!pPortfolio.hasErrors()) {</span>
+<span class="fc" id="L140">            pPortfolio.setValidEdit();</span>
+        }
+<span class="fc" id="L142">    }</span>
+
+    @Override
+    public void validateName(final MoneyWiseAssetBase pPortfolio,
+                             final String pName) {
+        /* Perform basic checks */
+<span class="fc" id="L148">        super.validateName(pPortfolio, pName);</span>
+
+        /* Check that the name does not contain invalid characters */
+<span class="pc bpc" id="L151" title="1 of 2 branches missed.">        if (pName.contains(MoneyWiseSecurityHolding.SECURITYHOLDING_SEP)) {</span>
+<span class="nc" id="L152">            pPortfolio.addError(PrometheusDataItem.ERROR_INVALIDCHAR, PrometheusDataResource.DATAITEM_FIELD_NAME);</span>
+        }
+<span class="fc" id="L154">    }</span>
+
+    @Override
+    public void setDefaults(final MoneyWisePortfolio pPortfolio) throws OceanusException {
+        /* Set values */
+<span class="nc" id="L159">        final MoneyWisePortfolioList myList = pPortfolio.getList();</span>
+<span class="nc" id="L160">        pPortfolio.setName(getUniqueName(myList, NAME_NEWACCOUNT));</span>
+<span class="nc" id="L161">        pPortfolio.setCategory(getDefaultPortfolioType());</span>
+<span class="nc" id="L162">        pPortfolio.setParent(getDefaultParent());</span>
+<span class="nc" id="L163">        pPortfolio.setAssetCurrency(getReportingCurrency());</span>
+<span class="nc" id="L164">        pPortfolio.setClosed(Boolean.FALSE);</span>
+<span class="nc" id="L165">    }</span>
+
+    @Override
+    public void autoCorrect(final MoneyWisePortfolio pPortfolio) throws OceanusException {
+        /* Ensure that we have a valid parent */
+<span class="nc" id="L170">        final MoneyWisePayee myParent = pPortfolio.getParent();</span>
+<span class="nc bnc" id="L171" title="All 2 branches missed.">        if (myParent == null</span>
+<span class="nc bnc" id="L172" title="All 2 branches missed.">                || !myParent.getCategoryClass().canParentPortfolio()) {</span>
+<span class="nc" id="L173">            pPortfolio.setParent(getDefaultParent());</span>
+        }
+
+        /* autoCorrect the infoSet */
+<span class="nc" id="L177">        theInfoSet.autoCorrect(pPortfolio.getInfoSet());</span>
+<span class="nc" id="L178">    }</span>
+
+    /**
+     * Obtain default parent for portfolio.
+     * @return the default parent
+     */
+    private MoneyWisePayee getDefaultParent() {
+        /* loop through the payees */
+<span class="nc" id="L186">        final MoneyWisePayeeList myPayees = getEditSet().getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class);</span>
+<span class="nc" id="L187">        final Iterator&lt;MoneyWisePayee&gt; myIterator = myPayees.iterator();</span>
+<span class="nc bnc" id="L188" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L189">            final MoneyWisePayee myPayee = myIterator.next();</span>
+
+            /* Ignore deleted and closed payees and those that cannot parent this portfolio */
+<span class="nc bnc" id="L192" title="All 4 branches missed.">            boolean bIgnore = myPayee.isDeleted() || myPayee.isClosed();</span>
+<span class="nc bnc" id="L193" title="All 2 branches missed.">            bIgnore |= !myPayee.getCategoryClass().canParentPortfolio();</span>
+<span class="nc bnc" id="L194" title="All 2 branches missed.">            if (!bIgnore) {</span>
+<span class="nc" id="L195">                return myPayee;</span>
+            }
+<span class="nc" id="L197">        }</span>
+
+        /* Return no payee */
+<span class="nc" id="L200">        return null;</span>
+    }
+
+    /**
+     * Obtain portfolio type for new portfolio account.
+     * @return the security type
+     */
+    private MoneyWisePortfolioType getDefaultPortfolioType() {
+        /* loop through the portfolio types */
+<span class="nc" id="L209">        final MoneyWisePortfolioTypeList myTypes</span>
+<span class="nc" id="L210">                = getEditSet().getDataList(MoneyWiseStaticDataType.PORTFOLIOTYPE, MoneyWisePortfolioTypeList.class);</span>
+<span class="nc" id="L211">        final Iterator&lt;MoneyWisePortfolioType&gt; myIterator = myTypes.iterator();</span>
+<span class="nc bnc" id="L212" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L213">            final MoneyWisePortfolioType myType = myIterator.next();</span>
+
+            /* Ignore deleted types */
+<span class="nc bnc" id="L216" title="All 2 branches missed.">            if (!myType.isDeleted()) {</span>
+<span class="nc" id="L217">                return myType;</span>
+            }
+<span class="nc" id="L219">        }</span>
+
+        /* Return no category */
+<span class="nc" id="L222">        return null;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

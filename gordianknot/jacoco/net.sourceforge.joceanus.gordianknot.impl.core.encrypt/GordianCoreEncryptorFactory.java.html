@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCoreEncryptorFactory.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.gordianknot.impl.core.encrypt</a> &gt; <span class="el_source">GordianCoreEncryptorFactory.java</span></div><h1>GordianCoreEncryptorFactory.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * GordianKnot: Security Suite
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.gordianknot.impl.core.encrypt;
+
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
+import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpecBuilder;
+import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorFactory;
+import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
+import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorSpecBuilder;
+import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianSM2EncryptionSpec;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairType;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseData;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.function.Predicate;
+
+/**
+ * GordianKnot base for encryptorFactory.
+ */
+public abstract class GordianCoreEncryptorFactory
+    implements GordianEncryptorFactory {
+    /**
+     * The factory.
+     */
+    private final GordianBaseFactory theFactory;
+
+    /**
+     * The algorithm Ids.
+     */
+    private GordianEncryptorAlgId theAlgIds;
+
+    /**
+     * Constructor.
+     * @param pFactory the factory
+     */
+<span class="fc" id="L58">    protected GordianCoreEncryptorFactory(final GordianBaseFactory pFactory) {</span>
+<span class="fc" id="L59">        theFactory = pFactory;</span>
+<span class="fc" id="L60">    }</span>
+
+    /**
+     * Obtain the factory.
+     * @return the factory
+     */
+    protected GordianBaseFactory getFactory() {
+<span class="fc" id="L67">        return theFactory;</span>
+    }
+
+    @Override
+    public Predicate&lt;GordianEncryptorSpec&gt; supportedEncryptors() {
+<span class="fc" id="L72">        return this::validEncryptorSpec;</span>
+    }
+
+    /**
+     * Check the encryptorSpec.
+     * @param pEncryptorSpec the encryptorSpec
+     * @throws GordianException on error
+     */
+    protected void checkEncryptorSpec(final GordianEncryptorSpec pEncryptorSpec) throws GordianException {
+        /* Check validity of encryptor */
+<span class="pc bpc" id="L82" title="1 of 2 branches missed.">        if (!validEncryptorSpec(pEncryptorSpec)) {</span>
+<span class="nc" id="L83">            throw new GordianDataException(GordianBaseData.getInvalidText(pEncryptorSpec));</span>
+        }
+<span class="fc" id="L85">    }</span>
+
+    /**
+     * Check EncryptorSpec.
+     * @param pSpec the encryptorSpec
+     * @return true/false
+     */
+    protected boolean validEncryptorSpec(final GordianEncryptorSpec pSpec) {
+        /* Reject invalid encryptorSpec */
+<span class="pc bpc" id="L94" title="2 of 4 branches missed.">        if (pSpec == null || !pSpec.isValid()) {</span>
+<span class="nc" id="L95">            return false;</span>
+        }
+
+        /* For Composite EncryptorSpec */
+<span class="fc bfc" id="L99" title="All 2 branches covered.">        if (pSpec.getKeyPairType() == GordianKeyPairType.COMPOSITE) {</span>
+            /* Loop through the specs */
+<span class="fc" id="L101">            final Iterator&lt;GordianEncryptorSpec&gt; myIterator = pSpec.encryptorSpecIterator();</span>
+<span class="fc bfc" id="L102" title="All 2 branches covered.">            while (myIterator.hasNext()) {</span>
+<span class="fc" id="L103">                final GordianEncryptorSpec mySpec = myIterator.next();</span>
+<span class="pc bpc" id="L104" title="1 of 2 branches missed.">                if (!validEncryptorSpec(mySpec)) {</span>
+<span class="nc" id="L105">                    return false;</span>
+                }
+<span class="fc" id="L107">            }</span>
+        }
+
+        /* Check that spec is supported */
+<span class="fc" id="L111">        return pSpec.isSupported();</span>
+    }
+
+    @Override
+    public boolean validEncryptorSpecForKeyPairSpec(final GordianKeyPairSpec pKeyPairSpec,
+                                                    final GordianEncryptorSpec pEncryptorSpec) {
+        /* Check that the encryptorSpec is supported */
+<span class="fc bfc" id="L118" title="All 2 branches covered.">        if (!validEncryptorSpec(pEncryptorSpec)) {</span>
+<span class="fc" id="L119">            return false;</span>
+        }
+
+        /* Check encryptor matches keyPair */
+<span class="fc" id="L123">        final GordianKeyPairType myKeyType = pKeyPairSpec.getKeyPairType();</span>
+<span class="fc" id="L124">        final GordianKeyPairType myEncType = pEncryptorSpec.getKeyPairType();</span>
+<span class="fc bfc" id="L125" title="All 2 branches covered.">        switch (myEncType) {</span>
+            case SM2:
+            case EC:
+<span class="fc bfc" id="L128" title="All 2 branches covered.">                if (!GordianKeyPairType.EC.equals(myKeyType)</span>
+<span class="fc bfc" id="L129" title="All 2 branches covered.">                    &amp;&amp; !GordianKeyPairType.GOST2012.equals(myKeyType)</span>
+<span class="pc bpc" id="L130" title="1 of 2 branches missed.">                    &amp;&amp; !GordianKeyPairType.SM2.equals(myKeyType)) {</span>
+<span class="nc" id="L131">                    return false;</span>
+                }
+                break;
+            default:
+<span class="pc bpc" id="L135" title="1 of 2 branches missed.">                if (!myKeyType.equals(myEncType)) {</span>
+<span class="nc" id="L136">                    return false;</span>
+                }
+                break;
+        }
+
+        /* Disallow EC if the curve does not support encryption */
+<span class="fc bfc" id="L142" title="All 2 branches covered.">        if (GordianKeyPairType.EC.equals(pKeyPairSpec.getKeyPairType())) {</span>
+<span class="fc" id="L143">            return pKeyPairSpec.getElliptic().canEncrypt();</span>
+        }
+
+        /* If this is a RSA encryption */
+<span class="fc bfc" id="L147" title="All 2 branches covered.">        if (GordianKeyPairType.RSA.equals(pKeyPairSpec.getKeyPairType())) {</span>
+            /* The digest length cannot be too large wrt to the modulus */
+<span class="fc" id="L149">            int myLen = pEncryptorSpec.getDigestSpec().getDigestLength().getByteLength();</span>
+<span class="fc" id="L150">            myLen = (myLen + 1) * Byte.SIZE;</span>
+<span class="pc bpc" id="L151" title="1 of 2 branches missed.">            return pKeyPairSpec.getRSAModulus().getLength() &gt;= (myLen &lt;&lt; 1);</span>
+        }
+
+        /* For Composite EncryptorSpec */
+<span class="fc bfc" id="L155" title="All 2 branches covered.">        if (pKeyPairSpec.getKeyPairType() == GordianKeyPairType.COMPOSITE) {</span>
+            /* Loop through the keyPairs */
+<span class="fc" id="L157">            final Iterator&lt;GordianKeyPairSpec&gt; pairIterator = pKeyPairSpec.keySpecIterator();</span>
+<span class="fc" id="L158">            final Iterator&lt;GordianEncryptorSpec&gt; encIterator = pEncryptorSpec.encryptorSpecIterator();</span>
+<span class="pc bpc" id="L159" title="1 of 4 branches missed.">            while (pairIterator.hasNext() &amp;&amp; encIterator.hasNext()) {</span>
+<span class="fc" id="L160">                final GordianKeyPairSpec myPairSpec = pairIterator.next();</span>
+<span class="fc" id="L161">                final GordianEncryptorSpec myEncSpec = encIterator.next();</span>
+<span class="pc bpc" id="L162" title="1 of 2 branches missed.">               if (!validEncryptorSpecForKeyPairSpec(myPairSpec, myEncSpec)) {</span>
+<span class="nc" id="L163">                    return false;</span>
+                }
+<span class="fc" id="L165">            }</span>
+<span class="pc bpc" id="L166" title="2 of 4 branches missed.">            if (pairIterator.hasNext() || encIterator.hasNext()) {</span>
+<span class="nc" id="L167">                return false;</span>
+            }
+        }
+
+        /* OK */
+<span class="fc" id="L172">        return true;</span>
+    }
+
+    /**
+     * Obtain Identifier for EncryptorSpec.
+     * @param pSpec the encryptorSpec.
+     * @return the Identifier
+     */
+    public AlgorithmIdentifier getIdentifierForSpec(final GordianEncryptorSpec pSpec) {
+<span class="fc" id="L181">        return getAlgorithmIds().getIdentifierForSpec(pSpec);</span>
+    }
+
+    /**
+     * Obtain EncryptorSpec for Identifier.
+     * @param pIdentifier the identifier.
+     * @return the encryptorSpec (or null if not found)
+     */
+    public GordianEncryptorSpec getSpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
+<span class="fc" id="L190">        return getAlgorithmIds().getSpecForIdentifier(pIdentifier);</span>
+    }
+
+    /**
+     * Obtain the encryptor algorithm Ids.
+     * @return the encryptor Algorithm Ids
+     */
+    private GordianEncryptorAlgId getAlgorithmIds() {
+<span class="fc bfc" id="L198" title="All 2 branches covered.">        if (theAlgIds == null) {</span>
+<span class="fc" id="L199">            theAlgIds = new GordianEncryptorAlgId(theFactory);</span>
+        }
+<span class="fc" id="L201">        return theAlgIds;</span>
+    }
+
+    @Override
+    public List&lt;GordianEncryptorSpec&gt; listAllSupportedEncryptors(final GordianKeyPair pKeyPair) {
+<span class="nc" id="L206">        return listAllSupportedEncryptors(pKeyPair.getKeyPairSpec());</span>
+    }
+
+    @Override
+    public List&lt;GordianEncryptorSpec&gt; listAllSupportedEncryptors(final GordianKeyPairSpec pKeyPairSpec) {
+<span class="nc" id="L211">        return listPossibleEncryptors(pKeyPairSpec.getKeyPairType())</span>
+<span class="nc" id="L212">                .stream()</span>
+<span class="nc" id="L213">                .filter(s -&gt; validEncryptorSpecForKeyPairSpec(pKeyPairSpec, s))</span>
+<span class="nc" id="L214">                .toList();</span>
+    }
+
+    @Override
+    public List&lt;GordianEncryptorSpec&gt; listPossibleEncryptors(final GordianKeyPairType pKeyPairType) {
+        /* Create list */
+<span class="fc" id="L220">        final List&lt;GordianEncryptorSpec&gt; myEncryptors = new ArrayList&lt;&gt;();</span>
+
+        /* Switch on keyPairType */
+<span class="fc bfc" id="L223" title="All 4 branches covered.">        switch (pKeyPairType) {</span>
+            case RSA:
+<span class="fc" id="L225">                myEncryptors.add(GordianEncryptorSpecBuilder.rsa(GordianDigestSpecBuilder.sha2(GordianLength.LEN_224)));</span>
+<span class="fc" id="L226">                myEncryptors.add(GordianEncryptorSpecBuilder.rsa(GordianDigestSpecBuilder.sha2(GordianLength.LEN_256)));</span>
+<span class="fc" id="L227">                myEncryptors.add(GordianEncryptorSpecBuilder.rsa(GordianDigestSpecBuilder.sha2(GordianLength.LEN_384)));</span>
+<span class="fc" id="L228">                myEncryptors.add(GordianEncryptorSpecBuilder.rsa(GordianDigestSpecBuilder.sha2(GordianLength.LEN_512)));</span>
+<span class="fc" id="L229">                break;</span>
+            case ELGAMAL:
+<span class="fc" id="L231">                myEncryptors.add(GordianEncryptorSpecBuilder.elGamal(GordianDigestSpecBuilder.sha2(GordianLength.LEN_224)));</span>
+<span class="fc" id="L232">                myEncryptors.add(GordianEncryptorSpecBuilder.elGamal(GordianDigestSpecBuilder.sha2(GordianLength.LEN_256)));</span>
+<span class="fc" id="L233">                myEncryptors.add(GordianEncryptorSpecBuilder.elGamal(GordianDigestSpecBuilder.sha2(GordianLength.LEN_384)));</span>
+<span class="fc" id="L234">                myEncryptors.add(GordianEncryptorSpecBuilder.elGamal(GordianDigestSpecBuilder.sha2(GordianLength.LEN_512)));</span>
+<span class="fc" id="L235">                break;</span>
+            case EC:
+            case SM2:
+            case GOST2012:
+                /* Add EC-ElGamal */
+<span class="fc" id="L240">                myEncryptors.add(GordianEncryptorSpecBuilder.ec());</span>
+
+                /* Loop through the encryptionSpecs */
+<span class="fc bfc" id="L243" title="All 2 branches covered.">                for (GordianSM2EncryptionSpec mySpec : GordianSM2EncryptionSpec.listPossibleSpecs()) {</span>
+<span class="fc" id="L244">                    myEncryptors.add(GordianEncryptorSpecBuilder.sm2(mySpec));</span>
+<span class="fc" id="L245">                }</span>
+<span class="fc" id="L246">                break;</span>
+            default:
+                break;
+        }
+
+        /* Return the list */
+<span class="fc" id="L252">        return myEncryptors;</span>
+    }
+
+    @Override
+    public GordianEncryptorSpec defaultForKeyPair(final GordianKeyPairSpec pKeySpec) {
+<span class="fc bfc" id="L257" title="All 5 branches covered.">        switch (pKeySpec.getKeyPairType()) {</span>
+            case RSA:
+<span class="fc" id="L259">                return GordianEncryptorSpecBuilder.rsa(GordianDigestSpecBuilder.sha2(GordianLength.LEN_512));</span>
+            case EC:
+            case SM2:
+            case GOST2012:
+<span class="fc" id="L263">                return GordianEncryptorSpecBuilder.sm2(GordianSM2EncryptionSpec.c1c2c3(GordianDigestSpecBuilder.sm3()));</span>
+            case ELGAMAL:
+<span class="fc" id="L265">                return GordianEncryptorSpecBuilder.elGamal(GordianDigestSpecBuilder.sha2(GordianLength.LEN_512));</span>
+            case COMPOSITE:
+<span class="fc" id="L267">                final List&lt;GordianEncryptorSpec&gt; mySpecs = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L268">                final Iterator&lt;GordianKeyPairSpec&gt; myIterator = pKeySpec.keySpecIterator();</span>
+<span class="fc bfc" id="L269" title="All 2 branches covered.">                while (myIterator.hasNext()) {</span>
+<span class="fc" id="L270">                    final GordianKeyPairSpec mySpec = myIterator.next();</span>
+<span class="fc" id="L271">                    mySpecs.add(defaultForKeyPair(mySpec));</span>
+<span class="fc" id="L272">                }</span>
+<span class="fc" id="L273">                final GordianEncryptorSpec mySpec = GordianEncryptorSpecBuilder.composite(mySpecs);</span>
+<span class="fc bfc" id="L274" title="All 2 branches covered.">                return mySpec.isValid() ? mySpec : null;</span>
+            default:
+<span class="fc" id="L276">                return null;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

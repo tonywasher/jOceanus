@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseUKBasicAllowance.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.tax.uk</a> &gt; <span class="el_source">MoneyWiseUKBasicAllowance.java</span></div><h1>MoneyWiseUKBasicAllowance.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.tax.uk;
+
+import net.sourceforge.joceanus.metis.field.MetisFieldItem;
+import net.sourceforge.joceanus.metis.field.MetisFieldSet;
+import net.sourceforge.joceanus.moneywise.tax.MoneyWiseMarginalReduction;
+import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
+import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxResource;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
+
+/**
+ * Basic UK Tax Allowance.
+ */
+public abstract class MoneyWiseUKBasicAllowance
+        implements MetisFieldItem {
+    /**
+     * Local Report fields.
+     */
+<span class="fc" id="L35">    private static final MetisFieldSet&lt;MoneyWiseUKBasicAllowance&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKBasicAllowance.class);</span>
+
+    /*
+     * Declare Fields.
+     */
+    static {
+<span class="fc" id="L41">        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.ALLOWANCE_BASIC, MoneyWiseUKBasicAllowance::getAllowance);</span>
+<span class="fc" id="L42">        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.ALLOWANCE_RENTAL, MoneyWiseUKBasicAllowance::getRentalAllowance);</span>
+<span class="fc" id="L43">        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.ALLOWANCE_CAPITAL, MoneyWiseUKBasicAllowance::getCapitalAllowance);</span>
+<span class="fc" id="L44">        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.MARGINAL_REDUCTION, MoneyWiseUKBasicAllowance::getMarginalReduction);</span>
+<span class="fc" id="L45">    }</span>
+
+    /**
+     * Allowance.
+     */
+    private final OceanusMoney theAllowance;
+
+    /**
+     * Rental Allowance.
+     */
+    private final OceanusMoney theRentalAllowance;
+
+    /**
+     * Capital Allowance.
+     */
+    private final OceanusMoney theCapitalAllowance;
+
+    /**
+     * Marginal Reduction Type.
+     */
+    private final MoneyWiseMarginalReduction theMarginalReduction;
+
+    /**
+     * Constructor.
+     * @param pAllowance the allowance
+     * @param pRentalAllowance the rental allowance
+     * @param pCapitalAllowance the capital allowance
+     * @param pReduction the marginal reduction
+     */
+    protected MoneyWiseUKBasicAllowance(final OceanusMoney pAllowance,
+                                        final OceanusMoney pRentalAllowance,
+                                        final OceanusMoney pCapitalAllowance,
+<span class="fc" id="L77">                                        final MoneyWiseMarginalReduction pReduction) {</span>
+<span class="fc" id="L78">        theAllowance = pAllowance;</span>
+<span class="fc" id="L79">        theRentalAllowance = pRentalAllowance;</span>
+<span class="fc" id="L80">        theCapitalAllowance = pCapitalAllowance;</span>
+<span class="fc" id="L81">        theMarginalReduction = pReduction;</span>
+<span class="fc" id="L82">    }</span>
+
+    /**
+     * Constructor.
+     * @param pAllowance the allowance
+     * @param pRentalAllowance the rental allowance
+     * @param pCapitalAllowance the capital allowance
+     */
+    protected MoneyWiseUKBasicAllowance(final OceanusMoney pAllowance,
+                                        final OceanusMoney pRentalAllowance,
+                                        final OceanusMoney pCapitalAllowance) {
+<span class="nc" id="L93">        this(pAllowance, pRentalAllowance, pCapitalAllowance, MoneyWiseMarginalReduction.TWOINTHREE);</span>
+<span class="nc" id="L94">    }</span>
+
+    /**
+     * Obtain the allowance.
+     * @return the Allowance
+     */
+    protected OceanusMoney getAllowance() {
+<span class="nc" id="L101">        return theAllowance;</span>
+    }
+
+    /**
+     * Obtain the rental allowance.
+     * @return the Allowance
+     */
+    protected OceanusMoney getRentalAllowance() {
+<span class="nc" id="L109">        return theRentalAllowance;</span>
+    }
+
+    /**
+     * Obtain the capital allowance.
+     * @return the Allowance
+     */
+    protected OceanusMoney getCapitalAllowance() {
+<span class="nc" id="L117">        return theCapitalAllowance;</span>
+    }
+
+    /**
+     * Obtain the marginal reduction.
+     * @return the Reduction
+     */
+    protected MoneyWiseMarginalReduction getMarginalReduction() {
+<span class="nc" id="L125">        return theMarginalReduction;</span>
+    }
+
+    /**
+     * Calculate the allowance.
+     * @param pConfig the tax configuration
+     * @return the calculated allowance
+     */
+    protected OceanusMoney calculateBasicAllowance(final MoneyWiseUKTaxConfig pConfig) {
+<span class="nc" id="L134">        return getAllowance();</span>
+    }
+
+    /**
+     * Calculate the savings allowance.
+     * @param pConfig the tax configuration
+     * @return the savings allowance
+     */
+    protected OceanusMoney calculateSavingsAllowance(final MoneyWiseUKTaxConfig pConfig) {
+<span class="nc" id="L143">        return getZeroAmount();</span>
+    }
+
+    /**
+     * Calculate the dividend allowance.
+     * @return the dividend allowance
+     */
+    protected OceanusMoney calculateDividendAllowance() {
+<span class="nc" id="L151">        return getZeroAmount();</span>
+    }
+
+    /**
+     * Calculate the loSavings band.
+     * @param pConfig the tax configuration
+     * @param pLoSavings the low savings band
+     * @return the loSavings band
+     */
+    protected MoneyWiseTaxBand calculateLoSavingsBand(final MoneyWiseUKTaxConfig pConfig,
+                                                      final MoneyWiseTaxBand pLoSavings) {
+        /* Obtain the loSavings band */
+<span class="nc bnc" id="L163" title="All 2 branches missed.">        if (pLoSavings == null) {</span>
+<span class="nc" id="L164">            return new MoneyWiseTaxBand(getZeroAmount(), OceanusRate.getWholePercentage(0));</span>
+        }
+<span class="nc" id="L166">        final MoneyWiseTaxBand myBand = new MoneyWiseTaxBand(pLoSavings);</span>
+<span class="nc" id="L167">        final OceanusMoney myAmount = myBand.getAmount();</span>
+
+        /* Obtain the preSavings income remaining after the allowance */
+<span class="nc" id="L170">        final OceanusMoney myPreSavings = new OceanusMoney(pConfig.getGrossPreSavings());</span>
+<span class="nc" id="L171">        myPreSavings.subtractAmount(pConfig.getAllowance());</span>
+
+        /* If we have allowance left over, return the full loSavings band */
+<span class="nc bnc" id="L174" title="All 2 branches missed.">        if (!myPreSavings.isPositive()) {</span>
+<span class="nc" id="L175">            return myBand;</span>
+        }
+
+        /* Subtract remaining income from the loSavings band */
+<span class="nc" id="L179">        myAmount.subtractAmount(myPreSavings);</span>
+
+        /* If we are negative, reset to zero */
+<span class="nc bnc" id="L182" title="All 2 branches missed.">        if (!myAmount.isPositive()) {</span>
+<span class="nc" id="L183">            myAmount.setZero();</span>
+        }
+
+        /* return the amount */
+<span class="nc" id="L187">        return myBand;</span>
+    }
+
+    /**
+     * Obtain zero amount.
+     * @return the zero amount
+     */
+    protected OceanusMoney getZeroAmount() {
+        /* Return a zero allowance */
+<span class="nc" id="L196">        final OceanusMoney myAllowance = new OceanusMoney(theAllowance);</span>
+<span class="nc" id="L197">        myAllowance.setZero();</span>
+<span class="nc" id="L198">        return myAllowance;</span>
+    }
+
+    /**
+     * Obtain the data fields.
+     * @return the data fields
+     */
+    protected static MetisFieldSet&lt;? extends MoneyWiseUKBasicAllowance&gt; getBaseFieldSet() {
+<span class="nc" id="L206">        return FIELD_DEFS;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

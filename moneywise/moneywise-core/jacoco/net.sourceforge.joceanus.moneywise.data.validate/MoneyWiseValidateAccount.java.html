@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseValidateAccount.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.data.validate</a> &gt; <span class="el_source">MoneyWiseValidateAccount.java</span></div><h1>MoneyWiseValidateAccount.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.data.validate;
+
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetBase.MoneyWiseAssetBaseList;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataValidator.MoneyWiseDataValidatorAccount;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
+import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
+
+/**
+ * Validator for assetBase.
+ * @param &lt;T&gt; the asset type
+ */
+<span class="fc" id="L34">public abstract class MoneyWiseValidateAccount&lt;T extends MoneyWiseAssetBase&gt;</span>
+        implements MoneyWiseDataValidatorAccount&lt;T&gt; {
+    /**
+     * Bad category error.
+     */
+<span class="fc" id="L39">    static final String ERROR_BADCATEGORY = MoneyWiseBasicResource.ASSET_ERROR_BADCAT.getValue();</span>
+
+    /**
+     * Bad parent error.
+     */
+<span class="fc" id="L44">    static final String ERROR_BADPARENT = MoneyWiseBasicResource.ASSET_ERROR_BADPARENT.getValue();</span>
+
+    /**
+     * Parent Closed Error Text.
+     */
+<span class="fc" id="L49">    static final String ERROR_PARCLOSED = MoneyWiseBasicResource.ASSET_ERROR_PARENTCLOSED.getValue();</span>
+
+    /**
+     * Reserved name error.
+     */
+<span class="fc" id="L54">    static final String ERROR_RESERVED = MoneyWiseBasicResource.ASSET_ERROR_RESERVED.getValue();</span>
+
+    /**
+     * Set the editSet.
+     */
+    private PrometheusEditSet theEditSet;
+
+    @Override
+    public void setEditSet(final PrometheusEditSet pEditSet) {
+<span class="fc" id="L63">        theEditSet = pEditSet;</span>
+<span class="fc" id="L64">    }</span>
+
+    /**
+     * Obtain the editSet.
+     * @return the editSet
+     */
+    PrometheusEditSet getEditSet() {
+<span class="nc bnc" id="L71" title="All 2 branches missed.">        if (theEditSet == null) {</span>
+<span class="nc" id="L72">            throw new IllegalStateException(&quot;editSet not set up&quot;);</span>
+        }
+<span class="nc" id="L74">        return theEditSet;</span>
+    }
+
+    @Override
+    public void validate(final PrometheusDataItem pAsset) {
+<span class="fc" id="L79">        final MoneyWiseAssetBase myAsset = (MoneyWiseAssetBase) pAsset;</span>
+<span class="fc" id="L80">        final String myName = myAsset.getName();</span>
+<span class="fc" id="L81">        final String myDesc = myAsset.getDesc();</span>
+
+        /* Name must be non-null */
+<span class="pc bpc" id="L84" title="1 of 2 branches missed.">        if (myName == null) {</span>
+<span class="nc" id="L85">            pAsset.addError(PrometheusDataItem.ERROR_MISSING, PrometheusDataResource.DATAITEM_FIELD_NAME);</span>
+
+            /* Check that the name is unique */
+        } else {
+            /* Validate the name */
+<span class="fc" id="L90">            validateName(myAsset, myName);</span>
+        }
+
+        /* Check description length */
+<span class="pc bpc" id="L94" title="1 of 2 branches missed.">        if (myDesc != null</span>
+<span class="nc bnc" id="L95" title="All 2 branches missed.">                &amp;&amp; myDesc.length() &gt; PrometheusDataItem.DESCLEN) {</span>
+<span class="nc" id="L96">            pAsset.addError(PrometheusDataItem.ERROR_LENGTH, PrometheusDataResource.DATAITEM_FIELD_DESC);</span>
+        }
+<span class="fc" id="L98">    }</span>
+
+    /**
+     * Validate the name.
+     * @param pAsset the asset
+     * @param pName the name
+     */
+    public void validateName(final MoneyWiseAssetBase pAsset,
+                             final String pName) {
+        /* Access the list */
+<span class="fc" id="L108">        final MoneyWiseAssetBaseList&lt;?&gt; myList = pAsset.getList();</span>
+
+        /* The name must not be too long */
+<span class="pc bpc" id="L111" title="1 of 2 branches missed.">        if (pName.length() &gt; PrometheusDataItem.NAMELEN) {</span>
+<span class="nc" id="L112">            pAsset.addError(PrometheusDataItem.ERROR_LENGTH, PrometheusDataResource.DATAITEM_FIELD_NAME);</span>
+        }
+
+        /* Check name count */
+<span class="pc bpc" id="L116" title="1 of 2 branches missed.">        if (!myList.validNameCount(pName)) {</span>
+<span class="nc" id="L117">            pAsset.addError(PrometheusDataItem.ERROR_DUPLICATE, PrometheusDataResource.DATAITEM_FIELD_NAME);</span>
+        }
+
+        /* Check that the name does not contain invalid characters */
+<span class="pc bpc" id="L121" title="1 of 2 branches missed.">        if (pName.contains(MoneyWiseSecurityHolding.SECURITYHOLDING_SEP)) {</span>
+<span class="nc" id="L122">            pAsset.addError(PrometheusDataItem.ERROR_INVALIDCHAR, PrometheusDataResource.DATAITEM_FIELD_NAME);</span>
+        }
+<span class="fc" id="L124">    }</span>
+
+    /**
+     * Obtain the reporting currency.
+     * @return the reporting currency
+     */
+    MoneyWiseCurrency getReportingCurrency() {
+<span class="nc" id="L131">        final MoneyWiseDataSet myDataSet = (MoneyWiseDataSet) getEditSet().getDataSet();</span>
+<span class="nc" id="L132">        return myDataSet.getReportingCurrency();</span>
+    }
+
+    /**
+     * Obtain unique name for new account.
+     * @param pList the list
+     * @param pBase the base name
+     * @return The new name
+     */
+    public String getUniqueName(final MoneyWiseAssetBaseList&lt;T&gt; pList,
+                                final String pBase) {
+        /* Set up base constraints */
+<span class="nc" id="L144">        int iNextId = 1;</span>
+
+        /* Loop until we found a name */
+<span class="nc" id="L147">        String myName = pBase;</span>
+        for (;;) {
+            /* try out the name */
+<span class="nc bnc" id="L150" title="All 2 branches missed.">            if (pList.checkAvailableName(myName)) {</span>
+<span class="nc" id="L151">                return myName;</span>
+            }
+
+            /* Build next name */
+<span class="nc" id="L155">            myName = pBase.concat(Integer.toString(iNextId++));</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

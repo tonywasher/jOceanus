@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PrometheusThreadCreateDatabase.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Prometheus Core Application Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.prometheus.threads</a> &gt; <span class="el_source">PrometheusThreadCreateDatabase.java</span></div><h1>PrometheusThreadCreateDatabase.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Prometheus: Application Framework
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.prometheus.threads;
+
+import net.sourceforge.joceanus.prometheus.database.PrometheusDataStore;
+import net.sourceforge.joceanus.prometheus.views.PrometheusDataControl;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.tethys.api.thread.TethysUIThread;
+import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadManager;
+
+/**
+ * Thread to create tables in a database to represent a data set. Existing tables will be dropped
+ * and redefined. Existing loaded data will be marked as new so that it will be written to the
+ * database via the store command.
+ */
+public class PrometheusThreadCreateDatabase
+        implements TethysUIThread&lt;Void&gt; {
+    /**
+     * Data Control.
+     */
+    private final PrometheusDataControl theControl;
+
+    /**
+     * Constructor (Event Thread).
+     * @param pControl data control
+     */
+<span class="nc" id="L41">    public PrometheusThreadCreateDatabase(final PrometheusDataControl pControl) {</span>
+<span class="nc" id="L42">        theControl = pControl;</span>
+<span class="nc" id="L43">    }</span>
+
+    @Override
+    public String getTaskName() {
+<span class="nc" id="L47">        return PrometheusThreadId.CREATEDB.toString();</span>
+    }
+
+    @Override
+    public Void performTask(final TethysUIThreadManager pManager) throws OceanusException {
+        /* Initialise the status window */
+<span class="nc" id="L53">        pManager.initTask(getTaskName());</span>
+
+        /* Access Database */
+<span class="nc" id="L56">        final PrometheusDataStore myNullDatabase = theControl.getNullDatabase();</span>
+
+        /* Protect against failures */
+        try {
+            /* Create database */
+<span class="nc" id="L61">            myNullDatabase.createDatabase(pManager, theControl.getDatabaseName());</span>
+
+            /* State that we have completed */
+<span class="nc" id="L64">            pManager.setCompletion();</span>
+
+            /* Return null value */
+<span class="nc" id="L67">            return null;</span>
+
+            /* Make sure that the database is closed */
+        } finally {
+            /* Close the database */
+<span class="nc" id="L72">            myNullDatabase.close();</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

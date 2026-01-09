@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>InWindow.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">SevenZip.Compression.LZ</a> &gt; <span class="el_source">InWindow.java</span></div><h1>InWindow.java</h1><pre class="source lang-java linenums">// LZ.InWindow
+
+package SevenZip.Compression.LZ;
+
+import java.io.IOException;
+
+<span class="fc" id="L7">public class InWindow</span>
+{
+	public byte[] _bufferBase; // pointer to buffer with data
+	java.io.InputStream _stream;
+	int _posLimit;  // offset (from _buffer) of first byte when new block reading must be done
+	boolean _streamEndWasReached; // if (true) then _streamPos shows real end of stream
+	
+	int _pointerToLastSafePosition;
+	
+	public int _bufferOffset;
+	
+	public int _blockSize;  // Size of Allocated memory block
+	public int _pos;             // offset (from _buffer) of curent byte
+	int _keepSizeBefore;  // how many BYTEs must be kept in buffer before _pos
+	int _keepSizeAfter;   // how many BYTEs must be kept buffer after _pos
+	public int _streamPos;   // offset (from _buffer) of first not read byte from Stream
+	
+	public void MoveBlock()
+	{
+<span class="nc" id="L26">		int offset = _bufferOffset + _pos - _keepSizeBefore;</span>
+		// we need one additional byte, since MovePos moves on 1 byte.
+<span class="nc bnc" id="L28" title="All 2 branches missed.">		if (offset &gt; 0)</span>
+<span class="nc" id="L29">			offset--;</span>
+
+<span class="nc" id="L31">		int numBytes = _bufferOffset + _streamPos - offset;</span>
+		
+		// check negative offset ????
+<span class="nc bnc" id="L34" title="All 2 branches missed.">		for (int i = 0; i &lt; numBytes; i++)</span>
+<span class="nc" id="L35">			_bufferBase[i] = _bufferBase[offset + i];</span>
+<span class="nc" id="L36">		_bufferOffset -= offset;</span>
+<span class="nc" id="L37">	}</span>
+	
+	public void ReadBlock() throws IOException
+	{
+<span class="pc bpc" id="L41" title="1 of 2 branches missed.">		if (_streamEndWasReached)</span>
+<span class="nc" id="L42">			return;</span>
+		while (true)
+		{
+<span class="fc" id="L45">			int size = (0 - _bufferOffset) + _blockSize - _streamPos;</span>
+<span class="pc bpc" id="L46" title="1 of 2 branches missed.">			if (size == 0)</span>
+<span class="nc" id="L47">				return;</span>
+<span class="fc" id="L48">			int numReadBytes = _stream.read(_bufferBase, _bufferOffset + _streamPos, size);</span>
+<span class="fc bfc" id="L49" title="All 2 branches covered.">			if (numReadBytes == -1)</span>
+			{
+<span class="fc" id="L51">				_posLimit = _streamPos;</span>
+<span class="fc" id="L52">				int pointerToPostion = _bufferOffset + _posLimit;</span>
+<span class="pc bpc" id="L53" title="1 of 2 branches missed.">				if (pointerToPostion &gt; _pointerToLastSafePosition)</span>
+<span class="nc" id="L54">					_posLimit = _pointerToLastSafePosition - _bufferOffset;</span>
+				
+<span class="fc" id="L56">				_streamEndWasReached = true;</span>
+<span class="fc" id="L57">				return;</span>
+			}
+<span class="fc" id="L59">			_streamPos += numReadBytes;</span>
+<span class="pc bpc" id="L60" title="1 of 2 branches missed.">			if (_streamPos &gt;= _pos + _keepSizeAfter)</span>
+<span class="fc" id="L61">				_posLimit = _streamPos - _keepSizeAfter;</span>
+<span class="fc" id="L62">		}</span>
+	}
+	
+<span class="fc" id="L65">	void Free() { _bufferBase = null; }</span>
+	
+	public void Create(int keepSizeBefore, int keepSizeAfter, int keepSizeReserv)
+	{
+<span class="fc" id="L69">		_keepSizeBefore = keepSizeBefore;</span>
+<span class="fc" id="L70">		_keepSizeAfter = keepSizeAfter;</span>
+<span class="fc" id="L71">		int blockSize = keepSizeBefore + keepSizeAfter + keepSizeReserv;</span>
+<span class="pc bpc" id="L72" title="3 of 4 branches missed.">		if (_bufferBase == null || _blockSize != blockSize)</span>
+		{
+<span class="fc" id="L74">			Free();</span>
+<span class="fc" id="L75">			_blockSize = blockSize;</span>
+<span class="fc" id="L76">			_bufferBase = new byte[_blockSize];</span>
+		}
+<span class="fc" id="L78">		_pointerToLastSafePosition = _blockSize - keepSizeAfter;</span>
+<span class="fc" id="L79">	}</span>
+	
+<span class="fc" id="L81">	public void SetStream(java.io.InputStream stream) { _stream = stream; 	}</span>
+<span class="fc" id="L82">	public void ReleaseStream() { _stream = null; }</span>
+
+	public void Init() throws IOException
+	{
+<span class="fc" id="L86">		_bufferOffset = 0;</span>
+<span class="fc" id="L87">		_pos = 0;</span>
+<span class="fc" id="L88">		_streamPos = 0;</span>
+<span class="fc" id="L89">		_streamEndWasReached = false;</span>
+<span class="fc" id="L90">		ReadBlock();</span>
+<span class="fc" id="L91">	}</span>
+	
+	public void MovePos() throws IOException
+	{
+<span class="fc" id="L95">		_pos++;</span>
+<span class="pc bpc" id="L96" title="1 of 2 branches missed.">		if (_pos &gt; _posLimit)</span>
+		{
+<span class="nc" id="L98">			int pointerToPostion = _bufferOffset + _pos;</span>
+<span class="nc bnc" id="L99" title="All 2 branches missed.">			if (pointerToPostion &gt; _pointerToLastSafePosition)</span>
+<span class="nc" id="L100">				MoveBlock();</span>
+<span class="nc" id="L101">			ReadBlock();</span>
+		}
+<span class="fc" id="L103">	}</span>
+	
+<span class="fc" id="L105">	public byte GetIndexByte(int index)	{ return _bufferBase[_bufferOffset + _pos + index]; }</span>
+	
+	// index + limit have not to exceed _keepSizeAfter;
+	public int GetMatchLen(int index, int distance, int limit)
+	{
+<span class="pc bpc" id="L110" title="1 of 2 branches missed.">		if (_streamEndWasReached)</span>
+<span class="fc bfc" id="L111" title="All 2 branches covered.">			if ((_pos + index) + limit &gt; _streamPos)</span>
+<span class="fc" id="L112">				limit = _streamPos - (_pos + index);</span>
+<span class="fc" id="L113">		distance++;</span>
+		// Byte *pby = _buffer + (size_t)_pos + index;
+<span class="fc" id="L115">		int pby = _bufferOffset + _pos + index;</span>
+		
+		int i;
+<span class="fc bfc" id="L118" title="All 4 branches covered.">		for (i = 0; i &lt; limit &amp;&amp; _bufferBase[pby + i] == _bufferBase[pby + i - distance]; i++);</span>
+<span class="fc" id="L119">		return i;</span>
+	}
+	
+<span class="fc" id="L122">	public int GetNumAvailableBytes()	{ return _streamPos - _pos; }</span>
+	
+	public void ReduceOffsets(int subValue)
+	{
+<span class="fc" id="L126">		_bufferOffset += subValue;</span>
+<span class="fc" id="L127">		_posLimit -= subValue;</span>
+<span class="fc" id="L128">		_pos -= subValue;</span>
+<span class="fc" id="L129">		_streamPos -= subValue;</span>
+<span class="fc" id="L130">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

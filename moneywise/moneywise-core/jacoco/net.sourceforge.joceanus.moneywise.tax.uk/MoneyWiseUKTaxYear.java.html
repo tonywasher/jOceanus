@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseUKTaxYear.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.tax.uk</a> &gt; <span class="el_source">MoneyWiseUKTaxYear.java</span></div><h1>MoneyWiseUKTaxYear.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.tax.uk;
+
+import java.time.Month;
+
+import net.sourceforge.joceanus.metis.field.MetisFieldSet;
+import net.sourceforge.joceanus.metis.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
+import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxResource;
+import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxSource;
+import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxYear;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusFiscalYear;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
+
+/**
+ * The UK Tax Year.
+ */
+public class MoneyWiseUKTaxYear
+        extends MoneyWiseTaxYear {
+    /**
+     * Local Report fields.
+     */
+<span class="fc" id="L39">    private static final MetisFieldSet&lt;MoneyWiseUKTaxYear&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKTaxYear.class);</span>
+
+    /*
+     * Declare Fields.
+     */
+    static {
+<span class="fc" id="L45">        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXYEAR_ALLOWANCES, MoneyWiseUKTaxYear::getAllowances);</span>
+<span class="fc" id="L46">        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXYEAR_BANDS, MoneyWiseUKTaxYear::getTaxBands);</span>
+<span class="fc" id="L47">        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXYEAR_INTEREST, MoneyWiseUKTaxYear::getInterestScheme);</span>
+<span class="fc" id="L48">        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXYEAR_DIVIDEND, MoneyWiseUKTaxYear::getDividendScheme);</span>
+<span class="fc" id="L49">        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXYEAR_CAPITAL, MoneyWiseUKTaxYear::getCapitalScheme);</span>
+<span class="fc" id="L50">    }</span>
+
+    /**
+     * The Allowances.
+     */
+    private final MoneyWiseUKBasicAllowance theAllowances;
+
+    /**
+     * The TaxBands.
+     */
+    private final MoneyWiseUKTaxBands theTaxBands;
+
+    /**
+     * The Income Scheme.
+     */
+    private final MoneyWiseUKIncomeScheme theIncomeScheme;
+
+    /**
+     * The Rental Scheme.
+     */
+    private final MoneyWiseUKRoomRentalScheme theRentalScheme;
+
+    /**
+     * The Interest Scheme.
+     */
+    private final MoneyWiseUKInterestScheme theInterestScheme;
+
+    /**
+     * The Dividends Scheme.
+     */
+    private final MoneyWiseUKDividendScheme theDividendScheme;
+
+    /**
+     * The ChargeableGains Scheme.
+     */
+    private final MoneyWiseUKChargeableGainsScheme theChargeableGainsScheme;
+
+    /**
+     * The Capital Gains Scheme.
+     */
+    private final MoneyWiseUKCapitalScheme theCapitalScheme;
+
+    /**
+     * Constructor.
+     * @param pDate the tax year end
+     * @param pAllowances the allowances
+     * @param pTaxBands the standard tax bands
+     * @param pInterest the interest scheme
+     * @param pDividend the dividend scheme
+     * @param pCapital the capital gains scheme
+     */
+    protected MoneyWiseUKTaxYear(final int pDate,
+                                 final MoneyWiseUKBasicAllowance pAllowances,
+                                 final MoneyWiseUKTaxBands pTaxBands,
+                                 final MoneyWiseUKInterestScheme pInterest,
+                                 final MoneyWiseUKDividendScheme pDividend,
+                                 final MoneyWiseUKCapitalScheme pCapital) {
+<span class="fc" id="L107">        super(getDate(pDate));</span>
+<span class="fc" id="L108">        theAllowances = pAllowances;</span>
+<span class="fc" id="L109">        theTaxBands = pTaxBands;</span>
+<span class="fc" id="L110">        theIncomeScheme = new MoneyWiseUKIncomeScheme();</span>
+<span class="fc" id="L111">        theRentalScheme = new MoneyWiseUKRoomRentalScheme();</span>
+<span class="fc" id="L112">        theInterestScheme = pInterest;</span>
+<span class="fc" id="L113">        theDividendScheme = pDividend;</span>
+<span class="fc" id="L114">        theChargeableGainsScheme = new MoneyWiseUKChargeableGainsScheme();</span>
+<span class="fc" id="L115">        theCapitalScheme = pCapital;</span>
+<span class="fc" id="L116">    }</span>
+
+    /**
+     * Obtain the Allowances.
+     * @return the allowances
+     */
+    public MoneyWiseUKBasicAllowance getAllowances() {
+<span class="nc" id="L123">        return theAllowances;</span>
+    }
+
+    /**
+     * Obtain the Standard taxBands.
+     * @return the tax bands
+     */
+    public MoneyWiseUKTaxBands getTaxBands() {
+<span class="nc" id="L131">        return theTaxBands;</span>
+    }
+
+    /**
+     * Obtain the Interest TaxScheme.
+     * @return the tax scheme
+     */
+    private MoneyWiseUKInterestScheme getInterestScheme() {
+<span class="nc" id="L139">        return theInterestScheme;</span>
+    }
+
+    /**
+     * Obtain the Dividend TaxScheme.
+     * @return the tax scheme
+     */
+    private MoneyWiseUKDividendScheme getDividendScheme() {
+<span class="nc" id="L147">        return theDividendScheme;</span>
+    }
+
+    /**
+     * Obtain the Capital TaxScheme.
+     * @return the tax scheme
+     */
+    private MoneyWiseUKCapitalScheme getCapitalScheme() {
+<span class="nc" id="L155">        return theCapitalScheme;</span>
+    }
+
+    /**
+     * Determine the taxYear end.
+     * @param pYear the taxYear as an integer
+     * @return the amount
+     */
+    private static OceanusDate getDate(final int pYear) {
+<span class="fc" id="L164">        final OceanusDate myDate = new OceanusDate(pYear, Month.JANUARY, 1);</span>
+<span class="fc" id="L165">        return OceanusFiscalYear.UK.endOfYear(myDate);</span>
+    }
+
+    @Override
+    public MetisFieldSet&lt;MoneyWiseUKTaxYear&gt; getDataFieldSet() {
+<span class="nc" id="L170">        return FIELD_DEFS;</span>
+    }
+
+    @Override
+    public boolean isTaxCreditRequired() {
+<span class="fc bfc" id="L175" title="All 2 branches covered.">        return !(theAllowances instanceof MoneyWiseUKSavingsAllowance);</span>
+    }
+
+    @Override
+    public OceanusRate getTaxCreditRateForInterest() {
+<span class="nc" id="L180">        return theInterestScheme.getTaxCreditRate(this);</span>
+    }
+
+    @Override
+    public OceanusRate getTaxCreditRateForDividend() {
+<span class="nc" id="L185">        return theDividendScheme.getTaxCreditRate(this);</span>
+    }
+
+    @Override
+    public MoneyWiseUKTaxAnalysis analyseTaxYear(final MetisPreferenceManager pPreferences,
+                                                 final MoneyWiseTaxSource pTaxSource) {
+        /* Create a new analysis */
+<span class="nc" id="L192">        final MoneyWiseUKTaxAnalysis myAnalysis = new MoneyWiseUKTaxAnalysis(pTaxSource, pPreferences, this);</span>
+
+        /* Process the standard amounts */
+<span class="nc" id="L195">        myAnalysis.processItem(MoneyWiseTaxClass.SALARY, theIncomeScheme);</span>
+<span class="nc" id="L196">        myAnalysis.processItem(MoneyWiseTaxClass.RENTALINCOME, theIncomeScheme);</span>
+<span class="nc" id="L197">        myAnalysis.processItem(MoneyWiseTaxClass.ROOMRENTAL, theRentalScheme);</span>
+<span class="nc" id="L198">        myAnalysis.processItem(MoneyWiseTaxClass.OTHERINCOME, theIncomeScheme);</span>
+
+        /* Process the interest */
+<span class="nc" id="L201">        myAnalysis.processItem(MoneyWiseTaxClass.TAXEDINTEREST, theInterestScheme);</span>
+<span class="nc" id="L202">        myAnalysis.processItem(MoneyWiseTaxClass.UNTAXEDINTEREST, theInterestScheme);</span>
+<span class="nc" id="L203">        myAnalysis.processItem(MoneyWiseTaxClass.PEER2PEERINTEREST, theInterestScheme);</span>
+
+        /* Process the dividends */
+<span class="nc" id="L206">        myAnalysis.processItem(MoneyWiseTaxClass.DIVIDEND, theDividendScheme);</span>
+<span class="nc" id="L207">        myAnalysis.processItem(MoneyWiseTaxClass.UNITTRUSTDIVIDEND, theDividendScheme);</span>
+<span class="nc" id="L208">        myAnalysis.processItem(MoneyWiseTaxClass.FOREIGNDIVIDEND, theDividendScheme);</span>
+
+        /* Process the chargeable Gains */
+<span class="nc" id="L211">        myAnalysis.processItem(MoneyWiseTaxClass.CHARGEABLEGAINS, theChargeableGainsScheme);</span>
+
+        /* Process the capital Gains */
+<span class="nc" id="L214">        myAnalysis.processItem(MoneyWiseTaxClass.RESIDENTIALGAINS, theCapitalScheme);</span>
+<span class="nc" id="L215">        myAnalysis.processItem(MoneyWiseTaxClass.CAPITALGAINS, theCapitalScheme);</span>
+
+        /* Calculate the totals */
+<span class="nc" id="L218">        myAnalysis.calculateTaxDue();</span>
+<span class="nc" id="L219">        myAnalysis.calculateTaxProfit();</span>
+
+        /* Return the analysis */
+<span class="nc" id="L222">        return myAnalysis;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

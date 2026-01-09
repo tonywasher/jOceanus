@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PrometheusDataException.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Prometheus Core Application Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.prometheus.exc</a> &gt; <span class="el_source">PrometheusDataException.java</span></div><h1>PrometheusDataException.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Prometheus: Application Framework
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.prometheus.exc;
+
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+
+import java.io.Serial;
+
+/**
+ * Prometheus Data Exception.
+ */
+public class PrometheusDataException
+        extends OceanusException {
+    /**
+     * SerialId.
+     */
+    @Serial
+    private static final long serialVersionUID = 477418185621087538L;
+
+    /**
+     * Create a new Prometheus Exception object based on an object, a string and an underlying
+     * exception.
+     * @param o the object
+     * @param s the description of the exception
+     * @param e the underlying exception
+     */
+    public PrometheusDataException(final Object o,
+                                   final String s,
+                                   final Throwable e) {
+<span class="nc" id="L44">        super(o, s, e);</span>
+<span class="nc" id="L45">    }</span>
+
+    /**
+     * Create a new Prometheus Exception object based on an object and a string.
+     * @param o the object
+     * @param s the description of the exception
+     */
+    public PrometheusDataException(final Object o,
+                                   final String s) {
+<span class="nc" id="L54">        super(o, s);</span>
+<span class="nc" id="L55">    }</span>
+
+    /**
+     * Create a new Prometheus Exception object based on a string and an underlying exception.
+     * @param s the description of the exception
+     * @param e the underlying exception
+     */
+    public PrometheusDataException(final String s,
+                                   final Throwable e) {
+<span class="nc" id="L64">        super(s, e);</span>
+<span class="nc" id="L65">    }</span>
+
+    /**
+     * Create a new Prometheus Exception object based on a string.
+     * @param s the description of the exception
+     */
+    public PrometheusDataException(final String s) {
+<span class="fc" id="L72">        super(s);</span>
+<span class="fc" id="L73">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

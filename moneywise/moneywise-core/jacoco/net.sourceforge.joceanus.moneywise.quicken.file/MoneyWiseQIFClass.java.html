@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseQIFClass.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.quicken.file</a> &gt; <span class="el_source">MoneyWiseQIFClass.java</span></div><h1>MoneyWiseQIFClass.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.quicken.file;
+
+import java.util.Iterator;
+import java.util.List;
+
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransTag;
+import net.sourceforge.joceanus.moneywise.quicken.definitions.MoneyWiseQClassLineType;
+import net.sourceforge.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFStringLine;
+
+/**
+ * Class representing a QIF Class record.
+ */
+public class MoneyWiseQIFClass
+        extends MoneyWiseQIFRecord&lt;MoneyWiseQClassLineType&gt;
+        implements Comparable&lt;MoneyWiseQIFClass&gt; {
+    /**
+     * Item type.
+     */
+    protected static final String QIF_ITEM = &quot;Class&quot;;
+
+    /**
+     * The Class Name.
+     */
+    private final String theName;
+
+    /**
+     * The Class Description.
+     */
+    private final String theDesc;
+
+    /**
+     * Constructor.
+     * @param pFile the QIF File
+     * @param pTag the Event Tag
+     */
+    public MoneyWiseQIFClass(final MoneyWiseQIFFile pFile,
+                             final MoneyWiseTransTag pTag) {
+        /* Call super-constructor */
+<span class="nc" id="L55">        super(pFile, MoneyWiseQClassLineType.class);</span>
+
+        /* Store data */
+<span class="nc" id="L58">        theName = pTag.getName();</span>
+<span class="nc" id="L59">        theDesc = pTag.getDesc();</span>
+
+        /* Build lines */
+<span class="nc" id="L62">        addLine(new MoneyWiseQIFClassNameLine(theName));</span>
+<span class="nc bnc" id="L63" title="All 2 branches missed.">        if (theDesc != null) {</span>
+<span class="nc" id="L64">            addLine(new MoneyWiseQIFClassDescLine(theDesc));</span>
+        }
+<span class="nc" id="L66">    }</span>
+
+    /**
+     * Constructor.
+     * @param pFile the QIF File
+     * @param pLines the data lines
+     */
+    protected MoneyWiseQIFClass(final MoneyWiseQIFFile pFile,
+                                final List&lt;String&gt; pLines) {
+        /* Call super-constructor */
+<span class="nc" id="L76">        super(pFile, MoneyWiseQClassLineType.class);</span>
+
+        /* Determine details */
+<span class="nc" id="L79">        String myName = null;</span>
+<span class="nc" id="L80">        String myDesc = null;</span>
+
+        /* Loop through the lines */
+<span class="nc" id="L83">        final Iterator&lt;String&gt; myIterator = pLines.iterator();</span>
+<span class="nc bnc" id="L84" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L85">            final String myLine = myIterator.next();</span>
+
+            /* Determine the category */
+<span class="nc" id="L88">            final MoneyWiseQClassLineType myType = MoneyWiseQClassLineType.parseLine(myLine);</span>
+<span class="nc bnc" id="L89" title="All 2 branches missed.">            if (myType != null) {</span>
+                /* Access data */
+<span class="nc" id="L91">                final String myData = myLine.substring(myType.getSymbol().length());</span>
+
+                /* Switch on line type */
+<span class="nc bnc" id="L94" title="All 3 branches missed.">                switch (myType) {</span>
+                    case NAME:
+<span class="nc" id="L96">                        addLine(new MoneyWiseQIFClassNameLine(myData));</span>
+<span class="nc" id="L97">                        myName = myData;</span>
+<span class="nc" id="L98">                        break;</span>
+                    case DESCRIPTION:
+<span class="nc" id="L100">                        addLine(new MoneyWiseQIFClassDescLine(myData));</span>
+<span class="nc" id="L101">                        myDesc = myData;</span>
+<span class="nc" id="L102">                        break;</span>
+                    default:
+<span class="nc" id="L104">                        throw new IllegalArgumentException(&quot;Unexpected QClassLineType: &quot; + myLine);</span>
+                }
+            }
+<span class="nc" id="L107">        }</span>
+
+        /* Build details */
+<span class="nc" id="L110">        theName = myName;</span>
+<span class="nc" id="L111">        theDesc = myDesc;</span>
+<span class="nc" id="L112">    }</span>
+
+    @Override
+    public String toString() {
+<span class="nc" id="L116">        return getName();</span>
+    }
+
+    /**
+     * Obtain the Name.
+     * @return the Name
+     */
+    public String getName() {
+<span class="nc" id="L124">        return theName;</span>
+    }
+
+    /**
+     * Obtain the Description.
+     * @return the description
+     */
+    public String getDesc() {
+<span class="nc" id="L132">        return theDesc;</span>
+    }
+
+    @Override
+    public int compareTo(final MoneyWiseQIFClass pThat) {
+<span class="nc" id="L137">        return theName.compareTo(pThat.getName());</span>
+    }
+
+    /**
+     * The Class Name line.
+     */
+    public class MoneyWiseQIFClassNameLine
+            extends MoneyWiseQIFStringLine&lt;MoneyWiseQClassLineType&gt; {
+        /**
+         * Constructor.
+         * @param pName the Name
+         */
+        protected MoneyWiseQIFClassNameLine(final String pName) {
+            /* Call super-constructor */
+<span class="nc" id="L151">            super(pName);</span>
+<span class="nc" id="L152">        }</span>
+
+        @Override
+        public MoneyWiseQClassLineType getLineType() {
+<span class="nc" id="L156">            return MoneyWiseQClassLineType.NAME;</span>
+        }
+
+        /**
+         * Obtain name.
+         * @return the name
+         */
+        public String getName() {
+<span class="nc" id="L164">            return getValue();</span>
+        }
+    }
+
+    /**
+     * The Class Description line.
+     */
+    public class MoneyWiseQIFClassDescLine
+            extends MoneyWiseQIFStringLine&lt;MoneyWiseQClassLineType&gt; {
+        /**
+         * Constructor.
+         * @param pDesc the Description
+         */
+        protected MoneyWiseQIFClassDescLine(final String pDesc) {
+            /* Call super-constructor */
+<span class="nc" id="L179">            super(pDesc);</span>
+<span class="nc" id="L180">        }</span>
+
+        @Override
+        public MoneyWiseQClassLineType getLineType() {
+<span class="nc" id="L184">            return MoneyWiseQClassLineType.DESCRIPTION;</span>
+        }
+
+        /**
+         * Obtain description.
+         * @return the description
+         */
+        public String getDescription() {
+<span class="nc" id="L192">            return getValue();</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OceanusPrice.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Oceanus Java Core Utilities</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.oceanus.decimal</a> &gt; <span class="el_source">OceanusPrice.java</span></div><h1>OceanusPrice.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Oceanus: Java Utilities
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.oceanus.decimal;
+
+import java.util.Currency;
+
+/**
+ * Represents a Price object.
+ */
+public class OceanusPrice
+        extends OceanusMoney {
+    /**
+     * Additional number of decimals for Price.
+     */
+    static final int XTRA_DECIMALS = 2;
+
+    /**
+     * Constructor for price of value zero in the default currency.
+     */
+    public OceanusPrice() {
+<span class="fc" id="L35">        this(DEFAULT_CURRENCY);</span>
+<span class="fc" id="L36">    }</span>
+
+    /**
+     * Constructor for money of value zero in specified currency.
+     * @param pCurrency the currency
+     */
+    public OceanusPrice(final Currency pCurrency) {
+<span class="fc" id="L43">        super(pCurrency);</span>
+<span class="fc" id="L44">        recordScale(pCurrency.getDefaultFractionDigits()</span>
+                    + XTRA_DECIMALS);
+<span class="fc" id="L46">    }</span>
+
+    /**
+     * Construct a new Price by copying another price.
+     * @param pPrice the Price to copy
+     */
+    public OceanusPrice(final OceanusPrice pPrice) {
+<span class="nc" id="L53">        super(pPrice.getCurrency());</span>
+<span class="nc" id="L54">        setValue(pPrice.unscaledValue(), pPrice.scale());</span>
+<span class="nc" id="L55">    }</span>
+
+    /**
+     * Constructor for price from a decimal string.
+     * @param pSource The source decimal string
+     * @throws IllegalArgumentException on invalidly formatted argument
+     */
+    public OceanusPrice(final String pSource) {
+        /* Use default constructor */
+<span class="fc" id="L64">        this();</span>
+
+        /* Parse the string and correct the scale */
+<span class="fc" id="L67">        OceanusDecimalParser.parseDecimalValue(pSource, this);</span>
+<span class="fc" id="L68">        adjustToScale(getCurrency().getDefaultFractionDigits()</span>
+                      + XTRA_DECIMALS);
+<span class="fc" id="L70">    }</span>
+
+    /**
+     * Constructor for price from a decimal string.
+     * @param pSource The source decimal string
+     * @param pCurrency the currency
+     * @throws IllegalArgumentException on invalidly formatted argument
+     */
+    public OceanusPrice(final String pSource,
+                        final Currency pCurrency) {
+        /* Use default constructor */
+<span class="nc" id="L81">        this(pCurrency);</span>
+
+        /* Parse the string and correct the scale */
+<span class="nc" id="L84">        OceanusDecimalParser.parseDecimalValue(pSource, this);</span>
+<span class="nc" id="L85">        adjustToScale(getCurrency().getDefaultFractionDigits()</span>
+                + XTRA_DECIMALS);
+<span class="nc" id="L87">    }</span>
+
+    /**
+     * Create the price from a byte array.
+     * @param pBuffer the buffer
+     */
+    public OceanusPrice(final byte[] pBuffer) {
+<span class="fc" id="L94">        super(pBuffer);</span>
+<span class="fc" id="L95">    }</span>
+
+    /**
+     * Factory method for generating whole monetary units for a currency (e.g. £)
+     * @param pUnits the number of whole monetary units
+     * @param pCurrency the currency
+     * @return the allocated price
+     */
+    public static OceanusPrice getWholeUnits(final long pUnits,
+                                             final Currency pCurrency) {
+        /* Allocate the money */
+<span class="nc" id="L106">        final OceanusPrice myResult = new OceanusPrice(pCurrency);</span>
+<span class="nc" id="L107">        final int myScale = myResult.scale();</span>
+<span class="nc" id="L108">        myResult.setValue(adjustDecimals(pUnits, myScale), myScale);</span>
+<span class="nc" id="L109">        return myResult;</span>
+    }
+
+    /**
+     * Factory method for generating whole monetary units (e.g. £)
+     * @param pUnits the number of whole monetary units
+     * @return the allocated price
+     */
+    public static OceanusPrice getWholeUnits(final long pUnits) {
+        /* Allocate the price */
+<span class="nc" id="L119">        final OceanusPrice myResult = new OceanusPrice();</span>
+<span class="nc" id="L120">        final int myScale = myResult.scale();</span>
+<span class="nc" id="L121">        myResult.setValue(adjustDecimals(pUnits, myScale), myScale);</span>
+<span class="nc" id="L122">        return myResult;</span>
+    }
+
+    @Override
+    public OceanusPrice changeCurrency(final Currency pCurrency) {
+        /* Convert currency with an exchange rate of one */
+<span class="nc" id="L128">        return convertCurrency(pCurrency, OceanusRatio.ONE);</span>
+    }
+
+    @Override
+    public OceanusPrice convertCurrency(final Currency pCurrency,
+                                        final OceanusRatio pRate) {
+        /* If this is the same currency then no conversion */
+<span class="nc bnc" id="L135" title="All 2 branches missed.">        if (getCurrency().equals(pCurrency)) {</span>
+<span class="nc" id="L136">            return new OceanusPrice(this);</span>
+        }
+
+        /* Create the new Price */
+<span class="nc" id="L140">        final OceanusPrice myResult = new OceanusPrice(pCurrency);</span>
+<span class="nc" id="L141">        myResult.calculateProduct(this, pRate);</span>
+<span class="nc" id="L142">        return myResult;</span>
+    }
+
+    /**
+     * Subtract a monetary price from the value.
+     *
+     * @param pValue The money to subtract from this one.
+     */
+    public void subtractPrice(final OceanusPrice pValue) {
+        /* Currency must be identical */
+<span class="nc bnc" id="L152" title="All 2 branches missed.">        if (!getCurrency().equals(pValue.getCurrency())) {</span>
+<span class="nc" id="L153">            throw new IllegalArgumentException(ERROR_DIFFER);</span>
+        }
+
+        /* Subtract the value */
+<span class="nc" id="L157">        super.subtractValue(pValue);</span>
+<span class="nc" id="L158">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

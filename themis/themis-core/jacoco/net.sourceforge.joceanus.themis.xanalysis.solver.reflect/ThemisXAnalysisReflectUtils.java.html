@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisXAnalysisReflectUtils.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.themis.xanalysis.solver.reflect</a> &gt; <span class="el_source">ThemisXAnalysisReflectUtils.java</span></div><h1>ThemisXAnalysisReflectUtils.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Themis: Java Project Framework
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.themis.xanalysis.solver.reflect;
+
+import com.github.javaparser.ast.Modifier;
+import com.github.javaparser.ast.NodeList;
+import com.github.javaparser.ast.body.Parameter;
+import com.github.javaparser.ast.expr.SimpleName;
+import com.github.javaparser.ast.type.ClassOrInterfaceType;
+import com.github.javaparser.ast.type.ReferenceType;
+import com.github.javaparser.ast.type.Type;
+import com.github.javaparser.ast.type.TypeParameter;
+import net.sourceforge.joceanus.themis.xanalysis.solver.reflect.ThemisXAnalysisReflectBaseUtils.ThemisXAnalysisReflectParameter;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Executable;
+import java.lang.reflect.Method;
+
+/**
+ * Solver utilities.
+ */
+public final class ThemisXAnalysisReflectUtils {
+    /**
+     * Private constructor.
+     */
+    private ThemisXAnalysisReflectUtils() {
+    }
+
+    /**
+     * Build modifiers.
+     * @param pClass the class
+     * @return the modifier list
+     */
+    static NodeList&lt;Modifier&gt; buildModifiers(final Class&lt;?&gt; pClass) {
+<span class="fc" id="L49">        final NodeList&lt;Modifier&gt; myModifiers = buildModifiers(pClass.getModifiers());</span>
+<span class="fc bfc" id="L50" title="All 2 branches covered.">        if (pClass.isSealed()) {</span>
+<span class="fc" id="L51">            myModifiers.add(Modifier.sealedModifier());</span>
+        }
+<span class="fc" id="L53">        return myModifiers;</span>
+    }
+
+    /**
+     * Build modifiers.
+     * @param pConstructor the constructor
+     * @return the modifier list
+     */
+    static NodeList&lt;Modifier&gt; buildModifiers(final Constructor&lt;?&gt; pConstructor) {
+<span class="fc" id="L62">        return buildModifiers(pConstructor.getModifiers());</span>
+    }
+
+    /**
+     * Build modifiers.
+     * @param pMethod the method
+     * @return the modifier list
+     */
+    static NodeList&lt;Modifier&gt; buildModifiers(final Method pMethod) {
+<span class="fc" id="L71">        return buildModifiers(pMethod.getModifiers());</span>
+    }
+
+    /**
+     * Build modifiers.
+     * @param pFlags the flags
+     * @return the modifier list
+     */
+    private static NodeList&lt;Modifier&gt; buildModifiers(final int pFlags) {
+<span class="fc" id="L80">        final NodeList&lt;Modifier&gt; myModifiers = new NodeList&lt;&gt;();</span>
+<span class="fc bfc" id="L81" title="All 2 branches covered.">        if (ThemisXAnalysisReflectBaseUtils.isPublic(pFlags)) {</span>
+<span class="fc" id="L82">            myModifiers.add(Modifier.publicModifier());</span>
+        }
+<span class="pc bpc" id="L84" title="1 of 2 branches missed.">        if (ThemisXAnalysisReflectBaseUtils.isProtected(pFlags)) {</span>
+<span class="nc" id="L85">            myModifiers.add(Modifier.protectedModifier());</span>
+        }
+<span class="pc bpc" id="L87" title="1 of 2 branches missed.">        if (ThemisXAnalysisReflectBaseUtils.isPrivate(pFlags)) {</span>
+<span class="nc" id="L88">            myModifiers.add(Modifier.privateModifier());</span>
+        }
+<span class="fc bfc" id="L90" title="All 2 branches covered.">        if (ThemisXAnalysisReflectBaseUtils.isStatic(pFlags)) {</span>
+<span class="fc" id="L91">            myModifiers.add(Modifier.staticModifier());</span>
+        }
+<span class="fc bfc" id="L93" title="All 2 branches covered.">        if (ThemisXAnalysisReflectBaseUtils.isFinal(pFlags)) {</span>
+<span class="fc" id="L94">            myModifiers.add(Modifier.finalModifier());</span>
+        }
+<span class="fc bfc" id="L96" title="All 2 branches covered.">        if (ThemisXAnalysisReflectBaseUtils.isSynchronized(pFlags)) {</span>
+<span class="fc" id="L97">            myModifiers.add(Modifier.synchronizedModifier());</span>
+        }
+<span class="fc bfc" id="L99" title="All 2 branches covered.">        if (ThemisXAnalysisReflectBaseUtils.isVolatile(pFlags)) {</span>
+<span class="fc" id="L100">            myModifiers.add(Modifier.volatileModifier());</span>
+        }
+<span class="fc bfc" id="L102" title="All 2 branches covered.">        if (ThemisXAnalysisReflectBaseUtils.isTransient(pFlags)) {</span>
+<span class="fc" id="L103">            myModifiers.add(Modifier.transientModifier());</span>
+        }
+<span class="fc bfc" id="L105" title="All 2 branches covered.">        if (ThemisXAnalysisReflectBaseUtils.isNative(pFlags)) {</span>
+<span class="fc" id="L106">            myModifiers.add(Modifier.nativeModifier());</span>
+        }
+<span class="fc bfc" id="L108" title="All 2 branches covered.">        if (ThemisXAnalysisReflectBaseUtils.isAbstract(pFlags)) {</span>
+<span class="fc" id="L109">            myModifiers.add(Modifier.abstractModifier());</span>
+        }
+<span class="fc" id="L111">        return myModifiers;</span>
+    }
+
+    /**
+     * Build the extended list.
+     * @param pClass the class
+     * @return the extended list
+     */
+    static NodeList&lt;ClassOrInterfaceType&gt; buildExtended(final Class&lt;?&gt; pClass) {
+<span class="fc" id="L120">        final Class&lt;?&gt; mySuperClass = pClass.getSuperclass();</span>
+<span class="fc" id="L121">        final NodeList&lt;ClassOrInterfaceType&gt; myExtends = new NodeList&lt;&gt;();</span>
+<span class="fc bfc" id="L122" title="All 2 branches covered.">        if (mySuperClass != null) {</span>
+<span class="fc" id="L123">            final ClassOrInterfaceType myType = buildClassOrInterface(mySuperClass);</span>
+<span class="fc" id="L124">            myExtends.add(myType);</span>
+        }
+<span class="fc" id="L126">        return myExtends;</span>
+    }
+
+    /**
+     * Build the implemented list.
+     * @param pClass the class
+     * @return the implemented list
+     */
+    static NodeList&lt;ClassOrInterfaceType&gt; buildImplements(final Class&lt;?&gt; pClass) {
+<span class="fc" id="L135">        final NodeList&lt;ClassOrInterfaceType&gt; myImplements = new NodeList&lt;&gt;();</span>
+<span class="fc bfc" id="L136" title="All 2 branches covered.">        for (Class&lt;?&gt; myClass: pClass.getInterfaces()) {</span>
+<span class="fc" id="L137">            final ClassOrInterfaceType myType = buildClassOrInterface(myClass);</span>
+<span class="fc" id="L138">            myImplements.add(myType);</span>
+        }
+<span class="fc" id="L140">        return myImplements;</span>
+    }
+
+    /**
+     * Build the thrown list.
+     * @param pConstructor the constructor
+     * @return the thrown list
+     */
+    static NodeList&lt;ReferenceType&gt; buildThrown(final Constructor&lt;?&gt; pConstructor) {
+<span class="fc" id="L149">        final NodeList&lt;ReferenceType&gt; myImplements = new NodeList&lt;&gt;();</span>
+<span class="fc bfc" id="L150" title="All 2 branches covered.">        for (Class&lt;?&gt; myClass: pConstructor.getExceptionTypes()) {</span>
+<span class="fc" id="L151">            final ClassOrInterfaceType myType = buildClassOrInterface(myClass);</span>
+<span class="fc" id="L152">            myImplements.add(myType);</span>
+        }
+<span class="fc" id="L154">        return myImplements;</span>
+    }
+
+    /**
+     * Build the thrown list.
+     * @param pMethod the method
+     * @return the thrown list
+     */
+    static NodeList&lt;ReferenceType&gt; buildThrown(final Method pMethod) {
+<span class="fc" id="L163">        final NodeList&lt;ReferenceType&gt; myImplements = new NodeList&lt;&gt;();</span>
+<span class="fc bfc" id="L164" title="All 2 branches covered.">        for (Class&lt;?&gt; myClass: pMethod.getExceptionTypes()) {</span>
+<span class="fc" id="L165">            final ClassOrInterfaceType myType = buildClassOrInterface(myClass);</span>
+<span class="fc" id="L166">            myImplements.add(myType);</span>
+        }
+<span class="fc" id="L168">        return myImplements;</span>
+    }
+
+    /**
+     * Build the parameters.
+     * @param pExecutable the executable
+     * @return the parameter list
+     */
+    static NodeList&lt;Parameter&gt; buildParameters(final Executable pExecutable) {
+<span class="fc" id="L177">        final NodeList&lt;Parameter&gt; myParameters = new NodeList&lt;&gt;();</span>
+<span class="fc bfc" id="L178" title="All 2 branches covered.">        for (ThemisXAnalysisReflectParameter myParam : ThemisXAnalysisReflectBaseUtils.getParameters(pExecutable.getParameters())) {</span>
+<span class="fc" id="L179">            final Parameter myParm = new Parameter();</span>
+<span class="fc" id="L180">            myParm.setName(new SimpleName(myParam.getName()));</span>
+<span class="fc" id="L181">            myParm.setModifiers(buildModifiers(myParam.getModifiers()));</span>
+<span class="fc" id="L182">            myParm.setType(buildClassOrInterface(myParam.getType()));</span>
+<span class="fc" id="L183">            myParm.setVarArgs(myParam.isVarArgs());</span>
+<span class="fc" id="L184">            myParameters.add(myParm);</span>
+<span class="fc" id="L185">        }</span>
+<span class="fc" id="L186">        return myParameters;</span>
+    }
+
+    /**
+     * Build the classOrInterface reference.
+     * @param pClass the class
+     * @return the reference
+     */
+    static ClassOrInterfaceType buildClassOrInterface(final Class&lt;?&gt; pClass) {
+<span class="fc" id="L195">        final ClassOrInterfaceType myType = ThemisXAnalysisReflectBaseUtils.createTypeForName(pClass.getCanonicalName());</span>
+<span class="fc" id="L196">        final NodeList&lt;TypeParameter&gt; myParams = ThemisXAnalysisReflectBaseUtils.buildTypeParams(pClass.getTypeParameters());</span>
+<span class="fc" id="L197">        myType.setTypeArguments(typeList(myParams));</span>
+<span class="fc" id="L198">        return myType;</span>
+    }
+
+    /**
+     * Map typeParameter list to type list.
+     * @param pSource the source list
+     * @return the type list
+     */
+    private static NodeList&lt;Type&gt; typeList(final NodeList&lt;TypeParameter&gt; pSource) {
+<span class="fc" id="L207">        final NodeList&lt;Type&gt; myTypes = new NodeList&lt;&gt;();</span>
+<span class="fc" id="L208">        myTypes.addAll(pSource);</span>
+<span class="fc" id="L209">        return myTypes;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

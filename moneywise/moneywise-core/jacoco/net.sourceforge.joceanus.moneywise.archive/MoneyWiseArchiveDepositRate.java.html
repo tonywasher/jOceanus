@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseArchiveDepositRate.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.archive</a> &gt; <span class="el_source">MoneyWiseArchiveDepositRate.java</span></div><h1>MoneyWiseArchiveDepositRate.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.archive;
+
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDepositRate;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDepositRate.MoneyWiseDepositRateList;
+import net.sourceforge.joceanus.moneywise.exc.MoneyWiseIOException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
+import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCell;
+import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetRow;
+import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetView;
+import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetWorkBook;
+import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadCancelException;
+import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
+
+/**
+ * ArchiveLoader for DepositRate.
+ * @author Tony Washer
+ */
+public final class MoneyWiseArchiveDepositRate {
+    /**
+     * NamedArea for Rates.
+     */
+<span class="nc" id="L44">    private static final String AREA_RATES = MoneyWiseDepositRate.LIST_NAME;</span>
+
+    /**
+     * Report processor.
+     */
+    private final TethysUIThreadStatusReport theReport;
+
+    /**
+     * Workbook.
+     */
+    private final PrometheusSheetWorkBook theWorkBook;
+
+    /**
+     * DataSet.
+     */
+    private final MoneyWiseDataSet theData;
+
+    /**
+     * Constructor.
+     * @param pReport the report
+     * @param pWorkBook the workbook
+     * @param pData the data set to load into
+     */
+    MoneyWiseArchiveDepositRate(final TethysUIThreadStatusReport pReport,
+                                final PrometheusSheetWorkBook pWorkBook,
+<span class="nc" id="L69">                                final MoneyWiseDataSet pData) {</span>
+<span class="nc" id="L70">        theReport = pReport;</span>
+<span class="nc" id="L71">        theWorkBook = pWorkBook;</span>
+<span class="nc" id="L72">        theData = pData;</span>
+<span class="nc" id="L73">    }</span>
+
+    /**
+     * Load the Payee Types from an archive.
+     * @param pStage the stage
+     * @throws OceanusException on error
+     */
+    void loadArchive(final OceanusProfile pStage) throws OceanusException {
+        /* Protect against exceptions */
+        try {
+            /* Find the range of cells */
+<span class="nc" id="L84">            pStage.startTask(AREA_RATES);</span>
+<span class="nc" id="L85">            final PrometheusSheetView myView = theWorkBook.getRangeView(AREA_RATES);</span>
+
+            /* If the view is present */
+<span class="nc bnc" id="L88" title="All 2 branches missed.">            if (myView != null) {</span>
+                /* Load from it */
+<span class="nc" id="L90">                loadArchiveRows(myView);</span>
+            }
+
+            /* Handle exceptions */
+<span class="nc" id="L94">        } catch (TethysUIThreadCancelException e) {</span>
+<span class="nc" id="L95">            throw e;</span>
+<span class="nc" id="L96">        } catch (OceanusException e) {</span>
+<span class="nc" id="L97">            throw new MoneyWiseIOException(&quot;Failed to Load &quot; + MoneyWiseBasicDataType.DEPOSITRATE.getListName(), e);</span>
+<span class="nc" id="L98">        }</span>
+<span class="nc" id="L99">    }</span>
+
+    /**
+     * Load the DepositRates from an archive.
+     * @param pView the view to load from
+     * @throws OceanusException on error
+     */
+    private void loadArchiveRows(final PrometheusSheetView pView) throws OceanusException {
+        /* Access the list of rates */
+<span class="nc" id="L108">        final MoneyWiseDepositRateList myList = theData.getDepositRates();</span>
+
+        /* Declare the new stage */
+<span class="nc" id="L111">        theReport.setNewStage(AREA_RATES);</span>
+
+        /* Count the number of Rates */
+<span class="nc" id="L114">        final int myTotal = pView.getRowCount();</span>
+
+        /* Declare the number of steps */
+<span class="nc" id="L117">        theReport.setNumSteps(myTotal);</span>
+
+        /* Loop through the rows of the table */
+<span class="nc bnc" id="L120" title="All 2 branches missed.">        for (int i = 0; i &lt; myTotal; i++) {</span>
+            /* Access the cell by reference */
+<span class="nc" id="L122">            final PrometheusSheetRow myRow = pView.getRowByIndex(i);</span>
+<span class="nc" id="L123">            int iAdjust = -1;</span>
+
+            /* Access deposit */
+<span class="nc" id="L126">            PrometheusSheetCell myCell = pView.getRowCellByIndex(myRow, ++iAdjust);</span>
+<span class="nc" id="L127">            final String myDeposit = myCell.getString();</span>
+
+            /* Handle Rate */
+<span class="nc" id="L130">            myCell = pView.getRowCellByIndex(myRow, ++iAdjust);</span>
+<span class="nc" id="L131">            final String myRate = myCell.getString();</span>
+
+            /* Handle bonus which may be missing */
+<span class="nc" id="L134">            myCell = pView.getRowCellByIndex(myRow, ++iAdjust);</span>
+<span class="nc" id="L135">            String myBonus = null;</span>
+<span class="nc bnc" id="L136" title="All 2 branches missed.">            if (myCell != null) {</span>
+<span class="nc" id="L137">                myBonus = myCell.getString();</span>
+            }
+
+            /* Handle expiration which may be missing */
+<span class="nc" id="L141">            myCell = pView.getRowCellByIndex(myRow, ++iAdjust);</span>
+<span class="nc" id="L142">            OceanusDate myExpiry = null;</span>
+<span class="nc bnc" id="L143" title="All 2 branches missed.">            if (myCell != null) {</span>
+<span class="nc" id="L144">                myExpiry = myCell.getDate();</span>
+            }
+
+            /* Build data values */
+<span class="nc" id="L148">            final PrometheusDataValues myValues = new PrometheusDataValues(MoneyWiseDepositRate.OBJECT_NAME);</span>
+<span class="nc" id="L149">            myValues.addValue(MoneyWiseBasicDataType.DEPOSIT, myDeposit);</span>
+<span class="nc" id="L150">            myValues.addValue(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_RATE, myRate);</span>
+<span class="nc" id="L151">            myValues.addValue(MoneyWiseBasicResource.DEPOSITRATE_BONUS, myBonus);</span>
+<span class="nc" id="L152">            myValues.addValue(MoneyWiseBasicResource.DEPOSITRATE_ENDDATE, myExpiry);</span>
+
+            /* Add the value into the list */
+<span class="nc" id="L155">            myList.addValuesItem(myValues);</span>
+
+            /* Report the progress */
+<span class="nc" id="L158">            theReport.setNextStep();</span>
+        }
+
+        /* PostProcess the rates */
+<span class="nc" id="L162">        myList.postProcessOnLoad();</span>
+<span class="nc" id="L163">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

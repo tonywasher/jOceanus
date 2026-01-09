@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseXAnalysisDepositBucket.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets</a> &gt; <span class="el_source">MoneyWiseXAnalysisDepositBucket.java</span></div><h1>MoneyWiseXAnalysisDepositBucket.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets;
+
+import java.util.Iterator;
+
+import net.sourceforge.joceanus.metis.data.MetisDataDifference;
+import net.sourceforge.joceanus.metis.field.MetisFieldSet;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDeposit;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDepositCategory;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+
+/**
+ * The Deposit Bucket class.
+ */
+public final class MoneyWiseXAnalysisDepositBucket
+        extends MoneyWiseXAnalysisAccountBucket&lt;MoneyWiseDeposit&gt; {
+    /**
+     * Local Report fields.
+     */
+<span class="fc" id="L37">    private static final MetisFieldSet&lt;MoneyWiseXAnalysisDepositBucket&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseXAnalysisDepositBucket.class);</span>
+
+    /*
+     * Declare Fields.
+     */
+    static {
+<span class="fc" id="L43">        FIELD_DEFS.declareLocalField(MoneyWiseBasicDataType.DEPOSITCATEGORY, MoneyWiseXAnalysisDepositBucket::getCategory);</span>
+<span class="fc" id="L44">    }</span>
+
+    /**
+     * The deposit category.
+     */
+    private final MoneyWiseDepositCategory theCategory;
+
+    /**
+     * Constructor.
+     * @param pAnalysis the analysis
+     * @param pDeposit the deposit
+     */
+    private MoneyWiseXAnalysisDepositBucket(final MoneyWiseXAnalysis pAnalysis,
+                                            final MoneyWiseDeposit pDeposit) {
+        /* Call super-constructor */
+<span class="fc" id="L59">        super(pAnalysis, pDeposit);</span>
+
+        /* Obtain category */
+<span class="fc" id="L62">        theCategory = pDeposit.getCategory();</span>
+<span class="fc" id="L63">        recordMaturity();</span>
+<span class="fc" id="L64">    }</span>
+
+    /**
+     * Constructor.
+     * @param pAnalysis the analysis
+     * @param pBase the underlying bucket
+     */
+    private MoneyWiseXAnalysisDepositBucket(final MoneyWiseXAnalysis pAnalysis,
+                                            final MoneyWiseXAnalysisDepositBucket pBase) {
+        /* Call super-constructor */
+<span class="nc" id="L74">        super(pAnalysis, pBase);</span>
+
+        /* Copy details from base */
+<span class="nc" id="L77">        theCategory = pBase.getCategory();</span>
+<span class="nc" id="L78">        recordMaturity();</span>
+<span class="nc" id="L79">    }</span>
+
+    /**
+     * Constructor.
+     * @param pAnalysis the analysis
+     * @param pBase the underlying bucket
+     * @param pDate the date for the bucket
+     */
+    private MoneyWiseXAnalysisDepositBucket(final MoneyWiseXAnalysis pAnalysis,
+                                            final MoneyWiseXAnalysisDepositBucket pBase,
+                                            final OceanusDate pDate) {
+        /* Call super-constructor */
+<span class="nc" id="L91">        super(pAnalysis, pBase, pDate);</span>
+
+        /* Obtain category */
+<span class="nc" id="L94">        theCategory = pBase.getCategory();</span>
+<span class="nc" id="L95">        recordMaturity();</span>
+<span class="nc" id="L96">    }</span>
+
+    /**
+     * Constructor.
+     * @param pAnalysis the analysis
+     * @param pBase the underlying bucket
+     * @param pRange the range for the bucket
+     */
+    private MoneyWiseXAnalysisDepositBucket(final MoneyWiseXAnalysis pAnalysis,
+                                            final MoneyWiseXAnalysisDepositBucket pBase,
+                                            final OceanusDateRange pRange) {
+        /* Call super-constructor */
+<span class="nc" id="L108">        super(pAnalysis, pBase, pRange);</span>
+
+        /* Copy details from base */
+<span class="nc" id="L111">        theCategory = pBase.getCategory();</span>
+
+        /* Record initial depositRate and Maturity */
+<span class="nc" id="L114">        recordDepositRate();</span>
+<span class="nc" id="L115">        recordMaturity();</span>
+<span class="nc" id="L116">    }</span>
+
+    @Override
+    public MetisFieldSet&lt;MoneyWiseXAnalysisDepositBucket&gt; getDataFieldSet() {
+<span class="nc" id="L120">        return FIELD_DEFS;</span>
+    }
+
+    /**
+     * Obtain the deposit category.
+     * @return the deposit category
+     */
+    public MoneyWiseDepositCategory getCategory() {
+<span class="fc" id="L128">        return theCategory;</span>
+    }
+
+    @Override
+    public Long getBucketId() {
+<span class="fc" id="L133">        return getAccount().getExternalId();</span>
+    }
+
+    /**
+     * DepositBucket list class.
+     */
+    public static final class MoneyWiseXAnalysisDepositBucketList
+            extends MoneyWiseXAnalysisAccountBucketList&lt;MoneyWiseXAnalysisDepositBucket, MoneyWiseDeposit&gt; {
+        /**
+         * Local Report fields.
+         */
+<span class="fc" id="L144">        private static final MetisFieldSet&lt;MoneyWiseXAnalysisDepositBucketList&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseXAnalysisDepositBucketList.class);</span>
+
+        /**
+         * Construct a top-level List.
+         * @param pAnalysis the analysis
+         */
+        MoneyWiseXAnalysisDepositBucketList(final MoneyWiseXAnalysis pAnalysis) {
+            /* Initialise class */
+<span class="fc" id="L152">            super(pAnalysis);</span>
+<span class="fc" id="L153">        }</span>
+
+        /**
+         * Construct a dated List.
+         * @param pAnalysis the analysis
+         * @param pBase the base list
+         * @param pDate the Date
+         */
+        MoneyWiseXAnalysisDepositBucketList(final MoneyWiseXAnalysis pAnalysis,
+                                            final MoneyWiseXAnalysisDepositBucketList pBase,
+                                            final OceanusDate pDate) {
+            /* Initialise class */
+<span class="nc" id="L165">            this(pAnalysis);</span>
+
+            /* Construct list from base */
+<span class="nc" id="L168">            constructFromBase(pBase, pDate);</span>
+<span class="nc" id="L169">        }</span>
+
+        /**
+         * Construct a ranged List.
+         * @param pAnalysis the analysis
+         * @param pBase the base list
+         * @param pRange the Date Range
+         */
+        MoneyWiseXAnalysisDepositBucketList(final MoneyWiseXAnalysis pAnalysis,
+                                            final MoneyWiseXAnalysisDepositBucketList pBase,
+                                            final OceanusDateRange pRange) {
+            /* Initialise class */
+<span class="nc" id="L181">            this(pAnalysis);</span>
+
+            /* Construct list from base */
+<span class="nc" id="L184">            constructFromBase(pBase, pRange);</span>
+<span class="nc" id="L185">        }</span>
+
+        @Override
+        public MetisFieldSet&lt;MoneyWiseXAnalysisDepositBucketList&gt; getDataFieldSet() {
+<span class="nc" id="L189">            return FIELD_DEFS;</span>
+        }
+
+        /**
+         * Obtain the matching DepositBucket.
+         * @param pDeposit the deposit
+         * @return the matching bucket
+         */
+        public MoneyWiseXAnalysisDepositBucket getMatchingDeposit(final MoneyWiseDeposit pDeposit) {
+            /* Return the matching deposit if it exists else an orphan bucket */
+<span class="nc" id="L199">            final MoneyWiseXAnalysisDepositBucket myDeposit = findItemById(pDeposit.getIndexedId());</span>
+<span class="nc bnc" id="L200" title="All 2 branches missed.">            return myDeposit != null</span>
+<span class="nc" id="L201">                    ? myDeposit</span>
+<span class="nc" id="L202">                    : new MoneyWiseXAnalysisDepositBucket(getAnalysis(), pDeposit);</span>
+        }
+
+        /**
+         * Obtain the default Deposit.
+         * @return the bucket
+         */
+        public MoneyWiseXAnalysisDepositBucket getDefaultDeposit() {
+            /* Return the first deposit in the list if it exists */
+<span class="nc bnc" id="L211" title="All 2 branches missed.">            return isEmpty()</span>
+<span class="nc" id="L212">                    ? null</span>
+<span class="nc" id="L213">                    : getUnderlyingList().get(0);</span>
+        }
+
+        /**
+         * Obtain the default Deposit for the category.
+         * @param pCategory the category
+         * @return the bucket
+         */
+        public MoneyWiseXAnalysisDepositBucket getDefaultDeposit(final MoneyWiseDepositCategory pCategory) {
+            /* If there is a category */
+<span class="nc bnc" id="L223" title="All 2 branches missed.">            if (pCategory != null) {</span>
+                /* Loop through the available account values */
+<span class="nc" id="L225">                final Iterator&lt;MoneyWiseXAnalysisDepositBucket&gt; myIterator = iterator();</span>
+<span class="nc bnc" id="L226" title="All 2 branches missed.">                while (myIterator.hasNext()) {</span>
+<span class="nc" id="L227">                    final MoneyWiseXAnalysisDepositBucket myBucket = myIterator.next();</span>
+
+                    /* Return if correct category */
+<span class="nc bnc" id="L230" title="All 2 branches missed.">                    if (MetisDataDifference.isEqual(pCategory, myBucket.getCategory())) {</span>
+<span class="nc" id="L231">                        return myBucket;</span>
+                    }
+<span class="nc" id="L233">                }</span>
+            }
+
+            /* No default deposit */
+<span class="nc" id="L237">            return null;</span>
+        }
+
+        /**
+         * Obtain an orphan DepositBucket for a given deposit account.
+         * @param pDeposit the deposit account
+         * @return the bucket
+         */
+        public MoneyWiseXAnalysisDepositBucket getOrphanBucket(final MoneyWiseDeposit pDeposit) {
+            /* Allocate an orphan bucket */
+<span class="nc" id="L247">            return newBucket(pDeposit);</span>
+        }
+
+        @Override
+        protected MoneyWiseXAnalysisDepositBucket newBucket(final MoneyWiseDeposit pDeposit) {
+<span class="fc" id="L252">            return new MoneyWiseXAnalysisDepositBucket(getAnalysis(), pDeposit);</span>
+        }
+
+        @Override
+        protected MoneyWiseXAnalysisDepositBucket newBucket(final MoneyWiseXAnalysisDepositBucket pBase) {
+<span class="nc" id="L257">            return new MoneyWiseXAnalysisDepositBucket(getAnalysis(), pBase);</span>
+        }
+
+        @Override
+        protected MoneyWiseXAnalysisDepositBucket newBucket(final MoneyWiseXAnalysisDepositBucket pBase,
+                                                            final OceanusDate pDate) {
+<span class="nc" id="L263">            return new MoneyWiseXAnalysisDepositBucket(getAnalysis(), pBase, pDate);</span>
+        }
+
+        @Override
+        protected MoneyWiseXAnalysisDepositBucket newBucket(final MoneyWiseXAnalysisDepositBucket pBase,
+                                                            final OceanusDateRange pRange) {
+<span class="nc" id="L269">            return new MoneyWiseXAnalysisDepositBucket(getAnalysis(), pBase, pRange);</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

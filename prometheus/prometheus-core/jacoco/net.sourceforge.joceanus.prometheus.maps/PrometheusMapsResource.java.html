@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PrometheusMapsResource.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Prometheus Core Application Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.prometheus.maps</a> &gt; <span class="el_source">PrometheusMapsResource.java</span></div><h1>PrometheusMapsResource.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Prometheus: Application Framework
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.prometheus.maps;
+
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
+
+import java.util.ResourceBundle;
+
+/**
+ * Resource IDs for jPrometheus Data Fields.
+ */
+<span class="nc" id="L29">public enum PrometheusMapsResource</span>
+        implements OceanusBundleId, MetisDataFieldId {
+    /**
+     * Maps Item.
+     */
+<span class="nc" id="L34">    MAPS_ITEM(&quot;Item&quot;),</span>
+
+    /**
+     * Maps ItemList.
+     */
+<span class="nc" id="L39">    MAPS_ITEMLIST(&quot;ItemList&quot;),</span>
+
+    /**
+     * Maps Field.
+     */
+<span class="nc" id="L44">    MAPS_FIELD(&quot;Field&quot;),</span>
+
+    /**
+     * Map.
+     */
+<span class="nc" id="L49">    MAPS_DATEMAP(&quot;DateMap&quot;),</span>
+
+    /**
+     * Map.
+     */
+<span class="nc" id="L54">    MAPS_TOUCHMAP(&quot;TouchMap&quot;),</span>
+
+    /**
+     * Map.
+     */
+<span class="nc" id="L59">    MAPS_INSTANCEMAP(&quot;InstanceMap&quot;),</span>
+
+    /**
+     * Touched By Map.
+     */
+<span class="nc" id="L64">    TOUCH_TOUCHEDBY(&quot;Touch.TouchedBy&quot;),</span>
+
+    /**
+     * Touches Map.
+     */
+<span class="nc" id="L69">    TOUCH_TOUCHES(&quot;Touch.Touches&quot;);</span>
+
+    /**
+     * The Resource Loader.
+     */
+<span class="nc" id="L74">    private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getLoader(PrometheusDataSet.class.getCanonicalName(),</span>
+            ResourceBundle::getBundle);
+
+    /**
+     * The Id.
+     */
+    private final String theKeyName;
+
+    /**
+     * The Value.
+     */
+    private String theValue;
+
+    /**
+     * Constructor.
+     * @param pKeyName the key name
+     */
+<span class="nc" id="L91">    PrometheusMapsResource(final String pKeyName) {</span>
+<span class="nc" id="L92">        theKeyName = pKeyName;</span>
+<span class="nc" id="L93">    }</span>
+
+    @Override
+    public String getKeyName() {
+<span class="nc" id="L97">        return theKeyName;</span>
+    }
+
+    @Override
+    public String getNameSpace() {
+<span class="nc" id="L102">        return &quot;Prometheus.maps&quot;;</span>
+    }
+
+    @Override
+    public String getValue() {
+        /* If we have not initialised the value */
+<span class="nc bnc" id="L108" title="All 2 branches missed.">        if (theValue == null) {</span>
+            /* Derive the value */
+<span class="nc" id="L110">            theValue = LOADER.getValue(this);</span>
+        }
+
+        /* return the value */
+<span class="nc" id="L114">        return theValue;</span>
+    }
+
+    @Override
+    public String getId() {
+<span class="nc" id="L119">        return getValue();</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L124">        return getValue();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisAnalysisCase.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.themis.lethe.analysis</a> &gt; <span class="el_source">ThemisAnalysisCase.java</span></div><h1>ThemisAnalysisCase.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Themis: Java Project Framework
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.themis.lethe.analysis;
+
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.List;
+
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+
+/**
+ * Case construct.
+ */
+public class ThemisAnalysisCase
+    implements ThemisAnalysisContainer {
+    /**
+     * The parent.
+     */
+    private final ThemisAnalysisContainer theParent;
+
+    /**
+     * The contents.
+     */
+    private final Deque&lt;ThemisAnalysisElement&gt; theContents;
+
+    /**
+     * The case values.
+     */
+    private final List&lt;Object&gt; theCases;
+
+    /**
+     * The number of lines.
+     */
+    private final int theNumLines;
+
+    /**
+     * Constructor.
+     * @param pParser the parser
+     * @param pOwner the owning switch
+     * @param pCase the case
+     * @throws OceanusException on error
+     */
+    ThemisAnalysisCase(final ThemisAnalysisParser pParser,
+                       final ThemisAnalysisContainer pOwner,
+<span class="nc" id="L60">                       final Object pCase) throws OceanusException {</span>
+        /* Record the parent */
+<span class="nc" id="L62">        theParent = pOwner;</span>
+
+        /* Initialise the case value */
+<span class="nc" id="L65">        theCases = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L66">        theCases.add(pCase);</span>
+
+        /* Create a parser */
+<span class="nc" id="L69">        theContents = new ArrayDeque&lt;&gt;();</span>
+<span class="nc" id="L70">        final ThemisAnalysisParser myParser = new ThemisAnalysisParser(pParser, theContents);</span>
+<span class="nc" id="L71">        processLines(myParser);</span>
+
+        /* Calculate the number of lines */
+<span class="nc" id="L74">        theNumLines = theCases.size();</span>
+<span class="nc" id="L75">    }</span>
+
+    /**
+     * process the lines.
+     * @param pParser the parser
+     * @throws OceanusException on error
+     */
+    void processLines(final ThemisAnalysisParser pParser) throws OceanusException {
+        /* we are still processing Cases */
+<span class="nc" id="L84">        boolean look4Case = true;</span>
+
+        /* Loop through the lines */
+<span class="nc bnc" id="L87" title="All 2 branches missed.">        while (pParser.hasLines()) {</span>
+            /* Access next line */
+<span class="nc" id="L89">            final ThemisAnalysisLine myLine = (ThemisAnalysisLine) pParser.popNextLine();</span>
+
+            /* Process comments/blanks/languageConstructs */
+<span class="nc bnc" id="L92" title="All 2 branches missed.">            boolean processed = pParser.processCommentsAndBlanks(myLine)</span>
+<span class="nc bnc" id="L93" title="All 2 branches missed.">                         || pParser.processLanguage(myLine)</span>
+<span class="nc bnc" id="L94" title="All 2 branches missed.">                         || pParser.processBlocks(myLine);</span>
+
+            /* If we have not processed */
+<span class="nc bnc" id="L97" title="All 2 branches missed.">            if (!processed) {</span>
+                /* Look for new case */
+<span class="nc" id="L99">                myLine.mark();</span>
+<span class="nc" id="L100">                final Object myCase = ThemisAnalysisParser.parseCase(myLine);</span>
+
+                /* If we have a new case */
+<span class="nc bnc" id="L103" title="All 2 branches missed.">                if (myCase != null) {</span>
+                    /* If we are still looking for further cases */
+<span class="nc bnc" id="L105" title="All 2 branches missed.">                    if (look4Case) {</span>
+                        /* Process additional caseValue */
+<span class="nc" id="L107">                        theCases.add(myCase);</span>
+<span class="nc" id="L108">                        processed = true;</span>
+
+                        /* else we have finished */
+                    } else {
+                        /* reset and restore line and break loop */
+<span class="nc" id="L113">                        myLine.reset();</span>
+<span class="nc" id="L114">                        pParser.pushLine(myLine);</span>
+<span class="nc" id="L115">                        return;</span>
+                    }
+                }
+            }
+
+            /* If we have not processed */
+<span class="nc bnc" id="L121" title="All 2 branches missed.">            if (!processed) {</span>
+                /* Have finished looking for cases */
+<span class="nc" id="L123">                look4Case = false;</span>
+
+                /* Just add the line to contents at present */
+<span class="nc" id="L126">                theContents.add(myLine);</span>
+            }
+<span class="nc" id="L128">        }</span>
+<span class="nc" id="L129">    }</span>
+
+    @Override
+    public Deque&lt;ThemisAnalysisElement&gt; getContents() {
+<span class="nc" id="L133">        return theContents;</span>
+    }
+
+    @Override
+    public ThemisAnalysisContainer getParent() {
+<span class="nc" id="L138">        return theParent;</span>
+    }
+
+    @Override
+    public int getNumLines() {
+<span class="nc" id="L143">        return theNumLines;</span>
+    }
+
+    @Override
+    public String toString() {
+        /* Start parameters */
+<span class="nc" id="L149">        final StringBuilder myBuilder = new StringBuilder();</span>
+
+        /* Build parameters */
+<span class="nc" id="L152">        boolean bFirst = true;</span>
+<span class="nc bnc" id="L153" title="All 2 branches missed.">        for (Object myCase : theCases) {</span>
+            /* Handle separators */
+<span class="nc bnc" id="L155" title="All 2 branches missed.">            if (!bFirst) {</span>
+<span class="nc" id="L156">                myBuilder.append(ThemisAnalysisChar.COMMA);</span>
+<span class="nc" id="L157">                myBuilder.append(ThemisAnalysisChar.BLANK);</span>
+            } else {
+<span class="nc" id="L159">                bFirst = false;</span>
+            }
+
+            /* Add case */
+<span class="nc" id="L163">            myBuilder.append(myCase);</span>
+<span class="nc" id="L164">        }</span>
+
+        /* Return the string */
+<span class="nc" id="L167">        return myBuilder.toString();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,1417 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Encoder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">SevenZip.Compression.LZMA</a> &gt; <span class="el_source">Encoder.java</span></div><h1>Encoder.java</h1><pre class="source lang-java linenums">package SevenZip.Compression.LZMA;
+
+import SevenZip.Compression.RangeCoder.BitTreeEncoder;
+import SevenZip.Compression.LZMA.Base;
+import SevenZip.Compression.LZ.BinTree;
+import SevenZip.ICodeProgress;
+import java.io.IOException;
+
+public class Encoder
+{
+	public static final int EMatchFinderTypeBT2 = 0;
+	public static final int EMatchFinderTypeBT4 = 1;
+
+
+
+
+	static final int kIfinityPrice = 0xFFFFFFF;
+
+<span class="fc" id="L19">	static byte[] g_FastPos = new byte[1 &lt;&lt; 11];</span>
+
+	static
+	{
+<span class="fc" id="L23">		int kFastSlots = 22;</span>
+<span class="fc" id="L24">		int c = 2;</span>
+<span class="fc" id="L25">		g_FastPos[0] = 0;</span>
+<span class="fc" id="L26">		g_FastPos[1] = 1;</span>
+<span class="fc bfc" id="L27" title="All 2 branches covered.">		for (int slotFast = 2; slotFast &lt; kFastSlots; slotFast++)</span>
+		{
+<span class="fc" id="L29">			int k = (1 &lt;&lt; ((slotFast &gt;&gt; 1) - 1));</span>
+<span class="fc bfc" id="L30" title="All 2 branches covered.">			for (int j = 0; j &lt; k; j++, c++)</span>
+<span class="fc" id="L31">				g_FastPos[c] = (byte)slotFast;</span>
+		}
+<span class="fc" id="L33">	}</span>
+
+	static int GetPosSlot(int pos)
+	{
+<span class="fc bfc" id="L37" title="All 2 branches covered.">		if (pos &lt; (1 &lt;&lt; 11))</span>
+<span class="fc" id="L38">			return g_FastPos[pos];</span>
+<span class="pc bpc" id="L39" title="1 of 2 branches missed.">		if (pos &lt; (1 &lt;&lt; 21))</span>
+<span class="fc" id="L40">			return (g_FastPos[pos &gt;&gt; 10] + 20);</span>
+<span class="nc" id="L41">		return (g_FastPos[pos &gt;&gt; 20] + 40);</span>
+	}
+
+	static int GetPosSlot2(int pos)
+	{
+<span class="pc bpc" id="L46" title="1 of 2 branches missed.">		if (pos &lt; (1 &lt;&lt; 17))</span>
+<span class="fc" id="L47">			return (g_FastPos[pos &gt;&gt; 6] + 12);</span>
+<span class="nc bnc" id="L48" title="All 2 branches missed.">		if (pos &lt; (1 &lt;&lt; 27))</span>
+<span class="nc" id="L49">			return (g_FastPos[pos &gt;&gt; 16] + 32);</span>
+<span class="nc" id="L50">		return (g_FastPos[pos &gt;&gt; 26] + 52);</span>
+	}
+
+<span class="fc" id="L53">	int _state = Base.StateInit();</span>
+	byte _previousByte;
+<span class="fc" id="L55">	int[] _repDistances = new int[Base.kNumRepDistances];</span>
+
+	void BaseInit()
+	{
+<span class="fc" id="L59">		_state = Base.StateInit();</span>
+<span class="fc" id="L60">		_previousByte = 0;</span>
+<span class="fc bfc" id="L61" title="All 2 branches covered.">		for (int i = 0; i &lt; Base.kNumRepDistances; i++)</span>
+<span class="fc" id="L62">			_repDistances[i] = 0;</span>
+<span class="fc" id="L63">	}</span>
+
+	static final int kDefaultDictionaryLogSize = 22;
+	static final int kNumFastBytesDefault = 0x20;
+
+<span class="fc" id="L68">	class LiteralEncoder</span>
+	{
+<span class="fc" id="L70">		class Encoder2</span>
+		{
+<span class="fc" id="L72">			short[] m_Encoders = new short[0x300];</span>
+
+<span class="fc" id="L74">			public void Init() { SevenZip.Compression.RangeCoder.Encoder.InitBitModels(m_Encoders); }</span>
+
+
+
+			public void Encode(SevenZip.Compression.RangeCoder.Encoder rangeEncoder, byte symbol) throws IOException
+			{
+<span class="fc" id="L80">				int context = 1;</span>
+<span class="fc bfc" id="L81" title="All 2 branches covered.">				for (int i = 7; i &gt;= 0; i--)</span>
+				{
+<span class="fc" id="L83">					int bit = ((symbol &gt;&gt; i) &amp; 1);</span>
+<span class="fc" id="L84">					rangeEncoder.Encode(m_Encoders, context, bit);</span>
+<span class="fc" id="L85">					context = (context &lt;&lt; 1) | bit;</span>
+				}
+<span class="fc" id="L87">			}</span>
+
+			public void EncodeMatched(SevenZip.Compression.RangeCoder.Encoder rangeEncoder, byte matchByte, byte symbol) throws IOException
+			{
+<span class="fc" id="L91">				int context = 1;</span>
+<span class="fc" id="L92">				boolean same = true;</span>
+<span class="fc bfc" id="L93" title="All 2 branches covered.">				for (int i = 7; i &gt;= 0; i--)</span>
+				{
+<span class="fc" id="L95">					int bit = ((symbol &gt;&gt; i) &amp; 1);</span>
+<span class="fc" id="L96">					int state = context;</span>
+<span class="fc bfc" id="L97" title="All 2 branches covered.">					if (same)</span>
+					{
+<span class="fc" id="L99">						int matchBit = ((matchByte &gt;&gt; i) &amp; 1);</span>
+<span class="fc" id="L100">						state += ((1 + matchBit) &lt;&lt; 8);</span>
+<span class="fc bfc" id="L101" title="All 2 branches covered.">						same = (matchBit == bit);</span>
+					}
+<span class="fc" id="L103">					rangeEncoder.Encode(m_Encoders, state, bit);</span>
+<span class="fc" id="L104">					context = (context &lt;&lt; 1) | bit;</span>
+				}
+<span class="fc" id="L106">			}</span>
+
+			public int GetPrice(boolean matchMode, byte matchByte, byte symbol)
+			{
+<span class="fc" id="L110">				int price = 0;</span>
+<span class="fc" id="L111">				int context = 1;</span>
+<span class="fc" id="L112">				int i = 7;</span>
+<span class="fc bfc" id="L113" title="All 2 branches covered.">				if (matchMode)</span>
+				{
+<span class="fc bfc" id="L115" title="All 2 branches covered.">					for (; i &gt;= 0; i--)</span>
+					{
+<span class="fc" id="L117">						int matchBit = (matchByte &gt;&gt; i) &amp; 1;</span>
+<span class="fc" id="L118">						int bit = (symbol &gt;&gt; i) &amp; 1;</span>
+<span class="fc" id="L119">						price += SevenZip.Compression.RangeCoder.Encoder.GetPrice(m_Encoders[((1 + matchBit) &lt;&lt; 8) + context], bit);</span>
+<span class="fc" id="L120">						context = (context &lt;&lt; 1) | bit;</span>
+<span class="fc bfc" id="L121" title="All 2 branches covered.">						if (matchBit != bit)</span>
+						{
+<span class="fc" id="L123">							i--;</span>
+<span class="fc" id="L124">							break;</span>
+						}
+					}
+				}
+<span class="fc bfc" id="L128" title="All 2 branches covered.">				for (; i &gt;= 0; i--)</span>
+				{
+<span class="fc" id="L130">					int bit = (symbol &gt;&gt; i) &amp; 1;</span>
+<span class="fc" id="L131">					price += SevenZip.Compression.RangeCoder.Encoder.GetPrice(m_Encoders[context], bit);</span>
+<span class="fc" id="L132">					context = (context &lt;&lt; 1) | bit;</span>
+				}
+<span class="fc" id="L134">				return price;</span>
+			}
+		}
+
+		Encoder2[] m_Coders;
+		int m_NumPrevBits;
+		int m_NumPosBits;
+		int m_PosMask;
+
+		public void Create(int numPosBits, int numPrevBits)
+		{
+<span class="pc bpc" id="L145" title="5 of 6 branches missed.">			if (m_Coders != null &amp;&amp; m_NumPrevBits == numPrevBits &amp;&amp; m_NumPosBits == numPosBits)</span>
+<span class="nc" id="L146">				return;</span>
+<span class="fc" id="L147">			m_NumPosBits = numPosBits;</span>
+<span class="fc" id="L148">			m_PosMask = (1 &lt;&lt; numPosBits) - 1;</span>
+<span class="fc" id="L149">			m_NumPrevBits = numPrevBits;</span>
+<span class="fc" id="L150">			int numStates = 1 &lt;&lt; (m_NumPrevBits + m_NumPosBits);</span>
+<span class="fc" id="L151">			m_Coders = new Encoder2[numStates];</span>
+<span class="fc bfc" id="L152" title="All 2 branches covered.">			for (int i = 0; i &lt; numStates; i++)</span>
+<span class="fc" id="L153">				m_Coders[i] = new Encoder2();</span>
+<span class="fc" id="L154">		}</span>
+
+		public void Init()
+		{
+<span class="fc" id="L158">			int numStates = 1 &lt;&lt; (m_NumPrevBits + m_NumPosBits);</span>
+<span class="fc bfc" id="L159" title="All 2 branches covered.">			for (int i = 0; i &lt; numStates; i++)</span>
+<span class="fc" id="L160">				m_Coders[i].Init();</span>
+<span class="fc" id="L161">		}</span>
+
+		public Encoder2 GetSubCoder(int pos, byte prevByte)
+<span class="fc" id="L164">		{ return m_Coders[((pos &amp; m_PosMask) &lt;&lt; m_NumPrevBits) + ((prevByte &amp; 0xFF) &gt;&gt;&gt; (8 - m_NumPrevBits))]; }</span>
+	}
+
+	class LenEncoder
+	{
+<span class="fc" id="L169">		short[] _choice = new short[2];</span>
+<span class="fc" id="L170">		BitTreeEncoder[] _lowCoder = new BitTreeEncoder[Base.kNumPosStatesEncodingMax];</span>
+<span class="fc" id="L171">		BitTreeEncoder[] _midCoder = new BitTreeEncoder[Base.kNumPosStatesEncodingMax];</span>
+<span class="fc" id="L172">		BitTreeEncoder _highCoder = new BitTreeEncoder(Base.kNumHighLenBits);</span>
+
+
+		public LenEncoder()
+<span class="fc" id="L176">		{</span>
+<span class="fc bfc" id="L177" title="All 2 branches covered.">			for (int posState = 0; posState &lt; Base.kNumPosStatesEncodingMax; posState++)</span>
+			{
+<span class="fc" id="L179">				_lowCoder[posState] = new BitTreeEncoder(Base.kNumLowLenBits);</span>
+<span class="fc" id="L180">				_midCoder[posState] = new BitTreeEncoder(Base.kNumMidLenBits);</span>
+			}
+<span class="fc" id="L182">		}</span>
+
+		public void Init(int numPosStates)
+		{
+<span class="fc" id="L186">			SevenZip.Compression.RangeCoder.Encoder.InitBitModels(_choice);</span>
+
+<span class="fc bfc" id="L188" title="All 2 branches covered.">			for (int posState = 0; posState &lt; numPosStates; posState++)</span>
+			{
+<span class="fc" id="L190">				_lowCoder[posState].Init();</span>
+<span class="fc" id="L191">				_midCoder[posState].Init();</span>
+			}
+<span class="fc" id="L193">			_highCoder.Init();</span>
+<span class="fc" id="L194">		}</span>
+
+		public void Encode(SevenZip.Compression.RangeCoder.Encoder rangeEncoder, int symbol, int posState) throws IOException
+		{
+<span class="fc bfc" id="L198" title="All 2 branches covered.">			if (symbol &lt; Base.kNumLowLenSymbols)</span>
+			{
+<span class="fc" id="L200">				rangeEncoder.Encode(_choice, 0, 0);</span>
+<span class="fc" id="L201">				_lowCoder[posState].Encode(rangeEncoder, symbol);</span>
+			}
+			else
+			{
+<span class="fc" id="L205">				symbol -= Base.kNumLowLenSymbols;</span>
+<span class="fc" id="L206">				rangeEncoder.Encode(_choice, 0, 1);</span>
+<span class="fc bfc" id="L207" title="All 2 branches covered.">				if (symbol &lt; Base.kNumMidLenSymbols)</span>
+				{
+<span class="fc" id="L209">					rangeEncoder.Encode(_choice, 1, 0);</span>
+<span class="fc" id="L210">					_midCoder[posState].Encode(rangeEncoder, symbol);</span>
+				}
+				else
+				{
+<span class="fc" id="L214">					rangeEncoder.Encode(_choice, 1, 1);</span>
+<span class="fc" id="L215">					_highCoder.Encode(rangeEncoder, symbol - Base.kNumMidLenSymbols);</span>
+				}
+			}
+<span class="fc" id="L218">		}</span>
+
+		public void SetPrices(int posState, int numSymbols, int[] prices, int st)
+		{
+<span class="fc" id="L222">			int a0 = SevenZip.Compression.RangeCoder.Encoder.GetPrice0(_choice[0]);</span>
+<span class="fc" id="L223">			int a1 = SevenZip.Compression.RangeCoder.Encoder.GetPrice1(_choice[0]);</span>
+<span class="fc" id="L224">			int b0 = a1 + SevenZip.Compression.RangeCoder.Encoder.GetPrice0(_choice[1]);</span>
+<span class="fc" id="L225">			int b1 = a1 + SevenZip.Compression.RangeCoder.Encoder.GetPrice1(_choice[1]);</span>
+<span class="fc" id="L226">			int i = 0;</span>
+<span class="fc bfc" id="L227" title="All 2 branches covered.">			for (i = 0; i &lt; Base.kNumLowLenSymbols; i++)</span>
+			{
+<span class="pc bpc" id="L229" title="1 of 2 branches missed.">				if (i &gt;= numSymbols)</span>
+<span class="nc" id="L230">					return;</span>
+<span class="fc" id="L231">				prices[st + i] = a0 + _lowCoder[posState].GetPrice(i);</span>
+			}
+<span class="fc bfc" id="L233" title="All 2 branches covered.">			for (; i &lt; Base.kNumLowLenSymbols + Base.kNumMidLenSymbols; i++)</span>
+			{
+<span class="pc bpc" id="L235" title="1 of 2 branches missed.">				if (i &gt;= numSymbols)</span>
+<span class="nc" id="L236">					return;</span>
+<span class="fc" id="L237">				prices[st + i] = b0 + _midCoder[posState].GetPrice(i - Base.kNumLowLenSymbols);</span>
+			}
+<span class="fc bfc" id="L239" title="All 2 branches covered.">			for (; i &lt; numSymbols; i++)</span>
+<span class="fc" id="L240">				prices[st + i] = b1 + _highCoder.GetPrice(i - Base.kNumLowLenSymbols - Base.kNumMidLenSymbols);</span>
+<span class="fc" id="L241">		}</span>
+	};
+
+	public static final int kNumLenSpecSymbols = Base.kNumLowLenSymbols + Base.kNumMidLenSymbols;
+
+<span class="fc" id="L246">	class LenPriceTableEncoder extends LenEncoder</span>
+	{
+<span class="fc" id="L248">		int[] _prices = new int[Base.kNumLenSymbols&lt;&lt;Base.kNumPosStatesBitsEncodingMax];</span>
+		int _tableSize;
+<span class="fc" id="L250">		int[] _counters = new int[Base.kNumPosStatesEncodingMax];</span>
+
+<span class="fc" id="L252">		public void SetTableSize(int tableSize) { _tableSize = tableSize; }</span>
+
+		public int GetPrice(int symbol, int posState)
+		{
+<span class="fc" id="L256">			return _prices[posState * Base.kNumLenSymbols + symbol];</span>
+		}
+
+		void UpdateTable(int posState)
+		{
+<span class="fc" id="L261">			SetPrices(posState, _tableSize, _prices, posState * Base.kNumLenSymbols);</span>
+<span class="fc" id="L262">			_counters[posState] = _tableSize;</span>
+<span class="fc" id="L263">		}</span>
+
+		public void UpdateTables(int numPosStates)
+		{
+<span class="fc bfc" id="L267" title="All 2 branches covered.">			for (int posState = 0; posState &lt; numPosStates; posState++)</span>
+<span class="fc" id="L268">				UpdateTable(posState);</span>
+<span class="fc" id="L269">		}</span>
+
+		public void Encode(SevenZip.Compression.RangeCoder.Encoder rangeEncoder, int symbol, int posState) throws IOException
+		{
+<span class="fc" id="L273">			super.Encode(rangeEncoder, symbol, posState);</span>
+<span class="fc bfc" id="L274" title="All 2 branches covered.">			if (--_counters[posState] == 0)</span>
+<span class="fc" id="L275">				UpdateTable(posState);</span>
+<span class="fc" id="L276">		}</span>
+	}
+
+	static final int kNumOpts = 1 &lt;&lt; 12;
+<span class="fc" id="L280">	class Optimal</span>
+	{
+		public int State;
+
+		public boolean Prev1IsChar;
+		public boolean Prev2;
+
+		public int PosPrev2;
+		public int BackPrev2;
+
+		public int Price;
+		public int PosPrev;
+		public int BackPrev;
+
+		public int Backs0;
+		public int Backs1;
+		public int Backs2;
+		public int Backs3;
+
+<span class="fc" id="L299">		public void MakeAsChar() { BackPrev = -1; Prev1IsChar = false; }</span>
+<span class="fc" id="L300">		public void MakeAsShortRep() { BackPrev = 0; ; Prev1IsChar = false; }</span>
+<span class="fc bfc" id="L301" title="All 2 branches covered.">		public boolean IsShortRep() { return (BackPrev == 0); }</span>
+	};
+<span class="fc" id="L303">	Optimal[] _optimum = new Optimal[kNumOpts];</span>
+<span class="fc" id="L304">	SevenZip.Compression.LZ.BinTree _matchFinder = null;</span>
+<span class="fc" id="L305">	SevenZip.Compression.RangeCoder.Encoder _rangeEncoder = new SevenZip.Compression.RangeCoder.Encoder();</span>
+
+<span class="fc" id="L307">	short[] _isMatch = new short[Base.kNumStates&lt;&lt;Base.kNumPosStatesBitsMax];</span>
+<span class="fc" id="L308">	short[] _isRep = new short[Base.kNumStates];</span>
+<span class="fc" id="L309">	short[] _isRepG0 = new short[Base.kNumStates];</span>
+<span class="fc" id="L310">	short[] _isRepG1 = new short[Base.kNumStates];</span>
+<span class="fc" id="L311">	short[] _isRepG2 = new short[Base.kNumStates];</span>
+<span class="fc" id="L312">	short[] _isRep0Long = new short[Base.kNumStates&lt;&lt;Base.kNumPosStatesBitsMax];</span>
+
+<span class="fc" id="L314">	BitTreeEncoder[] _posSlotEncoder = new BitTreeEncoder[Base.kNumLenToPosStates]; // kNumPosSlotBits</span>
+
+<span class="fc" id="L316">	short[] _posEncoders = new short[Base.kNumFullDistances-Base.kEndPosModelIndex];</span>
+<span class="fc" id="L317">	BitTreeEncoder _posAlignEncoder = new BitTreeEncoder(Base.kNumAlignBits);</span>
+
+<span class="fc" id="L319">	LenPriceTableEncoder _lenEncoder = new LenPriceTableEncoder();</span>
+<span class="fc" id="L320">	LenPriceTableEncoder _repMatchLenEncoder = new LenPriceTableEncoder();</span>
+
+<span class="fc" id="L322">	LiteralEncoder _literalEncoder = new LiteralEncoder();</span>
+
+<span class="fc" id="L324">	int[] _matchDistances = new int[Base.kMatchMaxLen*2+2];</span>
+
+<span class="fc" id="L326">	int _numFastBytes = kNumFastBytesDefault;</span>
+	int _longestMatchLength;
+	int _numDistancePairs;
+
+	int _additionalOffset;
+
+	int _optimumEndIndex;
+	int _optimumCurrentIndex;
+
+	boolean _longestMatchWasFound;
+
+<span class="fc" id="L337">	int[] _posSlotPrices = new int[1&lt;&lt;(Base.kNumPosSlotBits+Base.kNumLenToPosStatesBits)];</span>
+<span class="fc" id="L338">	int[] _distancesPrices = new int[Base.kNumFullDistances&lt;&lt;Base.kNumLenToPosStatesBits];</span>
+<span class="fc" id="L339">	int[] _alignPrices = new int[Base.kAlignTableSize];</span>
+	int _alignPriceCount;
+
+<span class="fc" id="L342">	int _distTableSize = (kDefaultDictionaryLogSize * 2);</span>
+
+<span class="fc" id="L344">	int _posStateBits = 2;</span>
+<span class="fc" id="L345">	int _posStateMask = (4 - 1);</span>
+<span class="fc" id="L346">	int _numLiteralPosStateBits = 0;</span>
+<span class="fc" id="L347">	int _numLiteralContextBits = 3;</span>
+
+<span class="fc" id="L349">	int _dictionarySize = (1 &lt;&lt; kDefaultDictionaryLogSize);</span>
+<span class="fc" id="L350">	int _dictionarySizePrev = -1;</span>
+<span class="fc" id="L351">	int _numFastBytesPrev = -1;</span>
+
+	long nowPos64;
+	boolean _finished;
+	java.io.InputStream _inStream;
+
+<span class="fc" id="L357">	int _matchFinderType = EMatchFinderTypeBT4;</span>
+<span class="fc" id="L358">	boolean _writeEndMark = false;</span>
+
+<span class="fc" id="L360">	boolean _needReleaseMFStream = false;</span>
+
+	void Create()
+	{
+<span class="pc bpc" id="L364" title="1 of 2 branches missed.">		if (_matchFinder == null)</span>
+		{
+<span class="fc" id="L366">			SevenZip.Compression.LZ.BinTree bt = new SevenZip.Compression.LZ.BinTree();</span>
+<span class="fc" id="L367">			int numHashBytes = 4;</span>
+<span class="pc bpc" id="L368" title="1 of 2 branches missed.">			if (_matchFinderType == EMatchFinderTypeBT2)</span>
+<span class="nc" id="L369">				numHashBytes = 2;</span>
+<span class="fc" id="L370">			bt.SetType(numHashBytes);</span>
+<span class="fc" id="L371">			_matchFinder = bt;</span>
+		}
+<span class="fc" id="L373">		_literalEncoder.Create(_numLiteralPosStateBits, _numLiteralContextBits);</span>
+
+<span class="pc bpc" id="L375" title="3 of 4 branches missed.">		if (_dictionarySize == _dictionarySizePrev &amp;&amp; _numFastBytesPrev == _numFastBytes)</span>
+<span class="nc" id="L376">			return;</span>
+<span class="fc" id="L377">		_matchFinder.Create(_dictionarySize, kNumOpts, _numFastBytes, Base.kMatchMaxLen + 1);</span>
+<span class="fc" id="L378">		_dictionarySizePrev = _dictionarySize;</span>
+<span class="fc" id="L379">		_numFastBytesPrev = _numFastBytes;</span>
+<span class="fc" id="L380">	}</span>
+
+	public Encoder()
+<span class="fc" id="L383">	{</span>
+<span class="fc bfc" id="L384" title="All 2 branches covered.">		for (int i = 0; i &lt; kNumOpts; i++)</span>
+<span class="fc" id="L385">			_optimum[i] = new Optimal();</span>
+<span class="fc bfc" id="L386" title="All 2 branches covered.">		for (int i = 0; i &lt; Base.kNumLenToPosStates; i++)</span>
+<span class="fc" id="L387">			_posSlotEncoder[i] = new BitTreeEncoder(Base.kNumPosSlotBits);</span>
+<span class="fc" id="L388">	}</span>
+
+	void SetWriteEndMarkerMode(boolean writeEndMarker)
+	{
+<span class="nc" id="L392">		_writeEndMark = writeEndMarker;</span>
+<span class="nc" id="L393">	}</span>
+
+	void Init()
+	{
+<span class="fc" id="L397">		BaseInit();</span>
+<span class="fc" id="L398">		_rangeEncoder.Init();</span>
+
+<span class="fc" id="L400">		SevenZip.Compression.RangeCoder.Encoder.InitBitModels(_isMatch);</span>
+<span class="fc" id="L401">		SevenZip.Compression.RangeCoder.Encoder.InitBitModels(_isRep0Long);</span>
+<span class="fc" id="L402">		SevenZip.Compression.RangeCoder.Encoder.InitBitModels(_isRep);</span>
+<span class="fc" id="L403">		SevenZip.Compression.RangeCoder.Encoder.InitBitModels(_isRepG0);</span>
+<span class="fc" id="L404">		SevenZip.Compression.RangeCoder.Encoder.InitBitModels(_isRepG1);</span>
+<span class="fc" id="L405">		SevenZip.Compression.RangeCoder.Encoder.InitBitModels(_isRepG2);</span>
+<span class="fc" id="L406">		SevenZip.Compression.RangeCoder.Encoder.InitBitModels(_posEncoders);</span>
+
+
+
+
+
+
+
+<span class="fc" id="L414">		_literalEncoder.Init();</span>
+<span class="fc bfc" id="L415" title="All 2 branches covered.">		for (int i = 0; i &lt; Base.kNumLenToPosStates; i++)</span>
+<span class="fc" id="L416">			_posSlotEncoder[i].Init();</span>
+
+
+
+<span class="fc" id="L420">		_lenEncoder.Init(1 &lt;&lt; _posStateBits);</span>
+<span class="fc" id="L421">		_repMatchLenEncoder.Init(1 &lt;&lt; _posStateBits);</span>
+
+<span class="fc" id="L423">		_posAlignEncoder.Init();</span>
+
+<span class="fc" id="L425">		_longestMatchWasFound = false;</span>
+<span class="fc" id="L426">		_optimumEndIndex = 0;</span>
+<span class="fc" id="L427">		_optimumCurrentIndex = 0;</span>
+<span class="fc" id="L428">		_additionalOffset = 0;</span>
+<span class="fc" id="L429">	}</span>
+
+	int ReadMatchDistances() throws java.io.IOException
+	{
+<span class="fc" id="L433">		int lenRes = 0;</span>
+<span class="fc" id="L434">		_numDistancePairs = _matchFinder.GetMatches(_matchDistances);</span>
+<span class="fc bfc" id="L435" title="All 2 branches covered.">		if (_numDistancePairs &gt; 0)</span>
+		{
+<span class="fc" id="L437">			lenRes = _matchDistances[_numDistancePairs - 2];</span>
+<span class="fc bfc" id="L438" title="All 2 branches covered.">			if (lenRes == _numFastBytes)</span>
+<span class="fc" id="L439">				lenRes += _matchFinder.GetMatchLen((int)lenRes - 1, _matchDistances[_numDistancePairs - 1],</span>
+					Base.kMatchMaxLen - lenRes);
+		}
+<span class="fc" id="L442">		_additionalOffset++;</span>
+<span class="fc" id="L443">		return lenRes;</span>
+	}
+
+	void MovePos(int num) throws java.io.IOException
+	{
+<span class="pc bpc" id="L448" title="1 of 2 branches missed.">		if (num &gt; 0)</span>
+		{
+<span class="fc" id="L450">			_matchFinder.Skip(num);</span>
+<span class="fc" id="L451">			_additionalOffset += num;</span>
+		}
+<span class="fc" id="L453">	}</span>
+
+	int GetRepLen1Price(int state, int posState)
+	{
+<span class="fc" id="L457">		return SevenZip.Compression.RangeCoder.Encoder.GetPrice0(_isRepG0[state]) +</span>
+<span class="fc" id="L458">				SevenZip.Compression.RangeCoder.Encoder.GetPrice0(_isRep0Long[(state &lt;&lt; Base.kNumPosStatesBitsMax) + posState]);</span>
+	}
+
+	int GetPureRepPrice(int repIndex, int state, int posState)
+	{
+		int price;
+<span class="fc bfc" id="L464" title="All 2 branches covered.">		if (repIndex == 0)</span>
+		{
+<span class="fc" id="L466">			price = SevenZip.Compression.RangeCoder.Encoder.GetPrice0(_isRepG0[state]);</span>
+<span class="fc" id="L467">			price += SevenZip.Compression.RangeCoder.Encoder.GetPrice1(_isRep0Long[(state &lt;&lt; Base.kNumPosStatesBitsMax) + posState]);</span>
+		}
+		else
+		{
+<span class="fc" id="L471">			price = SevenZip.Compression.RangeCoder.Encoder.GetPrice1(_isRepG0[state]);</span>
+<span class="fc bfc" id="L472" title="All 2 branches covered.">			if (repIndex == 1)</span>
+<span class="fc" id="L473">				price += SevenZip.Compression.RangeCoder.Encoder.GetPrice0(_isRepG1[state]);</span>
+			else
+			{
+<span class="fc" id="L476">				price += SevenZip.Compression.RangeCoder.Encoder.GetPrice1(_isRepG1[state]);</span>
+<span class="fc" id="L477">				price += SevenZip.Compression.RangeCoder.Encoder.GetPrice(_isRepG2[state], repIndex - 2);</span>
+			}
+		}
+<span class="fc" id="L480">		return price;</span>
+	}
+
+	int GetRepPrice(int repIndex, int len, int state, int posState)
+	{
+<span class="fc" id="L485">		int price = _repMatchLenEncoder.GetPrice(len - Base.kMatchMinLen, posState);</span>
+<span class="fc" id="L486">		return price + GetPureRepPrice(repIndex, state, posState);</span>
+	}
+
+	int GetPosLenPrice(int pos, int len, int posState)
+	{
+		int price;
+<span class="fc" id="L492">		int lenToPosState = Base.GetLenToPosState(len);</span>
+<span class="fc bfc" id="L493" title="All 2 branches covered.">		if (pos &lt; Base.kNumFullDistances)</span>
+<span class="fc" id="L494">			price = _distancesPrices[(lenToPosState * Base.kNumFullDistances) + pos];</span>
+		else
+<span class="fc" id="L496">			price = _posSlotPrices[(lenToPosState &lt;&lt; Base.kNumPosSlotBits) + GetPosSlot2(pos)] +</span>
+				_alignPrices[pos &amp; Base.kAlignMask];
+<span class="fc" id="L498">		return price + _lenEncoder.GetPrice(len - Base.kMatchMinLen, posState);</span>
+	}
+
+	int Backward(int cur)
+	{
+<span class="fc" id="L503">		_optimumEndIndex = cur;</span>
+<span class="fc" id="L504">		int posMem = _optimum[cur].PosPrev;</span>
+<span class="fc" id="L505">		int backMem = _optimum[cur].BackPrev;</span>
+		do
+		{
+<span class="fc bfc" id="L508" title="All 2 branches covered.">			if (_optimum[cur].Prev1IsChar)</span>
+			{
+<span class="fc" id="L510">				_optimum[posMem].MakeAsChar();</span>
+<span class="fc" id="L511">				_optimum[posMem].PosPrev = posMem - 1;</span>
+<span class="fc bfc" id="L512" title="All 2 branches covered.">				if (_optimum[cur].Prev2)</span>
+				{
+<span class="fc" id="L514">					_optimum[posMem - 1].Prev1IsChar = false;</span>
+<span class="fc" id="L515">					_optimum[posMem - 1].PosPrev = _optimum[cur].PosPrev2;</span>
+<span class="fc" id="L516">					_optimum[posMem - 1].BackPrev = _optimum[cur].BackPrev2;</span>
+				}
+			}
+<span class="fc" id="L519">			int posPrev = posMem;</span>
+<span class="fc" id="L520">			int backCur = backMem;</span>
+
+<span class="fc" id="L522">			backMem = _optimum[posPrev].BackPrev;</span>
+<span class="fc" id="L523">			posMem = _optimum[posPrev].PosPrev;</span>
+
+<span class="fc" id="L525">			_optimum[posPrev].BackPrev = backCur;</span>
+<span class="fc" id="L526">			_optimum[posPrev].PosPrev = cur;</span>
+<span class="fc" id="L527">			cur = posPrev;</span>
+		}
+<span class="fc bfc" id="L529" title="All 2 branches covered.">		while (cur &gt; 0);</span>
+<span class="fc" id="L530">		backRes = _optimum[0].BackPrev;</span>
+<span class="fc" id="L531">		_optimumCurrentIndex = _optimum[0].PosPrev;</span>
+<span class="fc" id="L532">		return _optimumCurrentIndex;</span>
+	}
+
+<span class="fc" id="L535">	int[] reps = new int[Base.kNumRepDistances];</span>
+<span class="fc" id="L536">	int[] repLens = new int[Base.kNumRepDistances];</span>
+	int backRes;
+
+	int GetOptimum(int position) throws IOException
+	{
+<span class="fc bfc" id="L541" title="All 2 branches covered.">		if (_optimumEndIndex != _optimumCurrentIndex)</span>
+		{
+<span class="fc" id="L543">			int lenRes = _optimum[_optimumCurrentIndex].PosPrev - _optimumCurrentIndex;</span>
+<span class="fc" id="L544">			backRes = _optimum[_optimumCurrentIndex].BackPrev;</span>
+<span class="fc" id="L545">			_optimumCurrentIndex = _optimum[_optimumCurrentIndex].PosPrev;</span>
+<span class="fc" id="L546">			return lenRes;</span>
+		}
+<span class="fc" id="L548">		_optimumCurrentIndex = _optimumEndIndex = 0;</span>
+
+		int lenMain, numDistancePairs;
+<span class="fc bfc" id="L551" title="All 2 branches covered.">		if (!_longestMatchWasFound)</span>
+		{
+<span class="fc" id="L553">			lenMain = ReadMatchDistances();</span>
+		}
+		else
+		{
+<span class="fc" id="L557">			lenMain = _longestMatchLength;</span>
+<span class="fc" id="L558">			_longestMatchWasFound = false;</span>
+		}
+<span class="fc" id="L560">		numDistancePairs = _numDistancePairs;</span>
+
+<span class="fc" id="L562">		int numAvailableBytes = _matchFinder.GetNumAvailableBytes() + 1;</span>
+<span class="fc bfc" id="L563" title="All 2 branches covered.">		if (numAvailableBytes &lt; 2)</span>
+		{
+<span class="fc" id="L565">			backRes = -1;</span>
+<span class="fc" id="L566">			return 1;</span>
+		}
+<span class="fc bfc" id="L568" title="All 2 branches covered.">		if (numAvailableBytes &gt; Base.kMatchMaxLen)</span>
+<span class="fc" id="L569">			numAvailableBytes = Base.kMatchMaxLen;</span>
+
+<span class="fc" id="L571">		int repMaxIndex = 0;</span>
+		int i;
+<span class="fc bfc" id="L573" title="All 2 branches covered.">		for (i = 0; i &lt; Base.kNumRepDistances; i++)</span>
+		{
+<span class="fc" id="L575">			reps[i] = _repDistances[i];</span>
+<span class="fc" id="L576">			repLens[i] = _matchFinder.GetMatchLen(0 - 1, reps[i], Base.kMatchMaxLen);</span>
+<span class="fc bfc" id="L577" title="All 2 branches covered.">			if (repLens[i] &gt; repLens[repMaxIndex])</span>
+<span class="fc" id="L578">				repMaxIndex = i;</span>
+		}
+<span class="fc bfc" id="L580" title="All 2 branches covered.">		if (repLens[repMaxIndex] &gt;= _numFastBytes)</span>
+		{
+<span class="fc" id="L582">			backRes = repMaxIndex;</span>
+<span class="fc" id="L583">			int lenRes = repLens[repMaxIndex];</span>
+<span class="fc" id="L584">			MovePos(lenRes - 1);</span>
+<span class="fc" id="L585">			return lenRes;</span>
+		}
+
+<span class="fc bfc" id="L588" title="All 2 branches covered.">		if (lenMain &gt;= _numFastBytes)</span>
+		{
+<span class="fc" id="L590">			backRes = _matchDistances[numDistancePairs - 1] + Base.kNumRepDistances;</span>
+<span class="fc" id="L591">			MovePos(lenMain - 1);</span>
+<span class="fc" id="L592">			return lenMain;</span>
+		}
+
+<span class="fc" id="L595">		byte currentByte = _matchFinder.GetIndexByte(0 - 1);</span>
+<span class="fc" id="L596">		byte matchByte = _matchFinder.GetIndexByte(0 - _repDistances[0] - 1 - 1);</span>
+
+<span class="fc bfc" id="L598" title="All 6 branches covered.">		if (lenMain &lt; 2 &amp;&amp; currentByte != matchByte &amp;&amp; repLens[repMaxIndex] &lt; 2)</span>
+		{
+<span class="fc" id="L600">			backRes = -1;</span>
+<span class="fc" id="L601">			return 1;</span>
+		}
+
+<span class="fc" id="L604">		_optimum[0].State = _state;</span>
+
+<span class="fc" id="L606">		int posState = (position &amp; _posStateMask);</span>
+
+<span class="fc" id="L608">		_optimum[1].Price = SevenZip.Compression.RangeCoder.Encoder.GetPrice0(_isMatch[(_state &lt;&lt; Base.kNumPosStatesBitsMax) + posState]) +</span>
+<span class="fc bfc" id="L609" title="All 2 branches covered.">				_literalEncoder.GetSubCoder(position, _previousByte).GetPrice(!Base.StateIsCharState(_state), matchByte, currentByte);</span>
+<span class="fc" id="L610">		_optimum[1].MakeAsChar();</span>
+
+<span class="fc" id="L612">		int matchPrice = SevenZip.Compression.RangeCoder.Encoder.GetPrice1(_isMatch[(_state &lt;&lt; Base.kNumPosStatesBitsMax) + posState]);</span>
+<span class="fc" id="L613">		int repMatchPrice = matchPrice + SevenZip.Compression.RangeCoder.Encoder.GetPrice1(_isRep[_state]);</span>
+
+<span class="fc bfc" id="L615" title="All 2 branches covered.">		if (matchByte == currentByte)</span>
+		{
+<span class="fc" id="L617">			int shortRepPrice = repMatchPrice + GetRepLen1Price(_state, posState);</span>
+<span class="fc bfc" id="L618" title="All 2 branches covered.">			if (shortRepPrice &lt; _optimum[1].Price)</span>
+			{
+<span class="fc" id="L620">				_optimum[1].Price = shortRepPrice;</span>
+<span class="fc" id="L621">				_optimum[1].MakeAsShortRep();</span>
+			}
+		}
+
+<span class="fc bfc" id="L625" title="All 2 branches covered.">		int lenEnd = ((lenMain &gt;= repLens[repMaxIndex]) ? lenMain : repLens[repMaxIndex]);</span>
+
+<span class="fc bfc" id="L627" title="All 2 branches covered.">		if (lenEnd &lt; 2)</span>
+		{
+<span class="fc" id="L629">			backRes = _optimum[1].BackPrev;</span>
+<span class="fc" id="L630">			return 1;</span>
+		}
+
+<span class="fc" id="L633">		_optimum[1].PosPrev = 0;</span>
+
+<span class="fc" id="L635">		_optimum[0].Backs0 = reps[0];</span>
+<span class="fc" id="L636">		_optimum[0].Backs1 = reps[1];</span>
+<span class="fc" id="L637">		_optimum[0].Backs2 = reps[2];</span>
+<span class="fc" id="L638">		_optimum[0].Backs3 = reps[3];</span>
+
+<span class="fc" id="L640">		int len = lenEnd;</span>
+		do
+<span class="fc" id="L642">			_optimum[len--].Price = kIfinityPrice;</span>
+<span class="fc bfc" id="L643" title="All 2 branches covered.">		while (len &gt;= 2);</span>
+
+<span class="fc bfc" id="L645" title="All 2 branches covered.">		for (i = 0; i &lt; Base.kNumRepDistances; i++)</span>
+		{
+<span class="fc" id="L647">			int repLen = repLens[i];</span>
+<span class="fc bfc" id="L648" title="All 2 branches covered.">			if (repLen &lt; 2)</span>
+<span class="fc" id="L649">				continue;</span>
+<span class="fc" id="L650">			int price = repMatchPrice + GetPureRepPrice(i, _state, posState);</span>
+			do
+			{
+<span class="fc" id="L653">				int curAndLenPrice = price + _repMatchLenEncoder.GetPrice(repLen - 2, posState);</span>
+<span class="fc" id="L654">				Optimal optimum = _optimum[repLen];</span>
+<span class="fc bfc" id="L655" title="All 2 branches covered.">				if (curAndLenPrice &lt; optimum.Price)</span>
+				{
+<span class="fc" id="L657">					optimum.Price = curAndLenPrice;</span>
+<span class="fc" id="L658">					optimum.PosPrev = 0;</span>
+<span class="fc" id="L659">					optimum.BackPrev = i;</span>
+<span class="fc" id="L660">					optimum.Prev1IsChar = false;</span>
+				}
+			}
+<span class="fc bfc" id="L663" title="All 2 branches covered.">			while (--repLen &gt;= 2);</span>
+		}
+
+<span class="fc" id="L666">		int normalMatchPrice = matchPrice + SevenZip.Compression.RangeCoder.Encoder.GetPrice0(_isRep[_state]);</span>
+
+<span class="fc bfc" id="L668" title="All 2 branches covered.">		len = ((repLens[0] &gt;= 2) ? repLens[0] + 1 : 2);</span>
+<span class="fc bfc" id="L669" title="All 2 branches covered.">		if (len &lt;= lenMain)</span>
+		{
+<span class="fc" id="L671">			int offs = 0;</span>
+<span class="fc bfc" id="L672" title="All 2 branches covered.">			while (len &gt; _matchDistances[offs])</span>
+<span class="fc" id="L673">				offs += 2;</span>
+<span class="fc" id="L674">			for (; ; len++)</span>
+			{
+<span class="fc" id="L676">				int distance = _matchDistances[offs + 1];</span>
+<span class="fc" id="L677">				int curAndLenPrice = normalMatchPrice + GetPosLenPrice(distance, len, posState);</span>
+<span class="fc" id="L678">				Optimal optimum = _optimum[len];</span>
+<span class="fc bfc" id="L679" title="All 2 branches covered.">				if (curAndLenPrice &lt; optimum.Price)</span>
+				{
+<span class="fc" id="L681">					optimum.Price = curAndLenPrice;</span>
+<span class="fc" id="L682">					optimum.PosPrev = 0;</span>
+<span class="fc" id="L683">					optimum.BackPrev = distance + Base.kNumRepDistances;</span>
+<span class="fc" id="L684">					optimum.Prev1IsChar = false;</span>
+				}
+<span class="fc bfc" id="L686" title="All 2 branches covered.">				if (len == _matchDistances[offs])</span>
+				{
+<span class="fc" id="L688">					offs += 2;</span>
+<span class="fc bfc" id="L689" title="All 2 branches covered.">					if (offs == numDistancePairs)</span>
+<span class="fc" id="L690">						break;</span>
+				}
+			}
+		}
+
+<span class="fc" id="L695">		int cur = 0;</span>
+
+		while (true)
+		{
+<span class="fc" id="L699">			cur++;</span>
+<span class="fc bfc" id="L700" title="All 2 branches covered.">			if (cur == lenEnd)</span>
+<span class="fc" id="L701">				return Backward(cur);</span>
+<span class="fc" id="L702">			int newLen = ReadMatchDistances();</span>
+<span class="fc" id="L703">			numDistancePairs = _numDistancePairs;</span>
+<span class="fc bfc" id="L704" title="All 2 branches covered.">			if (newLen &gt;= _numFastBytes)</span>
+			{
+
+<span class="fc" id="L707">				_longestMatchLength = newLen;</span>
+<span class="fc" id="L708">				_longestMatchWasFound = true;</span>
+<span class="fc" id="L709">				return Backward(cur);</span>
+			}
+<span class="fc" id="L711">			position++;</span>
+<span class="fc" id="L712">			int posPrev = _optimum[cur].PosPrev;</span>
+			int state;
+<span class="fc bfc" id="L714" title="All 2 branches covered.">			if (_optimum[cur].Prev1IsChar)</span>
+			{
+<span class="fc" id="L716">				posPrev--;</span>
+<span class="fc bfc" id="L717" title="All 2 branches covered.">				if (_optimum[cur].Prev2)</span>
+				{
+<span class="fc" id="L719">					state = _optimum[_optimum[cur].PosPrev2].State;</span>
+<span class="fc bfc" id="L720" title="All 2 branches covered.">					if (_optimum[cur].BackPrev2 &lt; Base.kNumRepDistances)</span>
+<span class="fc" id="L721">						state = Base.StateUpdateRep(state);</span>
+					else
+<span class="fc" id="L723">						state = Base.StateUpdateMatch(state);</span>
+				}
+				else
+<span class="fc" id="L726">					state = _optimum[posPrev].State;</span>
+<span class="fc" id="L727">				state = Base.StateUpdateChar(state);</span>
+			}
+			else
+<span class="fc" id="L730">				state = _optimum[posPrev].State;</span>
+<span class="fc bfc" id="L731" title="All 2 branches covered.">			if (posPrev == cur - 1)</span>
+			{
+<span class="fc bfc" id="L733" title="All 2 branches covered.">				if (_optimum[cur].IsShortRep())</span>
+<span class="fc" id="L734">					state = Base.StateUpdateShortRep(state);</span>
+				else
+<span class="fc" id="L736">					state = Base.StateUpdateChar(state);</span>
+			}
+			else
+			{
+				int pos;
+<span class="fc bfc" id="L741" title="All 4 branches covered.">				if (_optimum[cur].Prev1IsChar &amp;&amp; _optimum[cur].Prev2)</span>
+				{
+<span class="fc" id="L743">					posPrev = _optimum[cur].PosPrev2;</span>
+<span class="fc" id="L744">					pos = _optimum[cur].BackPrev2;</span>
+<span class="fc" id="L745">					state = Base.StateUpdateRep(state);</span>
+				}
+				else
+				{
+<span class="fc" id="L749">					pos = _optimum[cur].BackPrev;</span>
+<span class="fc bfc" id="L750" title="All 2 branches covered.">					if (pos &lt; Base.kNumRepDistances)</span>
+<span class="fc" id="L751">						state = Base.StateUpdateRep(state);</span>
+					else
+<span class="fc" id="L753">						state = Base.StateUpdateMatch(state);</span>
+				}
+<span class="fc" id="L755">				Optimal opt = _optimum[posPrev];</span>
+<span class="fc bfc" id="L756" title="All 2 branches covered.">				if (pos &lt; Base.kNumRepDistances)</span>
+				{
+<span class="fc bfc" id="L758" title="All 2 branches covered.">					if (pos == 0)</span>
+					{
+<span class="fc" id="L760">						reps[0] = opt.Backs0;</span>
+<span class="fc" id="L761">						reps[1] = opt.Backs1;</span>
+<span class="fc" id="L762">						reps[2] = opt.Backs2;</span>
+<span class="fc" id="L763">						reps[3] = opt.Backs3;</span>
+					}
+<span class="fc bfc" id="L765" title="All 2 branches covered.">					else if (pos == 1)</span>
+					{
+<span class="fc" id="L767">						reps[0] = opt.Backs1;</span>
+<span class="fc" id="L768">						reps[1] = opt.Backs0;</span>
+<span class="fc" id="L769">						reps[2] = opt.Backs2;</span>
+<span class="fc" id="L770">						reps[3] = opt.Backs3;</span>
+					}
+<span class="fc bfc" id="L772" title="All 2 branches covered.">					else if (pos == 2)</span>
+					{
+<span class="fc" id="L774">						reps[0] = opt.Backs2;</span>
+<span class="fc" id="L775">						reps[1] = opt.Backs0;</span>
+<span class="fc" id="L776">						reps[2] = opt.Backs1;</span>
+<span class="fc" id="L777">						reps[3] = opt.Backs3;</span>
+					}
+					else
+					{
+<span class="fc" id="L781">						reps[0] = opt.Backs3;</span>
+<span class="fc" id="L782">						reps[1] = opt.Backs0;</span>
+<span class="fc" id="L783">						reps[2] = opt.Backs1;</span>
+<span class="fc" id="L784">						reps[3] = opt.Backs2;</span>
+					}
+				}
+				else
+				{
+<span class="fc" id="L789">					reps[0] = (pos - Base.kNumRepDistances);</span>
+<span class="fc" id="L790">					reps[1] = opt.Backs0;</span>
+<span class="fc" id="L791">					reps[2] = opt.Backs1;</span>
+<span class="fc" id="L792">					reps[3] = opt.Backs2;</span>
+				}
+			}
+<span class="fc" id="L795">			_optimum[cur].State = state;</span>
+<span class="fc" id="L796">			_optimum[cur].Backs0 = reps[0];</span>
+<span class="fc" id="L797">			_optimum[cur].Backs1 = reps[1];</span>
+<span class="fc" id="L798">			_optimum[cur].Backs2 = reps[2];</span>
+<span class="fc" id="L799">			_optimum[cur].Backs3 = reps[3];</span>
+<span class="fc" id="L800">			int curPrice = _optimum[cur].Price;</span>
+
+<span class="fc" id="L802">			currentByte = _matchFinder.GetIndexByte(0 - 1);</span>
+<span class="fc" id="L803">			matchByte = _matchFinder.GetIndexByte(0 - reps[0] - 1 - 1);</span>
+
+<span class="fc" id="L805">			posState = (position &amp; _posStateMask);</span>
+
+<span class="fc" id="L807">			int curAnd1Price = curPrice +</span>
+<span class="fc" id="L808">				SevenZip.Compression.RangeCoder.Encoder.GetPrice0(_isMatch[(state &lt;&lt; Base.kNumPosStatesBitsMax) + posState]) +</span>
+<span class="fc" id="L809">				_literalEncoder.GetSubCoder(position, _matchFinder.GetIndexByte(0 - 2)).</span>
+<span class="fc bfc" id="L810" title="All 2 branches covered.">				GetPrice(!Base.StateIsCharState(state), matchByte, currentByte);</span>
+
+<span class="fc" id="L812">			Optimal nextOptimum = _optimum[cur + 1];</span>
+
+<span class="fc" id="L814">			boolean nextIsChar = false;</span>
+<span class="fc bfc" id="L815" title="All 2 branches covered.">			if (curAnd1Price &lt; nextOptimum.Price)</span>
+			{
+<span class="fc" id="L817">				nextOptimum.Price = curAnd1Price;</span>
+<span class="fc" id="L818">				nextOptimum.PosPrev = cur;</span>
+<span class="fc" id="L819">				nextOptimum.MakeAsChar();</span>
+<span class="fc" id="L820">				nextIsChar = true;</span>
+			}
+
+<span class="fc" id="L823">			matchPrice = curPrice + SevenZip.Compression.RangeCoder.Encoder.GetPrice1(_isMatch[(state &lt;&lt; Base.kNumPosStatesBitsMax) + posState]);</span>
+<span class="fc" id="L824">			repMatchPrice = matchPrice + SevenZip.Compression.RangeCoder.Encoder.GetPrice1(_isRep[state]);</span>
+
+<span class="fc bfc" id="L826" title="All 6 branches covered.">			if (matchByte == currentByte &amp;&amp;</span>
+				!(nextOptimum.PosPrev &lt; cur &amp;&amp; nextOptimum.BackPrev == 0))
+			{
+<span class="fc" id="L829">				int shortRepPrice = repMatchPrice + GetRepLen1Price(state, posState);</span>
+<span class="fc bfc" id="L830" title="All 2 branches covered.">				if (shortRepPrice &lt;= nextOptimum.Price)</span>
+				{
+<span class="fc" id="L832">					nextOptimum.Price = shortRepPrice;</span>
+<span class="fc" id="L833">					nextOptimum.PosPrev = cur;</span>
+<span class="fc" id="L834">					nextOptimum.MakeAsShortRep();</span>
+<span class="fc" id="L835">					nextIsChar = true;</span>
+				}
+			}
+
+<span class="fc" id="L839">			int numAvailableBytesFull = _matchFinder.GetNumAvailableBytes() + 1;</span>
+<span class="fc" id="L840">			numAvailableBytesFull = Math.min(kNumOpts - 1 - cur, numAvailableBytesFull);</span>
+<span class="fc" id="L841">			numAvailableBytes = numAvailableBytesFull;</span>
+
+<span class="pc bpc" id="L843" title="1 of 2 branches missed.">			if (numAvailableBytes &lt; 2)</span>
+<span class="nc" id="L844">				continue;</span>
+<span class="fc bfc" id="L845" title="All 2 branches covered.">			if (numAvailableBytes &gt; _numFastBytes)</span>
+<span class="fc" id="L846">				numAvailableBytes = _numFastBytes;</span>
+<span class="fc bfc" id="L847" title="All 4 branches covered.">			if (!nextIsChar &amp;&amp; matchByte != currentByte)</span>
+			{
+				// try Literal + rep0
+<span class="fc" id="L850">				int t = Math.min(numAvailableBytesFull - 1, _numFastBytes);</span>
+<span class="fc" id="L851">				int lenTest2 = _matchFinder.GetMatchLen(0, reps[0], t);</span>
+<span class="fc bfc" id="L852" title="All 2 branches covered.">				if (lenTest2 &gt;= 2)</span>
+				{
+<span class="fc" id="L854">					int state2 = Base.StateUpdateChar(state);</span>
+
+<span class="fc" id="L856">					int posStateNext = (position + 1) &amp; _posStateMask;</span>
+<span class="fc" id="L857">					int nextRepMatchPrice = curAnd1Price +</span>
+<span class="fc" id="L858">						SevenZip.Compression.RangeCoder.Encoder.GetPrice1(_isMatch[(state2 &lt;&lt; Base.kNumPosStatesBitsMax) + posStateNext]) +</span>
+<span class="fc" id="L859">						SevenZip.Compression.RangeCoder.Encoder.GetPrice1(_isRep[state2]);</span>
+					{
+<span class="fc" id="L861">						int offset = cur + 1 + lenTest2;</span>
+<span class="fc bfc" id="L862" title="All 2 branches covered.">						while (lenEnd &lt; offset)</span>
+<span class="fc" id="L863">							_optimum[++lenEnd].Price = kIfinityPrice;</span>
+<span class="fc" id="L864">						int curAndLenPrice = nextRepMatchPrice + GetRepPrice(</span>
+								0, lenTest2, state2, posStateNext);
+<span class="fc" id="L866">						Optimal optimum = _optimum[offset];</span>
+<span class="fc bfc" id="L867" title="All 2 branches covered.">						if (curAndLenPrice &lt; optimum.Price)</span>
+						{
+<span class="fc" id="L869">							optimum.Price = curAndLenPrice;</span>
+<span class="fc" id="L870">							optimum.PosPrev = cur + 1;</span>
+<span class="fc" id="L871">							optimum.BackPrev = 0;</span>
+<span class="fc" id="L872">							optimum.Prev1IsChar = true;</span>
+<span class="fc" id="L873">							optimum.Prev2 = false;</span>
+						}
+					}
+				}
+			}
+
+<span class="fc" id="L879">			int startLen = 2; // speed optimization </span>
+
+<span class="fc bfc" id="L881" title="All 2 branches covered.">			for (int repIndex = 0; repIndex &lt; Base.kNumRepDistances; repIndex++)</span>
+			{
+<span class="fc" id="L883">				int lenTest = _matchFinder.GetMatchLen(0 - 1, reps[repIndex], numAvailableBytes);</span>
+<span class="fc bfc" id="L884" title="All 2 branches covered.">				if (lenTest &lt; 2)</span>
+<span class="fc" id="L885">					continue;</span>
+<span class="fc" id="L886">				int lenTestTemp = lenTest;</span>
+				do
+				{
+<span class="fc bfc" id="L889" title="All 2 branches covered.">					while (lenEnd &lt; cur + lenTest)</span>
+<span class="fc" id="L890">						_optimum[++lenEnd].Price = kIfinityPrice;</span>
+<span class="fc" id="L891">					int curAndLenPrice = repMatchPrice + GetRepPrice(repIndex, lenTest, state, posState);</span>
+<span class="fc" id="L892">					Optimal optimum = _optimum[cur + lenTest];</span>
+<span class="fc bfc" id="L893" title="All 2 branches covered.">					if (curAndLenPrice &lt; optimum.Price)</span>
+					{
+<span class="fc" id="L895">						optimum.Price = curAndLenPrice;</span>
+<span class="fc" id="L896">						optimum.PosPrev = cur;</span>
+<span class="fc" id="L897">						optimum.BackPrev = repIndex;</span>
+<span class="fc" id="L898">						optimum.Prev1IsChar = false;</span>
+					}
+				}
+<span class="fc bfc" id="L901" title="All 2 branches covered.">				while (--lenTest &gt;= 2);</span>
+<span class="fc" id="L902">				lenTest = lenTestTemp;</span>
+
+<span class="fc bfc" id="L904" title="All 2 branches covered.">				if (repIndex == 0)</span>
+<span class="fc" id="L905">					startLen = lenTest + 1;</span>
+
+				// if (_maxMode)
+<span class="pc bpc" id="L908" title="1 of 2 branches missed.">				if (lenTest &lt; numAvailableBytesFull)</span>
+				{
+<span class="fc" id="L910">					int t = Math.min(numAvailableBytesFull - 1 - lenTest, _numFastBytes);</span>
+<span class="fc" id="L911">					int lenTest2 = _matchFinder.GetMatchLen(lenTest, reps[repIndex], t);</span>
+<span class="fc bfc" id="L912" title="All 2 branches covered.">					if (lenTest2 &gt;= 2)</span>
+					{
+<span class="fc" id="L914">						int state2 = Base.StateUpdateRep(state);</span>
+
+<span class="fc" id="L916">						int posStateNext = (position + lenTest) &amp; _posStateMask;</span>
+<span class="fc" id="L917">						int curAndLenCharPrice =</span>
+<span class="fc" id="L918">								repMatchPrice + GetRepPrice(repIndex, lenTest, state, posState) +</span>
+<span class="fc" id="L919">								SevenZip.Compression.RangeCoder.Encoder.GetPrice0(_isMatch[(state2 &lt;&lt; Base.kNumPosStatesBitsMax) + posStateNext]) +</span>
+<span class="fc" id="L920">								_literalEncoder.GetSubCoder(position + lenTest,</span>
+<span class="fc" id="L921">								_matchFinder.GetIndexByte(lenTest - 1 - 1)).GetPrice(true,</span>
+<span class="fc" id="L922">								_matchFinder.GetIndexByte(lenTest - 1 - (reps[repIndex] + 1)),</span>
+<span class="fc" id="L923">								_matchFinder.GetIndexByte(lenTest - 1));</span>
+<span class="fc" id="L924">						state2 = Base.StateUpdateChar(state2);</span>
+<span class="fc" id="L925">						posStateNext = (position + lenTest + 1) &amp; _posStateMask;</span>
+<span class="fc" id="L926">						int nextMatchPrice = curAndLenCharPrice + SevenZip.Compression.RangeCoder.Encoder.GetPrice1(_isMatch[(state2 &lt;&lt; Base.kNumPosStatesBitsMax) + posStateNext]);</span>
+<span class="fc" id="L927">						int nextRepMatchPrice = nextMatchPrice + SevenZip.Compression.RangeCoder.Encoder.GetPrice1(_isRep[state2]);</span>
+
+						// for(; lenTest2 &gt;= 2; lenTest2--)
+						{
+<span class="fc" id="L931">							int offset = lenTest + 1 + lenTest2;</span>
+<span class="fc bfc" id="L932" title="All 2 branches covered.">							while (lenEnd &lt; cur + offset)</span>
+<span class="fc" id="L933">								_optimum[++lenEnd].Price = kIfinityPrice;</span>
+<span class="fc" id="L934">							int curAndLenPrice = nextRepMatchPrice + GetRepPrice(0, lenTest2, state2, posStateNext);</span>
+<span class="fc" id="L935">							Optimal optimum = _optimum[cur + offset];</span>
+<span class="fc bfc" id="L936" title="All 2 branches covered.">							if (curAndLenPrice &lt; optimum.Price)</span>
+							{
+<span class="fc" id="L938">								optimum.Price = curAndLenPrice;</span>
+<span class="fc" id="L939">								optimum.PosPrev = cur + lenTest + 1;</span>
+<span class="fc" id="L940">								optimum.BackPrev = 0;</span>
+<span class="fc" id="L941">								optimum.Prev1IsChar = true;</span>
+<span class="fc" id="L942">								optimum.Prev2 = true;</span>
+<span class="fc" id="L943">								optimum.PosPrev2 = cur;</span>
+<span class="fc" id="L944">								optimum.BackPrev2 = repIndex;</span>
+							}
+						}
+					}
+				}
+			}
+
+<span class="pc bpc" id="L951" title="1 of 2 branches missed.">			if (newLen &gt; numAvailableBytes)</span>
+			{
+<span class="nc" id="L953">				newLen = numAvailableBytes;</span>
+<span class="nc bnc" id="L954" title="All 2 branches missed.">				for (numDistancePairs = 0; newLen &gt; _matchDistances[numDistancePairs]; numDistancePairs += 2) ;</span>
+<span class="nc" id="L955">				_matchDistances[numDistancePairs] = newLen;</span>
+<span class="nc" id="L956">				numDistancePairs += 2;</span>
+			}
+<span class="fc bfc" id="L958" title="All 2 branches covered.">			if (newLen &gt;= startLen)</span>
+			{
+<span class="fc" id="L960">				normalMatchPrice = matchPrice + SevenZip.Compression.RangeCoder.Encoder.GetPrice0(_isRep[state]);</span>
+<span class="fc bfc" id="L961" title="All 2 branches covered.">				while (lenEnd &lt; cur + newLen)</span>
+<span class="fc" id="L962">					_optimum[++lenEnd].Price = kIfinityPrice;</span>
+
+<span class="fc" id="L964">				int offs = 0;</span>
+<span class="fc bfc" id="L965" title="All 2 branches covered.">				while (startLen &gt; _matchDistances[offs])</span>
+<span class="fc" id="L966">					offs += 2;</span>
+
+<span class="fc" id="L968">				for (int lenTest = startLen; ; lenTest++)</span>
+				{
+<span class="fc" id="L970">					int curBack = _matchDistances[offs + 1];</span>
+<span class="fc" id="L971">					int curAndLenPrice = normalMatchPrice + GetPosLenPrice(curBack, lenTest, posState);</span>
+<span class="fc" id="L972">					Optimal optimum = _optimum[cur + lenTest];</span>
+<span class="fc bfc" id="L973" title="All 2 branches covered.">					if (curAndLenPrice &lt; optimum.Price)</span>
+					{
+<span class="fc" id="L975">						optimum.Price = curAndLenPrice;</span>
+<span class="fc" id="L976">						optimum.PosPrev = cur;</span>
+<span class="fc" id="L977">						optimum.BackPrev = curBack + Base.kNumRepDistances;</span>
+<span class="fc" id="L978">						optimum.Prev1IsChar = false;</span>
+					}
+
+<span class="fc bfc" id="L981" title="All 2 branches covered.">					if (lenTest == _matchDistances[offs])</span>
+					{
+<span class="pc bpc" id="L983" title="1 of 2 branches missed.">						if (lenTest &lt; numAvailableBytesFull)</span>
+						{
+<span class="fc" id="L985">							int t = Math.min(numAvailableBytesFull - 1 - lenTest, _numFastBytes);</span>
+<span class="fc" id="L986">							int lenTest2 = _matchFinder.GetMatchLen(lenTest, curBack, t);</span>
+<span class="fc bfc" id="L987" title="All 2 branches covered.">							if (lenTest2 &gt;= 2)</span>
+							{
+<span class="fc" id="L989">								int state2 = Base.StateUpdateMatch(state);</span>
+
+<span class="fc" id="L991">								int posStateNext = (position + lenTest) &amp; _posStateMask;</span>
+<span class="fc" id="L992">								int curAndLenCharPrice = curAndLenPrice +</span>
+<span class="fc" id="L993">									SevenZip.Compression.RangeCoder.Encoder.GetPrice0(_isMatch[(state2 &lt;&lt; Base.kNumPosStatesBitsMax) + posStateNext]) +</span>
+<span class="fc" id="L994">									_literalEncoder.GetSubCoder(position + lenTest,</span>
+<span class="fc" id="L995">									_matchFinder.GetIndexByte(lenTest - 1 - 1)).</span>
+<span class="fc" id="L996">									GetPrice(true,</span>
+<span class="fc" id="L997">									_matchFinder.GetIndexByte(lenTest - (curBack + 1) - 1),</span>
+<span class="fc" id="L998">									_matchFinder.GetIndexByte(lenTest - 1));</span>
+<span class="fc" id="L999">								state2 = Base.StateUpdateChar(state2);</span>
+<span class="fc" id="L1000">								posStateNext = (position + lenTest + 1) &amp; _posStateMask;</span>
+<span class="fc" id="L1001">								int nextMatchPrice = curAndLenCharPrice + SevenZip.Compression.RangeCoder.Encoder.GetPrice1(_isMatch[(state2 &lt;&lt; Base.kNumPosStatesBitsMax) + posStateNext]);</span>
+<span class="fc" id="L1002">								int nextRepMatchPrice = nextMatchPrice + SevenZip.Compression.RangeCoder.Encoder.GetPrice1(_isRep[state2]);</span>
+
+<span class="fc" id="L1004">								int offset = lenTest + 1 + lenTest2;</span>
+<span class="fc bfc" id="L1005" title="All 2 branches covered.">								while (lenEnd &lt; cur + offset)</span>
+<span class="fc" id="L1006">									_optimum[++lenEnd].Price = kIfinityPrice;</span>
+<span class="fc" id="L1007">								curAndLenPrice = nextRepMatchPrice + GetRepPrice(0, lenTest2, state2, posStateNext);</span>
+<span class="fc" id="L1008">								optimum = _optimum[cur + offset];</span>
+<span class="fc bfc" id="L1009" title="All 2 branches covered.">								if (curAndLenPrice &lt; optimum.Price)</span>
+								{
+<span class="fc" id="L1011">									optimum.Price = curAndLenPrice;</span>
+<span class="fc" id="L1012">									optimum.PosPrev = cur + lenTest + 1;</span>
+<span class="fc" id="L1013">									optimum.BackPrev = 0;</span>
+<span class="fc" id="L1014">									optimum.Prev1IsChar = true;</span>
+<span class="fc" id="L1015">									optimum.Prev2 = true;</span>
+<span class="fc" id="L1016">									optimum.PosPrev2 = cur;</span>
+<span class="fc" id="L1017">									optimum.BackPrev2 = curBack + Base.kNumRepDistances;</span>
+								}
+							}
+						}
+<span class="fc" id="L1021">						offs += 2;</span>
+<span class="fc bfc" id="L1022" title="All 2 branches covered.">						if (offs == numDistancePairs)</span>
+<span class="fc" id="L1023">							break;</span>
+					}
+				}
+			}
+<span class="fc" id="L1027">		}</span>
+	}
+
+	boolean ChangePair(int smallDist, int bigDist)
+	{
+<span class="nc" id="L1032">		int kDif = 7;</span>
+<span class="nc bnc" id="L1033" title="All 4 branches missed.">		return (smallDist &lt; (1 &lt;&lt; (32 - kDif)) &amp;&amp; bigDist &gt;= (smallDist &lt;&lt; kDif));</span>
+	}
+
+	void WriteEndMarker(int posState) throws IOException
+	{
+<span class="pc bpc" id="L1038" title="1 of 2 branches missed.">		if (!_writeEndMark)</span>
+<span class="nc" id="L1039">			return;</span>
+
+<span class="fc" id="L1041">		_rangeEncoder.Encode(_isMatch, (_state &lt;&lt; Base.kNumPosStatesBitsMax) + posState, 1);</span>
+<span class="fc" id="L1042">		_rangeEncoder.Encode(_isRep, _state, 0);</span>
+<span class="fc" id="L1043">		_state = Base.StateUpdateMatch(_state);</span>
+<span class="fc" id="L1044">		int len = Base.kMatchMinLen;</span>
+<span class="fc" id="L1045">		_lenEncoder.Encode(_rangeEncoder, len - Base.kMatchMinLen, posState);</span>
+<span class="fc" id="L1046">		int posSlot = (1 &lt;&lt; Base.kNumPosSlotBits) - 1;</span>
+<span class="fc" id="L1047">		int lenToPosState = Base.GetLenToPosState(len);</span>
+<span class="fc" id="L1048">		_posSlotEncoder[lenToPosState].Encode(_rangeEncoder, posSlot);</span>
+<span class="fc" id="L1049">		int footerBits = 30;</span>
+<span class="fc" id="L1050">		int posReduced = (1 &lt;&lt; footerBits) - 1;</span>
+<span class="fc" id="L1051">		_rangeEncoder.EncodeDirectBits(posReduced &gt;&gt; Base.kNumAlignBits, footerBits - Base.kNumAlignBits);</span>
+<span class="fc" id="L1052">		_posAlignEncoder.ReverseEncode(_rangeEncoder, posReduced &amp; Base.kAlignMask);</span>
+<span class="fc" id="L1053">	}</span>
+
+	void Flush(int nowPos) throws IOException
+	{
+<span class="fc" id="L1057">		ReleaseMFStream();</span>
+<span class="fc" id="L1058">		WriteEndMarker(nowPos &amp; _posStateMask);</span>
+<span class="fc" id="L1059">		_rangeEncoder.FlushData();</span>
+<span class="fc" id="L1060">		_rangeEncoder.FlushStream();</span>
+<span class="fc" id="L1061">	}</span>
+
+	public void CodeOneBlock(long[] inSize, long[] outSize, boolean[] finished) throws IOException
+	{
+<span class="fc" id="L1065">		inSize[0] = 0;</span>
+<span class="fc" id="L1066">		outSize[0] = 0;</span>
+<span class="fc" id="L1067">		finished[0] = true;</span>
+
+<span class="fc bfc" id="L1069" title="All 2 branches covered.">		if (_inStream != null)</span>
+		{
+<span class="fc" id="L1071">			_matchFinder.SetStream(_inStream);</span>
+<span class="fc" id="L1072">			_matchFinder.Init();</span>
+<span class="fc" id="L1073">			_needReleaseMFStream = true;</span>
+<span class="fc" id="L1074">			_inStream = null;</span>
+		}
+
+<span class="pc bpc" id="L1077" title="1 of 2 branches missed.">		if (_finished)</span>
+<span class="nc" id="L1078">			return;</span>
+<span class="fc" id="L1079">		_finished = true;</span>
+
+
+<span class="fc" id="L1082">		long progressPosValuePrev = nowPos64;</span>
+<span class="fc bfc" id="L1083" title="All 2 branches covered.">		if (nowPos64 == 0)</span>
+		{
+<span class="pc bpc" id="L1085" title="1 of 2 branches missed.">			if (_matchFinder.GetNumAvailableBytes() == 0)</span>
+			{
+<span class="nc" id="L1087">				Flush((int)nowPos64);</span>
+<span class="nc" id="L1088">				return;</span>
+			}
+
+<span class="fc" id="L1091">			ReadMatchDistances();</span>
+<span class="fc" id="L1092">			int posState = (int)(nowPos64) &amp; _posStateMask;</span>
+<span class="fc" id="L1093">			_rangeEncoder.Encode(_isMatch, (_state &lt;&lt; Base.kNumPosStatesBitsMax) + posState, 0);</span>
+<span class="fc" id="L1094">			_state = Base.StateUpdateChar(_state);</span>
+<span class="fc" id="L1095">			byte curByte = _matchFinder.GetIndexByte(0 - _additionalOffset);</span>
+<span class="fc" id="L1096">			_literalEncoder.GetSubCoder((int)(nowPos64), _previousByte).Encode(_rangeEncoder, curByte);</span>
+<span class="fc" id="L1097">			_previousByte = curByte;</span>
+<span class="fc" id="L1098">			_additionalOffset--;</span>
+<span class="fc" id="L1099">			nowPos64++;</span>
+		}
+<span class="pc bpc" id="L1101" title="1 of 2 branches missed.">		if (_matchFinder.GetNumAvailableBytes() == 0)</span>
+		{
+<span class="nc" id="L1103">			Flush((int)nowPos64);</span>
+<span class="nc" id="L1104">			return;</span>
+		}
+		while (true)
+		{
+
+<span class="fc" id="L1109">			int len = GetOptimum((int)nowPos64);</span>
+<span class="fc" id="L1110">			int pos = backRes;</span>
+<span class="fc" id="L1111">			int posState = ((int)nowPos64) &amp; _posStateMask;</span>
+<span class="fc" id="L1112">			int complexState = (_state &lt;&lt; Base.kNumPosStatesBitsMax) + posState;</span>
+<span class="fc bfc" id="L1113" title="All 4 branches covered.">			if (len == 1 &amp;&amp; pos == -1)</span>
+			{
+<span class="fc" id="L1115">				_rangeEncoder.Encode(_isMatch, complexState, 0);</span>
+<span class="fc" id="L1116">				byte curByte = _matchFinder.GetIndexByte((int)(0 - _additionalOffset));</span>
+<span class="fc" id="L1117">				LiteralEncoder.Encoder2 subCoder = _literalEncoder.GetSubCoder((int)nowPos64, _previousByte);</span>
+<span class="fc bfc" id="L1118" title="All 2 branches covered.">				if (!Base.StateIsCharState(_state))</span>
+				{
+<span class="fc" id="L1120">					byte matchByte = _matchFinder.GetIndexByte((int)(0 - _repDistances[0] - 1 - _additionalOffset));</span>
+<span class="fc" id="L1121">					subCoder.EncodeMatched(_rangeEncoder, matchByte, curByte);</span>
+<span class="fc" id="L1122">				}</span>
+				else
+<span class="fc" id="L1124">					subCoder.Encode(_rangeEncoder, curByte);</span>
+<span class="fc" id="L1125">				_previousByte = curByte;</span>
+<span class="fc" id="L1126">				_state = Base.StateUpdateChar(_state);</span>
+<span class="fc" id="L1127">			}</span>
+			else
+			{
+<span class="fc" id="L1130">				_rangeEncoder.Encode(_isMatch, complexState, 1);</span>
+<span class="fc bfc" id="L1131" title="All 2 branches covered.">				if (pos &lt; Base.kNumRepDistances)</span>
+				{
+<span class="fc" id="L1133">					_rangeEncoder.Encode(_isRep, _state, 1);</span>
+<span class="fc bfc" id="L1134" title="All 2 branches covered.">					if (pos == 0)</span>
+					{
+<span class="fc" id="L1136">						_rangeEncoder.Encode(_isRepG0, _state, 0);</span>
+<span class="fc bfc" id="L1137" title="All 2 branches covered.">						if (len == 1)</span>
+<span class="fc" id="L1138">							_rangeEncoder.Encode(_isRep0Long, complexState, 0);</span>
+						else
+<span class="fc" id="L1140">							_rangeEncoder.Encode(_isRep0Long, complexState, 1);</span>
+					}
+					else
+					{
+<span class="fc" id="L1144">						_rangeEncoder.Encode(_isRepG0, _state, 1);</span>
+<span class="fc bfc" id="L1145" title="All 2 branches covered.">						if (pos == 1)</span>
+<span class="fc" id="L1146">							_rangeEncoder.Encode(_isRepG1, _state, 0);</span>
+						else
+						{
+<span class="fc" id="L1149">							_rangeEncoder.Encode(_isRepG1, _state, 1);</span>
+<span class="fc" id="L1150">							_rangeEncoder.Encode(_isRepG2, _state, pos - 2);</span>
+						}
+					}
+<span class="fc bfc" id="L1153" title="All 2 branches covered.">					if (len == 1)</span>
+<span class="fc" id="L1154">						_state = Base.StateUpdateShortRep(_state);</span>
+					else
+					{
+<span class="fc" id="L1157">						_repMatchLenEncoder.Encode(_rangeEncoder, len - Base.kMatchMinLen, posState);</span>
+<span class="fc" id="L1158">						_state = Base.StateUpdateRep(_state);</span>
+					}
+<span class="fc" id="L1160">					int distance = _repDistances[pos];</span>
+<span class="fc bfc" id="L1161" title="All 2 branches covered.">					if (pos != 0)</span>
+					{
+<span class="fc bfc" id="L1163" title="All 2 branches covered.">						for (int i = pos; i &gt;= 1; i--)</span>
+<span class="fc" id="L1164">							_repDistances[i] = _repDistances[i - 1];</span>
+<span class="fc" id="L1165">						_repDistances[0] = distance;</span>
+					}
+<span class="fc" id="L1167">				}</span>
+				else
+				{
+<span class="fc" id="L1170">					_rangeEncoder.Encode(_isRep, _state, 0);</span>
+<span class="fc" id="L1171">					_state = Base.StateUpdateMatch(_state);</span>
+<span class="fc" id="L1172">					_lenEncoder.Encode(_rangeEncoder, len - Base.kMatchMinLen, posState);</span>
+<span class="fc" id="L1173">					pos -= Base.kNumRepDistances;</span>
+<span class="fc" id="L1174">					int posSlot = GetPosSlot(pos);</span>
+<span class="fc" id="L1175">					int lenToPosState = Base.GetLenToPosState(len);</span>
+<span class="fc" id="L1176">					_posSlotEncoder[lenToPosState].Encode(_rangeEncoder, posSlot);</span>
+
+<span class="fc bfc" id="L1178" title="All 2 branches covered.">					if (posSlot &gt;= Base.kStartPosModelIndex)</span>
+					{
+<span class="fc" id="L1180">						int footerBits = (int)((posSlot &gt;&gt; 1) - 1);</span>
+<span class="fc" id="L1181">						int baseVal = ((2 | (posSlot &amp; 1)) &lt;&lt; footerBits);</span>
+<span class="fc" id="L1182">						int posReduced = pos - baseVal;</span>
+
+<span class="fc bfc" id="L1184" title="All 2 branches covered.">						if (posSlot &lt; Base.kEndPosModelIndex)</span>
+<span class="fc" id="L1185">							BitTreeEncoder.ReverseEncode(_posEncoders,</span>
+									baseVal - posSlot - 1, _rangeEncoder, footerBits, posReduced);
+						else
+						{
+<span class="fc" id="L1189">							_rangeEncoder.EncodeDirectBits(posReduced &gt;&gt; Base.kNumAlignBits, footerBits - Base.kNumAlignBits);</span>
+<span class="fc" id="L1190">							_posAlignEncoder.ReverseEncode(_rangeEncoder, posReduced &amp; Base.kAlignMask);</span>
+<span class="fc" id="L1191">							_alignPriceCount++;</span>
+						}
+					}
+<span class="fc" id="L1194">					int distance = pos;</span>
+<span class="fc bfc" id="L1195" title="All 2 branches covered.">					for (int i = Base.kNumRepDistances - 1; i &gt;= 1; i--)</span>
+<span class="fc" id="L1196">						_repDistances[i] = _repDistances[i - 1];</span>
+<span class="fc" id="L1197">					_repDistances[0] = distance;</span>
+<span class="fc" id="L1198">					_matchPriceCount++;</span>
+				}
+<span class="fc" id="L1200">				_previousByte = _matchFinder.GetIndexByte(len - 1 - _additionalOffset);</span>
+			}
+<span class="fc" id="L1202">			_additionalOffset -= len;</span>
+<span class="fc" id="L1203">			nowPos64 += len;</span>
+<span class="fc bfc" id="L1204" title="All 2 branches covered.">			if (_additionalOffset == 0)</span>
+			{
+				// if (!_fastMode)
+<span class="fc bfc" id="L1207" title="All 2 branches covered.">				if (_matchPriceCount &gt;= (1 &lt;&lt; 7))</span>
+<span class="fc" id="L1208">					FillDistancesPrices();</span>
+<span class="fc bfc" id="L1209" title="All 2 branches covered.">				if (_alignPriceCount &gt;= Base.kAlignTableSize)</span>
+<span class="fc" id="L1210">					FillAlignPrices();</span>
+<span class="fc" id="L1211">				inSize[0] = nowPos64;</span>
+<span class="fc" id="L1212">				outSize[0] = _rangeEncoder.GetProcessedSizeAdd();</span>
+<span class="fc bfc" id="L1213" title="All 2 branches covered.">				if (_matchFinder.GetNumAvailableBytes() == 0)</span>
+				{
+<span class="fc" id="L1215">					Flush((int)nowPos64);</span>
+<span class="fc" id="L1216">					return;</span>
+				}
+
+<span class="fc bfc" id="L1219" title="All 2 branches covered.">				if (nowPos64 - progressPosValuePrev &gt;= (1 &lt;&lt; 12))</span>
+				{
+<span class="fc" id="L1221">					_finished = false;</span>
+<span class="fc" id="L1222">					finished[0] = false;</span>
+<span class="fc" id="L1223">					return;</span>
+				}
+			}
+<span class="fc" id="L1226">		}</span>
+	}
+
+	void ReleaseMFStream()
+	{
+<span class="pc bpc" id="L1231" title="1 of 4 branches missed.">		if (_matchFinder != null &amp;&amp; _needReleaseMFStream)</span>
+		{
+<span class="fc" id="L1233">			_matchFinder.ReleaseStream();</span>
+<span class="fc" id="L1234">			_needReleaseMFStream = false;</span>
+		}
+<span class="fc" id="L1236">	}</span>
+
+	void SetOutStream(java.io.OutputStream outStream)
+<span class="fc" id="L1239">	{ _rangeEncoder.SetStream(outStream); }</span>
+	void ReleaseOutStream()
+<span class="fc" id="L1241">	{ _rangeEncoder.ReleaseStream(); }</span>
+
+	void ReleaseStreams()
+	{
+<span class="fc" id="L1245">		ReleaseMFStream();</span>
+<span class="fc" id="L1246">		ReleaseOutStream();</span>
+<span class="fc" id="L1247">	}</span>
+
+	void SetStreams(java.io.InputStream inStream, java.io.OutputStream outStream,
+			long inSize, long outSize)
+	{
+<span class="fc" id="L1252">		_inStream = inStream;</span>
+<span class="fc" id="L1253">		_finished = false;</span>
+<span class="fc" id="L1254">		Create();</span>
+<span class="fc" id="L1255">		SetOutStream(outStream);</span>
+<span class="fc" id="L1256">		Init();</span>
+
+		// if (!_fastMode)
+		{
+<span class="fc" id="L1260">			FillDistancesPrices();</span>
+<span class="fc" id="L1261">			FillAlignPrices();</span>
+		}
+
+<span class="fc" id="L1264">		_lenEncoder.SetTableSize(_numFastBytes + 1 - Base.kMatchMinLen);</span>
+<span class="fc" id="L1265">		_lenEncoder.UpdateTables(1 &lt;&lt; _posStateBits);</span>
+<span class="fc" id="L1266">		_repMatchLenEncoder.SetTableSize(_numFastBytes + 1 - Base.kMatchMinLen);</span>
+<span class="fc" id="L1267">		_repMatchLenEncoder.UpdateTables(1 &lt;&lt; _posStateBits);</span>
+
+<span class="fc" id="L1269">		nowPos64 = 0;</span>
+<span class="fc" id="L1270">	}</span>
+
+<span class="fc" id="L1272">	long[] processedInSize = new long[1]; long[] processedOutSize = new long[1]; boolean[] finished = new boolean[1];</span>
+	public void Code(java.io.InputStream inStream, java.io.OutputStream outStream,
+			long inSize, long outSize, ICodeProgress progress) throws IOException
+	{
+<span class="fc" id="L1276">		_needReleaseMFStream = false;</span>
+		try
+		{
+<span class="fc" id="L1279">			SetStreams(inStream, outStream, inSize, outSize);</span>
+			while (true)
+			{
+
+
+
+<span class="fc" id="L1285">				CodeOneBlock(processedInSize, processedOutSize, finished);</span>
+<span class="fc bfc" id="L1286" title="All 2 branches covered.">				if (finished[0])</span>
+<span class="fc" id="L1287">					return;</span>
+<span class="pc bpc" id="L1288" title="1 of 2 branches missed.">				if (progress != null)</span>
+				{
+<span class="nc" id="L1290">					progress.SetProgress(processedInSize[0], processedOutSize[0]);</span>
+				}
+			}
+		}
+		finally
+		{
+<span class="fc" id="L1296">			ReleaseStreams();</span>
+		}
+	}
+
+	public static final int kPropSize = 5;
+<span class="fc" id="L1301">	byte[] properties = new byte[kPropSize];</span>
+
+	public void WriteCoderProperties(java.io.OutputStream outStream) throws IOException
+	{
+<span class="fc" id="L1305">		properties[0] = (byte)((_posStateBits * 5 + _numLiteralPosStateBits) * 9 + _numLiteralContextBits);</span>
+<span class="fc bfc" id="L1306" title="All 2 branches covered.">		for (int i = 0; i &lt; 4; i++)</span>
+<span class="fc" id="L1307">			properties[1 + i] = (byte)(_dictionarySize &gt;&gt; (8 * i));</span>
+<span class="fc" id="L1308">		outStream.write(properties, 0, kPropSize);</span>
+<span class="fc" id="L1309">	}</span>
+
+<span class="fc" id="L1311">	int[] tempPrices = new int[Base.kNumFullDistances];</span>
+	int _matchPriceCount;
+
+	void FillDistancesPrices()
+	{
+<span class="fc bfc" id="L1316" title="All 2 branches covered.">		for (int i = Base.kStartPosModelIndex; i &lt; Base.kNumFullDistances; i++)</span>
+		{
+<span class="fc" id="L1318">			int posSlot = GetPosSlot(i);</span>
+<span class="fc" id="L1319">			int footerBits = (int)((posSlot &gt;&gt; 1) - 1);</span>
+<span class="fc" id="L1320">			int baseVal = ((2 | (posSlot &amp; 1)) &lt;&lt; footerBits);</span>
+<span class="fc" id="L1321">			tempPrices[i] = BitTreeEncoder.ReverseGetPrice(_posEncoders,</span>
+				baseVal - posSlot - 1, footerBits, i - baseVal);
+		}
+
+<span class="fc bfc" id="L1325" title="All 2 branches covered.">		for (int lenToPosState = 0; lenToPosState &lt; Base.kNumLenToPosStates; lenToPosState++)</span>
+		{
+			int posSlot;
+<span class="fc" id="L1328">			BitTreeEncoder encoder = _posSlotEncoder[lenToPosState];</span>
+
+<span class="fc" id="L1330">			int st = (lenToPosState &lt;&lt; Base.kNumPosSlotBits);</span>
+<span class="fc bfc" id="L1331" title="All 2 branches covered.">			for (posSlot = 0; posSlot &lt; _distTableSize; posSlot++)</span>
+<span class="fc" id="L1332">				_posSlotPrices[st + posSlot] = encoder.GetPrice(posSlot);</span>
+<span class="fc bfc" id="L1333" title="All 2 branches covered.">			for (posSlot = Base.kEndPosModelIndex; posSlot &lt; _distTableSize; posSlot++)</span>
+<span class="fc" id="L1334">				_posSlotPrices[st + posSlot] += ((((posSlot &gt;&gt; 1) - 1) - Base.kNumAlignBits) &lt;&lt; SevenZip.Compression.RangeCoder.Encoder.kNumBitPriceShiftBits);</span>
+
+<span class="fc" id="L1336">			int st2 = lenToPosState * Base.kNumFullDistances;</span>
+			int i;
+<span class="fc bfc" id="L1338" title="All 2 branches covered.">			for (i = 0; i &lt; Base.kStartPosModelIndex; i++)</span>
+<span class="fc" id="L1339">				_distancesPrices[st2 + i] = _posSlotPrices[st + i];</span>
+<span class="fc bfc" id="L1340" title="All 2 branches covered.">			for (; i &lt; Base.kNumFullDistances; i++)</span>
+<span class="fc" id="L1341">				_distancesPrices[st2 + i] = _posSlotPrices[st + GetPosSlot(i)] + tempPrices[i];</span>
+		}
+<span class="fc" id="L1343">		_matchPriceCount = 0;</span>
+<span class="fc" id="L1344">	}</span>
+
+	void FillAlignPrices()
+	{
+<span class="fc bfc" id="L1348" title="All 2 branches covered.">		for (int i = 0; i &lt; Base.kAlignTableSize; i++)</span>
+<span class="fc" id="L1349">			_alignPrices[i] = _posAlignEncoder.ReverseGetPrice(i);</span>
+<span class="fc" id="L1350">		_alignPriceCount = 0;</span>
+<span class="fc" id="L1351">	}</span>
+
+
+	public boolean SetAlgorithm(int algorithm)
+	{
+		/*
+		_fastMode = (algorithm == 0);
+		_maxMode = (algorithm &gt;= 2);
+		*/
+<span class="nc" id="L1360">		return true;</span>
+	}
+
+	public boolean SetDictionarySize(int dictionarySize)
+	{
+<span class="nc" id="L1365">		int kDicLogSizeMaxCompress = 29;</span>
+<span class="nc bnc" id="L1366" title="All 4 branches missed.">		if (dictionarySize &lt; (1 &lt;&lt; Base.kDicLogSizeMin) || dictionarySize &gt; (1 &lt;&lt; kDicLogSizeMaxCompress))</span>
+<span class="nc" id="L1367">			return false;</span>
+<span class="nc" id="L1368">		_dictionarySize = dictionarySize;</span>
+		int dicLogSize;
+<span class="nc bnc" id="L1370" title="All 2 branches missed.">		for (dicLogSize = 0; dictionarySize &gt; (1 &lt;&lt; dicLogSize); dicLogSize++) ;</span>
+<span class="nc" id="L1371">		_distTableSize = dicLogSize * 2;</span>
+<span class="nc" id="L1372">		return true;</span>
+	}
+
+	public boolean SetNumFastBytes(int numFastBytes)
+	{
+<span class="nc bnc" id="L1377" title="All 4 branches missed.">		if (numFastBytes &lt; 5 || numFastBytes &gt; Base.kMatchMaxLen)</span>
+<span class="nc" id="L1378">			return false;</span>
+<span class="nc" id="L1379">		_numFastBytes = numFastBytes;</span>
+<span class="nc" id="L1380">		return true;</span>
+	}
+
+	public boolean SetMatchFinder(int matchFinderIndex)
+	{
+<span class="nc bnc" id="L1385" title="All 4 branches missed.">		if (matchFinderIndex &lt; 0 || matchFinderIndex &gt; 2)</span>
+<span class="nc" id="L1386">			return false;</span>
+<span class="nc" id="L1387">		int matchFinderIndexPrev = _matchFinderType;</span>
+<span class="nc" id="L1388">		_matchFinderType = matchFinderIndex;</span>
+<span class="nc bnc" id="L1389" title="All 4 branches missed.">		if (_matchFinder != null &amp;&amp; matchFinderIndexPrev != _matchFinderType)</span>
+		{
+<span class="nc" id="L1391">			_dictionarySizePrev = -1;</span>
+<span class="nc" id="L1392">			_matchFinder = null;</span>
+		}
+<span class="nc" id="L1394">		return true;</span>
+	}
+
+	public boolean SetLcLpPb(int lc, int lp, int pb)
+	{
+<span class="nc bnc" id="L1399" title="All 12 branches missed.">		if (</span>
+				lp &lt; 0 || lp &gt; Base.kNumLitPosStatesBitsEncodingMax ||
+				lc &lt; 0 || lc &gt; Base.kNumLitContextBitsMax ||
+				pb &lt; 0 || pb &gt; Base.kNumPosStatesBitsEncodingMax)
+<span class="nc" id="L1403">			return false;</span>
+<span class="nc" id="L1404">		_numLiteralPosStateBits = lp;</span>
+<span class="nc" id="L1405">		_numLiteralContextBits = lc;</span>
+<span class="nc" id="L1406">		_posStateBits = pb;</span>
+<span class="nc" id="L1407">		_posStateMask = ((1) &lt;&lt; _posStateBits) - 1;</span>
+<span class="nc" id="L1408">		return true;</span>
+	}
+
+	public void SetEndMarkerMode(boolean endMarkerMode)
+	{
+<span class="fc" id="L1413">		_writeEndMark = endMarkerMode;</span>
+<span class="fc" id="L1414">	}</span>
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianSignatureSpec.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.gordianknot.api.sign</a> &gt; <span class="el_source">GordianSignatureSpec.java</span></div><h1>GordianSignatureSpec.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * GordianKnot: Security Suite
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.gordianknot.api.sign;
+
+import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
+import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairType;
+
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
+
+/**
+ * Signature Specification.
+ */
+public final class GordianSignatureSpec {
+    /**
+     * The Separator.
+     */
+    private static final String SEP = &quot;-&quot;;
+
+    /**
+     * KeyPairType.
+     */
+    private final GordianKeyPairType theKeyPairType;
+
+    /**
+     * SignatureType.
+     */
+    private final GordianSignatureType theSignatureType;
+
+    /**
+     * SignatureSpec.
+     */
+    private final Object theSignatureSpec;
+
+    /**
+     * The Validity.
+     */
+    private final boolean isValid;
+
+    /**
+     * The String name.
+     */
+    private String theName;
+
+    /**
+     * Constructor.
+     * @param pKeyPairType the keyPairType
+     * @param pSignatureSpec the signatureSpec
+     */
+    public GordianSignatureSpec(final GordianKeyPairType pKeyPairType,
+                                final Object pSignatureSpec) {
+        /* Store parameters */
+<span class="fc" id="L69">        this(pKeyPairType, GordianSignatureType.NATIVE, pSignatureSpec);</span>
+<span class="fc" id="L70">    }</span>
+
+    /**
+     * Constructor.
+     * @param pKeyPairType the keyPairType
+     * @param pSignatureType the signatureType
+     */
+    public GordianSignatureSpec(final GordianKeyPairType pKeyPairType,
+                                final GordianSignatureType pSignatureType) {
+        /* Store parameters */
+<span class="fc" id="L80">        this(pKeyPairType, pSignatureType, null);</span>
+<span class="fc" id="L81">    }</span>
+
+    /**
+     * Constructor.
+     * @param pKeyPairType the keyPairType
+     * @param pSignatureType the signatureType
+     * @param pSignatureSpec the signatureSpec
+     */
+    public GordianSignatureSpec(final GordianKeyPairType pKeyPairType,
+                                final GordianSignatureType pSignatureType,
+<span class="fc" id="L91">                                final Object pSignatureSpec) {</span>
+        /* Store parameters */
+<span class="fc" id="L93">        theKeyPairType = pKeyPairType;</span>
+<span class="fc" id="L94">        theSignatureType = pSignatureType;</span>
+<span class="fc" id="L95">        theSignatureSpec = pSignatureSpec;</span>
+<span class="fc" id="L96">        isValid = checkValidity();</span>
+<span class="fc" id="L97">    }</span>
+
+    /**
+     * Obtain the keyPairType.
+     * @return the keyPairType.
+     */
+    public GordianKeyPairType getKeyPairType() {
+<span class="fc" id="L104">        return theKeyPairType;</span>
+    }
+
+    /**
+     * Obtain the SignatureType.
+     * @return the signatureType.
+     */
+    public GordianSignatureType getSignatureType() {
+<span class="fc" id="L112">        return theSignatureType;</span>
+    }
+
+    /**
+     * Obtain the signatureSpec.
+     * @return the signatureSpec.
+     */
+    public Object getSignatureSpec() {
+<span class="fc" id="L120">        return theSignatureSpec;</span>
+    }
+
+    /**
+     * Obtain the DigestSpec.
+     * @return the digestSpec.
+     */
+    public GordianDigestSpec getDigestSpec() {
+<span class="pc bpc" id="L128" title="1 of 2 branches missed.">        if (!(theSignatureSpec instanceof GordianDigestSpec)) {</span>
+<span class="nc" id="L129">            throw new IllegalArgumentException();</span>
+        }
+<span class="fc" id="L131">        return (GordianDigestSpec) theSignatureSpec;</span>
+    }
+
+    /**
+     * Obtain the composite signatureSpec iterator.
+     * @return the signatureeSpec iterator.
+     */
+    @SuppressWarnings(&quot;unchecked&quot;)
+    public Iterator&lt;GordianSignatureSpec&gt; signatureSpecIterator() {
+<span class="pc bpc" id="L140" title="1 of 2 branches missed.">        if (!(theSignatureSpec instanceof List)) {</span>
+<span class="nc" id="L141">            throw new IllegalArgumentException();</span>
+        }
+<span class="fc" id="L143">        return ((List&lt;GordianSignatureSpec&gt;) theSignatureSpec).iterator();</span>
+    }
+
+    /**
+     * Is the signatureSpec valid?
+     * @return true/false.
+     */
+    public boolean isValid() {
+<span class="fc" id="L151">        return isValid;</span>
+    }
+
+    /**
+     * Does this signatureSpec support context?
+     * @return true/false
+     */
+    public boolean supportsContext() {
+<span class="fc bfc" id="L159" title="All 2 branches covered.">        switch (theKeyPairType) {</span>
+            case MLDSA:
+            case SLHDSA:
+<span class="fc" id="L162">                return true;</span>
+            default:
+<span class="fc" id="L164">                return false;</span>
+        }
+    }
+
+    /**
+     * Check spec validity.
+     * @return valid true/false
+     */
+    private boolean checkValidity() {
+<span class="pc bpc" id="L173" title="2 of 4 branches missed.">        if (theKeyPairType == null || theSignatureType == null) {</span>
+<span class="nc" id="L174">            return false;</span>
+        }
+<span class="pc bpc" id="L176" title="1 of 6 branches missed.">        switch (theKeyPairType) {</span>
+            case RSA:
+            case DSA:
+            case EC:
+            case DSTU4145:
+            case GOST2012:
+<span class="pc bpc" id="L182" title="1 of 2 branches missed.">                if (!(theSignatureSpec instanceof GordianDigestSpec)) {</span>
+<span class="nc" id="L183">                    return false;</span>
+                }
+<span class="fc" id="L185">                final GordianDigestSpec mySpec = getDigestSpec();</span>
+<span class="pc bpc" id="L186" title="1 of 4 branches missed.">                return mySpec.isValid() &amp;&amp; mySpec.getDigestType().supportsLargeData();</span>
+            case EDDSA:
+            case SLHDSA:
+            case MLDSA:
+            case FALCON:
+            case MAYO:
+            case SNOVA:
+            case XMSS:
+            case LMS:
+<span class="pc bpc" id="L195" title="1 of 2 branches missed.">                return theSignatureSpec == null;</span>
+            case PICNIC:
+<span class="fc bfc" id="L197" title="All 4 branches covered.">                return theSignatureSpec == null || checkPICNICDigest();</span>
+            case SM2:
+<span class="fc" id="L199">                return checkSM2Digest();</span>
+            case COMPOSITE:
+<span class="fc bfc" id="L201" title="All 4 branches covered.">                return theSignatureSpec instanceof List &amp;&amp; checkComposite();</span>
+            default:
+<span class="nc" id="L203">                return false;</span>
+        }
+    }
+
+    /**
+     * Check composite spec validity.
+     * @return valid true/false
+     */
+    private boolean checkComposite() {
+<span class="fc" id="L212">        final Iterator&lt;GordianSignatureSpec&gt; myIterator = signatureSpecIterator();</span>
+<span class="fc bfc" id="L213" title="All 2 branches covered.">        while (myIterator.hasNext()) {</span>
+            /* Check that each spec is valid */
+<span class="fc" id="L215">            final GordianSignatureSpec mySpec = myIterator.next();</span>
+<span class="pc bpc" id="L216" title="1 of 4 branches missed.">            if (mySpec == null || !mySpec.isValid()) {</span>
+<span class="fc" id="L217">                return false;</span>
+            }
+<span class="fc" id="L219">        }</span>
+<span class="fc" id="L220">        return true;</span>
+    }
+
+    /**
+     * Check picnic spec validity.
+     * @return valid true/false
+     */
+    private boolean checkPICNICDigest() {
+        /* Check that signature length is 512 */
+<span class="fc" id="L229">        final GordianDigestSpec myDigest = getDigestSpec();</span>
+<span class="fc bfc" id="L230" title="All 2 branches covered.">        if (!GordianLength.LEN_512.equals(myDigest.getDigestLength())) {</span>
+<span class="fc" id="L231">            return false;</span>
+        }
+
+        /* Switch on DigestType */
+<span class="fc bfc" id="L235" title="All 2 branches covered.">        switch (myDigest.getDigestType()) {</span>
+            case SHA2:
+            case SHA3:
+            case SHAKE:
+<span class="fc" id="L239">                return true;</span>
+            default:
+<span class="fc" id="L241">                return false;</span>
+        }
+    }
+
+    /**
+     * Check sm2 spec validity.
+     * @return valid true/false
+     */
+    private boolean checkSM2Digest() {
+        /* Switch on DigestType */
+<span class="fc" id="L251">        final GordianDigestSpec myDigest = getDigestSpec();</span>
+<span class="fc bfc" id="L252" title="All 3 branches covered.">        switch (myDigest.getDigestType()) {</span>
+            case SM3:
+<span class="fc" id="L254">                return true;</span>
+            case SHA2:
+<span class="fc bfc" id="L256" title="All 2 branches covered.">                return GordianLength.LEN_256.equals(myDigest.getDigestLength())</span>
+<span class="fc bfc" id="L257" title="All 2 branches covered.">                        &amp;&amp; !myDigest.isSha2Hybrid();</span>
+             default:
+<span class="fc" id="L259">                return false;</span>
+        }
+    }
+
+    @Override
+    public String toString() {
+        /* If we have not yet loaded the name */
+<span class="fc bfc" id="L266" title="All 2 branches covered.">        if (theName == null) {</span>
+            /* Load the name */
+<span class="fc" id="L268">            theName = theKeyPairType.toString();</span>
+<span class="fc bfc" id="L269" title="All 2 branches covered.">            if (theSignatureType != GordianSignatureType.NATIVE) {</span>
+<span class="fc" id="L270">                theName += SEP + theSignatureType.toString();</span>
+            }
+<span class="fc bfc" id="L272" title="All 2 branches covered.">            if (theSignatureSpec != null) {</span>
+<span class="fc bfc" id="L273" title="All 2 branches covered.">                if (theKeyPairType == GordianKeyPairType.COMPOSITE) {</span>
+<span class="fc" id="L274">                    final Iterator&lt;GordianSignatureSpec&gt; myIterator = signatureSpecIterator();</span>
+<span class="fc" id="L275">                    final StringBuilder myBuilder = new StringBuilder(theName);</span>
+<span class="fc bfc" id="L276" title="All 2 branches covered.">                    while (myIterator.hasNext()) {</span>
+<span class="fc" id="L277">                        myBuilder.append(SEP).append(myIterator.next().toString());</span>
+                    }
+<span class="fc" id="L279">                    theName = myBuilder.toString();</span>
+<span class="fc" id="L280">                } else {</span>
+<span class="fc" id="L281">                    theName += SEP + theSignatureSpec.toString();</span>
+                }
+            }
+        }
+
+        /* return the name */
+<span class="fc" id="L287">        return theName;</span>
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+<span class="pc bpc" id="L293" title="1 of 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L294">            return true;</span>
+        }
+<span class="pc bpc" id="L296" title="1 of 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L297">            return false;</span>
+        }
+
+        /* Check KeyPairType, signatureType and signatureSpec */
+<span class="fc" id="L301">        return pThat instanceof GordianSignatureSpec myThat</span>
+<span class="pc bpc" id="L302" title="1 of 2 branches missed.">                &amp;&amp; theKeyPairType == myThat.getKeyPairType()</span>
+<span class="pc bpc" id="L303" title="1 of 2 branches missed.">                &amp;&amp; theSignatureType == myThat.getSignatureType()</span>
+<span class="pc bpc" id="L304" title="2 of 4 branches missed.">                &amp;&amp; Objects.equals(theSignatureSpec, myThat.theSignatureSpec);</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="fc" id="L309">        return Objects.hash(theKeyPairType, theSignatureType, theSignatureSpec);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

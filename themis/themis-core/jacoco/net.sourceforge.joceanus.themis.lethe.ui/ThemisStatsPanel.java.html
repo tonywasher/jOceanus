@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisStatsPanel.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.themis.lethe.ui</a> &gt; <span class="el_source">ThemisStatsPanel.java</span></div><h1>ThemisStatsPanel.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Themis: Java Project Framework
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.themis.lethe.ui;
+
+import java.util.Iterator;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.event.OceanusEvent;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
+import net.sourceforge.joceanus.tethys.api.control.TethysUIHTMLManager;
+import net.sourceforge.joceanus.tethys.api.control.TethysUISplitTreeManager;
+import net.sourceforge.joceanus.tethys.api.control.TethysUITreeManager;
+import net.sourceforge.joceanus.tethys.api.control.TethysUITreeManager.TethysUITreeItem;
+import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.themis.lethe.statistics.ThemisStatsBase;
+import net.sourceforge.joceanus.themis.lethe.statistics.ThemisStatsProject;
+import net.sourceforge.joceanus.themis.lethe.statistics.ThemisStatsReport;
+
+/**
+ * Statistics Panel.
+ */
+public class ThemisStatsPanel {
+    /**
+     * The Next entryId.
+     */
+<span class="nc" id="L42">    private static final AtomicInteger NEXT_ENTRY_ID = new AtomicInteger(1);</span>
+
+    /**
+     * The SplitTree Manager.
+     */
+    private final TethysUISplitTreeManager&lt;ThemisStatsEntry&gt; theSplitTree;
+
+    /**
+     * The Tree Manager.
+     */
+    private final TethysUITreeManager&lt;ThemisStatsEntry&gt; theTree;
+
+    /**
+     * The HTML Manager.
+     */
+    private final TethysUIHTMLManager theHTML;
+
+    /**
+     * The Current root.
+     */
+    private TethysUITreeItem&lt;ThemisStatsEntry&gt; theRoot;
+
+    /**
+     * Constructor.
+     *
+     * @param pFactory the GuiFactory
+     * @throws OceanusException on error
+     */
+<span class="nc" id="L70">    public ThemisStatsPanel(final TethysUIFactory&lt;?&gt; pFactory) throws OceanusException {</span>
+        /* Create the splitTree Manager */
+<span class="nc" id="L72">        theSplitTree = pFactory.controlFactory().newSplitTreeManager();</span>
+<span class="nc" id="L73">        theTree = theSplitTree.getTreeManager();</span>
+<span class="nc" id="L74">        theHTML = theSplitTree.getHTMLManager();</span>
+<span class="nc" id="L75">        theHTML.setCSSContent(ThemisDSMStyleSheet.CSS_DSM);</span>
+<span class="nc" id="L76">        theTree.setVisible(true);</span>
+
+        /* Listen to the TreeManager */
+<span class="nc" id="L79">        theSplitTree.getEventRegistrar().addEventListener(this::handleSplitTreeAction);</span>
+<span class="nc" id="L80">    }</span>
+
+    /**
+     * Obtain the component.
+     * @return the component
+     */
+    public TethysUIComponent getComponent() {
+<span class="nc" id="L87">        return theSplitTree;</span>
+    }
+
+    /**
+     * Get NextId.
+     * @return the next id
+     */
+    static int getNextId() {
+<span class="nc" id="L95">        return NEXT_ENTRY_ID.getAndIncrement();</span>
+    }
+
+    /**
+     * Initialise tree.
+     * @param pProject the project
+     */
+    void initialiseTree(final ThemisStatsProject pProject) {
+        /* If there is currently a root item */
+<span class="nc bnc" id="L104" title="All 2 branches missed.">        if (theRoot != null) {</span>
+            /* Hide it */
+<span class="nc" id="L106">            theRoot.setVisible(false);</span>
+        }
+
+        /* Create root item for project */
+<span class="nc" id="L110">        final ThemisStatsEntry myEntry = new ThemisStatsEntry(pProject);</span>
+<span class="nc" id="L111">        theRoot = theTree.addRootItem(myEntry.getUniqueName(), myEntry);</span>
+<span class="nc" id="L112">        theRoot.setVisible(true);</span>
+
+        /* Create child entries */
+<span class="nc" id="L115">        createChildEntries(theRoot, pProject);</span>
+<span class="nc" id="L116">    }</span>
+
+    /**
+     * Create child entries tree.
+     * @param pParent the parent
+     * @param pChild the child
+     */
+    void createChildEntries(final TethysUITreeItem&lt;ThemisStatsEntry&gt; pParent,
+                            final ThemisStatsBase pChild) {
+        /* Loop through the root children */
+<span class="nc" id="L126">        final Iterator&lt;ThemisStatsBase&gt; myIterator = pChild.childIterator();</span>
+<span class="nc bnc" id="L127" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L128">            final ThemisStatsBase myChild = myIterator.next();</span>
+
+            /* Create a new root entry */
+<span class="nc" id="L131">            final ThemisStatsEntry myEntry = new ThemisStatsEntry(pParent.getItem(), myChild);</span>
+<span class="nc" id="L132">            final TethysUITreeItem&lt;ThemisStatsEntry&gt; myTreeItem = theTree.addChildItem(pParent, myEntry.getUniqueName(), myEntry);</span>
+<span class="nc" id="L133">            myTreeItem.setVisible(true);</span>
+
+            /* Create child entries */
+<span class="nc" id="L136">            createChildEntries(myTreeItem, myChild);</span>
+<span class="nc" id="L137">        }</span>
+<span class="nc" id="L138">    }</span>
+
+    /**
+     * Handle the split tree action event.
+     * @param pEvent the event
+     */
+    protected void handleSplitTreeAction(final OceanusEvent&lt;TethysUIEvent&gt; pEvent) {
+        /* If this is a new value */
+<span class="nc bnc" id="L146" title="All 2 branches missed.">        if (pEvent.getEventId() == TethysUIEvent.NEWVALUE) {</span>
+<span class="nc" id="L147">            handleNewTreeItem(pEvent.getDetails(ThemisStatsEntry.class));</span>
+        }
+<span class="nc" id="L149">    }</span>
+
+    /**
+     * Handle the new tree item.
+     * @param pEntry the new entry
+     */
+    private void handleNewTreeItem(final ThemisStatsEntry pEntry) {
+        /* If we have an entry */
+<span class="nc bnc" id="L157" title="All 2 branches missed.">        if (pEntry != null) {</span>
+            /* Access the StatsHolder */
+<span class="nc" id="L159">            final ThemisStatsBase myHolder = pEntry.getObject();</span>
+
+            /* Build report */
+<span class="nc" id="L162">            final String myDoc = ThemisStatsReport.reportOnStats(myHolder);</span>
+<span class="nc" id="L163">            theHTML.setHTMLContent(myDoc, &quot;&quot;);</span>
+        }
+<span class="nc" id="L165">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

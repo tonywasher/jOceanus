@@ -1,0 +1,343 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisXAnalysisSolverProjectState.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.themis.xanalysis.solver</a> &gt; <span class="el_source">ThemisXAnalysisSolverProjectState.java</span></div><h1>ThemisXAnalysisSolverProjectState.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Themis: Java Project Framework
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.themis.xanalysis.solver;
+
+import com.github.javaparser.ast.Node;
+import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance;
+import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisClassInstance;
+import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
+import net.sourceforge.joceanus.themis.xanalysis.parser.node.ThemisXAnalysisNode;
+import net.sourceforge.joceanus.themis.xanalysis.parser.node.ThemisXAnalysisNodeImport;
+import net.sourceforge.joceanus.themis.xanalysis.parser.node.ThemisXAnalysisNodeName;
+import net.sourceforge.joceanus.themis.xanalysis.parser.type.ThemisXAnalysisType;
+import net.sourceforge.joceanus.themis.xanalysis.parser.type.ThemisXAnalysisTypeClassInterface;
+import net.sourceforge.joceanus.themis.xanalysis.solver.proj.ThemisXAnalysisSolverClass;
+import net.sourceforge.joceanus.themis.xanalysis.solver.proj.ThemisXAnalysisSolverFile;
+import net.sourceforge.joceanus.themis.xanalysis.solver.proj.ThemisXAnalysisSolverModule;
+import net.sourceforge.joceanus.themis.xanalysis.solver.proj.ThemisXAnalysisSolverPackage;
+import net.sourceforge.joceanus.themis.xanalysis.solver.proj.ThemisXAnalysisSolverProject;
+import net.sourceforge.joceanus.themis.xanalysis.solver.reflect.ThemisXAnalysisReflectExternal;
+
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * State for solver.
+ */
+public class ThemisXAnalysisSolverProjectState {
+    /**
+     * Map of all java.lang classes.
+     */
+    private final Map&lt;String, ThemisXAnalysisReflectExternal&gt; theJavaLang;
+
+    /**
+     * Map of all classes defined in the project.
+     */
+    private final Map&lt;String, ThemisXAnalysisSolverClass&gt; theProjectClasses;
+
+    /**
+     * Map of all external classes referenced in the project.
+     */
+    private final Map&lt;String, ThemisXAnalysisReflectExternal&gt; theExternalClasses;
+
+    /**
+     * Map of all known short names in file.
+     */
+    private final Map&lt;String, ThemisXAnalysisClassInstance&gt; theKnownClasses;
+
+    /**
+     * The referenced classes.
+     */
+    private final List&lt;ThemisXAnalysisSolverClass&gt; theReferenced;
+
+    /**
+     * Constructor.
+     * @param pProject the project
+     */
+<span class="fc" id="L73">    ThemisXAnalysisSolverProjectState(final ThemisXAnalysisSolverProject pProject) {</span>
+        /* Build the javaLang map */
+<span class="fc" id="L75">        theJavaLang = ThemisXAnalysisReflectExternal.getJavaLangMap();</span>
+
+        /* build the project classMap */
+<span class="fc" id="L78">        theProjectClasses = new LinkedHashMap&lt;&gt;();</span>
+<span class="fc" id="L79">        buildProjectClassMap(pProject);</span>
+
+        /* build the external classMap */
+<span class="fc" id="L82">        theExternalClasses = new LinkedHashMap&lt;&gt;();</span>
+<span class="fc" id="L83">        buildExternalClassMap(pProject);</span>
+
+        /* Create the maps and lists */
+<span class="fc" id="L86">        theKnownClasses = new LinkedHashMap&lt;&gt;();</span>
+<span class="fc" id="L87">        theReferenced = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L88">    }</span>
+
+    /**
+     * Obtain the external classes.
+     * @return the external classes.
+     */
+    Map&lt;String, ThemisXAnalysisReflectExternal&gt; getExternalClassMap() {
+<span class="fc" id="L95">        return theExternalClasses;</span>
+    }
+
+    /**
+     * Build project classMap.
+     * @param pProject the project
+     */
+    private void buildProjectClassMap(final ThemisXAnalysisSolverProject pProject) {
+        /* Loop through all modules */
+<span class="fc bfc" id="L104" title="All 2 branches covered.">        for (ThemisXAnalysisSolverModule myModule : pProject.getModules()) {</span>
+            /* Loop through all packages */
+<span class="fc bfc" id="L106" title="All 2 branches covered.">            for (ThemisXAnalysisSolverPackage myPackage : myModule.getPackages()) {</span>
+<span class="fc" id="L107">                buildProjectClassMap(myPackage);</span>
+<span class="fc" id="L108">            }</span>
+<span class="fc" id="L109">        }</span>
+<span class="fc" id="L110">    }</span>
+
+    /**
+     * Build project classMap.
+     * @param pPackage the package
+     */
+    private void buildProjectClassMap(final ThemisXAnalysisSolverPackage pPackage) {
+        /* Loop through all files */
+<span class="fc bfc" id="L118" title="All 2 branches covered.">        for (ThemisXAnalysisSolverFile myFile : pPackage.getFiles()) {</span>
+            /* Loop through all classes */
+<span class="fc bfc" id="L120" title="All 2 branches covered.">            for (ThemisXAnalysisSolverClass myClass : myFile.getClasses()) {</span>
+<span class="fc" id="L121">                final ThemisXAnalysisClassInstance myInstance = myClass.getUnderlyingClass();</span>
+                /* Ignore local and anonymous classes */
+<span class="pc bpc" id="L123" title="1 of 4 branches missed.">                if (!myInstance.isLocalDeclaration() &amp;&amp; !myInstance.isAnonClass()) {</span>
+<span class="fc" id="L124">                    theProjectClasses.put(myClass.getFullName(), myClass);</span>
+                }
+<span class="fc" id="L126">            }</span>
+<span class="fc" id="L127">        }</span>
+<span class="fc" id="L128">    }</span>
+
+    /**
+     * Build external classMap.
+     * @param pProject the project
+     */
+    private void buildExternalClassMap(final ThemisXAnalysisSolverProject pProject) {
+        /* Initialise the map with the javaLang classes */
+<span class="fc bfc" id="L136" title="All 2 branches covered.">        for (ThemisXAnalysisReflectExternal myClass : theJavaLang.values()) {</span>
+<span class="fc" id="L137">            theExternalClasses.put(myClass.getFullName(), myClass);</span>
+<span class="fc" id="L138">        }</span>
+
+        /* Loop through all modules */
+<span class="fc bfc" id="L141" title="All 2 branches covered.">        for (ThemisXAnalysisSolverModule myModule : pProject.getModules()) {</span>
+            /* Loop through all packages */
+<span class="fc bfc" id="L143" title="All 2 branches covered.">            for (ThemisXAnalysisSolverPackage myPackage : myModule.getPackages()) {</span>
+<span class="fc" id="L144">                buildExternalClassMap(myPackage);</span>
+<span class="fc" id="L145">            }</span>
+<span class="fc" id="L146">        }</span>
+<span class="fc" id="L147">    }</span>
+
+    /**
+     * Build external classMap.
+     * @param pPackage the package to process.
+     */
+    private void buildExternalClassMap(final ThemisXAnalysisSolverPackage pPackage) {
+        /* Loop through all files */
+<span class="fc bfc" id="L155" title="All 2 branches covered.">        for (ThemisXAnalysisSolverFile myFile : pPackage.getFiles()) {</span>
+            /* Process the imports */
+<span class="fc bfc" id="L157" title="All 2 branches covered.">            for (ThemisXAnalysisNodeInstance myInstance : myFile.getUnderlyingFile().getContents().getImports()) {</span>
+                /* Determine full name */
+<span class="fc" id="L159">                final ThemisXAnalysisNodeImport myImport = (ThemisXAnalysisNodeImport) myInstance;</span>
+<span class="fc" id="L160">                final String myFullName = myImport.getFullName();</span>
+
+                /* If this is a previously unseen class */
+<span class="fc bfc" id="L163" title="All 2 branches covered.">                if (!theProjectClasses.containsKey(myFullName)) {</span>
+                    /* Ensure the external class map */
+<span class="fc" id="L165">                    theExternalClasses.computeIfAbsent(myFullName, n -&gt; new ThemisXAnalysisReflectExternal(myImport));</span>
+                }
+<span class="fc" id="L167">            }</span>
+<span class="fc" id="L168">        }</span>
+<span class="fc" id="L169">    }</span>
+
+    /**
+     * Look up import.
+     * @param pImport the import definition.
+     * @return the import class
+     */
+    private ThemisXAnalysisClassInstance lookUpImport(final ThemisXAnalysisNodeImport pImport) {
+        /* Determine full name */
+<span class="fc" id="L178">        final String myFullName = pImport.getFullName();</span>
+
+        /* Look for project class of this name */
+<span class="fc" id="L181">        final ThemisXAnalysisSolverClass myClass = theProjectClasses.get(myFullName);</span>
+<span class="fc bfc" id="L182" title="All 2 branches covered.">        return myClass != null</span>
+<span class="fc" id="L183">                ? myClass.getUnderlyingClass()</span>
+<span class="fc" id="L184">                : theExternalClasses.get(myFullName);</span>
+    }
+
+    /**
+     * Process package.
+     * @param pPackage the package
+     */
+    void processPackage(final ThemisXAnalysisSolverPackage pPackage) {
+        /* Loop through the files in the package */
+<span class="fc bfc" id="L193" title="All 2 branches covered.">        for (ThemisXAnalysisSolverFile myFile : pPackage.getFiles()) {</span>
+            /* Determine the possible references */
+<span class="fc" id="L195">            determineKnownClasses(myFile);</span>
+
+            /* Detect references */
+<span class="fc" id="L198">            detectClassOrInterfaceTypes(myFile);</span>
+<span class="fc" id="L199">            detectNameReferences(myFile);</span>
+
+            /* Store the references into the file */
+<span class="fc" id="L202">            myFile.setReferenced(theReferenced);</span>
+<span class="fc" id="L203">        }</span>
+
+        /* Loop through the files in the package */
+<span class="fc bfc" id="L206" title="All 2 branches covered.">        for (ThemisXAnalysisSolverFile myFile : pPackage.getFiles()) {</span>
+            /* Process local references */
+<span class="fc" id="L208">            myFile.processLocalReferences();</span>
+<span class="fc" id="L209">        }</span>
+<span class="fc" id="L210">    }</span>
+
+    /**
+     * Determine known classes for file.
+     * @param pFile the file to process.
+     */
+    private void determineKnownClasses(final ThemisXAnalysisSolverFile pFile) {
+        /* Initialise the map with the javaLang classes */
+<span class="fc" id="L218">        theKnownClasses.clear();</span>
+<span class="fc" id="L219">        theReferenced.clear();</span>
+<span class="fc bfc" id="L220" title="All 2 branches covered.">        for (ThemisXAnalysisClassInstance myClass : theJavaLang.values()) {</span>
+<span class="fc" id="L221">            theKnownClasses.put(myClass.getName(), myClass);</span>
+<span class="fc" id="L222">        }</span>
+
+        /* Add all the package top-level classes */
+<span class="fc" id="L225">        final ThemisXAnalysisSolverPackage myPackage = (ThemisXAnalysisSolverPackage) pFile.getOwningPackage();</span>
+<span class="fc bfc" id="L226" title="All 2 branches covered.">        for (ThemisXAnalysisSolverFile myFile : myPackage.getFiles()) {</span>
+<span class="fc" id="L227">            final ThemisXAnalysisSolverClass myClass = myFile.getTopLevel();</span>
+<span class="pc bpc" id="L228" title="1 of 2 branches missed.">            if (myClass != null) {</span>
+<span class="fc" id="L229">                theKnownClasses.put(myClass.getName(), myClass.getUnderlyingClass());</span>
+            }
+<span class="fc" id="L231">        }</span>
+
+        /* Process the imports */
+<span class="fc bfc" id="L234" title="All 2 branches covered.">        for (ThemisXAnalysisNodeInstance myNode : pFile.getUnderlyingFile().getContents().getImports()) {</span>
+            /* LookUp the import and record it */
+<span class="fc" id="L236">            final ThemisXAnalysisClassInstance myImport = lookUpImport((ThemisXAnalysisNodeImport) myNode);</span>
+<span class="fc" id="L237">            theKnownClasses.put(myImport.getName(), myImport);</span>
+<span class="fc" id="L238">        }</span>
+
+        /* Process the classes in the file */
+<span class="fc bfc" id="L241" title="All 2 branches covered.">        for (ThemisXAnalysisSolverClass myClass : pFile.getClasses()) {</span>
+<span class="fc bfc" id="L242" title="All 2 branches covered.">            if (!myClass.getUnderlyingClass().isAnonClass()) {</span>
+<span class="fc" id="L243">                theKnownClasses.put(myClass.getName(), myClass.getUnderlyingClass());</span>
+            }
+<span class="fc" id="L245">        }</span>
+<span class="fc" id="L246">    }</span>
+
+    /**
+     * Detect Class or Interface References in a file.
+     * @param pFile the file
+     */
+    private void detectClassOrInterfaceTypes(final ThemisXAnalysisSolverFile pFile) {
+        /* Access class */
+<span class="fc" id="L254">        final ThemisXAnalysisInstance myClass = (ThemisXAnalysisInstance) pFile.getTopLevel().getUnderlyingClass();</span>
+
+        /* Obtain all ClassOrInterface references */
+<span class="fc" id="L257">        final List&lt;ThemisXAnalysisInstance&gt; myReferences = myClass.discoverNodes(ThemisXAnalysisType.CLASSINTERFACE);</span>
+
+        /* Loop through the references */
+<span class="fc bfc" id="L260" title="All 2 branches covered.">        for (ThemisXAnalysisInstance myNode : myReferences) {</span>
+<span class="fc" id="L261">            final ThemisXAnalysisTypeClassInterface myReference = (ThemisXAnalysisTypeClassInterface) myNode;</span>
+<span class="fc" id="L262">            final ThemisXAnalysisClassInstance myResolved = processPossibleReference(myReference.getName());</span>
+<span class="fc bfc" id="L263" title="All 2 branches covered.">            if (myResolved != null) {</span>
+<span class="fc" id="L264">                myReference.setClassInstance(myResolved);</span>
+            } else {
+<span class="fc" id="L266">                System.out.println(myReference.getName() + &quot;:&quot; + pFile);</span>
+            }
+<span class="fc" id="L268">        }</span>
+<span class="fc" id="L269">    }</span>
+
+    /**
+     * Detect Class or Interface References in a file.
+     * @param pFile the file
+     */
+    private void detectNameReferences(final ThemisXAnalysisSolverFile pFile) {
+        /* Access class */
+<span class="fc" id="L277">        final ThemisXAnalysisInstance myClass = (ThemisXAnalysisInstance) pFile.getTopLevel().getUnderlyingClass();</span>
+
+        /* Obtain all Name expressions */
+<span class="fc" id="L280">        final List&lt;ThemisXAnalysisInstance&gt; myReferences = myClass.discoverNodes(ThemisXAnalysisNode.NAME);</span>
+
+        /* Loop through the references */
+<span class="fc bfc" id="L283" title="All 2 branches covered.">        for (ThemisXAnalysisInstance myNode : myReferences) {</span>
+<span class="fc" id="L284">            final ThemisXAnalysisNodeName myReference = (ThemisXAnalysisNodeName) myNode;</span>
+<span class="pc bpc" id="L285" title="1 of 2 branches missed.">            if (myReference.getQualifier() == null) {</span>
+<span class="fc" id="L286">                final ThemisXAnalysisClassInstance myResolved = processPossibleReference(myReference.getName());</span>
+<span class="pc bpc" id="L287" title="1 of 2 branches missed.">                if (myResolved == null) {</span>
+<span class="nc" id="L288">                    look4Name(myReference);</span>
+                }
+            }
+<span class="fc" id="L291">        }</span>
+<span class="fc" id="L292">    }</span>
+
+    /**
+     * Look4Name.
+     * @param pName the name
+     */
+    private void look4Name(final ThemisXAnalysisNodeName pName) {
+<span class="nc" id="L299">        final String myName = pName.getName();</span>
+<span class="nc" id="L300">        final Node myParent = pName.getNode().getParentNode().orElse(null);</span>
+        //if (myParent != null) {
+//
+        //}
+<span class="nc" id="L304">    }</span>
+
+    /**
+     * process possible reference.
+     * @param pReference the possible reference.
+     * @return the resolved class (if found)
+     */
+    private ThemisXAnalysisClassInstance processPossibleReference(final String pReference) {
+        /* If the reference is interesting */
+<span class="fc" id="L313">        final ThemisXAnalysisClassInstance myReference = theKnownClasses.get(pReference);</span>
+<span class="fc bfc" id="L314" title="All 2 branches covered.">        if (myReference != null) {</span>
+<span class="fc" id="L315">            declareReferencedClass(myReference);</span>
+        }
+<span class="fc" id="L317">        return myReference;</span>
+    }
+
+    /**
+     * Declare referenced class.
+     * @param pClass the class
+     */
+    private void declareReferencedClass(final ThemisXAnalysisClassInstance pClass) {
+        /* Lookup the project class and return if not in project */
+<span class="fc" id="L326">        ThemisXAnalysisSolverClass myClass = theProjectClasses.get(pClass.getFullName());</span>
+<span class="fc bfc" id="L327" title="All 2 branches covered.">        if (myClass == null) {</span>
+<span class="fc" id="L328">            return;</span>
+        }
+
+        /* Convert to top-level class */
+<span class="fc bfc" id="L332" title="All 2 branches covered.">        if (!myClass.isTopLevel()) {</span>
+<span class="fc" id="L333">            myClass = ((ThemisXAnalysisSolverFile) myClass.getOwningFile()).getTopLevel();</span>
+        }
+
+        /* If this is the first instance of the reference */
+<span class="pc bpc" id="L337" title="1 of 4 branches missed.">        if (myClass != null &amp;&amp; !theReferenced.contains(myClass)) {</span>
+            /* Add to the list of referenced classes */
+<span class="fc" id="L339">            theReferenced.add(myClass);</span>
+        }
+<span class="fc" id="L341">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,473 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianPersonalisation.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.gordianknot.impl.core.base</a> &gt; <span class="el_source">GordianPersonalisation.java</span></div><h1>GordianPersonalisation.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * GordianKnot: Security Suite
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.gordianknot.impl.core.base;
+
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
+import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigest;
+import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestFactory;
+import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
+import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestType;
+import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
+import net.sourceforge.joceanus.gordianknot.api.mac.GordianMac;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import net.sourceforge.joceanus.gordianknot.impl.core.kdf.GordianHKDFEngine;
+import net.sourceforge.joceanus.gordianknot.impl.core.kdf.GordianHKDFParams;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
+
+/**
+ * Personalisation.
+ */
+public class GordianPersonalisation {
+    /**
+     * The Base personalisation.
+     */
+<span class="fc" id="L45">    private static final byte[] BASE_PERSONAL = &quot;G0rd1anKn0t&quot;.getBytes(StandardCharsets.UTF_8);</span>
+
+    /**
+     * Number of iterations.
+     */
+<span class="fc" id="L50">    public static final Integer NUM_ITERATIONS = 128;</span>
+
+    /**
+     * Phrase multiplier.
+     */
+<span class="fc" id="L55">    public static final Integer PHRASE_SHIFT = 4;</span>
+
+    /**
+     * The hash length.
+     */
+<span class="fc" id="L60">    private static final GordianLength HASH_LEN = GordianLength.LEN_256;</span>
+
+    /**
+     * The result length.
+     */
+<span class="fc" id="L65">    private static final int RESULT_LEN = GordianLength.LEN_512.getByteLength();</span>
+
+    /**
+     * The # of results.
+     */
+    private static final int NUM_RESULTS = 3;
+
+    /**
+     * Personalisation bytes.
+     */
+    private final byte[] thePersonalisation;
+
+    /**
+     * InitVector bytes.
+     */
+    private final byte[] theInitVector;
+
+    /**
+     * InitVector bytes.
+     */
+    private final byte[] theKeySetVector;
+
+    /**
+     * Constructor.
+     * @param pFactory the factory
+     * @throws GordianException on error
+     */
+<span class="fc" id="L92">    public GordianPersonalisation(final GordianBaseSupplier pFactory) throws GordianException {</span>
+        /* Calculate personalisation bytes */
+<span class="fc" id="L94">        final byte[][] myArrays = personalise(pFactory);</span>
+<span class="fc" id="L95">        thePersonalisation = myArrays[0];</span>
+<span class="fc" id="L96">        theInitVector = myArrays[1];</span>
+<span class="fc" id="L97">        theKeySetVector = myArrays[2];</span>
+<span class="fc" id="L98">    }</span>
+
+    /**
+     * Obtain an array of digests for personalisation.
+     * @param pFactory the factory
+     * @return the digests
+     * @throws GordianException on error
+     */
+    private static GordianDigest[] determineDigests(final GordianFactory pFactory) throws GordianException {
+        /* Access digest factory */
+<span class="fc" id="L108">        final GordianDigestFactory myFactory = pFactory.getDigestFactory();</span>
+
+        /* Initialise variables */
+<span class="fc" id="L111">        final GordianDigestType[] myTypes = GordianDigestType.values();</span>
+<span class="fc" id="L112">        final GordianDigest[] myDigests = new GordianDigest[myTypes.length];</span>
+<span class="fc" id="L113">        int myLen = 0;</span>
+
+        /* Loop through the digestTypes */
+<span class="fc bfc" id="L116" title="All 2 branches covered.">        for (final GordianDigestType myType : GordianDigestType.values()) {</span>
+            /* Add the digest if it is available as 256-bit and supports largeData */
+<span class="fc" id="L118">            final GordianDigestSpec mySpec = new GordianDigestSpec(myType, HASH_LEN);</span>
+<span class="fc bfc" id="L119" title="All 2 branches covered.">            if (myType.supportsLargeData()</span>
+<span class="fc bfc" id="L120" title="All 2 branches covered.">                    &amp;&amp; myFactory.supportedDigestSpecs().test(mySpec)) {</span>
+<span class="fc" id="L121">                myDigests[myLen++] = myFactory.createDigest(mySpec);</span>
+            }
+        }
+
+        /* Return the array */
+<span class="fc" id="L126">        return Arrays.copyOf(myDigests, myLen);</span>
+    }
+
+    /**
+     * Obtain the keySetVector.
+     * @return the keySetVector
+     */
+    public byte[] getKeySetVector() {
+<span class="fc" id="L134">        return theKeySetVector;</span>
+    }
+
+    /**
+     * determine hostName.
+     * @return the hostName
+     */
+    private static String getHostName() {
+        /* Protect against exceptions */
+        try {
+<span class="fc" id="L144">            final InetAddress myAddr = InetAddress.getLocalHost();</span>
+<span class="fc" id="L145">            return myAddr.getHostName();</span>
+
+<span class="nc" id="L147">        } catch (UnknownHostException e) {</span>
+<span class="nc" id="L148">            return &quot;localhost&quot;;</span>
+        }
+    }
+
+    /**
+     * Create an array of hashes from personalisation.
+     * @param pFactory the factory
+     * @return the hashes
+     * @throws GordianException on error
+     */
+    private static byte[][] personalise(final GordianBaseSupplier pFactory) throws GordianException {
+        /* Determine the digests */
+<span class="fc" id="L160">        final GordianDigest[] myDigests = determineDigests(pFactory);</span>
+
+        /* Allocate buffers */
+<span class="fc" id="L163">        final byte[][] myHashes = new byte[myDigests.length][];</span>
+<span class="fc" id="L164">        final byte[] myConfig = new byte[HASH_LEN.getByteLength()];</span>
+<span class="fc" id="L165">        byte[] myExpanded = null;</span>
+<span class="fc" id="L166">        GordianHKDFParams myParams = null;</span>
+<span class="fc" id="L167">        final byte[] myKeySetVec = pFactory.getKeySetSeed();</span>
+
+        /* Obtain configuration */
+<span class="fc" id="L170">        byte[] myPhraseBytes = pFactory.getSecuritySeed();</span>
+<span class="fc bfc" id="L171" title="All 2 branches covered.">        if (myPhraseBytes == null) {</span>
+<span class="fc" id="L172">            myPhraseBytes = GordianDataConverter.stringToByteArray(getHostName());</span>
+        }
+
+        /* Protect against exceptions */
+        try {
+            /* Initialise hashes */
+<span class="fc bfc" id="L178" title="All 2 branches covered.">            for (int i = 0; i &lt; myDigests.length; i++) {</span>
+                /* Initialise the digests */
+<span class="fc" id="L180">                final GordianDigest myDigest = myDigests[i];</span>
+<span class="fc" id="L181">                myDigest.update(BASE_PERSONAL);</span>
+<span class="fc" id="L182">                myDigest.update(myPhraseBytes);</span>
+
+                /* Finish the update and store the buffer */
+<span class="fc" id="L185">                final byte[] myResult = myDigest.finish();</span>
+<span class="fc" id="L186">                buildHashResult(myConfig, myResult);</span>
+<span class="fc" id="L187">                myHashes[i] = myResult;</span>
+            }
+
+            /* Determine the number of iterations */
+<span class="fc bfc" id="L191" title="All 2 branches covered.">            final int myIterations = pFactory.isInternal()</span>
+<span class="fc" id="L192">                    ? NUM_ITERATIONS</span>
+<span class="fc" id="L193">                    : NUM_ITERATIONS &lt;&lt; PHRASE_SHIFT;</span>
+
+            /* Loop the required amount of times to cross-fertilise */
+<span class="fc bfc" id="L196" title="All 2 branches covered.">            for (int i = 0; i &lt; myIterations; i++) {</span>
+<span class="fc" id="L197">                iterateHashes(myDigests, myHashes, myConfig);</span>
+            }
+
+            /* Determine the number of results that we want from HKDF */
+<span class="fc bfc" id="L201" title="All 2 branches covered.">            final int numResults = myKeySetVec != null ? NUM_RESULTS - 1 : NUM_RESULTS;</span>
+
+            /* Use HKDF to expand to the required length */
+<span class="fc" id="L204">            final GordianDigestSpec mySpec = determineHKDFDigestSpec(pFactory, myConfig);</span>
+<span class="fc" id="L205">            final GordianHKDFEngine myEngine = new GordianHKDFEngine(pFactory, mySpec);</span>
+<span class="fc" id="L206">            myParams = GordianHKDFParams.expandOnly(myConfig, RESULT_LEN * numResults).withInfo(BASE_PERSONAL);</span>
+<span class="fc" id="L207">            myExpanded = myEngine.deriveBytes(myParams);</span>
+
+            /* Extract the results */
+<span class="fc" id="L210">            final byte[][] myResults = new byte[NUM_RESULTS][];</span>
+<span class="fc" id="L211">            myResults[0] = new byte[RESULT_LEN];</span>
+<span class="fc" id="L212">            System.arraycopy(myExpanded, 0, myResults[0], 0, RESULT_LEN);</span>
+<span class="fc" id="L213">            myResults[1] = new byte[RESULT_LEN];</span>
+<span class="fc" id="L214">            System.arraycopy(myExpanded, RESULT_LEN, myResults[1], 0, RESULT_LEN);</span>
+
+            /* Handle the keySetVector */
+<span class="fc bfc" id="L217" title="All 2 branches covered.">            if (myKeySetVec != null) {</span>
+<span class="fc" id="L218">                myResults[2] = myKeySetVec;</span>
+            } else {
+<span class="fc" id="L220">                myResults[2] = new byte[RESULT_LEN];</span>
+<span class="fc" id="L221">                System.arraycopy(myExpanded, RESULT_LEN &lt;&lt; 1, myResults[2], 0, RESULT_LEN);</span>
+            }
+
+            /* Return the array */
+<span class="fc" id="L225">            return myResults;</span>
+
+            /* Clear intermediate arrays */
+        } finally {
+            /* Clear intermediate hashes */
+<span class="fc bfc" id="L230" title="All 2 branches covered.">            for (int i = 0; i &lt; myDigests.length; i++) {</span>
+<span class="pc bpc" id="L231" title="1 of 2 branches missed.">                if (myHashes[i] != null) {</span>
+<span class="fc" id="L232">                    Arrays.fill(myHashes[i], (byte) 0);</span>
+                }
+            }
+
+            /* Clear intermediate result */
+<span class="fc" id="L237">            Arrays.fill(myConfig, (byte) 0);</span>
+
+            /* Clear temporary output buffer */
+<span class="pc bpc" id="L240" title="1 of 2 branches missed.">            if (myExpanded != null) {</span>
+<span class="fc" id="L241">                Arrays.fill(myExpanded, (byte) 0);</span>
+            }
+
+            /* Clear HKDF parameters */
+<span class="pc bpc" id="L245" title="1 of 2 branches missed.">            if (myParams != null) {</span>
+<span class="fc" id="L246">                myParams.clearParameters();</span>
+            }
+        }
+    }
+
+    /**
+     * Iterate the hashes.
+     * @param pDigests the digest array
+     * @param pHashes the hashes array
+     * @param pResult the result array
+     * @throws GordianException on error
+     */
+    private static void iterateHashes(final GordianDigest[] pDigests,
+                                      final byte[][] pHashes,
+                                      final byte[] pResult) throws GordianException {
+        /* Update all the digests */
+<span class="fc bfc" id="L262" title="All 2 branches covered.">        for (final GordianDigest myDigest : pDigests) {</span>
+            /* Update with the results */
+<span class="fc bfc" id="L264" title="All 2 branches covered.">            for (int k = 0; k &lt; pDigests.length; k++) {</span>
+<span class="fc" id="L265">                myDigest.update(pHashes[k]);</span>
+            }
+        }
+
+        /* Finish all the digests */
+<span class="fc bfc" id="L270" title="All 2 branches covered.">        for (int j = 0; j &lt; pDigests.length; j++) {</span>
+            /* Update with the results */
+<span class="fc" id="L272">            final GordianDigest myDigest = pDigests[j];</span>
+<span class="fc" id="L273">            final byte[] myResult = pHashes[j];</span>
+<span class="fc" id="L274">            myDigest.finish(myResult, 0);</span>
+<span class="fc" id="L275">            buildHashResult(pResult, myResult);</span>
+        }
+<span class="fc" id="L277">    }</span>
+
+    /**
+     * Adjust an IV.
+     * @param pIV the input IV
+     * @return the adjusted IV
+     */
+    public byte[] adjustIV(final byte[] pIV) {
+<span class="fc" id="L285">        return combineHashes(pIV, theInitVector);</span>
+    }
+
+    /**
+     * Update a MAC with personalisation.
+     * @param pMac the MAC
+     */
+    public void updateMac(final GordianMac pMac) {
+<span class="fc" id="L293">        pMac.update(thePersonalisation);</span>
+<span class="fc" id="L294">        pMac.update(theInitVector);</span>
+<span class="fc" id="L295">    }</span>
+
+    /**
+     * Update HKDFInfo with personalisation.
+     * @param pParams the params
+     */
+    public void updateInfo(final GordianHKDFParams pParams) {
+<span class="fc" id="L302">        pParams.withInfo(BASE_PERSONAL);</span>
+<span class="fc" id="L303">        pParams.withInfo(thePersonalisation);</span>
+<span class="fc" id="L304">        pParams.withInfo(theInitVector);</span>
+<span class="fc" id="L305">    }</span>
+
+    /**
+     * Obtain integer from personalisation.
+     * @param pId the id of the integer
+     * @return the result
+     */
+    public int getPersonalisedInteger(final GordianPersonalId pId) {
+<span class="fc" id="L313">        return getPersonalisedMask(getOffsetForId(pId));</span>
+    }
+
+    /**
+     * Determine offset for Id.
+     * @param pId the id of the value
+     * @return the offset
+     */
+    private static int getOffsetForId(final GordianPersonalId pId) {
+<span class="fc" id="L322">        return pId.ordinal() &lt;&lt; 2;</span>
+    }
+
+    /**
+     * Obtain mask from personalisation.
+     * @param pOffSet the offset within the array
+     * @return the result
+     */
+    private int getPersonalisedMask(final int pOffSet) {
+        /* Loop to obtain the personalised byte */
+<span class="fc" id="L332">        int myVal = 0;</span>
+<span class="fc bfc" id="L333" title="All 2 branches covered.">        for (int i = 0, myOffSet = pOffSet; i &lt; Integer.BYTES; i++, myOffSet++) {</span>
+<span class="fc" id="L334">            myVal &lt;&lt;= Byte.SIZE;</span>
+<span class="fc" id="L335">            myVal |= thePersonalisation[myOffSet] &amp; GordianDataConverter.BYTE_MASK;</span>
+        }
+
+        /* Return the value */
+<span class="fc" id="L339">        return myVal;</span>
+    }
+
+    /**
+     * Obtain seeded random.
+     * @param pPrefixId the prefixId
+     * @param pBaseSeed the seed.
+     * @return the random
+     */
+    public Random getSeededRandom(final GordianPersonalId pPrefixId,
+                                  final byte[] pBaseSeed) {
+        /* Build the 48-bit seed and return the seeded random */
+<span class="fc" id="L351">        final long myPrefix = ((long) getPersonalisedInteger(pPrefixId)) &lt;&lt; Short.SIZE;</span>
+<span class="fc" id="L352">        final long myBaseSeed = Integer.toUnsignedLong(GordianDataConverter.byteArrayToInteger(pBaseSeed));</span>
+<span class="fc" id="L353">        final long mySeed = myPrefix ^ myBaseSeed;</span>
+<span class="fc" id="L354">        return new Random(mySeed);</span>
+    }
+
+    /**
+     * Detremine the HKDFDigestSpec.
+     * @param pFactory the factory
+     * @param pBaseSeed the seed.
+     * @return the digestSpec
+     */
+    private static GordianDigestSpec determineHKDFDigestSpec(final GordianBaseSupplier pFactory,
+                                                             final byte[] pBaseSeed) {
+        /* Build the 64-bit seed and create the seeded random */
+<span class="fc" id="L366">        final long mySeed = GordianDataConverter.byteArrayToLong(pBaseSeed);</span>
+<span class="fc" id="L367">        final Random myRandom = new Random(mySeed);</span>
+
+        /* Access the list to select from */
+<span class="fc" id="L370">        final GordianValidator myValidator = pFactory.getValidator();</span>
+<span class="fc" id="L371">        final List&lt;GordianDigestType&gt; myTypes = myValidator.listAllExternalDigestTypes();</span>
+
+        /* Select from the list */
+<span class="fc" id="L374">        final int myIndex = myRandom.nextInt(myTypes.size());</span>
+<span class="fc" id="L375">        final GordianDigestType myType = myTypes.get(myIndex);</span>
+
+        /* return the selected digestSpec */
+<span class="fc" id="L378">        return new GordianDigestSpec(myType, GordianLength.LEN_512);</span>
+    }
+
+    /**
+     * Simple function to combine hashes. Hashes are simply XORed together.
+     * @param pFirst the first Hash
+     * @param pSecond the second Hash
+     * @return the combined hash
+     */
+    public static byte[] combineHashes(final byte[] pFirst,
+                                       final byte[] pSecond) {
+        /* Handle nulls */
+<span class="pc bpc" id="L390" title="1 of 2 branches missed.">        if (pFirst == null) {</span>
+<span class="nc" id="L391">            return pSecond;</span>
+        }
+<span class="pc bpc" id="L393" title="1 of 2 branches missed.">        if (pSecond == null) {</span>
+<span class="nc" id="L394">            return pFirst;</span>
+        }
+
+        /* If the target is smaller than the source */
+<span class="fc" id="L398">        byte[] myTarget = pSecond;</span>
+<span class="fc" id="L399">        byte[] mySource = pFirst;</span>
+<span class="pc bpc" id="L400" title="1 of 2 branches missed.">        if (myTarget.length &lt; mySource.length) {</span>
+            /* Reverse the order to make use of all bits */
+<span class="nc" id="L402">            myTarget = pFirst;</span>
+<span class="nc" id="L403">            mySource = pSecond;</span>
+        }
+
+        /* Allocate the target as a copy of the input */
+<span class="fc" id="L407">        myTarget = Arrays.copyOf(myTarget, myTarget.length);</span>
+
+        /* Determine length of operation */
+<span class="fc" id="L410">        final int myLen = mySource.length;</span>
+
+        /* Loop through the array bytes */
+<span class="fc bfc" id="L413" title="All 2 branches covered.">        for (int i = 0; i &lt; myTarget.length; i++) {</span>
+            /* Combine the bytes */
+<span class="fc" id="L415">            myTarget[i] ^= mySource[i</span>
+                    % myLen];
+        }
+
+        /* return the array */
+<span class="fc" id="L420">        return myTarget;</span>
+    }
+
+    /**
+     * Simple function to build a hash result.
+     * @param pResult the result Hash
+     * @param pHash the calculated Hash
+     * @throws GordianException on error
+     */
+    public static void buildHashResult(final byte[] pResult,
+                                       final byte[] pHash) throws GordianException {
+        /* If the target is smaller than the source */
+<span class="fc" id="L432">        final int myLen = pResult.length;</span>
+<span class="pc bpc" id="L433" title="1 of 2 branches missed.">        if (myLen != pHash.length) {</span>
+<span class="nc" id="L434">            throw new GordianDataException(&quot;Hashes are different lengths&quot;);</span>
+        }
+        /* Loop through the array bytes */
+<span class="fc bfc" id="L437" title="All 2 branches covered.">        for (int i = 0; i &lt; myLen; i++) {</span>
+            /* Combine the bytes */
+<span class="fc" id="L439">            pResult[i] ^= pHash[i];</span>
+        }
+<span class="fc" id="L441">    }</span>
+
+    /**
+     * Personalisation IDs.
+     */
+<span class="fc" id="L446">    public enum GordianPersonalId {</span>
+        /**
+         * KeySetGenRandom Prefix.
+         */
+<span class="fc" id="L450">        KEYSETGENRANDOM,</span>
+
+        /**
+         * KeySetRandom Prefix.
+         */
+<span class="fc" id="L455">        KEYSETRANDOM,</span>
+
+        /**
+         * LockRandom Prefix.
+         */
+<span class="fc" id="L460">        LOCKRANDOM,</span>
+
+        /**
+         * KnuthPrime.
+         */
+<span class="fc" id="L465">        KNUTHPRIME,</span>
+
+        /**
+         * KnuthMask.
+         */
+<span class="fc" id="L470">        KNUTHMASK</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

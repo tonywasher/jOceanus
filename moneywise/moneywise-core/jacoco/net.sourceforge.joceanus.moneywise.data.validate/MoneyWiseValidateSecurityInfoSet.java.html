@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseValidateSecurityInfoSet.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.data.validate</a> &gt; <span class="el_source">MoneyWiseValidateSecurityInfoSet.java</span></div><h1>MoneyWiseValidateSecurityInfoSet.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.data.validate;
+
+import net.sourceforge.joceanus.metis.field.MetisFieldRequired;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDepositInfoSet;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseLoanInfoSet;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseRegion;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseRegion.MoneyWiseRegionList;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurity;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurity.MoneyWiseSecurityList;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityInfo;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityInfoSet;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoClass;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseSecurityClass;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoClass;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
+import net.sourceforge.joceanus.prometheus.validate.PrometheusValidateInfoSet;
+
+import java.util.Currency;
+import java.util.Iterator;
+
+/**
+ * Validate SecurityInfoSet.
+ */
+<span class="fc" id="L44">public class MoneyWiseValidateSecurityInfoSet</span>
+        extends PrometheusValidateInfoSet&lt;MoneyWiseSecurityInfo&gt; {
+    /**
+     * New Symbol name.
+     */
+    private static final String NAME_NEWSYMBOL = &quot;SYMBOL&quot;;
+
+    @Override
+    public MoneyWiseSecurity getOwner() {
+<span class="fc" id="L53">        return (MoneyWiseSecurity) super.getOwner();</span>
+    }
+
+    @Override
+    public MetisFieldRequired isClassRequired(final PrometheusDataInfoClass pClass) {
+        /* Access details about the Security */
+<span class="fc" id="L59">        final MoneyWiseSecurity mySec = getOwner();</span>
+<span class="fc" id="L60">        final MoneyWiseSecurityClass myType = mySec.getCategoryClass();</span>
+
+        /* If we have no Type, no class is allowed */
+<span class="pc bpc" id="L63" title="1 of 2 branches missed.">        if (myType == null) {</span>
+<span class="nc" id="L64">            return MetisFieldRequired.NOTALLOWED;</span>
+        }
+        /* Switch on class */
+<span class="fc bfc" id="L67" title="All 5 branches covered.">        switch ((MoneyWiseAccountInfoClass) pClass) {</span>
+            /* Allowed set */
+            case NOTES:
+<span class="fc" id="L70">                return MetisFieldRequired.CANEXIST;</span>
+
+            /* Symbol */
+            case SYMBOL:
+<span class="fc bfc" id="L74" title="All 2 branches covered.">                return myType.needsSymbol()</span>
+<span class="fc" id="L75">                        ? MetisFieldRequired.MUSTEXIST</span>
+<span class="fc" id="L76">                        : MetisFieldRequired.NOTALLOWED;</span>
+
+            /* Region */
+            case REGION:
+<span class="pc bpc" id="L80" title="1 of 2 branches missed.">                return myType.needsRegion()</span>
+<span class="nc" id="L81">                        ? MetisFieldRequired.MUSTEXIST</span>
+<span class="fc" id="L82">                        : MetisFieldRequired.NOTALLOWED;</span>
+
+            /* Options */
+            case UNDERLYINGSTOCK:
+            case OPTIONPRICE:
+<span class="pc bpc" id="L87" title="1 of 2 branches missed.">                return myType.isOption()</span>
+<span class="nc" id="L88">                        ? MetisFieldRequired.MUSTEXIST</span>
+<span class="fc" id="L89">                        : MetisFieldRequired.NOTALLOWED;</span>
+
+            /* Not Allowed */
+            case SORTCODE:
+            case ACCOUNT:
+            case REFERENCE:
+            case WEBSITE:
+            case CUSTOMERNO:
+            case USERID:
+            case PASSWORD:
+            case MATURITY:
+            case OPENINGBALANCE:
+            case AUTOEXPENSE:
+            case AUTOPAYEE:
+            default:
+<span class="fc" id="L104">                return MetisFieldRequired.NOTALLOWED;</span>
+        }
+    }
+
+    @Override
+    public void validateClass(final MoneyWiseSecurityInfo pInfo,
+                              final PrometheusDataInfoClass pClass) {
+        /* Switch on class */
+<span class="pc bpc" id="L112" title="4 of 5 branches missed.">        switch ((MoneyWiseAccountInfoClass) pClass) {</span>
+            case NOTES:
+<span class="nc" id="L114">                validateNotes(pInfo);</span>
+<span class="nc" id="L115">                break;</span>
+            case SYMBOL:
+<span class="fc" id="L117">                validateSymbol(pInfo);</span>
+<span class="fc" id="L118">                break;</span>
+            case UNDERLYINGSTOCK:
+<span class="nc" id="L120">                validateUnderlyingStock(pInfo);</span>
+<span class="nc" id="L121">                break;</span>
+            case OPTIONPRICE:
+<span class="nc" id="L123">                validateOptionPrice(pInfo);</span>
+<span class="nc" id="L124">                break;</span>
+            default:
+                break;
+        }
+<span class="fc" id="L128">    }</span>
+
+    /**
+     * Validate the Notes info.
+     * @param pInfo the info
+     */
+    private void validateNotes(final MoneyWiseSecurityInfo pInfo) {
+<span class="nc" id="L135">        final char[] myArray = pInfo.getValue(char[].class);</span>
+<span class="nc bnc" id="L136" title="All 2 branches missed.">        if (myArray.length &gt; MoneyWiseAccountInfoClass.NOTES.getMaximumLength()) {</span>
+<span class="nc" id="L137">            getOwner().addError(PrometheusDataItem.ERROR_LENGTH, MoneyWiseSecurityInfoSet.getFieldForClass(MoneyWiseAccountInfoClass.NOTES));</span>
+        }
+<span class="nc" id="L139">    }</span>
+
+    /**
+     * Validate the Symbol info.
+     * @param pInfo the info
+     */
+    private void validateSymbol(final MoneyWiseSecurityInfo pInfo) {
+<span class="fc" id="L146">        final String mySymbol = pInfo.getValue(String.class);</span>
+<span class="pc bpc" id="L147" title="1 of 2 branches missed.">        if (mySymbol.length() &gt; MoneyWiseAccountInfoClass.SYMBOL.getMaximumLength()) {</span>
+<span class="nc" id="L148">            getOwner().addError(PrometheusDataItem.ERROR_LENGTH, MoneyWiseSecurityInfoSet.getFieldForClass(MoneyWiseAccountInfoClass.SYMBOL));</span>
+        }
+<span class="fc" id="L150">    }</span>
+
+    /**
+     * Validate the UnderlyingStock info.
+     * @param pInfo the info
+     */
+    private void validateUnderlyingStock(final MoneyWiseSecurityInfo pInfo) {
+<span class="nc" id="L157">        final MoneyWiseSecurity myStock = pInfo.getValue(MoneyWiseSecurity.class);</span>
+<span class="nc bnc" id="L158" title="All 2 branches missed.">        if (!myStock.getCategoryClass().isShares()) {</span>
+<span class="nc" id="L159">            getOwner().addError(&quot;Invalid underlying stock&quot;, MoneyWiseSecurityInfoSet.getFieldForClass(MoneyWiseAccountInfoClass.UNDERLYINGSTOCK));</span>
+        }
+<span class="nc bnc" id="L161" title="All 2 branches missed.">        if (!myStock.getCurrency().equals(getOwner().getCurrency())) {</span>
+<span class="nc" id="L162">            getOwner().addError(MoneyWiseDepositInfoSet.ERROR_CURRENCY, MoneyWiseLoanInfoSet.getFieldForClass(MoneyWiseAccountInfoClass.UNDERLYINGSTOCK));</span>
+        }
+<span class="nc" id="L164">    }</span>
+
+    /**
+     * Validate the OptionPrice info.
+     * @param pInfo the info
+     */
+    private void validateOptionPrice(final MoneyWiseSecurityInfo pInfo) {
+<span class="nc" id="L171">        final OceanusPrice myPrice = pInfo.getValue(OceanusPrice.class);</span>
+<span class="nc bnc" id="L172" title="All 2 branches missed.">        if (myPrice.isZero()) {</span>
+<span class="nc" id="L173">            getOwner().addError(PrometheusDataItem.ERROR_ZERO, MoneyWiseSecurityInfoSet.getFieldForClass(MoneyWiseAccountInfoClass.OPTIONPRICE));</span>
+<span class="nc bnc" id="L174" title="All 2 branches missed.">        } else if (!myPrice.isPositive()) {</span>
+<span class="nc" id="L175">            getOwner().addError(PrometheusDataItem.ERROR_NEGATIVE, MoneyWiseSecurityInfoSet.getFieldForClass(MoneyWiseAccountInfoClass.OPTIONPRICE));</span>
+        }
+<span class="nc bnc" id="L177" title="All 2 branches missed.">        if (!myPrice.getCurrency().equals(getOwner().getCurrency())) {</span>
+<span class="nc" id="L178">            getOwner().addError(MoneyWiseDepositInfoSet.ERROR_CURRENCY, MoneyWiseLoanInfoSet.getFieldForClass(MoneyWiseAccountInfoClass.OPTIONPRICE));</span>
+        }
+<span class="nc" id="L180">    }</span>
+
+    @Override
+    protected void setDefault(final PrometheusDataInfoClass pClass) throws OceanusException {
+        /* Switch on the class */
+<span class="nc bnc" id="L185" title="All 5 branches missed.">        switch ((MoneyWiseAccountInfoClass) pClass) {</span>
+            case SYMBOL:
+<span class="nc" id="L187">                getInfoSet().setValue(pClass, getUniqueSymbol());</span>
+<span class="nc" id="L188">                break;</span>
+            case REGION:
+<span class="nc" id="L190">                getInfoSet().setValue(pClass, getDefaultRegion());</span>
+<span class="nc" id="L191">                break;</span>
+            case UNDERLYINGSTOCK:
+<span class="nc" id="L193">                getInfoSet().setValue(pClass, getDefaultUnderlyingStock());</span>
+<span class="nc" id="L194">                break;</span>
+            case OPTIONPRICE:
+<span class="nc" id="L196">                getInfoSet().setValue(pClass, getDefaultOptionPrice());</span>
+<span class="nc" id="L197">                break;</span>
+            default:
+                break;
+        }
+<span class="nc" id="L201">    }</span>
+
+    /**
+     * Obtain unique symbol for new tag.
+     * @return The new symbol
+     */
+    private String getUniqueSymbol() {
+        /* Access the security list */
+<span class="nc" id="L209">        final MoneyWiseSecurityList mySecurities = getOwner().getList();</span>
+
+        /* Set up base constraints */
+<span class="nc" id="L212">        final String myBase = NAME_NEWSYMBOL;</span>
+<span class="nc" id="L213">        int iNextId = 1;</span>
+
+        /* Loop until we found a symbol */
+<span class="nc" id="L216">        String mySymbol = myBase;</span>
+        for (;;) {
+            /* try out the symbol */
+<span class="nc bnc" id="L219" title="All 2 branches missed.">            if (mySecurities.findItemBySymbol(mySymbol) == null) {</span>
+<span class="nc" id="L220">                return mySymbol;</span>
+            }
+
+            /* Build next symbol */
+<span class="nc" id="L224">            mySymbol = myBase.concat(Integer.toString(iNextId++));</span>
+        }
+    }
+
+    /**
+     * Obtain default region for security.
+     * @return the default region
+     */
+    private MoneyWiseRegion getDefaultRegion() {
+        /* Access the region list */
+<span class="nc" id="L234">        final MoneyWiseRegionList myRegions</span>
+<span class="nc" id="L235">                = getEditSet().getDataList(MoneyWiseBasicDataType.REGION, MoneyWiseRegionList.class);</span>
+
+        /* loop through the regions */
+<span class="nc" id="L238">        final Iterator&lt;MoneyWiseRegion&gt; myIterator = myRegions.iterator();</span>
+<span class="nc bnc" id="L239" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L240">            final MoneyWiseRegion myRegion = myIterator.next();</span>
+
+            /* Return first non-deleted region */
+<span class="nc bnc" id="L243" title="All 2 branches missed.">            if (!myRegion.isDeleted()) {</span>
+<span class="nc" id="L244">                return myRegion;</span>
+            }
+<span class="nc" id="L246">        }</span>
+
+        /* Return no region */
+<span class="nc" id="L249">        return null;</span>
+    }
+
+    /**
+     * Obtain default underlying stock.
+     * @return the default underlying stock
+     */
+    private MoneyWiseSecurity getDefaultUnderlyingStock() {
+        /* Access the security list */
+<span class="nc" id="L258">        final MoneyWiseSecurityList mySecurities = getOwner().getList();</span>
+
+        /* loop through the securities */
+<span class="nc" id="L261">        final Iterator&lt;MoneyWiseSecurity&gt; myIterator = mySecurities.iterator();</span>
+<span class="nc bnc" id="L262" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L263">            final MoneyWiseSecurity mySecurity = myIterator.next();</span>
+
+            /* Ignore deleted securities */
+<span class="nc bnc" id="L266" title="All 2 branches missed.">            if (mySecurity.isDeleted()) {</span>
+<span class="nc" id="L267">                continue;</span>
+            }
+
+            /* Ignore securities that are the wrong class */
+<span class="nc bnc" id="L271" title="All 2 branches missed.">            if (mySecurity.getCategoryClass().isShares()) {</span>
+<span class="nc" id="L272">                return mySecurity;</span>
+            }
+<span class="nc" id="L274">        }</span>
+
+        /* Return no security */
+<span class="nc" id="L277">        return null;</span>
+    }
+
+    /**
+     * Obtain default option price.
+     * @return the default underlying stock
+     */
+    private OceanusPrice getDefaultOptionPrice() {
+        /* Obtain the underlying stock */
+<span class="nc" id="L286">        final MoneyWiseSecurity myUnderlying = getOwner().getUnderlyingStock();</span>
+
+        /* If there is no underlying stock, then there is no price */
+<span class="nc bnc" id="L289" title="All 2 branches missed.">        if (myUnderlying == null) {</span>
+<span class="nc" id="L290">            return null;</span>
+        }
+
+<span class="nc" id="L293">        final MoneyWiseCurrency myCurrency = myUnderlying.getAssetCurrency();</span>
+<span class="nc" id="L294">        return OceanusPrice.getWholeUnits(1, myCurrency.getCurrency());</span>
+    }
+
+    @Override
+    protected void autoCorrect(final PrometheusDataInfoClass pClass) throws OceanusException {
+        /* Switch on class */
+<span class="nc bnc" id="L300" title="All 3 branches missed.">        switch ((MoneyWiseAccountInfoClass) pClass) {</span>
+            case UNDERLYINGSTOCK:
+<span class="nc" id="L302">                autoCorrectUnderlyingStock();</span>
+<span class="nc" id="L303">                break;</span>
+            case OPTIONPRICE:
+<span class="nc" id="L305">                autoCorrectOptionPrice();</span>
+<span class="nc" id="L306">                break;</span>
+            default:
+                break;
+        }
+<span class="nc" id="L310">    }</span>
+
+    /**
+     * AutoCorrect underlying stock.
+     * @throws OceanusException on error
+     */
+    private void autoCorrectUnderlyingStock() throws OceanusException {
+        /* Obtain the existing value */
+<span class="nc" id="L318">        MoneyWiseSecurity myStock = getOwner().getUnderlyingStock();</span>
+
+        /* If the stock is not the correct currency */
+<span class="nc bnc" id="L321" title="All 2 branches missed.">        if (!myStock.getCurrency().equals(getOwner().getCurrency())) {</span>
+            /* Reset to new default */
+<span class="nc" id="L323">            myStock = getDefaultUnderlyingStock();</span>
+<span class="nc" id="L324">            getInfoSet().setValue(MoneyWiseAccountInfoClass.UNDERLYINGSTOCK, myStock);</span>
+        }
+<span class="nc" id="L326">    }</span>
+
+    /**
+     * AutoCorrect option price.
+     * @throws OceanusException on error
+     */
+    private void autoCorrectOptionPrice() throws OceanusException {
+        /* Obtain the existing value */
+<span class="nc" id="L334">        OceanusPrice myPrice = getOwner().getOptionPrice();</span>
+<span class="nc" id="L335">        final MoneyWiseCurrency myAssetCurrency = getOwner().getAssetCurrency();</span>
+<span class="nc" id="L336">        final Currency myCurrency = myAssetCurrency.getCurrency();</span>
+
+        /* If the price is not the correct currency */
+<span class="nc bnc" id="L339" title="All 2 branches missed.">        if (!myPrice.getCurrency().equals(myCurrency)) {</span>
+<span class="nc" id="L340">            myPrice = myPrice.changeCurrency(myCurrency);</span>
+<span class="nc" id="L341">            getInfoSet().setValue(MoneyWiseAccountInfoClass.OPTIONPRICE, myPrice);</span>
+        }
+<span class="nc" id="L343">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

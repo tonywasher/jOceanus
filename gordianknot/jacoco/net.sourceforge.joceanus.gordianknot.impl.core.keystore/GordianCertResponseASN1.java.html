@@ -1,0 +1,362 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCertResponseASN1.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.gordianknot.impl.core.keystore</a> &gt; <span class="el_source">GordianCertResponseASN1.java</span></div><h1>GordianCertResponseASN1.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * GordianKnot: Security Suite
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.gordianknot.impl.core.keystore;
+
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
+import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
+import net.sourceforge.joceanus.gordianknot.api.cert.GordianCertificate;
+import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianASN1Util.GordianASN1Object;
+import net.sourceforge.joceanus.gordianknot.impl.core.cert.GordianCoreCertificate;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
+import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianCRMEncryptor.GordianCRMResult;
+import org.bouncycastle.asn1.ASN1EncodableVector;
+import org.bouncycastle.asn1.ASN1Integer;
+import org.bouncycastle.asn1.ASN1Object;
+import org.bouncycastle.asn1.ASN1Primitive;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.ASN1TaggedObject;
+import org.bouncycastle.asn1.BERSet;
+import org.bouncycastle.asn1.DERSequence;
+import org.bouncycastle.asn1.DERTaggedObject;
+import org.bouncycastle.asn1.cms.EncryptedContentInfo;
+import org.bouncycastle.asn1.cms.EnvelopedData;
+import org.bouncycastle.asn1.cms.KeyTransRecipientInfo;
+import org.bouncycastle.asn1.cms.RecipientInfo;
+import org.bouncycastle.asn1.crmf.PKMACValue;
+import org.bouncycastle.asn1.x509.Certificate;
+
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
+
+/**
+ * ASN1 Encoding of CertificateResponse.
+ * &lt;pre&gt;
+ * GordianCertResponseASN1 ::= SEQUENCE {
+ *      certReqId    INTEGER
+ *      certRespId   INTEGER
+ *      CHOICE {
+ *          certificate     [1] Certificate,
+ *          encrypted       [2] EnvelopedData
+ *      }
+ *      signerCerts  SEQUENCE SIZE (1..MAX) OF Certificate
+ *      macValue  PKMACValue OPTIONAL
+ * }
+ * &lt;/pre&gt;
+ */
+public final class GordianCertResponseASN1
+        extends GordianASN1Object {
+    /**
+     * The standard certificate tag.
+     */
+    private static final int TAG_STANDARD = 1;
+
+    /**
+     * The encrypted certificate tag.
+     */
+    private static final int TAG_ENCRYPTED = 2;
+
+    /**
+     * The requestId.
+     */
+    private final int theReqId;
+
+    /**
+     * The responseId.
+     */
+    private final int theRespId;
+
+    /**
+     * The signer certificates.
+     */
+    private final Certificate[] theSignerCerts;
+
+    /**
+     * The certificate.
+     */
+    private Certificate theCertificate;
+
+    /**
+     * The encoded certificate.
+     */
+    private EnvelopedData theEncrypted;
+
+    /**
+     * The macValue.
+     */
+    private PKMACValue theMACValue;
+
+    /**
+     * Create the ASN1 sequence.
+     * @param pReqId the requestId
+     * @param pRespId the responseId
+     * @param pCertificate the certificate
+     * @param pSignerCerts the signerCertificates
+     */
+    private GordianCertResponseASN1(final int pReqId,
+                                    final int pRespId,
+                                    final Certificate pCertificate,
+<span class="fc" id="L116">                                    final Certificate[] pSignerCerts) {</span>
+        /* Store the Details */
+<span class="fc" id="L118">        theReqId = pReqId;</span>
+<span class="fc" id="L119">        theRespId = pRespId;</span>
+<span class="fc" id="L120">        theCertificate = pCertificate;</span>
+<span class="fc" id="L121">        theSignerCerts = pSignerCerts.clone();</span>
+<span class="fc" id="L122">    }</span>
+
+    /**
+     * Constructor.
+     * @param pSequence the Sequence
+     * @throws GordianException on error
+     */
+<span class="fc" id="L129">    private GordianCertResponseASN1(final ASN1Sequence pSequence) throws GordianException {</span>
+        /* Protect against exceptions */
+        try {
+            /* Extract the request/responseIds from the sequence */
+<span class="fc" id="L133">            final Enumeration&lt;?&gt; en = pSequence.getObjects();</span>
+<span class="fc" id="L134">            theReqId = ASN1Integer.getInstance(en.nextElement()).getValue().intValue();</span>
+<span class="fc" id="L135">            theRespId = ASN1Integer.getInstance(en.nextElement()).getValue().intValue();</span>
+
+            /* Extract the certificate from the sequence */
+<span class="fc" id="L138">            final ASN1TaggedObject myTagged = ASN1TaggedObject.getInstance(en.nextElement());</span>
+<span class="pc bpc" id="L139" title="1 of 3 branches missed.">            switch (myTagged.getTagNo()) {</span>
+                case TAG_STANDARD:
+<span class="fc" id="L141">                    theCertificate = Certificate.getInstance(myTagged, false);</span>
+<span class="fc" id="L142">                    break;</span>
+                case TAG_ENCRYPTED:
+<span class="fc" id="L144">                    theEncrypted = EnvelopedData.getInstance(myTagged, false);</span>
+<span class="fc" id="L145">                    break;</span>
+                default:
+<span class="nc" id="L147">                    throw new GordianDataException(&quot;Unexpected tag&quot;);</span>
+            }
+
+            /* Extract the signer Certificates from the sequence */
+<span class="fc" id="L151">            final ASN1Sequence mySignerCerts = ASN1Sequence.getInstance(en.nextElement());</span>
+<span class="fc" id="L152">            final Enumeration&lt;?&gt; enCert = mySignerCerts.getObjects();</span>
+<span class="fc" id="L153">            final int myNumCerts = mySignerCerts.size();</span>
+<span class="fc" id="L154">            theSignerCerts = new Certificate[mySignerCerts.size()];</span>
+<span class="fc bfc" id="L155" title="All 2 branches covered.">            for (int i = 0; i &lt; myNumCerts; i++) {</span>
+<span class="fc" id="L156">                theSignerCerts[i] = Certificate.getInstance(enCert.nextElement());</span>
+            }
+
+            /* Extract the Optional MACValue from the sequence */
+<span class="pc bpc" id="L160" title="1 of 2 branches missed.">            if (en.hasMoreElements()) {</span>
+<span class="fc" id="L161">                theMACValue = PKMACValue.getInstance(en.nextElement());</span>
+            }
+
+            /* handle exceptions */
+<span class="nc" id="L165">        } catch (IllegalArgumentException e) {</span>
+<span class="nc" id="L166">            throw new GordianIOException(&quot;Unable to parse ASN1 sequence&quot;, e);</span>
+<span class="fc" id="L167">        }</span>
+<span class="fc" id="L168">    }</span>
+
+    /**
+     * Parse the ASN1 object.
+     * @param pObject the object to parse
+     * @return the parsed object
+     * @throws GordianException on error
+     */
+    public static GordianCertResponseASN1 getInstance(final Object pObject) throws GordianException {
+<span class="pc bpc" id="L177" title="1 of 2 branches missed.">        if (pObject instanceof GordianCertResponseASN1 myASN1) {</span>
+<span class="nc" id="L178">            return myASN1;</span>
+<span class="pc bpc" id="L179" title="1 of 2 branches missed.">        } else if (pObject != null) {</span>
+<span class="fc" id="L180">            return new GordianCertResponseASN1(ASN1Sequence.getInstance(pObject));</span>
+        }
+<span class="nc" id="L182">        throw new GordianDataException(&quot;Null sequence&quot;);</span>
+    }
+
+    /**
+     * Create the certificate response.
+     * @param pReqId the request id
+     * @param pRespId the responseId
+     * @param pChain the certificate chain
+     * @return the response
+     */
+    public static GordianCertResponseASN1 createCertResponse(final int pReqId,
+                                                             final int pRespId,
+                                                             final List&lt;GordianCertificate&gt; pChain) {
+        /* Create the chain */
+<span class="fc" id="L196">        final Certificate[] myChain = new Certificate[pChain.size() - 1];</span>
+
+        /* Store first element in chain */
+<span class="fc" id="L199">        final Iterator&lt;GordianCertificate&gt; myIterator = pChain.iterator();</span>
+<span class="fc" id="L200">        final Certificate myCert = ((GordianCoreCertificate) myIterator.next()).getCertificate();</span>
+
+        /* Store subsequent details */
+<span class="fc bfc" id="L203" title="All 2 branches covered.">        for (int i = 1; i &lt; pChain.size(); i++) {</span>
+<span class="fc" id="L204">            myChain[i - 1] = ((GordianCoreCertificate) myIterator.next()).getCertificate();</span>
+        }
+
+        /* Return the chain */
+<span class="fc" id="L208">        return new GordianCertResponseASN1(pReqId, pRespId, myCert, myChain);</span>
+    }
+
+    /**
+     * Obtain the requestId.
+     * @return the id
+     */
+    public int getReqId() {
+<span class="fc" id="L216">        return theReqId;</span>
+    }
+
+    /**
+     * Obtain the responseId.
+     * @return the id
+     */
+    public int getRespId() {
+<span class="fc" id="L224">        return theRespId;</span>
+    }
+
+    /**
+     * Obtain the macValue.
+     * @return the macValue
+     */
+    public PKMACValue getMACValue() {
+<span class="fc" id="L232">        return theMACValue;</span>
+    }
+
+    /**
+     * Set the macValue.
+     * @param pMACValue the macValue
+     */
+    public void setMACValue(final PKMACValue pMACValue) {
+<span class="fc" id="L240">        theMACValue = pMACValue;</span>
+<span class="fc" id="L241">    }</span>
+
+    /**
+     * Obtain the macData.
+     * @return the macData
+     */
+    public ASN1Object getMACData() {
+<span class="fc" id="L248">        return theCertificate;</span>
+    }
+
+    /**
+     * Is the response encrypted?
+     * @return true/false
+     */
+    public boolean isEncrypted() {
+<span class="fc bfc" id="L256" title="All 2 branches covered.">        return theEncrypted != null;</span>
+    }
+
+    /**
+     * Obtain the certificate.
+     * @param pEncryptor the encryptor
+     * @return the certificate
+     * @throws GordianException on error
+     */
+    public GordianCoreCertificate getCertificate(final GordianCRMEncryptor pEncryptor) throws GordianException {
+        /* If the certificate is still encrypted */
+<span class="pc bpc" id="L267" title="1 of 2 branches missed.">        if (isEncrypted()) {</span>
+<span class="nc" id="L268">            throw new GordianLogicException(&quot;Certificate still encrypted&quot;);</span>
+        }
+
+        /* Convert and return the certificate */
+<span class="fc" id="L272">        return pEncryptor.convertCertificate(theCertificate);</span>
+    }
+
+    /**
+     * Obtain the certificate chain.
+     * @param pEncryptor the encryptor
+     * @return the chain
+     * @throws GordianException on error
+     */
+    public GordianCoreCertificate[] getCertificateChain(final GordianCRMEncryptor pEncryptor) throws GordianException {
+        /* If the certificate is still encrypted */
+<span class="pc bpc" id="L283" title="1 of 2 branches missed.">        if (isEncrypted()) {</span>
+<span class="nc" id="L284">            throw new GordianLogicException(&quot;Certificate still encrypted&quot;);</span>
+        }
+
+        /* Create the chain */
+<span class="fc" id="L288">        final GordianCoreCertificate[] myChain = new GordianCoreCertificate[theSignerCerts.length + 1];</span>
+
+        /* Store first element in chain */
+<span class="fc" id="L291">        myChain[0] = pEncryptor.convertCertificate(theCertificate);</span>
+
+        /* Store subsequent details */
+<span class="fc bfc" id="L294" title="All 2 branches covered.">        for (int i = 0; i &lt; theSignerCerts.length; i++) {</span>
+<span class="fc" id="L295">            myChain[i + 1] = pEncryptor.convertCertificate(theSignerCerts[i]);</span>
+        }
+
+        /* Return the chain */
+<span class="fc" id="L299">        return myChain;</span>
+    }
+
+    @Override
+    public ASN1Primitive toASN1Primitive() {
+<span class="fc" id="L304">        final ASN1EncodableVector v = new ASN1EncodableVector();</span>
+<span class="fc" id="L305">        v.add(new ASN1Integer(theReqId));</span>
+<span class="fc" id="L306">        v.add(new ASN1Integer(theRespId));</span>
+<span class="fc bfc" id="L307" title="All 2 branches covered.">        if (theCertificate != null) {</span>
+<span class="fc" id="L308">            v.add(new DERTaggedObject(false, TAG_STANDARD, theCertificate));</span>
+<span class="pc bpc" id="L309" title="1 of 2 branches missed.">        } else if (theEncrypted != null) {</span>
+<span class="fc" id="L310">            v.add(new DERTaggedObject(false, TAG_ENCRYPTED, theEncrypted));</span>
+        }
+<span class="fc" id="L312">        v.add(new DERSequence(theSignerCerts));</span>
+<span class="pc bpc" id="L313" title="1 of 2 branches missed.">        if (theMACValue != null) {</span>
+<span class="fc" id="L314">            v.add(theMACValue);</span>
+        }
+
+<span class="fc" id="L317">        return new DERSequence(v);</span>
+    }
+
+    /**
+     * Encrypt certificate.
+     * @param pEncryptor the encryptor
+     * @throws GordianException on error
+     */
+    public void encryptCertificate(final GordianCRMEncryptor pEncryptor) throws GordianException {
+        /* Only encrypt if not currently encrypted */
+<span class="pc bpc" id="L327" title="1 of 2 branches missed.">        if (theEncrypted == null) {</span>
+            /* Prepare for encryption */
+<span class="fc" id="L329">            final GordianCoreCertificate myCert = pEncryptor.convertCertificate(theCertificate);</span>
+<span class="fc" id="L330">            final GordianCRMResult myResult = pEncryptor.prepareForEncryption(myCert);</span>
+
+            /* Create the encrypted content */
+<span class="fc" id="L333">            final EncryptedContentInfo myInfo = GordianCRMEncryptor.buildEncryptedContentInfo(myResult.getKeySet(), myCert);</span>
+<span class="fc" id="L334">            theEncrypted = new EnvelopedData(null, new BERSet(myResult.getRecipient()), myInfo, (BERSet) null);</span>
+<span class="fc" id="L335">            theCertificate = null;</span>
+        }
+<span class="fc" id="L337">    }</span>
+
+    /**
+     * Decrypt certificate.
+     * @param pEncryptor the encryptor
+     * @param pKeyPair the keyPair
+     * @throws GordianException on error
+     */
+    public void decryptCertificate(final GordianCRMEncryptor pEncryptor,
+                                   final GordianKeyStorePair pKeyPair) throws GordianException {
+        /* Only decrypt if currently encrypted */
+<span class="pc bpc" id="L348" title="1 of 2 branches missed.">        if (theCertificate == null) {</span>
+            /* Derive the KeySet */
+<span class="fc" id="L350">            final RecipientInfo myRecipient = RecipientInfo.getInstance(theEncrypted.getRecipientInfos().getObjectAt(0));</span>
+<span class="fc" id="L351">            final KeyTransRecipientInfo myRecInfo = (KeyTransRecipientInfo) myRecipient.getInfo();</span>
+<span class="fc" id="L352">            final GordianKeySet myKeySet = pEncryptor.deriveKeySetFromRecInfo(myRecInfo, pKeyPair.getCertificateChain().get(0), pKeyPair.getKeyPair());</span>
+
+            /* Decrypt the certificate */
+<span class="fc" id="L355">            final EncryptedContentInfo myInfo = theEncrypted.getEncryptedContentInfo();</span>
+<span class="fc" id="L356">            final byte[] myEncoded = myKeySet.decryptBytes(myInfo.getEncryptedContent().getOctets());</span>
+<span class="fc" id="L357">            theCertificate = Certificate.getInstance(myEncoded);</span>
+<span class="fc" id="L358">            theEncrypted = null;</span>
+        }
+<span class="fc" id="L360">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

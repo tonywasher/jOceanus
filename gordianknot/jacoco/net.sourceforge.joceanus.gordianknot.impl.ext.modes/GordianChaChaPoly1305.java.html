@@ -1,0 +1,534 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianChaChaPoly1305.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.gordianknot.impl.ext.modes</a> &gt; <span class="el_source">GordianChaChaPoly1305.java</span></div><h1>GordianChaChaPoly1305.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * GordianKnot: Security Suite
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.gordianknot.impl.ext.modes;
+
+import org.bouncycastle.crypto.CipherParameters;
+import org.bouncycastle.crypto.DataLengthException;
+import org.bouncycastle.crypto.InvalidCipherTextException;
+import org.bouncycastle.crypto.OutputLengthException;
+import org.bouncycastle.crypto.StreamCipher;
+import org.bouncycastle.crypto.macs.Poly1305;
+import org.bouncycastle.crypto.modes.AEADCipher;
+import org.bouncycastle.crypto.params.AEADParameters;
+import org.bouncycastle.crypto.params.KeyParameter;
+import org.bouncycastle.crypto.params.ParametersWithIV;
+import org.bouncycastle.util.Arrays;
+import org.bouncycastle.util.Pack;
+
+/**
+ * ChaCha20Poly1305 Engine.
+ * Donated to BouncyCastle.
+ */
+public class GordianChaChaPoly1305
+        implements AEADCipher {
+    /**
+     * The MacSize.
+     */
+    private static final int MACSIZE = 16;
+
+    /**
+     * The Zero padding.
+     */
+<span class="fc" id="L46">    private static final byte[] PADDING = new byte[MACSIZE - 1];</span>
+
+    /**
+     * The Underlying cipher.
+     */
+    private final StreamCipher theCipher;
+
+    /**
+     * The Poly1305Mac.
+     */
+    private final Poly1305 polyMac;
+
+    /**
+     * The cachedBytes.
+     */
+    private final byte[] cachedBytes;
+
+    /**
+     * The lastMac.
+     */
+    private byte[] lastMac;
+
+    /**
+     * number of bytes in the cache.
+     */
+    private int cacheBytes;
+
+    /**
+     * Are we initialised?
+     */
+    private boolean initialised;
+
+    /**
+     * Are we encrypting?
+     */
+    private boolean encrypting;
+
+    /**
+     * The Initial AEAD Data.
+     */
+    private byte[] initialAEAD;
+
+    /**
+     * Have we completed AEAD?
+     */
+    private boolean aeadComplete;
+
+    /**
+     * The AEAD DataLength.
+     */
+    private long aeadLength;
+
+    /**
+     * The dataLength.
+     */
+    private long dataLength;
+
+    /**
+     * Constructor.
+     * @param pChaChaEngine the ChaCha engine.
+     */
+<span class="fc" id="L107">    public GordianChaChaPoly1305(final StreamCipher pChaChaEngine) {</span>
+<span class="fc" id="L108">        theCipher = pChaChaEngine;</span>
+<span class="fc" id="L109">        polyMac = new Poly1305();</span>
+<span class="fc" id="L110">        cachedBytes = new byte[MACSIZE];</span>
+<span class="fc" id="L111">    }</span>
+
+    /**
+     * Obtain algorithm name.
+     * @return the algorithm name
+     */
+    @Override
+    public String getAlgorithmName() {
+<span class="nc" id="L119">        return theCipher.getAlgorithmName() + &quot;Poly1305&quot;;</span>
+    }
+
+    /**
+     * Initialise the cipher.
+     * @param forEncryption true/false
+     * @param params the parameters
+     */
+    public void init(final boolean forEncryption,
+                     final CipherParameters params) {
+        /* Access parameters */
+<span class="fc" id="L130">        CipherParameters parms = params;</span>
+
+        /* Reset details */
+<span class="fc" id="L133">        initialised = false;</span>
+<span class="fc" id="L134">        initialAEAD = null;</span>
+
+        /* If we have AEAD parameters */
+<span class="fc bfc" id="L137" title="All 2 branches covered.">        if (params instanceof AEADParameters) {</span>
+<span class="fc" id="L138">            final AEADParameters param = (AEADParameters) params;</span>
+<span class="fc" id="L139">            initialAEAD = param.getAssociatedText();</span>
+<span class="fc" id="L140">            final byte[] nonce = param.getNonce();</span>
+<span class="fc" id="L141">            final KeyParameter key = param.getKey();</span>
+<span class="fc" id="L142">            parms = new ParametersWithIV(key, nonce);</span>
+        }
+
+        /* Initialise the cipher */
+<span class="fc" id="L146">        theCipher.init(forEncryption, parms);</span>
+
+        /* Reset the cipher and init the Mac */
+<span class="fc" id="L149">        reset();</span>
+
+        /* Note that we are initialised */
+<span class="fc" id="L152">        encrypting = forEncryption;</span>
+<span class="fc" id="L153">        initialised = true;</span>
+<span class="fc" id="L154">    }</span>
+
+    @Override
+    public void reset() {
+        /* Reset state */
+<span class="fc" id="L159">        dataLength = 0;</span>
+<span class="fc" id="L160">        aeadLength = 0;</span>
+<span class="fc" id="L161">        aeadComplete = false;</span>
+<span class="fc" id="L162">        cacheBytes = 0;</span>
+<span class="fc" id="L163">        theCipher.reset();</span>
+
+        /* Run the cipher once to initialise the mac */
+<span class="fc" id="L166">        final byte[] firstBlock = new byte[Long.SIZE]; // ChaCha stateLength</span>
+<span class="fc" id="L167">        theCipher.processBytes(firstBlock, 0, firstBlock.length, firstBlock, 0);</span>
+<span class="fc" id="L168">        polyMac.init(new KeyParameter(firstBlock, 0, Integer.SIZE)); // Poly1305 KeyLength</span>
+<span class="fc" id="L169">        Arrays.fill(firstBlock, (byte) 0);</span>
+
+        /* If we have initial AEAD data */
+<span class="fc bfc" id="L172" title="All 2 branches covered.">        if (initialAEAD != null) {</span>
+            /* Reapply initial AEAD data */
+<span class="fc" id="L174">            aeadLength = initialAEAD.length;</span>
+<span class="fc" id="L175">            polyMac.update(initialAEAD, 0, (int) aeadLength);</span>
+        }
+<span class="fc" id="L177">    }</span>
+
+    /**
+     * Process AAD byte.
+     * @param in the byte to process
+     */
+    public void processAADByte(final byte in) {
+        /* Check AAD is allowed */
+<span class="nc" id="L185">        checkAEADStatus();</span>
+
+        /* Process the byte */
+<span class="nc" id="L188">        polyMac.update(in);</span>
+<span class="nc" id="L189">        aeadLength++;</span>
+<span class="nc" id="L190">    }</span>
+
+    /**
+     * Process AAD bytes.
+     * @param in the bytes to process
+     * @param inOff the offset from which to start processing
+     * @param len the number of bytes to process
+     */
+    public void processAADBytes(final byte[] in,
+                                final int inOff,
+                                final int len) {
+        /* Check AAD is allowed */
+<span class="fc" id="L202">        checkAEADStatus();</span>
+
+        /* Process the bytes */
+<span class="fc" id="L205">        polyMac.update(in, inOff, len);</span>
+<span class="fc" id="L206">        aeadLength += len;</span>
+<span class="fc" id="L207">    }</span>
+
+    @Override
+    public int processByte(final byte pByte,
+                           final byte[] out,
+                           final int outOffset) throws DataLengthException {
+<span class="nc" id="L213">        final byte[] myByte = new byte[] { pByte };</span>
+<span class="nc" id="L214">        return processBytes(myByte, 0, 1, out, outOffset);</span>
+    }
+
+    /**
+     * check AEAD status.
+     */
+    private void checkAEADStatus() {
+        /* Check we are initialised */
+<span class="pc bpc" id="L222" title="1 of 2 branches missed.">        if (!initialised) {</span>
+<span class="nc" id="L223">            throw new IllegalStateException(&quot;Cipher is not initialised&quot;);</span>
+        }
+
+        /* Check AAD is allowed */
+<span class="pc bpc" id="L227" title="1 of 2 branches missed.">        if (aeadComplete) {</span>
+<span class="nc" id="L228">            throw new IllegalStateException(&quot;AEAD data cannot be processed after ordinary data&quot;);</span>
+        }
+<span class="fc" id="L230">    }</span>
+
+    /**
+     * check status.
+     */
+    private void checkStatus() {
+        /* Check we are initialised */
+<span class="pc bpc" id="L237" title="1 of 2 branches missed.">        if (!initialised) {</span>
+<span class="nc" id="L238">            throw new IllegalStateException(&quot;Cipher is not initialised&quot;);</span>
+        }
+
+        /* Complete the AEAD section if this is the first data */
+<span class="fc bfc" id="L242" title="All 2 branches covered.">        if (!aeadComplete) {</span>
+<span class="fc" id="L243">            completeAEADMac();</span>
+        }
+<span class="fc" id="L245">    }</span>
+
+    /**
+     * Process single byte (not supported).
+     * @param in the input byte
+     * @return the output byte
+     */
+    public byte returnByte(final byte in) {
+<span class="nc" id="L253">        throw new UnsupportedOperationException();</span>
+    }
+
+    /**
+     * Process bytes.
+     * @param in the input buffer
+     * @param inOff the starting offset in the input buffer
+     * @param len the length of data in the input buffer
+     * @param out the output buffer
+     * @param outOff the starting offset in the output buffer
+     * @return the number of bytes returned in the output buffer
+     */
+    public int processBytes(final byte[] in,
+                            final int inOff,
+                            final int len,
+                            final byte[] out,
+                            final int outOff) {
+        /* Check status */
+<span class="fc" id="L271">        checkStatus();</span>
+
+        /* process the bytes */
+<span class="fc bfc" id="L274" title="All 2 branches covered.">        return encrypting</span>
+<span class="fc" id="L275">                ? processEncryptionBytes(in, inOff, len, out, outOff)</span>
+<span class="fc" id="L276">                : processDecryptionBytes(in, inOff, len, out, outOff);</span>
+    }
+
+    /**
+     * Obtain the maximum output length for a given input length.
+     * @param len the length of data to process
+     * @return the maximum output length
+     */
+    public int getOutputSize(final int len) {
+<span class="fc bfc" id="L285" title="All 2 branches covered.">        if (encrypting) {</span>
+<span class="fc" id="L286">            return len + MACSIZE;</span>
+        }
+
+        /* Allow for cacheSpace */
+<span class="fc" id="L290">        final int cacheSpace = MACSIZE - cacheBytes;</span>
+<span class="pc bpc" id="L291" title="1 of 2 branches missed.">        return len &lt; cacheSpace ? 0 : len - cacheSpace;</span>
+    }
+
+    /**
+     * Obtain the maximum output length for an update.
+     * @param len the data length to update
+     * @return the maximum output length
+     */
+    public int getUpdateOutputSize(final int len) {
+<span class="nc" id="L300">        return len;</span>
+    }
+
+    /**
+     * Obtain the last calculated Mac.
+     * @return the last calculated Mac
+     */
+    public byte[] getMac() {
+<span class="nc bnc" id="L308" title="All 2 branches missed.">        return lastMac == null</span>
+<span class="nc" id="L309">                ? new byte[MACSIZE]</span>
+<span class="nc" id="L310">                : Arrays.clone(lastMac);</span>
+    }
+
+    /**
+     * Finish processing.
+     * @param out the output buffer
+     * @param outOff the offset from which to start writing output
+     * @return the length of data written out
+     * @throws InvalidCipherTextException on mac misMatch
+     */
+    public int doFinal(final byte[] out,
+                       final int outOff) throws InvalidCipherTextException {
+        /* Check status */
+<span class="fc" id="L323">        checkStatus();</span>
+
+        /* finish the mac */
+<span class="fc bfc" id="L326" title="All 2 branches covered.">        final int outLen = encrypting</span>
+<span class="fc" id="L327">                ? finishEncryptionMac(out, outOff)</span>
+<span class="fc" id="L328">                : finishDecryptionMac();</span>
+
+        /* Reset the cipher */
+<span class="fc" id="L331">        reset();</span>
+
+        /* return the number of bytes processed */
+<span class="fc" id="L334">        return outLen;</span>
+    }
+
+    /**
+     * Obtain buffer length (allowing for null).
+     * @param pBuffer the buffere
+     * @return the length
+     */
+    private static int bufLength(final byte[] pBuffer) {
+<span class="pc bpc" id="L343" title="1 of 2 branches missed.">        return pBuffer == null ? 0 : pBuffer.length;</span>
+    }
+
+    /**
+     * Process encryption bytes.
+     * @param in the input buffer
+     * @param inOff the offset from which to start processing
+     * @param len the length of data to process
+     * @param out the output buffer
+     * @param outOff the offset from which to start writing output
+     * @return the length of data written out
+     */
+    private int processEncryptionBytes(final byte[] in,
+                                       final int inOff,
+                                       final int len,
+                                       final byte[] out,
+                                       final int outOff) {
+        /* Check that the buffers are sufficient */
+<span class="pc bpc" id="L361" title="1 of 2 branches missed.">        if (bufLength(in) &lt; (len + inOff)) {</span>
+<span class="nc" id="L362">            throw new DataLengthException(&quot;Input buffer too short.&quot;);</span>
+        }
+<span class="pc bpc" id="L364" title="1 of 2 branches missed.">        if (bufLength(out) &lt; (len + outOff)) {</span>
+<span class="nc" id="L365">            throw new OutputLengthException(&quot;Output buffer too short.&quot;);</span>
+        }
+
+        /* Process the bytes */
+<span class="fc" id="L369">        theCipher.processBytes(in, inOff, len, out, outOff);</span>
+
+        /* Update the mac */
+<span class="fc" id="L372">        polyMac.update(out, outOff, len);</span>
+<span class="fc" id="L373">        dataLength += len;</span>
+
+        /* Return the number of bytes processed */
+<span class="fc" id="L376">        return len;</span>
+    }
+
+    /**
+     * finish the encryption Mac.
+     * @param out the output buffer
+     * @param outOff the offset from which to start writing output
+     * @return the length of data written out
+     */
+    private int finishEncryptionMac(final byte[] out,
+                                    final int outOff) {
+        /* Check that the output buffer is sufficient */
+<span class="pc bpc" id="L388" title="1 of 2 branches missed.">        if (bufLength(out) &lt; (MACSIZE + outOff)) {</span>
+<span class="nc" id="L389">            throw new OutputLengthException(&quot;Output buffer too short.&quot;);</span>
+        }
+
+        /* complete the data portion of the Mac */
+<span class="fc" id="L393">        completeDataMac();</span>
+
+        /* Calculate the Mac */
+<span class="fc" id="L396">        lastMac = new byte[MACSIZE];</span>
+<span class="fc" id="L397">        polyMac.doFinal(lastMac, 0);</span>
+
+        /* Update and return the mac in the output buffer */
+<span class="fc" id="L400">        System.arraycopy(lastMac, 0, out, outOff, MACSIZE);</span>
+<span class="fc" id="L401">        return MACSIZE;</span>
+    }
+
+    /**
+     * Process decryption bytes.
+     * @param in the input buffer
+     * @param inOff the offset from which to start processing
+     * @param len the length of data to process
+     * @param out the output buffer
+     * @param outOff the offset from which to start writing output
+     * @return the length of data written out
+     */
+    private int processDecryptionBytes(final byte[] in,
+                                       final int inOff,
+                                       final int len,
+                                       final byte[] out,
+                                       final int outOff) {
+        /* Check that the buffers are sufficient */
+<span class="pc bpc" id="L419" title="1 of 2 branches missed.">        if (bufLength(in) &lt; (len + inOff)) {</span>
+<span class="nc" id="L420">            throw new DataLengthException(&quot;Input buffer too short.&quot;);</span>
+        }
+<span class="pc bpc" id="L422" title="1 of 2 branches missed.">        if (bufLength(out) &lt; (len + outOff + cacheBytes - MACSIZE)) {</span>
+<span class="nc" id="L423">            throw new OutputLengthException(&quot;Output buffer too short.&quot;);</span>
+        }
+
+        /* Count how much we have processed */
+<span class="fc" id="L427">        int processed = 0;</span>
+
+        /* Calculate the number of bytes to process from the cache */
+<span class="fc" id="L430">        final int numInputBytes = len - MACSIZE;</span>
+<span class="fc" id="L431">        int numCacheBytes = Math.max(cacheBytes + numInputBytes, 0);</span>
+<span class="fc" id="L432">        numCacheBytes = Math.min(cacheBytes, numCacheBytes);</span>
+
+        /* If we should process bytes from the cache */
+<span class="fc bfc" id="L435" title="All 2 branches covered.">        if (numCacheBytes &gt; 0) {</span>
+            /* Process any required cachedBytes */
+<span class="fc" id="L437">            polyMac.update(cachedBytes, 0, numCacheBytes);</span>
+<span class="fc" id="L438">            dataLength += numCacheBytes;</span>
+
+            /* Process the cached bytes */
+<span class="fc" id="L441">            processed = theCipher.processBytes(cachedBytes, 0, numCacheBytes, out, outOff);</span>
+
+            /* Move any remaining cached bytes down in the buffer */
+<span class="fc" id="L444">            cacheBytes -= numCacheBytes;</span>
+<span class="fc bfc" id="L445" title="All 2 branches covered.">            if (cacheBytes &gt; 0) {</span>
+<span class="fc" id="L446">                System.arraycopy(cachedBytes, numCacheBytes, cachedBytes, 0, cacheBytes);</span>
+            }
+        }
+
+        /* Process any excess bytes from the input buffer */
+<span class="fc bfc" id="L451" title="All 2 branches covered.">        if (numInputBytes &gt; 0) {</span>
+            /* Process the data */
+<span class="fc" id="L453">            polyMac.update(in, inOff, numInputBytes);</span>
+<span class="fc" id="L454">            dataLength += numInputBytes;</span>
+
+            /* Process the input */
+<span class="fc" id="L457">            processed += theCipher.processBytes(in, inOff, numInputBytes, out, outOff + processed);</span>
+        }
+
+        /* Store the remaining input into the cache */
+<span class="fc" id="L461">        final int numToCache = Math.min(len, MACSIZE);</span>
+<span class="fc" id="L462">        System.arraycopy(in, inOff + len - numToCache, cachedBytes, cacheBytes, numToCache);</span>
+<span class="fc" id="L463">        cacheBytes += numToCache;</span>
+
+        /* Return the number of bytes processed */
+<span class="fc" id="L466">        return processed;</span>
+    }
+
+    /**
+     * finish the decryption Mac.
+     * @return the length of data written out
+     * @throws InvalidCipherTextException on mac misMatch
+     */
+    private int finishDecryptionMac() throws InvalidCipherTextException {
+        /* If we do not have sufficient data */
+<span class="pc bpc" id="L476" title="1 of 2 branches missed.">        if (cacheBytes &lt; MACSIZE) {</span>
+<span class="nc" id="L477">            throw new InvalidCipherTextException(&quot;data too short&quot;);</span>
+        }
+
+        /* complete the data portion of the Mac */
+<span class="fc" id="L481">        completeDataMac();</span>
+
+        /* Calculate the Mac */
+<span class="fc" id="L484">        lastMac = new byte[MACSIZE];</span>
+<span class="fc" id="L485">        polyMac.doFinal(lastMac, 0);</span>
+
+        /* Check that the calculated Mac is identical to that contained in the cache */
+<span class="pc bpc" id="L488" title="1 of 2 branches missed.">        if (!Arrays.constantTimeAreEqual(lastMac, cachedBytes)) {</span>
+<span class="nc" id="L489">            throw new InvalidCipherTextException(&quot;mac check failed&quot;);</span>
+        }
+
+        /* No bytes returned */
+<span class="fc" id="L493">        return 0;</span>
+    }
+
+    /**
+     * Complete AEAD Mac input.
+     */
+    private void completeAEADMac() {
+        /* Pad to boundary */
+<span class="fc" id="L501">        padToBoundary(aeadLength);</span>
+
+        /* Set flag */
+<span class="fc" id="L504">        aeadComplete = true;</span>
+<span class="fc" id="L505">    }</span>
+
+    /**
+     * Complete Mac data input.
+     */
+    private void completeDataMac() {
+        /* Pad to boundary */
+<span class="fc" id="L512">        padToBoundary(dataLength);</span>
+
+        /* Write the lengths */
+<span class="fc" id="L515">        final byte[] len = new byte[Long.BYTES &lt;&lt; 1]; // 2 * Long.BYTES</span>
+<span class="fc" id="L516">        Pack.longToLittleEndian(aeadLength, len, 0);</span>
+<span class="fc" id="L517">        Pack.longToLittleEndian(dataLength, len, Long.BYTES); // Long.BYTES</span>
+<span class="fc" id="L518">        polyMac.update(len, 0, len.length);</span>
+<span class="fc" id="L519">    }</span>
+
+    /**
+     * Pad to boundary.
+     * @param pDataLen the length of the data to pad
+     */
+    private void padToBoundary(final long pDataLen) {
+        /* Pad to boundary */
+<span class="fc" id="L527">        final int xtra = (int) pDataLen &amp; (MACSIZE - 1);</span>
+<span class="fc bfc" id="L528" title="All 2 branches covered.">        if (xtra != 0) {</span>
+<span class="fc" id="L529">            final int numPadding = MACSIZE - xtra;</span>
+<span class="fc" id="L530">            polyMac.update(PADDING, 0, numPadding);</span>
+        }
+<span class="fc" id="L532">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

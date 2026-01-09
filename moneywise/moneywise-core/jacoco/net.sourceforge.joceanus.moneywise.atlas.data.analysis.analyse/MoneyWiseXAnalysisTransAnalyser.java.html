@@ -1,0 +1,611 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseXAnalysisTransAnalyser.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.atlas.data.analysis.analyse</a> &gt; <span class="el_source">MoneyWiseXAnalysisTransAnalyser.java</span></div><h1>MoneyWiseXAnalysisTransAnalyser.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.atlas.data.analysis.analyse;
+
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisInterfaces.MoneyWiseXAnalysisCursor;
+import net.sourceforge.joceanus.moneywise.exc.MoneyWiseLogicException;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEvent;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisAccountBucket;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPayeeBucket;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTransCategoryBucket;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetType;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCash;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDeposit;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseLoan;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePortfolio;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransTag;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
+
+import java.util.List;
+
+/**
+ * Transaction analyser.
+ */
+public class MoneyWiseXAnalysisTransAnalyser {
+    /**
+     * The analysis.
+     */
+    private final MoneyWiseXAnalysis theAnalysis;
+
+    /**
+     * The analysis state.
+     */
+    private final MoneyWiseXAnalysisState theState;
+
+    /**
+     * The market analysis.
+     */
+    private final MoneyWiseXAnalysisMarket theMarket;
+
+    /**
+     * The tax analysis.
+     */
+    private final MoneyWiseXAnalysisTax theTax;
+
+    /**
+     * The security analysis.
+     */
+    private final MoneyWiseXAnalysisSecurity theSecurity;
+
+    /**
+     * The portfolioXfer analyser.
+     */
+    private final MoneyWiseXAnalysisPortfolioXfer thePortfolioXfer;
+
+    /**
+     * The reporting currency.
+     */
+    private final MoneyWiseCurrency theCurrency;
+
+    /**
+     * The current transaction.
+     */
+    private MoneyWiseXAnalysisTransaction theTransaction;
+
+    /**
+     * Constructor.
+     * @param pAnalyser the analyser
+     * @throws OceanusException on error
+     */
+<span class="fc" id="L95">    MoneyWiseXAnalysisTransAnalyser(final MoneyWiseXAnalysisEventAnalyser pAnalyser) throws OceanusException {</span>
+        /* Store details */
+<span class="fc" id="L97">        theAnalysis = pAnalyser.getAnalysis();</span>
+<span class="fc" id="L98">        theState = pAnalyser.getState();</span>
+<span class="fc" id="L99">        theMarket = pAnalyser.getMarket();</span>
+<span class="fc" id="L100">        theTax = pAnalyser.getTax();</span>
+<span class="fc" id="L101">        theCurrency = theAnalysis.getCurrency();</span>
+
+        /* Create the security analyser */
+<span class="fc" id="L104">        theSecurity = new MoneyWiseXAnalysisSecurity(pAnalyser, this);</span>
+<span class="fc" id="L105">        thePortfolioXfer = new MoneyWiseXAnalysisPortfolioXfer(pAnalyser, theSecurity);</span>
+<span class="fc" id="L106">        theTax.declareSecurityAnalyser(theSecurity);</span>
+<span class="fc" id="L107">    }</span>
+
+    /**
+     * Obtain the currency.
+     * @return the currency
+     */
+    MoneyWiseCurrency getCurrency() {
+<span class="nc" id="L114">        return theCurrency;</span>
+    }
+
+    /**
+     * Process transaction event.
+     * @param pEvent the event
+     * @throws OceanusException on error
+     */
+    public void processTransaction(final MoneyWiseXAnalysisEvent pEvent) throws OceanusException {
+        /* Parse the event */
+<span class="fc" id="L124">        theTransaction = new MoneyWiseXAnalysisTransaction(pEvent);</span>
+<span class="fc" id="L125">        final MoneyWiseTransaction myTrans = theTransaction.getTransaction();</span>
+
+        /* Ignore header transactions */
+<span class="pc bpc" id="L128" title="1 of 2 branches missed.">        if (!myTrans.isHeader()) {</span>
+            /* Touch underlying items */
+<span class="fc" id="L130">            myTrans.touchUnderlyingItems();</span>
+
+            /* Process tags */
+<span class="fc" id="L133">            final List&lt;MoneyWiseTransTag&gt; myTags = myTrans.getTransactionTags();</span>
+<span class="pc bpc" id="L134" title="1 of 2 branches missed.">            if (myTags != null) {</span>
+                /* Process the transaction tags */
+<span class="nc" id="L136">                theAnalysis.getTransactionTags().processEvent(pEvent, myTags.iterator());</span>
+            }
+
+            /* Process the transaction */
+<span class="fc" id="L140">            processTransaction();</span>
+        }
+<span class="fc" id="L142">    }</span>
+
+    /**
+     * Process transaction.
+     * @throws OceanusException on error
+     */
+    private void processTransaction() throws OceanusException {
+        /* Access account and partner */
+<span class="fc" id="L150">        final MoneyWiseTransaction myTrans = theTransaction.getTransaction();</span>
+<span class="fc" id="L151">        final MoneyWiseTransAsset myDebit = theTransaction.getDebitAccount();</span>
+<span class="fc" id="L152">        final MoneyWiseTransAsset myCredit = theTransaction.getCreditAccount();</span>
+
+        /* If the event relates to a security holding account, split out the workings */
+<span class="fc bfc" id="L155" title="All 2 branches covered.">        if (isSecurityHolding(myDebit)) {</span>
+            /* Process as a Security transaction */
+<span class="fc" id="L157">            theSecurity.processDebitSecurity(theTransaction);</span>
+
+            /* If the event relates to a security holding partner, split out the workings */
+<span class="fc bfc" id="L160" title="All 2 branches covered.">        } else if (isSecurityHolding(myCredit)) {</span>
+            /* Process as a Security transaction */
+<span class="fc" id="L162">            theSecurity.processCreditSecurity(theTransaction);</span>
+
+            /* If the event is portfolioXfer, split out the workings */
+<span class="pc bpc" id="L165" title="1 of 2 branches missed.">        } else if (isPortfolioXfer(theTransaction.getCategoryClass())) {</span>
+            /* Process the portfolioXfer */
+<span class="nc" id="L167">            thePortfolioXfer.processPortfolioXfer(theTransaction);</span>
+
+            /* Else handle the event normally */
+<span class="pc bpc" id="L170" title="2 of 4 branches missed.">        } else if (myDebit instanceof MoneyWiseAssetBase</span>
+                &amp;&amp; myCredit instanceof MoneyWiseAssetBase) {
+<span class="fc" id="L172">            processNonSecurity();</span>
+
+            /* else reject */
+        } else {
+<span class="nc" id="L176">            throw new MoneyWiseLogicException(&quot;Invalid Asset Pair: &quot;</span>
+<span class="nc" id="L177">                    + myTrans.getAccount().getAssetType()</span>
+                    + &quot; &quot;
+<span class="nc" id="L179">                    + myTrans.getDirection()</span>
+                    + &quot; &quot;
+<span class="nc" id="L181">                    + myTrans.getPartner().getAssetType());</span>
+        }
+
+        /* adjust category bucket */
+<span class="fc" id="L185">        adjustCategoryBucket();</span>
+
+        /* Process taxBasis */
+<span class="fc" id="L188">        theTax.adjustTaxBasis(theTransaction);</span>
+
+        /* Register the eventBuckets */
+<span class="fc" id="L191">        final MoneyWiseXAnalysisEvent myEvent = theTransaction.getEvent();</span>
+<span class="fc" id="L192">        theMarket.adjustMarketTotals(myEvent);</span>
+<span class="fc" id="L193">        theState.registerInterestedBucketsForEvent(myEvent);</span>
+<span class="fc" id="L194">    }</span>
+
+    /**
+     * process non-security transaction.
+     */
+    private void processNonSecurity() {
+        /* Adjust parent details */
+<span class="fc" id="L201">        theTransaction.adjustParent();</span>
+
+        /* Process Asset accounts */
+<span class="fc" id="L204">        processAssets();</span>
+
+        /* Process Auto-expense accounts */
+<span class="fc" id="L207">        processAutoExpense();</span>
+
+        /* Process Payee accounts */
+<span class="fc" id="L210">        processPayees();</span>
+<span class="fc" id="L211">    }</span>
+
+    /**
+     * process assets.
+     */
+    private void processAssets() {
+        /* Access debit and credit accounts and amounts */
+<span class="fc" id="L218">        final MoneyWiseAssetBase myDebit = (MoneyWiseAssetBase) theTransaction.getDebitAccount();</span>
+<span class="fc" id="L219">        final MoneyWiseAssetBase myCredit = (MoneyWiseAssetBase) theTransaction.getCreditAccount();</span>
+
+        /* If the debit account is an asset */
+<span class="fc" id="L222">        OceanusMoney myDebitAmount = theTransaction.getDebitAmount();</span>
+<span class="fc bfc" id="L223" title="All 2 branches covered.">        if (isAsset(myDebit)) {</span>
+            /* Process the debit asset bucket */
+<span class="fc" id="L225">            myDebitAmount = processDebitAsset(myDebit);</span>
+        }
+
+        /* If the credit account is an asset */
+<span class="fc" id="L229">        OceanusMoney myCreditAmount = theTransaction.getCreditAmount();</span>
+<span class="fc bfc" id="L230" title="All 2 branches covered.">        if (isAsset(myCredit)) {</span>
+            /* Process the credit asset bucket */
+<span class="fc" id="L232">            myCreditAmount = processCreditAsset(myCredit);</span>
+
+            /* Reload the debitAmount which changes if debit is payee and credit is foreign */
+<span class="fc" id="L235">            myDebitAmount = theTransaction.getDebitAmount();</span>
+        }
+
+        /* Adjust for currencyFluctuation */
+<span class="fc" id="L239">        final OceanusMoney myFluctuation = new OceanusMoney(myDebitAmount);</span>
+<span class="fc" id="L240">        myFluctuation.addAmount(myCreditAmount);</span>
+<span class="fc bfc" id="L241" title="All 2 branches covered.">        if (myFluctuation.isNonZero()) {</span>
+<span class="fc" id="L242">            theMarket.adjustTotalsForCurrencyFluctuation(theTransaction.getEvent(), myFluctuation);</span>
+        }
+<span class="fc" id="L244">    }</span>
+
+    /**
+     * process debit Asset.
+     * @param pDebit the debit asset
+     * @return the debitAmount in reporting currency
+     */
+    OceanusMoney processDebitAsset(final MoneyWiseAssetBase pDebit) {
+        /* Adjust the debit asset bucket */
+<span class="fc" id="L253">        final MoneyWiseXAnalysisAccountBucket&lt;?&gt; myBucket = getAccountBucket(pDebit);</span>
+<span class="fc" id="L254">        OceanusMoney myDebitAmount = theTransaction.getDebitAmount();</span>
+<span class="fc" id="L255">        myBucket.addToBalance(myDebitAmount);</span>
+<span class="fc" id="L256">        myBucket.adjustValuation();</span>
+<span class="fc" id="L257">        theState.registerBucketInterest(myBucket);</span>
+
+        /* If the asset is foreign, convert debit amount to reporting currency */
+<span class="fc bfc" id="L260" title="All 2 branches covered.">        if (pDebit.isForeign()) {</span>
+            /* convert debit amount to reporting currency */
+<span class="fc" id="L262">            myDebitAmount = myBucket.getDeltaValuation();</span>
+<span class="fc" id="L263">            theTransaction.setDebitAmount(myDebitAmount);</span>
+        }
+
+        /* Return the debit amount */
+<span class="fc" id="L267">        return myDebitAmount;</span>
+    }
+
+
+    /**
+     * process credit Asset.
+     * @param pCredit the credit asset
+     * @return the creditAmount in reporting currency
+     */
+    OceanusMoney processCreditAsset(final MoneyWiseAssetBase pCredit) {
+        /* Adjust the credit asset bucket */
+<span class="fc" id="L278">        final MoneyWiseXAnalysisAccountBucket&lt;?&gt; myBucket = getAccountBucket(pCredit);</span>
+<span class="fc" id="L279">        OceanusMoney myCreditAmount = theTransaction.getCreditAmount();</span>
+<span class="fc" id="L280">        myBucket.addToBalance(myCreditAmount);</span>
+<span class="fc" id="L281">        myBucket.adjustValuation();</span>
+<span class="fc" id="L282">        theState.registerBucketInterest(myBucket);</span>
+
+        /* If the asset is foreign */
+<span class="fc bfc" id="L285" title="All 2 branches covered.">        if (pCredit.isForeign()) {</span>
+            /* convert credit amount to reporting currency */
+<span class="fc" id="L287">            myCreditAmount = myBucket.getDeltaValuation();</span>
+<span class="fc" id="L288">            theTransaction.setCreditAmount(myCreditAmount);</span>
+        }
+
+        /* Return the credit amount */
+<span class="fc" id="L292">        return myCreditAmount;</span>
+    }
+
+    /**
+     * process autoExpense assets.
+     */
+    private void processAutoExpense() {
+        /* Access debit and credit accounts and amounts */
+<span class="fc" id="L300">        final MoneyWiseAssetBase myDebit = (MoneyWiseAssetBase) theTransaction.getDebitAccount();</span>
+<span class="fc" id="L301">        final MoneyWiseAssetBase myCredit = (MoneyWiseAssetBase) theTransaction.getCreditAccount();</span>
+
+        /* If the debit account is auto-Expense */
+<span class="fc bfc" id="L304" title="All 2 branches covered.">        if (isAutoExpense(myDebit)) {</span>
+            /* Access debit as cashPayee */
+<span class="fc" id="L306">            processDebitAutoExpense((MoneyWiseCash) myDebit);</span>
+        }
+
+        /* If the credit account is auto-Expense */
+<span class="fc bfc" id="L310" title="All 2 branches covered.">        if (isAutoExpense(myCredit)) {</span>
+            /* Access credit as cashPayee */
+<span class="fc" id="L312">            processCreditAutoExpense((MoneyWiseCash) myCredit);</span>
+        }
+<span class="fc" id="L314">    }</span>
+
+    /**
+     * process debit autoExpense asset.
+     * @param pDebit the debit asset
+     */
+    private void processDebitAutoExpense(final MoneyWiseCash pDebit) {
+        /* Access debit Payee/Category auto-expense */
+<span class="fc" id="L322">        final MoneyWiseTransCategory myAuto = pDebit.getAutoExpense();</span>
+<span class="fc" id="L323">        final MoneyWisePayee myDebit = pDebit.getAutoPayee();</span>
+
+        /* If the debit is foreign and the credit is a payee */
+<span class="fc bfc" id="L326" title="All 2 branches covered.">        if (pDebit.isForeign()) {</span>
+<span class="fc" id="L327">            final MoneyWiseTransAsset myCredit = theTransaction.getCreditAccount();</span>
+<span class="fc bfc" id="L328" title="All 2 branches covered.">            if (myCredit instanceof MoneyWisePayee) {</span>
+                /* Convert the debit amount to reporting currency */
+<span class="fc" id="L330">                final MoneyWiseXAnalysisCursor myCursor = theAnalysis.getCursor();</span>
+<span class="fc" id="L331">                final OceanusRatio myRate = myCursor.getCurrentXchgRate(pDebit.getAssetCurrency());</span>
+<span class="fc" id="L332">                final OceanusMoney myAmount = theTransaction.getDebitAmount();</span>
+<span class="fc" id="L333">                theTransaction.setDebitAmount(myAmount.convertCurrency(theAnalysis.getCurrency().getCurrency(), myRate));</span>
+            }
+        }
+
+        /* Adjust expense for autoPayee bucket */
+<span class="fc" id="L338">        final OceanusMoney myAmount = theTransaction.getDebitAmount();</span>
+<span class="fc" id="L339">        final MoneyWiseXAnalysisPayeeBucket myPayee = theAnalysis.getPayees().getBucket(myDebit);</span>
+<span class="fc" id="L340">        myPayee.addExpense(myAmount);</span>
+<span class="fc" id="L341">        theState.registerBucketInterest(myPayee);</span>
+
+        /* Adjust expense for Category bucket */
+<span class="fc" id="L344">        final MoneyWiseXAnalysisTransCategoryBucket myCategory = theAnalysis.getTransCategories().getBucket(myAuto);</span>
+<span class="fc" id="L345">        myCategory.addExpense(myAmount);</span>
+<span class="fc" id="L346">        theState.registerBucketInterest(myCategory);</span>
+
+        /* Adjust expense taxBasis */
+<span class="fc" id="L349">        theTax.processAutoExpense(myAmount);</span>
+<span class="fc" id="L350">    }</span>
+
+
+    /**
+     * process credit autoExpense asset.
+     * @param pCredit the credit asset
+     */
+    private void processCreditAutoExpense(final MoneyWiseCash pCredit) {
+        /* Access credit Payee/Category auto-expense */
+<span class="fc" id="L359">        final MoneyWiseTransCategory myAuto = pCredit.getAutoExpense();</span>
+<span class="fc" id="L360">        final MoneyWisePayee myCredit = pCredit.getAutoPayee();</span>
+
+        /* If the credit is foreign and the debit is a payee */
+<span class="fc bfc" id="L363" title="All 2 branches covered.">        if (pCredit.isForeign()) {</span>
+<span class="fc" id="L364">            final MoneyWiseTransAsset myDebit = theTransaction.getDebitAccount();</span>
+<span class="fc bfc" id="L365" title="All 2 branches covered.">            if (myDebit instanceof MoneyWisePayee) {</span>
+                /* Convert the debit amount to reporting currency */
+<span class="fc" id="L367">                final MoneyWiseXAnalysisCursor myCursor = theAnalysis.getCursor();</span>
+<span class="fc" id="L368">                final OceanusRatio myRate = myCursor.getCurrentXchgRate(pCredit.getAssetCurrency());</span>
+<span class="fc" id="L369">                final OceanusMoney myAmount = theTransaction.getCreditAmount();</span>
+<span class="fc" id="L370">                theTransaction.setCreditAmount(myAmount.convertCurrency(theAnalysis.getCurrency().getCurrency(), myRate));</span>
+            }
+        }
+
+        /* Adjust expense for autoPayee bucket */
+<span class="fc" id="L375">        final OceanusMoney myAmount = theTransaction.getCreditAmount();</span>
+<span class="fc" id="L376">        final MoneyWiseXAnalysisPayeeBucket myPayee = theAnalysis.getPayees().getBucket(myCredit);</span>
+<span class="fc" id="L377">        myPayee.addExpense(myAmount);</span>
+<span class="fc" id="L378">        theState.registerBucketInterest(myPayee);</span>
+
+        /* Adjust expense for Category bucket */
+<span class="fc" id="L381">        final MoneyWiseXAnalysisTransCategoryBucket myCategory = theAnalysis.getTransCategories().getBucket(myAuto);</span>
+<span class="fc" id="L382">        myCategory.addExpense(myAmount);</span>
+<span class="fc" id="L383">        theState.registerBucketInterest(myCategory);</span>
+
+        /* Adjust expense taxBasis */
+<span class="fc" id="L386">        theTax.processAutoExpense(myAmount);</span>
+<span class="fc" id="L387">    }</span>
+
+    /**
+     * process payee assets.
+     */
+    private void processPayees() {
+        /* Access debit and credit accounts and amounts */
+<span class="fc" id="L394">        final MoneyWiseAssetBase myDebit = (MoneyWiseAssetBase) theTransaction.getDebitAccount();</span>
+<span class="fc" id="L395">        final MoneyWiseAssetBase myCredit = (MoneyWiseAssetBase) theTransaction.getCreditAccount();</span>
+
+        /* If the debit account is payee */
+<span class="fc bfc" id="L398" title="All 2 branches covered.">        if (isPayee(myDebit)) {</span>
+            /* process debit as Payee */
+<span class="fc" id="L400">            processDebitPayee((MoneyWisePayee) myDebit);</span>
+        }
+
+        /* If the credit account is payee */
+<span class="fc bfc" id="L404" title="All 2 branches covered.">        if (isPayee(myCredit)) {</span>
+            /* process credit as Payee */
+<span class="fc" id="L406">            processCreditPayee((MoneyWisePayee) myCredit);</span>
+        }
+<span class="fc" id="L408">    }</span>
+
+    /**
+     * process debit payee asset.
+     * @param pDebit the debit asset
+     */
+    void processDebitPayee(final MoneyWisePayee pDebit) {
+        /* Determine income/expense */
+<span class="fc" id="L416">        final boolean isExpense = theTransaction.isExpenseCategory();</span>
+
+        /* Adjust expense for Payee bucket */
+<span class="fc" id="L419">        final OceanusMoney myAmount = theTransaction.getDebitAmount();</span>
+<span class="fc" id="L420">        final MoneyWiseXAnalysisPayeeBucket myPayeeBucket = theAnalysis.getPayees().getBucket(pDebit);</span>
+<span class="fc bfc" id="L421" title="All 2 branches covered.">        if (isExpense) {</span>
+<span class="fc" id="L422">            myPayeeBucket.addExpense(myAmount);</span>
+        } else {
+<span class="fc" id="L424">            myPayeeBucket.subtractIncome(myAmount);</span>
+        }
+<span class="fc" id="L426">        theState.registerBucketInterest(myPayeeBucket);</span>
+
+        /* Record payee bucket */
+<span class="fc" id="L429">        theTax.recordPayeeBucket(myPayeeBucket);</span>
+<span class="fc" id="L430">    }</span>
+
+    /**
+     * process credit payee asset.
+     * @param pCredit the credit asset
+     */
+    void processCreditPayee(final MoneyWisePayee pCredit) {
+        /* Determine income/expense */
+<span class="fc" id="L438">        final boolean isExpense = theTransaction.isExpenseCategory();</span>
+
+        /* Adjust expense for Payee bucket */
+<span class="fc" id="L441">        final OceanusMoney myAmount = theTransaction.getCreditAmount();</span>
+<span class="fc" id="L442">        final MoneyWiseXAnalysisPayeeBucket myPayeeBucket = theAnalysis.getPayees().getBucket(pCredit);</span>
+<span class="fc bfc" id="L443" title="All 2 branches covered.">        if (isExpense) {</span>
+<span class="fc" id="L444">            myPayeeBucket.addExpense(myAmount);</span>
+        } else {
+<span class="fc" id="L446">            myPayeeBucket.subtractIncome(myAmount);</span>
+        }
+<span class="fc" id="L448">        theState.registerBucketInterest(myPayeeBucket);</span>
+
+        /* Record payee bucket */
+<span class="fc" id="L451">        theTax.recordPayeeBucket(myPayeeBucket);</span>
+<span class="fc" id="L452">    }</span>
+
+    /**
+     * Adjust category buckets.
+     */
+    void adjustCategoryBucket() {
+        /* Access the credit amount and category */
+<span class="fc bfc" id="L459" title="All 2 branches covered.">        final OceanusMoney myAmount = theTransaction.isTo()</span>
+<span class="fc" id="L460">                ? theTransaction.getCreditAmount()</span>
+<span class="fc" id="L461">                : theTransaction.getDebitAmount();</span>
+<span class="fc" id="L462">        final MoneyWiseTransCategory myCategory = theTransaction.getCategory();</span>
+
+        /* Ignore transfers */
+<span class="fc bfc" id="L465" title="All 2 branches covered.">        if (myCategory.isTransfer()) {</span>
+<span class="fc" id="L466">            return;</span>
+        }
+
+        /* Adjust income/expense for Category bucket */
+<span class="fc" id="L470">        final MoneyWiseXAnalysisTransCategoryBucket myCatBucket = theAnalysis.getTransCategories().getBucket(myCategory);</span>
+<span class="fc bfc" id="L471" title="All 2 branches covered.">        if (theTransaction.isExpenseCategory()) {</span>
+<span class="fc" id="L472">            myCatBucket.addExpense(myAmount);</span>
+<span class="pc bpc" id="L473" title="1 of 2 branches missed.">        } else if (theTransaction.isIncomeCategory()) {</span>
+<span class="fc" id="L474">            myCatBucket.subtractIncome(myAmount);</span>
+        }
+<span class="fc" id="L476">        theState.registerBucketInterest(myCatBucket);</span>
+<span class="fc" id="L477">    }</span>
+
+    /**
+     * adjustForeignDebit.
+     * @param pExchangeRate the exchangeRate
+     * @return the adjusted debitAmount
+     */
+    OceanusMoney adjustForeignAssetDebit(final OceanusRatio pExchangeRate) {
+        /* Calculate the value in the local currency */
+<span class="fc" id="L486">        OceanusMoney myAmount = theTransaction.getDebitAmount();</span>
+<span class="fc" id="L487">        myAmount = myAmount.convertCurrency(theCurrency.getCurrency(), pExchangeRate);</span>
+<span class="fc" id="L488">        theTransaction.setDebitAmount(myAmount);</span>
+
+        /* Adjust for currencyFluctuation */
+<span class="fc" id="L491">        final OceanusMoney myCreditAmount = theTransaction.getCreditAmount();</span>
+<span class="fc" id="L492">        final OceanusMoney myFluctuation = new OceanusMoney(myCreditAmount);</span>
+<span class="fc" id="L493">        myFluctuation.addAmount(myAmount);</span>
+<span class="pc bpc" id="L494" title="1 of 2 branches missed.">        if (myFluctuation.isNonZero()) {</span>
+<span class="fc" id="L495">            theMarket.adjustTotalsForCurrencyFluctuation(theTransaction.getEvent(), myFluctuation);</span>
+        }
+
+        /* return the new debit amount */
+<span class="fc" id="L499">        return myAmount;</span>
+    }
+
+    /**
+     * adjustForeignCredit.
+     * @param pExchangeRate the exchangeRate
+     * @return the adjusted creditAmount
+     */
+    OceanusMoney adjustForeignAssetCredit(final OceanusRatio pExchangeRate) {
+        /* Calculate the value in the local currency */
+<span class="fc" id="L509">        OceanusMoney myAmount = theTransaction.getCreditAmount();</span>
+<span class="fc" id="L510">        myAmount = myAmount.convertCurrency(theCurrency.getCurrency(), pExchangeRate);</span>
+<span class="fc" id="L511">        theTransaction.setCreditAmount(myAmount);</span>
+
+        /* Adjust for currencyFluctuation */
+<span class="fc" id="L514">        final OceanusMoney myDebitAmount = theTransaction.getDebitAmount();</span>
+<span class="fc" id="L515">        final OceanusMoney myFluctuation = new OceanusMoney(myDebitAmount);</span>
+<span class="fc" id="L516">        myFluctuation.addAmount(myAmount);</span>
+<span class="pc bpc" id="L517" title="1 of 2 branches missed.">        if (myFluctuation.isNonZero()) {</span>
+<span class="nc" id="L518">            theMarket.adjustTotalsForCurrencyFluctuation(theTransaction.getEvent(), myFluctuation);</span>
+        }
+
+        /* return the new credit amount */
+<span class="fc" id="L522">        return myAmount;</span>
+    }
+
+    /**
+     * Obtain Account bucket for asset.
+     * @param pAsset the asset
+     * @return the bucket
+     */
+    MoneyWiseXAnalysisAccountBucket&lt;?&gt; getAccountBucket(final MoneyWiseAssetBase pAsset) {
+<span class="pc bpc" id="L531" title="2 of 5 branches missed.">        switch (pAsset.getAssetType()) {</span>
+            case DEPOSIT:
+<span class="fc" id="L533">                return theAnalysis.getDeposits().getBucket((MoneyWiseDeposit) pAsset);</span>
+            case CASH:
+<span class="fc" id="L535">                return theAnalysis.getCash().getBucket((MoneyWiseCash) pAsset);</span>
+            case LOAN:
+<span class="fc" id="L537">                return theAnalysis.getLoans().getBucket((MoneyWiseLoan) pAsset);</span>
+            case PORTFOLIO:
+<span class="nc" id="L539">                return theAnalysis.getPortfolios().getCashBucket((MoneyWisePortfolio) pAsset);</span>
+            default:
+<span class="nc" id="L541">                throw new IllegalArgumentException();</span>
+        }
+    }
+
+    /**
+     * is the account an asset?
+     * @param pAccount the account
+     * @return true/false
+     */
+    boolean isAsset(final MoneyWiseAssetBase pAccount) {
+<span class="fc bfc" id="L551" title="All 2 branches covered.">        switch (pAccount.getAssetType()) {</span>
+            case DEPOSIT:
+            case LOAN:
+            case CASH:
+            case PORTFOLIO:
+<span class="fc" id="L556">                return true;</span>
+            case SECURITY:
+            case PAYEE:
+            case SECURITYHOLDING:
+            case AUTOEXPENSE:
+            default:
+<span class="fc" id="L562">                return false;</span>
+        }
+    }
+
+    /**
+     * is the account a payee?
+     * @param pAccount the account
+     * @return true/false
+     */
+    boolean isPayee(final MoneyWiseAssetBase pAccount) {
+<span class="fc bfc" id="L572" title="All 2 branches covered.">        return pAccount.getAssetType() == MoneyWiseAssetType.PAYEE;</span>
+    }
+
+    /**
+     * is the account an autoExpense?
+     * @param pAccount the account
+     * @return true/false
+     */
+    private boolean isAutoExpense(final MoneyWiseAssetBase pAccount) {
+<span class="fc bfc" id="L581" title="All 2 branches covered.">        return pAccount.getAssetType() == MoneyWiseAssetType.AUTOEXPENSE;</span>
+    }
+
+    /**
+     * is the account a securityHolding?
+     * @param pAccount the account
+     * @return true/false
+     */
+    static boolean isSecurityHolding(final MoneyWiseTransAsset pAccount) {
+<span class="fc" id="L590">        return pAccount instanceof MoneyWiseSecurityHolding;</span>
+    }
+
+    /**
+     * is the account a securityHolding?
+     * @param pAccount the account
+     * @return true/false
+     */
+    static boolean isPortfolio(final MoneyWiseTransAsset pAccount) {
+<span class="nc" id="L599">        return pAccount instanceof MoneyWisePortfolio;</span>
+    }
+
+    /**
+     * is the category PortfolioXfer?
+     * @param pCategoryClass the categoryClass
+     * @return true/false
+     */
+    private static boolean isPortfolioXfer(final MoneyWiseTransCategoryClass pCategoryClass) {
+<span class="pc bpc" id="L608" title="1 of 2 branches missed.">        return pCategoryClass == MoneyWiseTransCategoryClass.PORTFOLIOXFER;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

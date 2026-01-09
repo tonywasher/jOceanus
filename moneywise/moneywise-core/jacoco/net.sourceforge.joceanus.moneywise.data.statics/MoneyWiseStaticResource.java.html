@@ -1,0 +1,1541 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseStaticResource.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.data.statics</a> &gt; <span class="el_source">MoneyWiseStaticResource.java</span></div><h1>MoneyWiseStaticResource.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.data.statics;
+
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
+
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.ResourceBundle;
+
+/**
+ * Resource IDs for MoneyWise DataType Fields.
+ */
+<span class="fc" id="L30">public enum MoneyWiseStaticResource</span>
+        implements OceanusBundleId, MetisDataFieldId {
+    /**
+     * DepositType Name.
+     */
+<span class="fc" id="L35">    DEPOSITTYPE_NAME(&quot;DepositType.Name&quot;),</span>
+
+    /**
+     * DepositType List.
+     */
+<span class="fc" id="L40">    DEPOSITTYPE_LIST(&quot;DepositType.List&quot;),</span>
+
+    /**
+     * CashType Name.
+     */
+<span class="fc" id="L45">    CASHTYPE_NAME(&quot;CashType.Name&quot;),</span>
+
+    /**
+     * CashType List.
+     */
+<span class="fc" id="L50">    CASHTYPE_LIST(&quot;CashType.List&quot;),</span>
+
+    /**
+     * LoanType Name.
+     */
+<span class="fc" id="L55">    LOANTYPE_NAME(&quot;LoanType.Name&quot;),</span>
+
+    /**
+     * LoanType List.
+     */
+<span class="fc" id="L60">    LOANTYPE_LIST(&quot;LoanType.List&quot;),</span>
+
+    /**
+     * PortfolioType Name.
+     */
+<span class="fc" id="L65">    PORTFOLIOTYPE_NAME(&quot;PortfolioType.Name&quot;),</span>
+
+    /**
+     * PortfolioType List.
+     */
+<span class="fc" id="L70">    PORTFOLIOTYPE_LIST(&quot;PortfolioType.List&quot;),</span>
+
+    /**
+     * SecurityType Name.
+     */
+<span class="fc" id="L75">    SECURITYTYPE_NAME(&quot;SecurityType.Name&quot;),</span>
+
+    /**
+     * SecurityType List.
+     */
+<span class="fc" id="L80">    SECURITYTYPE_LIST(&quot;SecurityType.List&quot;),</span>
+
+    /**
+     * PayeeType Name.
+     */
+<span class="fc" id="L85">    PAYEETYPE_NAME(&quot;PayeeType.Name&quot;),</span>
+
+    /**
+     * PayeeType List.
+     */
+<span class="fc" id="L90">    PAYEETYPE_LIST(&quot;PayeeType.List&quot;),</span>
+
+    /**
+     * TransType Name.
+     */
+<span class="fc" id="L95">    TRANSTYPE_NAME(&quot;TransType.Name&quot;),</span>
+
+    /**
+     * TransType List.
+     */
+<span class="fc" id="L100">    TRANSTYPE_LIST(&quot;TransType.List&quot;),</span>
+
+    /**
+     * TaxBasis Name.
+     */
+<span class="fc" id="L105">    TAXBASIS_NAME(&quot;TaxBasis.Name&quot;),</span>
+
+    /**
+     * TaxBasis List.
+     */
+<span class="fc" id="L110">    TAXBASIS_LIST(&quot;TaxBasis.List&quot;),</span>
+
+    /**
+     * TaxType Name.
+     */
+<span class="fc" id="L115">    TAXTYPE_NAME(&quot;TaxType.Name&quot;),</span>
+
+    /**
+     * TaxType List.
+     */
+<span class="fc" id="L120">    TAXTYPE_LIST(&quot;TaxType.List&quot;),</span>
+
+    /**
+     * TaxRegime Name.
+     */
+<span class="fc" id="L125">    TAXREGIME_NAME(&quot;TaxRegime.Name&quot;),</span>
+
+    /**
+     * TaxRegime List.
+     */
+<span class="fc" id="L130">    TAXREGIME_LIST(&quot;TaxRegime.List&quot;),</span>
+
+    /**
+     * Frequency Name.
+     */
+<span class="fc" id="L135">    FREQUENCY_NAME(&quot;Frequency.Name&quot;),</span>
+
+    /**
+     * Frequency List.
+     */
+<span class="fc" id="L140">    FREQUENCY_LIST(&quot;Frequency.List&quot;),</span>
+
+    /**
+     * Currency Name.
+     */
+<span class="fc" id="L145">    CURRENCY_NAME(&quot;Currency.Name&quot;),</span>
+
+    /**
+     * Currency List.
+     */
+<span class="fc" id="L150">    CURRENCY_LIST(&quot;Currency.List&quot;),</span>
+
+    /**
+     * TaxInfoType Name.
+     */
+<span class="fc" id="L155">    TAXINFOTYPE_NAME(&quot;TaxInfoType.Name&quot;),</span>
+
+    /**
+     * TaxInfoType List.
+     */
+<span class="fc" id="L160">    TAXINFOTYPE_LIST(&quot;TaxInfoType.List&quot;),</span>
+
+    /**
+     * AccountInfoType Name.
+     */
+<span class="fc" id="L165">    ACCOUNTINFOTYPE_NAME(&quot;AccountInfoType.Name&quot;),</span>
+
+    /**
+     * AccountInfoType List.
+     */
+<span class="fc" id="L170">    ACCOUNTINFOTYPE_LIST(&quot;AccountInfoType.List&quot;),</span>
+
+    /**
+     * TransInfoType Name.
+     */
+<span class="fc" id="L175">    TRANSINFOTYPE_NAME(&quot;TransInfoType.Name&quot;),</span>
+
+    /**
+     * TransInfoType List.
+     */
+<span class="fc" id="L180">    TRANSINFOTYPE_LIST(&quot;TransInfoType.List&quot;),</span>
+
+    /**
+     * CategoryType Parent.
+     */
+<span class="fc" id="L185">    CATEGORYTYPE_PARENT(&quot;CategoryType.Parent&quot;),</span>
+
+    /**
+     * DepositType Checking.
+     */
+<span class="fc" id="L190">    DEPOSITTYPE_CHECKING(&quot;DepositType.Checking&quot;),</span>
+
+    /**
+     * DepositType Savings.
+     */
+<span class="fc" id="L195">    DEPOSITTYPE_SAVINGS(&quot;DepositType.Savings&quot;),</span>
+
+    /**
+     * DepositType TaxFreeSavings.
+     */
+<span class="fc" id="L200">    DEPOSITTYPE_TAXFREESAVINGS(&quot;DepositType.TaxFreeSavings&quot;),</span>
+
+    /**
+     * DepositType Peer2Peer.
+     */
+<span class="fc" id="L205">    DEPOSITTYPE_PEER2PEER(&quot;DepositType.Peer2Peer&quot;),</span>
+
+    /**
+     * DepositType Bond.
+     */
+<span class="fc" id="L210">    DEPOSITTYPE_BOND(&quot;DepositType.Bond&quot;),</span>
+
+    /**
+     * DepositType TaxFreeBond.
+     */
+<span class="fc" id="L215">    DEPOSITTYPE_TAXFREEBOND(&quot;DepositType.TaxFreeBond&quot;),</span>
+
+    /**
+     * CashType Cash.
+     */
+<span class="fc" id="L220">    CASHTYPE_CASH(&quot;CashType.Cash&quot;),</span>
+
+    /**
+     * CashType AutoExpense.
+     */
+<span class="fc" id="L225">    CASHTYPE_AUTO(&quot;CashType.AutoExpense&quot;),</span>
+
+    /**
+     * LoanType CreditCard.
+     */
+<span class="fc" id="L230">    LOANTYPE_CREDIT(&quot;LoanType.CreditCard&quot;),</span>
+
+    /**
+     * LoanType Private.
+     */
+<span class="fc" id="L235">    LOANTYPE_PRIVATE(&quot;LoanType.Private&quot;),</span>
+
+    /**
+     * LoanType Loan.
+     */
+<span class="fc" id="L240">    LOANTYPE_LOAN(&quot;LoanType.Loan&quot;),</span>
+
+    /**
+     * PortfolioType Standard.
+     */
+<span class="fc" id="L245">    PORTFOLIOTYPE_STANDARD(&quot;PortfolioType.Standard&quot;),</span>
+
+    /**
+     * PortfolioType TaxFree.
+     */
+<span class="fc" id="L250">    PORTFOLIOTYPE_TAXFREE(&quot;PortfolioType.TaxFree&quot;),</span>
+
+    /**
+     * /** PortfolioType Pension.
+     */
+<span class="fc" id="L255">    PORTFOLIOTYPE_PENSION(&quot;PortfolioType.Pension&quot;),</span>
+
+    /**
+     * PortfolioType SIPP.
+     */
+<span class="fc" id="L260">    PORTFOLIOTYPE_SIPP(&quot;PortfolioType.SIPP&quot;),</span>
+
+    /**
+     * SecurityType Shares.
+     */
+<span class="fc" id="L265">    SECURITYTYPE_SHARES(&quot;SecurityType.Shares&quot;),</span>
+
+    /**
+     * SecurityType Income UnitTrust.
+     */
+<span class="fc" id="L270">    SECURITYTYPE_INCOMEUNIT(&quot;SecurityType.UnitTrust.Income&quot;),</span>
+
+    /**
+     * SecurityType Growth UnitTrust.
+     */
+<span class="fc" id="L275">    SECURITYTYPE_GROWTHUNIT(&quot;SecurityType.UnitTrust.Growth&quot;),</span>
+
+    /**
+     * SecurityType LifeBond.
+     */
+<span class="fc" id="L280">    SECURITYTYPE_LIFEBOND(&quot;SecurityType.LifeBond&quot;),</span>
+
+    /**
+     * SecurityType Endowment.
+     */
+<span class="fc" id="L285">    SECURITYTYPE_ENDOWMENT(&quot;SecurityType.Endowment&quot;),</span>
+
+    /**
+     * SecurityType Property.
+     */
+<span class="fc" id="L290">    SECURITYTYPE_PROPERTY(&quot;SecurityType.Property&quot;),</span>
+
+    /**
+     * SecurityType Vehicle.
+     */
+<span class="fc" id="L295">    SECURITYTYPE_VEHICLE(&quot;SecurityType.Vehicle&quot;),</span>
+
+    /**
+     * SecurityType StatePension.
+     */
+<span class="fc" id="L300">    SECURITYTYPE_STATEPENSION(&quot;SecurityType.StatePension&quot;),</span>
+
+    /**
+     * SecurityType DefinedBenefit.
+     */
+<span class="fc" id="L305">    SECURITYTYPE_BENEFIT(&quot;SecurityType.DefinedBenefit&quot;),</span>
+
+    /**
+     * SecurityType DefinedContribution.
+     */
+<span class="fc" id="L310">    SECURITYTYPE_CONTRIBUTION(&quot;SecurityType.DefinedContribution&quot;),</span>
+
+    /**
+     * SecurityType StockOption.
+     */
+<span class="fc" id="L315">    SECURITYTYPE_STOCKOPTION(&quot;SecurityType.StockOption&quot;),</span>
+
+    /**
+     * SecurityType Asset.
+     */
+<span class="fc" id="L320">    SECURITYTYPE_ASSET(&quot;SecurityType.Asset&quot;),</span>
+
+    /**
+     * PayeeType TaxMan.
+     */
+<span class="fc" id="L325">    PAYEETYPE_TAXMAN(&quot;PayeeType.TaxMan&quot;),</span>
+
+    /**
+     * PayeeType Government.
+     */
+<span class="fc" id="L330">    PAYEETYPE_GOVERNMENT(&quot;PayeeType.Government&quot;),</span>
+
+    /**
+     * PayeeType Market.
+     */
+<span class="fc" id="L335">    PAYEETYPE_MARKET(&quot;PayeeType.Market&quot;),</span>
+
+    /**
+     * PayeeType Employer.
+     */
+<span class="fc" id="L340">    PAYEETYPE_EMPLOYER(&quot;PayeeType.Employer&quot;),</span>
+
+    /**
+     * PayeeType Institution.
+     */
+<span class="fc" id="L345">    PAYEETYPE_INSTITUTION(&quot;PayeeType.Institution&quot;),</span>
+
+    /**
+     * PayeeType Individual.
+     */
+<span class="fc" id="L350">    PAYEETYPE_INDIVIDUAL(&quot;PayeeType.Individual&quot;),</span>
+
+    /**
+     * PayeeType Annuity.
+     */
+<span class="fc" id="L355">    PAYEETYPE_ANNUITY(&quot;PayeeType.Annuity&quot;),</span>
+
+    /**
+     * PayeeType Payee.
+     */
+<span class="fc" id="L360">    PAYEETYPE_PAYEE(&quot;PayeeType.Payee&quot;),</span>
+
+    /**
+     * TransType TaxedIncome.
+     */
+<span class="fc" id="L365">    TRANSTYPE_TAXEDINCOME(&quot;TransType.TaxedIncome&quot;),</span>
+
+    /**
+     * TransType RentalIncome.
+     */
+<span class="fc" id="L370">    TRANSTYPE_RENTALINCOME(&quot;TransType.RentalIncome&quot;),</span>
+
+    /**
+     * TransType TaxedIncome.
+     */
+<span class="fc" id="L375">    TRANSTYPE_ROOMRENTINCOME(&quot;TransType.RoomRentalIncome&quot;),</span>
+
+    /**
+     * TransType Interest.
+     */
+<span class="fc" id="L380">    TRANSTYPE_INTEREST(&quot;TransType.Interest&quot;),</span>
+
+    /**
+     * TransType Dividend.
+     */
+<span class="fc" id="L385">    TRANSTYPE_DIVIDEND(&quot;TransType.Dividend&quot;),</span>
+
+    /**
+     * TransType BShare Dividend.
+     */
+<span class="fc" id="L390">    TRANSTYPE_BSHAREDIVIDEND(&quot;TransType.Dividend.B&quot;),</span>
+
+    /**
+     * TransType VirtualIncome.
+     */
+<span class="fc" id="L395">    TRANSTYPE_VIRTUALINCOME(&quot;TransType.VirtualIncome&quot;),</span>
+
+    /**
+     * TransType GrossIncome.
+     */
+<span class="fc" id="L400">    TRANSTYPE_GROSSINCOME(&quot;TransType.GrossIncome&quot;),</span>
+
+    /**
+     * TransType PensionContribution.
+     */
+<span class="fc" id="L405">    TRANSTYPE_PENSIONCONTRIB(&quot;TransType.PensionContribution&quot;),</span>
+
+    /**
+     * TransType GiftedIncome.
+     */
+<span class="fc" id="L410">    TRANSTYPE_GIFTEDINCOME(&quot;TransType.GiftedIncome&quot;),</span>
+
+    /**
+     * TransType Inherited.
+     */
+<span class="fc" id="L415">    TRANSTYPE_INHERITED(&quot;TransType.Inherited&quot;),</span>
+
+    /**
+     * TransType LoanInterestEarned.
+     */
+<span class="fc" id="L420">    TRANSTYPE_LOANINTEARNED(&quot;TransType.LoanInterestEarned&quot;),</span>
+
+    /**
+     * TransType CashBack.
+     */
+<span class="fc" id="L425">    TRANSTYPE_CASHBACK(&quot;TransType.CashBack&quot;),</span>
+
+    /**
+     * TransType LoyaltyBonus.
+     */
+<span class="fc" id="L430">    TRANSTYPE_LOYALTYBONUS(&quot;TransType.LoyaltyBonus&quot;),</span>
+
+    /**
+     * TransType RecoveredExpenses.
+     */
+<span class="fc" id="L435">    TRANSTYPE_RECOVEREDEXPENSES(&quot;TransType.RecoveredExpenses&quot;),</span>
+
+    /**
+     * TransType OtherIncome.
+     */
+<span class="fc" id="L440">    TRANSTYPE_OTHERINCOME(&quot;TransType.OtherIncome&quot;),</span>
+
+    /**
+     * TransType Transfer.
+     */
+<span class="fc" id="L445">    TRANSTYPE_TRANSFER(&quot;TransType.Transfer&quot;),</span>
+
+    /**
+     * TransType Security UnitsAdjust.
+     */
+<span class="fc" id="L450">    TRANSTYPE_UNITSADJUST(&quot;TransType.UnitsAdjust&quot;),</span>
+
+    /**
+     * TransType StockSplit.
+     */
+<span class="fc" id="L455">    TRANSTYPE_STOCKSPLIT(&quot;TransType.StockSplit&quot;),</span>
+
+    /**
+     * TransType StockDeMerger.
+     */
+<span class="fc" id="L460">    TRANSTYPE_STOCKDEMERGER(&quot;TransType.StockDeMerger&quot;),</span>
+
+    /**
+     * TransType Security Replace.
+     */
+<span class="fc" id="L465">    TRANSTYPE_SECURITYREPLACE(&quot;TransType.SecurityReplace&quot;),</span>
+
+    /**
+     * TransType Security Closure.
+     */
+<span class="fc" id="L470">    TRANSTYPE_SECURITYCLOSURE(&quot;TransType.SecurityClosure&quot;),</span>
+
+    /**
+     * TransType Stock TakeOver.
+     */
+<span class="fc" id="L475">    TRANSTYPE_STOCKTAKEOVER(&quot;TransType.StockTakeOver&quot;),</span>
+
+    /**
+     * TransType StockRightsIssue.
+     */
+<span class="fc" id="L480">    TRANSTYPE_STOCKRIGHTSISSUE(&quot;TransType.StockRightsIssue&quot;),</span>
+
+    /**
+     * TransType PortfolioXfer.
+     */
+<span class="fc" id="L485">    TRANSTYPE_PORTFOLIOXFER(&quot;TransType.PortfolioXfer&quot;),</span>
+
+    /**
+     * TransType OptionsGrant.
+     */
+<span class="fc" id="L490">    TRANSTYPE_OPTIONSGRANT(&quot;TransType.OptionsGrant&quot;),</span>
+
+    /**
+     * TransType OptionsVest.
+     */
+<span class="fc" id="L495">    TRANSTYPE_OPTIONSVEST(&quot;TransType.OptionsVest&quot;),</span>
+
+    /**
+     * TransType OptionsExpire.
+     */
+<span class="fc" id="L500">    TRANSTYPE_OPTIONSEXPIRE(&quot;TransType.OptionsExpire&quot;),</span>
+
+    /**
+     * TransType OptionsExercise.
+     */
+<span class="fc" id="L505">    TRANSTYPE_OPTIONSEXERCISE(&quot;TransType.OptionsExercise&quot;),</span>
+
+    /**
+     * TransType PensionDrawdown.
+     */
+<span class="fc" id="L510">    TRANSTYPE_PENSIONDRAWDOWN(&quot;TransType.PensionDrawdown&quot;),</span>
+
+    /**
+     * TransType Pension TaxFree.
+     */
+<span class="fc" id="L515">    TRANSTYPE_PENSIONTAXFREE(&quot;TransType.PensionTaxFree&quot;),</span>
+
+    /**
+     * TransType Expense.
+     */
+<span class="fc" id="L520">    TRANSTYPE_EXPENSE(&quot;TransType.Expense&quot;),</span>
+
+    /**
+     * TransType BadDebtCapital.
+     */
+<span class="fc" id="L525">    TRANSTYPE_BADDEBTCAPITAL(&quot;TransType.BadDebt.Capital&quot;),</span>
+
+    /**
+     * TransType BadDebtInterest.
+     */
+<span class="fc" id="L530">    TRANSTYPE_BADDEBTINTEREST(&quot;TransType.BadDebt.Interest&quot;),</span>
+
+    /**
+     * TransType LocalTaxes.
+     */
+<span class="fc" id="L535">    TRANSTYPE_LOCALTAXES(&quot;TransType.LocalTaxes&quot;),</span>
+
+    /**
+     * TransType WriteOff.
+     */
+<span class="fc" id="L540">    TRANSTYPE_WRITEOFF(&quot;TransType.WriteOff&quot;),</span>
+
+    /**
+     * TransType RentalExpense.
+     */
+<span class="fc" id="L545">    TRANSTYPE_RENTALEXPENSE(&quot;TransType.RentalExpense&quot;),</span>
+
+    /**
+     * TransType AnnuityPurchase.
+     */
+<span class="fc" id="L550">    TRANSTYPE_ANNUITYPURCHASE(&quot;TransType.AnnuityPurchase&quot;),</span>
+
+    /**
+     * TransType LoanInterestCharged.
+     */
+<span class="fc" id="L555">    TRANSTYPE_LOANINTCHARGE(&quot;TransType.LoanInterestCharged&quot;),</span>
+
+    /**
+     * TransType TaxRelief.
+     */
+<span class="fc" id="L560">    TRANSTYPE_TAXRELIEF(&quot;TransType.TaxRelief&quot;),</span>
+
+    /**
+     * TransType IncomeTax.
+     */
+<span class="fc" id="L565">    TRANSTYPE_INCOMETAX(&quot;TransType.IncomeTax&quot;),</span>
+
+    /**
+     * TransType TaxedInterest.
+     */
+<span class="fc" id="L570">    TRANSTYPE_TAXEDINTEREST(&quot;TransType.TaxedInterest&quot;),</span>
+
+    /**
+     * TransType TaxFreeInterest.
+     */
+<span class="fc" id="L575">    TRANSTYPE_TAXFREEINTEREST(&quot;TransType.TaxFreeInterest&quot;),</span>
+
+    /**
+     * TransType Peer2PeerInterest.
+     */
+<span class="fc" id="L580">    TRANSTYPE_PEER2PEERINTEREST(&quot;TransType.Peer2PeerInterest&quot;),</span>
+
+    /**
+     * TransType GrossInterest.
+     */
+<span class="fc" id="L585">    TRANSTYPE_GROSSINTEREST(&quot;TransType.GrossInterest&quot;),</span>
+
+    /**
+     * TransType ShareDividend.
+     */
+<span class="fc" id="L590">    TRANSTYPE_SHAREDIVIDEND(&quot;TransType.ShareDividend&quot;),</span>
+
+    /**
+     * TransType UnitTrustDividend.
+     */
+<span class="fc" id="L595">    TRANSTYPE_UTDIVIDEND(&quot;TransType.UnitTrustDividend&quot;),</span>
+
+    /**
+     * TransType ForeignDividend.
+     */
+<span class="fc" id="L600">    TRANSTYPE_FOREIGNDIVIDEND(&quot;TransType.ForeignDividend&quot;),</span>
+
+    /**
+     * TransType TaxFreeDividend.
+     */
+<span class="fc" id="L605">    TRANSTYPE_TAXFREEDIVIDEND(&quot;TransType.TaxFreeDividend&quot;),</span>
+
+    /**
+     * TransType TaxedLoyaltyBonus.
+     */
+<span class="fc" id="L610">    TRANSTYPE_TAXEDLOYALTYBONUS(&quot;TransType.TaxedLoyaltyBonus&quot;),</span>
+
+    /**
+     * TransType TaxFreeLoyaltyBonus.
+     */
+<span class="fc" id="L615">    TRANSTYPE_TAXFREELOYALTYBONUS(&quot;TransType.TaxFreeLoyaltyBonus&quot;),</span>
+
+    /**
+     * TransType GrossLoyaltyBonus.
+     */
+<span class="fc" id="L620">    TRANSTYPE_GROSSLOYALTYBONUS(&quot;TransType.GrossLoyaltyBonus&quot;),</span>
+
+    /**
+     * TransType ChargeableGain.
+     */
+<span class="fc" id="L625">    TRANSTYPE_CHARGEABLEGAIN(&quot;TransType.ChargeableGain&quot;),</span>
+
+    /**
+     * TransType TaxFreeGain.
+     */
+<span class="fc" id="L630">    TRANSTYPE_TAXFREEGAIN(&quot;TransType.TaxFreeGain&quot;),</span>
+
+    /**
+     * TransType ResidentialGain.
+     */
+<span class="fc" id="L635">    TRANSTYPE_RESIDENTIALGAIN(&quot;TransType.ResidentialGain&quot;),</span>
+
+    /**
+     * TransType CapitalGain.
+     */
+<span class="fc" id="L640">    TRANSTYPE_CAPITALGAIN(&quot;TransType.CapitalGain&quot;),</span>
+
+    /**
+     * TransType MarketGrowth.
+     */
+<span class="fc" id="L645">    TRANSTYPE_MARKETGROWTH(&quot;TransType.MarketGrowth&quot;),</span>
+
+    /**
+     * TransType CurrencyFluctuation.
+     */
+<span class="fc" id="L650">    TRANSTYPE_CURRFLUCT(&quot;TransType.CurrencyFluctuation&quot;),</span>
+
+    /**
+     * TransType Withheld.
+     */
+<span class="fc" id="L655">    TRANSTYPE_WITHHELD(&quot;TransType.Withheld&quot;),</span>
+
+    /**
+     * TransType OpeningBalance.
+     */
+<span class="fc" id="L660">    TRANSTYPE_OPENINGBALANCE(&quot;TransType.OpeningBalance&quot;),</span>
+
+    /**
+     * TransInfo EmployerNatIns.
+     */
+<span class="fc" id="L665">    TRANSTYPE_EMPLOYERNATINS(&quot;TransType.EmployerNatIns&quot;),</span>
+
+    /**
+     * TransInfo EmployeeNatIns.
+     */
+<span class="fc" id="L670">    TRANSTYPE_EMPLOYEENATINS(&quot;TransType.EmployeeNatIns&quot;),</span>
+
+    /**
+     * TransType IncomeTotals.
+     */
+<span class="fc" id="L675">    TRANSTYPE_INCOMETOTALS(&quot;TransType.IncomeTotals&quot;),</span>
+
+    /**
+     * TransType ExpenseTotals.
+     */
+<span class="fc" id="L680">    TRANSTYPE_EXPENSETOTALS(&quot;TransType.ExpenseTotals&quot;),</span>
+
+    /**
+     * TransType SecurityParent.
+     */
+<span class="fc" id="L685">    TRANSTYPE_SECURITYPARENT(&quot;TransType.SecurityParent&quot;),</span>
+
+    /**
+     * TransType Totals.
+     */
+<span class="fc" id="L690">    TRANSTYPE_TOTALS(&quot;TransType.Totals&quot;),</span>
+
+    /**
+     * TaxBasis Salary.
+     */
+<span class="fc" id="L695">    TAXBASIS_SALARY(&quot;TaxBasis.Salary&quot;),</span>
+
+    /**
+     * TaxBasis RoomRental.
+     */
+<span class="fc" id="L700">    TAXBASIS_ROOMRENTAL(&quot;TaxBasis.RoomRental&quot;),</span>
+
+    /**
+     * TaxBasis RentalIncome.
+     */
+<span class="fc" id="L705">    TAXBASIS_RENTALINCOME(&quot;TaxBasis.RentalIncome&quot;),</span>
+
+    /**
+     * TaxBasis OtherIncome.
+     */
+<span class="fc" id="L710">    TAXBASIS_OTHERINCOME(&quot;TaxBasis.OtherIncome&quot;),</span>
+
+    /**
+     * TaxBasis Interest.
+     */
+<span class="fc" id="L715">    TAXBASIS_TAXEDINTEREST(&quot;TaxBasis.TaxedInterest&quot;),</span>
+
+    /**
+     * TaxBasis UnTaxedInterest.
+     */
+<span class="fc" id="L720">    TAXBASIS_UNTAXEDINTEREST(&quot;TaxBasis.UnTaxedInterest&quot;),</span>
+
+    /**
+     * TaxBasis Dividend.
+     */
+<span class="fc" id="L725">    TAXBASIS_DIVIDEND(&quot;TaxBasis.Dividend&quot;),</span>
+
+    /**
+     * TaxBasis UnitTrustDividend.
+     */
+<span class="fc" id="L730">    TAXBASIS_UTDIVIDEND(&quot;TaxBasis.UnitTrustDividend&quot;),</span>
+
+    /**
+     * TaxBasis ForeignDividend.
+     */
+<span class="fc" id="L735">    TAXBASIS_FOREIGNDIVIDEND(&quot;TaxBasis.ForeignDividend&quot;),</span>
+
+    /**
+     * TaxBasis ChargeableGains.
+     */
+<span class="fc" id="L740">    TAXBASIS_CHARGEABLEGAINS(&quot;TaxBasis.ChargeableGains&quot;),</span>
+
+    /**
+     * TaxBasis ResidentialGains.
+     */
+<span class="fc" id="L745">    TAXBASIS_RESIDENTIALGAINS(&quot;TaxBasis.ResidentialGains&quot;),</span>
+
+    /**
+     * TaxBasis CapitalGains.
+     */
+<span class="fc" id="L750">    TAXBASIS_CAPITALGAINS(&quot;TaxBasis.CapitalGains&quot;),</span>
+
+    /**
+     * TaxBasis TaxPaid.
+     */
+<span class="fc" id="L755">    TAXBASIS_TAXPAID(&quot;TaxBasis.TaxPaid&quot;),</span>
+
+    /**
+     * TaxBasis Market.
+     */
+<span class="fc" id="L760">    TAXBASIS_MARKET(&quot;TaxBasis.Market&quot;),</span>
+
+    /**
+     * TaxBasis TaxFree.
+     */
+<span class="fc" id="L765">    TAXBASIS_TAXFREE(&quot;TaxBasis.TaxFree&quot;),</span>
+
+    /**
+     * TaxBasis Expenses.
+     */
+<span class="fc" id="L770">    TAXBASIS_EXPENSE(&quot;TaxBasis.Expense&quot;),</span>
+
+    /**
+     * TaxBasis Virtual.
+     */
+<span class="fc" id="L775">    TAXBASIS_VIRTUAL(&quot;TaxBasis.Virtual&quot;),</span>
+
+    /**
+     * Frequency Once.
+     */
+<span class="fc" id="L780">    FREQUENCY_ONCE(&quot;Frequency.Once&quot;),</span>
+
+    /**
+     * Frequency Daily.
+     */
+<span class="fc" id="L785">    FREQUENCY_DAILY(&quot;Frequency.Daily&quot;),</span>
+
+    /**
+     * Frequency Weekly.
+     */
+<span class="fc" id="L790">    FREQUENCY_WEEKLY(&quot;Frequency.Weekly&quot;),</span>
+
+    /**
+     * Frequency Monthly.
+     */
+<span class="fc" id="L795">    FREQUENCY_MONTHLY(&quot;Frequency.Monthly&quot;),</span>
+
+    /**
+     * Frequency Annually.
+     */
+<span class="fc" id="L800">    FREQUENCY_ANNUALLY(&quot;Frequency.Annually&quot;),</span>
+
+    /**
+     * Repeat Frequency Every.
+     */
+<span class="fc" id="L805">    FREQUENCY_EVERY(&quot;Frequency.Repeat.Every&quot;),</span>
+
+    /**
+     * Repeat Frequency Alternate.
+     */
+<span class="fc" id="L810">    FREQUENCY_ALTERNATE(&quot;Frequency.Repeat.Alternate&quot;),</span>
+
+    /**
+     * Repeat Frequency Every Third.
+     */
+<span class="fc" id="L815">    FREQUENCY_EVERYTHIRD(&quot;Frequency.Repeat.EveryThird&quot;),</span>
+
+    /**
+     * Repeat Frequency Every Fourth.
+     */
+<span class="fc" id="L820">    FREQUENCY_EVERYFOURTH(&quot;Frequency.Repeat.EveryFourth&quot;),</span>
+
+    /**
+     * Repeat Frequency Every Sixth.
+     */
+<span class="fc" id="L825">    FREQUENCY_EVERYSIXTH(&quot;Frequency.Repeat.EverySixth&quot;),</span>
+
+    /**
+     * Repeat Frequency FirstWeek.
+     */
+<span class="fc" id="L830">    FREQUENCY_FIRSTWEEK(&quot;Frequency.Week.First&quot;),</span>
+
+    /**
+     * Repeat Frequency SecondWeek.
+     */
+<span class="fc" id="L835">    FREQUENCY_SECONDWEEK(&quot;Frequency.Week.Second&quot;),</span>
+
+    /**
+     * Repeat Frequency ThirdWeek.
+     */
+<span class="fc" id="L840">    FREQUENCY_THIRDWEEK(&quot;Frequency.Week.Third&quot;),</span>
+
+    /**
+     * Repeat Frequency FourthWeek.
+     */
+<span class="fc" id="L845">    FREQUENCY_FOURTHWEEK(&quot;Frequency.Week.Fourth&quot;),</span>
+
+    /**
+     * Repeat Frequency LastWeek.
+     */
+<span class="fc" id="L850">    FREQUENCY_LASTWEEK(&quot;Frequency.Week.Last&quot;),</span>
+
+    /**
+     * Currency Reporting.
+     */
+<span class="fc" id="L855">    CURRENCY_REPORTING(&quot;Currency.Reporting&quot;),</span>
+
+    /**
+     * AccountInfo Maturity.
+     */
+<span class="fc" id="L860">    ACCOUNTINFO_MATURITY(&quot;AccountInfoType.Maturity&quot;),</span>
+
+    /**
+     * AccountInfo OpeningBalance.
+     */
+<span class="fc" id="L865">    ACCOUNTINFO_OPENING(&quot;AccountInfoType.OpeningBalance&quot;),</span>
+
+    /**
+     * AccountInfo AutoExpense.
+     */
+<span class="fc" id="L870">    ACCOUNTINFO_AUTOEXPENSE(&quot;AccountInfoType.AutoExpense&quot;),</span>
+
+    /**
+     * AccountInfo AutoPayee.
+     */
+<span class="fc" id="L875">    ACCOUNTINFO_AUTOPAYEE(&quot;AccountInfoType.AutoPayee&quot;),</span>
+
+    /**
+     * AccountInfo WebSite.
+     */
+<span class="fc" id="L880">    ACCOUNTINFO_WEBSITE(&quot;AccountInfoType.WebSite&quot;),</span>
+
+    /**
+     * AccountInfo CustomerNo.
+     */
+<span class="fc" id="L885">    ACCOUNTINFO_CUSTNO(&quot;AccountInfoType.CustomerNo&quot;),</span>
+
+    /**
+     * AccountInfo UserId.
+     */
+<span class="fc" id="L890">    ACCOUNTINFO_USERID(&quot;AccountInfoType.UserId&quot;),</span>
+
+    /**
+     * AccountInfo Password.
+     */
+<span class="fc" id="L895">    ACCOUNTINFO_PASSWORD(&quot;AccountInfoType.Password&quot;),</span>
+
+    /**
+     * AccountInfo SortCode.
+     */
+<span class="fc" id="L900">    ACCOUNTINFO_SORTCODE(&quot;AccountInfoType.SortCode&quot;),</span>
+
+    /**
+     * AccountInfo Account.
+     */
+<span class="fc" id="L905">    ACCOUNTINFO_ACCOUNT(&quot;AccountInfoType.Account&quot;),</span>
+
+    /**
+     * AccountInfo Reference.
+     */
+<span class="fc" id="L910">    ACCOUNTINFO_REFERENCE(&quot;AccountInfoType.Reference&quot;),</span>
+
+    /**
+     * AccountInfo Notes.
+     */
+<span class="fc" id="L915">    ACCOUNTINFO_NOTES(&quot;AccountInfoType.Notes&quot;),</span>
+
+    /**
+     * AccountInfo Region.
+     */
+<span class="fc" id="L920">    ACCOUNTINFO_REGION(&quot;AccountInfoType.Region&quot;),</span>
+
+    /**
+     * AccountInfo Symbol.
+     */
+<span class="fc" id="L925">    ACCOUNTINFO_SYMBOL(&quot;AccountInfoType.Symbol&quot;),</span>
+
+    /**
+     * AccountInfo UnderlyingStock.
+     */
+<span class="fc" id="L930">    ACCOUNTINFO_UNDERLYINGSTOCK(&quot;AccountInfoType.UnderlyingStock&quot;),</span>
+
+    /**
+     * AccountInfo OptionPrice.
+     */
+<span class="fc" id="L935">    ACCOUNTINFO_OPTIONPRICE(&quot;AccountInfoType.OptionPrice&quot;),</span>
+
+    /**
+     * TransInfo AccountDeltaUnits.
+     */
+<span class="fc" id="L940">    TRANSINFO_ACCOUNTDELTAUNITS(&quot;TransInfoType.AccountDeltaUnits&quot;),</span>
+
+    /**
+     * TransInfo PartnerDeltaUnits.
+     */
+<span class="fc" id="L945">    TRANSINFO_PARTNERDELTAUNITS(&quot;TransInfoType.PartnerDeltaUnits&quot;),</span>
+
+    /**
+     * TransInfo PartnerAmount.
+     */
+<span class="fc" id="L950">    TRANSINFO_PARTNERAMOUNT(&quot;TransInfoType.PartnerAmount&quot;),</span>
+
+    /**
+     * TransInfo ReturnedCash.
+     */
+<span class="fc" id="L955">    TRANSINFO_RETURNEDCASH(&quot;TransInfoType.ReturnedCash&quot;),</span>
+
+    /**
+     * TransInfo Dilution.
+     */
+<span class="fc" id="L960">    TRANSINFO_DILUTION(&quot;TransInfoType.Dilution&quot;),</span>
+
+    /**
+     * TransInfo QualifyYears.
+     */
+<span class="fc" id="L965">    TRANSINFO_QUALYEARS(&quot;TransInfoType.QualifyYears&quot;),</span>
+
+    /**
+     * TransInfo Reference.
+     */
+<span class="fc" id="L970">    TRANSINFO_REFERENCE(&quot;TransInfoType.Reference&quot;),</span>
+
+    /**
+     * TransInfo Comments.
+     */
+<span class="fc" id="L975">    TRANSINFO_COMMENTS(&quot;TransInfoType.Comments&quot;),</span>
+
+    /**
+     * TransInfo TaxCredit.
+     */
+<span class="fc" id="L980">    TRANSINFO_TAXCREDIT(&quot;TransInfoType.TaxCredit&quot;),</span>
+
+    /**
+     * TransInfo Benefit.
+     */
+<span class="fc" id="L985">    TRANSINFO_BENEFIT(&quot;TransInfoType.Benefit&quot;),</span>
+
+    /**
+     * TransInfo ReturnedCashAccount.
+     */
+<span class="fc" id="L990">    TRANSINFO_RETURNEDCASHACCOUNT(&quot;TransInfoType.ReturnedCashAccount&quot;),</span>
+
+    /**
+     * TransInfo Price.
+     */
+<span class="fc" id="L995">    TRANSINFO_PRICE(&quot;TransInfoType.Price&quot;),</span>
+
+    /**
+     * TransInfo XchangeRate.
+     */
+<span class="fc" id="L1000">    TRANSINFO_XCHANGERATE(&quot;TransInfoType.XchangeRate&quot;),</span>
+
+    /**
+     * TransInfo Commission.
+     */
+<span class="fc" id="L1005">    TRANSINFO_COMMISSION(&quot;TransInfoType.Commission&quot;),</span>
+
+    /**
+     * TransInfo TransactionTag.
+     */
+<span class="fc" id="L1010">    TRANSINFO_TRANSTAG(&quot;TransInfoType.TransTag&quot;);</span>
+
+    /**
+     * The Name Map.
+     */
+<span class="fc" id="L1015">    private static final Map&lt;MoneyWiseStaticDataType, OceanusBundleId&gt; NAME_MAP = buildNameMap();</span>
+
+    /**
+     * The List Map.
+     */
+<span class="fc" id="L1020">    private static final Map&lt;MoneyWiseStaticDataType, OceanusBundleId&gt; LIST_MAP = buildListMap();</span>
+
+    /**
+     * The DepositType Map.
+     */
+<span class="fc" id="L1025">    private static final Map&lt;MoneyWiseDepositCategoryClass, OceanusBundleId&gt; DEPOSIT_MAP = buildDepositMap();</span>
+
+    /**
+     * The CashType Map.
+     */
+<span class="fc" id="L1030">    private static final Map&lt;MoneyWiseCashCategoryClass, OceanusBundleId&gt; CASH_MAP = buildCashMap();</span>
+
+    /**
+     * The LoanType Map.
+     */
+<span class="fc" id="L1035">    private static final Map&lt;MoneyWiseLoanCategoryClass, OceanusBundleId&gt; LOAN_MAP = buildLoanMap();</span>
+
+    /**
+     * The PortfolioType Map.
+     */
+<span class="fc" id="L1040">    private static final Map&lt;MoneyWisePortfolioClass, OceanusBundleId&gt; PORTFOLIO_MAP = buildPortfolioMap();</span>
+
+    /**
+     * The SecurityType Map.
+     */
+<span class="fc" id="L1045">    private static final Map&lt;MoneyWiseSecurityClass, OceanusBundleId&gt; SECURITY_MAP = buildSecurityMap();</span>
+
+    /**
+     * The PayeeType Map.
+     */
+<span class="fc" id="L1050">    private static final Map&lt;MoneyWisePayeeClass, OceanusBundleId&gt; PAYEE_MAP = buildPayeeMap();</span>
+
+    /**
+     * The TransactionType Map.
+     */
+<span class="fc" id="L1055">    private static final Map&lt;MoneyWiseTransCategoryClass, OceanusBundleId&gt; TRANSACTION_MAP = buildTransactionMap();</span>
+
+    /**
+     * The TaxBasis Map.
+     */
+<span class="fc" id="L1060">    private static final Map&lt;MoneyWiseTaxClass, OceanusBundleId&gt; TAXBASIS_MAP = buildTaxBasisMap();</span>
+
+    /**
+     * The AccountInfo Map.
+     */
+<span class="fc" id="L1065">    private static final Map&lt;MoneyWiseAccountInfoClass, OceanusBundleId&gt; ACCOUNTINFO_MAP = buildAccountInfoMap();</span>
+
+    /**
+     * The TransInfo Map.
+     */
+<span class="fc" id="L1070">    private static final Map&lt;MoneyWiseTransInfoClass, OceanusBundleId&gt; TRANSINFO_MAP = buildTransInfoMap();</span>
+
+    /**
+     * The Resource Loader.
+     */
+<span class="fc" id="L1075">    private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getLoader(MoneyWiseStaticResource.class.getCanonicalName(),</span>
+            ResourceBundle::getBundle);
+
+    /**
+     * The Id.
+     */
+    private final String theKeyName;
+
+    /**
+     * The Value.
+     */
+    private String theValue;
+
+    /**
+     * Constructor.
+     * @param pKeyName the key name
+     */
+<span class="fc" id="L1092">    MoneyWiseStaticResource(final String pKeyName) {</span>
+<span class="fc" id="L1093">        theKeyName = pKeyName;</span>
+<span class="fc" id="L1094">    }</span>
+
+    /**
+     * Constructor.
+     * @param pResource the underlying resource
+     */
+<span class="nc" id="L1100">    MoneyWiseStaticResource(final OceanusBundleId pResource) {</span>
+<span class="nc" id="L1101">        theKeyName = null;</span>
+<span class="nc" id="L1102">        theValue = pResource.getValue();</span>
+<span class="nc" id="L1103">    }</span>
+
+    @Override
+    public String getKeyName() {
+<span class="fc" id="L1107">        return theKeyName;</span>
+    }
+
+    @Override
+    public String getNameSpace() {
+<span class="fc" id="L1112">        return &quot;MoneyWise.static&quot;;</span>
+    }
+
+    @Override
+    public String getValue() {
+        /* If we have not initialised the value */
+<span class="fc bfc" id="L1118" title="All 2 branches covered.">        if (theValue == null) {</span>
+            /* Derive the value */
+<span class="fc" id="L1120">            theValue = LOADER.getValue(this);</span>
+        }
+
+        /* return the value */
+<span class="fc" id="L1124">        return theValue;</span>
+    }
+
+    @Override
+    public String getId() {
+<span class="fc" id="L1129">        return getValue();</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L1134">        return getValue();</span>
+    }
+
+    /**
+     * Build deposit type map.
+     * @return the map
+     */
+    private static Map&lt;MoneyWiseDepositCategoryClass, OceanusBundleId&gt; buildDepositMap() {
+        /* Create the map and return it */
+<span class="fc" id="L1143">        final Map&lt;MoneyWiseDepositCategoryClass, OceanusBundleId&gt; myMap = new EnumMap&lt;&gt;(MoneyWiseDepositCategoryClass.class);</span>
+<span class="fc" id="L1144">        myMap.put(MoneyWiseDepositCategoryClass.CHECKING, DEPOSITTYPE_CHECKING);</span>
+<span class="fc" id="L1145">        myMap.put(MoneyWiseDepositCategoryClass.SAVINGS, DEPOSITTYPE_SAVINGS);</span>
+<span class="fc" id="L1146">        myMap.put(MoneyWiseDepositCategoryClass.TAXFREESAVINGS, DEPOSITTYPE_TAXFREESAVINGS);</span>
+<span class="fc" id="L1147">        myMap.put(MoneyWiseDepositCategoryClass.PEER2PEER, DEPOSITTYPE_PEER2PEER);</span>
+<span class="fc" id="L1148">        myMap.put(MoneyWiseDepositCategoryClass.BOND, DEPOSITTYPE_BOND);</span>
+<span class="fc" id="L1149">        myMap.put(MoneyWiseDepositCategoryClass.TAXFREEBOND, DEPOSITTYPE_TAXFREEBOND);</span>
+<span class="fc" id="L1150">        myMap.put(MoneyWiseDepositCategoryClass.PARENT, CATEGORYTYPE_PARENT);</span>
+<span class="fc" id="L1151">        return myMap;</span>
+    }
+
+    /**
+     * Obtain key for deposit type.
+     * @param pValue the Value
+     * @return the resource key
+     */
+    static OceanusBundleId getKeyForDepositType(final MoneyWiseDepositCategoryClass pValue) {
+<span class="fc" id="L1160">        return OceanusBundleLoader.getKeyForEnum(DEPOSIT_MAP, pValue);</span>
+    }
+
+    /**
+     * Build cash type map.
+     * @return the map
+     */
+    private static Map&lt;MoneyWiseCashCategoryClass, OceanusBundleId&gt; buildCashMap() {
+        /* Create the map and return it */
+<span class="fc" id="L1169">        final Map&lt;MoneyWiseCashCategoryClass, OceanusBundleId&gt; myMap = new EnumMap&lt;&gt;(MoneyWiseCashCategoryClass.class);</span>
+<span class="fc" id="L1170">        myMap.put(MoneyWiseCashCategoryClass.CASH, CASHTYPE_CASH);</span>
+<span class="fc" id="L1171">        myMap.put(MoneyWiseCashCategoryClass.AUTOEXPENSE, CASHTYPE_AUTO);</span>
+<span class="fc" id="L1172">        myMap.put(MoneyWiseCashCategoryClass.PARENT, CATEGORYTYPE_PARENT);</span>
+<span class="fc" id="L1173">        return myMap;</span>
+    }
+
+    /**
+     * Obtain key for cash type.
+     * @param pValue the Value
+     * @return the resource key
+     */
+    static OceanusBundleId getKeyForCashType(final MoneyWiseCashCategoryClass pValue) {
+<span class="fc" id="L1182">        return OceanusBundleLoader.getKeyForEnum(CASH_MAP, pValue);</span>
+    }
+
+    /**
+     * Build loan type map.
+     * @return the map
+     */
+    private static Map&lt;MoneyWiseLoanCategoryClass, OceanusBundleId&gt; buildLoanMap() {
+        /* Create the map and return it */
+<span class="fc" id="L1191">        final Map&lt;MoneyWiseLoanCategoryClass, OceanusBundleId&gt; myMap = new EnumMap&lt;&gt;(MoneyWiseLoanCategoryClass.class);</span>
+<span class="fc" id="L1192">        myMap.put(MoneyWiseLoanCategoryClass.CREDITCARD, LOANTYPE_CREDIT);</span>
+<span class="fc" id="L1193">        myMap.put(MoneyWiseLoanCategoryClass.PRIVATELOAN, LOANTYPE_PRIVATE);</span>
+<span class="fc" id="L1194">        myMap.put(MoneyWiseLoanCategoryClass.LOAN, LOANTYPE_LOAN);</span>
+<span class="fc" id="L1195">        myMap.put(MoneyWiseLoanCategoryClass.PARENT, CATEGORYTYPE_PARENT);</span>
+<span class="fc" id="L1196">        return myMap;</span>
+    }
+
+    /**
+     * Obtain key for loan type.
+     * @param pValue the Value
+     * @return the resource key
+     */
+    static OceanusBundleId getKeyForLoanType(final MoneyWiseLoanCategoryClass pValue) {
+<span class="fc" id="L1205">        return OceanusBundleLoader.getKeyForEnum(LOAN_MAP, pValue);</span>
+    }
+
+    /**
+     * Build portfolio type map.
+     * @return the map
+     */
+    private static Map&lt;MoneyWisePortfolioClass, OceanusBundleId&gt; buildPortfolioMap() {
+        /* Create the map and return it */
+<span class="fc" id="L1214">        final Map&lt;MoneyWisePortfolioClass, OceanusBundleId&gt; myMap = new EnumMap&lt;&gt;(MoneyWisePortfolioClass.class);</span>
+<span class="fc" id="L1215">        myMap.put(MoneyWisePortfolioClass.STANDARD, PORTFOLIOTYPE_STANDARD);</span>
+<span class="fc" id="L1216">        myMap.put(MoneyWisePortfolioClass.TAXFREE, PORTFOLIOTYPE_TAXFREE);</span>
+<span class="fc" id="L1217">        myMap.put(MoneyWisePortfolioClass.PENSION, PORTFOLIOTYPE_PENSION);</span>
+<span class="fc" id="L1218">        myMap.put(MoneyWisePortfolioClass.SIPP, PORTFOLIOTYPE_SIPP);</span>
+<span class="fc" id="L1219">        return myMap;</span>
+    }
+
+    /**
+     * Obtain key for security type.
+     * @param pValue the Value
+     * @return the resource key
+     */
+    static OceanusBundleId getKeyForPortfolioType(final MoneyWisePortfolioClass pValue) {
+<span class="fc" id="L1228">        return OceanusBundleLoader.getKeyForEnum(PORTFOLIO_MAP, pValue);</span>
+    }
+
+    /**
+     * Build security type map.
+     * @return the map
+     */
+    private static Map&lt;MoneyWiseSecurityClass, OceanusBundleId&gt; buildSecurityMap() {
+        /* Create the map and return it */
+<span class="fc" id="L1237">        final Map&lt;MoneyWiseSecurityClass, OceanusBundleId&gt; myMap = new EnumMap&lt;&gt;(MoneyWiseSecurityClass.class);</span>
+<span class="fc" id="L1238">        myMap.put(MoneyWiseSecurityClass.SHARES, SECURITYTYPE_SHARES);</span>
+<span class="fc" id="L1239">        myMap.put(MoneyWiseSecurityClass.INCOMEUNITTRUST, SECURITYTYPE_INCOMEUNIT);</span>
+<span class="fc" id="L1240">        myMap.put(MoneyWiseSecurityClass.GROWTHUNITTRUST, SECURITYTYPE_GROWTHUNIT);</span>
+<span class="fc" id="L1241">        myMap.put(MoneyWiseSecurityClass.LIFEBOND, SECURITYTYPE_LIFEBOND);</span>
+<span class="fc" id="L1242">        myMap.put(MoneyWiseSecurityClass.ENDOWMENT, SECURITYTYPE_ENDOWMENT);</span>
+<span class="fc" id="L1243">        myMap.put(MoneyWiseSecurityClass.PROPERTY, SECURITYTYPE_PROPERTY);</span>
+<span class="fc" id="L1244">        myMap.put(MoneyWiseSecurityClass.VEHICLE, SECURITYTYPE_VEHICLE);</span>
+<span class="fc" id="L1245">        myMap.put(MoneyWiseSecurityClass.STATEPENSION, SECURITYTYPE_STATEPENSION);</span>
+<span class="fc" id="L1246">        myMap.put(MoneyWiseSecurityClass.DEFINEDBENEFIT, SECURITYTYPE_BENEFIT);</span>
+<span class="fc" id="L1247">        myMap.put(MoneyWiseSecurityClass.DEFINEDCONTRIBUTION, SECURITYTYPE_CONTRIBUTION);</span>
+<span class="fc" id="L1248">        myMap.put(MoneyWiseSecurityClass.STOCKOPTION, SECURITYTYPE_STOCKOPTION);</span>
+<span class="fc" id="L1249">        myMap.put(MoneyWiseSecurityClass.ASSET, SECURITYTYPE_ASSET);</span>
+<span class="fc" id="L1250">        return myMap;</span>
+    }
+
+    /**
+     * Obtain key for security type.
+     * @param pValue the Value
+     * @return the resource key
+     */
+    static OceanusBundleId getKeyForSecurityType(final MoneyWiseSecurityClass pValue) {
+<span class="fc" id="L1259">        return OceanusBundleLoader.getKeyForEnum(SECURITY_MAP, pValue);</span>
+    }
+
+    /**
+     * Build payee type map.
+     * @return the map
+     */
+    private static Map&lt;MoneyWisePayeeClass, OceanusBundleId&gt; buildPayeeMap() {
+        /* Create the map and return it */
+<span class="fc" id="L1268">        final Map&lt;MoneyWisePayeeClass, OceanusBundleId&gt; myMap = new EnumMap&lt;&gt;(MoneyWisePayeeClass.class);</span>
+<span class="fc" id="L1269">        myMap.put(MoneyWisePayeeClass.TAXMAN, PAYEETYPE_TAXMAN);</span>
+<span class="fc" id="L1270">        myMap.put(MoneyWisePayeeClass.GOVERNMENT, PAYEETYPE_GOVERNMENT);</span>
+<span class="fc" id="L1271">        myMap.put(MoneyWisePayeeClass.MARKET, PAYEETYPE_MARKET);</span>
+<span class="fc" id="L1272">        myMap.put(MoneyWisePayeeClass.EMPLOYER, PAYEETYPE_EMPLOYER);</span>
+<span class="fc" id="L1273">        myMap.put(MoneyWisePayeeClass.INSTITUTION, PAYEETYPE_INSTITUTION);</span>
+<span class="fc" id="L1274">        myMap.put(MoneyWisePayeeClass.INDIVIDUAL, PAYEETYPE_INDIVIDUAL);</span>
+<span class="fc" id="L1275">        myMap.put(MoneyWisePayeeClass.ANNUITY, PAYEETYPE_ANNUITY);</span>
+<span class="fc" id="L1276">        myMap.put(MoneyWisePayeeClass.PAYEE, PAYEETYPE_PAYEE);</span>
+<span class="fc" id="L1277">        return myMap;</span>
+    }
+
+    /**
+     * Obtain key for payee type.
+     * @param pValue the Value
+     * @return the resource key
+     */
+    static OceanusBundleId getKeyForPayeeType(final MoneyWisePayeeClass pValue) {
+<span class="fc" id="L1286">        return OceanusBundleLoader.getKeyForEnum(PAYEE_MAP, pValue);</span>
+    }
+
+    /**
+     * Build transaction type map.
+     * @return the map
+     */
+    private static Map&lt;MoneyWiseTransCategoryClass, OceanusBundleId&gt; buildTransactionMap() {
+        /* Create the map and return it */
+<span class="fc" id="L1295">        final Map&lt;MoneyWiseTransCategoryClass, OceanusBundleId&gt; myMap = new EnumMap&lt;&gt;(MoneyWiseTransCategoryClass.class);</span>
+<span class="fc" id="L1296">        myMap.put(MoneyWiseTransCategoryClass.TAXEDINCOME, TRANSTYPE_TAXEDINCOME);</span>
+<span class="fc" id="L1297">        myMap.put(MoneyWiseTransCategoryClass.RENTALINCOME, TRANSTYPE_RENTALINCOME);</span>
+<span class="fc" id="L1298">        myMap.put(MoneyWiseTransCategoryClass.ROOMRENTALINCOME, TRANSTYPE_ROOMRENTINCOME);</span>
+<span class="fc" id="L1299">        myMap.put(MoneyWiseTransCategoryClass.INTEREST, TRANSTYPE_INTEREST);</span>
+<span class="fc" id="L1300">        myMap.put(MoneyWiseTransCategoryClass.DIVIDEND, TRANSTYPE_DIVIDEND);</span>
+<span class="fc" id="L1301">        myMap.put(MoneyWiseTransCategoryClass.VIRTUALINCOME, TRANSTYPE_VIRTUALINCOME);</span>
+<span class="fc" id="L1302">        myMap.put(MoneyWiseTransCategoryClass.GROSSINCOME, TRANSTYPE_GROSSINCOME);</span>
+<span class="fc" id="L1303">        myMap.put(MoneyWiseTransCategoryClass.PENSIONCONTRIB, TRANSTYPE_PENSIONCONTRIB);</span>
+<span class="fc" id="L1304">        myMap.put(MoneyWiseTransCategoryClass.GIFTEDINCOME, TRANSTYPE_GIFTEDINCOME);</span>
+<span class="fc" id="L1305">        myMap.put(MoneyWiseTransCategoryClass.INHERITED, TRANSTYPE_INHERITED);</span>
+<span class="fc" id="L1306">        myMap.put(MoneyWiseTransCategoryClass.LOANINTERESTEARNED, TRANSTYPE_LOANINTEARNED);</span>
+<span class="fc" id="L1307">        myMap.put(MoneyWiseTransCategoryClass.CASHBACK, TRANSTYPE_CASHBACK);</span>
+<span class="fc" id="L1308">        myMap.put(MoneyWiseTransCategoryClass.LOYALTYBONUS, TRANSTYPE_LOYALTYBONUS);</span>
+<span class="fc" id="L1309">        myMap.put(MoneyWiseTransCategoryClass.RECOVEREDEXPENSES, TRANSTYPE_RECOVEREDEXPENSES);</span>
+<span class="fc" id="L1310">        myMap.put(MoneyWiseTransCategoryClass.OTHERINCOME, TRANSTYPE_OTHERINCOME);</span>
+<span class="fc" id="L1311">        myMap.put(MoneyWiseTransCategoryClass.TRANSFER, TRANSTYPE_TRANSFER);</span>
+<span class="fc" id="L1312">        myMap.put(MoneyWiseTransCategoryClass.UNITSADJUST, TRANSTYPE_UNITSADJUST);</span>
+<span class="fc" id="L1313">        myMap.put(MoneyWiseTransCategoryClass.STOCKSPLIT, TRANSTYPE_STOCKSPLIT);</span>
+<span class="fc" id="L1314">        myMap.put(MoneyWiseTransCategoryClass.STOCKDEMERGER, TRANSTYPE_STOCKDEMERGER);</span>
+<span class="fc" id="L1315">        myMap.put(MoneyWiseTransCategoryClass.STOCKTAKEOVER, TRANSTYPE_STOCKTAKEOVER);</span>
+<span class="fc" id="L1316">        myMap.put(MoneyWiseTransCategoryClass.SECURITYREPLACE, TRANSTYPE_SECURITYREPLACE);</span>
+<span class="fc" id="L1317">        myMap.put(MoneyWiseTransCategoryClass.SECURITYCLOSURE, TRANSTYPE_SECURITYCLOSURE);</span>
+<span class="fc" id="L1318">        myMap.put(MoneyWiseTransCategoryClass.STOCKRIGHTSISSUE, TRANSTYPE_STOCKRIGHTSISSUE);</span>
+<span class="fc" id="L1319">        myMap.put(MoneyWiseTransCategoryClass.PORTFOLIOXFER, TRANSTYPE_PORTFOLIOXFER);</span>
+<span class="fc" id="L1320">        myMap.put(MoneyWiseTransCategoryClass.OPTIONSGRANT, TRANSTYPE_OPTIONSGRANT);</span>
+<span class="fc" id="L1321">        myMap.put(MoneyWiseTransCategoryClass.OPTIONSVEST, TRANSTYPE_OPTIONSVEST);</span>
+<span class="fc" id="L1322">        myMap.put(MoneyWiseTransCategoryClass.OPTIONSEXPIRE, TRANSTYPE_OPTIONSEXPIRE);</span>
+<span class="fc" id="L1323">        myMap.put(MoneyWiseTransCategoryClass.OPTIONSEXERCISE, TRANSTYPE_OPTIONSEXERCISE);</span>
+<span class="fc" id="L1324">        myMap.put(MoneyWiseTransCategoryClass.PENSIONDRAWDOWN, TRANSTYPE_PENSIONDRAWDOWN);</span>
+<span class="fc" id="L1325">        myMap.put(MoneyWiseTransCategoryClass.PENSIONTAXFREE, TRANSTYPE_PENSIONTAXFREE);</span>
+<span class="fc" id="L1326">        myMap.put(MoneyWiseTransCategoryClass.EXPENSE, TRANSTYPE_EXPENSE);</span>
+<span class="fc" id="L1327">        myMap.put(MoneyWiseTransCategoryClass.BADDEBTCAPITAL, TRANSTYPE_BADDEBTCAPITAL);</span>
+<span class="fc" id="L1328">        myMap.put(MoneyWiseTransCategoryClass.BADDEBTINTEREST, TRANSTYPE_BADDEBTINTEREST);</span>
+<span class="fc" id="L1329">        myMap.put(MoneyWiseTransCategoryClass.LOCALTAXES, TRANSTYPE_LOCALTAXES);</span>
+<span class="fc" id="L1330">        myMap.put(MoneyWiseTransCategoryClass.WRITEOFF, TRANSTYPE_WRITEOFF);</span>
+<span class="fc" id="L1331">        myMap.put(MoneyWiseTransCategoryClass.RENTALEXPENSE, TRANSTYPE_RENTALEXPENSE);</span>
+<span class="fc" id="L1332">        myMap.put(MoneyWiseTransCategoryClass.ANNUITYPURCHASE, TRANSTYPE_ANNUITYPURCHASE);</span>
+<span class="fc" id="L1333">        myMap.put(MoneyWiseTransCategoryClass.LOANINTERESTCHARGED, TRANSTYPE_LOANINTCHARGE);</span>
+<span class="fc" id="L1334">        myMap.put(MoneyWiseTransCategoryClass.TAXRELIEF, TRANSTYPE_TAXRELIEF);</span>
+<span class="fc" id="L1335">        myMap.put(MoneyWiseTransCategoryClass.INCOMETAX, TRANSTYPE_INCOMETAX);</span>
+<span class="fc" id="L1336">        myMap.put(MoneyWiseTransCategoryClass.TAXEDINTEREST, TRANSTYPE_TAXEDINTEREST);</span>
+<span class="fc" id="L1337">        myMap.put(MoneyWiseTransCategoryClass.TAXFREEINTEREST, TRANSTYPE_TAXFREEINTEREST);</span>
+<span class="fc" id="L1338">        myMap.put(MoneyWiseTransCategoryClass.PEER2PEERINTEREST, TRANSTYPE_PEER2PEERINTEREST);</span>
+<span class="fc" id="L1339">        myMap.put(MoneyWiseTransCategoryClass.GROSSINTEREST, TRANSTYPE_GROSSINTEREST);</span>
+<span class="fc" id="L1340">        myMap.put(MoneyWiseTransCategoryClass.SHAREDIVIDEND, TRANSTYPE_SHAREDIVIDEND);</span>
+<span class="fc" id="L1341">        myMap.put(MoneyWiseTransCategoryClass.UNITTRUSTDIVIDEND, TRANSTYPE_UTDIVIDEND);</span>
+<span class="fc" id="L1342">        myMap.put(MoneyWiseTransCategoryClass.FOREIGNDIVIDEND, TRANSTYPE_FOREIGNDIVIDEND);</span>
+<span class="fc" id="L1343">        myMap.put(MoneyWiseTransCategoryClass.TAXFREEDIVIDEND, TRANSTYPE_TAXFREEDIVIDEND);</span>
+<span class="fc" id="L1344">        myMap.put(MoneyWiseTransCategoryClass.TAXEDLOYALTYBONUS, TRANSTYPE_TAXEDLOYALTYBONUS);</span>
+<span class="fc" id="L1345">        myMap.put(MoneyWiseTransCategoryClass.GROSSLOYALTYBONUS, TRANSTYPE_GROSSLOYALTYBONUS);</span>
+<span class="fc" id="L1346">        myMap.put(MoneyWiseTransCategoryClass.TAXFREELOYALTYBONUS, TRANSTYPE_TAXFREELOYALTYBONUS);</span>
+<span class="fc" id="L1347">        myMap.put(MoneyWiseTransCategoryClass.CHARGEABLEGAIN, TRANSTYPE_CHARGEABLEGAIN);</span>
+<span class="fc" id="L1348">        myMap.put(MoneyWiseTransCategoryClass.TAXFREEGAIN, TRANSTYPE_TAXFREEGAIN);</span>
+<span class="fc" id="L1349">        myMap.put(MoneyWiseTransCategoryClass.RESIDENTIALGAIN, TRANSTYPE_RESIDENTIALGAIN);</span>
+<span class="fc" id="L1350">        myMap.put(MoneyWiseTransCategoryClass.CAPITALGAIN, TRANSTYPE_CAPITALGAIN);</span>
+<span class="fc" id="L1351">        myMap.put(MoneyWiseTransCategoryClass.MARKETGROWTH, TRANSTYPE_MARKETGROWTH);</span>
+<span class="fc" id="L1352">        myMap.put(MoneyWiseTransCategoryClass.CURRENCYFLUCTUATION, TRANSTYPE_CURRFLUCT);</span>
+<span class="fc" id="L1353">        myMap.put(MoneyWiseTransCategoryClass.WITHHELD, TRANSTYPE_WITHHELD);</span>
+<span class="fc" id="L1354">        myMap.put(MoneyWiseTransCategoryClass.EMPLOYERNATINS, TRANSTYPE_EMPLOYERNATINS);</span>
+<span class="fc" id="L1355">        myMap.put(MoneyWiseTransCategoryClass.EMPLOYEENATINS, TRANSTYPE_EMPLOYEENATINS);</span>
+<span class="fc" id="L1356">        myMap.put(MoneyWiseTransCategoryClass.OPENINGBALANCE, TRANSTYPE_OPENINGBALANCE);</span>
+<span class="fc" id="L1357">        myMap.put(MoneyWiseTransCategoryClass.INCOMETOTALS, TRANSTYPE_INCOMETOTALS);</span>
+<span class="fc" id="L1358">        myMap.put(MoneyWiseTransCategoryClass.EXPENSETOTALS, TRANSTYPE_EXPENSETOTALS);</span>
+<span class="fc" id="L1359">        myMap.put(MoneyWiseTransCategoryClass.SECURITYPARENT, TRANSTYPE_SECURITYPARENT);</span>
+<span class="fc" id="L1360">        myMap.put(MoneyWiseTransCategoryClass.TOTALS, TRANSTYPE_TOTALS);</span>
+<span class="fc" id="L1361">        return myMap;</span>
+    }
+
+    /**
+     * Obtain key for transaction type.
+     * @param pValue the Value
+     * @return the resource key
+     */
+    static OceanusBundleId getKeyForTransType(final MoneyWiseTransCategoryClass pValue) {
+<span class="fc" id="L1370">        return OceanusBundleLoader.getKeyForEnum(TRANSACTION_MAP, pValue);</span>
+    }
+
+    /**
+     * Build tax basis map.
+     * @return the map
+     */
+    private static Map&lt;MoneyWiseTaxClass, OceanusBundleId&gt; buildTaxBasisMap() {
+        /* Create the map and return it */
+<span class="fc" id="L1379">        final Map&lt;MoneyWiseTaxClass, OceanusBundleId&gt; myMap = new EnumMap&lt;&gt;(MoneyWiseTaxClass.class);</span>
+<span class="fc" id="L1380">        myMap.put(MoneyWiseTaxClass.SALARY, TAXBASIS_SALARY);</span>
+<span class="fc" id="L1381">        myMap.put(MoneyWiseTaxClass.ROOMRENTAL, TAXBASIS_ROOMRENTAL);</span>
+<span class="fc" id="L1382">        myMap.put(MoneyWiseTaxClass.RENTALINCOME, TAXBASIS_RENTALINCOME);</span>
+<span class="fc" id="L1383">        myMap.put(MoneyWiseTaxClass.OTHERINCOME, TAXBASIS_OTHERINCOME);</span>
+<span class="fc" id="L1384">        myMap.put(MoneyWiseTaxClass.TAXEDINTEREST, TAXBASIS_TAXEDINTEREST);</span>
+<span class="fc" id="L1385">        myMap.put(MoneyWiseTaxClass.UNTAXEDINTEREST, TAXBASIS_UNTAXEDINTEREST);</span>
+<span class="fc" id="L1386">        myMap.put(MoneyWiseTaxClass.DIVIDEND, TAXBASIS_DIVIDEND);</span>
+<span class="fc" id="L1387">        myMap.put(MoneyWiseTaxClass.UNITTRUSTDIVIDEND, TAXBASIS_UTDIVIDEND);</span>
+<span class="fc" id="L1388">        myMap.put(MoneyWiseTaxClass.FOREIGNDIVIDEND, TAXBASIS_FOREIGNDIVIDEND);</span>
+<span class="fc" id="L1389">        myMap.put(MoneyWiseTaxClass.CHARGEABLEGAINS, TAXBASIS_CHARGEABLEGAINS);</span>
+<span class="fc" id="L1390">        myMap.put(MoneyWiseTaxClass.RESIDENTIALGAINS, TAXBASIS_RESIDENTIALGAINS);</span>
+<span class="fc" id="L1391">        myMap.put(MoneyWiseTaxClass.CAPITALGAINS, TAXBASIS_CAPITALGAINS);</span>
+<span class="fc" id="L1392">        myMap.put(MoneyWiseTaxClass.PEER2PEERINTEREST, TRANSTYPE_PEER2PEERINTEREST);</span>
+<span class="fc" id="L1393">        myMap.put(MoneyWiseTaxClass.TAXPAID, TAXBASIS_TAXPAID);</span>
+<span class="fc" id="L1394">        myMap.put(MoneyWiseTaxClass.MARKET, TAXBASIS_MARKET);</span>
+<span class="fc" id="L1395">        myMap.put(MoneyWiseTaxClass.TAXFREE, TAXBASIS_TAXFREE);</span>
+<span class="fc" id="L1396">        myMap.put(MoneyWiseTaxClass.EXPENSE, TAXBASIS_EXPENSE);</span>
+<span class="fc" id="L1397">        myMap.put(MoneyWiseTaxClass.VIRTUAL, TAXBASIS_VIRTUAL);</span>
+<span class="fc" id="L1398">        return myMap;</span>
+    }
+
+    /**
+     * Obtain key for taxBasis.
+     * @param pValue the Value
+     * @return the resource key
+     */
+    static OceanusBundleId getKeyForTaxBasis(final MoneyWiseTaxClass pValue) {
+<span class="fc" id="L1407">        return OceanusBundleLoader.getKeyForEnum(TAXBASIS_MAP, pValue);</span>
+    }
+
+    /**
+     * Build accountInfo map.
+     * @return the map
+     */
+    private static Map&lt;MoneyWiseAccountInfoClass, OceanusBundleId&gt; buildAccountInfoMap() {
+        /* Create the map and return it */
+<span class="fc" id="L1416">        final Map&lt;MoneyWiseAccountInfoClass, OceanusBundleId&gt; myMap = new EnumMap&lt;&gt;(MoneyWiseAccountInfoClass.class);</span>
+<span class="fc" id="L1417">        myMap.put(MoneyWiseAccountInfoClass.MATURITY, ACCOUNTINFO_MATURITY);</span>
+<span class="fc" id="L1418">        myMap.put(MoneyWiseAccountInfoClass.OPENINGBALANCE, ACCOUNTINFO_OPENING);</span>
+<span class="fc" id="L1419">        myMap.put(MoneyWiseAccountInfoClass.AUTOEXPENSE, ACCOUNTINFO_AUTOEXPENSE);</span>
+<span class="fc" id="L1420">        myMap.put(MoneyWiseAccountInfoClass.AUTOPAYEE, ACCOUNTINFO_AUTOPAYEE);</span>
+<span class="fc" id="L1421">        myMap.put(MoneyWiseAccountInfoClass.WEBSITE, ACCOUNTINFO_WEBSITE);</span>
+<span class="fc" id="L1422">        myMap.put(MoneyWiseAccountInfoClass.CUSTOMERNO, ACCOUNTINFO_CUSTNO);</span>
+<span class="fc" id="L1423">        myMap.put(MoneyWiseAccountInfoClass.USERID, ACCOUNTINFO_USERID);</span>
+<span class="fc" id="L1424">        myMap.put(MoneyWiseAccountInfoClass.PASSWORD, ACCOUNTINFO_PASSWORD);</span>
+<span class="fc" id="L1425">        myMap.put(MoneyWiseAccountInfoClass.SORTCODE, ACCOUNTINFO_SORTCODE);</span>
+<span class="fc" id="L1426">        myMap.put(MoneyWiseAccountInfoClass.ACCOUNT, ACCOUNTINFO_ACCOUNT);</span>
+<span class="fc" id="L1427">        myMap.put(MoneyWiseAccountInfoClass.REFERENCE, ACCOUNTINFO_REFERENCE);</span>
+<span class="fc" id="L1428">        myMap.put(MoneyWiseAccountInfoClass.NOTES, ACCOUNTINFO_NOTES);</span>
+<span class="fc" id="L1429">        myMap.put(MoneyWiseAccountInfoClass.REGION, ACCOUNTINFO_REGION);</span>
+<span class="fc" id="L1430">        myMap.put(MoneyWiseAccountInfoClass.SYMBOL, ACCOUNTINFO_SYMBOL);</span>
+<span class="fc" id="L1431">        myMap.put(MoneyWiseAccountInfoClass.UNDERLYINGSTOCK, ACCOUNTINFO_UNDERLYINGSTOCK);</span>
+<span class="fc" id="L1432">        myMap.put(MoneyWiseAccountInfoClass.OPTIONPRICE, ACCOUNTINFO_OPTIONPRICE);</span>
+<span class="fc" id="L1433">        return myMap;</span>
+    }
+
+    /**
+     * Obtain key for accountInfoType.
+     * @param pValue the Value
+     * @return the resource key
+     */
+    public static MoneyWiseStaticResource getKeyForAccountInfo(final MoneyWiseAccountInfoClass pValue) {
+<span class="fc" id="L1442">        return (MoneyWiseStaticResource) OceanusBundleLoader.getKeyForEnum(ACCOUNTINFO_MAP, pValue);</span>
+    }
+
+    /**
+     * Build transInfo map.
+     * @return the map
+     */
+    private static Map&lt;MoneyWiseTransInfoClass, OceanusBundleId&gt; buildTransInfoMap() {
+        /* Create the map and return it */
+<span class="fc" id="L1451">        final Map&lt;MoneyWiseTransInfoClass, OceanusBundleId&gt; myMap = new EnumMap&lt;&gt;(MoneyWiseTransInfoClass.class);</span>
+<span class="fc" id="L1452">        myMap.put(MoneyWiseTransInfoClass.TAXCREDIT, TRANSINFO_TAXCREDIT);</span>
+<span class="fc" id="L1453">        myMap.put(MoneyWiseTransInfoClass.EMPLOYERNATINS, TRANSTYPE_EMPLOYERNATINS);</span>
+<span class="fc" id="L1454">        myMap.put(MoneyWiseTransInfoClass.EMPLOYEENATINS, TRANSTYPE_EMPLOYEENATINS);</span>
+<span class="fc" id="L1455">        myMap.put(MoneyWiseTransInfoClass.DEEMEDBENEFIT, TRANSINFO_BENEFIT);</span>
+<span class="fc" id="L1456">        myMap.put(MoneyWiseTransInfoClass.WITHHELD, TRANSTYPE_WITHHELD);</span>
+<span class="fc" id="L1457">        myMap.put(MoneyWiseTransInfoClass.ACCOUNTDELTAUNITS, TRANSINFO_ACCOUNTDELTAUNITS);</span>
+<span class="fc" id="L1458">        myMap.put(MoneyWiseTransInfoClass.PARTNERDELTAUNITS, TRANSINFO_PARTNERDELTAUNITS);</span>
+<span class="fc" id="L1459">        myMap.put(MoneyWiseTransInfoClass.PARTNERAMOUNT, TRANSINFO_PARTNERAMOUNT);</span>
+<span class="fc" id="L1460">        myMap.put(MoneyWiseTransInfoClass.RETURNEDCASH, TRANSINFO_RETURNEDCASH);</span>
+<span class="fc" id="L1461">        myMap.put(MoneyWiseTransInfoClass.DILUTION, TRANSINFO_DILUTION);</span>
+<span class="fc" id="L1462">        myMap.put(MoneyWiseTransInfoClass.QUALIFYYEARS, TRANSINFO_QUALYEARS);</span>
+<span class="fc" id="L1463">        myMap.put(MoneyWiseTransInfoClass.REFERENCE, TRANSINFO_REFERENCE);</span>
+<span class="fc" id="L1464">        myMap.put(MoneyWiseTransInfoClass.COMMENTS, TRANSINFO_COMMENTS);</span>
+<span class="fc" id="L1465">        myMap.put(MoneyWiseTransInfoClass.RETURNEDCASHACCOUNT, TRANSINFO_RETURNEDCASHACCOUNT);</span>
+<span class="fc" id="L1466">        myMap.put(MoneyWiseTransInfoClass.PRICE, TRANSINFO_PRICE);</span>
+<span class="fc" id="L1467">        myMap.put(MoneyWiseTransInfoClass.XCHANGERATE, TRANSINFO_XCHANGERATE);</span>
+<span class="fc" id="L1468">        myMap.put(MoneyWiseTransInfoClass.COMMISSION, TRANSINFO_COMMISSION);</span>
+<span class="fc" id="L1469">        myMap.put(MoneyWiseTransInfoClass.TRANSTAG, TRANSINFO_TRANSTAG);</span>
+<span class="fc" id="L1470">        return myMap;</span>
+    }
+
+    /**
+     * Obtain key for transInfoType.
+     * @param pValue the Value
+     * @return the resource key
+     */
+    public static MoneyWiseStaticResource getKeyForTransInfo(final MoneyWiseTransInfoClass pValue) {
+<span class="fc" id="L1479">        return (MoneyWiseStaticResource) OceanusBundleLoader.getKeyForEnum(TRANSINFO_MAP, pValue);</span>
+    }
+    /**
+     * Build name map.
+     * @return the map
+     */
+    private static Map&lt;MoneyWiseStaticDataType, OceanusBundleId&gt; buildNameMap() {
+        /* Create the map and return it */
+<span class="fc" id="L1487">        final Map&lt;MoneyWiseStaticDataType, OceanusBundleId&gt; myMap = new EnumMap&lt;&gt;(MoneyWiseStaticDataType.class);</span>
+<span class="fc" id="L1488">        myMap.put(MoneyWiseStaticDataType.DEPOSITTYPE, DEPOSITTYPE_NAME);</span>
+<span class="fc" id="L1489">        myMap.put(MoneyWiseStaticDataType.CASHTYPE, CASHTYPE_NAME);</span>
+<span class="fc" id="L1490">        myMap.put(MoneyWiseStaticDataType.LOANTYPE, LOANTYPE_NAME);</span>
+<span class="fc" id="L1491">        myMap.put(MoneyWiseStaticDataType.PORTFOLIOTYPE, PORTFOLIOTYPE_NAME);</span>
+<span class="fc" id="L1492">        myMap.put(MoneyWiseStaticDataType.SECURITYTYPE, SECURITYTYPE_NAME);</span>
+<span class="fc" id="L1493">        myMap.put(MoneyWiseStaticDataType.PAYEETYPE, PAYEETYPE_NAME);</span>
+<span class="fc" id="L1494">        myMap.put(MoneyWiseStaticDataType.TRANSTYPE, TRANSTYPE_NAME);</span>
+<span class="fc" id="L1495">        myMap.put(MoneyWiseStaticDataType.TAXBASIS, TAXBASIS_NAME);</span>
+<span class="fc" id="L1496">        myMap.put(MoneyWiseStaticDataType.CURRENCY, CURRENCY_NAME);</span>
+<span class="fc" id="L1497">        myMap.put(MoneyWiseStaticDataType.ACCOUNTINFOTYPE, ACCOUNTINFOTYPE_NAME);</span>
+<span class="fc" id="L1498">        myMap.put(MoneyWiseStaticDataType.TRANSINFOTYPE, TRANSINFOTYPE_NAME);</span>
+<span class="fc" id="L1499">        return myMap;</span>
+    }
+
+    /**
+     * Obtain key for data item.
+     * @param pValue the Value
+     * @return the resource key
+     */
+    static OceanusBundleId getKeyForDataType(final MoneyWiseStaticDataType pValue) {
+<span class="fc" id="L1508">        return OceanusBundleLoader.getKeyForEnum(NAME_MAP, pValue);</span>
+    }
+
+    /**
+     * Build list map.
+     * @return the map
+     */
+    private static Map&lt;MoneyWiseStaticDataType, OceanusBundleId&gt; buildListMap() {
+        /* Create the map and return it */
+<span class="fc" id="L1517">        final Map&lt;MoneyWiseStaticDataType, OceanusBundleId&gt; myMap = new EnumMap&lt;&gt;(MoneyWiseStaticDataType.class);</span>
+<span class="fc" id="L1518">        myMap.put(MoneyWiseStaticDataType.DEPOSITTYPE, DEPOSITTYPE_LIST);</span>
+<span class="fc" id="L1519">        myMap.put(MoneyWiseStaticDataType.CASHTYPE, CASHTYPE_LIST);</span>
+<span class="fc" id="L1520">        myMap.put(MoneyWiseStaticDataType.LOANTYPE, LOANTYPE_LIST);</span>
+<span class="fc" id="L1521">        myMap.put(MoneyWiseStaticDataType.PORTFOLIOTYPE, PORTFOLIOTYPE_LIST);</span>
+<span class="fc" id="L1522">        myMap.put(MoneyWiseStaticDataType.SECURITYTYPE, SECURITYTYPE_LIST);</span>
+<span class="fc" id="L1523">        myMap.put(MoneyWiseStaticDataType.PAYEETYPE, PAYEETYPE_LIST);</span>
+<span class="fc" id="L1524">        myMap.put(MoneyWiseStaticDataType.TRANSTYPE, TRANSTYPE_LIST);</span>
+<span class="fc" id="L1525">        myMap.put(MoneyWiseStaticDataType.TAXBASIS, TAXBASIS_LIST);</span>
+<span class="fc" id="L1526">        myMap.put(MoneyWiseStaticDataType.CURRENCY, CURRENCY_LIST);</span>
+<span class="fc" id="L1527">        myMap.put(MoneyWiseStaticDataType.ACCOUNTINFOTYPE, ACCOUNTINFOTYPE_LIST);</span>
+<span class="fc" id="L1528">        myMap.put(MoneyWiseStaticDataType.TRANSINFOTYPE, TRANSINFOTYPE_LIST);</span>
+<span class="fc" id="L1529">        return myMap;</span>
+    }
+
+    /**
+     * Obtain key for data list.
+     * @param pValue the Value
+     * @return the resource key
+     */
+    static OceanusBundleId getKeyForDataList(final MoneyWiseStaticDataType pValue) {
+<span class="fc" id="L1538">        return OceanusBundleLoader.getKeyForEnum(LIST_MAP, pValue);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

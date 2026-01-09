@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseValidateDepositInfoSet.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.data.validate</a> &gt; <span class="el_source">MoneyWiseValidateDepositInfoSet.java</span></div><h1>MoneyWiseValidateDepositInfoSet.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.data.validate;
+
+import net.sourceforge.joceanus.metis.field.MetisFieldRequired;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDeposit;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDepositCategory;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDepositInfo;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDepositInfoSet;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoClass;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseDepositCategoryClass;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoClass;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
+import net.sourceforge.joceanus.prometheus.validate.PrometheusValidateInfoSet;
+
+import java.util.Currency;
+
+/**
+ * Validate DepositInfoSet.
+ */
+<span class="fc" id="L39">public class MoneyWiseValidateDepositInfoSet</span>
+        extends PrometheusValidateInfoSet&lt;MoneyWiseDepositInfo&gt; {
+    @Override
+    public MoneyWiseDeposit getOwner() {
+<span class="fc" id="L43">        return (MoneyWiseDeposit) super.getOwner();</span>
+    }
+
+    @Override
+    public MoneyWiseDepositInfoSet getInfoSet() {
+<span class="nc" id="L48">        return (MoneyWiseDepositInfoSet) super.getInfoSet();</span>
+    }
+
+    @Override
+    public MetisFieldRequired isClassRequired(final PrometheusDataInfoClass pClass) {
+        /* Access details about the Deposit */
+<span class="fc" id="L54">        final MoneyWiseDeposit myDeposit = getOwner();</span>
+<span class="fc" id="L55">        final MoneyWiseDepositCategory myCategory = myDeposit.getCategory();</span>
+
+        /* If we have no Category, no class is allowed */
+<span class="pc bpc" id="L58" title="1 of 2 branches missed.">        if (myCategory == null) {</span>
+<span class="nc" id="L59">            return MetisFieldRequired.NOTALLOWED;</span>
+        }
+<span class="fc" id="L61">        final MoneyWiseDepositCategoryClass myClass = myCategory.getCategoryTypeClass();</span>
+
+        /* Switch on class */
+<span class="fc bfc" id="L64" title="All 3 branches covered.">        switch ((MoneyWiseAccountInfoClass) pClass) {</span>
+            /* Allowed set */
+            case NOTES:
+            case SORTCODE:
+            case ACCOUNT:
+            case REFERENCE:
+            case OPENINGBALANCE:
+<span class="fc" id="L71">                return MetisFieldRequired.CANEXIST;</span>
+
+            /* Handle Maturity */
+            case MATURITY:
+<span class="pc bpc" id="L75" title="1 of 2 branches missed.">                return myClass.hasMaturity()</span>
+<span class="nc" id="L76">                        ? MetisFieldRequired.MUSTEXIST</span>
+<span class="fc" id="L77">                        : MetisFieldRequired.NOTALLOWED;</span>
+
+            /* Not allowed */
+            case AUTOEXPENSE:
+            case AUTOPAYEE:
+            case WEBSITE:
+            case CUSTOMERNO:
+            case USERID:
+            case PASSWORD:
+            case SYMBOL:
+            case REGION:
+            case UNDERLYINGSTOCK:
+            case OPTIONPRICE:
+            default:
+<span class="fc" id="L91">                return MetisFieldRequired.NOTALLOWED;</span>
+        }
+    }
+
+    @Override
+    public void validateClass(final MoneyWiseDepositInfo pInfo,
+                              final PrometheusDataInfoClass pClass) {
+        /* Switch on class */
+<span class="pc bpc" id="L99" title="2 of 3 branches missed.">        switch ((MoneyWiseAccountInfoClass) pClass) {</span>
+            case OPENINGBALANCE:
+<span class="fc" id="L101">                validateOpeningBalance(pInfo);</span>
+<span class="fc" id="L102">                break;</span>
+            case SORTCODE:
+            case ACCOUNT:
+            case NOTES:
+            case REFERENCE:
+<span class="nc" id="L107">                validateInfoLength(pInfo);</span>
+<span class="nc" id="L108">                break;</span>
+            default:
+                break;
+        }
+<span class="fc" id="L112">    }</span>
+
+    /**
+     * Validate the opening balance.
+     * @param pInfo the info
+     */
+    private void validateOpeningBalance(final MoneyWiseDepositInfo pInfo) {
+<span class="fc" id="L119">        final OceanusMoney myBalance = pInfo.getValue(OceanusMoney.class);</span>
+<span class="pc bpc" id="L120" title="1 of 2 branches missed.">        if (!myBalance.getCurrency().equals(getOwner().getCurrency())) {</span>
+<span class="nc" id="L121">            getOwner().addError(MoneyWiseDepositInfoSet.ERROR_CURRENCY, MoneyWiseDepositInfoSet.getFieldForClass(MoneyWiseAccountInfoClass.OPENINGBALANCE));</span>
+        }
+<span class="fc" id="L123">    }</span>
+
+    /**
+     * Validate the info length.
+     * @param pInfo the info
+     */
+    private void validateInfoLength(final MoneyWiseDepositInfo pInfo) {
+<span class="nc" id="L130">        final char[] myArray = pInfo.getValue(char[].class);</span>
+<span class="nc" id="L131">        final MoneyWiseAccountInfoClass myClass = pInfo.getInfoClass();</span>
+<span class="nc bnc" id="L132" title="All 2 branches missed.">        if (myArray.length &gt; myClass.getMaximumLength()) {</span>
+<span class="nc" id="L133">            getOwner().addError(PrometheusDataItem.ERROR_LENGTH, MoneyWiseDepositInfoSet.getFieldForClass(myClass));</span>
+        }
+<span class="nc" id="L135">    }</span>
+
+    @Override
+    protected void setDefault(final PrometheusDataInfoClass pClass) throws OceanusException {
+        /* If this is maturity */
+<span class="nc bnc" id="L140" title="All 2 branches missed.">        if (MoneyWiseAccountInfoClass.MATURITY.equals(pClass)) {</span>
+<span class="nc" id="L141">            final OceanusDate myDate = new OceanusDate();</span>
+<span class="nc" id="L142">            myDate.adjustYear(1);</span>
+<span class="nc" id="L143">            getOwner().setMaturity(myDate);</span>
+        }
+<span class="nc" id="L145">    }</span>
+
+    @Override
+    protected void autoCorrect(final PrometheusDataInfoClass pClass) throws OceanusException {
+        /* If the info is Opening balance */
+<span class="nc bnc" id="L150" title="All 2 branches missed.">        if (MoneyWiseAccountInfoClass.OPENINGBALANCE.equals(pClass)) {</span>
+            /* Access the value */
+<span class="nc" id="L152">            final MoneyWiseDeposit myOwner = getOwner();</span>
+<span class="nc" id="L153">            OceanusMoney myOpening = myOwner.getOpeningBalance();</span>
+<span class="nc" id="L154">            final MoneyWiseCurrency myAssetCurrency = myOwner.getAssetCurrency();</span>
+<span class="nc" id="L155">            final Currency myCurrency = myAssetCurrency.getCurrency();</span>
+
+            /* If we need to change currency */
+<span class="nc bnc" id="L158" title="All 2 branches missed.">            if (!myCurrency.equals(myOpening.getCurrency())) {</span>
+<span class="nc" id="L159">                myOpening = myOpening.changeCurrency(myCurrency);</span>
+<span class="nc" id="L160">                getInfoSet().setValue(pClass, myOpening);</span>
+            }
+        }
+<span class="nc" id="L163">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianDigestSpec.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.gordianknot.api.digest</a> &gt; <span class="el_source">GordianDigestSpec.java</span></div><h1>GordianDigestSpec.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * GordianKnot: Security Suite
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.gordianknot.api.digest;
+
+import net.sourceforge.joceanus.gordianknot.api.base.GordianIdSpec;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
+import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSubSpec.GordianDigestState;
+
+import java.util.Objects;
+
+/**
+ * Digest Specification.
+ */
+public class GordianDigestSpec
+    implements GordianIdSpec {
+    /**
+     * The Separator.
+     */
+    private static final String SEP = &quot;-&quot;;
+
+    /**
+     * The Digest Type.
+     */
+    private final GordianDigestType theDigestType;
+
+    /**
+     * The Digest SubSpec.
+     */
+    private final GordianDigestSubSpec theSubSpec;
+
+    /**
+     * The Digest Length.
+     */
+    private final GordianLength theLength;
+
+    /**
+     * Is this a Xof mode?
+     */
+    private final Boolean isXofMode;
+
+    /**
+     * The Validity.
+     */
+    private final boolean isValid;
+
+    /**
+     * The String name.
+     */
+    private String theName;
+
+    /**
+     * Constructor.
+     * @param pDigestType the digestType
+     */
+    public GordianDigestSpec(final GordianDigestType pDigestType) {
+<span class="fc" id="L70">        this(pDigestType, pDigestType.getDefaultLength());</span>
+<span class="fc" id="L71">    }</span>
+
+    /**
+     * Constructor.
+     * @param pDigestType the digestType
+     * @param pLength the length
+     */
+    public GordianDigestSpec(final GordianDigestType pDigestType,
+                             final GordianLength pLength) {
+        /* Store parameters */
+<span class="fc" id="L81">        this(pDigestType, pLength, Boolean.FALSE);</span>
+<span class="fc" id="L82">    }</span>
+
+    /**
+     * Constructor.
+     * @param pDigestType the digestType
+     * @param pLength the length
+     * @param pXofMode is this an explicit Xof?
+     */
+    public GordianDigestSpec(final GordianDigestType pDigestType,
+                             final GordianLength pLength,
+                             final Boolean pXofMode) {
+<span class="fc" id="L93">        this(pDigestType, GordianDigestSubSpec.getDefaultSubSpecForTypeAndLength(pDigestType, pLength), pLength, pXofMode);</span>
+<span class="fc" id="L94">    }</span>
+
+    /**
+     * Constructor.
+     * @param pDigestType the digestType
+     * @param pState the digestState
+     * @param pLength the length
+     */
+    public GordianDigestSpec(final GordianDigestType pDigestType,
+                             final GordianDigestSubSpec pState,
+                             final GordianLength pLength) {
+<span class="fc" id="L105">        this(pDigestType, pState, pLength, Boolean.FALSE);</span>
+<span class="fc" id="L106">    }</span>
+
+    /**
+     * Constructor.
+     * @param pDigestType the digestType
+     * @param pState the digestState
+     * @param pLength the length
+     * @param pXofMode is this an explicit Xof?
+     */
+    public GordianDigestSpec(final GordianDigestType pDigestType,
+                             final GordianDigestSubSpec pState,
+                             final GordianLength pLength,
+<span class="fc" id="L118">                             final Boolean pXofMode) {</span>
+        /* Store parameters */
+<span class="fc" id="L120">        theDigestType = pDigestType;</span>
+<span class="fc" id="L121">        theSubSpec = pState;</span>
+<span class="fc" id="L122">        theLength = pLength;</span>
+<span class="fc" id="L123">        isXofMode = pXofMode;</span>
+<span class="fc" id="L124">        isValid = checkValidity();</span>
+<span class="fc" id="L125">    }</span>
+
+    /**
+     * Obtain Digest Type.
+     * @return the DigestType
+     */
+    public GordianDigestType getDigestType() {
+<span class="fc" id="L132">        return theDigestType;</span>
+    }
+
+    /**
+     * Obtain DigestSubSpec.
+     * @return the SubSpec
+     */
+    public GordianDigestSubSpec getSubSpec() {
+<span class="fc" id="L140">        return theSubSpec;</span>
+    }
+
+    /**
+     * Obtain DigestState.
+     * @return the State
+     */
+    public GordianDigestState getDigestState() {
+<span class="fc bfc" id="L148" title="All 2 branches covered.">        return theSubSpec instanceof GordianDigestState myState</span>
+<span class="fc" id="L149">                ? myState</span>
+<span class="fc" id="L150">                : null;</span>
+    }
+
+    /**
+     * Obtain Digest Length.
+     * @return the Length
+     */
+    public GordianLength getDigestLength() {
+<span class="fc" id="L158">        return theLength;</span>
+    }
+
+    /**
+     * Is the digestSpec a Xof mode?
+     * @return true/false.
+     */
+    public Boolean isXofMode() {
+<span class="fc" id="L166">        return isXofMode;</span>
+    }
+
+    /**
+     * Is the digestSpec a Xof?
+     * @return true/false.
+     */
+    public Boolean isXof() {
+<span class="fc bfc" id="L174" title="All 4 branches covered.">        return isXofMode || theDigestType.isXof();</span>
+    }
+
+    /**
+     * Is the digestSpec valid?
+     * @return true/false.
+     */
+    public boolean isValid() {
+<span class="fc" id="L182">        return isValid;</span>
+    }
+
+    /**
+     * Is this a sha2 hybrid state.
+     * @return true/false
+     */
+    public boolean isSha2Hybrid() {
+<span class="pc bpc" id="L190" title="1 of 2 branches missed.">        return GordianDigestType.SHA2.equals(theDigestType)</span>
+<span class="fc bfc" id="L191" title="All 2 branches covered.">                &amp;&amp; GordianDigestState.STATE512.equals(theSubSpec)</span>
+<span class="fc bfc" id="L192" title="All 2 branches covered.">                &amp;&amp; (GordianLength.LEN_224.equals(theLength)</span>
+<span class="fc bfc" id="L193" title="All 2 branches covered.">                    || GordianLength.LEN_256.equals(theLength));</span>
+    }
+
+    /**
+     * Check spec validity.
+     * @return valid true/false
+     */
+    private boolean checkValidity() {
+        /* Handle null type */
+<span class="pc bpc" id="L202" title="3 of 6 branches missed.">        if (theDigestType == null || theLength == null || isXofMode == null) {</span>
+<span class="nc" id="L203">            return false;</span>
+        }
+
+        /* Switch on keyType */
+<span class="fc bfc" id="L207" title="All 4 branches covered.">        switch (theDigestType) {</span>
+            case SHA2:
+            case SHAKE:
+            case KANGAROO:
+            case HARAKA:
+<span class="pc bpc" id="L212" title="1 of 2 branches missed.">                return theSubSpec instanceof GordianDigestState</span>
+<span class="fc bfc" id="L213" title="All 2 branches covered.">                        &amp;&amp; !isXofMode</span>
+<span class="fc bfc" id="L214" title="All 2 branches covered.">                        &amp;&amp; getDigestState().validForTypeAndLength(theDigestType, theLength);</span>
+            case SKEIN:
+            case BLAKE2:
+<span class="pc bpc" id="L217" title="1 of 2 branches missed.">                return theSubSpec instanceof GordianDigestState</span>
+<span class="fc bfc" id="L218" title="All 4 branches covered.">                        &amp;&amp; (isXofMode ? getDigestState().lengthForXofType(theDigestType) == theLength</span>
+<span class="fc bfc" id="L219" title="All 2 branches covered.">                                      : getDigestState().validForTypeAndLength(theDigestType, theLength));</span>
+            case ASCON:
+<span class="pc bpc" id="L221" title="1 of 2 branches missed.">                return theSubSpec == null</span>
+<span class="pc bpc" id="L222" title="1 of 2 branches missed.">                        &amp;&amp; theDigestType.isLengthValid(theLength);</span>
+            default:
+<span class="pc bpc" id="L224" title="1 of 2 branches missed.">                return theSubSpec == null</span>
+<span class="fc bfc" id="L225" title="All 2 branches covered.">                        &amp;&amp; !isXofMode</span>
+<span class="fc bfc" id="L226" title="All 2 branches covered.">                        &amp;&amp; theDigestType.isLengthValid(theLength);</span>
+        }
+    }
+
+    @Override
+    public String toString() {
+        /* If we have not yet loaded the name */
+<span class="fc bfc" id="L233" title="All 2 branches covered.">        if (theName == null) {</span>
+            /* If the keySpec is valid */
+<span class="pc bpc" id="L235" title="1 of 2 branches missed.">            if (isValid) {</span>
+                /* Load the name */
+<span class="fc" id="L237">                theName = theDigestType.toString();</span>
+<span class="fc bfc" id="L238" title="All 8 branches covered.">                switch (theDigestType) {</span>
+                    case SHA2:
+<span class="fc bfc" id="L240" title="All 2 branches covered.">                        if (isSha2Hybrid()) {</span>
+<span class="fc" id="L241">                            theName += SEP + theSubSpec;</span>
+                        }
+<span class="fc" id="L243">                        theName += SEP + theLength;</span>
+<span class="fc" id="L244">                        break;</span>
+                    case SHAKE:
+<span class="fc" id="L246">                        theName += theSubSpec;</span>
+<span class="fc" id="L247">                        break;</span>
+                    case SKEIN:
+<span class="fc bfc" id="L249" title="All 2 branches covered.">                        if (Boolean.TRUE.equals(isXofMode)) {</span>
+<span class="fc" id="L250">                            theName += &quot;X&quot; + SEP + theSubSpec;</span>
+                        } else {
+<span class="fc" id="L252">                            theName += SEP + theSubSpec + SEP + theLength;</span>
+                        }
+<span class="fc" id="L254">                        break;</span>
+                    case BLAKE2:
+<span class="fc" id="L256">                        theName += getDigestState().getBlake2Algorithm(isXofMode);</span>
+<span class="fc bfc" id="L257" title="All 2 branches covered.">                        if (!Boolean.TRUE.equals(isXofMode)) {</span>
+<span class="fc" id="L258">                            theName += SEP + theLength;</span>
+                        }
+                        break;
+                    case KANGAROO:
+<span class="fc" id="L262">                        theName = getDigestState().getKangarooAlgorithm();</span>
+<span class="fc" id="L263">                        break;</span>
+                    case HARAKA:
+<span class="fc" id="L265">                        theName += SEP + theSubSpec;</span>
+<span class="fc" id="L266">                        break;</span>
+                    case ASCON:
+<span class="fc bfc" id="L268" title="All 2 branches covered.">                        theName += Boolean.TRUE.equals(isXofMode) ? &quot;X&quot; : &quot;&quot;;</span>
+<span class="fc" id="L269">                        break;</span>
+                    default:
+<span class="fc bfc" id="L271" title="All 2 branches covered.">                        if (theDigestType.getSupportedLengths().length &gt; 1) {</span>
+<span class="fc" id="L272">                            theName += SEP + theLength;</span>
+                        }
+                        break;
+                }
+            }  else {
+                /* Report invalid spec */
+<span class="nc" id="L278">                theName = &quot;InvalidDigestSpec: &quot; + theDigestType + &quot;:&quot; + theSubSpec + &quot;:&quot; + theLength + &quot;:&quot; + isXofMode;</span>
+            }
+        }
+
+        /* return the name */
+<span class="fc" id="L283">        return theName;</span>
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+<span class="pc bpc" id="L289" title="1 of 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L290">            return true;</span>
+        }
+<span class="pc bpc" id="L292" title="1 of 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L293">            return false;</span>
+        }
+
+        /* Check subFields */
+<span class="fc" id="L297">        return pThat instanceof GordianDigestSpec myThat</span>
+<span class="fc bfc" id="L298" title="All 2 branches covered.">                &amp;&amp; theDigestType == myThat.getDigestType()</span>
+<span class="fc bfc" id="L299" title="All 2 branches covered.">                &amp;&amp; theSubSpec == myThat.getSubSpec()</span>
+<span class="fc bfc" id="L300" title="All 2 branches covered.">                &amp;&amp; theLength == myThat.getDigestLength()</span>
+<span class="pc bpc" id="L301" title="1 of 4 branches missed.">                &amp;&amp; isXofMode == myThat.isXofMode();</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="fc" id="L306">        return Objects.hash(theDigestType, theSubSpec, theLength, isXofMode);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PrometheusMapsBaseInstance.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Prometheus Core Application Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.prometheus.maps</a> &gt; <span class="el_source">PrometheusMapsBaseInstance.java</span></div><h1>PrometheusMapsBaseInstance.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Prometheus: Application Framework
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.prometheus.maps;
+
+import net.sourceforge.joceanus.metis.field.MetisFieldItem;
+import net.sourceforge.joceanus.metis.field.MetisFieldSet;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
+import net.sourceforge.joceanus.prometheus.maps.PrometheusMapsInstanceElement.PrometheusMapsInstanceElementItem;
+import net.sourceforge.joceanus.prometheus.maps.PrometheusMapsInstanceElement.PrometheusMapsInstanceElementList;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+/**
+ * InstanceMaps Base.
+ */
+public abstract class PrometheusMapsBaseInstance
+        implements MetisFieldItem {
+    /**
+     * Report fields.
+     */
+<span class="nc" id="L37">    private static final MetisFieldSet&lt;PrometheusMapsBaseInstance&gt; FIELD_DEFS</span>
+<span class="nc" id="L38">            = MetisFieldSet.newFieldSet(PrometheusMapsBaseInstance.class);</span>
+
+    /*
+     * Declare Fields.
+     */
+    static {
+<span class="nc" id="L44">        FIELD_DEFS.declareLocalField(PrometheusMapsResource.MAPS_INSTANCEMAP, PrometheusMapsBaseInstance::getMap);</span>
+<span class="nc" id="L45">    }</span>
+
+    /**
+     * The map.
+     */
+    private final Map&lt;Object, PrometheusMapsInstanceElement&gt; theMap;
+
+    /**
+     * Constructor.
+     */
+<span class="nc" id="L55">    PrometheusMapsBaseInstance() {</span>
+<span class="nc" id="L56">        theMap = new LinkedHashMap&lt;&gt;();</span>
+<span class="nc" id="L57">    }</span>
+
+    @Override
+    public MetisFieldSetDef getDataFieldSet() {
+<span class="nc" id="L61">            return FIELD_DEFS;</span>
+        }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L66">        return PrometheusMapsBaseInstance.class.getSimpleName();</span>
+    }
+
+    /**
+     * Obtain the map.
+     * @return the map
+     */
+    private Map&lt;Object, PrometheusMapsInstanceElement&gt; getMap() {
+<span class="nc" id="L74">        return theMap;</span>
+    }
+
+    /**
+     * add item to map.
+     * @param pKey the key for the item
+     * @param pItem the item
+     */
+    void addItemToMap(final Object pKey,
+                      final PrometheusDataItem pItem) {
+<span class="nc" id="L84">        final PrometheusMapsInstanceElement myCurr = theMap.get(pKey);</span>
+<span class="nc bnc" id="L85" title="All 2 branches missed.">        if (myCurr != null) {</span>
+<span class="nc" id="L86">            theMap.put(pKey, new PrometheusMapsInstanceElementList(myCurr, pItem));</span>
+        } else {
+<span class="nc" id="L88">            theMap.put(pKey, new PrometheusMapsInstanceElementItem(pItem));</span>
+        }
+<span class="nc" id="L90">    }</span>
+
+    /**
+     * Is the key duplicate?
+     * @param pKey the key
+     * @return true/false
+     */
+    boolean isKeyDuplicate(final Object pKey) {
+<span class="nc" id="L98">        return theMap.get(pKey) instanceof PrometheusMapsInstanceElementList;</span>
+    }
+
+    /**
+     * Is the key available?
+     * @param pKey the key
+     * @return true/false
+     */
+    boolean isKeyAvailable(final Object pKey) {
+<span class="nc bnc" id="L107" title="All 2 branches missed.">        return theMap.get(pKey) == null;</span>
+    }
+
+    /**
+     * Obtain the item for the key.
+     * @param pKey the key
+     * @return the item
+     */
+    PrometheusDataItem getItemForKey(final Object pKey) {
+<span class="nc" id="L116">        final PrometheusMapsInstanceElement myElement = theMap.get(pKey);</span>
+<span class="nc bnc" id="L117" title="All 2 branches missed.">        if (myElement instanceof PrometheusMapsInstanceElementItem myItem) {</span>
+<span class="nc" id="L118">            return myItem.getItem();</span>
+        }
+<span class="nc bnc" id="L120" title="All 2 branches missed.">        if (myElement instanceof PrometheusMapsInstanceElementList) {</span>
+<span class="nc" id="L121">            return myElement.getList().get(0);</span>
+        }
+<span class="nc" id="L123">        return null;</span>
+    }
+
+    /**
+     * Reset Maps.
+     */
+    void resetMap() {
+<span class="nc" id="L130">        theMap.clear();</span>
+<span class="nc" id="L131">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

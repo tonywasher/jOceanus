@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseStaticTable.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.ui.panel</a> &gt; <span class="el_source">MoneyWiseStaticTable.java</span></div><h1>MoneyWiseStaticTable.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.ui.panel;
+
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.metis.ui.MetisErrorPanel;
+import net.sourceforge.joceanus.metis.ui.MetisAction;
+import net.sourceforge.joceanus.metis.ui.MetisIcon;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
+import net.sourceforge.joceanus.moneywise.ui.base.MoneyWiseBaseTable;
+import net.sourceforge.joceanus.moneywise.ui.MoneyWiseUIResource;
+import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataList.PrometheusListStyle;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
+import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataClass;
+import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataItem;
+import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataItem.PrometheusStaticList;
+import net.sourceforge.joceanus.prometheus.ui.PrometheusIcon;
+import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIGenericWrapper;
+import net.sourceforge.joceanus.tethys.api.button.TethysUIScrollButtonManager;
+import net.sourceforge.joceanus.tethys.api.control.TethysUIControl.TethysUIIconMapSet;
+import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollMenu;
+import net.sourceforge.joceanus.tethys.api.table.TethysUITableColumn;
+import net.sourceforge.joceanus.tethys.api.table.TethysUITableManager;
+
+/**
+ * MoneyWise Static Table.
+ * @param &lt;L&gt; the list type
+ * @param &lt;T&gt; the data type
+ */
+public class MoneyWiseStaticTable&lt;L extends PrometheusStaticList&lt;T&gt;, T extends PrometheusStaticDataItem&gt;
+        extends MoneyWiseBaseTable&lt;T&gt; {
+    /**
+     * Class column width.
+     */
+    private static final int WIDTH_CLASS = 90;
+
+    /**
+     * The list class.
+     */
+    private final Class&lt;L&gt; theClass;
+
+    /**
+     * The enabled column.
+     */
+    private final TethysUITableColumn&lt;Boolean, MetisDataFieldId, T&gt; theEnabledColumn;
+
+    /**
+     * The new button.
+     */
+    private final TethysUIScrollButtonManager&lt;TethysUIGenericWrapper&gt; theNewButton;
+
+    /**
+     * The edit list.
+     */
+    private L theStatic;
+
+    /**
+     * show disabled.
+     */
+    private boolean showAll;
+
+    /**
+     * Constructor.
+     * @param pView the view
+     * @param pEditSet the editSet
+     * @param pError the error panel
+     * @param pDataType the dataType
+     * @param pListClass the listClass
+     */
+    MoneyWiseStaticTable(final MoneyWiseView pView,
+                         final PrometheusEditSet pEditSet,
+                         final MetisErrorPanel pError,
+                         final MoneyWiseStaticDataType pDataType,
+                         final Class&lt;L&gt; pListClass) {
+        /* Store parameters */
+<span class="nc" id="L98">        super(pView, pEditSet, pError, pDataType);</span>
+<span class="nc" id="L99">        theClass = pListClass;</span>
+
+        /* Access the gui factory */
+<span class="nc" id="L102">        final TethysUIFactory&lt;?&gt; myGuiFactory = pView.getGuiFactory();</span>
+<span class="nc" id="L103">        final TethysUITableManager&lt;MetisDataFieldId, T&gt; myTable = getTable();</span>
+
+        /* Create new button */
+<span class="nc" id="L106">        theNewButton = myGuiFactory.buttonFactory().newScrollButton(TethysUIGenericWrapper.class);</span>
+<span class="nc" id="L107">        MetisIcon.configureNewScrollButton(theNewButton);</span>
+
+        /* Set table configuration */
+<span class="nc" id="L110">        myTable.setDisabled(PrometheusStaticDataItem::isDisabled)</span>
+<span class="nc" id="L111">                .setComparator(PrometheusStaticDataItem::compareTo);</span>
+
+        /* Create the class column */
+<span class="nc" id="L114">        myTable.declareStringColumn(PrometheusDataResource.STATICDATA_CLASS)</span>
+<span class="nc" id="L115">                .setCellValueFactory(r -&gt; r.getStaticClass().toString())</span>
+<span class="nc" id="L116">                .setEditable(false)</span>
+<span class="nc" id="L117">                .setColumnWidth(WIDTH_CLASS);</span>
+
+        /* Create the name column */
+<span class="nc" id="L120">        myTable.declareStringColumn(PrometheusDataResource.DATAITEM_FIELD_NAME)</span>
+<span class="nc" id="L121">                .setValidator(this::isValidName)</span>
+<span class="nc" id="L122">                .setCellValueFactory(PrometheusStaticDataItem::getName)</span>
+<span class="nc" id="L123">                .setEditable(true)</span>
+<span class="nc" id="L124">                .setColumnWidth(WIDTH_NAME)</span>
+<span class="nc" id="L125">                .setOnCommit((r, v) -&gt; updateField(PrometheusStaticDataItem::setName, r, v));</span>
+
+        /* Create the description column */
+<span class="nc" id="L128">        myTable.declareStringColumn(PrometheusDataResource.DATAITEM_FIELD_DESC)</span>
+<span class="nc" id="L129">                .setValidator(this::isValidDesc)</span>
+<span class="nc" id="L130">                .setCellValueFactory(PrometheusStaticDataItem::getDesc)</span>
+<span class="nc" id="L131">                .setEditable(true)</span>
+<span class="nc" id="L132">                .setColumnWidth(WIDTH_DESC)</span>
+<span class="nc" id="L133">                .setOnCommit((r, v) -&gt; updateField(PrometheusStaticDataItem::setDescription, r, v));</span>
+
+        /* Create the enabled column */
+<span class="nc" id="L136">        final TethysUIIconMapSet&lt;Boolean&gt; myEnabledMapSet = PrometheusIcon.configureEnabledIconButton(myGuiFactory);</span>
+<span class="nc" id="L137">        theEnabledColumn = myTable.declareIconColumn(PrometheusDataResource.STATICDATA_ENABLED, Boolean.class)</span>
+<span class="nc" id="L138">                .setIconMapSet(r -&gt; myEnabledMapSet)</span>
+<span class="nc" id="L139">                .setCellValueFactory(PrometheusStaticDataItem::getEnabled)</span>
+<span class="nc" id="L140">                .setVisible(false)</span>
+<span class="nc" id="L141">                .setEditable(true)</span>
+<span class="nc bnc" id="L142" title="All 2 branches missed.">                .setCellEditable(r -&gt; !r.isActive())</span>
+<span class="nc" id="L143">                .setColumnWidth(WIDTH_ICON)</span>
+<span class="nc" id="L144">                .setOnCommit((r, v) -&gt; updateField(PrometheusStaticDataItem::setEnabled, r, v));</span>
+
+        /* Create the Active column */
+<span class="nc" id="L147">        final TethysUIIconMapSet&lt;MetisAction&gt; myActionMapSet = MetisIcon.configureStatusIconButton(myGuiFactory);</span>
+<span class="nc" id="L148">        myTable.declareIconColumn(PrometheusDataResource.DATAITEM_TOUCH, MetisAction.class)</span>
+<span class="nc" id="L149">                .setIconMapSet(r -&gt; myActionMapSet)</span>
+<span class="nc bnc" id="L150" title="All 2 branches missed.">                .setCellValueFactory(r -&gt; r.isActive() ? MetisAction.ACTIVE : MetisAction.DELETE)</span>
+<span class="nc" id="L151">                .setName(MoneyWiseUIResource.STATICDATA_ACTIVE.getValue())</span>
+<span class="nc" id="L152">                .setEditable(true)</span>
+<span class="nc bnc" id="L153" title="All 2 branches missed.">                .setCellEditable(r -&gt; !r.isActive())</span>
+<span class="nc" id="L154">                .setColumnWidth(WIDTH_ICON)</span>
+<span class="nc" id="L155">                .setOnCommit((r, v) -&gt; updateField(this::deleteRow, r, v));</span>
+
+        /* Add listeners */
+<span class="nc" id="L158">        final OceanusEventRegistrar&lt;TethysUIEvent&gt; myRegistrar = theNewButton.getEventRegistrar();</span>
+<span class="nc" id="L159">        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -&gt; handleNewClass());</span>
+<span class="nc" id="L160">        theNewButton.setMenuConfigurator(e -&gt; buildNewMenu());</span>
+<span class="nc" id="L161">        setShowAll(false);</span>
+<span class="nc" id="L162">    }</span>
+
+    /**
+     * Obtain the new button.
+     * @return the new Button
+     */
+    TethysUIScrollButtonManager&lt;TethysUIGenericWrapper&gt; getNewButton() {
+<span class="nc" id="L169">        return theNewButton;</span>
+    }
+
+    @Override
+    protected void refreshData() throws OceanusException {
+<span class="nc" id="L174">        final MoneyWiseDataSet myData = getView().getData();</span>
+<span class="nc" id="L175">        final PrometheusStaticList&lt;T&gt; myStatic = myData.getDataList(theClass);</span>
+<span class="nc" id="L176">        theStatic = theClass.cast(myStatic.deriveList(PrometheusListStyle.EDIT));</span>
+<span class="nc" id="L177">        theStatic.mapData();</span>
+<span class="nc" id="L178">        getTable().setItems(theStatic.getUnderlyingList());</span>
+<span class="nc" id="L179">        getEditEntry().setDataList(theStatic);</span>
+<span class="nc" id="L180">        restoreSelected();</span>
+<span class="nc" id="L181">    }</span>
+
+    /**
+     * handle new static class.
+     */
+    private void handleNewClass() {
+        /* Create a new profile */
+<span class="nc" id="L188">        final OceanusProfile myTask = getView().getNewProfile(&quot;addNewClass&quot;);</span>
+
+        /* Access the new class */
+<span class="nc" id="L191">        cancelEditing();</span>
+<span class="nc" id="L192">        final PrometheusStaticDataClass myClass = (PrometheusStaticDataClass) theNewButton.getValue().getData();</span>
+
+        /* Protect the action */
+        try {
+            /* Look to find a deleted value */
+<span class="nc" id="L197">            myTask.startTask(&quot;addToList&quot;);</span>
+<span class="nc" id="L198">            T myValue = theStatic.findItemByClass(myClass);</span>
+
+            /* If we found a deleted value */
+<span class="nc bnc" id="L201" title="All 2 branches missed.">            if (myValue != null) {</span>
+                /* reinstate it */
+<span class="nc" id="L203">                myValue.setDeleted(false);</span>
+
+                /* else we have no existing value */
+            } else {
+                /* Create the new value */
+<span class="nc" id="L208">                myValue = theStatic.addNewItem(myClass);</span>
+<span class="nc" id="L209">                myValue.setNewVersion();</span>
+<span class="nc" id="L210">                myValue.adjustMapForItem();</span>
+            }
+
+            /* Update the table */
+<span class="nc" id="L214">            myTask.startTask(&quot;incrementVersion&quot;);</span>
+<span class="nc" id="L215">            getEditSet().incrementVersion();</span>
+<span class="nc" id="L216">            updateTableData();</span>
+<span class="nc" id="L217">            selectItem(myValue);</span>
+<span class="nc" id="L218">            notifyChanges();</span>
+
+            /* Handle exceptions */
+<span class="nc" id="L221">        } catch (OceanusException e) {</span>
+<span class="nc" id="L222">            setError(e);</span>
+<span class="nc" id="L223">        }</span>
+
+        /* End the task */
+<span class="nc" id="L226">        myTask.end();</span>
+<span class="nc" id="L227">    }</span>
+
+    /**
+     * Build the menu of available new items.
+     */
+    private void buildNewMenu() {
+        /* Reset the menu popUp */
+<span class="nc" id="L234">        final TethysUIScrollMenu&lt;TethysUIGenericWrapper&gt; myMenu = theNewButton.getMenu();</span>
+<span class="nc" id="L235">        myMenu.removeAllItems();</span>
+
+        /* Loop through the missing classes */
+<span class="nc bnc" id="L238" title="All 2 branches missed.">        for (PrometheusStaticDataClass myValue : theStatic.getMissingClasses()) {</span>
+            /* Create a new MenuItem and add it to the popUp */
+<span class="nc" id="L240">            myMenu.addItem(new TethysUIGenericWrapper(myValue));</span>
+<span class="nc" id="L241">        }</span>
+<span class="nc" id="L242">    }</span>
+
+    /**
+     * Select static data.
+     * @param pStatic the static data
+     */
+    @SuppressWarnings(&quot;unchecked&quot;)
+    void selectStatic(final PrometheusStaticDataItem pStatic) {
+<span class="nc" id="L250">        getTable().selectRow((T) pStatic);</span>
+<span class="nc" id="L251">    }</span>
+
+    /**
+     * Is the static table full?
+     * @return true/false
+     */
+    boolean isFull() {
+<span class="nc bnc" id="L258" title="All 2 branches missed.">        return theStatic == null</span>
+<span class="nc bnc" id="L259" title="All 2 branches missed.">                || theStatic.isFull();</span>
+    }
+
+    /**
+     * adjust showALL.
+     * @param pShow show disabled entries
+     */
+    void setShowAll(final boolean pShow) {
+<span class="nc" id="L267">        showAll = pShow;</span>
+<span class="nc" id="L268">        cancelEditing();</span>
+<span class="nc" id="L269">        getTable().setFilter(this::isFiltered);</span>
+<span class="nc" id="L270">        theEnabledColumn.setVisible(showAll);</span>
+<span class="nc" id="L271">        restoreSelected();</span>
+<span class="nc" id="L272">    }</span>
+
+    @Override
+    protected boolean isFiltered(final T pRow) {
+<span class="nc bnc" id="L276" title="All 6 branches missed.">        return super.isFiltered(pRow) &amp;&amp; (pRow.getEnabled() || showAll);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

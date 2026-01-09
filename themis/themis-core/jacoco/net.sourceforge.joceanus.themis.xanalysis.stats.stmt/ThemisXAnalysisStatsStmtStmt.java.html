@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisXAnalysisStatsStmtStmt.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.themis.xanalysis.stats.stmt</a> &gt; <span class="el_source">ThemisXAnalysisStatsStmtStmt.java</span></div><h1>ThemisXAnalysisStatsStmtStmt.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Themis: Java Project Framework
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.themis.xanalysis.stats.stmt;
+
+import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisStatementInstance;
+import net.sourceforge.joceanus.themis.xanalysis.parser.stmt.ThemisXAnalysisStatement;
+import net.sourceforge.joceanus.themis.xanalysis.parser.stmt.ThemisXAnalysisStmtAssert;
+import net.sourceforge.joceanus.themis.xanalysis.parser.stmt.ThemisXAnalysisStmtBlock;
+import net.sourceforge.joceanus.themis.xanalysis.parser.stmt.ThemisXAnalysisStmtConstructor;
+import net.sourceforge.joceanus.themis.xanalysis.parser.stmt.ThemisXAnalysisStmtDo;
+import net.sourceforge.joceanus.themis.xanalysis.parser.stmt.ThemisXAnalysisStmtExpression;
+import net.sourceforge.joceanus.themis.xanalysis.parser.stmt.ThemisXAnalysisStmtFor;
+import net.sourceforge.joceanus.themis.xanalysis.parser.stmt.ThemisXAnalysisStmtForEach;
+import net.sourceforge.joceanus.themis.xanalysis.parser.stmt.ThemisXAnalysisStmtIf;
+import net.sourceforge.joceanus.themis.xanalysis.parser.stmt.ThemisXAnalysisStmtLabeled;
+import net.sourceforge.joceanus.themis.xanalysis.parser.stmt.ThemisXAnalysisStmtReturn;
+import net.sourceforge.joceanus.themis.xanalysis.parser.stmt.ThemisXAnalysisStmtSwitch;
+import net.sourceforge.joceanus.themis.xanalysis.parser.stmt.ThemisXAnalysisStmtSynch;
+import net.sourceforge.joceanus.themis.xanalysis.parser.stmt.ThemisXAnalysisStmtThrow;
+import net.sourceforge.joceanus.themis.xanalysis.parser.stmt.ThemisXAnalysisStmtTry;
+import net.sourceforge.joceanus.themis.xanalysis.parser.stmt.ThemisXAnalysisStmtWhile;
+import net.sourceforge.joceanus.themis.xanalysis.parser.stmt.ThemisXAnalysisStmtYield;
+
+/**
+ * Statement Counter for Statements.
+ */
+public final class ThemisXAnalysisStatsStmtStmt {
+    /**
+     * Private constructor.
+     */
+    private ThemisXAnalysisStatsStmtStmt() {
+    }
+
+    /**
+     * Obtain the statement count for a statement.
+     *
+     * @param pCounter the counter
+     * @param pStatement the statement
+     * @return the count
+     */
+    static int count(final ThemisXAnalysisStatsStmtCounter pCounter,
+                     final ThemisXAnalysisStatementInstance pStatement) {
+        /* Handle null statement */
+<span class="nc bnc" id="L58" title="All 2 branches missed.">        if (pStatement == null) {</span>
+<span class="nc" id="L59">            return pCounter.fixedCount(0);</span>
+        }
+
+        /* Switch on statement id */
+<span class="nc bnc" id="L63" title="All 18 branches missed.">        switch ((ThemisXAnalysisStatement) pStatement.getId()) {</span>
+<span class="nc" id="L64">            case ASSERT:       return countAssert(pCounter, (ThemisXAnalysisStmtAssert) pStatement);</span>
+<span class="nc" id="L65">            case BLOCK:        return countBlock(pCounter, (ThemisXAnalysisStmtBlock) pStatement);</span>
+<span class="nc" id="L66">            case CONSTRUCTOR:  return countConstructor(pCounter, (ThemisXAnalysisStmtConstructor) pStatement);</span>
+<span class="nc" id="L67">            case DO:           return countDo(pCounter, (ThemisXAnalysisStmtDo) pStatement);</span>
+<span class="nc" id="L68">            case EXPRESSION:   return countExpression(pCounter, (ThemisXAnalysisStmtExpression) pStatement);</span>
+<span class="nc" id="L69">            case FOR:          return countFor(pCounter, (ThemisXAnalysisStmtFor) pStatement);</span>
+<span class="nc" id="L70">            case FOREACH:      return countForEach(pCounter, (ThemisXAnalysisStmtForEach) pStatement);</span>
+<span class="nc" id="L71">            case IF:           return countIf(pCounter, (ThemisXAnalysisStmtIf) pStatement);</span>
+<span class="nc" id="L72">            case LABELED:      return countLabeled(pCounter, (ThemisXAnalysisStmtLabeled) pStatement);</span>
+<span class="nc" id="L73">            case RETURN:       return countReturn(pCounter, (ThemisXAnalysisStmtReturn) pStatement);</span>
+<span class="nc" id="L74">            case SWITCH:       return countSwitch(pCounter, (ThemisXAnalysisStmtSwitch) pStatement);</span>
+<span class="nc" id="L75">            case SYNCHRONIZED: return countSynch(pCounter, (ThemisXAnalysisStmtSynch) pStatement);</span>
+<span class="nc" id="L76">            case THROW:        return countThrow(pCounter, (ThemisXAnalysisStmtThrow) pStatement);</span>
+<span class="nc" id="L77">            case TRY:          return countTry(pCounter, (ThemisXAnalysisStmtTry) pStatement);</span>
+<span class="nc" id="L78">            case WHILE:        return countWhile(pCounter, (ThemisXAnalysisStmtWhile) pStatement);</span>
+<span class="nc" id="L79">            case YIELD:        return countYield(pCounter, (ThemisXAnalysisStmtYield) pStatement);</span>
+            case BREAK:
+<span class="nc" id="L81">            case CONTINUE:     return pCounter.fixedCount(1);</span>
+            case EMPTY:
+            case LOCALCLASS:
+            case LOCALRECORD:
+<span class="nc" id="L85">            default:           return pCounter.fixedCount(0);</span>
+        }
+    }
+
+    /**
+     * Obtain the statement count for an ASSERT statement.
+     *
+     * @param pCounter the counter
+     * @param pAssert the statement
+     * @return the count
+     */
+    private static int countAssert(final ThemisXAnalysisStatsStmtCounter pCounter,
+                                   final ThemisXAnalysisStmtAssert pAssert) {
+<span class="nc" id="L98">        int myCount = pCounter.countExpr(pAssert.getCheck());</span>
+<span class="nc" id="L99">        myCount += pCounter.countExpr(pAssert.getMessage());</span>
+<span class="nc" id="L100">        return myCount;</span>
+    }
+
+    /**
+     * Obtain the statement count for a BLOCK statement.
+     *
+     * @param pCounter the counter
+     * @param pBlock the statement
+     * @return the count
+     */
+    private static int countBlock(final ThemisXAnalysisStatsStmtCounter pCounter,
+                                  final ThemisXAnalysisStmtBlock pBlock) {
+<span class="nc" id="L112">        return pCounter.countStmtList(pBlock.getBody());</span>
+    }
+
+    /**
+     * Obtain the statement count for a CONSTRUCTOR statement.
+     *
+     * @param pCounter the counter
+     * @param pConstructor the statement
+     * @return the count
+     */
+    private static int countConstructor(final ThemisXAnalysisStatsStmtCounter pCounter,
+                                        final ThemisXAnalysisStmtConstructor pConstructor) {
+<span class="nc" id="L124">        return pCounter.countExpr(pConstructor.getExpression())</span>
+<span class="nc" id="L125">                + pCounter.countExprList(pConstructor.getArguments());</span>
+    }
+
+    /**
+     * Obtain the statement count for a DO statement.
+     *
+     * @param pCounter the counter
+     * @param pDo the statement
+     * @return the count
+     */
+    private static int countDo(final ThemisXAnalysisStatsStmtCounter pCounter,
+                               final ThemisXAnalysisStmtDo pDo) {
+<span class="nc" id="L137">        return pCounter.countExpr(pDo.getCondition())</span>
+<span class="nc" id="L138">                + pCounter.countStmt(pDo.getBody());</span>
+    }
+
+    /**
+     * Obtain the statement count for an EXPRESSION statement.
+     *
+     * @param pCounter the counter
+     * @param pExpression the statement
+     * @return the count
+     */
+    private static int countExpression(final ThemisXAnalysisStatsStmtCounter pCounter,
+                                       final ThemisXAnalysisStmtExpression pExpression) {
+<span class="nc" id="L150">        return pCounter.countExpr(pExpression.getExpression());</span>
+    }
+
+    /**
+     * Obtain the statement count for a FOR statement.
+     *
+     * @param pCounter the counter
+     * @param pFor the statement
+     * @return the count
+     */
+    private static int countFor(final ThemisXAnalysisStatsStmtCounter pCounter,
+                                final ThemisXAnalysisStmtFor pFor) {
+<span class="nc" id="L162">        return pCounter.countExprList(pFor.getInit())</span>
+<span class="nc" id="L163">                + pCounter.countExpr(pFor.getCompare())</span>
+<span class="nc" id="L164">                + pCounter.countExprList(pFor.getUpdates())</span>
+<span class="nc" id="L165">                + pCounter.countStmt(pFor.getBody());</span>
+    }
+
+    /**
+     * Obtain the statement count for a FOREACH statement.
+     *
+     * @param pCounter the counter
+     * @param pFor the statement
+     * @return the count
+     */
+    private static int countForEach(final ThemisXAnalysisStatsStmtCounter pCounter,
+                                    final ThemisXAnalysisStmtForEach pFor) {
+<span class="nc" id="L177">        return pCounter.countNode(pFor.getVariableDeclarator())</span>
+<span class="nc" id="L178">                + pCounter.countStmt(pFor.getBody());</span>
+    }
+
+    /**
+     * Obtain the statement count for an IF statement.
+     *
+     * @param pCounter the counter
+     * @param pIf the statement
+     * @return the count
+     */
+    private static int countIf(final ThemisXAnalysisStatsStmtCounter pCounter,
+                               final ThemisXAnalysisStmtIf pIf) {
+<span class="nc" id="L190">        return pCounter.countExpr(pIf.getCondition())</span>
+<span class="nc" id="L191">                + pCounter.countStmt(pIf.getThen())</span>
+<span class="nc" id="L192">                + pCounter.countStmt(pIf.getElse());</span>
+    }
+
+    /**
+     * Obtain the statement count for a LABELED statement.
+     *
+     * @param pCounter the counter
+     * @param pLabeled the statement
+     * @return the count
+     */
+    private static int countLabeled(final ThemisXAnalysisStatsStmtCounter pCounter,
+                                    final ThemisXAnalysisStmtLabeled pLabeled) {
+<span class="nc" id="L204">        return pCounter.countStmt(pLabeled.getLabeled());</span>
+    }
+
+    /**
+     * Obtain the statement count for a RETURN statement.
+     *
+     * @param pCounter the counter
+     * @param pReturn the statement
+     * @return the count
+     */
+    private static int countReturn(final ThemisXAnalysisStatsStmtCounter pCounter,
+                                   final ThemisXAnalysisStmtReturn pReturn) {
+<span class="nc" id="L216">        return pCounter.fixedCount(1)</span>
+<span class="nc" id="L217">                + pCounter.countExpr(pReturn.getExpression());</span>
+    }
+
+    /**
+     * Obtain the statement count for a SWITCH statement.
+     *
+     * @param pCounter the counter
+     * @param pSwitch the statement
+     * @return the count
+     */
+    private static int countSwitch(final ThemisXAnalysisStatsStmtCounter pCounter,
+                                   final ThemisXAnalysisStmtSwitch pSwitch) {
+<span class="nc" id="L229">        return pCounter.countExpr(pSwitch.getSelector())</span>
+<span class="nc" id="L230">                + pCounter.countNodeList(pSwitch.getCases());</span>
+    }
+
+    /**
+     * Obtain the statement count for a Synchronised statement.
+     *
+     * @param pCounter the counter
+     * @param pSync the statement
+     * @return the count
+     */
+    private static int countSynch(final ThemisXAnalysisStatsStmtCounter pCounter,
+                                  final ThemisXAnalysisStmtSynch pSync) {
+<span class="nc" id="L242">        return pCounter.countExpr(pSync.getSynched())</span>
+<span class="nc" id="L243">                + pCounter.countStmt(pSync.getBody());</span>
+    }
+
+    /**
+     * Obtain the statement count for a THROW statement.
+     *
+     * @param pCounter the counter
+     * @param pThrow the statement
+     * @return the count
+     */
+    private static int countThrow(final ThemisXAnalysisStatsStmtCounter pCounter,
+                                  final ThemisXAnalysisStmtThrow pThrow) {
+<span class="nc" id="L255">        return pCounter.fixedCount(1)</span>
+<span class="nc" id="L256">                + pCounter.countExpr(pThrow.getThrown());</span>
+    }
+
+    /**
+     * Obtain the statement count for a TRY statement.
+     *
+     * @param pCounter the counter
+     * @param pTry the statement
+     * @return the count
+     */
+    private static int countTry(final ThemisXAnalysisStatsStmtCounter pCounter,
+                                final ThemisXAnalysisStmtTry pTry) {
+<span class="nc" id="L268">        return pCounter.countExprList(pTry.getResources())</span>
+<span class="nc" id="L269">                + pCounter.countStmt(pTry.getTry())</span>
+<span class="nc" id="L270">                + pCounter.countNodeList(pTry.getCatches())</span>
+<span class="nc" id="L271">                + pCounter.countStmt(pTry.getFinally());</span>
+    }
+
+    /**
+     * Obtain the statement count for a WHILE statement.
+     *
+     * @param pCounter the counter
+     * @param pWhile the statement
+     * @return the count
+     */
+    private static int countWhile(final ThemisXAnalysisStatsStmtCounter pCounter,
+                                  final ThemisXAnalysisStmtWhile pWhile) {
+<span class="nc" id="L283">        return pCounter.countExpr(pWhile.getCondition())</span>
+<span class="nc" id="L284">                + pCounter.countStmt(pWhile.getBody());</span>
+    }
+
+    /**
+     * Obtain the statement count for a YIELD statement.
+     *
+     * @param pCounter the counter
+     * @param pYield the statement
+     * @return the count
+     */
+    private static int countYield(final ThemisXAnalysisStatsStmtCounter pCounter,
+                                  final ThemisXAnalysisStmtYield pYield) {
+<span class="nc" id="L296">        return pCounter.fixedCount(1)</span>
+<span class="nc" id="L297">                + pCounter.countExpr(pYield.getExpression());</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

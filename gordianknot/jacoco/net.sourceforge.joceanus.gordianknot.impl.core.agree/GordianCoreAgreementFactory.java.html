@@ -1,0 +1,374 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCoreAgreementFactory.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.gordianknot.impl.core.agree</a> &gt; <span class="el_source">GordianCoreAgreementFactory.java</span></div><h1>GordianCoreAgreementFactory.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * GordianKnot: Security Suite
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.gordianknot.impl.core.agree;
+
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreement;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementFactory;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpecBuilder;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementType;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianKDFType;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianEdwardsElliptic;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairType;
+import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianAgreementMessageASN1.GordianMessageType;
+import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCompositeAgreement.GordianCompositeAnonymousAgreement;
+import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCompositeAgreement.GordianCompositeBasicAgreement;
+import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCompositeAgreement.GordianCompositeHandshakeAgreement;
+import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCompositeAgreement.GordianCompositeSignedAgreement;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseData;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
+
+/**
+ * GordianKnot base for encryptorFactory.
+ */
+public abstract class GordianCoreAgreementFactory
+        implements GordianAgreementFactory {
+    /**
+     * The factory.
+     */
+    private final GordianBaseFactory theFactory;
+
+    /**
+     * The id control.
+     */
+    private final AtomicInteger theNextId;
+
+    /**
+     * The algorithm Ids.
+     */
+    private GordianAgreementAlgId theAlgIds;
+
+    /**
+     * Constructor.
+     *
+     * @param pFactory the factory
+     */
+<span class="fc" id="L71">    protected GordianCoreAgreementFactory(final GordianBaseFactory pFactory) {</span>
+<span class="fc" id="L72">        theFactory = pFactory;</span>
+<span class="fc" id="L73">        theNextId = new AtomicInteger();</span>
+<span class="fc" id="L74">    }</span>
+
+    /**
+     * Obtain the factory.
+     * @return the factory
+     */
+    protected GordianBaseFactory getFactory() {
+<span class="fc" id="L81">        return theFactory;</span>
+    }
+
+    @Override
+    public GordianAgreement createAgreement(final byte[] pClientHello) throws GordianException {
+        /* Parse the client hello message */
+<span class="fc" id="L87">        final GordianAgreementMessageASN1 myASN1 = GordianAgreementMessageASN1.getInstance(pClientHello);</span>
+<span class="fc" id="L88">        myASN1.checkMessageType(GordianMessageType.CLIENTHELLO);</span>
+<span class="fc" id="L89">        final AlgorithmIdentifier myAlgId = myASN1.getAgreementId();</span>
+<span class="fc" id="L90">        final GordianAgreementSpec mySpec = getSpecForIdentifier(myAlgId);</span>
+<span class="fc" id="L91">        return createAgreement(mySpec);</span>
+    }
+
+    /**
+     * Create the BouncyCastle Agreement.
+     *
+     * @param pSpec the agreementSpec
+     * @return the Agreement
+     * @throws GordianException on error
+     */
+    protected GordianAgreement getCompositeAgreement(final GordianAgreementSpec pSpec) throws GordianException {
+<span class="pc bpc" id="L102" title="1 of 5 branches missed.">        switch (pSpec.getAgreementType()) {</span>
+            case KEM:
+            case ANON:
+<span class="fc" id="L105">                return new GordianCompositeAnonymousAgreement(getFactory(), pSpec);</span>
+            case BASIC:
+<span class="fc" id="L107">                return new GordianCompositeBasicAgreement(getFactory(), pSpec);</span>
+            case SIGNED:
+<span class="fc" id="L109">                return new GordianCompositeSignedAgreement(getFactory(), pSpec);</span>
+            case MQV:
+            case UNIFIED:
+            case SM2:
+<span class="fc" id="L113">                return new GordianCompositeHandshakeAgreement(getFactory(), pSpec);</span>
+            default:
+<span class="nc" id="L115">                throw new GordianDataException(GordianBaseData.getInvalidText(pSpec));</span>
+        }
+    }
+
+    @Override
+    public Predicate&lt;GordianAgreementSpec&gt; supportedAgreements() {
+<span class="fc" id="L121">        return this::validAgreementSpec;</span>
+    }
+
+    /**
+     * Check the agreementSpec.
+     * @param pAgreementSpec the agreementSpec
+     * @throws GordianException on error
+     */
+    protected void checkAgreementSpec(final GordianAgreementSpec pAgreementSpec) throws GordianException {
+        /* Check validity of agreement */
+<span class="pc bpc" id="L131" title="1 of 2 branches missed.">        if (!validAgreementSpec(pAgreementSpec)) {</span>
+<span class="nc" id="L132">            throw new GordianDataException(GordianBaseData.getInvalidText(pAgreementSpec));</span>
+        }
+<span class="fc" id="L134">    }</span>
+
+    /**
+     * Obtain the nextId.
+     * @return the nextId
+     */
+    Integer getNextId() {
+<span class="fc" id="L141">        return theNextId.incrementAndGet();</span>
+    }
+
+    /**
+     * Check AgreementSpec.
+     *
+     * @param pSpec the agreementSpec
+     * @return true/false
+     */
+    protected boolean validAgreementSpec(final GordianAgreementSpec pSpec) {
+        /* Reject invalid agreementSpec */
+<span class="pc bpc" id="L152" title="1 of 4 branches missed.">        if (pSpec == null || !pSpec.isValid()) {</span>
+<span class="fc" id="L153">            return false;</span>
+        }
+
+        /* Check that spec is supported */
+<span class="fc" id="L157">        return pSpec.isSupported();</span>
+    }
+
+    @Override
+    public boolean validAgreementSpecForKeyPairSpec(final GordianKeyPairSpec pKeyPairSpec,
+                                                    final GordianAgreementSpec pAgreementSpec) {
+        /* Check that the agreementSpec is supported */
+<span class="fc bfc" id="L164" title="All 2 branches covered.">        if (!validAgreementSpec(pAgreementSpec)) {</span>
+<span class="fc" id="L165">            return false;</span>
+        }
+
+        /* Check agreement matches keySpec */
+<span class="pc bpc" id="L169" title="1 of 2 branches missed.">        if (!pAgreementSpec.getKeyPairSpec().equals(pKeyPairSpec)) {</span>
+<span class="nc" id="L170">            return false;</span>
+        }
+
+        /* For Edwards XDH, disallow 512KDF for 25519 and 256KDF for 448 */
+<span class="fc bfc" id="L174" title="All 2 branches covered.">        if (pKeyPairSpec.getKeyPairType() == GordianKeyPairType.XDH) {</span>
+<span class="fc" id="L175">            final GordianEdwardsElliptic myEdwards = pKeyPairSpec.getEdwardsElliptic();</span>
+<span class="fc bfc" id="L176" title="All 3 branches covered.">            switch (pAgreementSpec.getKDFType()) {</span>
+                case SHA256KDF:
+                case SHA256CKDF:
+<span class="fc" id="L179">                    return myEdwards.is25519();</span>
+                case SHA512KDF:
+                case SHA512CKDF:
+<span class="fc bfc" id="L182" title="All 2 branches covered.">                    return !myEdwards.is25519();</span>
+                default:
+                    break;
+            }
+        }
+
+        /* For Composite AgreementSpec */
+<span class="fc bfc" id="L189" title="All 2 branches covered.">        if (pKeyPairSpec.getKeyPairType() == GordianKeyPairType.COMPOSITE) {</span>
+            /* Access the subSpecs  */
+<span class="fc" id="L191">            final List&lt;GordianAgreementSpec&gt; mySubAgrees = GordianCompositeAgreement.getSubAgreements(pAgreementSpec);</span>
+
+            /* Loop through the subAgreements */
+<span class="fc bfc" id="L194" title="All 2 branches covered.">            for (GordianAgreementSpec mySpec : mySubAgrees) {</span>
+<span class="fc bfc" id="L195" title="All 2 branches covered.">                if (!validAgreementSpecForKeyPairSpec(mySpec.getKeyPairSpec(), mySpec)) {</span>
+<span class="fc" id="L196">                    return false;</span>
+                }
+<span class="fc" id="L198">            }</span>
+
+            /* Check confirmation */
+<span class="fc bfc" id="L201" title="All 2 branches covered.">            if (Boolean.TRUE.equals(pAgreementSpec.withConfirm())</span>
+<span class="pc bpc" id="L202" title="1 of 2 branches missed.">                &amp;&amp; !pAgreementSpec.getAgreementType().canConfirm()) {</span>
+<span class="nc" id="L203">                return false;</span>
+            }
+
+            /* Disallow SM2 with confirm */
+<span class="fc bfc" id="L207" title="All 2 branches covered.">            return pAgreementSpec.getAgreementType() != GordianAgreementType.SM2</span>
+<span class="fc bfc" id="L208" title="All 2 branches covered.">                    || !pAgreementSpec.withConfirm();</span>
+        }
+
+        /* OK */
+<span class="fc" id="L212">        return true;</span>
+    }
+
+    /**
+     * Obtain Identifier for AgreementSpec.
+     * @param pSpec the agreementSpec.
+     * @return the Identifier
+     */
+    public AlgorithmIdentifier getIdentifierForSpec(final GordianAgreementSpec pSpec) {
+<span class="fc" id="L221">        return getAlgorithmIds().determineIdentifier(pSpec);</span>
+    }
+
+    /**
+     * Obtain AgreementSpec for Identifier.
+     * @param pIdentifier the identifier.
+     * @return the agreementSpec (or null if not found)
+     */
+    public GordianAgreementSpec getSpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
+<span class="fc" id="L230">        return getAlgorithmIds().determineAgreementSpec(pIdentifier);</span>
+    }
+
+    /**
+     * Obtain the agreement algorithm Ids.
+     * @return the agreement Algorithm Ids
+     */
+    public GordianAgreementAlgId getAlgorithmIds() {
+<span class="fc bfc" id="L238" title="All 2 branches covered.">        if (theAlgIds == null) {</span>
+<span class="fc" id="L239">            theAlgIds = new GordianAgreementAlgId(theFactory);</span>
+        }
+<span class="fc" id="L241">        return theAlgIds;</span>
+    }
+
+    @Override
+    public List&lt;GordianAgreementSpec&gt; listAllSupportedAgreements(final GordianKeyPair pKeyPair) {
+<span class="nc" id="L246">        return listAllSupportedAgreements(pKeyPair.getKeyPairSpec());</span>
+    }
+
+    @Override
+    public List&lt;GordianAgreementSpec&gt; listAllSupportedAgreements(final GordianKeyPairSpec pKeyPairSpec) {
+<span class="fc" id="L251">        return listPossibleAgreements(pKeyPairSpec)</span>
+<span class="fc" id="L252">                .stream()</span>
+<span class="fc" id="L253">                .filter(supportedAgreements())</span>
+<span class="fc" id="L254">                .filter(s -&gt; validAgreementSpecForKeyPairSpec(pKeyPairSpec, s))</span>
+<span class="fc" id="L255">                .toList();</span>
+    }
+
+    /**
+     * Obtain a list of all possible agreements for the keyPairSpec.
+     * @param pKeyPairSpec the keyPairSpec
+     * @return the list
+     */
+    public List&lt;GordianAgreementSpec&gt; listPossibleAgreements(final GordianKeyPairSpec pKeyPairSpec) {
+        /* Create list */
+<span class="fc" id="L265">        final List&lt;GordianAgreementSpec&gt; myAgreements = new ArrayList&lt;&gt;();</span>
+
+        /* Switch on keyPairType */
+<span class="fc bfc" id="L268" title="All 8 branches covered.">        switch (pKeyPairSpec.getKeyPairType()) {</span>
+            case RSA:
+<span class="fc" id="L270">                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.KEM));</span>
+<span class="fc" id="L271">                break;</span>
+            case NEWHOPE:
+<span class="fc" id="L273">                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.ANON));</span>
+<span class="fc" id="L274">                break;</span>
+            case CMCE:
+            case FRODO:
+            case SABER:
+            case MLKEM:
+            case HQC:
+            case BIKE:
+            case NTRU:
+            case NTRUPRIME:
+<span class="fc" id="L283">                myAgreements.add(GordianAgreementSpecBuilder.kem(pKeyPairSpec, GordianKDFType.NONE));</span>
+<span class="fc" id="L284">                break;</span>
+            case EC:
+            case SM2:
+            case GOST2012:
+<span class="fc" id="L288">                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.ANON));</span>
+<span class="fc" id="L289">                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.KEM));</span>
+<span class="fc" id="L290">                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.BASIC));</span>
+<span class="fc" id="L291">                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.SIGNED));</span>
+<span class="fc" id="L292">                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.UNIFIED));</span>
+<span class="fc" id="L293">                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.UNIFIED, Boolean.TRUE));</span>
+<span class="fc" id="L294">                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.MQV));</span>
+<span class="fc" id="L295">                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.MQV, Boolean.TRUE));</span>
+<span class="fc" id="L296">                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.SM2));</span>
+<span class="fc" id="L297">                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.SM2, Boolean.TRUE));</span>
+<span class="fc" id="L298">                break;</span>
+            case DH:
+            case DSTU4145:
+<span class="fc" id="L301">                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.ANON));</span>
+<span class="fc" id="L302">                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.KEM));</span>
+<span class="fc" id="L303">                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.BASIC));</span>
+<span class="fc" id="L304">                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.SIGNED));</span>
+<span class="fc" id="L305">                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.UNIFIED));</span>
+<span class="fc" id="L306">                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.UNIFIED, Boolean.TRUE));</span>
+<span class="fc" id="L307">                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.MQV));</span>
+<span class="fc" id="L308">                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.MQV, Boolean.TRUE));</span>
+<span class="fc" id="L309">                break;</span>
+            case XDH:
+<span class="fc" id="L311">                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.ANON));</span>
+<span class="fc" id="L312">                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.BASIC));</span>
+<span class="fc" id="L313">                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.SIGNED));</span>
+<span class="fc" id="L314">                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.UNIFIED));</span>
+<span class="fc" id="L315">                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.UNIFIED, Boolean.TRUE));</span>
+<span class="fc" id="L316">                break;</span>
+            case COMPOSITE:
+                /* Loop through the possible keySpecs for the first key */
+<span class="fc" id="L319">                final Iterator&lt;GordianKeyPairSpec&gt; myIterator = pKeyPairSpec.keySpecIterator();</span>
+<span class="fc bfc" id="L320" title="All 2 branches covered.">                for (GordianAgreementSpec mySpec : listPossibleAgreements(myIterator.next())) {</span>
+<span class="fc" id="L321">                    final GordianAgreementSpec myTest = new GordianAgreementSpec(pKeyPairSpec, mySpec.getAgreementType(), mySpec.getKDFType(), mySpec.withConfirm());</span>
+<span class="pc bpc" id="L322" title="1 of 2 branches missed.">                    if (myTest.isValid()) {</span>
+<span class="fc" id="L323">                        myAgreements.add(myTest);</span>
+                    }
+<span class="fc" id="L325">                }</span>
+<span class="fc" id="L326">                break;</span>
+            default:
+                break;
+        }
+
+        /* Return the list */
+<span class="fc" id="L332">        return myAgreements;</span>
+    }
+
+    /**
+     * Create list of KDF variants.
+     * @param pKeyPairSpec the keyPairSpec
+     * @param pAgreementType the agreementType
+     * @return the list
+     */
+    public static List&lt;GordianAgreementSpec&gt; listAllKDFs(final GordianKeyPairSpec pKeyPairSpec,
+                                                         final GordianAgreementType pAgreementType) {
+<span class="fc" id="L343">        return listAllKDFs(pKeyPairSpec, pAgreementType, Boolean.FALSE);</span>
+    }
+
+    @Override
+    public GordianAgreementSpec defaultForKeyPair(final GordianKeyPairSpec pKeySpec) {
+<span class="fc" id="L348">        final Iterator&lt;GordianAgreementSpec&gt; myIterator = listAllSupportedAgreements(pKeySpec).iterator();</span>
+<span class="pc bpc" id="L349" title="1 of 2 branches missed.">        return myIterator.hasNext() ? myIterator.next() : null;</span>
+    }
+
+    /**
+     * Create list of KDF variants.
+     * @param pKeyPairSpec the keyPairSpec
+     * @param pAgreementType the agreementType
+     * @param pConfirm with key confirmation
+     * @return the list
+     */
+    public static List&lt;GordianAgreementSpec&gt; listAllKDFs(final GordianKeyPairSpec pKeyPairSpec,
+                                                         final GordianAgreementType pAgreementType,
+                                                         final Boolean pConfirm) {
+        /* Create list */
+<span class="fc" id="L363">        final List&lt;GordianAgreementSpec&gt; myAgreements = new ArrayList&lt;&gt;();</span>
+
+        /* Loop through the KDFs */
+<span class="fc bfc" id="L366" title="All 2 branches covered.">        for (final GordianKDFType myKDF : GordianKDFType.values()) {</span>
+<span class="fc" id="L367">            myAgreements.add(new GordianAgreementSpec(pKeyPairSpec, pAgreementType, myKDF, pConfirm));</span>
+        }
+
+        /* Return the list */
+<span class="fc" id="L371">        return myAgreements;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

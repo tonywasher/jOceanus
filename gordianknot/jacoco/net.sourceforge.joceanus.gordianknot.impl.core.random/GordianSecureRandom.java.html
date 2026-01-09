@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianSecureRandom.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.gordianknot.impl.core.random</a> &gt; <span class="el_source">GordianSecureRandom.java</span></div><h1>GordianSecureRandom.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * GordianKnot: Security Suite
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.gordianknot.impl.core.random;
+
+import java.security.SecureRandom;
+
+import org.bouncycastle.crypto.prng.EntropySource;
+import org.bouncycastle.crypto.prng.EntropyUtil;
+
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianSeededRandom;
+
+/**
+ * SecureRandom wrapper class.
+ */
+public class GordianSecureRandom
+        extends SecureRandom
+        implements GordianSeededRandom {
+    /**
+     * Serial Id.
+     */
+    private static final long serialVersionUID = -6422187120154720941L;
+
+    /**
+     * The Basic Secure Random instance.
+     */
+    private final SecureRandom theRandom;
+
+    /**
+     * The DRBG generator.
+     */
+    private final transient GordianDRBGenerator theGenerator;
+
+    /**
+     * The DRBG provider.
+     */
+    private final transient EntropySource theEntropy;
+
+    /**
+     * Is this instance prediction resistant?
+     */
+    private final boolean predictionResistant;
+
+    /**
+     * The pre-calculated buffer.
+     */
+    private final byte[] theBuffer;
+
+    /**
+     * Bytes available in buffer.
+     */
+    private int bytesAvailable;
+
+    /**
+     * Constructor.
+     * @param pGenerator the random generator
+     * @param pRandom the secure random instance
+     * @param pEntropy the entropy source
+     * @param isPredictionResistant true/false
+     */
+    GordianSecureRandom(final GordianDRBGenerator pGenerator,
+                        final SecureRandom pRandom,
+                        final EntropySource pEntropy,
+<span class="fc" id="L77">                        final boolean isPredictionResistant) {</span>
+        /* Store parameters */
+<span class="fc" id="L79">        theGenerator = pGenerator;</span>
+<span class="fc" id="L80">        theRandom = pRandom;</span>
+<span class="fc" id="L81">        theEntropy = pEntropy;</span>
+<span class="fc" id="L82">        predictionResistant = isPredictionResistant;</span>
+<span class="fc" id="L83">        theBuffer = new byte[pGenerator.getBlockSize()];</span>
+<span class="fc" id="L84">    }</span>
+
+    @Override
+    public SecureRandom getRandom() {
+<span class="nc" id="L88">        return this;</span>
+    }
+
+    @Override
+    public void setSeed(final byte[] seed) {
+<span class="fc" id="L93">        synchronized (this) {</span>
+            /* Pass the call on */
+<span class="fc" id="L95">            theRandom.setSeed(seed);</span>
+<span class="fc" id="L96">            bytesAvailable = 0;</span>
+<span class="fc" id="L97">        }</span>
+<span class="fc" id="L98">    }</span>
+
+    @Override
+    public void setSeed(final long seed) {
+<span class="fc" id="L102">        synchronized (this) {</span>
+<span class="pc bpc" id="L103" title="1 of 2 branches missed.">            if (theRandom != null) {</span>
+<span class="nc" id="L104">                theRandom.setSeed(seed);</span>
+<span class="nc" id="L105">                bytesAvailable = 0;</span>
+            }
+<span class="fc" id="L107">        }</span>
+<span class="fc" id="L108">    }</span>
+
+    @Override
+    public void nextBytes(final byte[] bytes) {
+<span class="fc" id="L112">        synchronized (this) {</span>
+            /* Fill buffer directly if we are prediction resistant */
+<span class="fc bfc" id="L114" title="All 2 branches covered.">            if (predictionResistant) {</span>
+<span class="fc" id="L115">                fillBuffer(bytes);</span>
+<span class="fc" id="L116">                return;</span>
+            }
+
+            /* Determine how many bytes are needed */
+<span class="fc" id="L120">            int bytesNeeded = bytes.length;</span>
+<span class="fc" id="L121">            int bytesBuilt = 0;</span>
+
+            /* If we have bytes available */
+<span class="fc bfc" id="L124" title="All 2 branches covered.">            if (bytesAvailable &gt; 0) {</span>
+                /* Fulfil the request from the buffer as much as possible */
+<span class="fc" id="L126">                final int bytesToTransfer = Math.min(bytesNeeded, bytesAvailable);</span>
+<span class="fc" id="L127">                System.arraycopy(theBuffer, theBuffer.length - bytesAvailable, bytes, 0, bytesToTransfer);</span>
+<span class="fc" id="L128">                bytesAvailable -= bytesToTransfer;</span>
+<span class="fc" id="L129">                bytesNeeded -= bytesToTransfer;</span>
+<span class="fc" id="L130">                bytesBuilt += bytesToTransfer;</span>
+            }
+
+            /* Loop to fulfil remaining bytes */
+<span class="fc bfc" id="L134" title="All 2 branches covered.">            while (bytesNeeded &gt; 0) {</span>
+                /* Fill the buffer again */
+<span class="fc" id="L136">                nextBuffer();</span>
+
+                /* Fulfil the request from the buffer as much as possible */
+<span class="fc" id="L139">                final int bytesToTransfer = Math.min(bytesNeeded, bytesAvailable);</span>
+<span class="fc" id="L140">                System.arraycopy(theBuffer, 0, bytes, bytesBuilt, bytesToTransfer);</span>
+<span class="fc" id="L141">                bytesAvailable -= bytesToTransfer;</span>
+<span class="fc" id="L142">                bytesNeeded -= bytesToTransfer;</span>
+<span class="fc" id="L143">                bytesBuilt += bytesToTransfer;</span>
+<span class="fc" id="L144">            }</span>
+<span class="fc" id="L145">        }</span>
+<span class="fc" id="L146">    }</span>
+
+    /**
+     * Next buffer of random data.
+     */
+    private void nextBuffer() {
+        /* Generate, checking for reSeed request */
+<span class="pc bpc" id="L153" title="1 of 2 branches missed.">        if (theGenerator.generate(theBuffer, null, predictionResistant) &lt; 0) {</span>
+            /* ReSeed and regenerate */
+<span class="nc" id="L155">            theGenerator.reseed(null);</span>
+<span class="nc" id="L156">            theGenerator.generate(theBuffer, null, predictionResistant);</span>
+        }
+<span class="fc" id="L158">        bytesAvailable = theBuffer.length;</span>
+<span class="fc" id="L159">    }</span>
+
+    /**
+     * Next buffer of random data.
+     * @param pBuffer the buffer to fill
+     */
+    private void fillBuffer(final byte[] pBuffer) {
+        /* Generate, checking for reSeed request */
+<span class="pc bpc" id="L167" title="1 of 2 branches missed.">        if (theGenerator.generate(pBuffer, null, predictionResistant) &lt; 0) {</span>
+            /* ReSeed and regenerate */
+<span class="nc" id="L169">            theGenerator.reseed(null);</span>
+<span class="nc" id="L170">            theGenerator.generate(pBuffer, null, predictionResistant);</span>
+        }
+<span class="fc" id="L172">        bytesAvailable = 0;</span>
+<span class="fc" id="L173">    }</span>
+
+    @Override
+    public byte[] generateSeed(final int numBytes) {
+<span class="fc" id="L177">        return EntropyUtil.generateSeed(theEntropy, numBytes);</span>
+    }
+
+    @Override
+    public String getAlgorithm() {
+<span class="nc" id="L182">        return theGenerator.getAlgorithm();</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L187">        return getAlgorithm();</span>
+    }
+
+    @Override
+    public void reseed(final byte[] pXtraInput) {
+<span class="fc" id="L192">        synchronized (this) {</span>
+<span class="fc" id="L193">            theGenerator.reseed(pXtraInput);</span>
+<span class="fc" id="L194">            bytesAvailable = 0;</span>
+<span class="fc" id="L195">        }</span>
+<span class="fc" id="L196">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

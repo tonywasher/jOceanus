@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianLZMAInputStream.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.gordianknot.impl.core.stream</a> &gt; <span class="el_source">GordianLZMAInputStream.java</span></div><h1>GordianLZMAInputStream.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * GordianKnot: Security Suite
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.gordianknot.impl.core.stream;
+
+import SevenZip.Compression.LZMA.Decoder;
+import SevenZip.Compression.LZMA.Encoder;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
+/**
+ * Provides an LZMA decompression InputStream. Due to the design of the 7-Zip libraries the
+ * decompression must be performed on a separate thread. A thread is created to read the compressed
+ * data from the input stream, decompress the data and write the output to a PipeStream. This class
+ * works as the wrapper to read the decompressed data from the PipedStream.
+ */
+final class GordianLZMAInputStream
+        extends InputStream {
+    /**
+     * The sink stream to write to for the decoder thread.
+     */
+    private final OutputStream theSink;
+
+    /**
+     * The source stream for the decoder thread.
+     */
+    private final InputStream theInput;
+
+    /**
+     * The source stream to read from the decoder thread.
+     */
+    private final InputStream theSource;
+
+    /**
+     * The decoder service.
+     */
+    private final GordianDecoderService theService;
+
+    /**
+     * Constructor.
+     * @param pInput the input stream to wrap
+     */
+<span class="fc" id="L58">    GordianLZMAInputStream(final InputStream pInput) {</span>
+        /* Store the target */
+<span class="fc" id="L60">        theInput = pInput;</span>
+
+        /* Create the piped stream */
+<span class="fc" id="L63">        final GordianPipedStream myPipe = new GordianPipedStream();</span>
+<span class="fc" id="L64">        theSink = myPipe.getSink();</span>
+<span class="fc" id="L65">        theSource = myPipe.getSource();</span>
+
+        /* Create and run the decoder service */
+<span class="fc" id="L68">        theService = new GordianDecoderService();</span>
+<span class="fc" id="L69">        theService.start();</span>
+<span class="fc" id="L70">    }</span>
+
+    @Override
+    public int read(final byte[] pBytes) throws IOException {
+        /* Read the bytes from the source */
+<span class="nc" id="L75">        final int myResult = read(pBytes, 0, pBytes.length);</span>
+
+        /* Check for error */
+<span class="nc" id="L78">        theService.checkForError();</span>
+
+        /* Read the bytes from the source */
+<span class="nc" id="L81">        return myResult;</span>
+    }
+
+    @Override
+    public int read() throws IOException {
+        /* Read the bytes from the source */
+<span class="nc" id="L87">        final int myResult = theSource.read();</span>
+
+        /* Check for error */
+<span class="nc" id="L90">        theService.checkForError();</span>
+
+        /* Read the bytes from the source */
+<span class="nc" id="L93">        return myResult;</span>
+    }
+
+    @Override
+    public int read(final byte[] pBuffer,
+                    final int pOffset,
+                    final int pLength) throws IOException {
+
+        /* Read the bytes from the source */
+<span class="fc" id="L102">        final int myResult = theSource.read(pBuffer, pOffset, pLength);</span>
+
+        /* Check for error */
+<span class="fc" id="L105">        theService.checkForError();</span>
+
+        /* Read the bytes from the source */
+<span class="fc" id="L108">        return myResult;</span>
+    }
+
+    @Override
+    public void close() throws IOException {
+        /* Close the source */
+<span class="fc" id="L114">        theSource.close();</span>
+
+        /* Wait for the Decoder service to stop */
+        try {
+<span class="fc" id="L118">            theService.join();</span>
+<span class="nc" id="L119">        } catch (InterruptedException e) {</span>
+<span class="nc" id="L120">            Thread.currentThread().interrupt();</span>
+<span class="fc" id="L121">        }</span>
+<span class="fc" id="L122">    }</span>
+
+    /**
+     * Close the input.
+     * @throws IOException on error
+     */
+    void closeInput() throws IOException {
+<span class="fc" id="L129">        theInput.close();</span>
+<span class="fc" id="L130">        theSink.close();</span>
+<span class="fc" id="L131">    }</span>
+
+    /**
+     * Close the input.
+     */
+    void closeInputOnError() {
+        try {
+<span class="nc" id="L138">            closeInput();</span>
+<span class="nc" id="L139">        } catch (IOException e) {</span>
+            /* Ignore!! */
+<span class="nc" id="L141">        }</span>
+<span class="nc" id="L142">    }</span>
+
+    /**
+     * The decoder service.
+     */
+    private final class GordianDecoderService
+            extends Thread {
+        /**
+         * The decoder.
+         */
+        private final Decoder theDecoder;
+
+        /**
+         * The error.
+         */
+        private IOException theError;
+
+        /**
+         * Constructor.
+         */
+<span class="fc" id="L162">        GordianDecoderService() {</span>
+            /* Create the decoder */
+<span class="fc" id="L164">            theDecoder = new Decoder();</span>
+<span class="fc" id="L165">            theError = null;</span>
+<span class="fc" id="L166">        }</span>
+
+        /**
+         * Check for error.
+         * @throws IOException on error
+         */
+        void checkForError() throws IOException {
+<span class="pc bpc" id="L173" title="1 of 2 branches missed.">            if (theError != null) {</span>
+<span class="nc" id="L174">                throw theError;</span>
+            }
+<span class="fc" id="L176">        }</span>
+
+        @Override
+        public void run() {
+            try {
+<span class="fc" id="L181">                final byte[] myProperties = new byte[Encoder.kPropSize];</span>
+
+                /* Read the decoder properties */
+<span class="fc" id="L184">                final int n = theInput.read(myProperties, 0, Encoder.kPropSize);</span>
+<span class="pc bpc" id="L185" title="1 of 2 branches missed.">                if (n != Encoder.kPropSize) {</span>
+<span class="nc" id="L186">                    theError = new IOException(&quot;input stream too short&quot;);</span>
+<span class="nc" id="L187">                    return;</span>
+                }
+
+                /* Set the decoder properties */
+<span class="fc" id="L191">                theDecoder.SetDecoderProperties(myProperties);</span>
+
+                /* Decode the stream */
+<span class="fc" id="L194">                theDecoder.Code(theInput, theSink, -1);</span>
+
+                /* Close the input/output streams */
+<span class="fc" id="L197">                closeInput();</span>
+
+<span class="nc" id="L199">            } catch (Exception e) {</span>
+<span class="nc bnc" id="L200" title="All 2 branches missed.">                theError = e instanceof IOException i ? i : new IOException(e);</span>
+<span class="nc" id="L201">                closeInputOnError();</span>
+<span class="fc" id="L202">            }</span>
+<span class="fc" id="L203">        }</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

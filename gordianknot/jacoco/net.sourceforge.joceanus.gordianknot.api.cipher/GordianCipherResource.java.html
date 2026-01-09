@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCipherResource.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.gordianknot.api.cipher</a> &gt; <span class="el_source">GordianCipherResource.java</span></div><h1>GordianCipherResource.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * GordianKnot: Security Suite
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.gordianknot.api.cipher;
+
+import net.sourceforge.joceanus.gordianknot.api.base.GordianBundleLoader;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianBundleLoader.GordianBundleId;
+import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestResource;
+
+/**
+ * Resource IDs for Cipher package.
+ */
+<span class="fc" id="L26">public enum GordianCipherResource</span>
+        implements GordianBundleId {
+    /**
+     * SymKey AES.
+     */
+<span class="fc" id="L31">    SYMKEY_AES(&quot;symKey.AES&quot;),</span>
+
+    /**
+     * SymKey TwoFish.
+     */
+<span class="fc" id="L36">    SYMKEY_TWOFISH(&quot;symKey.TWOFISH&quot;),</span>
+
+    /**
+     * SymKey Serpent.
+     */
+<span class="fc" id="L41">    SYMKEY_SERPENT(&quot;symKey.SERPENT&quot;),</span>
+
+    /**
+     * SymKey Camellia.
+     */
+<span class="fc" id="L46">    SYMKEY_CAMELLIA(&quot;symKey.CAMELLIA&quot;),</span>
+
+    /**
+     * SymKey CAST6.
+     */
+<span class="fc" id="L51">    SYMKEY_CAST6(&quot;symKey.CAST6&quot;),</span>
+
+    /**
+     * SymKey RC6.
+     */
+<span class="fc" id="L56">    SYMKEY_RC6(&quot;symKey.RC6&quot;),</span>
+
+    /**
+     * SymKey THREEFISH.
+     */
+<span class="fc" id="L61">    SYMKEY_THREEFISH(&quot;symKey.THREEFISH&quot;),</span>
+
+    /**
+     * SymKey ARIA.
+     */
+<span class="fc" id="L66">    SYMKEY_ARIA(&quot;symKey.ARIA&quot;),</span>
+
+    /**
+     * SymKey NOEKEON.
+     */
+<span class="fc" id="L71">    SYMKEY_NOEKEON(&quot;symKey.NOEKEON&quot;),</span>
+
+    /**
+     * SymKey SEED.
+     */
+<span class="fc" id="L76">    SYMKEY_SEED(&quot;symKey.SEED&quot;),</span>
+
+    /**
+     * SymKey SM4.
+     */
+<span class="fc" id="L81">    SYMKEY_SM4(&quot;symKey.SM4&quot;),</span>
+
+    /**
+     * SymKey RC2.
+     */
+<span class="fc" id="L86">    SYMKEY_RC2(&quot;symKey.RC2&quot;),</span>
+
+    /**
+     * SymKey RC5.
+     */
+<span class="fc" id="L91">    SYMKEY_RC5(&quot;symKey.RC5&quot;),</span>
+
+    /**
+     * SymKey CAST5.
+     */
+<span class="fc" id="L96">    SYMKEY_CAST5(&quot;symKey.CAST5&quot;),</span>
+
+    /**
+     * SymKey IDEA.
+     */
+<span class="fc" id="L101">    SYMKEY_IDEA(&quot;symKey.IDEA&quot;),</span>
+
+    /**
+     * SymKey TEA.
+     */
+<span class="fc" id="L106">    SYMKEY_TEA(&quot;symKey.TEA&quot;),</span>
+
+    /**
+     * SymKey XTEA.
+     */
+<span class="fc" id="L111">    SYMKEY_XTEA(&quot;symKey.XTEA&quot;),</span>
+
+    /**
+     * SymKey Blowfish.
+     */
+<span class="fc" id="L116">    SYMKEY_BLOWFISH(&quot;symKey.BlowFish&quot;),</span>
+
+    /**
+     * SymKey GOST.
+     */
+<span class="fc" id="L121">    SYMKEY_GOST(&quot;symKey.GOST&quot;),</span>
+
+    /**
+     * SymKey Kuznyechik.
+     */
+<span class="fc" id="L126">    SYMKEY_KUZNYECHIK(&quot;symKey.KUZNYECHIK&quot;),</span>
+
+    /**
+     * SymKey Kalyna.
+     */
+<span class="fc" id="L131">    SYMKEY_KALYNA(&quot;symKey.Kalyna&quot;),</span>
+
+    /**
+     * SymKey SkipJack.
+     */
+<span class="fc" id="L136">    SYMKEY_SKIPJACK(&quot;symKey.Skipjack&quot;),</span>
+
+    /**
+     * SymKey DESede.
+     */
+<span class="fc" id="L141">    SYMKEY_DESEDE(&quot;symKey.DESede&quot;),</span>
+
+    /**
+     * SymKey SHACAL2.
+     */
+<span class="fc" id="L146">    SYMKEY_SHACAL2(&quot;symKey.SHACAL2&quot;),</span>
+
+    /**
+     * SymKey SHACAL2.
+     */
+<span class="fc" id="L151">    SYMKEY_SPECK(&quot;symKey.Speck&quot;),</span>
+
+    /**
+     * SymKey Anubis.
+     */
+<span class="fc" id="L156">    SYMKEY_ANUBIS(&quot;symKey.Anubis&quot;),</span>
+
+    /**
+     * SymKey Simon.
+     */
+<span class="fc" id="L161">    SYMKEY_SIMON(&quot;symKey.Simon&quot;),</span>
+
+    /**
+     * SymKey MARS.
+     */
+<span class="fc" id="L166">    SYMKEY_MARS(&quot;symKey.MARS&quot;),</span>
+
+    /**
+     * SymKey LEA.
+     */
+<span class="fc" id="L171">    SYMKEY_LEA(&quot;symKey.LEA&quot;),</span>
+
+    /**
+     * StreamKey SALSA20.
+     */
+<span class="fc" id="L176">    STREAMKEY_SALSA20(&quot;streamKey.SALSA20&quot;),</span>
+
+    /**
+     * StreamKey HC.
+     */
+<span class="fc" id="L181">    STREAMKEY_HC(&quot;streamKey.HC&quot;),</span>
+
+    /**
+     * StreamKey CHACHA.
+     */
+<span class="fc" id="L186">    STREAMKEY_CHACHA(&quot;streamKey.CHACHA&quot;),</span>
+
+    /**
+     * StreamKey VMPC.
+     */
+<span class="fc" id="L191">    STREAMKEY_VMPC(&quot;streamKey.VMPC&quot;),</span>
+
+    /**
+     * StreamKey ISAAC.
+     */
+<span class="fc" id="L196">    STREAMKEY_ISAAC(&quot;streamKey.ISAAC&quot;),</span>
+
+    /**
+     * StreamKey GRAIN.
+     */
+<span class="fc" id="L201">    STREAMKEY_GRAIN(&quot;streamKey.GRAIN&quot;),</span>
+
+    /**
+     * StreamKey RC4.
+     */
+<span class="fc" id="L206">    STREAMKEY_RC4(&quot;streamKey.RC4&quot;),</span>
+
+    /**
+     * StreamKey SOSEMANUK.
+     */
+<span class="fc" id="L211">    STREAMKEY_SOSEMANUK(&quot;streamKey.SOSEMANUK&quot;),</span>
+
+    /**
+     * StreamKey Rabbit.
+     */
+<span class="fc" id="L216">    STREAMKEY_RABBIT(&quot;streamKey.Rabbit&quot;),</span>
+
+    /**
+     * StreamKey Snow3G.
+     */
+<span class="fc" id="L221">    STREAMKEY_SNOW3G(&quot;streamKey.SNOW3G&quot;),</span>
+
+    /**
+     * StreamKey ZUC.
+     */
+<span class="fc" id="L226">    STREAMKEY_ZUC(&quot;streamKey.ZUC&quot;),</span>
+
+    /**
+     * StreamKey SkeinXof.
+     */
+<span class="fc" id="L231">    STREAMKEY_SKEIN(&quot;streamKey.SKEIN&quot;),</span>
+
+    /**
+     * StreamKey Blake2Xof.
+     */
+<span class="fc" id="L236">    STREAMKEY_BLAKE2(&quot;streamKey.BLAKE2&quot;),</span>
+
+    /**
+     * StreamKey Blake3Xof.
+     */
+<span class="fc" id="L241">    STREAMKEY_BLAKE3(&quot;streamKey.BLAKE3&quot;),</span>
+
+    /**
+     * StreamKey Ascon.
+     */
+<span class="fc" id="L246">    STREAMKEY_ASCON(GordianDigestResource.DIGEST_ASCON),</span>
+
+    /**
+     * StreamKey Elephant.
+     */
+<span class="fc" id="L251">    STREAMKEY_ELEPHANT(&quot;streamKey.Elephant&quot;),</span>
+
+    /**
+     * StreamKey ISAP.
+     */
+<span class="fc" id="L256">    STREAMKEY_ISAP(GordianDigestResource.DIGEST_ISAP),</span>
+
+    /**
+     * StreamKey PhotonBeetle.
+     */
+<span class="fc" id="L261">    STREAMKEY_PHOTONBEETLE(GordianDigestResource.DIGEST_PHOTONBEETLE),</span>
+
+    /**
+     * StreamKey Romulus.
+     */
+<span class="fc" id="L266">    STREAMKEY_ROMULUS(GordianDigestResource.DIGEST_ROMULUS),</span>
+
+    /**
+     * StreamKey Sparkle.
+     */
+<span class="fc" id="L271">    STREAMKEY_SPARKLE(GordianDigestResource.DIGEST_SPARKLE),</span>
+
+    /**
+     * StreamKey Xoodyak.
+     */
+<span class="fc" id="L276">    STREAMKEY_XOODYAK(GordianDigestResource.DIGEST_XOODYAK);</span>
+
+    /**
+     * The Resource Loader.
+     */
+<span class="fc" id="L281">    private static final GordianBundleLoader LOADER = GordianBundleLoader.getLoader(GordianCipherResource.class.getCanonicalName());</span>
+
+    /**
+     * The Id.
+     */
+    private final String theKeyName;
+
+    /**
+     * The Value.
+     */
+    private String theValue;
+
+    /**
+     * Constructor.
+     * @param pKeyName the key name
+     */
+<span class="fc" id="L297">    GordianCipherResource(final String pKeyName) {</span>
+<span class="fc" id="L298">        theKeyName = pKeyName;</span>
+<span class="fc" id="L299">    }</span>
+
+    /**
+     * Constructor.
+     * @param pResource the underlying resource
+     */
+<span class="fc" id="L305">    GordianCipherResource(final GordianBundleId pResource) {</span>
+<span class="fc" id="L306">        theKeyName = null;</span>
+<span class="fc" id="L307">        theValue = pResource.getValue();</span>
+<span class="fc" id="L308">    }</span>
+
+    @Override
+    public String getKeyName() {
+<span class="fc" id="L312">        return theKeyName;</span>
+    }
+
+    @Override
+    public String getNameSpace() {
+<span class="fc" id="L317">        return &quot;cipher&quot;;</span>
+    }
+
+    @Override
+    public String getValue() {
+        /* If we have not initialized the value */
+<span class="fc bfc" id="L323" title="All 2 branches covered.">        if (theValue == null) {</span>
+            /* Derive the value */
+<span class="fc" id="L325">            theValue = LOADER.getValue(this);</span>
+        }
+
+        /* return the value */
+<span class="fc" id="L329">        return theValue;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

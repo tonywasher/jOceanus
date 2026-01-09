@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisAnalysisReference.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.themis.lethe.analysis</a> &gt; <span class="el_source">ThemisAnalysisReference.java</span></div><h1>ThemisAnalysisReference.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Themis: Java Project Framework
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.themis.lethe.analysis;
+
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.themis.lethe.analysis.ThemisAnalysisDataMap.ThemisAnalysisDataType;
+import net.sourceforge.joceanus.themis.lethe.analysis.ThemisAnalysisGeneric.ThemisAnalysisGenericBase;
+import net.sourceforge.joceanus.themis.lethe.analysis.ThemisAnalysisGeneric.ThemisAnalysisGenericRef;
+
+/**
+ * Reference structure.
+ */
+public class ThemisAnalysisReference {
+    /**
+     * The generic.
+     */
+    private ThemisAnalysisGeneric theGeneric;
+
+    /**
+     * The array.
+     */
+    private final ThemisAnalysisArray theArray;
+
+    /**
+     * The dataType.
+     */
+    private ThemisAnalysisDataType theDataType;
+
+    /**
+     * Constructor.
+     * @param pDataType the dataType
+     * @param pGeneric the generic
+     * @param pArray the array
+     */
+    ThemisAnalysisReference(final ThemisAnalysisDataType pDataType,
+                            final ThemisAnalysisGeneric pGeneric,
+<span class="nc" id="L51">                            final ThemisAnalysisArray pArray) {</span>
+        /* Store parameters */
+<span class="nc" id="L53">        theDataType = pDataType;</span>
+<span class="nc" id="L54">        theGeneric = pGeneric;</span>
+<span class="nc" id="L55">        theArray = pArray;</span>
+<span class="nc" id="L56">    }</span>
+
+    /**
+     * Obtain the dataType.
+     * @return the dataType
+     */
+    ThemisAnalysisDataType getDataType() {
+<span class="nc" id="L63">        return theDataType;</span>
+    }
+
+    /**
+     * Resolve the generic reference.
+     * @param pParser the parser
+     * @throws OceanusException on error
+     */
+    void resolveGeneric(final ThemisAnalysisParser pParser) throws OceanusException  {
+        /* Resolve any generic base instance */
+<span class="nc bnc" id="L73" title="All 2 branches missed.">        if (theGeneric instanceof ThemisAnalysisGenericBase myBase) {</span>
+<span class="nc" id="L74">            theGeneric = new ThemisAnalysisGenericRef(pParser, myBase);</span>
+        }
+<span class="nc" id="L76">    }</span>
+
+    /**
+     * Update the dataType.
+     * @param pType the updated type
+     */
+    void updateDataType(final ThemisAnalysisDataType pType) {
+<span class="nc" id="L83">        theDataType = pType;</span>
+<span class="nc" id="L84">    }</span>
+
+    @Override
+    public String toString() {
+<span class="nc" id="L88">        String myName = theDataType.toString();</span>
+<span class="nc bnc" id="L89" title="All 2 branches missed.">        if (theGeneric != null) {</span>
+<span class="nc" id="L90">            myName += theGeneric.toString();</span>
+        }
+<span class="nc bnc" id="L92" title="All 2 branches missed.">        if (theArray != null) {</span>
+<span class="nc" id="L93">            myName += theArray.toString();</span>
+        }
+<span class="nc" id="L95">        return myName;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

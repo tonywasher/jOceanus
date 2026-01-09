@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisAnalysisJavaLang.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.themis.lethe.analysis</a> &gt; <span class="el_source">ThemisAnalysisJavaLang.java</span></div><h1>ThemisAnalysisJavaLang.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Themis: Java Project Framework
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.themis.lethe.analysis;
+
+import net.sourceforge.joceanus.themis.lethe.analysis.ThemisAnalysisDataMap.ThemisAnalysisDataType;
+
+/**
+ * Well-known java.lang classes.
+ */
+<span class="nc" id="L24">public enum ThemisAnalysisJavaLang</span>
+        implements ThemisAnalysisDataType {
+    /**
+     * Object.
+     */
+<span class="nc" id="L29">    OBJECT(&quot;Object&quot;),</span>
+
+    /**
+     * Enum.
+     */
+<span class="nc" id="L34">    ENUM(&quot;Enum&quot;),</span>
+
+    /**
+     * String.
+     */
+<span class="nc" id="L39">    STRING(&quot;String&quot;),</span>
+
+    /**
+     * CharSequence.
+     */
+<span class="nc" id="L44">    CHARSEQ(&quot;CharSequence&quot;),</span>
+
+    /**
+     * StringBuilder.
+     */
+<span class="nc" id="L49">    STRINGBLDR(&quot;StringBuilder&quot;),</span>
+
+    /**
+     * StringBuffer.
+     */
+<span class="nc" id="L54">    STRINGBUFFER(&quot;StringBuffer&quot;),</span>
+
+    /**
+     * Comparable.
+     */
+<span class="nc" id="L59">    COMPARABLE(&quot;Comparable&quot;),</span>
+
+    /**
+     * Throwable.
+     */
+<span class="nc" id="L64">    THROWABLE(&quot;Throwable&quot;),</span>
+
+    /**
+     * Number.
+     */
+<span class="nc" id="L69">    NUMBER(&quot;Number&quot;),</span>
+
+    /**
+     * Thread.
+     */
+<span class="nc" id="L74">    THREAD(&quot;Thread&quot;),</span>
+
+    /**
+     * Runnable.
+     */
+<span class="nc" id="L79">    RUNNABLE(&quot;Runnable&quot;),</span>
+
+    /**
+     * Class.
+     */
+<span class="nc" id="L84">    CLASS(&quot;Class&quot;),</span>
+
+    /**
+     * Iterable.
+     */
+<span class="nc" id="L89">    ITERABLE(&quot;Iterable&quot;),</span>
+
+    /**
+     * Exception.
+     */
+<span class="nc" id="L94">    EXCEPT(&quot;Exception&quot;),</span>
+
+    /**
+     * RunTimeException.
+     */
+<span class="nc" id="L99">    RUNTIMEXCEPT(&quot;RuntimeException&quot;),</span>
+
+    /**
+     * StackTraceELement.
+     */
+<span class="nc" id="L104">    STACKTRACE(&quot;StackTraceElement&quot;),</span>
+
+    /**
+     * Override.
+     */
+<span class="nc" id="L109">    OVERRIDE(&quot;Override&quot;),</span>
+
+    /**
+     * SuppressWarnings.
+     */
+<span class="nc" id="L114">    SUPPRESSWARNINGS(&quot;SuppressWarnings&quot;),</span>
+
+    /**
+     * Deprecated.
+     */
+<span class="nc" id="L119">    DEPRECATED(&quot;Deprecated&quot;),</span>
+
+    /**
+     * FunctionalInterface.
+     */
+<span class="nc" id="L124">    FUNCTIONALINTERFACE(&quot;FunctionalInterface&quot;),</span>
+
+    /**
+     * AutoCloseable.
+     */
+<span class="nc" id="L129">    AUTOCLOSEABLE(&quot;AutoCloseable&quot;),</span>
+
+    /**
+     * IllegalArgumentException.
+     */
+<span class="nc" id="L134">    ILLEGALARGEXC(&quot;IllegalArgumentException&quot;),</span>
+
+    /**
+     * IllegalStateException.
+     */
+<span class="nc" id="L139">    ILLEGALSTATEECEPTION(&quot;IllegalStateException&quot;);</span>
+
+    /**
+     * The class name.
+     */
+    private final String theName;
+
+    /**
+     * Constructor.
+     * @param pName the className
+     */
+<span class="nc" id="L150">    ThemisAnalysisJavaLang(final String pName) {</span>
+<span class="nc" id="L151">        theName = pName;</span>
+<span class="nc" id="L152">    }</span>
+
+    /**
+     * Obtain the className.
+     * @return the name
+     */
+    String getName() {
+<span class="nc" id="L159">        return theName;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L164">        return getName();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

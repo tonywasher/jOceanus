@@ -1,0 +1,1035 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseBasicResource.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.data.basic</a> &gt; <span class="el_source">MoneyWiseBasicResource.java</span></div><h1>MoneyWiseBasicResource.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.data.basic;
+
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticResource;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
+
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.ResourceBundle;
+
+/**
+ * Resource IDs for MoneyWise Data Fields.
+ */
+<span class="fc" id="L31">public enum MoneyWiseBasicResource</span>
+        implements OceanusBundleId, MetisDataFieldId {
+    /**
+     * MoneyWiseData Name.
+     */
+<span class="fc" id="L36">    MONEYWISEDATA_NAME(&quot;MoneyWiseData.Name&quot;),</span>
+
+    /**
+     * MoneyWiseData Name.
+     */
+<span class="fc" id="L41">    MONEYWISEDATA_RANGE(&quot;MoneyWiseData.DateRange&quot;),</span>
+
+    /**
+     * MoneyWiseData Holdings Map.
+     */
+<span class="fc" id="L46">    MONEYWISEDATA_HOLDINGSMAP(&quot;MoneyWiseData.SecurityHoldingsMap&quot;),</span>
+
+    /**
+     * MoneyWiseData Date.
+     */
+<span class="fc" id="L51">    MONEYWISEDATA_FIELD_DATE(&quot;MoneyWiseData.Field.Date&quot;),</span>
+
+    /**
+     * MoneyWiseData Price.
+     */
+<span class="fc" id="L56">    MONEYWISEDATA_FIELD_PRICE(MoneyWiseStaticResource.TRANSINFO_PRICE),</span>
+
+    /**
+     * MoneyWiseData Units.
+     */
+<span class="fc" id="L61">    MONEYWISEDATA_FIELD_UNITS(&quot;MoneyWiseData.Field.Units&quot;),</span>
+
+    /**
+     * MoneyWiseData Rate.
+     */
+<span class="fc" id="L66">    MONEYWISEDATA_FIELD_RATE(&quot;MoneyWiseData.Field.Rate&quot;),</span>
+
+    /**
+     * MoneyWiseData TaxYear.
+     */
+<span class="fc" id="L71">    MONEYWISEDATA_FIELD_TAXYEAR(&quot;MoneyWiseData.Field.TaxYear&quot;),</span>
+
+    /**
+     * MoneyWiseData Dilution.
+     */
+<span class="fc" id="L76">    MONEYWISEDATA_FIELD_DILUTION(MoneyWiseStaticResource.TRANSINFO_DILUTION),</span>
+
+    /**
+     * MoneyWiseData InvalidCurrency Error.
+     */
+<span class="fc" id="L81">    MONEYWISEDATA_ERROR_CURRENCY(&quot;MoneyWiseData.Error.Currency&quot;),</span>
+
+    /**
+     * MoneyWiseData Map MultiMap.
+     */
+<span class="fc" id="L86">    MONEYWISEDATA_MAP_MULTIMAP(&quot;MoneyWiseData.Map.MultiMap&quot;),</span>
+
+    /**
+     * MoneyWiseData Map Underlying.
+     */
+<span class="fc" id="L91">    MONEYWISEDATA_MAP_UNDERLYING(&quot;MoneyWiseData.Map.Underlying&quot;),</span>
+
+    /**
+     * MoneyWiseData Map MultiMap.
+     */
+<span class="fc" id="L96">    MONEYWISEDATA_MAP_MAPOFMAPS(&quot;MoneyWiseData.Map.MapOfMaps&quot;),</span>
+
+    /**
+     * MoneyWiseData Map SingularMap.
+     */
+<span class="fc" id="L101">    MONEYWISEDATA_MAP_SINGULARMAP(&quot;MoneyWiseData.Map.SingularMap&quot;),</span>
+
+    /**
+     * MoneyWiseData Map SingularCounts.
+     */
+<span class="fc" id="L106">    MONEYWISEDATA_MAP_SINGULARCOUNTS(&quot;MoneyWiseData.Map.SingularCounts&quot;),</span>
+
+    /**
+     * Category Name.
+     */
+<span class="fc" id="L111">    CATEGORY_NAME(&quot;Category.Name&quot;),</span>
+
+    /**
+     * Category SubCategory.
+     */
+<span class="fc" id="L116">    CATEGORY_SUBCAT(&quot;Category.SubCategory&quot;),</span>
+
+    /**
+     * Category New Parent.
+     */
+<span class="fc" id="L121">    CATEGORY_NEWPARENT(&quot;Category.NewParent&quot;),</span>
+
+    /**
+     * Category New Category.
+     */
+<span class="fc" id="L126">    CATEGORY_NEWCAT(&quot;Category.NewCategory&quot;),</span>
+
+    /**
+     * Category Error BadParent.
+     */
+<span class="fc" id="L131">    CATEGORY_ERROR_BADPARENT(&quot;Category.Error.BadParent&quot;),</span>
+
+    /**
+     * Category Error BadParent.
+     */
+<span class="fc" id="L136">    CATEGORY_ERROR_MATCHPARENT(&quot;Category.Error.MatchParent&quot;),</span>
+
+    /**
+     * TransCategory Error DiffParent.
+     */
+<span class="fc" id="L141">    TRANSCATEGORY_ERROR_DIFFPARENT(&quot;TransCategory.Error.DiffParent&quot;),</span>
+
+    /**
+     * ExchangeRate From Currency.
+     */
+<span class="fc" id="L146">    XCHGRATE_FROM(&quot;ExchangeRate.FromCurrency&quot;),</span>
+
+    /**
+     * ExchangeRate To Currency.
+     */
+<span class="fc" id="L151">    XCHGRATE_TO(&quot;ExchangeRate.ToCurrency&quot;),</span>
+
+    /**
+     * ExchangeRate Rate.
+     */
+<span class="fc" id="L156">    XCHGRATE_RATE(&quot;ExchangeRate.Rate&quot;),</span>
+
+    /**
+     * ExchangeRate Map Rates.
+     */
+<span class="fc" id="L161">    XCHGRATE_MAP_MAPOFRATES(&quot;ExchangeRate.Map.MapOfRates&quot;),</span>
+
+    /**
+     * ExchangeRate Circular Error.
+     */
+<span class="fc" id="L166">    XCHGRATE_ERROR_CIRCLE(&quot;ExchangeRate.Error.Circle&quot;),</span>
+
+    /**
+     * ExchangeRate Default Error.
+     */
+<span class="fc" id="L171">    XCHGRATE_ERROR_DEFAULT(&quot;ExchangeRate.Error.Default&quot;),</span>
+
+    /**
+     * TransactionTag New Tag.
+     */
+<span class="fc" id="L176">    TRANSTAG_NEWTAG(&quot;TransTag.NewTag&quot;),</span>
+
+    /**
+     * Region New region.
+     */
+<span class="fc" id="L181">    REGION_NEWREGION(&quot;Region.NewRegion&quot;),</span>
+
+    /**
+     * Asset Closed.
+     */
+<span class="fc" id="L186">    ASSET_CLOSED(&quot;Asset.Closed&quot;),</span>
+
+    /**
+     * Asset CloseDate.
+     */
+<span class="fc" id="L191">    ASSET_CLOSEDATE(&quot;Asset.CloseDate&quot;),</span>
+
+    /**
+     * Asset Parent.
+     */
+<span class="fc" id="L196">    ASSET_PARENT(&quot;Asset.Parent&quot;),</span>
+
+    /**
+     * Asset TaxFree.
+     */
+<span class="fc" id="L201">    ASSET_TAXFREE(&quot;Asset.TaxFree&quot;),</span>
+
+    /**
+     * Asset FirstEvent.
+     */
+<span class="fc" id="L206">    ASSET_FIRSTEVENT(&quot;Asset.FirstEvent&quot;),</span>
+
+    /**
+     * Asset LastEvent.
+     */
+<span class="fc" id="L211">    ASSET_LASTEVENT(&quot;Asset.LastEvent&quot;),</span>
+
+    /**
+     * Asset Relevant.
+     */
+<span class="fc" id="L216">    ASSET_RELEVANT(&quot;Asset.Relevant&quot;),</span>
+
+    /**
+     * Asset BadParent Error.
+     */
+<span class="fc" id="L221">    ASSET_ERROR_BADPARENT(&quot;Asset.Error.BadParent&quot;),</span>
+
+    /**
+     * Asset BadCategory Error.
+     */
+<span class="fc" id="L226">    ASSET_ERROR_BADCAT(&quot;Asset.Error.BadCategory&quot;),</span>
+
+    /**
+     * Asset ParentClosed Error.
+     */
+<span class="fc" id="L231">    ASSET_ERROR_PARENTCLOSED(&quot;Asset.Error.ParentClosed&quot;),</span>
+
+    /**
+     * Asset Reserved valueParentClosed Error.
+     */
+<span class="fc" id="L236">    ASSET_ERROR_RESERVED(&quot;Asset.Error.Reserved&quot;),</span>
+
+    /**
+     * Asset Invalid Characters Error.
+     */
+<span class="fc" id="L241">    ASSET_ERROR_INVALIDCHAR(&quot;Asset.Error.InvalidChar&quot;),</span>
+
+    /**
+     * AssetType Payee.
+     */
+<span class="fc" id="L246">    ASSETTYPE_PAYEE(&quot;Payee.Name&quot;),</span>
+
+    /**
+     * AssetType Security.
+     */
+<span class="fc" id="L251">    ASSETTYPE_SECURITY(&quot;Security.Name&quot;),</span>
+
+    /**
+     * AssetType Deposit.
+     */
+<span class="fc" id="L256">    ASSETTYPE_DEPOSIT(&quot;Deposit.Name&quot;),</span>
+
+    /**
+     * AssetType Cash.
+     */
+<span class="fc" id="L261">    ASSETTYPE_CASH(&quot;Cash.Name&quot;),</span>
+
+    /**
+     * AssetType AutoExpense.
+     */
+<span class="fc" id="L266">    ASSETTYPE_AUTOEXPENSE(MoneyWiseStaticResource.CASHTYPE_AUTO),</span>
+
+    /**
+     * AssetType Loan.
+     */
+<span class="fc" id="L271">    ASSETTYPE_LOAN(&quot;Loan.Name&quot;),</span>
+
+    /**
+     * AssetType Portfolio.
+     */
+<span class="fc" id="L276">    ASSETTYPE_PORTFOLIO(&quot;Portfolio.Name&quot;),</span>
+
+    /**
+     * AssetType SecurityHolding.
+     */
+<span class="fc" id="L281">    ASSETTYPE_SECURITYHOLDING(&quot;AssetType.SecurityHolding&quot;),</span>
+
+    /**
+     * AssetDirection To.
+     */
+<span class="fc" id="L286">    ASSETDIRECTION_TO(&quot;AssetDirection.To&quot;),</span>
+
+    /**
+     * AssetType Portfolio.
+     */
+<span class="fc" id="L291">    ASSETDIRECTION_FROM(&quot;AssetDirection.From&quot;),</span>
+
+    /**
+     * Payee InfoSet.
+     */
+<span class="fc" id="L296">    PAYEE_INFOSET(&quot;Payee.InfoSet&quot;),</span>
+
+    /**
+     * Payee NewAccount.
+     */
+<span class="fc" id="L301">    PAYEE_NEWACCOUNT(&quot;Payee.NewAccount&quot;),</span>
+
+    /**
+     * Security Symbol.
+     */
+<span class="fc" id="L306">    SECURITY_SYMBOL(&quot;Security.Symbol&quot;),</span>
+
+    /**
+     * Security InfoSet.
+     */
+<span class="fc" id="L311">    SECURITY_INFOSET(&quot;Security.InfoSet&quot;),</span>
+
+    /**
+     * Security NewAccount.
+     */
+<span class="fc" id="L316">    SECURITY_NEWACCOUNT(&quot;Security.NewAccount&quot;),</span>
+
+    /**
+     * Security Symbol Map.
+     */
+<span class="fc" id="L321">    SECURITY_SYMBOLMAP(&quot;Security.Map.Symbol&quot;),</span>
+
+    /**
+     * Security Symbol Count Map.
+     */
+<span class="fc" id="L326">    SECURITY_SYMBOLCOUNTMAP(&quot;Security.Map.SymbolCount&quot;),</span>
+
+    /**
+     * SecurityPrice Map Prices.
+     */
+<span class="fc" id="L331">    SECURITYPRICE_MAP_MAPOFPRICES(&quot;SecurityPrice.Map.MapOfPrices&quot;),</span>
+
+    /**
+     * Deposit Gross.
+     */
+<span class="fc" id="L336">    DEPOSIT_GROSS(&quot;Deposit.Gross&quot;),</span>
+
+    /**
+     * Deposit InfoSet.
+     */
+<span class="fc" id="L341">    DEPOSIT_INFOSET(&quot;Deposit.InfoSet&quot;),</span>
+
+    /**
+     * Deposit NewAccount.
+     */
+<span class="fc" id="L346">    DEPOSIT_NEWACCOUNT(&quot;Deposit.NewAccount&quot;),</span>
+
+    /**
+     * DepositRate Bonus.
+     */
+<span class="fc" id="L351">    DEPOSITRATE_BONUS(&quot;DepositRate.Bonus&quot;),</span>
+
+    /**
+     * DepositRate EndDate.
+     */
+<span class="fc" id="L356">    DEPOSITRATE_ENDDATE(&quot;DepositRate.EndDate&quot;),</span>
+
+    /**
+     * DepositRate Map Rates.
+     */
+<span class="fc" id="L361">    DEPOSITRATE_MAP_MAPOFRATES(&quot;DepositRate.Map.MapOfRates&quot;),</span>
+
+    /**
+     * DepositRate NulDate Error.
+     */
+<span class="fc" id="L366">    DEPOSITRATE_ERROR_NULLDATE(&quot;DepositRate.Error.NullDate&quot;),</span>
+
+    /**
+     * Cash InfoSet.
+     */
+<span class="fc" id="L371">    CASH_INFOSET(&quot;Cash.InfoSet&quot;),</span>
+
+    /**
+     * Cash NewAccount.
+     */
+<span class="fc" id="L376">    CASH_NEWACCOUNT(&quot;Cash.NewAccount&quot;),</span>
+
+    /**
+     * Cash Bad AutoExpense Error.
+     */
+<span class="fc" id="L381">    CASH_ERROR_AUTOEXPENSE(&quot;Cash.Error.AutoExpense&quot;),</span>
+
+    /**
+     * Loan InfoSet.
+     */
+<span class="fc" id="L386">    LOAN_INFOSET(&quot;Loan.InfoSet&quot;),</span>
+
+    /**
+     * Loan NewAccount.
+     */
+<span class="fc" id="L391">    LOAN_NEWACCOUNT(&quot;Loan.NewAccount&quot;),</span>
+
+    /**
+     * Portfolio InfoSet.
+     */
+<span class="fc" id="L396">    PORTFOLIO_INFOSET(&quot;Portfolio.InfoSet&quot;),</span>
+
+    /**
+     * Portfolio NewAccount.
+     */
+<span class="fc" id="L401">    PORTFOLIO_NEWACCOUNT(&quot;Portfolio.NewAccount&quot;),</span>
+
+    /**
+     * Portfolio CashAccount.
+     */
+<span class="fc" id="L406">    PORTFOLIO_CASHACCOUNT(&quot;Portfolio.CashAccount&quot;),</span>
+
+    /**
+     * StockOption Error BadSecurity.
+     */
+<span class="fc" id="L411">    STOCKOPTION_ERROR_BADSECURITY(&quot;StockOption.Error.BadSecurity&quot;),</span>
+
+    /**
+     * StockOption Error BadExpiry.
+     */
+<span class="fc" id="L416">    STOCKOPTION_ERROR_BADEXPIRE(&quot;StockOption.Error.BadExpire&quot;),</span>
+
+    /**
+     * SecurityHolding New Menu.
+     */
+<span class="fc" id="L421">    SECURITYHOLDING_NEW(&quot;SecurityHolding.Menu.New&quot;),</span>
+
+    /**
+     * Transaction AssetPair.
+     */
+<span class="fc" id="L426">    TRANSACTION_ASSETPAIR(&quot;Transaction.AssetPair&quot;),</span>
+
+    /**
+     * Transaction Account.
+     */
+<span class="fc" id="L431">    TRANSACTION_ACCOUNT(&quot;Transaction.Account&quot;),</span>
+
+    /**
+     * Transaction Partner.
+     */
+<span class="fc" id="L436">    TRANSACTION_PARTNER(&quot;Transaction.Partner&quot;),</span>
+
+    /**
+     * Transaction Direction.
+     */
+<span class="fc" id="L441">    TRANSACTION_DIRECTION(&quot;Transaction.Direction&quot;),</span>
+
+    /**
+     * Transaction Amount.
+     */
+<span class="fc" id="L446">    TRANSACTION_AMOUNT(&quot;Transaction.Amount&quot;),</span>
+
+    /**
+     * Transaction Reconciled.
+     */
+<span class="fc" id="L451">    TRANSACTION_RECONCILED(&quot;Transaction.Reconciled&quot;),</span>
+
+    /**
+     * Transaction Split indication.
+     */
+<span class="fc" id="L456">    TRANSACTION_ID_SPLIT(&quot;Transaction.id.Split&quot;),</span>
+
+    /**
+     * Transaction InfoSet.
+     */
+<span class="fc" id="L461">    TRANSACTION_INFOSET(&quot;Transaction.InfoSet&quot;),</span>
+
+    /**
+     * Transaction Circular Error.
+     */
+<span class="fc" id="L466">    TRANSACTION_ERROR_CIRCLE(&quot;Transaction.Error.Circular&quot;),</span>
+
+    /**
+     * Transaction AssetPair Error.
+     */
+<span class="fc" id="L471">    TRANSACTION_ERROR_ASSETPAIR(&quot;Transaction.Error.AssetPair&quot;),</span>
+
+    /**
+     * Transaction ZeroAmount Error.
+     */
+<span class="fc" id="L476">    TRANSACTION_ERROR_ZERO(&quot;Transaction.Error.ZeroAmount&quot;),</span>
+
+    /**
+     * Transaction BadCreditDate Error.
+     */
+<span class="fc" id="L481">    TRANSACTION_ERROR_BADCREDITDATE(&quot;Transaction.Error.BadCreditDate&quot;),</span>
+
+    /**
+     * Transaction BadOwner Error.
+     */
+<span class="fc" id="L486">    TRANSACTION_ERROR_BADOWNER(&quot;Transaction.Error.BadOwner&quot;),</span>
+
+    /**
+     * Transaction MultiplePayees Error.
+     */
+<span class="fc" id="L491">    TRANSACTION_ERROR_MULTPAYEES(&quot;Transaction.Error.MultiplePayees&quot;),</span>
+
+    /**
+     * Transaction MultipleDates Error.
+     */
+<span class="fc" id="L496">    TRANSACTION_ERROR_MULTDATES(&quot;Transaction.Error.MultipleDates&quot;),</span>
+
+    /**
+     * Transaction PartialReconcile Error.
+     */
+<span class="fc" id="L501">    TRANSACTION_ERROR_PARTIALRECONCILE(&quot;Transaction.Error.PartialReconcile&quot;),</span>
+
+    /**
+     * Transaction MultiplePortfolios Error.
+     */
+<span class="fc" id="L506">    TRANSACTION_ERROR_MULTPORT(&quot;Transaction.Error.MultiplePortfolios&quot;),</span>
+
+    /**
+     * Schedule Start Date.
+     */
+<span class="fc" id="L511">    SCHEDULE_STARTDATE(&quot;Schedule.StartDate&quot;),</span>
+
+    /**
+     * Schedule End Date.
+     */
+<span class="fc" id="L516">    SCHEDULE_ENDDATE(&quot;Schedule.EndDate&quot;),</span>
+
+    /**
+     * Schedule Repeat Frequency.
+     */
+<span class="fc" id="L521">    SCHEDULE_REPEATFREQ(&quot;Schedule.RepeatFrequency&quot;),</span>
+
+    /**
+     * Schedule Pattern.
+     */
+<span class="fc" id="L526">    SCHEDULE_PATTERN(&quot;Schedule.Pattern&quot;),</span>
+
+    /**
+     * Schedule Pattern None.
+     */
+<span class="fc" id="L531">    SCHEDULE_PATTERN_NONE(&quot;Schedule.Pattern.None&quot;),</span>
+
+    /**
+     * Schedule Pattern Last.
+     */
+<span class="fc" id="L536">    SCHEDULE_PATTERN_LAST(&quot;Schedule.Pattern.Last&quot;),</span>
+
+    /**
+     * Schedule Next Date.
+     */
+<span class="fc" id="L541">    SCHEDULE_NEXTDATE(&quot;Schedule.NextDate&quot;),</span>
+
+    /**
+     * Schedule Invalid Frequency Error.
+     */
+<span class="fc" id="L546">    SCHEDULE_ERROR_FREQINVALID(&quot;Schedule.Error.BadFrequency&quot;),</span>
+
+    /**
+     * Schedule Before StartDate Error.
+     */
+<span class="fc" id="L551">    SCHEDULE_ERROR_BEFORESTARTDATE(&quot;Schedule.Error.BeforeStartDate&quot;),</span>
+
+    /**
+     * Schedule After EndDate Error.
+     */
+<span class="fc" id="L556">    SCHEDULE_ERROR_AFTERENDDATE(&quot;Schedule.Error.AfterEndDate&quot;),</span>
+
+    /**
+     * DepositCategory Name.
+     */
+<span class="fc" id="L561">    DEPOSITCAT_NAME(&quot;DepositCategory.Name&quot;),</span>
+
+    /**
+     * DepositCategory List.
+     */
+<span class="fc" id="L566">    DEPOSITCAT_LIST(&quot;DepositCategory.List&quot;),</span>
+
+    /**
+     * CashCategory Name.
+     */
+<span class="fc" id="L571">    CASHCAT_NAME(&quot;CashCategory.Name&quot;),</span>
+
+    /**
+     * CashCategory List.
+     */
+<span class="fc" id="L576">    CASHCAT_LIST(&quot;CashCategory.List&quot;),</span>
+
+    /**
+     * LoanCategory Name.
+     */
+<span class="fc" id="L581">    LOANCAT_NAME(&quot;LoanCategory.Name&quot;),</span>
+
+    /**
+     * LoanCategory List.
+     */
+<span class="fc" id="L586">    LOANCAT_LIST(&quot;LoanCategory.List&quot;),</span>
+
+    /**
+     * TransCategory Name.
+     */
+<span class="fc" id="L591">    TRANSCAT_NAME(&quot;TransCategory.Name&quot;),</span>
+
+    /**
+     * TransCategory List.
+     */
+<span class="fc" id="L596">    TRANSCAT_LIST(&quot;TransCategory.List&quot;),</span>
+
+    /**
+     * ExchangeRate Name.
+     */
+<span class="fc" id="L601">    XCHGRATE_NAME(&quot;ExchangeRate.Name&quot;),</span>
+
+    /**
+     * ExchangeRate List.
+     */
+<span class="fc" id="L606">    XCHGRATE_LIST(&quot;ExchangeRate.List&quot;),</span>
+
+    /**
+     * TransTag Name.
+     */
+<span class="fc" id="L611">    TRANSTAG_NAME(&quot;TransTag.Name&quot;),</span>
+
+    /**
+     * TransTag List.
+     */
+<span class="fc" id="L616">    TRANSTAG_LIST(&quot;TransTag.List&quot;),</span>
+
+    /**
+     * Region Name.
+     */
+<span class="fc" id="L621">    REGION_NAME(&quot;Region.Name&quot;),</span>
+
+    /**
+     * Region List.
+     */
+<span class="fc" id="L626">    REGION_LIST(&quot;Region.List&quot;),</span>
+
+    /**
+     * TaxInfo Name.
+     */
+<span class="fc" id="L631">    TAXINFO_NAME(&quot;TaxInfo.Name&quot;),</span>
+
+    /**
+     * TaxInfo List.
+     */
+<span class="fc" id="L636">    TAXINFO_LIST(&quot;TaxInfo.List&quot;),</span>
+
+    /**
+     * TaxYear Name.
+     */
+<span class="fc" id="L641">    TAXYEAR_NAME(&quot;TaxYear.Name&quot;),</span>
+
+    /**
+     * TaxYear List.
+     */
+<span class="fc" id="L646">    TAXYEAR_LIST(&quot;TaxYear.List&quot;),</span>
+
+    /**
+     * Payee Name.
+     */
+<span class="fc" id="L651">    PAYEE_NAME(&quot;Payee.Name&quot;),</span>
+
+    /**
+     * Payee List.
+     */
+<span class="fc" id="L656">    PAYEE_LIST(&quot;Payee.List&quot;),</span>
+
+    /**
+     * PayeeInfo Name.
+     */
+<span class="fc" id="L661">    PAYEEINFO_NAME(&quot;PayeeInfo.Name&quot;),</span>
+
+    /**
+     * PayeeInfo List.
+     */
+<span class="fc" id="L666">    PAYEEINFO_LIST(&quot;PayeeInfo.List&quot;),</span>
+
+    /**
+     * Security Name.
+     */
+<span class="fc" id="L671">    SECURITY_NAME(&quot;Security.Name&quot;),</span>
+
+    /**
+     * Security List.
+     */
+<span class="fc" id="L676">    SECURITY_LIST(&quot;Security.List&quot;),</span>
+
+    /**
+     * SecurityPrice Name.
+     */
+<span class="fc" id="L681">    SECURITYPRICE_NAME(&quot;SecurityPrice.Name&quot;),</span>
+
+    /**
+     * SecurityPrice List.
+     */
+<span class="fc" id="L686">    SECURITYPRICE_LIST(&quot;SecurityPrice.List&quot;),</span>
+
+    /**
+     * SecurityInfo Name.
+     */
+<span class="fc" id="L691">    SECURITYINFO_NAME(&quot;SecurityInfo.Name&quot;),</span>
+
+    /**
+     * SecurityInfo List.
+     */
+<span class="fc" id="L696">    SECURITYINFO_LIST(&quot;SecurityInfo.List&quot;),</span>
+
+    /**
+     * Deposit Name.
+     */
+<span class="fc" id="L701">    DEPOSIT_NAME(&quot;Deposit.Name&quot;),</span>
+
+    /**
+     * Deposit List.
+     */
+<span class="fc" id="L706">    DEPOSIT_LIST(&quot;Deposit.List&quot;),</span>
+
+    /**
+     * DepositRate Name.
+     */
+<span class="fc" id="L711">    DEPOSITRATE_NAME(&quot;DepositRate.Name&quot;),</span>
+
+    /**
+     * DepositRate List.
+     */
+<span class="fc" id="L716">    DEPOSITRATE_LIST(&quot;DepositRate.List&quot;),</span>
+
+    /**
+     * DepositInfo Name.
+     */
+<span class="fc" id="L721">    DEPOSITINFO_NAME(&quot;DepositInfo.Name&quot;),</span>
+
+    /**
+     * PayeeInfo List.
+     */
+<span class="fc" id="L726">    DEPOSITINFO_LIST(&quot;DepositInfo.List&quot;),</span>
+
+    /**
+     * Cash Name.
+     */
+<span class="fc" id="L731">    CASH_NAME(&quot;Cash.Name&quot;),</span>
+
+    /**
+     * Cash List.
+     */
+<span class="fc" id="L736">    CASH_LIST(&quot;Cash.List&quot;),</span>
+
+    /**
+     * CashInfo Name.
+     */
+<span class="fc" id="L741">    CASHINFO_NAME(&quot;CashInfo.Name&quot;),</span>
+
+    /**
+     * CashInfo List.
+     */
+<span class="fc" id="L746">    CASHINFO_LIST(&quot;CashInfo.List&quot;),</span>
+
+    /**
+     * Loan Name.
+     */
+<span class="fc" id="L751">    LOAN_NAME(&quot;Loan.Name&quot;),</span>
+
+    /**
+     * Loan List.
+     */
+<span class="fc" id="L756">    LOAN_LIST(&quot;Loan.List&quot;),</span>
+
+    /**
+     * LoanInfo Name.
+     */
+<span class="fc" id="L761">    LOANINFO_NAME(&quot;LoanInfo.Name&quot;),</span>
+
+    /**
+     * LoanInfo List.
+     */
+<span class="fc" id="L766">    LOANINFO_LIST(&quot;LoanInfo.List&quot;),</span>
+
+    /**
+     * Portfolio Name.
+     */
+<span class="fc" id="L771">    PORTFOLIO_NAME(&quot;Portfolio.Name&quot;),</span>
+
+    /**
+     * Portfolio List.
+     */
+<span class="fc" id="L776">    PORTFOLIO_LIST(&quot;Portfolio.List&quot;),</span>
+
+    /**
+     * PortfolioInfo Name.
+     */
+<span class="fc" id="L781">    PORTFOLIOINFO_NAME(&quot;PortfolioInfo.Name&quot;),</span>
+
+    /**
+     * PortfolioInfo List.
+     */
+<span class="fc" id="L786">    PORTFOLIOINFO_LIST(&quot;PortfolioInfo.List&quot;),</span>
+
+    /**
+     * Transaction Name.
+     */
+<span class="fc" id="L791">    TRANSACTION_NAME(&quot;Transaction.Name&quot;),</span>
+
+    /**
+     * Transaction List.
+     */
+<span class="fc" id="L796">    TRANSACTION_LIST(&quot;Transaction.List&quot;),</span>
+
+    /**
+     * TransInfo Name.
+     */
+<span class="fc" id="L801">    TRANSINFO_NAME(&quot;TransactionInfo.Name&quot;),</span>
+
+    /**
+     * TransInfo List.
+     */
+<span class="fc" id="L806">    TRANSINFO_LIST(&quot;TransactionInfo.List&quot;),</span>
+
+    /**
+     * Schedule Name.
+     */
+<span class="fc" id="L811">    SCHEDULE_NAME(&quot;Schedule.Name&quot;),</span>
+
+    /**
+     * Schedule List.
+     */
+<span class="fc" id="L816">    SCHEDULE_LIST(&quot;Schedule.List&quot;);</span>
+
+    /**
+     * The Name Map.
+     */
+<span class="fc" id="L821">    private static final Map&lt;MoneyWiseBasicDataType, OceanusBundleId&gt; NAME_MAP = buildNameMap();</span>
+
+    /**
+     * The List Map.
+     */
+<span class="fc" id="L826">    private static final Map&lt;MoneyWiseBasicDataType, OceanusBundleId&gt; LIST_MAP = buildListMap();</span>
+
+    /**
+     * The Asset Type Map.
+     */
+<span class="fc" id="L831">    private static final Map&lt;MoneyWiseAssetType, OceanusBundleId&gt; TYPE_MAP = buildTypeMap();</span>
+
+    /**
+     * The Asset Direction Map.
+     */
+<span class="fc" id="L836">    private static final Map&lt;MoneyWiseAssetDirection, OceanusBundleId&gt; DIRECTION_MAP = buildDirectionMap();</span>
+
+    /**
+     * The Resource Loader.
+     */
+<span class="fc" id="L841">    private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getLoader(MoneyWiseBasicResource.class.getCanonicalName(),</span>
+            ResourceBundle::getBundle);
+
+    /**
+     * The Id.
+     */
+    private final String theKeyName;
+
+    /**
+     * The Value.
+     */
+    private String theValue;
+
+    /**
+     * Constructor.
+     * @param pKeyName the key name
+     */
+<span class="fc" id="L858">    MoneyWiseBasicResource(final String pKeyName) {</span>
+<span class="fc" id="L859">        theKeyName = pKeyName;</span>
+<span class="fc" id="L860">    }</span>
+
+    /**
+     * Constructor.
+     * @param pResource the underlying resource
+     */
+<span class="fc" id="L866">    MoneyWiseBasicResource(final OceanusBundleId pResource) {</span>
+<span class="fc" id="L867">        theKeyName = null;</span>
+<span class="fc" id="L868">        theValue = pResource.getValue();</span>
+<span class="fc" id="L869">    }</span>
+
+    @Override
+    public String getKeyName() {
+<span class="fc" id="L873">        return theKeyName;</span>
+    }
+
+    @Override
+    public String getNameSpace() {
+<span class="fc" id="L878">        return &quot;MoneyWise.data&quot;;</span>
+    }
+
+    @Override
+    public String getValue() {
+        /* If we have not initialised the value */
+<span class="fc bfc" id="L884" title="All 2 branches covered.">        if (theValue == null) {</span>
+            /* Derive the value */
+<span class="fc" id="L886">            theValue = LOADER.getValue(this);</span>
+        }
+
+        /* return the value */
+<span class="fc" id="L890">        return theValue;</span>
+    }
+
+    @Override
+    public String getId() {
+<span class="fc" id="L895">        return getValue();</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L900">        return getValue();</span>
+    }
+
+    /**
+     * Build asset type map.
+     * @return the map
+     */
+    private static Map&lt;MoneyWiseAssetType, OceanusBundleId&gt; buildTypeMap() {
+        /* Create the map and return it */
+<span class="fc" id="L909">        final Map&lt;MoneyWiseAssetType, OceanusBundleId&gt; myMap = new EnumMap&lt;&gt;(MoneyWiseAssetType.class);</span>
+<span class="fc" id="L910">        myMap.put(MoneyWiseAssetType.PAYEE, ASSETTYPE_PAYEE);</span>
+<span class="fc" id="L911">        myMap.put(MoneyWiseAssetType.SECURITY, ASSETTYPE_SECURITY);</span>
+<span class="fc" id="L912">        myMap.put(MoneyWiseAssetType.DEPOSIT, ASSETTYPE_DEPOSIT);</span>
+<span class="fc" id="L913">        myMap.put(MoneyWiseAssetType.CASH, ASSETTYPE_CASH);</span>
+<span class="fc" id="L914">        myMap.put(MoneyWiseAssetType.AUTOEXPENSE, ASSETTYPE_AUTOEXPENSE);</span>
+<span class="fc" id="L915">        myMap.put(MoneyWiseAssetType.LOAN, ASSETTYPE_LOAN);</span>
+<span class="fc" id="L916">        myMap.put(MoneyWiseAssetType.PORTFOLIO, ASSETTYPE_PORTFOLIO);</span>
+<span class="fc" id="L917">        myMap.put(MoneyWiseAssetType.SECURITYHOLDING, ASSETTYPE_SECURITYHOLDING);</span>
+<span class="fc" id="L918">        return myMap;</span>
+    }
+
+    /**
+     * Obtain key for asset type.
+     * @param pValue the Value
+     * @return the resource key
+     */
+    static OceanusBundleId getKeyForAssetType(final MoneyWiseAssetType pValue) {
+<span class="nc" id="L927">        return OceanusBundleLoader.getKeyForEnum(TYPE_MAP, pValue);</span>
+    }
+
+    /**
+     * Build asset direction map.
+     * @return the map
+     */
+    private static Map&lt;MoneyWiseAssetDirection, OceanusBundleId&gt; buildDirectionMap() {
+        /* Create the map and return it */
+<span class="fc" id="L936">        final Map&lt;MoneyWiseAssetDirection, OceanusBundleId&gt; myMap = new EnumMap&lt;&gt;(MoneyWiseAssetDirection.class);</span>
+<span class="fc" id="L937">        myMap.put(MoneyWiseAssetDirection.TO, ASSETDIRECTION_TO);</span>
+<span class="fc" id="L938">        myMap.put(MoneyWiseAssetDirection.FROM, ASSETDIRECTION_FROM);</span>
+<span class="fc" id="L939">        return myMap;</span>
+    }
+
+    /**
+     * Obtain key for asset direction.
+     * @param pValue the Value
+     * @return the resource key
+     */
+    static OceanusBundleId getKeyForAssetDirection(final MoneyWiseAssetDirection pValue) {
+<span class="fc" id="L948">        return OceanusBundleLoader.getKeyForEnum(DIRECTION_MAP, pValue);</span>
+    }
+
+    /**
+     * Build name map.
+     * @return the map
+     */
+    private static Map&lt;MoneyWiseBasicDataType, OceanusBundleId&gt; buildNameMap() {
+        /* Create the map and return it */
+<span class="fc" id="L957">        final Map&lt;MoneyWiseBasicDataType, OceanusBundleId&gt; myMap = new EnumMap&lt;&gt;(MoneyWiseBasicDataType.class);</span>
+<span class="fc" id="L958">        myMap.put(MoneyWiseBasicDataType.DEPOSITCATEGORY, DEPOSITCAT_NAME);</span>
+<span class="fc" id="L959">        myMap.put(MoneyWiseBasicDataType.CASHCATEGORY, CASHCAT_NAME);</span>
+<span class="fc" id="L960">        myMap.put(MoneyWiseBasicDataType.LOANCATEGORY, LOANCAT_NAME);</span>
+<span class="fc" id="L961">        myMap.put(MoneyWiseBasicDataType.TRANSCATEGORY, TRANSCAT_NAME);</span>
+<span class="fc" id="L962">        myMap.put(MoneyWiseBasicDataType.EXCHANGERATE, XCHGRATE_NAME);</span>
+<span class="fc" id="L963">        myMap.put(MoneyWiseBasicDataType.TRANSTAG, TRANSTAG_NAME);</span>
+<span class="fc" id="L964">        myMap.put(MoneyWiseBasicDataType.REGION, REGION_NAME);</span>
+<span class="fc" id="L965">        myMap.put(MoneyWiseBasicDataType.PAYEE, PAYEE_NAME);</span>
+<span class="fc" id="L966">        myMap.put(MoneyWiseBasicDataType.PAYEEINFO, PAYEEINFO_NAME);</span>
+<span class="fc" id="L967">        myMap.put(MoneyWiseBasicDataType.SECURITY, SECURITY_NAME);</span>
+<span class="fc" id="L968">        myMap.put(MoneyWiseBasicDataType.SECURITYPRICE, SECURITYPRICE_NAME);</span>
+<span class="fc" id="L969">        myMap.put(MoneyWiseBasicDataType.SECURITYINFO, SECURITYINFO_NAME);</span>
+<span class="fc" id="L970">        myMap.put(MoneyWiseBasicDataType.DEPOSIT, DEPOSIT_NAME);</span>
+<span class="fc" id="L971">        myMap.put(MoneyWiseBasicDataType.DEPOSITRATE, DEPOSITRATE_NAME);</span>
+<span class="fc" id="L972">        myMap.put(MoneyWiseBasicDataType.DEPOSITINFO, DEPOSITINFO_NAME);</span>
+<span class="fc" id="L973">        myMap.put(MoneyWiseBasicDataType.CASH, CASH_NAME);</span>
+<span class="fc" id="L974">        myMap.put(MoneyWiseBasicDataType.CASHINFO, CASHINFO_NAME);</span>
+<span class="fc" id="L975">        myMap.put(MoneyWiseBasicDataType.LOAN, LOAN_NAME);</span>
+<span class="fc" id="L976">        myMap.put(MoneyWiseBasicDataType.LOANINFO, LOANINFO_NAME);</span>
+<span class="fc" id="L977">        myMap.put(MoneyWiseBasicDataType.PORTFOLIO, PORTFOLIO_NAME);</span>
+<span class="fc" id="L978">        myMap.put(MoneyWiseBasicDataType.PORTFOLIOINFO, PORTFOLIOINFO_NAME);</span>
+<span class="fc" id="L979">        myMap.put(MoneyWiseBasicDataType.TRANSACTION, TRANSACTION_NAME);</span>
+<span class="fc" id="L980">        myMap.put(MoneyWiseBasicDataType.TRANSACTIONINFO, TRANSINFO_NAME);</span>
+<span class="fc" id="L981">        return myMap;</span>
+    }
+
+    /**
+     * Obtain key for data item.
+     * @param pValue the Value
+     * @return the resource key
+     */
+    static OceanusBundleId getKeyForDataType(final MoneyWiseBasicDataType pValue) {
+<span class="fc" id="L990">        return OceanusBundleLoader.getKeyForEnum(NAME_MAP, pValue);</span>
+    }
+
+    /**
+     * Build list map.
+     * @return the map
+     */
+    private static Map&lt;MoneyWiseBasicDataType, OceanusBundleId&gt; buildListMap() {
+        /* Create the map and return it */
+<span class="fc" id="L999">        final Map&lt;MoneyWiseBasicDataType, OceanusBundleId&gt; myMap = new EnumMap&lt;&gt;(MoneyWiseBasicDataType.class);</span>
+<span class="fc" id="L1000">        myMap.put(MoneyWiseBasicDataType.DEPOSITCATEGORY, DEPOSITCAT_LIST);</span>
+<span class="fc" id="L1001">        myMap.put(MoneyWiseBasicDataType.CASHCATEGORY, CASHCAT_LIST);</span>
+<span class="fc" id="L1002">        myMap.put(MoneyWiseBasicDataType.LOANCATEGORY, LOANCAT_LIST);</span>
+<span class="fc" id="L1003">        myMap.put(MoneyWiseBasicDataType.TRANSCATEGORY, TRANSCAT_LIST);</span>
+<span class="fc" id="L1004">        myMap.put(MoneyWiseBasicDataType.EXCHANGERATE, XCHGRATE_LIST);</span>
+<span class="fc" id="L1005">        myMap.put(MoneyWiseBasicDataType.TRANSTAG, TRANSTAG_LIST);</span>
+<span class="fc" id="L1006">        myMap.put(MoneyWiseBasicDataType.REGION, REGION_LIST);</span>
+<span class="fc" id="L1007">        myMap.put(MoneyWiseBasicDataType.PAYEE, PAYEE_LIST);</span>
+<span class="fc" id="L1008">        myMap.put(MoneyWiseBasicDataType.PAYEEINFO, PAYEEINFO_LIST);</span>
+<span class="fc" id="L1009">        myMap.put(MoneyWiseBasicDataType.SECURITY, SECURITY_LIST);</span>
+<span class="fc" id="L1010">        myMap.put(MoneyWiseBasicDataType.SECURITYPRICE, SECURITYPRICE_LIST);</span>
+<span class="fc" id="L1011">        myMap.put(MoneyWiseBasicDataType.SECURITYINFO, SECURITYINFO_LIST);</span>
+<span class="fc" id="L1012">        myMap.put(MoneyWiseBasicDataType.DEPOSIT, DEPOSIT_LIST);</span>
+<span class="fc" id="L1013">        myMap.put(MoneyWiseBasicDataType.DEPOSITRATE, DEPOSITRATE_LIST);</span>
+<span class="fc" id="L1014">        myMap.put(MoneyWiseBasicDataType.DEPOSITINFO, DEPOSITINFO_LIST);</span>
+<span class="fc" id="L1015">        myMap.put(MoneyWiseBasicDataType.CASH, CASH_LIST);</span>
+<span class="fc" id="L1016">        myMap.put(MoneyWiseBasicDataType.CASHINFO, CASHINFO_LIST);</span>
+<span class="fc" id="L1017">        myMap.put(MoneyWiseBasicDataType.LOAN, LOAN_LIST);</span>
+<span class="fc" id="L1018">        myMap.put(MoneyWiseBasicDataType.LOANINFO, LOANINFO_LIST);</span>
+<span class="fc" id="L1019">        myMap.put(MoneyWiseBasicDataType.PORTFOLIO, PORTFOLIO_LIST);</span>
+<span class="fc" id="L1020">        myMap.put(MoneyWiseBasicDataType.PORTFOLIOINFO, PORTFOLIOINFO_LIST);</span>
+<span class="fc" id="L1021">        myMap.put(MoneyWiseBasicDataType.TRANSACTION, TRANSACTION_LIST);</span>
+<span class="fc" id="L1022">        myMap.put(MoneyWiseBasicDataType.TRANSACTIONINFO, TRANSINFO_LIST);</span>
+<span class="fc" id="L1023">        return myMap;</span>
+    }
+
+    /**
+     * Obtain key for data list.
+     * @param pValue the Value
+     * @return the resource key
+     */
+    static OceanusBundleId getKeyForDataList(final MoneyWiseBasicDataType pValue) {
+<span class="fc" id="L1032">        return OceanusBundleLoader.getKeyForEnum(LIST_MAP, pValue);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

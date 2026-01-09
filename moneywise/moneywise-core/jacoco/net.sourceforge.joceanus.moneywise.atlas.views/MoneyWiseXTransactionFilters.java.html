@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseXTransactionFilters.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.atlas.views</a> &gt; <span class="el_source">MoneyWiseXTransactionFilters.java</span></div><h1>MoneyWiseXTransactionFilters.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.atlas.views;
+
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataList;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEvent;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisCashBucket;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisCashBucket.MoneyWiseXAnalysisCashBucketList;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisDepositBucket;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisDepositBucket.MoneyWiseXAnalysisDepositBucketList;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisLoanBucket;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisLoanBucket.MoneyWiseXAnalysisLoanBucketList;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPayeeBucket;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPayeeBucket.MoneyWiseXAnalysisPayeeBucketList;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioBucket;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioBucket.MoneyWiseXAnalysisPortfolioBucketList;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioCashBucket;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisSecurityBucket;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisSecurityBucket.MoneyWiseXAnalysisSecurityBucketList;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTaxBasisBucket;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTaxBasisBucket.MoneyWiseXAnalysisTaxBasisBucketList;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTransCategoryBucket;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTransCategoryBucket.MoneyWiseXAnalysisTransCategoryBucketList;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTransTagBucket;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTransTagBucket.MoneyWiseXAnalysisTransTagBucketList;
+import net.sourceforge.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter.MoneyWiseXAnalysisCashFilter;
+import net.sourceforge.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter.MoneyWiseXAnalysisDepositFilter;
+import net.sourceforge.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter.MoneyWiseXAnalysisLoanFilter;
+import net.sourceforge.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter.MoneyWiseXAnalysisPayeeFilter;
+import net.sourceforge.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter.MoneyWiseXAnalysisPortfolioCashFilter;
+import net.sourceforge.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter.MoneyWiseXAnalysisSecurityFilter;
+import net.sourceforge.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter.MoneyWiseXAnalysisTagFilter;
+import net.sourceforge.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter.MoneyWiseXAnalysisTaxBasisFilter;
+import net.sourceforge.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter.MoneyWiseXAnalysisTransCategoryFilter;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+/**
+ * List of filters for a transaction within an analysis.
+ */
+public class MoneyWiseXTransactionFilters
+        implements MetisDataList&lt;MoneyWiseXAnalysisFilter&lt;?, ?&gt;&gt; {
+    /**
+     * The list.
+     */
+    private final List&lt;MoneyWiseXAnalysisFilter&lt;?, ?&gt;&gt; theList;
+
+    /**
+     * The event.
+     */
+    private final MoneyWiseXAnalysisEvent theEvent;
+
+    /**
+     * The dateRange.
+     */
+    private final OceanusDateRange theDateRange;
+
+    /**
+     * Constructor.
+     * @param pAnalysis the analysis
+     * @param pDateRange the dateRange
+     * @param pEvent the event
+     */
+    public MoneyWiseXTransactionFilters(final MoneyWiseXAnalysis pAnalysis,
+                                        final OceanusDateRange pDateRange,
+<span class="nc" id="L84">                                        final MoneyWiseXAnalysisEvent pEvent) {</span>
+        /* Store dateRange and transaction */
+<span class="nc" id="L86">        theDateRange = pDateRange;</span>
+<span class="nc" id="L87">        theEvent = pEvent;</span>
+
+        /* Create the list */
+<span class="nc" id="L90">        theList = new ArrayList&lt;&gt;();</span>
+
+        /* Analyse accounts */
+<span class="nc" id="L93">        analyseDeposits(pAnalysis.getDeposits());</span>
+<span class="nc" id="L94">        analyseCash(pAnalysis.getCash());</span>
+<span class="nc" id="L95">        analyseLoans(pAnalysis.getLoans());</span>
+
+        /* Analyse Portfolios */
+<span class="nc" id="L98">        analysePortfolios(pAnalysis.getPortfolios());</span>
+
+        /* Analyse Payees */
+<span class="nc" id="L101">        analysePayees(pAnalysis.getPayees());</span>
+
+        /* Analyse Categories */
+<span class="nc" id="L104">        analyseCategories(pAnalysis.getTransCategories());</span>
+
+        /* Analyse TaxBases */
+<span class="nc" id="L107">        analyseTaxBasis(pAnalysis.getTaxBasis());</span>
+
+        /* Analyse Tags */
+<span class="nc" id="L110">        analyseTags(pAnalysis.getTransactionTags());</span>
+<span class="nc" id="L111">    }</span>
+
+    @Override
+    public List&lt;MoneyWiseXAnalysisFilter&lt;?, ?&gt;&gt; getUnderlyingList() {
+<span class="nc" id="L115">        return theList;</span>
+    }
+
+    /**
+     * Add relevant deposit filters.
+     * @param pDeposits the deposit buckets
+     */
+    private void analyseDeposits(final MoneyWiseXAnalysisDepositBucketList pDeposits) {
+        /* Loop through the deposit buckets */
+<span class="nc" id="L124">        final Iterator&lt;MoneyWiseXAnalysisDepositBucket&gt; myIterator = pDeposits.iterator();</span>
+<span class="nc bnc" id="L125" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L126">            final MoneyWiseXAnalysisDepositBucket myBucket = myIterator.next();</span>
+
+            /* If this bucket is relevant for the event */
+<span class="nc bnc" id="L129" title="All 2 branches missed.">            if (myBucket.getValuesForEvent(theEvent) != null) {</span>
+                /* Add filter */
+<span class="nc" id="L131">                final MoneyWiseXAnalysisDepositFilter myFilter = new MoneyWiseXAnalysisDepositFilter(myBucket);</span>
+<span class="nc" id="L132">                myFilter.setDateRange(theDateRange);</span>
+<span class="nc" id="L133">                add(myFilter);</span>
+            }
+<span class="nc" id="L135">        }</span>
+<span class="nc" id="L136">    }</span>
+
+    /**
+     * Add relevant cash filters.
+     * @param pCash the cash buckets
+     */
+    private void analyseCash(final MoneyWiseXAnalysisCashBucketList pCash) {
+        /* Loop through the cash buckets */
+<span class="nc" id="L144">        final Iterator&lt;MoneyWiseXAnalysisCashBucket&gt; myIterator = pCash.iterator();</span>
+<span class="nc bnc" id="L145" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L146">            final MoneyWiseXAnalysisCashBucket myBucket = myIterator.next();</span>
+
+            /* If this bucket is relevant for the event */
+<span class="nc bnc" id="L149" title="All 2 branches missed.">            if (myBucket.getValuesForEvent(theEvent) != null) {</span>
+                /* Add filter */
+<span class="nc" id="L151">                final MoneyWiseXAnalysisCashFilter myFilter = new MoneyWiseXAnalysisCashFilter(myBucket);</span>
+<span class="nc" id="L152">                myFilter.setDateRange(theDateRange);</span>
+<span class="nc" id="L153">                add(myFilter);</span>
+            }
+<span class="nc" id="L155">        }</span>
+<span class="nc" id="L156">    }</span>
+
+    /**
+     * Add relevant loan filters.
+     * @param pLoans the loan buckets
+     */
+    private void analyseLoans(final MoneyWiseXAnalysisLoanBucketList pLoans) {
+        /* Loop through the loan buckets */
+<span class="nc" id="L164">        final Iterator&lt;MoneyWiseXAnalysisLoanBucket&gt; myIterator = pLoans.iterator();</span>
+<span class="nc bnc" id="L165" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L166">            final MoneyWiseXAnalysisLoanBucket myBucket = myIterator.next();</span>
+
+            /* If this bucket is relevant for the event */
+<span class="nc bnc" id="L169" title="All 2 branches missed.">            if (myBucket.getValuesForEvent(theEvent) != null) {</span>
+                /* Add filter */
+<span class="nc" id="L171">                final MoneyWiseXAnalysisLoanFilter myFilter = new MoneyWiseXAnalysisLoanFilter(myBucket);</span>
+<span class="nc" id="L172">                myFilter.setDateRange(theDateRange);</span>
+<span class="nc" id="L173">                add(myFilter);</span>
+            }
+<span class="nc" id="L175">        }</span>
+<span class="nc" id="L176">    }</span>
+
+    /**
+     * Add relevant portfolio filters.
+     * @param pPortfolios the portfolio buckets
+     */
+    private void analysePortfolios(final MoneyWiseXAnalysisPortfolioBucketList pPortfolios) {
+        /* Loop through the portfolio buckets */
+<span class="nc" id="L184">        final Iterator&lt;MoneyWiseXAnalysisPortfolioBucket&gt; myIterator = pPortfolios.iterator();</span>
+<span class="nc bnc" id="L185" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L186">            final MoneyWiseXAnalysisPortfolioBucket myBucket = myIterator.next();</span>
+
+            /* Analyse Securities */
+<span class="nc" id="L189">            analyseSecurities(myBucket.getSecurities());</span>
+
+            /* Check for Cash bucket is relevant for the event */
+<span class="nc" id="L192">            final MoneyWiseXAnalysisPortfolioCashBucket myCash = myBucket.getPortfolioCash();</span>
+<span class="nc bnc" id="L193" title="All 2 branches missed.">            if (myCash.getValuesForEvent(theEvent) != null) {</span>
+                /* Add filter */
+<span class="nc" id="L195">                final MoneyWiseXAnalysisPortfolioCashFilter myFilter = new MoneyWiseXAnalysisPortfolioCashFilter(myBucket);</span>
+<span class="nc" id="L196">                myFilter.setDateRange(theDateRange);</span>
+<span class="nc" id="L197">                add(myFilter);</span>
+            }
+<span class="nc" id="L199">        }</span>
+<span class="nc" id="L200">    }</span>
+
+    /**
+     * Add relevant security filters.
+     * @param pSecurities the security buckets
+     */
+    private void analyseSecurities(final MoneyWiseXAnalysisSecurityBucketList pSecurities) {
+        /* Loop through the security buckets */
+<span class="nc" id="L208">        final Iterator&lt;MoneyWiseXAnalysisSecurityBucket&gt; myIterator = pSecurities.iterator();</span>
+<span class="nc bnc" id="L209" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L210">            final MoneyWiseXAnalysisSecurityBucket myBucket = myIterator.next();</span>
+
+            /* If this bucket is relevant for the event */
+<span class="nc bnc" id="L213" title="All 2 branches missed.">            if (myBucket.getValuesForEvent(theEvent) != null) {</span>
+                /* Add filter */
+<span class="nc" id="L215">                final MoneyWiseXAnalysisSecurityFilter myFilter = new MoneyWiseXAnalysisSecurityFilter(myBucket);</span>
+<span class="nc" id="L216">                myFilter.setDateRange(theDateRange);</span>
+<span class="nc" id="L217">                add(myFilter);</span>
+            }
+<span class="nc" id="L219">        }</span>
+<span class="nc" id="L220">    }</span>
+
+    /**
+     * Add relevant payee filters.
+     * @param pPayees the payee buckets
+     */
+    private void analysePayees(final MoneyWiseXAnalysisPayeeBucketList pPayees) {
+        /* Loop through the payee buckets */
+<span class="nc" id="L228">        final Iterator&lt;MoneyWiseXAnalysisPayeeBucket&gt; myIterator = pPayees.iterator();</span>
+<span class="nc bnc" id="L229" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L230">            final MoneyWiseXAnalysisPayeeBucket myBucket = myIterator.next();</span>
+
+            /* If this bucket is relevant for the event */
+<span class="nc bnc" id="L233" title="All 2 branches missed.">            if (myBucket.getValuesForEvent(theEvent) != null) {</span>
+                /* Add filter */
+<span class="nc" id="L235">                final MoneyWiseXAnalysisPayeeFilter myFilter = new MoneyWiseXAnalysisPayeeFilter(myBucket);</span>
+<span class="nc" id="L236">                myFilter.setDateRange(theDateRange);</span>
+<span class="nc" id="L237">                add(myFilter);</span>
+            }
+<span class="nc" id="L239">        }</span>
+<span class="nc" id="L240">    }</span>
+
+    /**
+     * Add relevant category filters.
+     * @param pCategories the category buckets
+     */
+    private void analyseCategories(final MoneyWiseXAnalysisTransCategoryBucketList pCategories) {
+        /* Loop through the category buckets */
+<span class="nc" id="L248">        final Iterator&lt;MoneyWiseXAnalysisTransCategoryBucket&gt; myIterator = pCategories.iterator();</span>
+<span class="nc bnc" id="L249" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L250">            final MoneyWiseXAnalysisTransCategoryBucket myBucket = myIterator.next();</span>
+
+            /* If this bucket is relevant for the event */
+<span class="nc bnc" id="L253" title="All 2 branches missed.">            if (myBucket.getValuesForEvent(theEvent) != null) {</span>
+                /* Add filter */
+<span class="nc" id="L255">                final MoneyWiseXAnalysisTransCategoryFilter myFilter = new MoneyWiseXAnalysisTransCategoryFilter(myBucket);</span>
+<span class="nc" id="L256">                myFilter.setDateRange(theDateRange);</span>
+<span class="nc" id="L257">                add(myFilter);</span>
+            }
+<span class="nc" id="L259">        }</span>
+<span class="nc" id="L260">    }</span>
+
+    /**
+     * Add relevant taxBasis filters.
+     * @param pBases the taxBasis buckets
+     */
+    private void analyseTaxBasis(final MoneyWiseXAnalysisTaxBasisBucketList pBases) {
+        /* Loop through the taxBasis buckets */
+<span class="nc" id="L268">        final Iterator&lt;MoneyWiseXAnalysisTaxBasisBucket&gt; myIterator = pBases.iterator();</span>
+<span class="nc bnc" id="L269" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L270">            final MoneyWiseXAnalysisTaxBasisBucket myBucket = myIterator.next();</span>
+
+            /* If this bucket is relevant for the event */
+<span class="nc bnc" id="L273" title="All 2 branches missed.">            if (myBucket.getValuesForEvent(theEvent) != null) {</span>
+                /* Add filter */
+<span class="nc" id="L275">                final MoneyWiseXAnalysisTaxBasisFilter myFilter = new MoneyWiseXAnalysisTaxBasisFilter(myBucket);</span>
+<span class="nc" id="L276">                myFilter.setDateRange(theDateRange);</span>
+<span class="nc" id="L277">                add(myFilter);</span>
+            }
+<span class="nc" id="L279">        }</span>
+<span class="nc" id="L280">    }</span>
+
+    /**
+     * Add relevant transaction tag filters.
+     * @param pTags the trqansactionTag buckets
+     */
+    private void analyseTags(final MoneyWiseXAnalysisTransTagBucketList pTags) {
+        /* Loop through the tag buckets */
+<span class="nc" id="L288">        final Iterator&lt;MoneyWiseXAnalysisTransTagBucket&gt; myIterator = pTags.iterator();</span>
+<span class="nc bnc" id="L289" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L290">            final MoneyWiseXAnalysisTransTagBucket myBucket = myIterator.next();</span>
+
+            /* If this bucket is relevant for the event */
+<span class="nc bnc" id="L293" title="All 2 branches missed.">            if (myBucket.hasEvent(theEvent)) {</span>
+                /* Add filter */
+<span class="nc" id="L295">                final MoneyWiseXAnalysisTagFilter myFilter = new MoneyWiseXAnalysisTagFilter(myBucket);</span>
+<span class="nc" id="L296">                myFilter.setDateRange(theDateRange);</span>
+<span class="nc" id="L297">                add(myFilter);</span>
+            }
+<span class="nc" id="L299">        }</span>
+<span class="nc" id="L300">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

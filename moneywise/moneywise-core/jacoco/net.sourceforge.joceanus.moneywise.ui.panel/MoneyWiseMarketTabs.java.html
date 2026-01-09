@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseMarketTabs.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.ui.panel</a> &gt; <span class="el_source">MoneyWiseMarketTabs.java</span></div><h1>MoneyWiseMarketTabs.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.ui.panel;
+
+import net.sourceforge.joceanus.moneywise.ui.MoneyWiseUIResource;
+import net.sourceforge.joceanus.moneywise.ui.panel.MoneyWiseMarketPricesTable.MoneyWiseSpotPricesPanel;
+import net.sourceforge.joceanus.moneywise.ui.panel.MoneyWiseMarketRatesTable.MoneyWiseSpotRatesPanel;
+import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
+import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.tethys.api.pane.TethysUITabPaneManager;
+import net.sourceforge.joceanus.tethys.api.pane.TethysUITabPaneManager.TethysUITabItem;
+
+/**
+ * Market Tab panel.
+ * @author Tony Washer
+ */
+public class MoneyWiseMarketTabs
+        implements OceanusEventProvider&lt;PrometheusDataEvent&gt;, TethysUIComponent {
+    /**
+     * Prices tab title.
+     */
+<span class="nc" id="L40">    private static final String TITLE_PRICES = MoneyWiseUIResource.MARKET_PRICES.getValue();</span>
+
+    /**
+     * Rates tab title.
+     */
+<span class="nc" id="L45">    private static final String TITLE_RATES = MoneyWiseUIResource.MARKET_RATES.getValue();</span>
+
+    /**
+     * The Event Manager.
+     */
+    private final OceanusEventManager&lt;PrometheusDataEvent&gt; theEventManager;
+
+    /**
+     * The Data View.
+     */
+    private final MoneyWiseView theView;
+
+    /**
+     * The Tabs.
+     */
+    private final TethysUITabPaneManager theTabs;
+
+    /**
+     * The PricesPanel.
+     */
+    private final MoneyWiseSpotPricesPanel thePrices;
+
+    /**
+     * The RatesPanel.
+     */
+    private final MoneyWiseSpotRatesPanel theRates;
+
+    /**
+     * Constructor.
+     * @param pView the view
+     */
+<span class="nc" id="L76">    MoneyWiseMarketTabs(final MoneyWiseView pView) {</span>
+        /* Store details */
+<span class="nc" id="L78">        theView = pView;</span>
+
+        /* Create the event manager */
+<span class="nc" id="L81">        theEventManager = new OceanusEventManager&lt;&gt;();</span>
+
+        /* Create the Tabbed Pane */
+<span class="nc" id="L84">        theTabs = theView.getGuiFactory().paneFactory().newTabPane();</span>
+
+        /* Create the Prices Tab */
+<span class="nc" id="L87">        thePrices = new MoneyWiseSpotPricesPanel(theView);</span>
+<span class="nc" id="L88">        theTabs.addTabItem(TITLE_PRICES, thePrices);</span>
+
+        /* Create the Rates Tab */
+<span class="nc" id="L91">        theRates = new MoneyWiseSpotRatesPanel(theView);</span>
+<span class="nc" id="L92">        theTabs.addTabItem(TITLE_RATES, theRates);</span>
+
+        /* Create a listeners */
+<span class="nc" id="L95">        theTabs.getEventRegistrar().addEventListener(e -&gt; determineFocus());</span>
+<span class="nc" id="L96">        thePrices.getEventRegistrar().addEventListener(e -&gt; setVisibility());</span>
+<span class="nc" id="L97">        theRates.getEventRegistrar().addEventListener(e -&gt; setVisibility());</span>
+<span class="nc" id="L98">    }</span>
+
+    @Override
+    public TethysUIComponent getUnderlying() {
+<span class="nc" id="L102">        return theTabs;</span>
+    }
+
+    @Override
+    public OceanusEventRegistrar&lt;PrometheusDataEvent&gt; getEventRegistrar() {
+<span class="nc" id="L107">        return theEventManager.getEventRegistrar();</span>
+    }
+
+    /**
+     * Obtain the view.
+     * @return the view
+     */
+    protected MoneyWiseView getView() {
+<span class="nc" id="L115">        return theView;</span>
+    }
+
+    /**
+     * Has this set of tables got updates.
+     * @return true/false
+     */
+    public boolean hasUpdates() {
+        /* Determine whether we have updates */
+<span class="nc" id="L124">        boolean hasUpdates = thePrices.hasUpdates();</span>
+<span class="nc bnc" id="L125" title="All 2 branches missed.">        if (!hasUpdates) {</span>
+<span class="nc" id="L126">            hasUpdates = theRates.hasUpdates();</span>
+        }
+
+        /* Return to caller */
+<span class="nc" id="L130">        return hasUpdates;</span>
+    }
+
+    /**
+     * Has this set of panels got the session focus?
+     * @return true/false
+     */
+    public boolean hasSession() {
+        /* Determine whether we have focus */
+<span class="nc" id="L139">        boolean hasUpdates = thePrices.hasSession();</span>
+<span class="nc bnc" id="L140" title="All 2 branches missed.">        if (!hasUpdates) {</span>
+<span class="nc" id="L141">            hasUpdates = theRates.hasSession();</span>
+        }
+
+        /* Return to caller */
+<span class="nc" id="L145">        return hasUpdates;</span>
+    }
+
+    /**
+     * Set visibility.
+     */
+    protected void setVisibility() {
+        /* Determine whether we have any locked session */
+<span class="nc" id="L153">        final boolean hasSession = hasSession();</span>
+
+        /* Enable/Disable the Prices tab */
+<span class="nc bnc" id="L156" title="All 4 branches missed.">        boolean doEnabled = !hasSession || thePrices.hasSession();</span>
+<span class="nc" id="L157">        theTabs.enableItemByName(TITLE_PRICES, doEnabled);</span>
+
+        /* Enable/Disable the Rates tab */
+<span class="nc bnc" id="L160" title="All 4 branches missed.">        doEnabled = !hasSession || theRates.hasSession();</span>
+<span class="nc" id="L161">        theTabs.enableItemByName(TITLE_RATES, doEnabled);</span>
+
+        /* Update the top level tabs */
+<span class="nc" id="L164">        theEventManager.fireEvent(PrometheusDataEvent.ADJUSTVISIBILITY);</span>
+<span class="nc" id="L165">    }</span>
+
+    /**
+     * Determine Focus.
+     */
+    public void determineFocus() {
+        /* Access the selected component */
+<span class="nc" id="L172">        final TethysUITabItem myItem = theTabs.getSelectedTab();</span>
+<span class="nc" id="L173">        final Integer myId = myItem.getId();</span>
+
+        /* If the selected component is Prices */
+<span class="nc bnc" id="L176" title="All 2 branches missed.">        if (myId.equals(thePrices.getId())) {</span>
+            /* Set the debug focus */
+<span class="nc" id="L178">            thePrices.determineFocus();</span>
+
+            /* If the selected component is Rates */
+<span class="nc bnc" id="L181" title="All 2 branches missed.">        } else if (myId.equals(theRates.getId())) {</span>
+            /* Set the debug focus */
+<span class="nc" id="L183">            theRates.determineFocus();</span>
+        }
+<span class="nc" id="L185">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

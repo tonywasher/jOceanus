@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseUKAgeAllowance.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.tax.uk</a> &gt; <span class="el_source">MoneyWiseUKAgeAllowance.java</span></div><h1>MoneyWiseUKAgeAllowance.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.tax.uk;
+
+import net.sourceforge.joceanus.metis.field.MetisFieldSet;
+import net.sourceforge.joceanus.moneywise.tax.MoneyWiseMarginalReduction;
+import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxResource;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusFiscalYear;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+
+import java.time.Month;
+
+/**
+ * AgeAdapted UK Tax Allowance.
+ */
+public class MoneyWiseUKAgeAllowance
+        extends MoneyWiseUKBasicAllowance {
+    /**
+     * Local Report fields.
+     */
+<span class="fc" id="L37">    private static final MetisFieldSet&lt;MoneyWiseUKAgeAllowance&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKAgeAllowance.class);</span>
+
+    /*
+     * Declare Fields.
+     */
+    static {
+<span class="fc" id="L43">        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.ALLOWANCE_LOAGE, MoneyWiseUKAgeAllowance::getLoAgeAllowance);</span>
+<span class="fc" id="L44">        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.ALLOWANCE_HIAGE, MoneyWiseUKAgeAllowance::getHiAgeAllowance);</span>
+<span class="fc" id="L45">        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.LIMIT_AGEALLOWANCE, MoneyWiseUKAgeAllowance::getAgeAllowanceLimit);</span>
+    }
+
+    /**
+     * Age Allowance minimum.
+     */
+<span class="fc" id="L51">    private static final OceanusDate BIRTHDAY_MINIMUM = OceanusFiscalYear.UK.endOfYear(new OceanusDate(1948, Month.JANUARY, 1));</span>
+
+    /**
+     * HiAge Allowance minimum.
+     */
+<span class="fc" id="L56">    private static final OceanusDate HI_BIRTHDAY_MINIMUM = OceanusFiscalYear.UK.endOfYear(new OceanusDate(1938, Month.JANUARY, 1));</span>
+
+    /**
+     * Low Age Limit.
+     */
+    private static final int LO_AGE_BOUNDARY = 65;
+
+    /**
+     * Hi Age Limit.
+     */
+    private static final int HI_AGE_BOUNDARY = 75;
+
+    /**
+     * Old Hi Age Limit.
+     */
+    private static final int OLD_HI_AGE_BOUNDARY = 80;
+
+    /**
+     * HiAgeBoundary.
+     */
+    private final int theHiAgeBoundary;
+
+    /**
+     * LoAgeAllowance.
+     */
+    private final OceanusMoney theLoAgeAllowance;
+
+    /**
+     * HiAgeAllowance.
+     */
+    private final OceanusMoney theHiAgeAllowance;
+
+    /**
+     * AgeAllowanceLimit.
+     */
+    private final OceanusMoney theAgeAllowanceLimit;
+
+    /**
+     * Constructor.
+     * @param pAllowance the allowance
+     * @param pRentalAllowance the rental allowance
+     * @param pCapitalAllowance the capital allowance
+     * @param pLoAgeAllowance the low age allowance
+     * @param pHiAgeAllowance the high age allowance
+     * @param pAgeAllowanceLimit the age allowance limit
+     * @param pReduction the marginal reduction
+     */
+    protected MoneyWiseUKAgeAllowance(final OceanusMoney pAllowance,
+                                      final OceanusMoney pRentalAllowance,
+                                      final OceanusMoney pCapitalAllowance,
+                                      final OceanusMoney pLoAgeAllowance,
+                                      final OceanusMoney pHiAgeAllowance,
+                                      final OceanusMoney pAgeAllowanceLimit,
+                                      final MoneyWiseMarginalReduction pReduction) {
+<span class="fc" id="L110">        super(pAllowance, pRentalAllowance, pCapitalAllowance, pReduction);</span>
+<span class="fc" id="L111">        theLoAgeAllowance = pLoAgeAllowance;</span>
+<span class="fc" id="L112">        theHiAgeAllowance = pHiAgeAllowance;</span>
+<span class="fc" id="L113">        theAgeAllowanceLimit = pAgeAllowanceLimit;</span>
+<span class="fc bfc" id="L114" title="All 2 branches covered.">        theHiAgeBoundary = MoneyWiseMarginalReduction.ONEINTWO.equals(pReduction)</span>
+<span class="fc" id="L115">                ? HI_AGE_BOUNDARY</span>
+<span class="fc" id="L116">                : OLD_HI_AGE_BOUNDARY;</span>
+<span class="fc" id="L117">    }</span>
+
+    /**
+     * Constructor.
+     * @param pAllowance the allowance
+     * @param pRentalAllowance the rental allowance
+     * @param pCapitalAllowance the capital allowance
+     * @param pLoAgeAllowance the low age allowance
+     * @param pHiAgeAllowance the high age allowance
+     * @param pAgeAllowanceLimit the age allowance limit
+     */
+    protected MoneyWiseUKAgeAllowance(final OceanusMoney pAllowance,
+                                      final OceanusMoney pRentalAllowance,
+                                      final OceanusMoney pCapitalAllowance,
+                                      final OceanusMoney pLoAgeAllowance,
+                                      final OceanusMoney pHiAgeAllowance,
+                                      final OceanusMoney pAgeAllowanceLimit) {
+<span class="fc" id="L134">        this(pAllowance, pRentalAllowance, pCapitalAllowance, pLoAgeAllowance,</span>
+                pHiAgeAllowance, pAgeAllowanceLimit, MoneyWiseMarginalReduction.ONEINTWO);
+<span class="fc" id="L136">    }</span>
+
+    /**
+     * Constructor.
+     * @param pAllowance the allowance
+     * @param pRentalAllowance the rental allowance
+     * @param pCapitalAllowance the capital allowance
+     * @param pLoAgeAllowance the low age allowance
+     * @param pAgeAllowanceLimit the age allowance limit
+     */
+    protected MoneyWiseUKAgeAllowance(final OceanusMoney pAllowance,
+                                      final OceanusMoney pRentalAllowance,
+                                      final OceanusMoney pCapitalAllowance,
+                                      final OceanusMoney pLoAgeAllowance,
+                                      final OceanusMoney pAgeAllowanceLimit) {
+<span class="fc" id="L151">        this(pAllowance, pRentalAllowance, pCapitalAllowance, pLoAgeAllowance, null, pAgeAllowanceLimit, MoneyWiseMarginalReduction.TWOINTHREE);</span>
+<span class="fc" id="L152">    }</span>
+
+    /**
+     * Obtain the loAgeAllowance.
+     * @return the Allowance
+     */
+    protected OceanusMoney getLoAgeAllowance() {
+<span class="nc" id="L159">        return theLoAgeAllowance;</span>
+    }
+
+    /**
+     * Obtain the hiAgeAllowance.
+     * @return the Allowance
+     */
+    protected OceanusMoney getHiAgeAllowance() {
+<span class="nc" id="L167">        return theHiAgeAllowance;</span>
+    }
+
+    /**
+     * Obtain the ageAllowanceLimit.
+     * @return the Limit
+     */
+    protected OceanusMoney getAgeAllowanceLimit() {
+<span class="nc" id="L175">        return theAgeAllowanceLimit;</span>
+    }
+
+    @Override
+    protected OceanusMoney calculateBasicAllowance(final MoneyWiseUKTaxConfig pConfig) {
+        /* Access the client age */
+<span class="nc" id="L181">        final OceanusDate myBirthday = pConfig.getBirthday();</span>
+<span class="nc" id="L182">        final Integer myAge = pConfig.getClientAge();</span>
+<span class="nc" id="L183">        boolean hasAgeAllowance = false;</span>
+
+        /* Determine the allowance */
+<span class="nc" id="L186">        final OceanusMoney myBaseAllowance = getAllowance();</span>
+<span class="nc" id="L187">        OceanusMoney myAllowance = myBaseAllowance;</span>
+<span class="nc bnc" id="L188" title="All 4 branches missed.">        if ((myBirthday.compareTo(HI_BIRTHDAY_MINIMUM) &lt; 0)</span>
+                &amp;&amp; (theHiAgeAllowance != null)
+<span class="nc bnc" id="L190" title="All 2 branches missed.">                &amp;&amp; (myAge &gt;= theHiAgeBoundary)) {</span>
+<span class="nc" id="L191">            hasAgeAllowance = true;</span>
+<span class="nc" id="L192">            myAllowance = theHiAgeAllowance;</span>
+<span class="nc bnc" id="L193" title="All 2 branches missed.">        } else if ((myBirthday.compareTo(BIRTHDAY_MINIMUM) &lt; 0)</span>
+<span class="nc bnc" id="L194" title="All 2 branches missed.">                &amp;&amp; (myAge &gt;= LO_AGE_BOUNDARY)) {</span>
+<span class="nc" id="L195">            hasAgeAllowance = true;</span>
+<span class="nc" id="L196">            myAllowance = theLoAgeAllowance;</span>
+        }
+
+        /* If we have an age related allowance and we are above the allowance limit */
+<span class="nc" id="L200">        final OceanusMoney myGross = pConfig.getGrossTaxable();</span>
+<span class="nc bnc" id="L201" title="All 2 branches missed.">        if (hasAgeAllowance</span>
+<span class="nc bnc" id="L202" title="All 2 branches missed.">                &amp;&amp; (myGross.compareTo(theAgeAllowanceLimit) &gt; 0)) {</span>
+            /* Calculate and apply the reduction */
+<span class="nc" id="L204">            final OceanusMoney myReduction = getMarginalReduction().calculateReduction(myGross, theAgeAllowanceLimit);</span>
+<span class="nc" id="L205">            myAllowance = new OceanusMoney(myAllowance);</span>
+<span class="nc" id="L206">            myAllowance.subtractAmount(myReduction);</span>
+
+            /* If we have reduced below the Base Allowance */
+<span class="nc bnc" id="L209" title="All 2 branches missed.">            if (myAllowance.compareTo(myBaseAllowance) &lt; 0) {</span>
+                /* Return to the basic allowance */
+<span class="nc" id="L211">                hasAgeAllowance = false;</span>
+<span class="nc" id="L212">                myAllowance = myBaseAllowance;</span>
+            }
+        }
+
+        /* Set whether we have an age related allowance */
+<span class="nc" id="L217">        pConfig.setHasAgeRelatedAllowance(hasAgeAllowance);</span>
+
+        /* return the allowance */
+<span class="nc" id="L220">        return myAllowance;</span>
+    }
+
+    @Override
+    public MetisFieldSet&lt;? extends MoneyWiseUKAgeAllowance&gt; getDataFieldSet() {
+<span class="nc" id="L225">        return FIELD_DEFS;</span>
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L230">        return FIELD_DEFS.getName();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

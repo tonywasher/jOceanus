@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisDSMClass.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.themis.lethe.dsm</a> &gt; <span class="el_source">ThemisDSMClass.java</span></div><h1>ThemisDSMClass.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Themis: Java Project Framework
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.themis.lethe.dsm;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+
+import net.sourceforge.joceanus.themis.lethe.analysis.ThemisAnalysisPackage;
+
+/**
+ * DSM Class.
+ */
+public class ThemisDSMClass {
+    /**
+     * The location of the class.
+     */
+    private final File theLocation;
+
+    /**
+     * The package reference.
+     */
+    private final ThemisDSMPackage thePackage;
+
+    /**
+     * The name of the class.
+     */
+    private final String theClass;
+
+    /**
+     * The list of imports.
+     */
+    private final List&lt;ThemisDSMClass&gt; theImports;
+
+    /**
+     * Constructor.
+     * @param pPackage the package
+     * @param pLocation the location
+     */
+    ThemisDSMClass(final ThemisDSMPackage pPackage,
+<span class="nc" id="L57">                   final File pLocation) {</span>
+<span class="nc" id="L58">        thePackage = pPackage;</span>
+<span class="nc" id="L59">        theLocation = pLocation;</span>
+<span class="nc" id="L60">        final String myName = pLocation.getName();</span>
+<span class="nc" id="L61">        theClass = myName.substring(0, myName.length() - ThemisAnalysisPackage.SFX_JAVA.length());</span>
+<span class="nc" id="L62">        theImports = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L63">    }</span>
+
+    /**
+     * Return the location of the module.
+     * @return the location
+     */
+    File getLocation() {
+<span class="nc" id="L70">        return theLocation;</span>
+    }
+
+    /**
+     * Obtain the package.
+     * @return the package
+     */
+    ThemisDSMPackage getPackage() {
+<span class="nc" id="L78">        return thePackage;</span>
+    }
+
+    /**
+     * Return the class name.
+     * @return the name
+     */
+    String getClassName() {
+<span class="nc" id="L86">        return theClass;</span>
+    }
+
+    /**
+     * Return the full class name.
+     * @return the full name
+     */
+    String getFullClassName() {
+<span class="nc" id="L94">        return thePackage.getPackageName() + ThemisDSMPackage.SEP_PACKAGE + theClass;</span>
+    }
+
+    /**
+     * Add an import to the list.
+     * @param pImport the imported class
+     */
+    void registerImport(final ThemisDSMClass pImport) {
+<span class="nc bnc" id="L102" title="All 2 branches missed.">        if (!theImports.contains(pImport)) {</span>
+<span class="nc" id="L103">            theImports.add(pImport);</span>
+        }
+<span class="nc" id="L105">    }</span>
+
+    /**
+     * Sort the imports.
+     */
+    void sortImports() {
+<span class="nc" id="L111">        theImports.sort(Comparator.comparing(ThemisDSMClass::getFullClassName));</span>
+<span class="nc" id="L112">    }</span>
+
+    /**
+     * Obtain an iterator of the imports.
+     * @return the iterator
+     */
+    Iterator&lt;ThemisDSMClass&gt; importIterator() {
+<span class="nc" id="L119">        return theImports.iterator();</span>
+    }
+
+    /**
+     * Does this class reference the package?
+     * @param pPackage the package
+     * @return true/false
+     */
+    boolean references(final ThemisDSMPackage pPackage) {
+        /* Loop through the classes */
+<span class="nc bnc" id="L129" title="All 2 branches missed.">        for (ThemisDSMClass myReference : theImports) {</span>
+<span class="nc bnc" id="L130" title="All 2 branches missed.">            if (pPackage.equals(myReference.getPackage())) {</span>
+<span class="nc" id="L131">                return true;</span>
+            }
+<span class="nc" id="L133">        }</span>
+<span class="nc" id="L134">        return false;</span>
+    }
+
+    /**
+     * Obtain the list of direct references to the other package.
+     * @param pPackage the other package
+     * @return the list of direct references
+     */
+    public List&lt;ThemisDSMClass&gt; getReferencesTo(final ThemisDSMPackage pPackage) {
+        /* Loop through the classes */
+<span class="nc" id="L144">        final List&lt;ThemisDSMClass&gt; myReferences = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L145" title="All 2 branches missed.">        for (ThemisDSMClass myImport : theImports) {</span>
+<span class="nc bnc" id="L146" title="All 2 branches missed.">            if (pPackage.equals(myImport.getPackage())) {</span>
+<span class="nc" id="L147">                myReferences.add(myImport);</span>
+            }
+<span class="nc" id="L149">        }</span>
+<span class="nc" id="L150">        return myReferences;</span>
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+<span class="nc bnc" id="L156" title="All 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L157">            return true;</span>
+        }
+<span class="nc bnc" id="L159" title="All 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L160">            return false;</span>
+        }
+
+        /* Make sure that the object is an Class */
+<span class="nc bnc" id="L164" title="All 2 branches missed.">        if (pThat.getClass() != this.getClass()) {</span>
+<span class="nc" id="L165">            return false;</span>
+        }
+
+        /* Access the target Class */
+<span class="nc" id="L169">        final ThemisDSMClass myThat = (ThemisDSMClass) pThat;</span>
+
+        /* Check Package and class name */
+<span class="nc bnc" id="L172" title="All 2 branches missed.">        return thePackage.equals(myThat.getPackage())</span>
+<span class="nc bnc" id="L173" title="All 2 branches missed.">               &amp;&amp; theClass.equals(myThat.getClassName());</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="nc" id="L178">        return thePackage.hashCode() + theClass.hashCode();</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L183">        return getClassName();</span>
+    }
+ }
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

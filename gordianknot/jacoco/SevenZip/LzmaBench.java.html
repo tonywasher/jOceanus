@@ -1,0 +1,393 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LzmaBench.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">SevenZip</a> &gt; <span class="el_source">LzmaBench.java</span></div><h1>LzmaBench.java</h1><pre class="source lang-java linenums">package SevenZip;
+
+import java.io.ByteArrayOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+
+<span class="nc" id="L7">public class LzmaBench</span>
+{
+	static final int kAdditionalSize = (1 &lt;&lt; 21);
+	static final int kCompressedAdditionalSize = (1 &lt;&lt; 10);
+	
+	static class CRandomGenerator
+	{
+		int A1;
+		int A2;
+<span class="nc" id="L16">		public CRandomGenerator() { Init(); }</span>
+<span class="nc" id="L17">		public void Init() { A1 = 362436069; A2 = 521288629; }</span>
+		public int GetRnd()
+		{
+<span class="nc" id="L20">			return</span>
+				((A1 = 36969 * (A1 &amp; 0xffff) + (A1 &gt;&gt;&gt; 16)) &lt;&lt; 16) ^
+				((A2 = 18000 * (A2 &amp; 0xffff) + (A2 &gt;&gt;&gt; 16)));
+		}
+	};
+	
+<span class="nc" id="L26">	static class CBitRandomGenerator</span>
+	{
+<span class="nc" id="L28">		CRandomGenerator RG = new CRandomGenerator();</span>
+		int Value;
+		int NumBits;
+		public void Init()
+		{
+<span class="nc" id="L33">			Value = 0;</span>
+<span class="nc" id="L34">			NumBits = 0;</span>
+<span class="nc" id="L35">		}</span>
+		public int GetRnd(int numBits)
+		{
+			int result;
+<span class="nc bnc" id="L39" title="All 2 branches missed.">			if (NumBits &gt; numBits)</span>
+			{
+<span class="nc" id="L41">				result = Value &amp; ((1 &lt;&lt; numBits) - 1);</span>
+<span class="nc" id="L42">				Value &gt;&gt;&gt;= numBits;</span>
+<span class="nc" id="L43">				NumBits -= numBits;</span>
+<span class="nc" id="L44">				return result;</span>
+			}
+<span class="nc" id="L46">			numBits -= NumBits;</span>
+<span class="nc" id="L47">			result = (Value &lt;&lt; numBits);</span>
+<span class="nc" id="L48">			Value = RG.GetRnd();</span>
+<span class="nc" id="L49">			result |= Value &amp; (((int)1 &lt;&lt; numBits) - 1);</span>
+<span class="nc" id="L50">			Value &gt;&gt;&gt;= numBits;</span>
+<span class="nc" id="L51">			NumBits = 32 - numBits;</span>
+<span class="nc" id="L52">			return result;</span>
+		}
+	};
+	
+	static class CBenchRandomGenerator
+	{
+<span class="nc" id="L58">		CBitRandomGenerator RG = new CBitRandomGenerator();</span>
+		int Pos;
+		int Rep0;
+
+		public int BufferSize;
+<span class="nc" id="L63">		public byte[] Buffer = null;</span>
+
+<span class="nc" id="L65">		public CBenchRandomGenerator() { }</span>
+		public void Set(int bufferSize)
+		{
+<span class="nc" id="L68">			Buffer = new byte[bufferSize];</span>
+<span class="nc" id="L69">			Pos = 0;</span>
+<span class="nc" id="L70">			BufferSize = bufferSize;</span>
+<span class="nc" id="L71">		}</span>
+<span class="nc" id="L72">		int GetRndBit() { return RG.GetRnd(1); }</span>
+		int GetLogRandBits(int numBits)
+		{
+<span class="nc" id="L75">			int len = RG.GetRnd(numBits);</span>
+<span class="nc" id="L76">			return RG.GetRnd((int)len);</span>
+		}
+		int GetOffset()
+		{
+<span class="nc bnc" id="L80" title="All 2 branches missed.">			if (GetRndBit() == 0)</span>
+<span class="nc" id="L81">				return GetLogRandBits(4);</span>
+<span class="nc" id="L82">			return (GetLogRandBits(4) &lt;&lt; 10) | RG.GetRnd(10);</span>
+		}
+<span class="nc" id="L84">		int GetLen1() { return RG.GetRnd(1 + (int)RG.GetRnd(2)); }</span>
+<span class="nc" id="L85">		int GetLen2() { return RG.GetRnd(2 + (int)RG.GetRnd(2)); }</span>
+		public void Generate()
+		{
+<span class="nc" id="L88">			RG.Init();</span>
+<span class="nc" id="L89">			Rep0 = 1;</span>
+<span class="nc bnc" id="L90" title="All 2 branches missed.">			while (Pos &lt; BufferSize)</span>
+			{
+<span class="nc bnc" id="L92" title="All 4 branches missed.">				if (GetRndBit() == 0 || Pos &lt; 1)</span>
+<span class="nc" id="L93">					Buffer[Pos++] = (byte)(RG.GetRnd(8));</span>
+				else
+				{
+					int len;
+<span class="nc bnc" id="L97" title="All 2 branches missed.">					if (RG.GetRnd(3) == 0)</span>
+<span class="nc" id="L98">						len = 1 + GetLen1();</span>
+					else
+					{
+						do
+<span class="nc" id="L102">							Rep0 = GetOffset();</span>
+<span class="nc bnc" id="L103" title="All 2 branches missed.">						while (Rep0 &gt;= Pos);</span>
+<span class="nc" id="L104">						Rep0++;</span>
+<span class="nc" id="L105">						len = 2 + GetLen2();</span>
+					}
+<span class="nc bnc" id="L107" title="All 4 branches missed.">					for (int i = 0; i &lt; len &amp;&amp; Pos &lt; BufferSize; i++, Pos++)</span>
+<span class="nc" id="L108">						Buffer[Pos] = Buffer[Pos - Rep0];</span>
+<span class="nc" id="L109">				}</span>
+			}
+<span class="nc" id="L111">		}</span>
+	};
+	
+<span class="nc" id="L114">	static class CrcOutStream extends java.io.OutputStream</span>
+	{
+<span class="nc" id="L116">		public CRC CRC = new CRC();</span>
+		
+		public void Init()
+		{ 
+<span class="nc" id="L120">			CRC.Init(); </span>
+<span class="nc" id="L121">		}</span>
+		public int GetDigest()
+		{ 
+<span class="nc" id="L124">			return CRC.GetDigest(); </span>
+		}
+		public void write(byte[] b)
+		{
+<span class="nc" id="L128">			CRC.Update(b);</span>
+<span class="nc" id="L129">		}</span>
+		public void write(byte[] b, int off, int len)
+		{
+<span class="nc" id="L132">			CRC.Update(b, off, len);</span>
+<span class="nc" id="L133">		}</span>
+		public void write(int b)
+		{
+<span class="nc" id="L136">			CRC.UpdateByte(b);</span>
+<span class="nc" id="L137">		}</span>
+	};
+
+	static class MyOutputStream extends java.io.OutputStream
+	{
+		byte[] _buffer;
+		int _size;
+		int _pos;
+		
+		public MyOutputStream(byte[] buffer)
+<span class="nc" id="L147">		{</span>
+<span class="nc" id="L148">			_buffer = buffer;</span>
+<span class="nc" id="L149">			_size = _buffer.length;</span>
+<span class="nc" id="L150">		}</span>
+		
+		public void reset()
+		{ 
+<span class="nc" id="L154">			_pos = 0; </span>
+<span class="nc" id="L155">		}</span>
+		
+		public void write(int b) throws IOException
+		{
+<span class="nc bnc" id="L159" title="All 2 branches missed.">			if (_pos &gt;= _size)</span>
+<span class="nc" id="L160">				throw new IOException(&quot;Error&quot;);</span>
+<span class="nc" id="L161">			_buffer[_pos++] = (byte)b;</span>
+<span class="nc" id="L162">		}</span>
+		
+		public int size()
+		{
+<span class="nc" id="L166">			return _pos;</span>
+		}
+	};
+
+	static class MyInputStream extends java.io.InputStream
+	{
+		byte[] _buffer;
+		int _size;
+		int _pos;
+		
+		public MyInputStream(byte[] buffer, int size)
+<span class="nc" id="L177">		{</span>
+<span class="nc" id="L178">			_buffer = buffer;</span>
+<span class="nc" id="L179">			_size = size;</span>
+<span class="nc" id="L180">		}</span>
+		
+		public void reset()
+		{ 
+<span class="nc" id="L184">			_pos = 0; </span>
+<span class="nc" id="L185">		}</span>
+		
+		public int read()
+		{
+<span class="nc bnc" id="L189" title="All 2 branches missed.">			if (_pos &gt;= _size)</span>
+<span class="nc" id="L190">				return -1;</span>
+<span class="nc" id="L191">			return _buffer[_pos++] &amp; 0xFF;</span>
+		}
+	};
+	
+<span class="nc" id="L195">	static class CProgressInfo implements ICodeProgress</span>
+	{
+		public long ApprovedStart;
+		public long InSize;
+		public long Time;
+		public void Init()
+<span class="nc" id="L201">		{ InSize = 0; }</span>
+		public void SetProgress(long inSize, long outSize)
+		{
+<span class="nc bnc" id="L204" title="All 4 branches missed.">			if (inSize &gt;= ApprovedStart &amp;&amp; InSize == 0)</span>
+			{
+<span class="nc" id="L206">				Time = System.currentTimeMillis();</span>
+<span class="nc" id="L207">				InSize = inSize;</span>
+			}
+<span class="nc" id="L209">		}</span>
+	}
+	static final int kSubBits = 8;
+	
+	static int GetLogSize(int size)
+	{
+<span class="nc bnc" id="L215" title="All 2 branches missed.">		for (int i = kSubBits; i &lt; 32; i++)</span>
+<span class="nc bnc" id="L216" title="All 2 branches missed.">			for (int j = 0; j &lt; (1 &lt;&lt; kSubBits); j++)</span>
+<span class="nc bnc" id="L217" title="All 2 branches missed.">				if (size &lt;= ((1) &lt;&lt; i) + (j &lt;&lt; (i - kSubBits)))</span>
+<span class="nc" id="L218">					return (i &lt;&lt; kSubBits) + j;</span>
+<span class="nc" id="L219">		return (32 &lt;&lt; kSubBits);</span>
+	}
+	
+	static long MyMultDiv64(long value, long elapsedTime)
+	{
+<span class="nc" id="L224">		long freq = 1000; // ms</span>
+<span class="nc" id="L225">		long elTime = elapsedTime;</span>
+<span class="nc bnc" id="L226" title="All 2 branches missed.">		while (freq &gt; 1000000)</span>
+		{
+<span class="nc" id="L228">			freq &gt;&gt;&gt;= 1;</span>
+<span class="nc" id="L229">			elTime &gt;&gt;&gt;= 1;</span>
+		}
+<span class="nc bnc" id="L231" title="All 2 branches missed.">		if (elTime == 0)</span>
+<span class="nc" id="L232">			elTime = 1;</span>
+<span class="nc" id="L233">		return value * freq / elTime;</span>
+	}
+	
+	static long GetCompressRating(int dictionarySize, long elapsedTime, long size)
+	{
+<span class="nc" id="L238">		long t = GetLogSize(dictionarySize) - (18 &lt;&lt; kSubBits);</span>
+<span class="nc" id="L239">		long numCommandsForOne = 1060 + ((t * t * 10) &gt;&gt; (2 * kSubBits));</span>
+<span class="nc" id="L240">		long numCommands = (long)(size) * numCommandsForOne;</span>
+<span class="nc" id="L241">		return MyMultDiv64(numCommands, elapsedTime);</span>
+	}
+	
+	static long GetDecompressRating(long elapsedTime, long outSize, long inSize)
+	{
+<span class="nc" id="L246">		long numCommands = inSize * 220 + outSize * 20;</span>
+<span class="nc" id="L247">		return MyMultDiv64(numCommands, elapsedTime);</span>
+	}
+	
+	static long GetTotalRating(
+			int dictionarySize,
+			long elapsedTimeEn, long sizeEn,
+			long elapsedTimeDe,
+			long inSizeDe, long outSizeDe)
+	{
+<span class="nc" id="L256">		return (GetCompressRating(dictionarySize, elapsedTimeEn, sizeEn) +</span>
+<span class="nc" id="L257">				GetDecompressRating(elapsedTimeDe, inSizeDe, outSizeDe)) / 2;</span>
+	}
+	
+	static void PrintValue(long v)
+	{
+<span class="nc" id="L262">		String s = &quot;&quot;;</span>
+<span class="nc" id="L263">		s += v;</span>
+<span class="nc bnc" id="L264" title="All 2 branches missed.">		for (int i = 0; i + s.length() &lt; 6; i++)</span>
+<span class="nc" id="L265">			System.out.print(&quot; &quot;);</span>
+<span class="nc" id="L266">		System.out.print(s);</span>
+<span class="nc" id="L267">	}</span>
+	
+	static void PrintRating(long rating)
+	{
+<span class="nc" id="L271">		PrintValue(rating / 1000000);</span>
+<span class="nc" id="L272">		System.out.print(&quot; MIPS&quot;);</span>
+<span class="nc" id="L273">	}</span>
+	
+	static void PrintResults(
+			int dictionarySize,
+			long elapsedTime,
+			long size,
+			boolean decompressMode, long secondSize)
+	{
+<span class="nc" id="L281">		long speed = MyMultDiv64(size, elapsedTime);</span>
+<span class="nc" id="L282">		PrintValue(speed / 1024);</span>
+<span class="nc" id="L283">		System.out.print(&quot; KB/s  &quot;);</span>
+		long rating;
+<span class="nc bnc" id="L285" title="All 2 branches missed.">		if (decompressMode)</span>
+<span class="nc" id="L286">			rating = GetDecompressRating(elapsedTime, size, secondSize);</span>
+		else
+<span class="nc" id="L288">			rating = GetCompressRating(dictionarySize, elapsedTime, size);</span>
+<span class="nc" id="L289">		PrintRating(rating);</span>
+<span class="nc" id="L290">	}</span>
+	
+	static public int LzmaBenchmark(int numIterations, int dictionarySize) throws Exception
+	{
+<span class="nc bnc" id="L294" title="All 2 branches missed.">		if (numIterations &lt;= 0)</span>
+<span class="nc" id="L295">			return 0;</span>
+<span class="nc bnc" id="L296" title="All 2 branches missed.">		if (dictionarySize &lt; (1 &lt;&lt; 18))</span>
+		{
+<span class="nc" id="L298">			System.out.println(&quot;\nError: dictionary size for benchmark must be &gt;= 18 (256 KB)&quot;);</span>
+<span class="nc" id="L299">			return 1;</span>
+		}
+<span class="nc" id="L301">		System.out.print(&quot;\n       Compressing                Decompressing\n\n&quot;);</span>
+		
+<span class="nc" id="L303">		SevenZip.Compression.LZMA.Encoder encoder = new SevenZip.Compression.LZMA.Encoder();</span>
+<span class="nc" id="L304">		SevenZip.Compression.LZMA.Decoder decoder = new SevenZip.Compression.LZMA.Decoder();</span>
+		
+<span class="nc bnc" id="L306" title="All 2 branches missed.">		if (!encoder.SetDictionarySize(dictionarySize))</span>
+<span class="nc" id="L307">			throw new Exception(&quot;Incorrect dictionary size&quot;);</span>
+		
+<span class="nc" id="L309">		int kBufferSize = dictionarySize + kAdditionalSize;</span>
+<span class="nc" id="L310">		int kCompressedBufferSize = (kBufferSize / 2) + kCompressedAdditionalSize;</span>
+		
+<span class="nc" id="L312">		ByteArrayOutputStream propStream = new ByteArrayOutputStream();</span>
+<span class="nc" id="L313">		encoder.WriteCoderProperties(propStream);</span>
+<span class="nc" id="L314">		byte[] propArray = propStream.toByteArray();</span>
+<span class="nc" id="L315">		decoder.SetDecoderProperties(propArray);</span>
+		
+<span class="nc" id="L317">		CBenchRandomGenerator rg = new CBenchRandomGenerator();</span>
+
+<span class="nc" id="L319">		rg.Set(kBufferSize);</span>
+<span class="nc" id="L320">		rg.Generate();</span>
+<span class="nc" id="L321">		CRC crc = new CRC();</span>
+<span class="nc" id="L322">		crc.Init();</span>
+<span class="nc" id="L323">		crc.Update(rg.Buffer, 0, rg.BufferSize);</span>
+		
+<span class="nc" id="L325">		CProgressInfo progressInfo = new CProgressInfo();</span>
+<span class="nc" id="L326">		progressInfo.ApprovedStart = dictionarySize;</span>
+		
+<span class="nc" id="L328">		long totalBenchSize = 0;</span>
+<span class="nc" id="L329">		long totalEncodeTime = 0;</span>
+<span class="nc" id="L330">		long totalDecodeTime = 0;</span>
+<span class="nc" id="L331">		long totalCompressedSize = 0;</span>
+		
+<span class="nc" id="L333">		MyInputStream inStream = new MyInputStream(rg.Buffer, rg.BufferSize);</span>
+
+<span class="nc" id="L335">		byte[] compressedBuffer = new byte[kCompressedBufferSize];</span>
+<span class="nc" id="L336">		MyOutputStream compressedStream = new MyOutputStream(compressedBuffer);</span>
+<span class="nc" id="L337">		CrcOutStream crcOutStream = new CrcOutStream();</span>
+<span class="nc" id="L338">		MyInputStream inputCompressedStream = null;</span>
+<span class="nc" id="L339">		int compressedSize = 0;</span>
+<span class="nc bnc" id="L340" title="All 2 branches missed.">		for (int i = 0; i &lt; numIterations; i++)</span>
+		{
+<span class="nc" id="L342">			progressInfo.Init();</span>
+<span class="nc" id="L343">			inStream.reset();</span>
+<span class="nc" id="L344">			compressedStream.reset();</span>
+<span class="nc" id="L345">			encoder.Code(inStream, compressedStream, -1, -1, progressInfo);</span>
+<span class="nc" id="L346">			long encodeTime = System.currentTimeMillis() - progressInfo.Time;</span>
+			
+<span class="nc bnc" id="L348" title="All 2 branches missed.">			if (i == 0)</span>
+			{
+<span class="nc" id="L350">				compressedSize = compressedStream.size();</span>
+<span class="nc" id="L351">				inputCompressedStream = new MyInputStream(compressedBuffer, compressedSize);</span>
+			}
+<span class="nc bnc" id="L353" title="All 2 branches missed.">			else if (compressedSize != compressedStream.size())</span>
+<span class="nc" id="L354">				throw (new Exception(&quot;Encoding error&quot;));</span>
+				
+<span class="nc bnc" id="L356" title="All 2 branches missed.">			if (progressInfo.InSize == 0)</span>
+<span class="nc" id="L357">				throw (new Exception(&quot;Internal ERROR 1282&quot;));</span>
+
+<span class="nc" id="L359">			long decodeTime = 0;</span>
+<span class="nc bnc" id="L360" title="All 2 branches missed.">			for (int j = 0; j &lt; 2; j++)</span>
+			{
+<span class="nc" id="L362">				inputCompressedStream.reset();</span>
+<span class="nc" id="L363">				crcOutStream.Init();</span>
+				
+<span class="nc" id="L365">				long outSize = kBufferSize;</span>
+<span class="nc" id="L366">				long startTime = System.currentTimeMillis();</span>
+<span class="nc bnc" id="L367" title="All 2 branches missed.">				if (!decoder.Code(inputCompressedStream, crcOutStream, outSize))</span>
+<span class="nc" id="L368">					throw (new Exception(&quot;Decoding Error&quot;));;</span>
+<span class="nc" id="L369">				decodeTime = System.currentTimeMillis() - startTime;</span>
+<span class="nc bnc" id="L370" title="All 2 branches missed.">				if (crcOutStream.GetDigest() != crc.GetDigest())</span>
+<span class="nc" id="L371">					throw (new Exception(&quot;CRC Error&quot;));</span>
+			}
+<span class="nc" id="L373">			long benchSize = kBufferSize - (long)progressInfo.InSize;</span>
+<span class="nc" id="L374">			PrintResults(dictionarySize, encodeTime, benchSize, false, 0);</span>
+<span class="nc" id="L375">			System.out.print(&quot;     &quot;);</span>
+<span class="nc" id="L376">			PrintResults(dictionarySize, decodeTime, kBufferSize, true, compressedSize);</span>
+<span class="nc" id="L377">			System.out.println();</span>
+			
+<span class="nc" id="L379">			totalBenchSize += benchSize;</span>
+<span class="nc" id="L380">			totalEncodeTime += encodeTime;</span>
+<span class="nc" id="L381">			totalDecodeTime += decodeTime;</span>
+<span class="nc" id="L382">			totalCompressedSize += compressedSize;</span>
+		}
+<span class="nc" id="L384">		System.out.println(&quot;---------------------------------------------------&quot;);</span>
+<span class="nc" id="L385">		PrintResults(dictionarySize, totalEncodeTime, totalBenchSize, false, 0);</span>
+<span class="nc" id="L386">		System.out.print(&quot;     &quot;);</span>
+<span class="nc" id="L387">		PrintResults(dictionarySize, totalDecodeTime,</span>
+				kBufferSize * (long)numIterations, true, totalCompressedSize);
+<span class="nc" id="L389">		System.out.println(&quot;    Average&quot;);</span>
+<span class="nc" id="L390">		return 0;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

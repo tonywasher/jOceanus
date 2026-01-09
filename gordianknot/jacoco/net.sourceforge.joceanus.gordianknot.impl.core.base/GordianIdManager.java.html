@@ -1,0 +1,360 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianIdManager.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.gordianknot.impl.core.base</a> &gt; <span class="el_source">GordianIdManager.java</span></div><h1>GordianIdManager.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * GordianKnot: Security Suite
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.gordianknot.impl.core.base;
+
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
+import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherFactory;
+import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec;
+import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeyType;
+import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
+import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeyType;
+import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestFactory;
+import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
+import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestType;
+import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacFactory;
+import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpec;
+import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpecBuilder;
+import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacType;
+
+import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.stream.Collectors;
+
+/**
+ * Security Id Manager.
+ */
+public class GordianIdManager {
+    /**
+     * The Factory.
+     */
+    private final GordianBaseSupplier theFactory;
+
+    /**
+     * Constructor.
+     * @param pFactory the security factory
+     * @throws GordianException on error
+     */
+<span class="fc" id="L54">    public GordianIdManager(final GordianBaseSupplier pFactory) throws GordianException  {</span>
+        /* Store the factory */
+<span class="fc" id="L56">        theFactory = pFactory;</span>
+<span class="fc" id="L57">    }</span>
+
+    /**
+     * Obtain random SymKeySpec.
+     * @param pKeyLen the keyLength
+     * @return the random symKeySpec
+     */
+    public GordianSymKeySpec generateRandomSymKeySpec(final GordianLength pKeyLen) {
+        /* Access the list of symKeySpecs and unique symKeyTypes */
+<span class="fc" id="L66">        final GordianCipherFactory myCiphers = theFactory.getCipherFactory();</span>
+<span class="fc" id="L67">        final List&lt;GordianSymKeySpec&gt; mySpecs = myCiphers.listAllSupportedSymKeySpecs(pKeyLen);</span>
+<span class="fc" id="L68">        final List&lt;GordianSymKeyType&gt; myTypes = mySpecs.stream().map(GordianSymKeySpec::getSymKeyType).toList();</span>
+
+        /* Determine a random index into the list and obtain the symKeyType */
+<span class="fc" id="L71">        final SecureRandom myRandom = theFactory.getRandomSource().getRandom();</span>
+<span class="fc" id="L72">        int myIndex = myRandom.nextInt(myTypes.size());</span>
+<span class="fc" id="L73">        final GordianSymKeyType myKeyType = myTypes.get(myIndex);</span>
+
+        /* Select from among possible keySpecs of this type */
+<span class="fc bfc" id="L76" title="All 2 branches covered.">        mySpecs.removeIf(s -&gt; s.getSymKeyType() != myKeyType);</span>
+<span class="fc" id="L77">        myIndex = myRandom.nextInt(mySpecs.size());</span>
+<span class="fc" id="L78">        return mySpecs.get(myIndex);</span>
+    }
+
+    /**
+     * Obtain set of random keySet SymKeySpecs.
+     * @param pKeyLen the keyLength
+     * @param pCount the count
+     * @return the random symKeySpecs
+     */
+    public GordianSymKeySpec[] generateRandomKeySetSymKeySpecs(final GordianLength pKeyLen,
+                                                               final int pCount) {
+        /* Access the list to select from */
+<span class="fc" id="L90">        final GordianCipherFactory myCiphers = theFactory.getCipherFactory();</span>
+<span class="fc" id="L91">        final List&lt;GordianSymKeySpec&gt; mySpecs = myCiphers.listAllSupportedSymKeySpecs(pKeyLen);</span>
+
+        /* Remove the short block specs that cannot support SIC Mode */
+<span class="fc bfc" id="L94" title="All 2 branches covered.">        mySpecs.removeIf(s -&gt; s.getBlockLength() == GordianLength.LEN_64);</span>
+
+        /* Create the Access list and loop to populate */
+<span class="fc" id="L97">        final GordianSymKeySpec[] myResult = new GordianSymKeySpec[pCount];</span>
+<span class="fc bfc" id="L98" title="All 2 branches covered.">        for (int i = 0; i &lt; pCount; i++) {</span>
+<span class="fc" id="L99">             myResult[i] = selectSymKeySpecFromList(mySpecs);</span>
+        }
+
+        /* Return the result  */
+<span class="fc" id="L103">        return myResult;</span>
+    }
+
+    /**
+     * Obtain a random symKeySpec and remove all of the same symKeyType.
+     * @param pList the list of symKeySpecs
+     * @return the random symKeySpec
+     */
+    public GordianSymKeySpec selectSymKeySpecFromList(final List&lt;GordianSymKeySpec&gt; pList) {
+        /* Select the random Spec */
+<span class="fc" id="L113">        final List&lt;GordianSymKeyType&gt; myTypes = pList.stream().map(GordianSymKeySpec::getSymKeyType).toList();</span>
+<span class="fc" id="L114">        final SecureRandom myRandom = theFactory.getRandomSource().getRandom();</span>
+<span class="fc" id="L115">        int myIndex = myRandom.nextInt(pList.size());</span>
+<span class="fc" id="L116">        final GordianSymKeyType myType = myTypes.get(myIndex);</span>
+
+        /* Strip out the possible specs */
+<span class="fc bfc" id="L119" title="All 2 branches covered.">        final List&lt;GordianSymKeySpec&gt; mySpecs = pList.stream().filter(mySpec -&gt; mySpec.getSymKeyType() == myType).toList();</span>
+<span class="fc bfc" id="L120" title="All 2 branches covered.">        pList.removeIf(mySpec -&gt; mySpec.getSymKeyType() == myType);</span>
+
+        /* Return the result */
+<span class="fc" id="L123">        myIndex = myRandom.nextInt(mySpecs.size());</span>
+<span class="fc" id="L124">        return mySpecs.get(myIndex);</span>
+    }
+
+    /**
+     * Obtain random StreamKeySpec.
+     * @param pKeyLen the keyLength
+     * @param pLargeData only generate a Key that is suitable for processing large amounts of data
+     * @return the random streamKeySpec
+     */
+    public GordianStreamKeySpec generateRandomStreamKeySpec(final GordianLength pKeyLen,
+                                                            final boolean pLargeData) {
+        /* Access the list to select from */
+<span class="fc" id="L136">        final GordianCipherFactory myCiphers = theFactory.getCipherFactory();</span>
+<span class="fc" id="L137">        final List&lt;GordianStreamKeySpec&gt; mySpecs = myCiphers.listAllSupportedStreamKeySpecs(pKeyLen);</span>
+<span class="fc bfc" id="L138" title="All 2 branches covered.">        if (pLargeData) {</span>
+<span class="fc bfc" id="L139" title="All 2 branches covered.">            mySpecs.removeIf(s -&gt; !s.getStreamKeyType().supportsLargeData());</span>
+        }
+<span class="fc" id="L141">        final List&lt;GordianStreamKeyType&gt; myTypes = mySpecs.stream().map(GordianStreamKeySpec::getStreamKeyType).toList();</span>
+
+        /* Determine a random index into the list and obtain the streamKeyType */
+<span class="fc" id="L144">        final SecureRandom myRandom = theFactory.getRandomSource().getRandom();</span>
+<span class="fc" id="L145">        int myIndex = myRandom.nextInt(myTypes.size());</span>
+<span class="fc" id="L146">        final GordianStreamKeyType myKeyType = myTypes.get(myIndex);</span>
+
+        /* Select from among possible keySpecs of this type */
+<span class="fc bfc" id="L149" title="All 2 branches covered.">        mySpecs.removeIf(s -&gt; s.getStreamKeyType() != myKeyType);</span>
+<span class="fc" id="L150">        myIndex = myRandom.nextInt(mySpecs.size());</span>
+<span class="fc" id="L151">        return mySpecs.get(myIndex);</span>
+     }
+
+    /**
+     * Obtain random DigestSpec.
+     * @param pLargeData only generate a Digest that is suitable for processing large amounts of data
+     * @return the random digestSpec
+     */
+    public GordianDigestSpec generateRandomDigestSpec(final boolean pLargeData) {
+        /* Access the list to select from */
+<span class="fc" id="L161">        final GordianDigestFactory myDigests = theFactory.getDigestFactory();</span>
+<span class="fc" id="L162">        final List&lt;GordianDigestSpec&gt; mySpecs = myDigests.listAllSupportedSpecs();</span>
+<span class="fc bfc" id="L163" title="All 2 branches covered.">        if (pLargeData) {</span>
+<span class="fc bfc" id="L164" title="All 2 branches covered.">            mySpecs.removeIf(s -&gt; !s.getDigestType().supportsLargeData());</span>
+        }
+<span class="fc" id="L166">        final List&lt;GordianDigestType&gt; myTypes = mySpecs.stream().map(GordianDigestSpec::getDigestType).toList();</span>
+
+        /* Determine a random index into the list and obtain the digestType */
+<span class="fc" id="L169">        final SecureRandom myRandom = theFactory.getRandomSource().getRandom();</span>
+<span class="fc" id="L170">        int myIndex = myRandom.nextInt(myTypes.size());</span>
+<span class="fc" id="L171">        final GordianDigestType myDigestType = myTypes.get(myIndex);</span>
+
+        /* Select from among possible digestSpecs of this type */
+<span class="fc bfc" id="L174" title="All 2 branches covered.">        mySpecs.removeIf(s -&gt; s.getDigestType() != myDigestType);</span>
+<span class="fc" id="L175">        myIndex = myRandom.nextInt(mySpecs.size());</span>
+<span class="fc" id="L176">        return mySpecs.get(myIndex);</span>
+    }
+
+    /**
+     * Derive set of keySet SymKeyTypes from seed.
+     * @param pRandom the seeded random
+     * @param pKeyLen the keyLength
+     * @param pCount the number of distinct digestTypes to select
+     * @return the remaining seed
+     */
+    public GordianSymKeyType[] deriveKeySetSymKeyTypesFromSeed(final Random pRandom,
+                                                               final GordianLength pKeyLen,
+                                                               final int pCount) {
+        /* Access the list to select from */
+<span class="fc" id="L190">        final GordianCipherFactory myCiphers = theFactory.getCipherFactory();</span>
+<span class="fc" id="L191">        final GordianValidator myValidator = theFactory.getValidator();</span>
+<span class="fc" id="L192">        final List&lt;GordianSymKeyType&gt; myTypes = myCiphers.listAllSupportedSymKeyTypes().stream()</span>
+<span class="fc" id="L193">                .filter(myValidator.supportedKeySetSymKeyTypes(pKeyLen))</span>
+<span class="fc" id="L194">                .collect(Collectors.toCollection(ArrayList::new));</span>
+
+        /* Allocate the array to return */
+<span class="fc" id="L197">        final GordianSymKeyType[] myResult = new GordianSymKeyType[pCount];</span>
+
+        /* Loop selecting digestTypes */
+<span class="fc bfc" id="L200" title="All 2 branches covered.">        for (int i = 0; i &lt; pCount; i++) {</span>
+            /* Select from the list and remove the selected item */
+<span class="fc" id="L202">            final int myIndex = pRandom.nextInt(myTypes.size());</span>
+<span class="fc" id="L203">            final GordianSymKeyType myType = myTypes.get(myIndex);</span>
+<span class="fc bfc" id="L204" title="All 2 branches covered.">            myTypes.removeIf(t -&gt; t == myType);</span>
+<span class="fc" id="L205">            myResult[i] = myType;</span>
+        }
+
+        /* return the selected symKeyTypes */
+<span class="fc" id="L209">        return myResult;</span>
+    }
+
+    /**
+     * Derive secret lockDigestType from seed.
+     * @param pRandom the seeded random
+     * @return the selected keyHashDigestTypes
+     */
+    public GordianDigestType deriveLockSecretTypeFromSeed(final Random pRandom) {
+        /* Access the list to select from */
+<span class="fc" id="L219">        final GordianDigestFactory myDigests = theFactory.getDigestFactory();</span>
+<span class="fc" id="L220">        final GordianValidator myValidator = theFactory.getValidator();</span>
+<span class="fc" id="L221">        final List&lt;GordianDigestType&gt; myTypes = myDigests.listAllSupportedTypes().stream()</span>
+<span class="fc" id="L222">                .filter(myValidator.supportedLockDigestTypes())</span>
+<span class="fc" id="L223">                .filter(myValidator.isExternalHashDigest())</span>
+<span class="fc" id="L224">                .toList();</span>
+
+        /* Select from the list and remove the selected item */
+<span class="fc" id="L227">        final int myIndex = pRandom.nextInt(myTypes.size());</span>
+<span class="fc" id="L228">        return myTypes.get(myIndex);</span>
+    }
+
+    /**
+     * Derive set of lockDigestTypes from seed.
+     * @param pRandom the seeded random
+     * @param pCount the number of distinct digestTypes to select
+     * @return the selected keyHashDigestTypes
+     */
+    public GordianDigestType[] deriveLockDigestTypesFromSeed(final Random pRandom,
+                                                             final int pCount) {
+        /* Access the list to select from */
+<span class="fc" id="L240">        final GordianDigestFactory myDigests = theFactory.getDigestFactory();</span>
+<span class="fc" id="L241">        final GordianValidator myValidator = theFactory.getValidator();</span>
+<span class="fc" id="L242">        final List&lt;GordianDigestType&gt; myTypes = myDigests.listAllSupportedTypes().stream()</span>
+<span class="fc" id="L243">                .filter(myValidator.supportedLockDigestTypes())</span>
+<span class="fc" id="L244">                .collect(Collectors.toCollection(ArrayList::new));</span>
+
+        /* Allocate the array to return */
+<span class="fc" id="L247">        final GordianDigestType[] myResult = new GordianDigestType[pCount];</span>
+
+        /* Loop selecting digestTypes */
+<span class="fc bfc" id="L250" title="All 2 branches covered.">        for (int i = 0; i &lt; pCount; i++) {</span>
+            /* Select from the list and remove the selected item */
+<span class="fc" id="L252">            final int myIndex = pRandom.nextInt(myTypes.size());</span>
+<span class="fc" id="L253">            final GordianDigestType myType = myTypes.get(myIndex);</span>
+<span class="fc bfc" id="L254" title="All 2 branches covered.">            myTypes.removeIf(t -&gt; t == myType);</span>
+<span class="fc" id="L255">            myResult[i] = myType;</span>
+        }
+
+        /* return the selected digestTypes */
+<span class="fc" id="L259">        return myResult;</span>
+    }
+
+    /**
+     * Derive a Lock externalDigestTypes from seededRandom.
+     * @param pRandom the seeded random
+     * @return the selected externalDigestType
+     */
+    public GordianDigestType deriveExternalDigestTypeFromSeed(final Random pRandom) {
+        /* Access the list to select from */
+<span class="fc" id="L269">        final GordianValidator myValidator = theFactory.getValidator();</span>
+<span class="fc" id="L270">        final List&lt;GordianDigestType&gt; myTypes = myValidator.listAllExternalDigestTypes();</span>
+
+        /* Select from the list */
+<span class="fc" id="L273">        final int myIndex = pRandom.nextInt(myTypes.size());</span>
+<span class="fc" id="L274">        return myTypes.get(myIndex);</span>
+    }
+
+    /**
+     * Derive set of keyGenDigestTypes from seed.
+     * @param pRandom the seeded random
+     * @param pCount the number of distinct digestTypes to select
+     * @return the selected keyGenDigestTypes
+     */
+    public GordianDigestType[] deriveKeyGenDigestTypesFromSeed(final Random pRandom,
+                                                               final int pCount) {
+        /* Access the list to select from */
+<span class="fc" id="L286">        final GordianDigestFactory myDigests = theFactory.getDigestFactory();</span>
+<span class="fc" id="L287">        final GordianValidator myValidator = theFactory.getValidator();</span>
+<span class="fc" id="L288">        final List&lt;GordianDigestType&gt; myTypes = myDigests.listAllSupportedTypes().stream()</span>
+<span class="fc" id="L289">                .filter(myValidator.supportedKeyGenDigestTypes())</span>
+<span class="fc" id="L290">                .collect(Collectors.toCollection(ArrayList::new));</span>
+
+        /* Allocate the array to return */
+<span class="fc" id="L293">        final GordianDigestType[] myResult = new GordianDigestType[pCount];</span>
+
+        /* Loop selecting digestTypes */
+<span class="fc bfc" id="L296" title="All 2 branches covered.">        for (int i = 0; i &lt; pCount; i++) {</span>
+            /* Select from the list and remove the selected item */
+<span class="fc" id="L298">            final int myIndex = pRandom.nextInt(myTypes.size());</span>
+<span class="fc" id="L299">            final GordianDigestType myType = myTypes.get(myIndex);</span>
+<span class="fc bfc" id="L300" title="All 2 branches covered.">            myTypes.removeIf(t -&gt; t == myType);</span>
+<span class="fc" id="L301">            myResult[i] = myType;</span>
+        }
+
+        /* return the selected digestTypes */
+<span class="fc" id="L305">        return myResult;</span>
+    }
+
+    /**
+     * Derive agreementDigestType from seed.
+     * @param pRandom the seeded random
+     * @return the selected agreementDigestType
+     */
+    public GordianDigestType deriveAgreementDigestTypeFromSeed(final Random pRandom) {
+        /* Access the list to select from */
+<span class="nc" id="L315">        final GordianDigestFactory myDigests = theFactory.getDigestFactory();</span>
+<span class="nc" id="L316">        final GordianValidator myValidator = theFactory.getValidator();</span>
+<span class="nc" id="L317">        final List&lt;GordianDigestType&gt; myTypes = myDigests.listAllSupportedTypes().stream()</span>
+<span class="nc" id="L318">                .filter(myValidator.supportedAgreementDigestTypes())</span>
+<span class="nc" id="L319">                .toList();</span>
+
+        /* Select from the list */
+<span class="nc" id="L322">        final int myIndex = pRandom.nextInt(myTypes.size());</span>
+<span class="nc" id="L323">        return myTypes.get(myIndex);</span>
+    }
+
+    /**
+     * generate random GordianMacSpec.
+     * @param pKeyLen the keyLength
+     * @param pLargeData only generate a Mac that is suitable for parsing large amounts of data
+     * @return the new MacSpec
+     */
+    public GordianMacSpec generateRandomMacSpec(final GordianLength pKeyLen,
+                                                final boolean pLargeData) {
+        /* Access the list to select from */
+<span class="fc" id="L335">        final GordianMacFactory myMacs = theFactory.getMacFactory();</span>
+<span class="fc" id="L336">        final List&lt;GordianMacSpec&gt; mySpecs = myMacs.listAllSupportedSpecs(pKeyLen);</span>
+
+        /* Modify list (if required) to remove macs that do not support largeData */
+<span class="fc bfc" id="L339" title="All 2 branches covered.">        if (pLargeData) {</span>
+<span class="fc bfc" id="L340" title="All 2 branches covered.">            mySpecs.removeIf(s -&gt; !s.getMacType().supportsLargeData());</span>
+        }
+
+        /* Modify list to remove rawPoly1305 */
+<span class="fc" id="L344">        mySpecs.remove(GordianMacSpecBuilder.poly1305Mac());</span>
+
+        /* Extract the macTypes */
+<span class="fc" id="L347">        final List&lt;GordianMacType&gt; myTypes = mySpecs.stream().map(GordianMacSpec::getMacType).toList();</span>
+
+        /* Determine a random index into the list and obtain the macType */
+<span class="fc" id="L350">        final SecureRandom myRandom = theFactory.getRandomSource().getRandom();</span>
+<span class="fc" id="L351">        int myIndex = myRandom.nextInt(myTypes.size());</span>
+<span class="fc" id="L352">        final GordianMacType myMacType = myTypes.get(myIndex);</span>
+
+        /* Select from among possible macSpecs of this type */
+<span class="fc bfc" id="L355" title="All 2 branches covered.">        mySpecs.removeIf(s -&gt; s.getMacType() != myMacType);</span>
+<span class="fc" id="L356">        myIndex = myRandom.nextInt(mySpecs.size());</span>
+<span class="fc" id="L357">        return mySpecs.get(myIndex);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

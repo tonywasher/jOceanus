@@ -1,0 +1,549 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseCurrency.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.data.statics</a> &gt; <span class="el_source">MoneyWiseCurrency.java</span></div><h1>MoneyWiseCurrency.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.data.statics;
+
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.metis.data.MetisDataResource;
+import net.sourceforge.joceanus.metis.field.MetisFieldSet;
+import net.sourceforge.joceanus.metis.field.MetisFieldVersionValues;
+import net.sourceforge.joceanus.metis.field.MetisFieldVersionedSet;
+import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
+import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataClass;
+import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataItem;
+
+import java.util.Currency;
+
+/**
+ * AssetCurrency data type.
+ * @author Tony Washer
+ */
+public class MoneyWiseCurrency
+        extends PrometheusStaticDataItem {
+    /**
+     * Object name.
+     */
+<span class="fc" id="L45">    public static final String OBJECT_NAME = MoneyWiseStaticDataType.CURRENCY.getItemName();</span>
+
+    /**
+     * List name.
+     */
+<span class="fc" id="L50">    public static final String LIST_NAME = MoneyWiseStaticDataType.CURRENCY.getListName();</span>
+
+    /**
+     * Report fields.
+     */
+<span class="fc" id="L55">    private static final MetisFieldVersionedSet&lt;MoneyWiseCurrency&gt; FIELD_DEFS = MetisFieldVersionedSet.newVersionedFieldSet(MoneyWiseCurrency.class);</span>
+
+    /*
+     * FieldIds.
+     */
+    static {
+<span class="fc" id="L61">        FIELD_DEFS.declareBooleanField(MoneyWiseStaticResource.CURRENCY_REPORTING);</span>
+<span class="fc" id="L62">    }</span>
+
+    /**
+     * Copy Constructor.
+     * @param pList The list to associate the Account Currency with
+     * @param pCurrency The Account Currency to copy
+     */
+    protected MoneyWiseCurrency(final MoneyWiseCurrencyList pList,
+                                final MoneyWiseCurrency pCurrency) {
+<span class="fc" id="L71">        super(pList, pCurrency);</span>
+<span class="fc" id="L72">    }</span>
+
+    /**
+     * Basic constructor.
+     * @param pList The list to associate the Account Currency with
+     * @param pName Name of Account Currency
+     * @throws OceanusException on error
+     */
+    private MoneyWiseCurrency(final MoneyWiseCurrencyList pList,
+                              final String pName) throws OceanusException {
+<span class="fc" id="L82">        super(pList, pName);</span>
+<span class="fc" id="L83">        setValueReporting(Boolean.FALSE);</span>
+<span class="fc" id="L84">        setValueEnabled(Boolean.TRUE);</span>
+<span class="fc" id="L85">        setValueDesc(getCurrencyClass().getCurrency().getDisplayName());</span>
+<span class="fc" id="L86">    }</span>
+
+    /**
+     * Basic constructor.
+     * @param pList The list to associate the Account Currency with
+     * @param pClass Class of Account Currency
+     * @throws OceanusException on error
+     */
+    private MoneyWiseCurrency(final MoneyWiseCurrencyList pList,
+                              final MoneyWiseCurrencyClass pClass) throws OceanusException {
+<span class="nc" id="L96">        super(pList, pClass);</span>
+<span class="nc" id="L97">        setValueReporting(Boolean.FALSE);</span>
+<span class="nc" id="L98">        setValueEnabled(Boolean.TRUE);</span>
+<span class="nc" id="L99">        setValueDesc(pClass.getCurrency().getDisplayName());</span>
+<span class="nc" id="L100">    }</span>
+
+    /**
+     * Values constructor.
+     * @param pList The list to associate the item with
+     * @param pValues the values
+     * @throws OceanusException on error
+     */
+    private MoneyWiseCurrency(final MoneyWiseCurrencyList pList,
+                              final PrometheusDataValues pValues) throws OceanusException {
+<span class="fc" id="L110">        super(pList, pValues);</span>
+
+        /* Store the Default */
+<span class="fc" id="L113">        final Object myValue = pValues.getValue(MoneyWiseStaticResource.CURRENCY_REPORTING);</span>
+<span class="fc bfc" id="L114" title="All 2 branches covered.">        if (myValue instanceof Boolean b) {</span>
+<span class="fc" id="L115">            setValueReporting(b);</span>
+<span class="pc bpc" id="L116" title="1 of 2 branches missed.">        } else if (myValue instanceof String s) {</span>
+<span class="fc" id="L117">            final OceanusDataFormatter myFormatter = getDataSet().getDataFormatter();</span>
+<span class="fc" id="L118">            setValueReporting(myFormatter.parseValue(s, Boolean.class));</span>
+<span class="fc" id="L119">        } else {</span>
+<span class="nc" id="L120">            setValueReporting(Boolean.FALSE);</span>
+        }
+<span class="fc" id="L122">    }</span>
+
+    @Override
+    public MetisFieldSetDef getDataFieldSet() {
+<span class="fc" id="L126">        return FIELD_DEFS;</span>
+    }
+
+    @Override
+    public boolean includeXmlField(final MetisDataFieldId pField) {
+        /* Determine whether fields should be included */
+<span class="fc bfc" id="L132" title="All 2 branches covered.">        if (MoneyWiseStaticResource.CURRENCY_REPORTING.equals(pField)) {</span>
+<span class="fc" id="L133">            return true;</span>
+        }
+
+        /* Pass call on */
+<span class="fc" id="L137">        return super.includeXmlField(pField);</span>
+    }
+
+    /**
+     * Is this the reporting currency.
+     * @return true/false
+     */
+    public Boolean isReporting() {
+<span class="fc" id="L145">        return getValues().getValue(MoneyWiseStaticResource.CURRENCY_REPORTING, Boolean.class);</span>
+   }
+
+    /**
+     * Set reporting indication.
+     * @param pValue the value
+     */
+    private void setValueReporting(final Boolean pValue) {
+<span class="fc" id="L153">        getValues().setUncheckedValue(MoneyWiseStaticResource.CURRENCY_REPORTING, pValue);</span>
+<span class="fc" id="L154">    }</span>
+
+    /**
+     * Return the Currency class of the AccountCurrency.
+     * @return the class
+     */
+    public MoneyWiseCurrencyClass getCurrencyClass() {
+<span class="fc" id="L161">        return (MoneyWiseCurrencyClass) super.getStaticClass();</span>
+    }
+
+    @Override
+    public MoneyWiseCurrency getBase() {
+<span class="fc" id="L166">        return (MoneyWiseCurrency) super.getBase();</span>
+    }
+
+    @Override
+    public MoneyWiseCurrencyList getList() {
+<span class="fc" id="L171">        return (MoneyWiseCurrencyList) super.getList();</span>
+    }
+
+    /**
+     * Return the Currency of the AccountCurrency.
+     * @return the currency
+     */
+    public Currency getCurrency() {
+<span class="fc" id="L179">        return getCurrencyClass().getCurrency();</span>
+    }
+
+    @Override
+    public int compareValues(final PrometheusDataItem pThat) {
+        /* Handle differences in default value */
+<span class="fc" id="L185">        final MoneyWiseCurrency myThat = (MoneyWiseCurrency) pThat;</span>
+<span class="fc bfc" id="L186" title="All 2 branches covered.">        if (!isReporting().equals(myThat.isReporting())) {</span>
+<span class="pc bpc" id="L187" title="1 of 2 branches missed.">            return Boolean.TRUE.equals(isReporting())</span>
+<span class="nc" id="L188">                    ? -1</span>
+<span class="fc" id="L189">                    : 1;</span>
+        }
+
+        /* Handle normally */
+<span class="fc" id="L193">        return super.compareValues(pThat);</span>
+    }
+
+    @Override
+    public void resolveDataSetLinks() throws OceanusException {
+        /* Update the Encryption details */
+<span class="fc" id="L199">        super.resolveDataSetLinks();</span>
+
+        /* Access Relevant lists */
+<span class="fc" id="L202">        final MetisFieldVersionValues myValues = getValues();</span>
+
+        /* Adjust Default */
+<span class="fc" id="L205">        final Object myReporting = myValues.getValue(MoneyWiseStaticResource.CURRENCY_REPORTING);</span>
+<span class="pc bpc" id="L206" title="1 of 2 branches missed.">        if (myReporting == null) {</span>
+<span class="nc" id="L207">            setValueReporting(Boolean.FALSE);</span>
+        }
+<span class="fc" id="L209">    }</span>
+
+    /**
+     * Set reporting indication.
+     * @param pReporting the new indication
+     */
+    public void setReporting(final Boolean pReporting) {
+<span class="fc" id="L216">        setValueReporting(pReporting);</span>
+<span class="fc" id="L217">    }</span>
+
+    @Override
+    public boolean applyChanges(final PrometheusDataItem pData) {
+        /* Can only apply changes for AccountCurrency */
+<span class="nc bnc" id="L222" title="All 2 branches missed.">        if (!(pData instanceof MoneyWiseCurrency)) {</span>
+<span class="nc" id="L223">            return false;</span>
+        }
+
+        /* Access the data */
+<span class="nc" id="L227">        final MoneyWiseCurrency myData = (MoneyWiseCurrency) pData;</span>
+
+        /* Store the current detail into history */
+<span class="nc" id="L230">        pushHistory();</span>
+
+        /* Apply basic changes */
+<span class="nc" id="L233">        applyBasicChanges(myData);</span>
+
+        /* Update the reporting indication if required */
+<span class="nc bnc" id="L236" title="All 2 branches missed.">        if (!isReporting().equals(myData.isReporting())) {</span>
+<span class="nc" id="L237">            setReporting(myData.isReporting());</span>
+        }
+
+        /* Check for changes */
+<span class="nc" id="L241">        return checkForHistory();</span>
+    }
+
+    /**
+     * Represents a list of {@link MoneyWiseCurrency} objects.
+     */
+    public static class MoneyWiseCurrencyList
+            extends PrometheusStaticList&lt;MoneyWiseCurrency&gt; {
+        /**
+         * Report fields.
+         */
+<span class="fc" id="L252">        private static final MetisFieldSet&lt;MoneyWiseCurrencyList&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseCurrencyList.class);</span>
+
+        /**
+         * Construct an empty CORE account currency list.
+         * @param pData the DataSet for the list
+         */
+        public MoneyWiseCurrencyList(final PrometheusDataSet pData) {
+<span class="fc" id="L259">            super(MoneyWiseCurrency.class, pData, MoneyWiseStaticDataType.CURRENCY, PrometheusListStyle.CORE);</span>
+<span class="fc" id="L260">        }</span>
+
+        /**
+         * Constructor for a cloned List.
+         * @param pSource the source List
+         */
+        private MoneyWiseCurrencyList(final MoneyWiseCurrencyList pSource) {
+<span class="fc" id="L267">            super(pSource);</span>
+<span class="fc" id="L268">        }</span>
+
+        @Override
+        public MetisFieldSet&lt;MoneyWiseCurrencyList&gt; getDataFieldSet() {
+<span class="nc" id="L272">            return FIELD_DEFS;</span>
+        }
+
+        @Override
+        public String listName() {
+<span class="fc" id="L277">            return LIST_NAME;</span>
+        }
+
+        @Override
+        public MetisFieldSetDef getItemFields() {
+<span class="fc" id="L282">            return MoneyWiseCurrency.FIELD_DEFS;</span>
+        }
+
+        @Override
+        protected Class&lt;MoneyWiseCurrencyClass&gt; getEnumClass() {
+<span class="fc" id="L287">            return MoneyWiseCurrencyClass.class;</span>
+        }
+
+        @Override
+        public MoneyWiseCurrencyDataMap getDataMap() {
+<span class="fc" id="L292">            return (MoneyWiseCurrencyDataMap) super.getDataMap();</span>
+        }
+
+        @Override
+        protected MoneyWiseCurrencyList getEmptyList(final PrometheusListStyle pStyle) {
+<span class="fc" id="L297">            final MoneyWiseCurrencyList myList = new MoneyWiseCurrencyList(this);</span>
+<span class="fc" id="L298">            myList.setStyle(pStyle);</span>
+<span class="fc" id="L299">            return myList;</span>
+        }
+
+        @Override
+        public MoneyWiseCurrency addCopyItem(final PrometheusDataItem pItem) {
+            /* Can only clone an AccountCurrency */
+<span class="pc bpc" id="L305" title="1 of 2 branches missed.">            if (!(pItem instanceof MoneyWiseCurrency)) {</span>
+<span class="nc" id="L306">                throw new UnsupportedOperationException();</span>
+            }
+
+<span class="fc" id="L309">            final MoneyWiseCurrency myCurr = new MoneyWiseCurrency(this, (MoneyWiseCurrency) pItem);</span>
+<span class="fc" id="L310">            add(myCurr);</span>
+<span class="fc" id="L311">            return myCurr;</span>
+        }
+
+        @Override
+        public MoneyWiseCurrency addNewItem() {
+<span class="nc" id="L316">            throw new UnsupportedOperationException();</span>
+        }
+
+        /**
+         * Obtain the type of the item.
+         * @return the type of the item
+         */
+        public String itemType() {
+<span class="nc" id="L324">            return LIST_NAME;</span>
+        }
+
+        /**
+         * Add an AccountCurrency to the list.
+         * @param pCurrency the Name of the account currency
+         * @return the new currency
+         * @throws OceanusException on error
+         */
+        public MoneyWiseCurrency addBasicItem(final String pCurrency) throws OceanusException {
+            /* Create a new Account Currency */
+<span class="fc" id="L335">            final MoneyWiseCurrency myCurr = new MoneyWiseCurrency(this, pCurrency);</span>
+
+            /* Check that this AccountCurrencyId has not been previously added */
+<span class="pc bpc" id="L338" title="1 of 2 branches missed.">            if (!isIdUnique(myCurr.getIndexedId())) {</span>
+<span class="nc" id="L339">                myCurr.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
+<span class="nc" id="L340">                throw new MoneyWiseDataException(myCurr, ERROR_VALIDATION);</span>
+            }
+
+            /* Add the Account Currency to the list */
+<span class="fc" id="L344">            add(myCurr);</span>
+<span class="fc" id="L345">            return myCurr;</span>
+        }
+
+        @Override
+        public MoneyWiseCurrency addValuesItem(final PrometheusDataValues pValues) throws OceanusException {
+            /* Create the currency */
+<span class="fc" id="L351">            final MoneyWiseCurrency myCurrency = new MoneyWiseCurrency(this, pValues);</span>
+
+            /* Check that this CurrencyId has not been previously added */
+<span class="pc bpc" id="L354" title="1 of 2 branches missed.">            if (!isIdUnique(myCurrency.getIndexedId())) {</span>
+<span class="nc" id="L355">                myCurrency.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
+<span class="nc" id="L356">                throw new MoneyWiseDataException(myCurrency, ERROR_VALIDATION);</span>
+            }
+
+            /* Add to the list */
+<span class="fc" id="L360">            add(myCurrency);</span>
+
+            /* Return it */
+<span class="fc" id="L363">            return myCurrency;</span>
+        }
+
+        @Override
+        public void populateDefaults() throws OceanusException {
+            /* Initialise the reporting currency */
+<span class="nc" id="L369">            initialiseReporting();</span>
+
+            /* Ensure that the list is sorted */
+<span class="nc" id="L372">            reSort();</span>
+<span class="nc" id="L373">        }</span>
+
+        /**
+         * Initialise the reporting currency.
+         */
+        public void initialiseReporting() {
+            /* Determine the default currency */
+<span class="nc" id="L380">            final Currency myCurrency = OceanusMoney.getDefaultCurrency();</span>
+
+            /* Find the currency in the list */
+<span class="nc" id="L383">            MoneyWiseCurrency myCurr = findCurrency(myCurrency);</span>
+<span class="nc bnc" id="L384" title="All 2 branches missed.">            if (myCurr == null) {</span>
+                /* Default to GBP if local currency not found */
+<span class="nc" id="L386">                myCurr = findItemByClass(MoneyWiseCurrencyClass.GBP);</span>
+            }
+
+            /* If we have a currency */
+<span class="nc bnc" id="L390" title="All 2 branches missed.">            if (myCurr != null) {</span>
+                /* Set it as the reporting */
+<span class="nc" id="L392">                myCurr.setReporting(Boolean.TRUE);</span>
+<span class="nc" id="L393">                myCurr.setValueEnabled(Boolean.TRUE);</span>
+            }
+<span class="nc" id="L395">        }</span>
+
+        /**
+         * find a currency in the list.
+         * @param pCurrency the currency to find
+         * @return The currency
+         */
+        public MoneyWiseCurrency findCurrency(final Currency pCurrency) {
+            /* Look up the currency */
+<span class="nc" id="L404">            final MoneyWiseCurrencyClass myClass = MoneyWiseCurrencyClass.fromCurrency(pCurrency);</span>
+<span class="nc" id="L405">            return findItemByClass(myClass);</span>
+        }
+
+        /**
+         * Find the reporting currency.
+         * @return The reporting currency
+         */
+        public MoneyWiseCurrency findReporting() {
+            /* look up the reporting in the map */
+<span class="fc" id="L414">            final MoneyWiseCurrencyDataMap myMap = getDataMap();</span>
+<span class="fc bfc" id="L415" title="All 2 branches covered.">            return myMap == null</span>
+<span class="fc" id="L416">                    ? null</span>
+<span class="fc" id="L417">                    : myMap.getReporting();</span>
+        }
+
+        @Override
+        protected MoneyWiseCurrency newItem(final PrometheusStaticDataClass pClass) throws OceanusException {
+            /* Create the currency */
+<span class="nc" id="L423">            final MoneyWiseCurrency myCurr = new MoneyWiseCurrency(this, (MoneyWiseCurrencyClass) pClass);</span>
+
+            /* Check that this CurrId has not been previously added */
+<span class="nc bnc" id="L426" title="All 2 branches missed.">            if (!isIdUnique(myCurr.getIndexedId())) {</span>
+<span class="nc" id="L427">                myCurr.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
+<span class="nc" id="L428">                throw new MoneyWiseDataException(myCurr, ERROR_VALIDATION);</span>
+            }
+
+            /* Add to the list */
+<span class="nc" id="L432">            add(myCurr);</span>
+
+            /* Return it */
+<span class="nc" id="L435">            return myCurr;</span>
+        }
+
+        /**
+         * Set reporting currency.
+         * @param pCurrency the new reporting currency.
+         */
+        public void setReportingCurrency(final MoneyWiseCurrency pCurrency) {
+            /* Find the reportingdefault currency */
+<span class="nc" id="L444">            final MoneyWiseCurrency myCurr = findReporting();</span>
+
+            /* If we are changing the currency */
+<span class="nc bnc" id="L447" title="All 2 branches missed.">            if (!pCurrency.equals(myCurr)) {</span>
+                /* If we have a default value */
+<span class="nc bnc" id="L449" title="All 2 branches missed.">                if (myCurr != null) {</span>
+                    /* Clear default value */
+<span class="nc" id="L451">                    myCurr.pushHistory();</span>
+<span class="nc" id="L452">                    myCurr.setReporting(Boolean.FALSE);</span>
+                }
+
+                /* Set new currency */
+<span class="nc" id="L456">                pCurrency.pushHistory();</span>
+<span class="nc" id="L457">                pCurrency.setReporting(Boolean.TRUE);</span>
+            }
+<span class="nc" id="L459">        }</span>
+
+        @Override
+        protected MoneyWiseCurrencyDataMap allocateDataMap() {
+<span class="fc" id="L463">            return new MoneyWiseCurrencyDataMap();</span>
+        }
+    }
+
+    /**
+     * The dataMap class.
+     */
+    public static final class MoneyWiseCurrencyDataMap
+            extends PrometheusStaticDataMap&lt;MoneyWiseCurrency&gt; {
+        /**
+         * Report fields.
+         */
+<span class="fc" id="L475">        private static final MetisFieldSet&lt;MoneyWiseCurrencyDataMap&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseCurrencyDataMap.class);</span>
+
+        /*
+         * Declare Fields.
+         */
+        static {
+<span class="fc" id="L481">            FIELD_DEFS.declareLocalField(MoneyWiseStaticResource.CURRENCY_REPORTING, MoneyWiseCurrencyDataMap::getReporting);</span>
+<span class="fc" id="L482">        }</span>
+
+        /**
+         * Reporting value.
+         */
+        private MoneyWiseCurrency theReporting;
+
+        /**
+         * Reporting count.
+         */
+        private Integer theReportingCount;
+
+        /**
+         * Constructor.
+         */
+        private MoneyWiseCurrencyDataMap() {
+        }
+
+        @Override
+        public MetisFieldSet&lt;MoneyWiseCurrencyDataMap&gt; getDataFieldSet() {
+<span class="nc" id="L502">            return FIELD_DEFS;</span>
+        }
+
+        @Override
+        public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L507">            return FIELD_DEFS.getName();</span>
+        }
+
+        @Override
+        public void resetMap() {
+<span class="fc" id="L512">            super.resetMap();</span>
+<span class="fc" id="L513">            theReporting = null;</span>
+<span class="fc" id="L514">            theReportingCount = null;</span>
+<span class="fc" id="L515">        }</span>
+
+        @Override
+        public void adjustForItem(final PrometheusDataItem pItem) {
+            /* Adjust order count */
+<span class="fc" id="L520">            final MoneyWiseCurrency myItem = (MoneyWiseCurrency) pItem;</span>
+<span class="fc bfc" id="L521" title="All 2 branches covered.">            if (Boolean.TRUE.equals(myItem.isReporting())) {</span>
+<span class="fc" id="L522">                theReporting = myItem;</span>
+<span class="pc bpc" id="L523" title="1 of 2 branches missed.">                theReportingCount = theReportingCount == null</span>
+<span class="fc" id="L524">                        ? ONE</span>
+<span class="nc" id="L525">                        : theReportingCount + 1;</span>
+            }
+
+            /* Adjust name/order count */
+<span class="fc" id="L529">            super.adjustForItem(pItem);</span>
+<span class="fc" id="L530">        }</span>
+
+        /**
+         * find reporting currency.
+         * @return the reporting currency
+         */
+        public MoneyWiseCurrency getReporting() {
+<span class="fc" id="L537">            return theReporting;</span>
+        }
+
+        /**
+         * Check validity of report count.
+         * @return true/false
+         */
+        public boolean validReportCount() {
+<span class="fc" id="L545">            return ONE.equals(theReportingCount);</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseTaxResource.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.tax</a> &gt; <span class="el_source">MoneyWiseTaxResource.java</span></div><h1>MoneyWiseTaxResource.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.tax;
+
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
+
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.ResourceBundle;
+
+/**
+ * Resource IDs for MoneyWise Tax Fields.
+ */
+<span class="fc" id="L30">public enum MoneyWiseTaxResource</span>
+        implements OceanusBundleId, MetisDataFieldId {
+    /**
+     * Basic Allowance.
+     */
+<span class="fc" id="L35">    ALLOWANCE_BASIC(&quot;Allowance.Basic&quot;),</span>
+
+    /**
+     * Rental Allowance.
+     */
+<span class="fc" id="L40">    ALLOWANCE_RENTAL(&quot;Allowance.Rental&quot;),</span>
+
+    /**
+     * Capital Allowance.
+     */
+<span class="fc" id="L45">    ALLOWANCE_CAPITAL(&quot;Allowance.Capital&quot;),</span>
+
+    /**
+     * Savings Allowance.
+     */
+<span class="fc" id="L50">    ALLOWANCE_SAVINGS(&quot;Allowance.Savings&quot;),</span>
+
+    /**
+     * Dividend Allowance.
+     */
+<span class="fc" id="L55">    ALLOWANCE_DIVIDEND(&quot;Allowance.Dividend&quot;),</span>
+
+    /**
+     * LoAge Allowance.
+     */
+<span class="fc" id="L60">    ALLOWANCE_LOAGE(&quot;Allowance.LoAge&quot;),</span>
+
+    /**
+     * HiAge Allowance.
+     */
+<span class="fc" id="L65">    ALLOWANCE_HIAGE(&quot;Allowance.HiAge&quot;),</span>
+
+    /**
+     * AgeAllowanceLimit.
+     */
+<span class="fc" id="L70">    LIMIT_AGEALLOWANCE(&quot;Limit.AgeAllowance&quot;),</span>
+
+    /**
+     * AdditionalAllowanceLimit.
+     */
+<span class="fc" id="L75">    LIMIT_ADDALLOWANCE(&quot;Limit.AdditionalAllowance&quot;),</span>
+
+    /**
+     * Scheme BaseRate.
+     */
+<span class="fc" id="L80">    SCHEME_BASE_RATE(&quot;Scheme.BaseRate&quot;),</span>
+
+    /**
+     * Scheme HighRate.
+     */
+<span class="fc" id="L85">    SCHEME_HIGH_RATE(&quot;Scheme.HighRate&quot;),</span>
+
+    /**
+     * Scheme AdditionalRate.
+     */
+<span class="fc" id="L90">    SCHEME_ADDITIONAL_RATE(&quot;Scheme.AdditionalRate&quot;),</span>
+
+    /**
+     * Scheme Residential.
+     */
+<span class="fc" id="L95">    SCHEME_RESIDENTIAL(&quot;Scheme.Residential&quot;),</span>
+
+    /**
+     * Scheme Relief Available.
+     */
+<span class="fc" id="L100">    SCHEME_RELIEF_AVAILABLE(&quot;Scheme.ReliefAvailable&quot;),</span>
+
+    /**
+     * TaxBands Standard.
+     */
+<span class="fc" id="L105">    TAXBANDS_STANDARD(&quot;TaxBands.Standard&quot;),</span>
+
+    /**
+     * TaxBands LoSavings.
+     */
+<span class="fc" id="L110">    TAXBANDS_LOSAVINGS(&quot;TaxBands.LoSavings&quot;),</span>
+
+    /**
+     * TaxBands Amount.
+     */
+<span class="fc" id="L115">    TAXBANDS_AMOUNT(&quot;TaxBands.Amount&quot;),</span>
+
+    /**
+     * TaxBands Rate.
+     */
+<span class="fc" id="L120">    TAXBANDS_RATE(&quot;TaxBands.Rate&quot;),</span>
+
+    /**
+     * TaxBands TaxableIncome.
+     */
+<span class="fc" id="L125">    TAXBANDS_INCOME(&quot;TaxBands.Income&quot;),</span>
+
+    /**
+     * TaxBands TaxDue.
+     */
+<span class="fc" id="L130">    TAXBANDS_TAXDUE(&quot;TaxBands.TaxDue&quot;),</span>
+
+    /**
+     * TaxBands hasLoTaxBand.
+     */
+<span class="fc" id="L135">    TAXBANDS_HASLOTAXBAND(&quot;TaxBands.hasLoTaxBand&quot;),</span>
+
+    /**
+     * TaxYear Name.
+     */
+<span class="fc" id="L140">    TAXYEAR_NAME(&quot;TaxYear.Name&quot;),</span>
+
+    /**
+     * TaxYear End.
+     */
+<span class="fc" id="L145">    TAXYEAR_END(&quot;TaxYear.End&quot;),</span>
+
+    /**
+     * TaxYear Allowances.
+     */
+<span class="fc" id="L150">    TAXYEAR_ALLOWANCES(&quot;TaxYear.Allowances&quot;),</span>
+
+    /**
+     * TaxYear Bands.
+     */
+<span class="fc" id="L155">    TAXYEAR_BANDS(&quot;TaxYear.Bands&quot;),</span>
+
+    /**
+     * TaxYear Capital.
+     */
+<span class="fc" id="L160">    TAXYEAR_INTEREST(&quot;TaxYear.Interest&quot;),</span>
+
+    /**
+     * TaxYear Capital.
+     */
+<span class="fc" id="L165">    TAXYEAR_DIVIDEND(&quot;TaxYear.Dividend&quot;),</span>
+
+    /**
+     * TaxYear Capital.
+     */
+<span class="fc" id="L170">    TAXYEAR_CAPITAL(&quot;TaxYear.Capital&quot;),</span>
+
+    /**
+     * TaxYear Profit.
+     */
+<span class="fc" id="L175">    TAXYEAR_PROFIT(&quot;TaxYear.Profit&quot;),</span>
+
+    /**
+     * TaxConfig Name.
+     */
+<span class="fc" id="L180">    TAXCONFIG_NAME(&quot;TaxConfig.Name&quot;),</span>
+
+    /**
+     * TaxConfig GrossTaxable.
+     */
+<span class="fc" id="L185">    TAXCONFIG_GROSS(&quot;TaxConfig.GrossTaxable&quot;),</span>
+
+    /**
+     * TaxConfig GrossPreSavings.
+     */
+<span class="fc" id="L190">    TAXCONFIG_PRESAVINGS(&quot;TaxConfig.GrossPreSavings&quot;),</span>
+
+    /**
+     * TaxConfig Birthday.
+     */
+<span class="fc" id="L195">    TAXCONFIG_BIRTHDAY(&quot;TaxConfig.Birthday&quot;),</span>
+
+    /**
+     * TaxConfig Age.
+     */
+<span class="fc" id="L200">    TAXCONFIG_AGE(&quot;TaxConfig.Age&quot;),</span>
+
+    /**
+     * TaxConfig AgeAllowances.
+     */
+<span class="fc" id="L205">    TAXCONFIG_AGEALLOWANCE(&quot;TaxConfig.AgeAllowances&quot;),</span>
+
+    /**
+     * Analysis TaxBuckets.
+     */
+<span class="fc" id="L210">    TAXANALYSIS_TAXBUCKETS(&quot;TaxAnalysis.TaxBuckets&quot;),</span>
+
+    /**
+     * Analysis TaxProfit.
+     */
+<span class="fc" id="L215">    TAXANALYSIS_TAXPROFIT(&quot;TaxAnalysis.TaxProfit&quot;),</span>
+
+    /**
+     * TaxPreference Name.
+     */
+<span class="fc" id="L220">    TAXPREF_NAME(&quot;preference.display&quot;),</span>
+
+    /**
+     * TaxPreference Birthday.
+     */
+<span class="fc" id="L225">    TAXPREF_BIRTH(&quot;preference.birth&quot;),</span>
+
+    /**
+     * Marginal Reduction.
+     */
+<span class="fc" id="L230">    MARGINAL_REDUCTION(&quot;Marginal.Name&quot;),</span>
+
+    /**
+     * Marginal OneInTwo.
+     */
+<span class="fc" id="L235">    MARGINAL_ONEINTWO(&quot;Marginal.OneInTwo&quot;),</span>
+
+    /**
+     * Marginal TwoInThree.
+     */
+<span class="fc" id="L240">    MARGINAL_TWOINTHREE(&quot;Marginal.TwoInThree&quot;),</span>
+
+    /**
+     * CashType Large.
+     */
+<span class="fc" id="L245">    CASHTYPE_LARGE(&quot;CashType.Large&quot;),</span>
+
+    /**
+     * CashType Small.
+     */
+<span class="fc" id="L250">    CASHTYPE_SMALL(&quot;CashType.Small&quot;),</span>
+
+    /**
+     * ChargeableGain Gain.
+     */
+<span class="fc" id="L255">    CHARGEABLEGAIN_GAIN(&quot;ChargeableGain.Gain&quot;),</span>
+
+    /**
+     * ChargeableGain Slice.
+     */
+<span class="fc" id="L260">    CHARGEABLEGAIN_SLICE(&quot;ChargeableGain.Slice&quot;),</span>
+
+    /**
+     * ChargeableGain TotalGain.
+     */
+<span class="fc" id="L265">    CHARGEABLEGAIN_TOTALGAINS(&quot;ChargeableGain.TotalGains&quot;),</span>
+
+    /**
+     * ChargeableGain TotalSlices.
+     */
+<span class="fc" id="L270">    CHARGEABLEGAIN_TOTALSLICES(&quot;ChargeableGain.TotalSlices&quot;),</span>
+
+    /**
+     * ChargeableGain Ratio.
+     */
+<span class="fc" id="L275">    CHARGEABLEGAIN_RATIO(&quot;ChargeableGain.Ratio&quot;),</span>
+
+    /**
+     * ChargeableGain TaxedSlices.
+     */
+<span class="fc" id="L280">    CHARGEABLEGAIN_TAXEDSLICES(&quot;ChargeableGain.TaxedSlices&quot;),</span>
+
+    /**
+     * ChargeableGain NettTaxDue.
+     */
+<span class="fc" id="L285">    CHARGEABLEGAIN_NETTTAXDUE(&quot;ChargeableGain.NettTaxDue&quot;),</span>
+
+    /**
+     * ChargeableGain TaxRelief.
+     */
+<span class="fc" id="L290">    CHARGEABLEGAIN_TAXRELIEF(&quot;ChargeableGain.TaxRelief&quot;);</span>
+
+    /**
+     * The Marginal Map.
+     */
+<span class="fc" id="L295">    private static final Map&lt;MoneyWiseMarginalReduction, OceanusBundleId&gt; MARGINAL_MAP = buildMarginalMap();</span>
+
+    /**
+     * The CashType Map.
+     */
+<span class="fc" id="L300">    private static final Map&lt;MoneyWiseCashType, OceanusBundleId&gt; CASHTYPE_MAP = buildCashTypeMap();</span>
+
+    /**
+     * The Resource Loader.
+     */
+<span class="fc" id="L305">    private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getLoader(MoneyWiseTaxResource.class.getCanonicalName(),</span>
+            ResourceBundle::getBundle);
+
+    /**
+     * The Id.
+     */
+    private final String theKeyName;
+
+    /**
+     * The Value.
+     */
+    private String theValue;
+
+    /**
+     * Constructor.
+     * @param pKeyName the key name
+     */
+<span class="fc" id="L322">    MoneyWiseTaxResource(final String pKeyName) {</span>
+<span class="fc" id="L323">        theKeyName = pKeyName;</span>
+<span class="fc" id="L324">    }</span>
+
+    @Override
+    public String getKeyName() {
+<span class="fc" id="L328">        return theKeyName;</span>
+    }
+
+    @Override
+    public String getNameSpace() {
+<span class="fc" id="L333">        return &quot;MoneyWise.tax&quot;;</span>
+    }
+
+    @Override
+    public String getValue() {
+        /* If we have not initialised the value */
+<span class="fc bfc" id="L339" title="All 2 branches covered.">        if (theValue == null) {</span>
+            /* Derive the value */
+<span class="fc" id="L341">            theValue = LOADER.getValue(this);</span>
+        }
+
+        /* return the value */
+<span class="fc" id="L345">        return theValue;</span>
+    }
+
+    @Override
+    public String getId() {
+<span class="fc" id="L350">        return getValue();</span>
+    }
+
+    /**
+     * Build marginal map.
+     * @return the map
+     */
+    private static Map&lt;MoneyWiseMarginalReduction, OceanusBundleId&gt; buildMarginalMap() {
+        /* Create the map and return it */
+<span class="fc" id="L359">        final Map&lt;MoneyWiseMarginalReduction, OceanusBundleId&gt; myMap = new EnumMap&lt;&gt;(MoneyWiseMarginalReduction.class);</span>
+<span class="fc" id="L360">        myMap.put(MoneyWiseMarginalReduction.ONEINTWO, MARGINAL_ONEINTWO);</span>
+<span class="fc" id="L361">        myMap.put(MoneyWiseMarginalReduction.TWOINTHREE, MARGINAL_TWOINTHREE);</span>
+<span class="fc" id="L362">        return myMap;</span>
+    }
+
+    /**
+     * Obtain key for marginal reduction type.
+     * @param pValue the Value
+     * @return the resource key
+     */
+    protected static OceanusBundleId getKeyForMarginalReduction(final MoneyWiseMarginalReduction pValue) {
+<span class="nc" id="L371">        return OceanusBundleLoader.getKeyForEnum(MARGINAL_MAP, pValue);</span>
+    }
+
+    /**
+     * Build cashType map.
+     * @return the map
+     */
+    private static Map&lt;MoneyWiseCashType, OceanusBundleId&gt; buildCashTypeMap() {
+        /* Create the map and return it */
+<span class="fc" id="L380">        final Map&lt;MoneyWiseCashType, OceanusBundleId&gt; myMap = new EnumMap&lt;&gt;(MoneyWiseCashType.class);</span>
+<span class="fc" id="L381">        myMap.put(MoneyWiseCashType.LARGECASH, CASHTYPE_LARGE);</span>
+<span class="fc" id="L382">        myMap.put(MoneyWiseCashType.SMALLCASH, CASHTYPE_SMALL);</span>
+<span class="fc" id="L383">        return myMap;</span>
+    }
+
+    /**
+     * Obtain key for cash type.
+     * @param pValue the Value
+     * @return the resource key
+     */
+    protected static OceanusBundleId getKeyForCashType(final MoneyWiseCashType pValue) {
+<span class="nc" id="L392">        return OceanusBundleLoader.getKeyForEnum(CASHTYPE_MAP, pValue);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

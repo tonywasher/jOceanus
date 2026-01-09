@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCipherParameters.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.gordianknot.api.cipher</a> &gt; <span class="el_source">GordianCipherParameters.java</span></div><h1>GordianCipherParameters.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * GordianKnot: Security Suite
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.gordianknot.api.cipher;
+
+import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
+import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
+
+/**
+ * Cipher Parameters.
+ */
+public interface GordianCipherParameters {
+    /**
+     * Obtain keySpec Parameters.
+     * @param &lt;T&gt; the keyType
+     * @param pKey the key
+     * @return the keySpec
+     */
+    static &lt;T extends GordianKeySpec&gt; GordianKeyCipherParameters&lt;T&gt; key(final GordianKey&lt;T&gt; pKey) {
+<span class="fc" id="L33">        return new GordianKeyCipherParameters&lt;&gt;(pKey);</span>
+    }
+
+    /**
+     * Obtain keyAndNonce Parameters.
+     * @param &lt;T&gt; the keyType
+     * @param pKey the key
+     * @param pNonce the nonce
+     * @return the keySpec
+     */
+    static &lt;T extends GordianKeySpec&gt; GordianKeyCipherParameters&lt;T&gt; keyAndNonce(final GordianKey&lt;T&gt; pKey,
+                                                                                final byte[] pNonce) {
+<span class="fc" id="L45">        return new GordianKeyAndNonceCipherParameters&lt;&gt;(pKey, pNonce);</span>
+    }
+
+    /**
+     * Obtain keyAndRandomNonce Parameters.
+     * @param &lt;T&gt; the keyType
+     * @param pKey the key
+     * @return the keySpec
+     */
+    static &lt;T extends GordianKeySpec&gt; GordianKeyCipherParameters&lt;T&gt; keyWithRandomNonce(final GordianKey&lt;T&gt; pKey) {
+<span class="fc" id="L55">        return new GordianKeyAndNonceCipherParameters&lt;&gt;(pKey);</span>
+    }
+
+    /**
+     * Obtain aeadAndNonce Parameters.
+     * @param &lt;T&gt; the keyType
+     * @param pKey the key
+     * @param pInitialAEAD the initialAEAD
+     * @param pNonce the nonce
+     * @return the keySpec
+     */
+    static &lt;T extends GordianKeySpec&gt; GordianAEADCipherParameters&lt;T&gt; aeadAndNonce(final GordianKey&lt;T&gt; pKey,
+                                                                                  final byte[] pInitialAEAD,
+                                                                                  final byte[] pNonce) {
+<span class="fc" id="L69">        return new GordianAEADCipherParameters&lt;&gt;(pKey, pNonce, pInitialAEAD);</span>
+    }
+
+    /**
+     * Obtain aeadAndRandomNonce Parameters.
+     * @param &lt;T&gt; the keyType
+     * @param pKey the key
+     * @param pInitialAEAD the initialAEAD
+     * @return the keySpec
+     */
+    static &lt;T extends GordianKeySpec&gt; GordianAEADCipherParameters&lt;T&gt; aeadWithRandomNonce(final GordianKey&lt;T&gt; pKey,
+                                                                                         final byte[] pInitialAEAD) {
+<span class="nc" id="L81">        return new GordianAEADCipherParameters&lt;&gt;(pKey, null, pInitialAEAD);</span>
+    }
+
+    /**
+     * Obtain pbe Parameters.
+     * @param pPBESpec the pbeSpec
+     * @param pPassword the password
+     * @return the keySpec
+     */
+    static GordianPBECipherParameters pbe(final GordianPBESpec pPBESpec,
+                                          final char[] pPassword) {
+<span class="fc" id="L92">        return new GordianPBECipherParameters(pPBESpec, pPassword);</span>
+    }
+
+    /**
+     * Obtain pneAndNonce Parameters.
+     * @param pPBESpec the pbeSpec
+     * @param pPassword the password
+     * @param pNonce the nonce
+     * @return the keySpec
+     */
+    static GordianPBECipherParameters pbeAndNonce(final GordianPBESpec pPBESpec,
+                                                  final char[] pPassword,
+                                                  final byte[] pNonce) {
+<span class="fc" id="L105">        return new GordianPBECipherParameters(pPBESpec, pNonce, pPassword);</span>
+    }
+
+    /**
+     * Key Parameters.
+     * @param &lt;T&gt; the keyType
+     */
+    class GordianKeyCipherParameters&lt;T extends GordianKeySpec&gt;
+        implements GordianCipherParameters {
+        /**
+         * The Key.
+         */
+        private final GordianKey&lt;T&gt; theKey;
+
+        /**
+         * Constructor.
+         * @param pKey the key
+         */
+<span class="fc" id="L123">        GordianKeyCipherParameters(final GordianKey&lt;T&gt; pKey) {</span>
+<span class="fc" id="L124">            theKey = pKey;</span>
+<span class="fc" id="L125">        }</span>
+
+        /**
+         * Obtain the key.
+         * @return the key
+         */
+        public GordianKey&lt;T&gt; getKey() {
+<span class="fc" id="L132">            return theKey;</span>
+        }
+    }
+
+    /**
+     * Nonce Parameters.
+     */
+    interface GordianNonceParameters {
+        /**
+         * Was a random Nonce requested?.
+         * @return true/false
+         */
+        boolean randomNonce();
+
+        /**
+         * Obtain the nonce.
+         * @return the nonce
+         */
+        byte[] getNonce();
+    }
+
+    /**
+     * KeyAndNonce Parameters.
+     * @param &lt;T&gt; the keyType
+     */
+    class GordianKeyAndNonceCipherParameters&lt;T extends GordianKeySpec&gt;
+            extends GordianKeyCipherParameters&lt;T&gt;
+            implements GordianNonceParameters {
+        /**
+         * The Nonce.
+         */
+        private final byte[] theNonce;
+
+        /**
+         * Random Nonce requested?
+         */
+        private final boolean randomNonce;
+
+        /**
+         * Constructor for random nonce.
+         * @param pKey the key
+         */
+        GordianKeyAndNonceCipherParameters(final GordianKey&lt;T&gt; pKey) {
+<span class="fc" id="L175">            super(pKey);</span>
+<span class="fc" id="L176">            theNonce = null;</span>
+<span class="fc" id="L177">            randomNonce = true;</span>
+<span class="fc" id="L178">        }</span>
+
+        /**
+         * Constructor.
+         * @param pKey the key
+         * @param pNonce the nonce
+         */
+        GordianKeyAndNonceCipherParameters(final GordianKey&lt;T&gt; pKey,
+                                           final byte[] pNonce) {
+<span class="fc" id="L187">            super(pKey);</span>
+<span class="fc" id="L188">            theNonce = pNonce;</span>
+<span class="fc" id="L189">            randomNonce = false;</span>
+<span class="fc" id="L190">        }</span>
+
+        @Override
+        public byte[] getNonce() {
+<span class="fc" id="L194">            return theNonce;</span>
+        }
+
+        @Override
+        public boolean randomNonce() {
+<span class="fc" id="L199">            return randomNonce;</span>
+        }
+    }
+
+    /**
+     * AEAD Parameters.
+     * @param &lt;T&gt; the keyType
+     */
+    class GordianAEADCipherParameters&lt;T extends GordianKeySpec&gt;
+            extends GordianKeyAndNonceCipherParameters&lt;T&gt; {
+        /**
+         * The InitialAEAD.
+         */
+        private final byte[] theInitialAEAD;
+
+        /**
+         * Constructor.
+         * @param pKey the key
+         * @param pInitialAEAD the initialAEAD
+         */
+        GordianAEADCipherParameters(final GordianKey&lt;T&gt; pKey,
+                                    final byte[] pInitialAEAD) {
+<span class="nc" id="L221">            super(pKey);</span>
+<span class="nc" id="L222">            theInitialAEAD = pInitialAEAD;</span>
+<span class="nc" id="L223">        }</span>
+
+        /**
+         * Constructor.
+         * @param pKey the key
+         * @param pNonce the nonce
+         * @param pInitialAEAD the initialAEAD
+         */
+        GordianAEADCipherParameters(final GordianKey&lt;T&gt; pKey,
+                                    final byte[] pNonce,
+                                    final byte[] pInitialAEAD) {
+<span class="fc" id="L234">            super(pKey, pNonce);</span>
+<span class="fc" id="L235">            theInitialAEAD = pInitialAEAD;</span>
+<span class="fc" id="L236">        }</span>
+
+        /**
+         * Obtain the initialAEAD.
+         * @return the initialAEAD
+         */
+        public byte[] getInitialAEAD() {
+<span class="fc" id="L243">            return theInitialAEAD;</span>
+        }
+    }
+
+    /**
+     * PBE Parameters.
+     */
+    class GordianPBECipherParameters
+            implements GordianCipherParameters, GordianNonceParameters {
+        /**
+         * The PBESpec.
+         */
+        private final GordianPBESpec thePBESpec;
+
+        /**
+         * The Nonce.
+         */
+        private final byte[] theNonce;
+
+        /**
+         * Random Nonce requested?
+         */
+        private final boolean randomNonce;
+
+        /**
+         * The Password.
+         */
+        private final char[] thePassword;
+
+        /**
+         * Constructor for random nonce.
+         * @param pPBESpec the PBESpec
+         * @param pPassword the password
+         */
+        GordianPBECipherParameters(final GordianPBESpec pPBESpec,
+<span class="fc" id="L278">                                   final char[] pPassword) {</span>
+<span class="fc" id="L279">            thePBESpec = pPBESpec;</span>
+<span class="fc" id="L280">            theNonce = null;</span>
+<span class="fc" id="L281">            randomNonce = true;</span>
+<span class="fc" id="L282">            thePassword = pPassword;</span>
+<span class="fc" id="L283">        }</span>
+
+        /**
+         * Constructor.
+         * @param pPBESpec the PBESpec
+         * @param pNonce the nonce
+         * @param pPassword the password
+         */
+        GordianPBECipherParameters(final GordianPBESpec pPBESpec,
+                                   final byte[] pNonce,
+<span class="fc" id="L293">                                   final char[] pPassword) {</span>
+<span class="fc" id="L294">            thePBESpec = pPBESpec;</span>
+<span class="fc" id="L295">            theNonce = pNonce;</span>
+<span class="fc" id="L296">            randomNonce = false;</span>
+<span class="fc" id="L297">            thePassword = pPassword;</span>
+<span class="fc" id="L298">        }</span>
+
+        /**
+         * Obtain the PBESpec.
+         * @return the PBESpec
+         */
+        public GordianPBESpec getPBESpec() {
+<span class="fc" id="L305">            return thePBESpec;</span>
+        }
+
+        @Override
+        public byte[] getNonce() {
+<span class="fc" id="L310">            return theNonce;</span>
+        }
+
+        @Override
+        public boolean randomNonce() {
+<span class="fc" id="L315">            return randomNonce;</span>
+        }
+
+        /**
+         * Obtain the password.
+         * @return the password
+         */
+        public char[] getPassword() {
+<span class="fc" id="L323">            return thePassword;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

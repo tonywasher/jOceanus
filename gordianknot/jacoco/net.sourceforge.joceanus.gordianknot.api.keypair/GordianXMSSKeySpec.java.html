@@ -1,0 +1,556 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianXMSSKeySpec.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.gordianknot.api.keypair</a> &gt; <span class="el_source">GordianXMSSKeySpec.java</span></div><h1>GordianXMSSKeySpec.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * GordianKnot: Security Suite
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.gordianknot.api.keypair;
+
+import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
+import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
+import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpecBuilder;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+/**
+ * XMSS KeySpec.
+ */
+public class GordianXMSSKeySpec {
+    /**
+     * The Separator.
+     */
+    private static final String SEP = &quot;-&quot;;
+
+    /**
+     * The key type.
+     */
+    private final GordianXMSSKeyType theKeyType;
+
+    /**
+     * The digest type.
+     */
+    private final GordianXMSSDigestType theDigestType;
+
+    /**
+     * The height.
+     */
+    private final GordianXMSSHeight theHeight;
+
+    /**
+     * The layers.
+     */
+    private final GordianXMSSMTLayers theLayers;
+
+    /**
+     * The Validity.
+     */
+    private final boolean isValid;
+
+    /**
+     * The String name.
+     */
+    private String theName;
+
+    /**
+     * Constructor.
+     * @param pDigestType the digestType
+     * @param pHeight the height
+     */
+    public GordianXMSSKeySpec(final GordianXMSSDigestType pDigestType,
+                              final GordianXMSSHeight pHeight) {
+<span class="fc" id="L73">        this(GordianXMSSKeyType.XMSS, pDigestType, pHeight, null);</span>
+<span class="fc" id="L74">    }</span>
+
+    /**
+     * Constructor.
+     * @param pDigestType the digestType
+     * @param pHeight the height
+     * @param pLayers the layers
+     */
+    public GordianXMSSKeySpec(final GordianXMSSDigestType pDigestType,
+                              final GordianXMSSHeight pHeight,
+                              final GordianXMSSMTLayers pLayers) {
+<span class="fc" id="L85">        this(GordianXMSSKeyType.XMSSMT, pDigestType, pHeight, pLayers);</span>
+<span class="fc" id="L86">    }</span>
+
+    /**
+     * Constructor.
+     * @param pKeyType the keyType
+     * @param pDigestType the digestType
+     * @param pHeight the height
+     * @param pLayers the layers
+     */
+    public GordianXMSSKeySpec(final GordianXMSSKeyType pKeyType,
+                              final GordianXMSSDigestType pDigestType,
+                              final GordianXMSSHeight pHeight,
+<span class="fc" id="L98">                              final GordianXMSSMTLayers pLayers) {</span>
+<span class="fc" id="L99">        theKeyType = pKeyType;</span>
+<span class="fc" id="L100">        theDigestType = pDigestType;</span>
+<span class="fc" id="L101">        theHeight = pHeight;</span>
+<span class="fc" id="L102">        theLayers = pLayers;</span>
+<span class="fc" id="L103">        isValid = checkValidity();</span>
+<span class="fc" id="L104">    }</span>
+
+    /**
+     * Is this key MT?
+     * @return true/false
+     */
+    public boolean isMT() {
+<span class="fc" id="L111">        return theKeyType.isMT();</span>
+    }
+
+    /**
+     * Obtain the keyType.
+     * @return the keyType
+     */
+    public GordianXMSSKeyType getKeyType() {
+<span class="fc" id="L119">        return theKeyType;</span>
+    }
+
+    /**
+     * Obtain the digestType.
+     * @return the digestType
+     */
+    public GordianXMSSDigestType getDigestType() {
+<span class="fc" id="L127">        return theDigestType;</span>
+    }
+
+    /**
+     * Obtain the height.
+     * @return the height
+     */
+    public GordianXMSSHeight getHeight() {
+<span class="fc" id="L135">        return theHeight;</span>
+    }
+
+    /**
+     * Obtain the layers.
+     * @return the layers
+     */
+    public GordianXMSSMTLayers getLayers() {
+<span class="fc" id="L143">        return theLayers;</span>
+    }
+
+    /**
+     * Is the keySpec valid?
+     * @return true/false.
+     */
+    public boolean isValid() {
+<span class="fc" id="L151">        return isValid;</span>
+    }
+
+    /**
+     * Is the keySpec high (height &amp;gt; 15)?
+     * @return true/false.
+     */
+    public boolean isHigh() {
+<span class="pc bpc" id="L159" title="2 of 4 branches missed.">        return isValid &amp;&amp; theHeight.isHigh(theKeyType);</span>
+    }
+
+    /**
+     * Create XMSS keySpec.
+     * @param pDigestType the digestType
+     * @param pHeight the height
+     * @return the keySpec
+     */
+    public static GordianXMSSKeySpec xmss(final GordianXMSSDigestType pDigestType,
+                                          final GordianXMSSHeight pHeight) {
+<span class="fc" id="L170">        return new GordianXMSSKeySpec(pDigestType, pHeight);</span>
+    }
+
+    /**
+     * Create XMSS keySpec.
+     * @param pDigestType the digestType
+     * @param pHeight the height
+     * @param pLayers the layers
+     * @return the keySpec
+     */
+    public static GordianXMSSKeySpec xmssmt(final GordianXMSSDigestType pDigestType,
+                                            final GordianXMSSHeight pHeight,
+                                            final GordianXMSSMTLayers pLayers) {
+<span class="fc" id="L183">        return new GordianXMSSKeySpec(pDigestType, pHeight, pLayers);</span>
+    }
+
+    /**
+     * Check spec validity.
+     * @return valid true/false
+     */
+    private boolean checkValidity() {
+        /* Check that required elements are present */
+<span class="pc bpc" id="L192" title="3 of 6 branches missed.">        if (theKeyType == null || theDigestType == null || theHeight == null) {</span>
+<span class="nc" id="L193">            return false;</span>
+        }
+
+        /* Check that the height is valid for the keyType */
+<span class="pc bpc" id="L197" title="1 of 2 branches missed.">        if (!theHeight.validForKeyType(theKeyType)) {</span>
+<span class="nc" id="L198">            return false;</span>
+        }
+
+        /* Check layers is valid for keyType/height */
+<span class="fc bfc" id="L202" title="All 2 branches covered.">        return theKeyType == GordianXMSSKeyType.XMSS</span>
+<span class="pc bpc" id="L203" title="1 of 2 branches missed.">               ? theLayers == null</span>
+<span class="pc bpc" id="L204" title="2 of 4 branches missed.">               : theLayers != null &amp;&amp; theHeight.hasValidLayers(theLayers);</span>
+    }
+
+    @Override
+    public String toString() {
+        /* If we have not yet loaded the name */
+<span class="pc bpc" id="L210" title="1 of 2 branches missed.">        if (theName == null) {</span>
+            /* If the keySpec is valid */
+<span class="pc bpc" id="L212" title="1 of 2 branches missed.">            if (isValid) {</span>
+                /* Load the name */
+<span class="fc" id="L214">                theName = theKeyType.toString()</span>
+<span class="fc" id="L215">                            + SEP + theDigestType.toString()</span>
+<span class="fc" id="L216">                            + SEP + theHeight.toString();</span>
+<span class="pc bpc" id="L217" title="1 of 2 branches missed.">                if (isMT()) {</span>
+<span class="nc" id="L218">                    theName += SEP + theLayers.toString();</span>
+                }
+
+            }  else {
+                /* Report invalid spec */
+<span class="nc" id="L223">                theName = &quot;InvalidXMSSKeySpec: &quot; + theKeyType + &quot;:&quot; + theDigestType</span>
+                        + &quot;:&quot; + theHeight + &quot;:&quot; + theLayers;
+            }
+        }
+
+        /* return the name */
+<span class="fc" id="L229">        return theName;</span>
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+<span class="pc bpc" id="L235" title="1 of 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L236">            return true;</span>
+        }
+<span class="pc bpc" id="L238" title="1 of 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L239">            return false;</span>
+        }
+
+        /* Check KeyType, digestType, height and layers */
+<span class="fc" id="L243">        return pThat instanceof GordianXMSSKeySpec myThat</span>
+<span class="pc bpc" id="L244" title="1 of 2 branches missed.">                &amp;&amp; theKeyType == myThat.getKeyType()</span>
+<span class="pc bpc" id="L245" title="1 of 2 branches missed.">                &amp;&amp; theDigestType == myThat.getDigestType()</span>
+<span class="pc bpc" id="L246" title="1 of 2 branches missed.">                &amp;&amp; theHeight == myThat.getHeight()</span>
+<span class="pc bpc" id="L247" title="2 of 4 branches missed.">                &amp;&amp; theLayers == myThat.getLayers();</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="fc" id="L252">        return Objects.hash(theKeyType, theDigestType, theHeight, theLayers);</span>
+    }
+
+    /**
+     * Obtain a list of all possible specs.
+     * @return the list
+     */
+    public static List&lt;GordianXMSSKeySpec&gt; listPossibleKeySpecs() {
+        /* Create the list */
+<span class="fc" id="L261">        final List&lt;GordianXMSSKeySpec&gt; mySpecs = new ArrayList&lt;&gt;();</span>
+
+        /* Add the specs */
+<span class="fc bfc" id="L264" title="All 2 branches covered.">        for (final GordianXMSSDigestType myType : GordianXMSSDigestType.values()) {</span>
+<span class="fc" id="L265">            mySpecs.addAll(listPossibleKeySpecs(myType));</span>
+        }
+
+        /* Return the list */
+<span class="fc" id="L269">        return mySpecs;</span>
+    }
+
+    /**
+     * Obtain a list of all possible specs.
+     * @param pDigestType the digestType
+     * @return the list
+     */
+    public static List&lt;GordianXMSSKeySpec&gt; listPossibleKeySpecs(final GordianXMSSDigestType pDigestType) {
+        /* Create the list */
+<span class="fc" id="L279">        final List&lt;GordianXMSSKeySpec&gt; mySpecs = new ArrayList&lt;&gt;();</span>
+
+        /* For all heights */
+<span class="fc bfc" id="L282" title="All 2 branches covered.">        for (final GordianXMSSHeight myHeight : GordianXMSSHeight.values()) {</span>
+            /* Add XMSS Spec if valid */
+<span class="fc bfc" id="L284" title="All 2 branches covered.">            if (myHeight.validForKeyType(GordianXMSSKeyType.XMSS)) {</span>
+<span class="fc" id="L285">                mySpecs.add(xmss(pDigestType, myHeight));</span>
+            }
+
+            /* Add XMSSMT Specs if valid */
+<span class="fc bfc" id="L289" title="All 2 branches covered.">            if (myHeight.validForKeyType(GordianXMSSKeyType.XMSSMT)) {</span>
+                /* For all heights */
+<span class="fc bfc" id="L291" title="All 2 branches covered.">                for (final GordianXMSSMTLayers myLayers : myHeight.getValidLayers()) {</span>
+<span class="fc" id="L292">                    mySpecs.add(xmssmt(pDigestType, myHeight, myLayers));</span>
+                }
+            }
+        }
+
+        /* Return the list */
+<span class="fc" id="L298">        return mySpecs;</span>
+    }
+
+    /**
+     * XMSS keyTypes.
+     */
+<span class="fc" id="L304">    public enum GordianXMSSKeyType {</span>
+        /**
+         * XMSS.
+         */
+<span class="fc" id="L308">        XMSS,</span>
+
+        /**
+         * XMSSMT.
+         */
+<span class="fc" id="L313">        XMSSMT;</span>
+
+        /**
+         * Is this key MT?
+         * @return true/false
+         */
+        public boolean isMT() {
+<span class="fc bfc" id="L320" title="All 2 branches covered.">            return this == XMSSMT;</span>
+        }
+
+        @Override
+        public String toString() {
+<span class="pc bpc" id="L325" title="1 of 2 branches missed.">            return this == XMSSMT ? &quot;XMSS^MT&quot; : &quot;XMSS&quot;;</span>
+        }
+    }
+
+    /**
+     * XMSS digestType.
+     */
+<span class="fc" id="L332">    public enum GordianXMSSDigestType {</span>
+        /**
+         * SHA256.
+         */
+<span class="fc" id="L336">        SHA256,</span>
+
+        /**
+         * SHA512.
+         */
+<span class="fc" id="L341">        SHA512,</span>
+
+        /**
+         * SHAKE128.
+         */
+<span class="fc" id="L346">        SHAKE128,</span>
+
+        /**
+         * SHAKE256.
+         */
+<span class="fc" id="L351">        SHAKE256;</span>
+
+        /**
+         * Obtain the required digestSpec.
+         * @return the digestSpec
+         */
+        public GordianDigestSpec getDigestSpec() {
+<span class="pc bpc" id="L358" title="3 of 5 branches missed.">            switch (this) {</span>
+                case SHA256:
+<span class="fc" id="L360">                    return GordianDigestSpecBuilder.sha2(GordianLength.LEN_256);</span>
+                case SHA512:
+<span class="fc" id="L362">                    return GordianDigestSpecBuilder.sha2(GordianLength.LEN_512);</span>
+                case SHAKE128:
+<span class="nc" id="L364">                    return GordianDigestSpecBuilder.shake128();</span>
+                case SHAKE256:
+<span class="nc" id="L366">                    return GordianDigestSpecBuilder.shake256();</span>
+                default:
+<span class="nc" id="L368">                    throw new IllegalStateException();</span>
+            }
+        }
+    }
+
+    /**
+     * XMSS Height.
+     */
+<span class="fc" id="L376">    public enum GordianXMSSHeight {</span>
+        /**
+         * 10.
+         */
+<span class="fc" id="L380">        H10(10),</span>
+
+        /**
+         * 16.
+         */
+<span class="fc" id="L385">        H16(16),</span>
+
+        /**
+         * 20.
+         */
+<span class="fc" id="L390">        H20(20, new GordianXMSSMTLayers[] { GordianXMSSMTLayers.L2, GordianXMSSMTLayers.L4 }),</span>
+
+        /**
+         * 40.
+         */
+<span class="fc" id="L395">        H40(40, new GordianXMSSMTLayers[] { GordianXMSSMTLayers.L2, GordianXMSSMTLayers.L4, GordianXMSSMTLayers.L8 }),</span>
+
+        /**
+         * 12.
+         */
+<span class="fc" id="L400">        H60(12, new GordianXMSSMTLayers[] { GordianXMSSMTLayers.L3, GordianXMSSMTLayers.L6, GordianXMSSMTLayers.L12 });</span>
+
+        /**
+         * The Height.
+         */
+        private final int theHeight;
+
+        /**
+         * The Layers.
+         */
+        private final GordianXMSSMTLayers[] theLayers;
+
+        /**
+         * Constructor.
+         * @param pHeight the height
+         */
+        GordianXMSSHeight(final int pHeight) {
+<span class="fc" id="L417">            this(pHeight, null);</span>
+<span class="fc" id="L418">        }</span>
+
+        /**
+         * Constructor.
+         * @param pHeight the height
+         * @param pLayers the layers
+         */
+        GordianXMSSHeight(final int pHeight,
+<span class="fc" id="L426">                          final GordianXMSSMTLayers[] pLayers) {</span>
+<span class="fc" id="L427">            theHeight = pHeight;</span>
+<span class="fc" id="L428">            theLayers = pLayers;</span>
+<span class="fc" id="L429">        }</span>
+
+        /**
+         * Obtain the height.
+         * @return the height
+         */
+        public int getHeight() {
+<span class="fc" id="L436">            return theHeight;</span>
+        }
+
+
+        /**
+         * Is the height valid for the keyType.
+         * @param pKeyType the keyType
+         * @return true/false
+         */
+        boolean validForKeyType(final GordianXMSSKeyType pKeyType) {
+<span class="fc bfc" id="L446" title="All 3 branches covered.">            switch (this) {</span>
+                case H10:
+                case H16:
+<span class="fc bfc" id="L449" title="All 2 branches covered.">                    return pKeyType == GordianXMSSKeyType.XMSS;</span>
+                case H40:
+                case H60:
+<span class="fc bfc" id="L452" title="All 2 branches covered.">                    return pKeyType == GordianXMSSKeyType.XMSSMT;</span>
+                default:
+<span class="fc" id="L454">                    return true;</span>
+            }
+        }
+
+        /**
+         * Is the layers valid for the height.
+         * @param pLayers the layers
+         * @return true/false
+         */
+        boolean hasValidLayers(final GordianXMSSMTLayers pLayers) {
+<span class="pc bpc" id="L464" title="1 of 2 branches missed.">            if (theLayers != null) {</span>
+<span class="pc bpc" id="L465" title="1 of 2 branches missed.">                for (GordianXMSSMTLayers myLayers : theLayers) {</span>
+<span class="fc bfc" id="L466" title="All 2 branches covered.">                    if (myLayers == pLayers) {</span>
+<span class="fc" id="L467">                        return true;</span>
+                    }
+                }
+            }
+<span class="nc" id="L471">            return false;</span>
+        }
+
+        /**
+         * Obtain the valid XMSSMT layers.
+         * @return the height
+         */
+        GordianXMSSMTLayers[] getValidLayers() {
+<span class="fc" id="L479">            return theLayers;</span>
+        }
+        /**
+         * Is the parameter high?
+         * @param pKeyType the keyTypoe
+         * @return true/false.
+         */
+        public boolean isHigh(final GordianXMSSKeyType pKeyType) {
+<span class="pc bpc" id="L487" title="2 of 3 branches missed.">            switch (this) {</span>
+                case H16:
+                case H20:
+<span class="nc bnc" id="L490" title="All 2 branches missed.">                    return pKeyType == GordianXMSSKeyType.XMSS;</span>
+                case H40:
+                case H60:
+<span class="nc" id="L493">                    return true;</span>
+                default:
+<span class="fc" id="L495">                    return false;</span>
+            }
+        }
+    }
+
+    /**
+     * XMSSMT Layers.
+     */
+<span class="fc" id="L503">    public enum GordianXMSSMTLayers {</span>
+        /**
+         * 2.
+         */
+<span class="fc" id="L507">        L2(2),</span>
+
+        /**
+         * 3.
+         */
+<span class="fc" id="L512">        L3(3),</span>
+
+        /**
+         * 4.
+         */
+<span class="fc" id="L517">        L4(4),</span>
+
+        /**
+         * 6.
+         */
+<span class="fc" id="L522">        L6(6),</span>
+
+        /**
+         * 40.
+         */
+<span class="fc" id="L527">        L8(8),</span>
+
+        /**
+         * 12.
+         */
+<span class="fc" id="L532">        L12(12);</span>
+
+        /**
+         * The layers.
+         */
+        private final int theLayers;
+
+        /**
+         * Constructor.
+         * @param pLayers the layers
+         */
+<span class="fc" id="L543">        GordianXMSSMTLayers(final int pLayers) {</span>
+<span class="fc" id="L544">            theLayers = pLayers;</span>
+<span class="fc" id="L545">        }</span>
+
+        /**
+         * Obtain the layers.
+         * @return the layers
+         */
+        public int getLayers() {
+<span class="nc" id="L552">            return theLayers;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

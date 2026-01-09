@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PrometheusToolkit.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Prometheus Core Application Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.prometheus.toolkit</a> &gt; <span class="el_source">PrometheusToolkit.java</span></div><h1>PrometheusToolkit.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Prometheus: Application Framework
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.prometheus.toolkit;
+
+import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryType;
+import net.sourceforge.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
+import net.sourceforge.joceanus.metis.toolkit.MetisToolkit;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.prometheus.preference.PrometheusPreferenceManager;
+import net.sourceforge.joceanus.prometheus.preference.PrometheusPreferenceSecurity.PrometheusSecurityPreferences;
+import net.sourceforge.joceanus.prometheus.preference.PrometheusPreferenceView;
+import net.sourceforge.joceanus.prometheus.security.PrometheusSecurityGenerator;
+import net.sourceforge.joceanus.prometheus.security.PrometheusSecurityPasswordManager;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIProgram;
+import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadManager;
+
+/**
+ * Prometheus Toolkit.
+ */
+public class PrometheusToolkit {
+    /**
+     * Toolkit.
+     */
+    private final MetisToolkit theToolkit;
+
+    /**
+     * Preference Manager.
+     */
+    private final PrometheusPreferenceManager thePreferenceManager;
+
+    /**
+     * Password Manager.
+     */
+    private final PrometheusSecurityPasswordManager thePasswordMgr;
+
+    /**
+     * Constructor.
+     * @param pFactory the GUI factory
+     * @throws OceanusException on error
+     */
+<span class="nc" id="L56">    public PrometheusToolkit(final TethysUIFactory&lt;?&gt; pFactory) throws OceanusException {</span>
+        /* Store parameters */
+<span class="nc" id="L58">        theToolkit = new MetisToolkit(pFactory, false);</span>
+
+        /* Access components */
+<span class="nc" id="L61">        thePreferenceManager = new PrometheusPreferenceManager(theToolkit.getViewerManager());</span>
+<span class="nc" id="L62">        theToolkit.setUpColors(thePreferenceManager);</span>
+
+        /* Create the passwordManager */
+<span class="nc" id="L65">        final PrometheusSecurityPreferences myPreferences = thePreferenceManager.getPreferenceSet(PrometheusSecurityPreferences.class);</span>
+<span class="nc" id="L66">        thePasswordMgr = newPasswordManager(myPreferences.getFactoryType(), myPreferences.getPasswordLockSpec());</span>
+
+        /* Set this as the threadData */
+<span class="nc" id="L69">        final TethysUIThreadManager myThreadMgr = theToolkit.getThreadManager();</span>
+<span class="nc" id="L70">        myThreadMgr.setThreadData(this);</span>
+<span class="nc" id="L71">    }</span>
+
+    /**
+     * Obtain the preference manager.
+     * @return the preference manager
+     */
+    public PrometheusPreferenceManager getPreferenceManager() {
+<span class="nc" id="L78">        return thePreferenceManager;</span>
+    }
+
+    /**
+     * Obtain the password manager.
+     * @return the password manager
+     */
+    public PrometheusSecurityPasswordManager getPasswordManager() {
+<span class="nc" id="L86">        return thePasswordMgr;</span>
+    }
+
+    /**
+     * Obtain the Program Definitions.
+     * @return the definitions
+     */
+    public TethysUIProgram getProgramDefinitions() {
+<span class="nc" id="L94">        return theToolkit.getProgramDefinitions();</span>
+    }
+
+    /**
+     * Obtain the Toolkit.
+     * @return the toolkit
+     */
+    public MetisToolkit getToolkit() {
+<span class="nc" id="L102">        return theToolkit;</span>
+    }
+
+    /**
+     * Create a Password Manager.
+     * @param pFactoryType the factoryType
+     * @param pLockSpec the lockSpec
+     * @return the manager
+     * @throws OceanusException on error
+     */
+    private PrometheusSecurityPasswordManager newPasswordManager(final GordianFactoryType pFactoryType,
+                                                                 final GordianPasswordLockSpec pLockSpec) throws OceanusException {
+<span class="nc" id="L114">        return PrometheusSecurityGenerator.newPasswordManager(getToolkit().getGuiFactory(), pFactoryType, pLockSpec);</span>
+    }
+
+    /**
+     * Create a new Preference View.
+     * @return the view
+     */
+    public PrometheusPreferenceView newPreferenceView() {
+<span class="nc" id="L122">        return new PrometheusPreferenceView(getToolkit().getGuiFactory(), thePreferenceManager);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

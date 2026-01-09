@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianXCoreAgreementParticipant.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.gordianknot.impl.core.xagree</a> &gt; <span class="el_source">GordianXCoreAgreementParticipant.java</span></div><h1>GordianXCoreAgreementParticipant.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * GordianKnot: Security Suite
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.gordianknot.impl.core.xagree;
+
+import net.sourceforge.joceanus.gordianknot.api.cert.GordianCertificate;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
+
+import java.security.spec.X509EncodedKeySpec;
+
+/**
+ * Participant state.
+ */
+<span class="nc" id="L27">public class GordianXCoreAgreementParticipant {</span>
+    /**
+     * Certificate.
+     */
+    private GordianCertificate theCertificate;
+
+    /**
+     * KeyPair.
+     */
+    private GordianKeyPair theKeyPair;
+
+    /**
+     * Ephemeral KeyPair.
+     */
+    private GordianKeyPair theEphemeral;
+
+    /**
+     * The Ephemeral keySpec.
+     */
+    private X509EncodedKeySpec theKeySpec;
+
+    /**
+     * InitVector.
+     */
+    private byte[] theInitVector;
+
+    /**
+     * Id.
+     */
+    private Long theId;
+
+    /**
+     * Confirm.
+     */
+    private byte[] theConfirm;
+
+    /**
+     * Obtain the certificate.
+     * @return the certificate
+     */
+    GordianCertificate getCertificate() {
+<span class="nc" id="L68">        return theCertificate;</span>
+    }
+
+    /**
+     * Set the certificate.
+     * @param pCertificate the certificate
+     * @return the state
+     */
+    GordianXCoreAgreementParticipant setCertificate(final GordianCertificate pCertificate) {
+<span class="nc" id="L77">        theCertificate = pCertificate;</span>
+<span class="nc bnc" id="L78" title="All 2 branches missed.">        theKeyPair = theCertificate == null ? null : theCertificate.getKeyPair();</span>
+<span class="nc" id="L79">        return this;</span>
+    }
+
+    /**
+     * Obtain the keyPair.
+     * @return the keyPair
+     */
+    public GordianKeyPair getKeyPair() {
+<span class="nc" id="L87">        return theKeyPair;</span>
+    }
+
+    /**
+     * Set the keyPair.
+     * @param pKeyPair the keyPair
+     * @return the state
+     */
+    GordianXCoreAgreementParticipant setKeyPair(final GordianKeyPair pKeyPair) {
+<span class="nc" id="L96">        theKeyPair = pKeyPair;</span>
+<span class="nc" id="L97">        return this;</span>
+    }
+
+    /**
+     * Obtain the ephemeral keyPair.
+     * @return the keyPair
+     */
+    public GordianKeyPair getEphemeralKeyPair() {
+<span class="nc" id="L105">        return theEphemeral;</span>
+    }
+
+    /**
+     * Set the ephemeral keyPair.
+     * @param pKeyPair the keyPair
+     * @return the state
+     */
+    GordianXCoreAgreementParticipant setEphemeralKeyPair(final GordianKeyPair pKeyPair) {
+<span class="nc" id="L114">        theEphemeral = pKeyPair;</span>
+<span class="nc" id="L115">        return this;</span>
+    }
+
+    /**
+     * Obtain the ephemeral keySpec.
+     * @return the keySpec
+     */
+    X509EncodedKeySpec getEphemeralKeySpec() {
+<span class="nc" id="L123">        return theKeySpec;</span>
+    }
+
+    /**
+     * Set the ephemeral keySpec.
+     * @param pKeySpec the keySpec
+     * @return the state
+     */
+    GordianXCoreAgreementParticipant setEphemeralKeySpec(final X509EncodedKeySpec pKeySpec) {
+<span class="nc" id="L132">        theKeySpec = pKeySpec;</span>
+<span class="nc" id="L133">        return this;</span>
+    }
+
+    /**
+     * Copy ephemeral keyPair to main keyPair.
+     */
+    void copyEphemeral() {
+<span class="nc" id="L140">        theKeyPair = theEphemeral;</span>
+<span class="nc" id="L141">     }</span>
+
+    /**
+     * Obtain the certificate.
+     * @return the certificate
+     */
+    byte[] getInitVector() {
+<span class="nc" id="L148">        return theInitVector;</span>
+    }
+
+    /**
+     * Set the initVector.
+     * @param pInitVector the initVector
+     * @return the state
+     */
+    GordianXCoreAgreementParticipant setInitVector(final byte[] pInitVector) {
+<span class="nc" id="L157">        theInitVector = pInitVector;</span>
+<span class="nc" id="L158">        return this;</span>
+    }
+
+    /**
+     * Obtain the id.
+     * @return the id
+     */
+    Long getId() {
+<span class="nc" id="L166">        return theId;</span>
+    }
+
+    /**
+     * Set the id.
+     * @param pId the id
+     * @return the state
+     */
+    GordianXCoreAgreementParticipant setId(final Long pId) {
+<span class="nc" id="L175">        theId = pId;</span>
+<span class="nc" id="L176">        return this;</span>
+    }
+
+    /**
+     * Obtain the confirmation.
+     * @return the confirmation
+     */
+    public byte[] getConfirm() {
+<span class="nc" id="L184">        return theConfirm;</span>
+    }
+
+    /**
+     * Set the confirmation.
+     * @param pConfirm the confirmation
+     * @return the state
+     */
+    GordianXCoreAgreementParticipant setConfirm(final byte[] pConfirm) {
+<span class="nc" id="L193">        theConfirm = pConfirm;</span>
+<span class="nc" id="L194">        return this;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

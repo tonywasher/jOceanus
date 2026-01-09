@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BouncySignatureFactory.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.gordianknot.impl.bc</a> &gt; <span class="el_source">BouncySignatureFactory.java</span></div><h1>BouncySignatureFactory.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * GordianKnot: Security Suite
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.gordianknot.impl.bc;
+
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
+import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignature;
+import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
+import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyDSAKeyPair.BouncyDSASignature;
+import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyDSTUKeyPair.BouncyDSTUSignature;
+import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyEdDSAKeyPair.BouncyEdDSASignature;
+import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECSignature;
+import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyFalconKeyPair.BouncyFalconSignature;
+import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyGOSTKeyPair.BouncyGOSTSignature;
+import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyLMSKeyPair.BouncyLMSSignature;
+import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyMLDSAKeyPair.BouncyMLDSASignature;
+import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyMayoKeyPair.BouncyMayoSignature;
+import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyPicnicKeyPair.BouncyPicnicSignature;
+import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyRSAKeyPair.BouncyRSASignature;
+import net.sourceforge.joceanus.gordianknot.impl.bc.BouncySLHDSAKeyPair.BouncySLHDSASignature;
+import net.sourceforge.joceanus.gordianknot.impl.bc.BouncySM2KeyPair.BouncySM2Signature;
+import net.sourceforge.joceanus.gordianknot.impl.bc.BouncySnovaKeyPair.BouncySnovaSignature;
+import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyXMSSKeyPair.BouncyXMSSSignature;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseData;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import net.sourceforge.joceanus.gordianknot.impl.core.sign.GordianCompositeSigner;
+import net.sourceforge.joceanus.gordianknot.impl.core.sign.GordianCoreSignatureFactory;
+
+import java.util.function.Predicate;
+
+/**
+ * Bouncy Signature Factory.
+ */
+public class BouncySignatureFactory
+        extends GordianCoreSignatureFactory {
+    /**
+     * Constructor.
+     *
+     * @param pFactory the factory
+     */
+    BouncySignatureFactory(final GordianBaseFactory pFactory) {
+        /* Initialise underlying class */
+<span class="fc" id="L57">        super(pFactory);</span>
+<span class="fc" id="L58">    }</span>
+
+    @Override
+    public Predicate&lt;GordianSignatureSpec&gt; supportedKeyPairSignatures() {
+<span class="fc" id="L62">        return this::validSignatureSpec;</span>
+    }
+
+    @Override
+    public GordianSignature createSigner(final GordianSignatureSpec pSignatureSpec) throws GordianException {
+        /* Check validity of Signature */
+<span class="fc" id="L68">        checkSignatureSpec(pSignatureSpec);</span>
+
+        /* Create the signer */
+<span class="fc" id="L71">        return getBCSigner(pSignatureSpec);</span>
+    }
+
+    /**
+     * Create the BouncyCastle Signer.
+     *
+     * @param pSignatureSpec the signatureSpec
+     * @return the Signer
+     * @throws GordianException on error
+     */
+    private GordianSignature getBCSigner(final GordianSignatureSpec pSignatureSpec) throws GordianException {
+<span class="pc bpc" id="L82" title="1 of 17 branches missed.">        switch (pSignatureSpec.getKeyPairType()) {</span>
+            case RSA:
+<span class="fc" id="L84">                return new BouncyRSASignature(getFactory(), pSignatureSpec);</span>
+            case EC:
+<span class="fc" id="L86">                return new BouncyECSignature(getFactory(), pSignatureSpec);</span>
+            case DSTU4145:
+<span class="fc" id="L88">                return new BouncyDSTUSignature(getFactory(), pSignatureSpec);</span>
+            case GOST2012:
+<span class="fc" id="L90">                return new BouncyGOSTSignature(getFactory(), pSignatureSpec);</span>
+            case SM2:
+<span class="fc" id="L92">                return new BouncySM2Signature(getFactory(), pSignatureSpec);</span>
+            case EDDSA:
+<span class="fc" id="L94">                return new BouncyEdDSASignature(getFactory(), pSignatureSpec);</span>
+            case DSA:
+<span class="fc" id="L96">                return new BouncyDSASignature(getFactory(), pSignatureSpec);</span>
+            case SLHDSA:
+<span class="fc" id="L98">                return new BouncySLHDSASignature(getFactory(), pSignatureSpec);</span>
+            case MLDSA:
+<span class="fc" id="L100">                return new BouncyMLDSASignature(getFactory(), pSignatureSpec);</span>
+            case FALCON:
+<span class="fc" id="L102">                return new BouncyFalconSignature(getFactory(), pSignatureSpec);</span>
+            case MAYO:
+<span class="fc" id="L104">                return new BouncyMayoSignature(getFactory(), pSignatureSpec);</span>
+            case SNOVA:
+<span class="fc" id="L106">                return new BouncySnovaSignature(getFactory(), pSignatureSpec);</span>
+            case PICNIC:
+<span class="fc" id="L108">                return new BouncyPicnicSignature(getFactory(), pSignatureSpec);</span>
+            case XMSS:
+<span class="fc" id="L110">                return new BouncyXMSSSignature(getFactory(), pSignatureSpec);</span>
+            case LMS:
+<span class="fc" id="L112">                return new BouncyLMSSignature(getFactory(), pSignatureSpec);</span>
+            case COMPOSITE:
+<span class="fc" id="L114">                return new GordianCompositeSigner(getFactory(), pSignatureSpec);</span>
+            default:
+<span class="nc" id="L116">                throw new GordianDataException(GordianBaseData.getInvalidText(pSignatureSpec.getKeyPairType()));</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

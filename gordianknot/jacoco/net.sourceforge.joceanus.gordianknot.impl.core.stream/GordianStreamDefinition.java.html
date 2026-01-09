@@ -1,0 +1,466 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianStreamDefinition.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.gordianknot.impl.core.stream</a> &gt; <span class="el_source">GordianStreamDefinition.java</span></div><h1>GordianStreamDefinition.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * GordianKnot: Security Suite
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.gordianknot.impl.core.stream;
+
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
+import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherParameters;
+import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamCipher;
+import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamCipherSpec;
+import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec;
+import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymCipher;
+import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymCipherSpec;
+import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
+import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigest;
+import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
+import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
+import net.sourceforge.joceanus.gordianknot.api.mac.GordianMac;
+import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacParameters;
+import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpec;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreKnuthObfuscater;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataConverter;
+import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipher;
+import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.digest.GordianCoreDigestFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySet;
+import net.sourceforge.joceanus.gordianknot.impl.core.mac.GordianCoreMacFactory;
+
+import java.io.InputStream;
+import java.util.Arrays;
+
+/**
+ * Stream definition.
+ */
+public final class GordianStreamDefinition {
+    /**
+     * Stream Type.
+     */
+    private final GordianStreamType theType;
+
+    /**
+     * TypeId.
+     */
+    private final int theTypeId;
+
+    /**
+     * TypeDefinition.
+     */
+    private final byte[] theTypeDefinition;
+
+    /**
+     * InitVector.
+     */
+    private final byte[] theInitVector;
+
+    /**
+     * Value.
+     */
+    private final byte[] theValue;
+
+    /**
+     * The length.
+     */
+    private final Long theLength;
+
+    /**
+     * Constructor.
+     * @param pExternalId the externalId
+     * @param pTypeDef the type definition
+     * @param pInitVector the IV
+     * @param pValue the value
+     * @throws GordianException on error
+     */
+    public GordianStreamDefinition(final long pExternalId,
+                                   final byte[] pTypeDef,
+                                   final byte[] pInitVector,
+<span class="fc" id="L91">                                   final byte[] pValue) throws GordianException {</span>
+<span class="fc" id="L92">        final int myStreamId = (int) (pExternalId &amp; GordianDataConverter.NYBBLE_MASK);</span>
+<span class="fc" id="L93">        theType = GordianStreamType.fromId(myStreamId);</span>
+<span class="fc" id="L94">        theTypeId = (int) (pExternalId &gt;&gt; GordianDataConverter.NYBBLE_SHIFT);</span>
+<span class="fc bfc" id="L95" title="All 2 branches covered.">        theTypeDefinition = pTypeDef == null</span>
+<span class="fc" id="L96">                            ? null</span>
+<span class="fc" id="L97">                            : Arrays.copyOf(pTypeDef, pTypeDef.length);</span>
+<span class="fc bfc" id="L98" title="All 2 branches covered.">        theInitVector = pInitVector == null</span>
+<span class="fc" id="L99">                        ? null</span>
+<span class="fc" id="L100">                        : Arrays.copyOf(pInitVector, pInitVector.length);</span>
+<span class="fc bfc" id="L101" title="All 2 branches covered.">        theValue = pValue == null</span>
+<span class="fc" id="L102">                   ? null</span>
+<span class="fc" id="L103">                   : Arrays.copyOf(pValue, pValue.length);</span>
+<span class="fc" id="L104">        theLength = null;</span>
+<span class="fc" id="L105">    }</span>
+
+    /**
+     * Constructor.
+     * @param pKeySet the KeySet
+     * @param pStream the DigestOutputStream
+     * @throws GordianException on error
+     */
+    GordianStreamDefinition(final GordianCoreKeySet pKeySet,
+<span class="fc" id="L114">                            final GordianDigestOutputStream pStream) throws GordianException {</span>
+        /* Access factory */
+<span class="fc" id="L116">        final GordianBaseFactory myFactory = pKeySet.getFactory();</span>
+<span class="fc" id="L117">        final GordianCoreKnuthObfuscater myKnuth = (GordianCoreKnuthObfuscater) myFactory.getObfuscater();</span>
+
+        /* Access DigestType */
+<span class="fc" id="L120">        theType = GordianStreamType.DIGEST;</span>
+<span class="fc" id="L121">        final GordianDigest myDigest = pStream.getDigest();</span>
+<span class="fc" id="L122">        theTypeId = myKnuth.deriveExternalIdFromType(myDigest.getDigestSpec());</span>
+
+        /* Build details */
+<span class="fc" id="L125">        theTypeDefinition = null;</span>
+<span class="fc" id="L126">        theInitVector = null;</span>
+<span class="fc" id="L127">        theValue = pStream.getResult();</span>
+<span class="fc" id="L128">        theLength = pStream.getDataLen();</span>
+<span class="fc" id="L129">    }</span>
+
+    /**
+     * Constructor.
+     * @param pKeySet the KeySet
+     * @param pStream the MacOutputStream
+     * @throws GordianException on error
+     */
+    GordianStreamDefinition(final GordianCoreKeySet pKeySet,
+<span class="fc" id="L138">                            final GordianMacOutputStream pStream) throws GordianException {</span>
+        /* Access factory */
+<span class="fc" id="L140">        final GordianBaseFactory myFactory = pKeySet.getFactory();</span>
+<span class="fc" id="L141">        final GordianCoreKnuthObfuscater myKnuth = (GordianCoreKnuthObfuscater) myFactory.getObfuscater();</span>
+
+        /* Access MacType */
+<span class="fc" id="L144">        theType = GordianStreamType.MAC;</span>
+<span class="fc" id="L145">        final GordianMac myMac = pStream.getMac();</span>
+<span class="fc" id="L146">        theTypeId = myKnuth.deriveExternalIdFromType(myMac.getMacSpec());</span>
+
+        /* Build details */
+<span class="fc" id="L149">        theTypeDefinition = pKeySet.secureKey(myMac.getKey());</span>
+<span class="fc" id="L150">        theInitVector = myMac.getInitVector();</span>
+<span class="fc" id="L151">        theValue = pStream.getResult();</span>
+<span class="fc" id="L152">        theLength = pStream.getDataLen();</span>
+<span class="fc" id="L153">    }</span>
+
+    /**
+     * Constructor.
+     * @param pKeySet the KeySet
+     * @param pStream the CipherOutputStream
+     * @throws GordianException on error
+     */
+    GordianStreamDefinition(final GordianCoreKeySet pKeySet,
+<span class="fc" id="L162">                            final GordianCipherOutputStream&lt;?&gt; pStream) throws GordianException {</span>
+        /* Access factory */
+<span class="fc" id="L164">        final GordianBaseFactory myFactory = pKeySet.getFactory();</span>
+<span class="fc" id="L165">        final GordianCoreKnuthObfuscater myKnuth = (GordianCoreKnuthObfuscater) myFactory.getObfuscater();</span>
+
+        /* Access CipherType */
+<span class="fc" id="L168">        final GordianCoreCipher&lt;?&gt; myCipher = pStream.getCipher();</span>
+<span class="fc bfc" id="L169" title="All 2 branches covered.">        theType = pStream.isSymKeyStream()</span>
+<span class="fc" id="L170">                  ? GordianStreamType.SYMMETRIC</span>
+<span class="fc" id="L171">                  : GordianStreamType.STREAM;</span>
+<span class="fc" id="L172">        theTypeId = myKnuth.deriveExternalIdFromType(myCipher.getCipherSpec());</span>
+
+        /* Build details */
+<span class="fc" id="L175">        theTypeDefinition = pKeySet.secureKey(myCipher.getKey());</span>
+<span class="fc" id="L176">        theInitVector = myCipher.getInitVector();</span>
+<span class="fc" id="L177">        theValue = null;</span>
+<span class="fc" id="L178">        theLength = null;</span>
+<span class="fc" id="L179">    }</span>
+
+    /**
+     * Constructor.
+     * @param pStreamType the StreamType
+     */
+<span class="fc" id="L185">    GordianStreamDefinition(final GordianStreamType pStreamType) {</span>
+<span class="fc" id="L186">        theType = GordianStreamType.LZMA;</span>
+<span class="fc" id="L187">        theTypeId = 0;</span>
+<span class="fc" id="L188">        theTypeDefinition = null;</span>
+<span class="fc" id="L189">        theInitVector = null;</span>
+<span class="fc" id="L190">        theValue = null;</span>
+<span class="fc" id="L191">        theLength = null;</span>
+<span class="fc" id="L192">    }</span>
+
+    /**
+     * Obtain Encoded stream type.
+     * @return the encoded value
+     */
+    public long getExternalId() {
+<span class="fc" id="L199">        return ((long) theTypeId &lt;&lt; GordianDataConverter.NYBBLE_SHIFT)</span>
+<span class="fc" id="L200">                + theType.getId();</span>
+    }
+
+    /**
+     * Obtain Type.
+     * @return the type
+     */
+    public GordianStreamType getType() {
+<span class="fc" id="L208">        return theType;</span>
+    }
+
+    /**
+     * Obtain TypeId.
+     * @return the typeId
+     */
+    public long getTypeId() {
+<span class="nc" id="L216">        return theTypeId;</span>
+    }
+
+    /**
+     * Obtain TypeDefinition.
+     * @return the type definition
+     */
+    public byte[] getTypeDefinition() {
+<span class="fc bfc" id="L224" title="All 2 branches covered.">        return theTypeDefinition == null</span>
+<span class="fc" id="L225">               ? null</span>
+<span class="fc" id="L226">               : Arrays.copyOf(theTypeDefinition, theTypeDefinition.length);</span>
+    }
+
+    /**
+     * Obtain InitVector.
+     * @return the initVector
+     */
+    public byte[] getInitVector() {
+<span class="fc bfc" id="L234" title="All 2 branches covered.">        return theInitVector == null</span>
+<span class="fc" id="L235">               ? null</span>
+<span class="fc" id="L236">               : Arrays.copyOf(theInitVector, theInitVector.length);</span>
+    }
+
+    /**
+     * Obtain Value.
+     * @return the value
+     */
+    public byte[] getValue() {
+<span class="fc bfc" id="L244" title="All 2 branches covered.">        return theValue == null</span>
+<span class="fc" id="L245">               ? null</span>
+<span class="fc" id="L246">               : Arrays.copyOf(theValue, theValue.length);</span>
+    }
+
+    /**
+     * Obtain dataLength.
+     * @return the length
+     */
+    public Long getDataLength() {
+<span class="fc" id="L254">        return theLength;</span>
+    }
+
+    /**
+     * Build input Stream.
+     * @param pKeySet the keySet
+     * @param pCurrent the current stream
+     * @param pMacStream the Mac input stream
+     * @return the new input stream
+     * @throws GordianException on error
+     */
+    InputStream buildInputStream(final GordianCoreKeySet pKeySet,
+                                 final InputStream pCurrent,
+                                 final GordianMacInputStream pMacStream) throws GordianException {
+<span class="fc bfc" id="L268" title="All 5 branches covered.">        switch (theType) {</span>
+            case DIGEST:
+<span class="fc" id="L270">                return buildDigestInputStream(pKeySet, pCurrent, pMacStream);</span>
+            case MAC:
+<span class="fc" id="L272">                return buildMacInputStream(pKeySet, pCurrent);</span>
+            case SYMMETRIC:
+<span class="fc" id="L274">                return buildSymKeyInputStream(pKeySet, pCurrent);</span>
+            case STREAM:
+<span class="fc" id="L276">                return buildStreamKeyInputStream(pKeySet, pCurrent);</span>
+            case LZMA:
+            default:
+<span class="fc" id="L279">                return buildLZMAInputStream(pCurrent);</span>
+        }
+    }
+
+    /**
+     * Build digest input Stream.
+     * @param pKeySet the keySet
+     * @param pCurrent the current stream
+     * @param pMacStream the Mac input stream
+     * @return the new input stream
+     * @throws GordianException on error
+     */
+    private InputStream buildDigestInputStream(final GordianCoreKeySet pKeySet,
+                                               final InputStream pCurrent,
+                                               final GordianMacInputStream pMacStream) throws GordianException {
+        /* Access factory */
+<span class="fc" id="L295">        final GordianBaseFactory myFactory = pKeySet.getFactory();</span>
+<span class="fc" id="L296">        final GordianCoreKnuthObfuscater myKnuth = (GordianCoreKnuthObfuscater) myFactory.getObfuscater();</span>
+
+        /* Parse the TypeId */
+<span class="fc" id="L299">        final GordianDigestSpec mySpec = (GordianDigestSpec) myKnuth.deriveTypeFromExternalId(theTypeId);</span>
+
+        /* Generate the Digest */
+<span class="fc" id="L302">        final GordianCoreDigestFactory myDigests = (GordianCoreDigestFactory) myFactory.getDigestFactory();</span>
+<span class="fc" id="L303">        final GordianDigest myDigest = myDigests.createDigest(mySpec);</span>
+
+        /* Create the stream */
+<span class="fc" id="L306">        return new GordianDigestInputStream(myDigest, theValue, pCurrent, pMacStream);</span>
+    }
+
+    /**
+     * Build MAC input Stream.
+     * @param pKeySet the keySet
+     * @param pCurrent the current stream
+     * @return the new input stream
+     * @throws GordianException on error
+     */
+    private InputStream buildMacInputStream(final GordianCoreKeySet pKeySet,
+                                            final InputStream pCurrent) throws GordianException {
+        /* Access factory */
+<span class="fc" id="L319">        final GordianBaseFactory myFactory = pKeySet.getFactory();</span>
+<span class="fc" id="L320">        final GordianCoreKnuthObfuscater myKnuth = (GordianCoreKnuthObfuscater) myFactory.getObfuscater();</span>
+
+        /* Parse the TypeId */
+<span class="fc" id="L323">        final GordianMacSpec mySpec = (GordianMacSpec) myKnuth.deriveTypeFromExternalId(theTypeId);</span>
+
+        /* Generate the MAC */
+<span class="fc" id="L326">        final GordianCoreMacFactory myMacs = (GordianCoreMacFactory) myFactory.getMacFactory();</span>
+<span class="fc" id="L327">        final GordianMac myMac = myMacs.createMac(mySpec);</span>
+<span class="fc" id="L328">        final GordianKey&lt;GordianMacSpec&gt; myKey = pKeySet.deriveKey(theTypeDefinition, mySpec);</span>
+<span class="fc" id="L329">        myMac.init(GordianMacParameters.keyAndNonce(myKey, theInitVector));</span>
+
+        /* Create the stream */
+<span class="fc" id="L332">        return new GordianMacInputStream(myMac, theValue, pCurrent);</span>
+    }
+
+    /**
+     * Build SymKey input Stream.
+     * @param pKeySet the keySet
+     * @param pCurrent the current stream
+     * @return the new input stream
+     * @throws GordianException on error
+     */
+    private InputStream buildSymKeyInputStream(final GordianCoreKeySet pKeySet,
+                                               final InputStream pCurrent) throws GordianException {
+        /* Access factory */
+<span class="fc" id="L345">        final GordianBaseFactory myFactory = pKeySet.getFactory();</span>
+<span class="fc" id="L346">        final GordianCoreKnuthObfuscater myKnuth = (GordianCoreKnuthObfuscater) myFactory.getObfuscater();</span>
+
+        /* Parse the TypeId */
+<span class="fc" id="L349">        final GordianSymCipherSpec mySpec = (GordianSymCipherSpec) myKnuth.deriveTypeFromExternalId(theTypeId);</span>
+<span class="fc" id="L350">        final GordianSymKeySpec myKeySpec = mySpec.getKeyType();</span>
+
+        /* Generate the Cipher */
+<span class="fc" id="L353">        final GordianCoreCipherFactory myCiphers = (GordianCoreCipherFactory) myFactory.getCipherFactory();</span>
+<span class="fc" id="L354">        final GordianSymCipher myCipher = myCiphers.createSymKeyCipher(mySpec);</span>
+<span class="fc" id="L355">        final GordianKey&lt;GordianSymKeySpec&gt; myKey = pKeySet.deriveKey(theTypeDefinition, myKeySpec);</span>
+<span class="fc" id="L356">        myCipher.initForDecrypt(GordianCipherParameters.keyAndNonce(myKey, theInitVector));</span>
+
+        /* Create the stream */
+<span class="fc" id="L359">        return new GordianCipherInputStream&lt;&gt;(myCipher, pCurrent);</span>
+    }
+
+    /**
+     * Build StreamKey input Stream.
+     * @param pKeySet the keySet
+     * @param pCurrent the current stream
+     * @return the new input stream
+     * @throws GordianException on error
+     */
+    private InputStream buildStreamKeyInputStream(final GordianCoreKeySet pKeySet,
+                                                  final InputStream pCurrent) throws GordianException {
+        /* Access factory */
+<span class="fc" id="L372">        final GordianBaseFactory myFactory = pKeySet.getFactory();</span>
+<span class="fc" id="L373">        final GordianCoreKnuthObfuscater myKnuth = (GordianCoreKnuthObfuscater) myFactory.getObfuscater();</span>
+
+        /* Parse the TypeId */
+<span class="fc" id="L376">        final GordianStreamCipherSpec mySpec = (GordianStreamCipherSpec) myKnuth.deriveTypeFromExternalId(theTypeId);</span>
+<span class="fc" id="L377">        final GordianStreamKeySpec myType = mySpec.getKeyType();</span>
+
+        /* Generate the Cipher */
+<span class="fc" id="L380">        final GordianCoreCipherFactory myCiphers = (GordianCoreCipherFactory) myFactory.getCipherFactory();</span>
+<span class="fc" id="L381">        final GordianStreamCipher myCipher = myCiphers.createStreamKeyCipher(mySpec);</span>
+<span class="fc" id="L382">        final GordianKey&lt;GordianStreamKeySpec&gt; myKey = pKeySet.deriveKey(theTypeDefinition, myType);</span>
+<span class="fc" id="L383">        myCipher.initForDecrypt(GordianCipherParameters.keyAndNonce(myKey, theInitVector));</span>
+
+        /* Create the stream */
+<span class="fc" id="L386">        return new GordianCipherInputStream&lt;&gt;(myCipher, pCurrent);</span>
+    }
+
+    /**
+     * Build LZMA input Stream.
+     * @param pCurrent the current stream
+     * @return the new input stream
+     */
+    private static InputStream buildLZMAInputStream(final InputStream pCurrent) {
+        /* Create the stream */
+<span class="fc" id="L396">        return new GordianLZMAInputStream(pCurrent);</span>
+    }
+
+    /**
+     * Stream Type.
+     */
+<span class="fc" id="L402">    public enum GordianStreamType {</span>
+        /**
+         * Symmetric.
+         */
+<span class="fc" id="L406">        SYMMETRIC(1),</span>
+
+        /**
+         * Stream.
+         */
+<span class="fc" id="L411">        STREAM(2),</span>
+
+        /**
+         * Digest.
+         */
+<span class="fc" id="L416">        DIGEST(3),</span>
+
+        /**
+         * MAC.
+         */
+<span class="fc" id="L421">        MAC(4),</span>
+
+        /**
+         * LZMA.
+         */
+<span class="fc" id="L426">        LZMA(5);</span>
+
+        /**
+         * The external Id of the stream type.
+         */
+        private final int theId;
+
+        /**
+         * Constructor.
+         * @param id the id
+         */
+<span class="fc" id="L437">        GordianStreamType(final int id) {</span>
+<span class="fc" id="L438">            theId = id;</span>
+<span class="fc" id="L439">        }</span>
+
+        /**
+         * Obtain the external Id.
+         * @return the external Id
+         */
+        public int getId() {
+<span class="fc" id="L446">            return theId;</span>
+        }
+
+        /**
+         * get value from id.
+         * @param id the id value
+         * @return the corresponding enumeration object
+         * @throws GordianException on error
+         */
+        public static GordianStreamType fromId(final int id) throws GordianException {
+<span class="pc bpc" id="L456" title="1 of 2 branches missed.">            for (final GordianStreamType myType : values()) {</span>
+<span class="fc bfc" id="L457" title="All 2 branches covered.">                if (myType.getId() == id) {</span>
+<span class="fc" id="L458">                    return myType;</span>
+                }
+            }
+<span class="nc" id="L461">            throw new GordianDataException(&quot;Invalid StreamType: &quot;</span>
+                    + id);
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

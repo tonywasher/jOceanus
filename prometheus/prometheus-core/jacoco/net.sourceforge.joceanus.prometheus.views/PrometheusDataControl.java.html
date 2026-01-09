@@ -1,0 +1,419 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PrometheusDataControl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Prometheus Core Application Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.prometheus.views</a> &gt; <span class="el_source">PrometheusDataControl.java</span></div><h1>PrometheusDataControl.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Prometheus: Application Framework
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.prometheus.views;
+
+import net.sourceforge.joceanus.metis.toolkit.MetisToolkit;
+import net.sourceforge.joceanus.metis.viewer.MetisViewerEntry;
+import net.sourceforge.joceanus.metis.viewer.MetisViewerErrorList;
+import net.sourceforge.joceanus.metis.viewer.MetisViewerExceptionWrapper;
+import net.sourceforge.joceanus.metis.viewer.MetisViewerManager;
+import net.sourceforge.joceanus.metis.viewer.MetisViewerStandardEntry;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataValidator.PrometheusDataValidatorFactory;
+import net.sourceforge.joceanus.prometheus.database.PrometheusDataStore;
+import net.sourceforge.joceanus.prometheus.preference.PrometheusPreferenceManager;
+import net.sourceforge.joceanus.prometheus.security.PrometheusSecurityPasswordManager;
+import net.sourceforge.joceanus.prometheus.sheets.PrometheusSpreadSheet;
+import net.sourceforge.joceanus.prometheus.toolkit.PrometheusToolkit;
+import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
+
+import java.util.EnumMap;
+import java.util.Map;
+
+/**
+ * Provides top-level control of data.
+ */
+public abstract class PrometheusDataControl
+        implements OceanusEventProvider&lt;PrometheusDataEvent&gt; {
+    /**
+     * The Event Manager.
+     */
+    private final OceanusEventManager&lt;PrometheusDataEvent&gt; theEventManager;
+
+    /**
+     * The DataSet.
+     */
+    private PrometheusDataSet theData;
+
+    /**
+     * The Update DataSet.
+     */
+    private PrometheusDataSet theUpdates;
+
+    /**
+     * The Error List.
+     */
+    private final MetisViewerErrorList theErrors;
+
+    /**
+     * The toolkit.
+     */
+    private final PrometheusToolkit theToolkit;
+
+    /**
+     * The metisToolkit.
+     */
+    private final MetisToolkit theMetisToolkit;
+
+    /**
+     * The Viewer Entry hashMap.
+     */
+    private final Map&lt;PrometheusViewerEntryId, MetisViewerEntry&gt; theViewerMap;
+
+    /**
+     * Validator factory.
+     */
+    private PrometheusDataValidatorFactory theValidatorFactory;
+
+    /**
+     * Constructor for default control.
+     * @param pToolkit the toolkit
+     */
+<span class="nc" id="L92">    protected PrometheusDataControl(final PrometheusToolkit pToolkit) {</span>
+        /* Store the parameters */
+<span class="nc" id="L94">        theToolkit = pToolkit;</span>
+<span class="nc" id="L95">        theMetisToolkit = pToolkit.getToolkit();</span>
+
+        /* Create the Viewer Map and initialise it */
+<span class="nc" id="L98">        theViewerMap = new EnumMap&lt;&gt;(PrometheusViewerEntryId.class);</span>
+<span class="nc" id="L99">        initViewerMap();</span>
+
+        /* Create event manager */
+<span class="nc" id="L102">        theEventManager = new OceanusEventManager&lt;&gt;();</span>
+
+        /* Create the error list */
+<span class="nc" id="L105">        theErrors = new MetisViewerErrorList();</span>
+<span class="nc" id="L106">    }</span>
+
+    @Override
+    public OceanusEventRegistrar&lt;PrometheusDataEvent&gt; getEventRegistrar() {
+<span class="nc" id="L110">        return theEventManager.getEventRegistrar();</span>
+    }
+
+    /**
+     * Set the validator factory.
+     * @param pFactory the validator factory
+     */
+    public void setValidatorFactory(final PrometheusDataValidatorFactory pFactory) {
+<span class="nc" id="L118">        theValidatorFactory = pFactory;</span>
+<span class="nc" id="L119">    }</span>
+
+    /**
+     * Obtain the validator factory.
+     * @return the validator factory
+     */
+    public PrometheusDataValidatorFactory getValidatorFactory() {
+<span class="nc" id="L126">        return theValidatorFactory;</span>
+    }
+
+    /**
+     * Record new DataSet.
+     * @param pData the new DataSet
+     */
+    public void setData(final PrometheusDataSet pData) {
+        /* Store the data */
+<span class="nc" id="L135">        theData = pData;</span>
+
+        /* Update the Data entry */
+<span class="nc" id="L138">        final MetisViewerEntry myData = getViewerEntry(PrometheusViewerEntryId.DATASET);</span>
+<span class="nc" id="L139">        myData.setTreeObject(pData);</span>
+
+        /* Analyse the data */
+<span class="nc" id="L142">        analyseData(false);</span>
+
+        /* Refresh the views */
+<span class="nc" id="L145">        refreshViews();</span>
+<span class="nc" id="L146">    }</span>
+
+    /**
+     * Increment data version.
+     */
+    public void incrementVersion() {
+        /* Increment data versions */
+<span class="nc" id="L153">        final int myVersion = theData.getVersion();</span>
+<span class="nc" id="L154">        theData.setVersion(myVersion + 1);</span>
+<span class="nc" id="L155">    }</span>
+
+    /**
+     * Obtain current DataSet.
+     * @return the current DataSet
+     */
+    public PrometheusDataSet getData() {
+<span class="nc" id="L162">        return theData;</span>
+    }
+
+    /**
+     * Derive update list.
+     * @throws OceanusException on error
+     */
+    public void deriveUpdates() throws OceanusException {
+        /* Store the updates */
+<span class="nc" id="L171">        theUpdates = theData.deriveUpdateSet();</span>
+
+        /* Update the Data entry */
+<span class="nc" id="L174">        final MetisViewerEntry myData = getViewerEntry(PrometheusViewerEntryId.UPDATES);</span>
+<span class="nc" id="L175">        myData.setTreeObject(theUpdates);</span>
+<span class="nc" id="L176">    }</span>
+
+    /**
+     * Obtain current Updates.
+     * @return the current Updates
+     */
+    public PrometheusDataSet getUpdates() {
+<span class="nc" id="L183">        return theUpdates;</span>
+    }
+
+    /**
+     * Add new Error.
+     * @param pError the new Error
+     */
+    public void addError(final OceanusException pError) {
+<span class="nc" id="L191">        theErrors.add(new MetisViewerExceptionWrapper(pError));</span>
+<span class="nc" id="L192">    }</span>
+
+    /**
+     * Clear error list.
+     */
+    protected void clearErrors() {
+<span class="nc" id="L198">        theErrors.clear();</span>
+<span class="nc" id="L199">    }</span>
+
+    /**
+     * Obtain current error.
+     * @return the current Error
+     */
+    public MetisViewerErrorList getErrors() {
+<span class="nc" id="L206">        return theErrors;</span>
+    }
+
+    /**
+     * Obtain toolkit.
+     * @return the toolkit
+     */
+    public PrometheusToolkit getToolkit() {
+<span class="nc" id="L214">        return theToolkit;</span>
+    }
+
+    /**
+     * Obtain DataFormatter.
+     * @return the DataFormatter
+     */
+    public OceanusDataFormatter getDataFormatter() {
+<span class="nc" id="L222">        return theMetisToolkit.getFormatter();</span>
+    }
+
+    /**
+     * Obtain SecurityManager.
+     * @return the SecurityManager
+     */
+    public PrometheusSecurityPasswordManager getPasswordManager() {
+<span class="nc" id="L230">        return theToolkit.getPasswordManager();</span>
+    }
+
+    /**
+     * Obtain PreferenceManager.
+     * @return the PreferenceManager
+     */
+    public PrometheusPreferenceManager getPreferenceManager() {
+<span class="nc" id="L238">        return theToolkit.getPreferenceManager();</span>
+    }
+
+    /**
+     * Obtain ViewerManager.
+     * @return the ViewerManager
+     */
+    public MetisViewerManager getViewerManager() {
+<span class="nc" id="L246">        return theMetisToolkit.getViewerManager();</span>
+    }
+
+    /**
+     * Obtain GuiFactory.
+     * @return the GuiFactory
+     */
+    public TethysUIFactory&lt;?&gt; getGuiFactory() {
+<span class="nc" id="L254">        return theMetisToolkit.getGuiFactory();</span>
+    }
+
+    /**
+     * Initialise ViewerMap.
+     */
+    private void initViewerMap() {
+        /* Access the viewer manager */
+<span class="nc" id="L262">        final MetisViewerManager myViewer = getViewerManager();</span>
+
+        /* Access standard entries */
+<span class="nc" id="L265">        theViewerMap.put(PrometheusViewerEntryId.ERROR, myViewer.getStandardEntry(MetisViewerStandardEntry.ERROR));</span>
+<span class="nc" id="L266">        theViewerMap.put(PrometheusViewerEntryId.PROFILE, myViewer.getStandardEntry(MetisViewerStandardEntry.PROFILE));</span>
+<span class="nc" id="L267">        theViewerMap.put(PrometheusViewerEntryId.DATA, myViewer.getStandardEntry(MetisViewerStandardEntry.DATA));</span>
+<span class="nc" id="L268">        theViewerMap.put(PrometheusViewerEntryId.UPDATES, myViewer.getStandardEntry(MetisViewerStandardEntry.UPDATES));</span>
+<span class="nc" id="L269">        theViewerMap.put(PrometheusViewerEntryId.VIEW, myViewer.getStandardEntry(MetisViewerStandardEntry.VIEW));</span>
+
+        /* Create Data entries */
+<span class="nc" id="L272">        final MetisViewerEntry myData = getViewerEntry(PrometheusViewerEntryId.DATA);</span>
+<span class="nc" id="L273">        theViewerMap.put(PrometheusViewerEntryId.DATASET, myViewer.newEntry(myData, PrometheusViewerEntryId.DATASET.toString()));</span>
+<span class="nc" id="L274">        theViewerMap.put(PrometheusViewerEntryId.ANALYSIS, myViewer.newEntry(myData, PrometheusViewerEntryId.ANALYSIS.toString()));</span>
+
+        /* Create View entries */
+<span class="nc" id="L277">        final MetisViewerEntry myView = getViewerEntry(PrometheusViewerEntryId.VIEW);</span>
+<span class="nc" id="L278">        final MetisViewerEntry myMaint = myViewer.newEntry(myView, PrometheusViewerEntryId.MAINTENANCE.toString());</span>
+<span class="nc" id="L279">        theViewerMap.put(PrometheusViewerEntryId.MAINTENANCE, myMaint);</span>
+<span class="nc" id="L280">        theViewerMap.put(PrometheusViewerEntryId.STATIC, myViewer.newEntry(myMaint, PrometheusViewerEntryId.STATIC.toString()));</span>
+
+        /* Hide the error entry */
+<span class="nc" id="L283">        final MetisViewerEntry myError = theViewerMap.get(PrometheusViewerEntryId.ERROR);</span>
+<span class="nc bnc" id="L284" title="All 2 branches missed.">        myError.setVisible(myError.getObject() != null);</span>
+<span class="nc" id="L285">    }</span>
+
+    /**
+     * Get viewer Entry.
+     * @param pId the id of the entry
+     * @return the Viewer Entry
+     */
+    public final MetisViewerEntry getViewerEntry(final PrometheusViewerEntryId pId) {
+<span class="nc" id="L293">        return theViewerMap.get(pId);</span>
+    }
+
+    /**
+     * Obtain SpreadSheet object.
+     * @return SpreadSheet object
+     */
+    public abstract PrometheusSpreadSheet getSpreadSheet();
+
+    /**
+     * Obtain the database name.
+     * @return the name
+     */
+    public abstract String getDatabaseName();
+
+    /**
+     * Obtain Database object.
+     * @return database object
+     * @throws OceanusException on error
+     */
+    public abstract PrometheusDataStore getDatabase() throws OceanusException;
+
+    /**
+     * Obtain Null Database object.
+     * @return database object
+     * @throws OceanusException on error
+     */
+    public abstract PrometheusDataStore getNullDatabase() throws OceanusException;
+
+    /**
+     * Obtain DataSet object.
+     * @return dataSet object
+     */
+    public abstract PrometheusDataSet getNewData();
+
+    /**
+     * Analyse the data in the view.
+     * @param bPreserve preserve any error
+     * @return success true/false
+     */
+    protected abstract boolean analyseData(boolean bPreserve);
+
+    /**
+     * refresh the data view.
+     */
+    final void refreshViews() {
+        /* Obtain the active profile */
+<span class="nc" id="L340">        OceanusProfile myTask = getActiveTask();</span>
+<span class="nc" id="L341">        myTask = myTask.startTask(&quot;refreshViews&quot;);</span>
+
+        /* Refresh the Control */
+<span class="nc" id="L344">        theEventManager.fireEvent(PrometheusDataEvent.REFRESHVIEWS);</span>
+
+        /* Complete the task */
+<span class="nc" id="L347">        myTask.end();</span>
+<span class="nc" id="L348">    }</span>
+
+    /**
+     * Undo changes in a viewSet.
+     */
+    public void undoLastChange() {
+        /* Obtain the active profile */
+<span class="nc" id="L355">        OceanusProfile myTask = getActiveTask();</span>
+<span class="nc" id="L356">        myTask = myTask.startTask(&quot;unDoLastChange&quot;);</span>
+
+        /* UndoLastChange */
+<span class="nc" id="L359">        theData.undoLastChange();</span>
+<span class="nc" id="L360">        myTask.end();</span>
+
+        /* Analyse the data */
+<span class="nc" id="L363">        analyseData(false);</span>
+
+        /* Refresh the views */
+<span class="nc" id="L366">        refreshViews();</span>
+
+        /* Complete the task */
+<span class="nc" id="L369">        myTask.end();</span>
+<span class="nc" id="L370">    }</span>
+
+    /**
+     * Reset changes in a viewSet.
+     */
+    public void resetChanges() {
+        /* Obtain the active profile */
+<span class="nc" id="L377">        OceanusProfile myTask = getActiveTask();</span>
+<span class="nc" id="L378">        myTask = myTask.startTask(&quot;resetChanges&quot;);</span>
+
+        /* Rewind the data */
+<span class="nc" id="L381">        theData.resetChanges();</span>
+<span class="nc" id="L382">        myTask.end();</span>
+
+        /* Analyse the data */
+<span class="nc" id="L385">        analyseData(false);</span>
+
+        /* Refresh the views */
+<span class="nc" id="L388">        refreshViews();</span>
+
+        /* Complete the task */
+<span class="nc" id="L391">        myTask.end();</span>
+<span class="nc" id="L392">    }</span>
+
+    /**
+     * Create new profile.
+     * @param pTask the name of the task
+     * @return the new profile
+     */
+    public OceanusProfile getNewProfile(final String pTask) {
+<span class="nc" id="L400">        return theMetisToolkit.getNewProfile(pTask);</span>
+    }
+
+    /**
+     * Obtain the active profile.
+     * @return the active profile
+     */
+    public OceanusProfile getActiveProfile() {
+<span class="nc" id="L408">        return theMetisToolkit.getActiveProfile();</span>
+    }
+
+    /**
+     * Obtain the active task.
+     * @return the active task
+     */
+    public OceanusProfile getActiveTask() {
+<span class="nc" id="L416">        return theMetisToolkit.getActiveTask();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

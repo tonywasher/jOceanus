@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PrometheusThreadStoreDatabase.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Prometheus Core Application Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.prometheus.threads</a> &gt; <span class="el_source">PrometheusThreadStoreDatabase.java</span></div><h1>PrometheusThreadStoreDatabase.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Prometheus: Application Framework
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.prometheus.threads;
+
+import net.sourceforge.joceanus.prometheus.exc.PrometheusDataException;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
+import net.sourceforge.joceanus.prometheus.database.PrometheusDataStore;
+import net.sourceforge.joceanus.prometheus.views.PrometheusDataControl;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.tethys.api.thread.TethysUIThread;
+import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadManager;
+
+/**
+ * Thread to store changes in the DataSet to a database.
+ */
+public class PrometheusThreadStoreDatabase
+        implements TethysUIThread&lt;Void&gt; {
+    /**
+     * Data control.
+     */
+    private final PrometheusDataControl theControl;
+
+    /**
+     * Constructor (Event Thread).
+     * @param pControl data control
+     */
+<span class="nc" id="L41">    public PrometheusThreadStoreDatabase(final PrometheusDataControl pControl) {</span>
+<span class="nc" id="L42">        theControl = pControl;</span>
+<span class="nc" id="L43">    }</span>
+
+    @Override
+    public String getTaskName() {
+<span class="nc" id="L47">        return PrometheusThreadId.STOREDB.toString();</span>
+    }
+
+    @Override
+    public Void performTask(final TethysUIThreadManager pManager) throws OceanusException {
+        /* Initialise the status window */
+<span class="nc" id="L53">        pManager.initTask(getTaskName());</span>
+
+        /* Create interface */
+<span class="nc" id="L56">        final PrometheusDataStore myDatabase = theControl.getDatabase();</span>
+
+        /* Protect against failures */
+        try {
+            /* Store database */
+<span class="nc" id="L61">            myDatabase.updateDatabase(pManager, theControl.getUpdates());</span>
+
+            /* Load database */
+<span class="nc" id="L64">            final PrometheusDataSet myStore = theControl.getNewData();</span>
+<span class="nc" id="L65">            myDatabase.loadDatabase(pManager, myStore);</span>
+
+            /* Create a difference set between the two data copies */
+<span class="nc" id="L68">            final PrometheusDataSet myData = theControl.getData();</span>
+<span class="nc" id="L69">            final PrometheusDataSet myDiff = myData.getDifferenceSet(pManager, myStore);</span>
+
+            /* If the difference set is non-empty */
+<span class="nc bnc" id="L72" title="All 2 branches missed.">            if (!myDiff.isEmpty()) {</span>
+                /* Throw an exception */
+<span class="nc" id="L74">                throw new PrometheusDataException(myDiff, &quot;DataStore is inconsistent&quot;);</span>
+            }
+
+            /* DataSet version is now zero */
+<span class="nc" id="L78">            myData.setVersion(0);</span>
+
+            /* Derive new update list */
+<span class="nc" id="L81">            theControl.deriveUpdates();</span>
+
+            /* State that we have completed */
+<span class="nc" id="L84">            pManager.setCompletion();</span>
+
+            /* Return null */
+<span class="nc" id="L87">            return null;</span>
+
+            /* Make sure that the database is closed */
+        } finally {
+            /* Close the database */
+<span class="nc" id="L92">            myDatabase.close();</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

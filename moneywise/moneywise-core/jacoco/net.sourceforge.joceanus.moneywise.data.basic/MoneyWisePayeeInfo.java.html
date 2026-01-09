@@ -1,0 +1,373 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWisePayeeInfo.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.data.basic</a> &gt; <span class="el_source">MoneyWisePayeeInfo.java</span></div><h1>MoneyWisePayeeInfo.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.data.basic;
+
+import net.sourceforge.joceanus.metis.data.MetisDataDifference;
+import net.sourceforge.joceanus.metis.data.MetisDataResource;
+import net.sourceforge.joceanus.metis.field.MetisFieldSet;
+import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee.MoneyWisePayeeList;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoClass;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoType;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoType.MoneyWiseAccountInfoTypeList;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoClass;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoItem;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
+import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataItem;
+import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+
+/**
+ * Representation of an information extension of a payee.
+ * @author Tony Washer
+ */
+public class MoneyWisePayeeInfo
+        extends PrometheusDataInfoItem {
+    /**
+     * Object name.
+     */
+<span class="fc" id="L46">    public static final String OBJECT_NAME = MoneyWiseBasicDataType.PAYEEINFO.getItemName();</span>
+
+    /**
+     * List name.
+     */
+<span class="fc" id="L51">    public static final String LIST_NAME = MoneyWiseBasicDataType.PAYEEINFO.getListName();</span>
+
+    /**
+     * Local Report fields.
+     */
+<span class="fc" id="L56">    private static final MetisFieldSet&lt;MoneyWisePayeeInfo&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWisePayeeInfo.class);</span>
+
+    /**
+     * Copy Constructor.
+     * @param pList the list
+     * @param pInfo The Info to copy
+     */
+    protected MoneyWisePayeeInfo(final MoneyWisePayeeInfoList pList,
+                                 final MoneyWisePayeeInfo pInfo) {
+        /* Set standard values */
+<span class="nc" id="L66">        super(pList, pInfo);</span>
+<span class="nc" id="L67">    }</span>
+
+    /**
+     * Edit Constructor.
+     * @param pList the list
+     * @param pPayee the payee
+     * @param pType the type
+     */
+    private MoneyWisePayeeInfo(final MoneyWisePayeeInfoList pList,
+                               final MoneyWisePayee pPayee,
+                               final MoneyWiseAccountInfoType pType) {
+        /* Initialise the item */
+<span class="nc" id="L79">        super(pList);</span>
+<span class="nc" id="L80">        setNextDataKeySet();</span>
+
+        /* Record the Detail */
+<span class="nc" id="L83">        setValueInfoType(pType);</span>
+<span class="nc" id="L84">        setValueOwner(pPayee);</span>
+<span class="nc" id="L85">    }</span>
+
+    /**
+     * Values constructor.
+     * @param pList the List to add to
+     * @param pValues the values constructor
+     * @throws OceanusException on error
+     */
+    private MoneyWisePayeeInfo(final MoneyWisePayeeInfoList pList,
+                               final PrometheusDataValues pValues) throws OceanusException {
+        /* Initialise the item */
+<span class="nc" id="L96">        super(pList, pValues);</span>
+
+        /* Protect against exceptions */
+        try {
+            /* Resolve links */
+<span class="nc" id="L101">            final MoneyWiseDataSet myData = getDataSet();</span>
+<span class="nc" id="L102">            resolveDataLink(PrometheusDataResource.DATAINFO_TYPE, myData.getActInfoTypes());</span>
+<span class="nc" id="L103">            resolveDataLink(PrometheusDataResource.DATAINFO_OWNER, myData.getPayees());</span>
+
+            /* Set the value */
+<span class="nc" id="L106">            setValue(pValues.getValue(PrometheusDataResource.DATAINFO_VALUE));</span>
+
+            /* Access the PayeeInfoSet and register this data */
+<span class="nc" id="L109">            final MoneyWisePayeeInfoSet mySet = getOwner().getInfoSet();</span>
+<span class="nc" id="L110">            mySet.registerInfo(this);</span>
+
+<span class="nc" id="L112">        } catch (OceanusException e) {</span>
+            /* Pass on exception */
+<span class="nc" id="L114">            throw new MoneyWiseDataException(this, ERROR_CREATEITEM, e);</span>
+<span class="nc" id="L115">        }</span>
+<span class="nc" id="L116">    }</span>
+
+    @Override
+    public MetisFieldSetDef getDataFieldSet() {
+<span class="nc" id="L120">        return FIELD_DEFS;</span>
+    }
+
+    @Override
+    public MoneyWiseAccountInfoType getInfoType() {
+<span class="nc" id="L125">        return getValues().getValue(PrometheusDataResource.DATAINFO_TYPE, MoneyWiseAccountInfoType.class);</span>
+    }
+
+    @Override
+    public MoneyWiseAccountInfoClass getInfoClass() {
+<span class="nc" id="L130">        return getInfoType().getInfoClass();</span>
+    }
+
+    @Override
+    public MoneyWisePayee getOwner() {
+<span class="nc" id="L135">        return getValues().getValue(PrometheusDataResource.DATAINFO_OWNER, MoneyWisePayee.class);</span>
+    }
+
+    @Override
+    public MoneyWiseDataSet getDataSet() {
+<span class="nc" id="L140">        return (MoneyWiseDataSet) super.getDataSet();</span>
+    }
+
+    @Override
+    public MoneyWisePayeeInfo getBase() {
+<span class="nc" id="L145">        return (MoneyWisePayeeInfo) super.getBase();</span>
+    }
+
+    @Override
+    public MoneyWisePayeeInfoList getList() {
+<span class="nc" id="L150">        return (MoneyWisePayeeInfoList) super.getList();</span>
+    }
+
+    @Override
+    public void deRegister() {
+        /* Access the PayeeInfoSet and register this value */
+<span class="nc" id="L156">        final MoneyWisePayeeInfoSet mySet = getOwner().getInfoSet();</span>
+<span class="nc" id="L157">        mySet.deRegisterInfo(this);</span>
+<span class="nc" id="L158">    }</span>
+
+    @Override
+    public void resolveDataSetLinks() throws OceanusException {
+        /* Update the Encryption details */
+<span class="nc" id="L163">        super.resolveDataSetLinks();</span>
+
+        /* Resolve data links */
+<span class="nc" id="L166">        final MoneyWiseDataSet myData = getDataSet();</span>
+<span class="nc" id="L167">        resolveDataLink(PrometheusDataResource.DATAINFO_TYPE, myData.getActInfoTypes());</span>
+<span class="nc" id="L168">        resolveDataLink(PrometheusDataResource.DATAINFO_OWNER, myData.getPayees());</span>
+
+        /* Access the PayeeInfoSet and register this data */
+<span class="nc" id="L171">        final MoneyWisePayeeInfoSet mySet = getOwner().getInfoSet();</span>
+<span class="nc" id="L172">        mySet.registerInfo(this);</span>
+<span class="nc" id="L173">    }</span>
+
+    /**
+     * Resolve editSet links.
+     * @param pEditSet the editSet
+     * @throws OceanusException on error
+     */
+    public void resolveEditSetLinks(final PrometheusEditSet pEditSet) throws OceanusException {
+        /* Resolve data links */
+<span class="nc" id="L182">        resolveDataLink(PrometheusDataResource.DATAINFO_TYPE, pEditSet.getDataList(MoneyWiseStaticDataType.ACCOUNTINFOTYPE, MoneyWiseAccountInfoTypeList.class));</span>
+<span class="nc" id="L183">        resolveDataLink(PrometheusDataResource.DATAINFO_OWNER, pEditSet.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class));</span>
+<span class="nc" id="L184">    }</span>
+
+    /**
+     * Update payeeInfo from a payeeInfo extract.
+     * @param pInfo the changed payeeInfo
+     * @return whether changes have been made
+     */
+    @Override
+    public boolean applyChanges(final PrometheusDataItem pInfo) {
+        /* Can only update from PayeeInfo */
+<span class="nc bnc" id="L194" title="All 2 branches missed.">        if (!(pInfo instanceof MoneyWisePayeeInfo)) {</span>
+<span class="nc" id="L195">            return false;</span>
+        }
+
+        /* Access as PayeeInfo */
+<span class="nc" id="L199">        final MoneyWisePayeeInfo myPayeeInfo = (MoneyWisePayeeInfo) pInfo;</span>
+
+        /* Store the current detail into history */
+<span class="nc" id="L202">        pushHistory();</span>
+
+        /* Update the value if required */
+<span class="nc bnc" id="L205" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getField(), myPayeeInfo.getField())) {</span>
+<span class="nc" id="L206">            setValueValue(myPayeeInfo.getField());</span>
+        }
+
+        /* Check for changes */
+<span class="nc" id="L210">        return checkForHistory();</span>
+    }
+
+    /**
+     * PayeeInfoList.
+     */
+    public static class MoneyWisePayeeInfoList
+            extends PrometheusDataInfoList&lt;MoneyWisePayeeInfo&gt; {
+        /**
+         * Report fields.
+         */
+<span class="fc" id="L221">        private static final MetisFieldSet&lt;MoneyWisePayeeInfoList&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWisePayeeInfoList.class);</span>
+
+        /**
+         * Construct an empty CORE info list.
+         * @param pData the DataSet for the list
+         */
+        protected MoneyWisePayeeInfoList(final MoneyWiseDataSet pData) {
+<span class="fc" id="L228">            super(MoneyWisePayeeInfo.class, pData, MoneyWiseBasicDataType.PAYEEINFO, PrometheusListStyle.CORE);</span>
+<span class="fc" id="L229">        }</span>
+
+        /**
+         * Constructor for a cloned List.
+         * @param pSource the source List
+         */
+        private MoneyWisePayeeInfoList(final MoneyWisePayeeInfoList pSource) {
+<span class="fc" id="L236">            super(pSource);</span>
+<span class="fc" id="L237">        }</span>
+
+        @Override
+        public MetisFieldSet&lt;MoneyWisePayeeInfoList&gt; getDataFieldSet() {
+<span class="nc" id="L241">            return FIELD_DEFS;</span>
+        }
+
+        @Override
+        public String listName() {
+<span class="fc" id="L246">            return LIST_NAME;</span>
+        }
+
+        @Override
+        public MetisFieldSetDef getItemFields() {
+<span class="nc" id="L251">            return MoneyWisePayeeInfo.FIELD_DEFS;</span>
+        }
+
+        @Override
+        public MoneyWiseDataSet getDataSet() {
+<span class="fc" id="L256">            return (MoneyWiseDataSet) super.getDataSet();</span>
+        }
+
+        /**
+         * Set base list for Edit InfoList.
+         * @param pBase the base list
+         */
+        protected void setBase(final MoneyWisePayeeInfoList pBase) {
+            /* Set the style and base */
+<span class="nc" id="L265">            setStyle(PrometheusListStyle.EDIT);</span>
+<span class="nc" id="L266">            super.setBase(pBase);</span>
+<span class="nc" id="L267">        }</span>
+
+        @Override
+        protected MoneyWisePayeeInfoList getEmptyList(final PrometheusListStyle pStyle) {
+<span class="fc" id="L271">            final MoneyWisePayeeInfoList myList = new MoneyWisePayeeInfoList(this);</span>
+<span class="fc" id="L272">            myList.setStyle(pStyle);</span>
+<span class="fc" id="L273">            return myList;</span>
+        }
+
+        @Override
+        public MoneyWisePayeeInfo addCopyItem(final PrometheusDataItem pItem) {
+            /* Can only clone a PayeeInfo */
+<span class="nc bnc" id="L279" title="All 2 branches missed.">            if (!(pItem instanceof MoneyWisePayeeInfo)) {</span>
+<span class="nc" id="L280">                throw new UnsupportedOperationException();</span>
+            }
+
+<span class="nc" id="L283">            final MoneyWisePayeeInfo myInfo = new MoneyWisePayeeInfo(this, (MoneyWisePayeeInfo) pItem);</span>
+<span class="nc" id="L284">            add(myInfo);</span>
+<span class="nc" id="L285">            return myInfo;</span>
+        }
+
+        @Override
+        public MoneyWisePayeeInfo addNewItem() {
+<span class="nc" id="L290">            throw new UnsupportedOperationException();</span>
+        }
+
+        @Override
+        protected MoneyWisePayeeInfo addNewItem(final PrometheusDataItem pOwner,
+                                                final PrometheusStaticDataItem pInfoType) {
+            /* Allocate the new entry and add to list */
+<span class="nc" id="L297">            final MoneyWisePayeeInfo myInfo = new MoneyWisePayeeInfo(this, (MoneyWisePayee) pOwner, (MoneyWiseAccountInfoType) pInfoType);</span>
+<span class="nc" id="L298">            add(myInfo);</span>
+
+            /* return it */
+<span class="nc" id="L301">            return myInfo;</span>
+        }
+
+        @Override
+        public void addInfoItem(final Integer pId,
+                                final PrometheusDataItem pPayee,
+                                final PrometheusDataInfoClass pInfoClass,
+                                final Object pValue) throws OceanusException {
+            /* Ignore item if it is null */
+<span class="nc bnc" id="L310" title="All 2 branches missed.">            if (pValue == null) {</span>
+<span class="nc" id="L311">                return;</span>
+            }
+
+            /* Access the data set */
+<span class="nc" id="L315">            final MoneyWiseDataSet myData = getDataSet();</span>
+
+            /* Look up the Info Type */
+<span class="nc" id="L318">            final MoneyWiseAccountInfoType myInfoType = myData.getActInfoTypes().findItemByClass(pInfoClass);</span>
+<span class="nc bnc" id="L319" title="All 2 branches missed.">            if (myInfoType == null) {</span>
+<span class="nc" id="L320">                throw new MoneyWiseDataException(pPayee, ERROR_BADINFOCLASS + &quot; [&quot; + pInfoClass + &quot;]&quot;);</span>
+            }
+
+            /* Create the values */
+<span class="nc" id="L324">            final PrometheusDataValues myValues = new PrometheusDataValues(OBJECT_NAME);</span>
+<span class="nc" id="L325">            myValues.addValue(MetisDataResource.DATA_ID, pId);</span>
+<span class="nc" id="L326">            myValues.addValue(PrometheusDataResource.DATAINFO_TYPE, myInfoType);</span>
+<span class="nc" id="L327">            myValues.addValue(PrometheusDataResource.DATAINFO_OWNER, pPayee);</span>
+<span class="nc" id="L328">            myValues.addValue(PrometheusDataResource.DATAINFO_VALUE, pValue);</span>
+
+            /* Create a new Payee Info */
+<span class="nc" id="L331">            final MoneyWisePayeeInfo myInfo = new MoneyWisePayeeInfo(this, myValues);</span>
+
+            /* Check that this InfoTypeId has not been previously added */
+<span class="nc bnc" id="L334" title="All 2 branches missed.">            if (!isIdUnique(pId)) {</span>
+<span class="nc" id="L335">                myInfo.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
+<span class="nc" id="L336">                throw new MoneyWiseDataException(myInfo, ERROR_VALIDATION);</span>
+            }
+
+            /* Add the Info to the list */
+<span class="nc" id="L340">            add(myInfo);</span>
+<span class="nc" id="L341">        }</span>
+
+        @Override
+        public MoneyWisePayeeInfo addValuesItem(final PrometheusDataValues pValues) throws OceanusException {
+            /* Create the info */
+<span class="nc" id="L346">            final MoneyWisePayeeInfo myInfo = new MoneyWisePayeeInfo(this, pValues);</span>
+
+            /* Check that this InfoId has not been previously added */
+<span class="nc bnc" id="L349" title="All 2 branches missed.">            if (!isIdUnique(myInfo.getIndexedId())) {</span>
+<span class="nc" id="L350">                myInfo.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
+<span class="nc" id="L351">                throw new MoneyWiseDataException(myInfo, ERROR_VALIDATION);</span>
+            }
+
+            /* Add to the list */
+<span class="nc" id="L355">            add(myInfo);</span>
+
+            /* Return it */
+<span class="nc" id="L358">            return myInfo;</span>
+        }
+
+        @Override
+        public void postProcessOnLoad() throws OceanusException {
+            /* Validate the PayeeInfo */
+<span class="fc" id="L364">            validateOnLoad();</span>
+
+            /* Map and Validate the Payees */
+<span class="fc" id="L367">            final MoneyWisePayeeList myPayees = getDataSet().getPayees();</span>
+<span class="fc" id="L368">            myPayees.mapData();</span>
+<span class="fc" id="L369">            myPayees.validateOnLoad();</span>
+<span class="fc" id="L370">        }</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

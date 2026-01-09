@@ -1,0 +1,453 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OceanusDataFormatter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Oceanus Java Core Utilities</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.oceanus.format</a> &gt; <span class="el_source">OceanusDataFormatter.java</span></div><h1>OceanusDataFormatter.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Oceanus: Java Utilities
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.oceanus.format;
+
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusLocale;
+import net.sourceforge.joceanus.oceanus.convert.OceanusDataConverter;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateFormatter;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimalFormatter;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimalParser;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
+import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+/**
+ * Data Formatter.
+ */
+public class OceanusDataFormatter {
+    /**
+     * Formatter extension.
+     */
+    public interface OceanusDataFormatterExtension {
+        /**
+         * Format an object value.
+         * @param pValue the object to format
+         * @return the formatted value (or null if not recognised)
+         */
+        String formatObject(Object pValue);
+    }
+
+    /**
+     * Invalid class error.
+     */
+    private static final String ERROR_CLASS = &quot;Invalid Class: &quot;;
+
+    /**
+     * Date Formatter.
+     */
+    private final OceanusDateFormatter theDateFormatter;
+
+    /**
+     * Decimal Formatter.
+     */
+    private final OceanusDecimalFormatter theDecimalFormatter;
+
+    /**
+     * Date Formatter.
+     */
+    private final OceanusDecimalParser theDecimalParser;
+
+    /**
+     * Extensions.
+     */
+    private final List&lt;OceanusDataFormatterExtension&gt; theExtensions;
+
+    /**
+     * Constructor.
+     */
+    public OceanusDataFormatter() {
+<span class="nc" id="L90">        this(OceanusLocale.getDefaultLocale());</span>
+<span class="nc" id="L91">    }</span>
+
+    /**
+     * Constructor.
+     * @param pLocale the locale
+     */
+<span class="nc" id="L97">    public OceanusDataFormatter(final Locale pLocale) {</span>
+<span class="nc" id="L98">        theDateFormatter = new OceanusDateFormatter(pLocale);</span>
+<span class="nc" id="L99">        theDecimalFormatter = new OceanusDecimalFormatter(pLocale);</span>
+<span class="nc" id="L100">        theDecimalParser = new OceanusDecimalParser(pLocale);</span>
+<span class="nc" id="L101">        theExtensions = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L102">    }</span>
+
+    /**
+     * Obtain the date formatter.
+     * @return the formatter
+     */
+    public OceanusDateFormatter getDateFormatter() {
+<span class="nc" id="L109">        return theDateFormatter;</span>
+    }
+
+    /**
+     * Obtain the decimal formatter.
+     * @return the formatter
+     */
+    public OceanusDecimalFormatter getDecimalFormatter() {
+<span class="nc" id="L117">        return theDecimalFormatter;</span>
+    }
+
+    /**
+     * Obtain the decimal parser.
+     * @return the parser
+     */
+    public OceanusDecimalParser getDecimalParser() {
+<span class="nc" id="L125">        return theDecimalParser;</span>
+    }
+
+    /**
+     * Extend the formatter.
+     * @param pExtension the extension
+     */
+    public void extendFormatter(final OceanusDataFormatterExtension pExtension) {
+<span class="nc" id="L133">        theExtensions.add(pExtension);</span>
+<span class="nc" id="L134">    }</span>
+
+    /**
+     * Set accounting width.
+     * @param pWidth the accounting width to use
+     */
+    public void setAccountingWidth(final int pWidth) {
+        /* Set accounting width on decimal formatter */
+<span class="nc" id="L142">        theDecimalFormatter.setAccountingWidth(pWidth);</span>
+<span class="nc" id="L143">    }</span>
+
+    /**
+     * Clear accounting mode.
+     */
+    public void clearAccounting() {
+        /* Clear the accounting mode flag */
+<span class="nc" id="L150">        theDecimalFormatter.clearAccounting();</span>
+<span class="nc" id="L151">    }</span>
+
+    /**
+     * Set the date format.
+     * @param pFormat the format string
+     */
+    public final void setFormat(final String pFormat) {
+        /* Tell the formatters about the format */
+<span class="nc" id="L159">        theDateFormatter.setFormat(pFormat);</span>
+<span class="nc" id="L160">    }</span>
+
+    /**
+     * Set the locale.
+     * @param pLocale the locale
+     */
+    public final void setLocale(final Locale pLocale) {
+        /* Tell the formatters about the locale */
+<span class="nc" id="L168">        theDateFormatter.setLocale(pLocale);</span>
+<span class="nc" id="L169">        theDecimalFormatter.setLocale(pLocale);</span>
+<span class="nc" id="L170">        theDecimalParser.setLocale(pLocale);</span>
+<span class="nc" id="L171">    }</span>
+
+    /**
+     * Obtain the locale.
+     * @return the locale
+     */
+    public Locale getLocale() {
+        /* Obtain locale from date formatter */
+<span class="nc" id="L179">        return theDateFormatter.getLocale();</span>
+    }
+
+    /**
+     * Format an object value.
+     * @param pValue the object to format
+     * @return the formatted value
+     */
+    public String formatObject(final Object pValue) {
+        /* Handle null value */
+<span class="nc bnc" id="L189" title="All 2 branches missed.">        if (pValue == null) {</span>
+<span class="nc" id="L190">            return null;</span>
+        }
+
+        /* Loop through extensions */
+<span class="nc bnc" id="L194" title="All 2 branches missed.">        for (OceanusDataFormatterExtension myExtension : theExtensions) {</span>
+<span class="nc" id="L195">            final String myResult = myExtension.formatObject(pValue);</span>
+<span class="nc bnc" id="L196" title="All 2 branches missed.">            if (myResult != null) {</span>
+<span class="nc" id="L197">                return myResult;</span>
+            }
+<span class="nc" id="L199">        }</span>
+
+        /* Access the class */
+<span class="nc" id="L202">        final Class&lt;?&gt; myClass = pValue.getClass();</span>
+
+        /* Handle Native classes */
+<span class="nc bnc" id="L205" title="All 2 branches missed.">        if (pValue instanceof String s) {</span>
+<span class="nc" id="L206">            return s;</span>
+        }
+<span class="nc bnc" id="L208" title="All 2 branches missed.">        if (pValue instanceof Boolean) {</span>
+<span class="nc bnc" id="L209" title="All 2 branches missed.">            return Boolean.TRUE.equals(pValue)</span>
+<span class="nc" id="L210">                    ? &quot;true&quot;</span>
+<span class="nc" id="L211">                    : &quot;false&quot;;</span>
+        }
+<span class="nc bnc" id="L213" title="All 6 branches missed.">        if (pValue instanceof Short</span>
+                || pValue instanceof Integer
+                || pValue instanceof Long) {
+<span class="nc" id="L216">            return pValue.toString();</span>
+        }
+<span class="nc bnc" id="L218" title="All 4 branches missed.">        if (pValue instanceof Float</span>
+                || pValue instanceof Double) {
+<span class="nc" id="L220">            return pValue.toString();</span>
+        }
+<span class="nc bnc" id="L222" title="All 4 branches missed.">        if (pValue instanceof BigInteger</span>
+                || pValue instanceof BigDecimal) {
+<span class="nc" id="L224">            return pValue.toString();</span>
+        }
+
+        /* Handle Enumerated classes */
+<span class="nc bnc" id="L228" title="All 2 branches missed.">        if (pValue instanceof Enum) {</span>
+<span class="nc" id="L229">            return pValue.toString();</span>
+        }
+
+        /* Handle Class */
+<span class="nc bnc" id="L233" title="All 2 branches missed.">        if (pValue instanceof Class&lt;?&gt; myClazz) {</span>
+<span class="nc" id="L234">            return myClazz.getCanonicalName();</span>
+        }
+
+        /* Handle Native array classes */
+<span class="nc bnc" id="L238" title="All 2 branches missed.">        if (pValue instanceof byte[] ba) {</span>
+<span class="nc" id="L239">            return OceanusDataConverter.bytesToHexString(ba);</span>
+        }
+<span class="nc bnc" id="L241" title="All 2 branches missed.">        if (pValue instanceof char[] ca) {</span>
+<span class="nc" id="L242">            return new String(ca);</span>
+        }
+
+        /* Handle date classes */
+<span class="nc bnc" id="L246" title="All 2 branches missed.">        if (pValue instanceof Calendar myCal) {</span>
+<span class="nc" id="L247">            return theDateFormatter.formatCalendarDay(myCal);</span>
+        }
+<span class="nc bnc" id="L249" title="All 2 branches missed.">        if (pValue instanceof Date myDate) {</span>
+<span class="nc" id="L250">            return theDateFormatter.formatJavaDate(myDate);</span>
+        }
+<span class="nc bnc" id="L252" title="All 2 branches missed.">        if (pValue instanceof LocalDate myDate) {</span>
+<span class="nc" id="L253">            return theDateFormatter.formatLocalDate(myDate);</span>
+        }
+<span class="nc bnc" id="L255" title="All 2 branches missed.">        if (pValue instanceof OceanusDate myDate) {</span>
+<span class="nc" id="L256">            return theDateFormatter.formatDate(myDate);</span>
+        }
+<span class="nc bnc" id="L258" title="All 2 branches missed.">        if (pValue instanceof OceanusDateRange myRange) {</span>
+<span class="nc" id="L259">            return theDateFormatter.formatDateRange(myRange);</span>
+        }
+
+        /* Handle decimal classes */
+<span class="nc bnc" id="L263" title="All 2 branches missed.">        if (pValue instanceof OceanusDecimal myDecimal) {</span>
+<span class="nc" id="L264">            return theDecimalFormatter.formatDecimal(myDecimal);</span>
+        }
+
+        /* Handle TethysProfile */
+<span class="nc bnc" id="L268" title="All 2 branches missed.">        if (pValue instanceof OceanusProfile myProfile) {</span>
+            /* Format the profile */
+<span class="nc" id="L270">            return myProfile.getName()</span>
+                    + &quot;: &quot;
+<span class="nc bnc" id="L272" title="All 2 branches missed.">                    + (myProfile.isRunning()</span>
+<span class="nc" id="L273">                    ? myProfile.getStatus()</span>
+<span class="nc" id="L274">                    : myProfile.getElapsed());</span>
+        }
+
+        /* Handle OceanusExceptions */
+<span class="nc bnc" id="L278" title="All 2 branches missed.">        if (pValue instanceof OceanusException) {</span>
+<span class="nc" id="L279">            return myClass.getSimpleName();</span>
+        }
+
+        /* Standard format option */
+<span class="nc" id="L283">        return formatBasicValue(pValue);</span>
+    }
+
+    /**
+     * Parse object value.
+     * @param &lt;T&gt; the value type
+     * @param pSource the source value
+     * @param pClazz the value type class
+     * @return the formatted value
+     * @throws IllegalArgumentException on bad Date/Decimal format
+     * @throws NumberFormatException on bad Integer format
+     */
+    public &lt;T&gt; T parseValue(final String pSource,
+                            final Class&lt;T&gt; pClazz) {
+<span class="nc bnc" id="L297" title="All 2 branches missed.">        if (Boolean.class.equals(pClazz)) {</span>
+<span class="nc" id="L298">            return pClazz.cast(Boolean.parseBoolean(pSource));</span>
+        }
+<span class="nc bnc" id="L300" title="All 2 branches missed.">        if (Short.class.equals(pClazz)) {</span>
+<span class="nc" id="L301">            return pClazz.cast(Short.parseShort(pSource));</span>
+        }
+<span class="nc bnc" id="L303" title="All 2 branches missed.">        if (Integer.class.equals(pClazz)) {</span>
+<span class="nc" id="L304">            return pClazz.cast(Integer.parseInt(pSource));</span>
+        }
+<span class="nc bnc" id="L306" title="All 2 branches missed.">        if (Long.class.equals(pClazz)) {</span>
+<span class="nc" id="L307">            return pClazz.cast(Long.parseLong(pSource));</span>
+        }
+<span class="nc bnc" id="L309" title="All 2 branches missed.">        if (Float.class.equals(pClazz)) {</span>
+<span class="nc" id="L310">            return pClazz.cast(Float.parseFloat(pSource));</span>
+        }
+<span class="nc bnc" id="L312" title="All 2 branches missed.">        if (Double.class.equals(pClazz)) {</span>
+<span class="nc" id="L313">            return pClazz.cast(Double.parseDouble(pSource));</span>
+        }
+<span class="nc bnc" id="L315" title="All 2 branches missed.">        if (BigInteger.class.equals(pClazz)) {</span>
+<span class="nc" id="L316">            return pClazz.cast(new BigInteger(pSource));</span>
+        }
+<span class="nc bnc" id="L318" title="All 2 branches missed.">        if (BigDecimal.class.equals(pClazz)) {</span>
+<span class="nc" id="L319">            return pClazz.cast(new BigDecimal(pSource));</span>
+        }
+<span class="nc bnc" id="L321" title="All 2 branches missed.">        if (Date.class.equals(pClazz)) {</span>
+            /* Parse the date */
+<span class="nc" id="L323">            return pClazz.cast(theDateFormatter.parseJavaDate(pSource));</span>
+        }
+<span class="nc bnc" id="L325" title="All 2 branches missed.">        if (OceanusDate.class.equals(pClazz)) {</span>
+            /* Parse the date */
+<span class="nc" id="L327">            return pClazz.cast(theDateFormatter.parseDate(pSource));</span>
+        }
+<span class="nc bnc" id="L329" title="All 2 branches missed.">        if (Calendar.class.equals(pClazz)) {</span>
+            /* Parse the date */
+<span class="nc" id="L331">            return pClazz.cast(theDateFormatter.parseCalendarDay(pSource));</span>
+        }
+<span class="nc bnc" id="L333" title="All 2 branches missed.">        if (LocalDate.class.equals(pClazz)) {</span>
+            /* Parse the date */
+<span class="nc" id="L335">            return pClazz.cast(theDateFormatter.parseLocalDate(pSource));</span>
+        }
+<span class="nc bnc" id="L337" title="All 2 branches missed.">        if (OceanusPrice.class.equals(pClazz)) {</span>
+            /* Parse the price */
+<span class="nc" id="L339">            return pClazz.cast(theDecimalParser.parsePriceValue(pSource));</span>
+        }
+<span class="nc bnc" id="L341" title="All 2 branches missed.">        if (OceanusMoney.class.equals(pClazz)) {</span>
+            /* Parse the money */
+<span class="nc" id="L343">            return pClazz.cast(theDecimalParser.parseMoneyValue(pSource));</span>
+        }
+<span class="nc bnc" id="L345" title="All 2 branches missed.">        if (OceanusRate.class.equals(pClazz)) {</span>
+            /* Parse the rate */
+<span class="nc" id="L347">            return pClazz.cast(theDecimalParser.parseRateValue(pSource));</span>
+        }
+<span class="nc bnc" id="L349" title="All 2 branches missed.">        if (OceanusUnits.class.equals(pClazz)) {</span>
+            /* Parse the units */
+<span class="nc" id="L351">            return pClazz.cast(theDecimalParser.parseUnitsValue(pSource));</span>
+        }
+<span class="nc bnc" id="L353" title="All 2 branches missed.">        if (OceanusRatio.class.equals(pClazz)) {</span>
+            /* Parse the dilution */
+<span class="nc" id="L355">            return pClazz.cast(theDecimalParser.parseRatioValue(pSource));</span>
+        }
+<span class="nc" id="L357">        throw new IllegalArgumentException(ERROR_CLASS + pClazz.getSimpleName());</span>
+    }
+
+    /**
+     * Parse object value.
+     * @param &lt;T&gt; the value type
+     * @param pSource the source value
+     * @param pClazz the value type class
+     * @return the formatted value
+     * @throws IllegalArgumentException on bad TethysDecimal format
+     */
+    public &lt;T&gt; T parseValue(final Double pSource,
+                            final Class&lt;T&gt; pClazz) {
+<span class="nc bnc" id="L370" title="All 2 branches missed.">        if (OceanusPrice.class.equals(pClazz)) {</span>
+            /* Parse the price */
+<span class="nc" id="L372">            return pClazz.cast(theDecimalParser.createPriceFromDouble(pSource));</span>
+        }
+<span class="nc bnc" id="L374" title="All 2 branches missed.">        if (OceanusMoney.class.equals(pClazz)) {</span>
+            /* Parse the money */
+<span class="nc" id="L376">            return pClazz.cast(theDecimalParser.createMoneyFromDouble(pSource));</span>
+        }
+<span class="nc bnc" id="L378" title="All 2 branches missed.">        if (OceanusRate.class.equals(pClazz)) {</span>
+            /* Parse the rate */
+<span class="nc" id="L380">            return pClazz.cast(theDecimalParser.createRateFromDouble(pSource));</span>
+        }
+<span class="nc bnc" id="L382" title="All 2 branches missed.">        if (OceanusUnits.class.equals(pClazz)) {</span>
+            /* Parse the units */
+<span class="nc" id="L384">            return pClazz.cast(theDecimalParser.createUnitsFromDouble(pSource));</span>
+        }
+<span class="nc bnc" id="L386" title="All 2 branches missed.">        if (OceanusRatio.class.equals(pClazz)) {</span>
+            /* Parse the dilution */
+<span class="nc" id="L388">            return pClazz.cast(theDecimalParser.createRatioFromDouble(pSource));</span>
+        }
+<span class="nc" id="L390">        throw new IllegalArgumentException(ERROR_CLASS + pClazz.getSimpleName());</span>
+    }
+
+    /**
+     * Parse object value.
+     * @param &lt;T&gt; the value type
+     * @param pSource the source value
+     * @param pCurrCode the currency code
+     * @param pClazz the value type class
+     * @return the formatted value
+     * @throws IllegalArgumentException on bad TethysDecimal format
+     */
+    public &lt;T&gt; T parseValue(final Double pSource,
+                            final String pCurrCode,
+                            final Class&lt;T&gt; pClazz) {
+<span class="nc bnc" id="L405" title="All 2 branches missed.">        if (OceanusPrice.class.equals(pClazz)) {</span>
+            /* Parse the price */
+<span class="nc" id="L407">            return pClazz.cast(theDecimalParser.createPriceFromDouble(pSource, pCurrCode));</span>
+        }
+<span class="nc bnc" id="L409" title="All 2 branches missed.">        if (OceanusMoney.class.equals(pClazz)) {</span>
+            /* Parse the money */
+<span class="nc" id="L411">            return pClazz.cast(theDecimalParser.createMoneyFromDouble(pSource, pCurrCode));</span>
+        }
+<span class="nc" id="L413">        throw new IllegalArgumentException(ERROR_CLASS + pClazz.getSimpleName());</span>
+    }
+
+    /**
+     * Format basic object.
+     * @param pValue the object
+     * @return the formatted value
+     */
+    private static String formatBasicValue(final Object pValue) {
+        /* Access the class */
+<span class="nc" id="L423">        final Class&lt;?&gt; myClass = pValue.getClass();</span>
+
+        /* Create basic result */
+<span class="nc" id="L426">        final StringBuilder myBuilder = new StringBuilder();</span>
+<span class="nc" id="L427">        myBuilder.append(myClass.getCanonicalName());</span>
+
+        /* Handle list/map instances */
+<span class="nc bnc" id="L430" title="All 2 branches missed.">        if (pValue instanceof List&lt;?&gt; myList) {</span>
+<span class="nc" id="L431">            formatSize(myBuilder, myList.size());</span>
+<span class="nc bnc" id="L432" title="All 2 branches missed.">        } else if (pValue instanceof Map&lt;?, ?&gt; myMap) {</span>
+<span class="nc" id="L433">            formatSize(myBuilder, myMap.size());</span>
+        }
+
+        /* Return the value */
+<span class="nc" id="L437">        return myBuilder.toString();</span>
+    }
+
+    /**
+     * Format size.
+     * @param pBuilder the string builder
+     * @param pSize the size
+     */
+    private static void formatSize(final StringBuilder pBuilder,
+                                   final Object pSize) {
+        /* Append the size */
+<span class="nc" id="L448">        pBuilder.append('(');</span>
+<span class="nc" id="L449">        pBuilder.append(pSize);</span>
+<span class="nc" id="L450">        pBuilder.append(')');</span>
+<span class="nc" id="L451">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

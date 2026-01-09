@@ -1,0 +1,685 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JcaXAgreement.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.gordianknot.impl.jca</a> &gt; <span class="el_source">JcaXAgreement.java</span></div><h1>JcaXAgreement.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * GordianKnot: Security Suite
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.gordianknot.impl.jca;
+
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianKDFType;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
+import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeyType;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairType;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianNTRUPrimeSpec;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseData;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
+import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianPrivateKey;
+import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianPublicKey;
+import net.sourceforge.joceanus.gordianknot.impl.core.xagree.GordianXCoreAgreementEngine;
+import net.sourceforge.joceanus.gordianknot.impl.core.xagree.GordianXCoreAgreementFactory;
+import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPair.JcaPrivateKey;
+import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPair.JcaPublicKey;
+import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.asn1.x9.X9ObjectIdentifiers;
+import org.bouncycastle.jcajce.SecretKeyWithEncapsulation;
+import org.bouncycastle.jcajce.spec.DHUParameterSpec;
+import org.bouncycastle.jcajce.spec.KEMExtractSpec;
+import org.bouncycastle.jcajce.spec.KEMGenerateSpec;
+import org.bouncycastle.jcajce.spec.MQVParameterSpec;
+import org.bouncycastle.jcajce.spec.UserKeyingMaterialSpec;
+
+import javax.crypto.KeyAgreement;
+import javax.crypto.KeyGenerator;
+import javax.security.auth.DestroyFailedException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.Provider;
+import java.security.PublicKey;
+
+/**
+ * Agreement classes.
+ */
+public final class JcaXAgreement {
+    /**
+     * Failed agreement message.
+     */
+    private static final String ERR_AGREEMENT = &quot;Failed Agreement&quot;;
+
+    /**
+     * Private constructor.
+     */
+    private JcaXAgreement() {
+    }
+
+    /**
+     * Jca PostQuantum Agreement.
+     */
+    public static class JcaPostQuantumXEngine
+            extends JcaXAgreementBase {
+        /**
+         * Key Agreement.
+         */
+        private final KeyGenerator theGenerator;
+
+        /**
+         * Constructor.
+         * @param pFactory the security factory
+         * @param pSpec the agreementSpec
+         * @param pGenerator the generator
+         */
+        JcaPostQuantumXEngine(final GordianXCoreAgreementFactory pFactory,
+                              final GordianAgreementSpec pSpec,
+                              final KeyGenerator pGenerator) throws GordianException {
+            /* Initialize underlying class */
+<span class="nc" id="L92">            super(pFactory, pSpec);</span>
+
+            /* Store the generator */
+<span class="nc" id="L95">            theGenerator = pGenerator;</span>
+<span class="nc" id="L96">        }</span>
+
+        @Override
+        public void buildClientHello() throws GordianException {
+            /* Protect against exceptions */
+            try {
+                /* Create encapsulation */
+<span class="nc" id="L103">                final JcaPublicKey myPublic = (JcaPublicKey) getPublicKey(getServerKeyPair());</span>
+<span class="nc" id="L104">                final KEMGenerateSpec mySpec = new KEMGenerateSpec.Builder(myPublic.getPublicKey(),</span>
+<span class="nc" id="L105">                        GordianSymKeyType.AES.toString(), GordianLength.LEN_256.getLength()).withKdfAlgorithm(derivationAlgorithmId()).build();</span>
+<span class="nc" id="L106">                theGenerator.init(mySpec, getRandom());</span>
+<span class="nc" id="L107">                final SecretKeyWithEncapsulation mySecret = (SecretKeyWithEncapsulation) theGenerator.generateKey();</span>
+
+                /* Store the encapsulation */
+<span class="nc" id="L110">                setEncapsulated(mySecret.getEncapsulation());</span>
+
+                /* Store secret */
+<span class="nc" id="L113">                storeSecret(mySecret.getEncoded());</span>
+<span class="nc" id="L114">                mySecret.destroy();</span>
+
+<span class="nc" id="L116">            } catch (InvalidAlgorithmParameterException e) {</span>
+<span class="nc" id="L117">                throw new GordianCryptoException(ERR_AGREEMENT, e);</span>
+
+<span class="nc" id="L119">            } catch (DestroyFailedException e) {</span>
+<span class="nc" id="L120">                throw new GordianIOException(&quot;Failed to destroy secret&quot;, e);</span>
+<span class="nc" id="L121">            }</span>
+<span class="nc" id="L122">        }</span>
+
+        @Override
+        public void processClientHello() throws GordianException {
+            /* Protect against exceptions */
+            try {
+                /* Create extractor */
+<span class="nc" id="L129">                final JcaPrivateKey myPrivate = (JcaPrivateKey) getPrivateKey(getServerKeyPair());</span>
+<span class="nc" id="L130">                final KEMExtractSpec mySpec = new KEMExtractSpec.Builder(myPrivate.getPrivateKey(), getEncapsulated(),</span>
+<span class="nc" id="L131">                        GordianSymKeyType.AES.toString(), GordianLength.LEN_256.getLength()).withKdfAlgorithm(derivationAlgorithmId()).build();</span>
+<span class="nc" id="L132">                theGenerator.init(mySpec);</span>
+
+                /* Store secret */
+<span class="nc" id="L135">                final SecretKeyWithEncapsulation mySecret = (SecretKeyWithEncapsulation) theGenerator.generateKey();</span>
+<span class="nc" id="L136">                storeSecret(mySecret.getEncoded());</span>
+<span class="nc" id="L137">                mySecret.destroy();</span>
+
+<span class="nc" id="L139">            } catch (InvalidAlgorithmParameterException e) {</span>
+<span class="nc" id="L140">                throw new GordianCryptoException(ERR_AGREEMENT, e);</span>
+
+<span class="nc" id="L142">            } catch (DestroyFailedException e) {</span>
+<span class="nc" id="L143">                throw new GordianIOException(&quot;Failed to destroy secret&quot;, e);</span>
+<span class="nc" id="L144">            }</span>
+<span class="nc" id="L145">        }</span>
+    }
+
+    /**
+     * Jca NewHope Agreement.
+     */
+    public static class JcaNewHopeXEngine
+            extends JcaXAgreementBase {
+        /**
+         * Key Agreement.
+         */
+        private final KeyAgreement theAgreement;
+
+        /**
+         * Constructor.
+         * @param pFactory the security factory
+         * @param pSpec the agreementSpec
+         * @param pAgreement the agreement
+         */
+        JcaNewHopeXEngine(final GordianXCoreAgreementFactory pFactory,
+                          final GordianAgreementSpec pSpec,
+                          final KeyAgreement pAgreement) throws GordianException {
+            /* Initialize underlying class */
+<span class="nc" id="L168">            super(pFactory, pSpec);</span>
+
+            /* Store the agreement */
+<span class="nc" id="L171">            theAgreement = pAgreement;</span>
+<span class="nc" id="L172">        }</span>
+
+        @Override
+        public void buildClientHello() throws GordianException {
+            /* Protect against exceptions */
+            try {
+                /* Derive the secret */
+<span class="nc" id="L179">                theAgreement.init(null, getRandom());</span>
+<span class="nc" id="L180">                final JcaPublicKey myTarget = (JcaPublicKey) getPublicKey(getServerKeyPair());</span>
+<span class="nc" id="L181">                final PublicKey myKey = (PublicKey) theAgreement.doPhase(myTarget.getPublicKey(), true);</span>
+
+                /* Store the ephemeral */
+<span class="nc" id="L184">                final GordianKeyPairSpec mySpec = getSpec().getKeyPairSpec();</span>
+<span class="nc" id="L185">                final JcaPublicKey myPublic = new JcaPublicKey(mySpec, myKey);</span>
+<span class="nc" id="L186">                final JcaKeyPair myEphemeral = new JcaKeyPair(myPublic);</span>
+<span class="nc" id="L187">                setClientEphemeral(myEphemeral);</span>
+
+                /* Store secret */
+<span class="nc" id="L190">                storeSecret(theAgreement.generateSecret());</span>
+
+<span class="nc" id="L192">            } catch (InvalidKeyException e) {</span>
+<span class="nc" id="L193">                throw new GordianCryptoException(ERR_AGREEMENT, e);</span>
+<span class="nc" id="L194">            }</span>
+<span class="nc" id="L195">        }</span>
+
+        @Override
+        public void processClientHello() throws GordianException {
+            /* Protect against exceptions */
+            try {
+                /* Derive the secret */
+<span class="nc" id="L202">                final JcaPrivateKey myPrivate = (JcaPrivateKey) getPrivateKey(getServerKeyPair());</span>
+<span class="nc" id="L203">                final JcaPublicKey myPublic = (JcaPublicKey) getPublicKey(getClientEphemeral());</span>
+<span class="nc" id="L204">                theAgreement.init(myPrivate.getPrivateKey());</span>
+<span class="nc" id="L205">                theAgreement.doPhase(myPublic.getPublicKey(), true);</span>
+
+                /* Store secret */
+<span class="nc" id="L208">                storeSecret(theAgreement.generateSecret());</span>
+
+<span class="nc" id="L210">            } catch (InvalidKeyException e) {</span>
+<span class="nc" id="L211">                throw new GordianCryptoException(ERR_AGREEMENT, e);</span>
+<span class="nc" id="L212">            }</span>
+<span class="nc" id="L213">        }</span>
+    }
+
+    /**
+     * Jca Anonymous Agreement.
+     */
+    public static class JcaAnonXEngine
+            extends JcaXAgreementBase {
+        /**
+         * Key Agreement.
+         */
+        private KeyAgreement theAgreement;
+
+        /**
+         * Constructor.
+         * @param pFactory the security factory
+         * @param pSpec the agreementSpec
+         * @param pAgreement the agreement
+         */
+        JcaAnonXEngine(final GordianXCoreAgreementFactory pFactory,
+                       final GordianAgreementSpec pSpec,
+                       final KeyAgreement pAgreement) throws GordianException {
+            /* Initialize underlying class */
+<span class="nc" id="L236">            super(pFactory, pSpec);</span>
+
+            /* Store the agreement */
+<span class="nc" id="L239">            theAgreement = pAgreement;</span>
+<span class="nc" id="L240">        }</span>
+
+        @Override
+        public void buildClientHello() throws GordianException {
+            /* Protect against exceptions */
+            try {
+                /* Access keys */
+<span class="nc" id="L247">                final JcaPublicKey myPublic = (JcaPublicKey) getPublicKey(getServerKeyPair());</span>
+<span class="nc" id="L248">                final JcaPrivateKey myPrivate = (JcaPrivateKey) getPrivateKey(getClientEphemeral());</span>
+<span class="nc" id="L249">                theAgreement = adjustAgreement(theAgreement, getServerKeyPair());</span>
+
+                /* Derive the secret */
+<span class="nc" id="L252">                initAgreement(theAgreement, myPrivate);</span>
+<span class="nc" id="L253">                theAgreement.doPhase(myPublic.getPublicKey(), true);</span>
+<span class="nc" id="L254">                storeSecret(theAgreement.generateSecret());</span>
+
+<span class="nc" id="L256">            } catch (InvalidKeyException e) {</span>
+<span class="nc" id="L257">                throw new GordianCryptoException(ERR_AGREEMENT, e);</span>
+<span class="nc" id="L258">            }</span>
+<span class="nc" id="L259">        }</span>
+
+        @Override
+        public void processClientHello() throws GordianException {
+            /* Protect against exceptions */
+            try {
+                /* Access keys */
+<span class="nc" id="L266">                final JcaPublicKey myPublic = (JcaPublicKey) getPublicKey(getClientEphemeral());</span>
+<span class="nc" id="L267">                final JcaPrivateKey myPrivate = (JcaPrivateKey) getPrivateKey(getServerKeyPair());</span>
+<span class="nc" id="L268">                theAgreement = adjustAgreement(theAgreement, getServerKeyPair());</span>
+
+                /* Derive the secret */
+<span class="nc" id="L271">                initAgreement(theAgreement, myPrivate);</span>
+<span class="nc" id="L272">                theAgreement.doPhase(myPublic.getPublicKey(), true);</span>
+<span class="nc" id="L273">                storeSecret(theAgreement.generateSecret());</span>
+
+<span class="nc" id="L275">            } catch (InvalidKeyException e) {</span>
+<span class="nc" id="L276">                throw new GordianCryptoException(ERR_AGREEMENT, e);</span>
+<span class="nc" id="L277">            }</span>
+<span class="nc" id="L278">        }</span>
+    }
+
+    /**
+     * Jca Basic Agreement.
+     */
+    public static class JcaBasicXEngine
+            extends JcaXAgreementBase {
+        /**
+         * Key Agreement.
+         */
+        private KeyAgreement theAgreement;
+
+        /**
+         * Constructor.
+         * @param pFactory the security factory
+         * @param pSpec the agreementSpec
+         * @param pAgreement the agreement
+         */
+        JcaBasicXEngine(final GordianXCoreAgreementFactory pFactory,
+                        final GordianAgreementSpec pSpec,
+                        final KeyAgreement pAgreement) throws GordianException {
+            /* Initialize underlying class */
+<span class="nc" id="L301">            super(pFactory, pSpec);</span>
+
+            /* Store the agreement */
+<span class="nc" id="L304">            theAgreement = pAgreement;</span>
+<span class="nc" id="L305">        }</span>
+
+        @Override
+        public void processClientHello() throws GordianException {
+            /* Protect against exceptions */
+            try {
+                /* Access keys */
+<span class="nc" id="L312">                final JcaPublicKey myPublic = (JcaPublicKey) getPublicKey(getClientKeyPair());</span>
+<span class="nc" id="L313">                final JcaPrivateKey myPrivate = (JcaPrivateKey) getPrivateKey(getServerKeyPair());</span>
+<span class="nc" id="L314">                theAgreement = adjustAgreement(theAgreement, getServerKeyPair());</span>
+
+                /* Derive the secret */
+<span class="nc" id="L317">                initAgreement(theAgreement, myPrivate);</span>
+<span class="nc" id="L318">                theAgreement.doPhase(myPublic.getPublicKey(), true);</span>
+<span class="nc" id="L319">                storeSecret(theAgreement.generateSecret());</span>
+
+<span class="nc" id="L321">            } catch (InvalidKeyException e) {</span>
+<span class="nc" id="L322">                throw new GordianCryptoException(ERR_AGREEMENT, e);</span>
+<span class="nc" id="L323">            }</span>
+<span class="nc" id="L324">        }</span>
+
+        @Override
+        public void processServerHello() throws GordianException {
+            /* Protect against exceptions */
+            try {
+                /* Access keys */
+<span class="nc" id="L331">                final JcaPublicKey myPublic = (JcaPublicKey) getPublicKey(getServerKeyPair());</span>
+<span class="nc" id="L332">                final JcaPrivateKey myPrivate = (JcaPrivateKey) getPrivateKey(getClientKeyPair());</span>
+<span class="nc" id="L333">                theAgreement = adjustAgreement(theAgreement, getServerKeyPair());</span>
+
+                /* Derive the secret */
+<span class="nc" id="L336">                initAgreement(theAgreement, myPrivate);</span>
+<span class="nc" id="L337">                theAgreement.doPhase(myPublic.getPublicKey(), true);</span>
+<span class="nc" id="L338">                storeSecret(theAgreement.generateSecret());</span>
+
+<span class="nc" id="L340">            } catch (InvalidKeyException e) {</span>
+<span class="nc" id="L341">                throw new GordianCryptoException(ERR_AGREEMENT, e);</span>
+<span class="nc" id="L342">            }</span>
+<span class="nc" id="L343">        }</span>
+    }
+
+    /**
+     * Jca Unified Agreement.
+     */
+    public static class JcaUnifiedXEngine
+            extends JcaXAgreementBase {
+        /**
+         * Key Agreement.
+         */
+        private KeyAgreement theAgreement;
+
+        /**
+         * Constructor.
+         * @param pFactory the security factory
+         * @param pSpec the agreementSpec
+         * @param pAgreement the agreement
+         */
+        JcaUnifiedXEngine(final GordianXCoreAgreementFactory pFactory,
+                          final GordianAgreementSpec pSpec,
+                          final KeyAgreement pAgreement) throws GordianException {
+            /* Initialize underlying class */
+<span class="nc" id="L366">            super(pFactory, pSpec);</span>
+
+            /* Store the agreement */
+<span class="nc" id="L369">            theAgreement = pAgreement;</span>
+<span class="nc" id="L370">        }</span>
+
+        @Override
+        public void processClientHello() throws GordianException {
+            /* Protect against exceptions */
+            try {
+                /* Access keys */
+<span class="nc" id="L377">                final JcaPublicKey myClientPublic = (JcaPublicKey) getPublicKey(getClientKeyPair());</span>
+<span class="nc" id="L378">                final JcaPublicKey myClientEphPublic = (JcaPublicKey) getPublicKey(getClientEphemeral());</span>
+<span class="nc" id="L379">                final JcaPrivateKey myPrivate = (JcaPrivateKey) getPrivateKey(getServerKeyPair());</span>
+<span class="nc" id="L380">                final JcaPublicKey myEphPublic = (JcaPublicKey) getPublicKey(getServerEphemeral());</span>
+<span class="nc" id="L381">                final JcaPrivateKey myEphPrivate = (JcaPrivateKey) getPrivateKey(getServerEphemeral());</span>
+<span class="nc" id="L382">                theAgreement = adjustAgreement(theAgreement, getServerKeyPair());</span>
+
+                /* Derive the secret */
+<span class="nc" id="L385">                final DHUParameterSpec myParams = new DHUParameterSpec(myEphPublic.getPublicKey(),</span>
+<span class="nc" id="L386">                        myEphPrivate.getPrivateKey(), myClientEphPublic.getPublicKey(), new byte[0]);</span>
+<span class="nc" id="L387">                theAgreement.init(myPrivate.getPrivateKey(), myParams, getRandom());</span>
+<span class="nc" id="L388">                theAgreement.doPhase(myClientPublic.getPublicKey(), true);</span>
+<span class="nc" id="L389">                storeSecret(theAgreement.generateSecret());</span>
+
+<span class="nc" id="L391">            } catch (InvalidKeyException</span>
+                    | InvalidAlgorithmParameterException e) {
+<span class="nc" id="L393">                throw new GordianCryptoException(ERR_AGREEMENT, e);</span>
+<span class="nc" id="L394">            }</span>
+<span class="nc" id="L395">        }</span>
+
+        @Override
+        public void processServerHello() throws GordianException {
+            /* Protect against exceptions */
+            try {
+                /* Access keys */
+<span class="nc" id="L402">                final JcaPublicKey myServerPublic = (JcaPublicKey) getPublicKey(getServerKeyPair());</span>
+<span class="nc" id="L403">                final JcaPublicKey myServerEphPublic = (JcaPublicKey) getPublicKey(getServerEphemeral());</span>
+<span class="nc" id="L404">                final JcaPrivateKey myPrivate = (JcaPrivateKey) getPrivateKey(getClientKeyPair());</span>
+<span class="nc" id="L405">                final JcaPublicKey myEphPublic = (JcaPublicKey) getPublicKey(getClientEphemeral());</span>
+<span class="nc" id="L406">                final JcaPrivateKey myEphPrivate = (JcaPrivateKey) getPrivateKey(getClientEphemeral());</span>
+<span class="nc" id="L407">                theAgreement = adjustAgreement(theAgreement, getServerKeyPair());</span>
+
+                /* Derive the secret */
+<span class="nc" id="L410">                final DHUParameterSpec myParams = new DHUParameterSpec(myEphPublic.getPublicKey(),</span>
+<span class="nc" id="L411">                        myEphPrivate.getPrivateKey(), myServerEphPublic.getPublicKey(), new byte[0]);</span>
+<span class="nc" id="L412">                theAgreement.init(myPrivate.getPrivateKey(), myParams);</span>
+<span class="nc" id="L413">                theAgreement.doPhase(myServerPublic.getPublicKey(), true);</span>
+<span class="nc" id="L414">                storeSecret(theAgreement.generateSecret());</span>
+
+<span class="nc" id="L416">            } catch (InvalidKeyException</span>
+                    | InvalidAlgorithmParameterException e) {
+<span class="nc" id="L418">                throw new GordianCryptoException(ERR_AGREEMENT, e);</span>
+<span class="nc" id="L419">            }</span>
+<span class="nc" id="L420">        }</span>
+    }
+
+    /**
+     * Jca MQV Agreement.
+     */
+    public static class JcaMQVXEngine
+            extends JcaXAgreementBase {
+        /**
+         * Key Agreement.
+         */
+        private final KeyAgreement theAgreement;
+
+        /**
+         * Constructor.
+         * @param pFactory the security factory
+         * @param pSpec the agreementSpec
+         * @param pAgreement the agreement
+         */
+        JcaMQVXEngine(final GordianXCoreAgreementFactory pFactory,
+                      final GordianAgreementSpec pSpec,
+                      final KeyAgreement pAgreement) throws GordianException {
+            /* Initialize underlying class */
+<span class="nc" id="L443">            super(pFactory, pSpec);</span>
+
+            /* Store the agreement */
+<span class="nc" id="L446">            theAgreement = pAgreement;</span>
+<span class="nc" id="L447">        }</span>
+
+        @Override
+        public void processClientHello() throws GordianException {
+            /* Protect against exceptions */
+            try {
+                /* Access keys */
+<span class="nc" id="L454">                final JcaPublicKey myClientPublic = (JcaPublicKey) getPublicKey(getClientKeyPair());</span>
+<span class="nc" id="L455">                final JcaPublicKey myClientEphPublic = (JcaPublicKey) getPublicKey(getClientEphemeral());</span>
+<span class="nc" id="L456">                final JcaPrivateKey myPrivate = (JcaPrivateKey) getPrivateKey(getServerKeyPair());</span>
+<span class="nc" id="L457">                final JcaPublicKey myEphPublic = (JcaPublicKey) getPublicKey(getServerEphemeral());</span>
+<span class="nc" id="L458">                final JcaPrivateKey myEphPrivate = (JcaPrivateKey) getPrivateKey(getServerEphemeral());</span>
+
+                /* Derive the secret */
+<span class="nc" id="L461">                final MQVParameterSpec myParams = new MQVParameterSpec(myEphPublic.getPublicKey(),</span>
+<span class="nc" id="L462">                        myEphPrivate.getPrivateKey(), myClientEphPublic.getPublicKey(), new byte[0]);</span>
+<span class="nc" id="L463">                theAgreement.init(myPrivate.getPrivateKey(), myParams, getRandom());</span>
+<span class="nc" id="L464">                theAgreement.doPhase(myClientPublic.getPublicKey(), true);</span>
+<span class="nc" id="L465">                storeSecret(theAgreement.generateSecret());</span>
+
+<span class="nc" id="L467">            } catch (InvalidKeyException</span>
+                     | InvalidAlgorithmParameterException e) {
+<span class="nc" id="L469">                throw new GordianCryptoException(ERR_AGREEMENT, e);</span>
+<span class="nc" id="L470">            }</span>
+<span class="nc" id="L471">        }</span>
+
+        @Override
+        public void processServerHello() throws GordianException {
+            /* Protect against exceptions */
+            try {
+                /* Access keys */
+<span class="nc" id="L478">                final JcaPublicKey myServerPublic = (JcaPublicKey) getPublicKey(getServerKeyPair());</span>
+<span class="nc" id="L479">                final JcaPublicKey myServerEphPublic = (JcaPublicKey) getPublicKey(getServerEphemeral());</span>
+<span class="nc" id="L480">                final JcaPrivateKey myPrivate = (JcaPrivateKey) getPrivateKey(getClientKeyPair());</span>
+<span class="nc" id="L481">                final JcaPublicKey myEphPublic = (JcaPublicKey) getPublicKey(getClientEphemeral());</span>
+<span class="nc" id="L482">                final JcaPrivateKey myEphPrivate = (JcaPrivateKey) getPrivateKey(getClientEphemeral());</span>
+
+                /* Derive the secret */
+<span class="nc" id="L485">                final MQVParameterSpec myParams = new MQVParameterSpec(myEphPublic.getPublicKey(),</span>
+<span class="nc" id="L486">                        myEphPrivate.getPrivateKey(), myServerEphPublic.getPublicKey(), new byte[0]);</span>
+<span class="nc" id="L487">                theAgreement.init(myPrivate.getPrivateKey(), myParams);</span>
+<span class="nc" id="L488">                theAgreement.doPhase(myServerPublic.getPublicKey(), true);</span>
+<span class="nc" id="L489">                storeSecret(theAgreement.generateSecret());</span>
+
+<span class="nc" id="L491">            } catch (InvalidKeyException</span>
+                     | InvalidAlgorithmParameterException e) {
+<span class="nc" id="L493">                throw new GordianCryptoException(ERR_AGREEMENT, e);</span>
+<span class="nc" id="L494">            }</span>
+<span class="nc" id="L495">        }</span>
+    }
+
+    /**
+     * Base Agreement Engine class.
+     */
+    public abstract static class JcaXAgreementBase
+            extends GordianXCoreAgreementEngine {
+        /**
+         * Constructor.
+         * @param pFactory the security factory
+         * @param pSpec the agreementSpec
+         * @throws GordianException on error
+         */
+        JcaXAgreementBase(final GordianXCoreAgreementFactory pFactory,
+                          final GordianAgreementSpec pSpec) throws GordianException {
+            /* Invoke underlying constructor */
+<span class="nc" id="L512">            super(pFactory, pSpec);</span>
+
+            /* Enable derivation for NewHope */
+<span class="nc bnc" id="L515" title="All 2 branches missed.">            if (GordianKeyPairType.NEWHOPE.equals(pSpec.getKeyPairSpec().getKeyPairType())) {</span>
+<span class="nc" id="L516">                enableDerivation();</span>
+            }
+<span class="nc" id="L518">        }</span>
+
+        @Override
+        protected GordianPublicKey getPublicKey(final GordianKeyPair pKeyPair) throws GordianException {
+            /* Validate the keyPair */
+<span class="nc bnc" id="L523" title="All 2 branches missed.">            if (!(pKeyPair instanceof JcaKeyPair)) {</span>
+                /* Reject keyPair */
+<span class="nc" id="L525">                throw new GordianDataException(&quot;Invalid KeyPair&quot;);</span>
+            }
+
+            /* Access private key */
+<span class="nc" id="L529">            return super.getPublicKey(pKeyPair);</span>
+        }
+
+        @Override
+        protected GordianPrivateKey getPrivateKey(final GordianKeyPair pKeyPair) throws GordianException {
+            /* Validate the keyPair */
+<span class="nc bnc" id="L535" title="All 2 branches missed.">            if (!(pKeyPair instanceof JcaKeyPair)) {</span>
+                /* Reject keyPair */
+<span class="nc" id="L537">                throw new GordianDataException(&quot;Invalid KeyPair&quot;);</span>
+            }
+
+            /* Access private key */
+<span class="nc" id="L541">            return super.getPrivateKey(pKeyPair);</span>
+        }
+
+        /**
+         * Initialise agreement.
+         * @param pAgreement the agreement
+         * @param pPrivate the private key
+         */
+        void initAgreement(final KeyAgreement pAgreement,
+                           final JcaPrivateKey pPrivate) throws GordianException {
+            /* Protect against exceptions */
+            try {
+<span class="nc bnc" id="L553" title="All 2 branches missed.">                if (getSpec().getKDFType() == GordianKDFType.NONE) {</span>
+<span class="nc" id="L554">                    pAgreement.init(pPrivate.getPrivateKey(), getRandom());</span>
+                } else {
+<span class="nc" id="L556">                    pAgreement.init(pPrivate.getPrivateKey(), new UserKeyingMaterialSpec(new byte[0]), getRandom());</span>
+                }
+<span class="nc" id="L558">            } catch (InvalidKeyException</span>
+                     | InvalidAlgorithmParameterException e) {
+<span class="nc" id="L560">                throw new GordianCryptoException(ERR_AGREEMENT, e);</span>
+<span class="nc" id="L561">            }</span>
+<span class="nc" id="L562">        }</span>
+
+        /**
+         * adjust agreement if necessary.
+         * @param pCurrent the current agreement
+         * @param pKeyPair the keyPair
+         * @return the adjusted agreement
+         * @throws GordianException on error
+         */
+        KeyAgreement adjustAgreement(final KeyAgreement pCurrent,
+                                     final GordianKeyPair pKeyPair) throws GordianException {
+            /* If we need to change agreement based on keySpec */
+<span class="nc bnc" id="L574" title="All 2 branches missed.">            if (getSpec().getKeyPairSpec().getKeyPairType().equals(GordianKeyPairType.XDH)) {</span>
+<span class="nc" id="L575">                final String myBase = pKeyPair.getKeyPairSpec().toString();</span>
+<span class="nc" id="L576">                final String myName = getFullAgreementName(myBase + &quot;U&quot;, getSpec());</span>
+<span class="nc" id="L577">                return getJavaKeyAgreement(myName, false);</span>
+            }
+
+            /* Just return the current agreement */
+<span class="nc" id="L581">            return pCurrent;</span>
+        }
+
+        /**
+         * Obtain the required derivation id.
+         * @return the derivation id
+         */
+        AlgorithmIdentifier derivationAlgorithmId() {
+<span class="nc" id="L589">            final GordianAgreementSpec mySpec = getSpec();</span>
+<span class="nc bnc" id="L590" title="All 5 branches missed.">            switch (mySpec.getKDFType()) {</span>
+<span class="nc" id="L591">                case SHA256KDF:     return new AlgorithmIdentifier(X9ObjectIdentifiers.id_kdf_kdf2, new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha256));</span>
+<span class="nc" id="L592">                case SHA512KDF:     return new AlgorithmIdentifier(X9ObjectIdentifiers.id_kdf_kdf2, new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha512));</span>
+<span class="nc" id="L593">                case SHA256CKDF:    return new AlgorithmIdentifier(X9ObjectIdentifiers.id_kdf_kdf3, new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha256));</span>
+<span class="nc" id="L594">                case SHA512CKDF:    return new AlgorithmIdentifier(X9ObjectIdentifiers.id_kdf_kdf3, new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha512));</span>
+                case NONE:
+<span class="nc" id="L596">                default:            return null;</span>
+            }
+        }
+    }
+
+    /**
+     * Create the BouncyCastle KeyGenerator via JCA.
+     * @param pSpec the KeySpec
+     * @return the KeyFactory
+     * @throws GordianException on error
+     */
+    static KeyGenerator getJavaKeyGenerator(final GordianKeyPairSpec pSpec) throws GordianException {
+        /* Protect against exceptions */
+        try {
+            /* Determine the algorithm name */
+<span class="nc" id="L611">            String myName = pSpec.getKeyPairType().toString();</span>
+<span class="nc bnc" id="L612" title="All 3 branches missed.">            switch (pSpec.getKeyPairType()) {</span>
+                case NTRUPRIME:
+<span class="nc" id="L614">                    final GordianNTRUPrimeSpec myNTRUSpec = pSpec.getNTRUPrimeKeySpec();</span>
+<span class="nc" id="L615">                    myName = myNTRUSpec.getType() + &quot;PRIME&quot;;</span>
+<span class="nc" id="L616">                    break;</span>
+                case MLKEM:
+<span class="nc" id="L618">                    myName = &quot;ML-KEM&quot;;</span>
+<span class="nc" id="L619">                    break;</span>
+                default:
+                    break;
+            }
+
+            /* Determine source of keyGenerator */
+<span class="nc bnc" id="L625" title="All 2 branches missed.">            final Provider myProvider = pSpec.getKeyPairType().isStandardJca() ? JcaProvider.BCPROV : JcaProvider.BCPQPROV;</span>
+
+            /* Return a KeyAgreement for the algorithm */
+<span class="nc" id="L628">            return KeyGenerator.getInstance(myName, myProvider);</span>
+
+            /* Catch exceptions */
+<span class="nc" id="L631">        } catch (NoSuchAlgorithmException e) {</span>
+            /* Throw the exception */
+<span class="nc" id="L633">            throw new GordianCryptoException(&quot;Failed to create KeyGenerator&quot;, e);</span>
+        }
+    }
+
+    /**
+     * Create the BouncyCastle KeyFactory via JCA.
+     * @param pAlgorithm the Algorithm
+     * @param postQuantum is this a postQuantum algorithm?
+     * @return the KeyFactory
+     * @throws GordianException on error
+     */
+    static KeyAgreement getJavaKeyAgreement(final String pAlgorithm,
+                                            final boolean postQuantum) throws GordianException {
+        /* Protect against exceptions */
+        try {
+            /* Return a KeyAgreement for the algorithm */
+<span class="nc bnc" id="L649" title="All 2 branches missed.">            return KeyAgreement.getInstance(pAlgorithm, postQuantum</span>
+<span class="nc" id="L650">                    ? JcaProvider.BCPQPROV</span>
+<span class="nc" id="L651">                    : JcaProvider.BCPROV);</span>
+
+            /* Catch exceptions */
+<span class="nc" id="L654">        } catch (NoSuchAlgorithmException e) {</span>
+            /* Throw the exception */
+<span class="nc" id="L656">            throw new GordianCryptoException(&quot;Failed to create KeyAgreement&quot;, e);</span>
+        }
+    }
+
+    /**
+     * Obtain the agreement name.
+     * @param pBase the base agreement
+     * @param pAgreementSpec the agreementSpec
+     * @return the full agreement name
+     * @throws GordianException on error
+     */
+    static String getFullAgreementName(final String pBase,
+                                       final GordianAgreementSpec pAgreementSpec) throws GordianException {
+<span class="nc bnc" id="L669" title="All 6 branches missed.">        switch (pAgreementSpec.getKDFType()) {</span>
+            case NONE:
+<span class="nc" id="L671">                return pBase;</span>
+            case SHA256KDF:
+<span class="nc" id="L673">                return pBase + &quot;withSHA256KDF&quot;;</span>
+            case SHA512KDF:
+<span class="nc" id="L675">                return pBase + &quot;withSHA512KDF&quot;;</span>
+            case SHA256CKDF:
+<span class="nc" id="L677">                return pBase + &quot;withSHA256CKDF&quot;;</span>
+            case SHA512CKDF:
+<span class="nc" id="L679">                return pBase + &quot;withSHA512CKDF&quot;;</span>
+            default:
+<span class="nc" id="L681">                throw new GordianDataException(GordianBaseData.getInvalidText(pAgreementSpec));</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

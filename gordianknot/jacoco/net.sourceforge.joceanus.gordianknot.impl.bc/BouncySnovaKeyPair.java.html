@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BouncySnovaKeyPair.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.gordianknot.impl.bc</a> &gt; <span class="el_source">BouncySnovaKeyPair.java</span></div><h1>BouncySnovaKeyPair.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * GordianKnot: Security Suite
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.gordianknot.impl.bc;
+
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignParams;
+import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
+import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
+import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
+import net.sourceforge.joceanus.gordianknot.impl.bc.BouncySignature.BouncyDigestSignature;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
+import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
+import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
+import org.bouncycastle.crypto.CipherParameters;
+import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
+import org.bouncycastle.crypto.params.ParametersWithRandom;
+import org.bouncycastle.pqc.crypto.snova.SnovaKeyGenerationParameters;
+import org.bouncycastle.pqc.crypto.snova.SnovaKeyPairGenerator;
+import org.bouncycastle.pqc.crypto.snova.SnovaParameters;
+import org.bouncycastle.pqc.crypto.snova.SnovaPrivateKeyParameters;
+import org.bouncycastle.pqc.crypto.snova.SnovaPublicKeyParameters;
+import org.bouncycastle.pqc.crypto.snova.SnovaSigner;
+import org.bouncycastle.pqc.crypto.util.PrivateKeyFactory;
+import org.bouncycastle.pqc.crypto.util.PrivateKeyInfoFactory;
+import org.bouncycastle.pqc.crypto.util.PublicKeyFactory;
+import org.bouncycastle.pqc.crypto.util.SubjectPublicKeyInfoFactory;
+
+import java.io.IOException;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Arrays;
+
+/**
+ * Snova KeyPair classes.
+ */
+public final class BouncySnovaKeyPair {
+    /**
+     * Private constructor.
+     */
+    private BouncySnovaKeyPair() {
+    }
+
+    /**
+     * Bouncy Snova PublicKey.
+     */
+    public static class BouncySnovaPublicKey
+            extends BouncyPublicKey&lt;SnovaPublicKeyParameters&gt; {
+        /**
+         * Constructor.
+         * @param pKeySpec the keySpec
+         * @param pPublicKey the public key
+         */
+        BouncySnovaPublicKey(final GordianKeyPairSpec pKeySpec,
+                             final SnovaPublicKeyParameters pPublicKey) {
+<span class="fc" id="L74">            super(pKeySpec, pPublicKey);</span>
+<span class="fc" id="L75">        }</span>
+
+        @Override
+        protected boolean matchKey(final AsymmetricKeyParameter pThat) {
+            /* Access keys */
+<span class="fc" id="L80">            final SnovaPublicKeyParameters myThis = getPublicKey();</span>
+<span class="fc" id="L81">            final SnovaPublicKeyParameters myThat = (SnovaPublicKeyParameters) pThat;</span>
+
+            /* Compare keys */
+<span class="fc" id="L84">            return compareKeys(myThis, myThat);</span>
+        }
+
+        /**
+         * CompareKeys.
+         * @param pFirst the first key
+         * @param pSecond the second key
+         * @return true/false
+         */
+        private static boolean compareKeys(final SnovaPublicKeyParameters pFirst,
+                                           final SnovaPublicKeyParameters pSecond) {
+<span class="fc" id="L95">            return Arrays.equals(pFirst.getEncoded(), pSecond.getEncoded());</span>
+        }
+    }
+
+    /**
+     * Bouncy Snova PrivateKey.
+     */
+    public static class BouncySnovaPrivateKey
+            extends BouncyPrivateKey&lt;SnovaPrivateKeyParameters&gt; {
+        /**
+         * Constructor.
+         * @param pKeySpec the keySpec
+         * @param pPrivateKey the private key
+         */
+        BouncySnovaPrivateKey(final GordianKeyPairSpec pKeySpec,
+                              final SnovaPrivateKeyParameters pPrivateKey) {
+<span class="fc" id="L111">            super(pKeySpec, pPrivateKey);</span>
+<span class="fc" id="L112">        }</span>
+
+
+        @Override
+        protected boolean matchKey(final AsymmetricKeyParameter pThat) {
+            /* Access keys */
+<span class="fc" id="L118">            final SnovaPrivateKeyParameters myThis = getPrivateKey();</span>
+<span class="fc" id="L119">            final SnovaPrivateKeyParameters myThat = (SnovaPrivateKeyParameters) pThat;</span>
+
+            /* Compare keys */
+<span class="fc" id="L122">            return compareKeys(myThis, myThat);</span>
+        }
+
+        /**
+         * CompareKeys.
+         * @param pFirst the first key
+         * @param pSecond the second key
+         * @return true/false
+         */
+        private static boolean compareKeys(final SnovaPrivateKeyParameters pFirst,
+                                           final SnovaPrivateKeyParameters pSecond) {
+<span class="fc" id="L133">            return Arrays.equals(pFirst.getEncoded(), pSecond.getEncoded());</span>
+        }
+    }
+
+    /**
+     * BouncyCastle Snova KeyPair generator.
+     */
+    public static class BouncySnovaKeyPairGenerator
+            extends BouncyKeyPairGenerator {
+        /**
+         * Generator.
+         */
+        private final SnovaKeyPairGenerator theGenerator;
+
+        /**
+         * Constructor.
+         * @param pFactory the Security Factory
+         * @param pKeySpec the keySpec
+         */
+        BouncySnovaKeyPairGenerator(final GordianBaseFactory pFactory,
+                                    final GordianKeyPairSpec pKeySpec) {
+            /* Initialise underlying class */
+<span class="fc" id="L155">            super(pFactory, pKeySpec);</span>
+
+            /* Determine the parameters */
+<span class="fc" id="L158">            final SnovaParameters myParms = pKeySpec.getSnovaKeySpec().getParameters();</span>
+
+            /* Create and initialise the generator */
+<span class="fc" id="L161">            theGenerator = new SnovaKeyPairGenerator();</span>
+<span class="fc" id="L162">            final SnovaKeyGenerationParameters myParams = new SnovaKeyGenerationParameters(getRandom(), myParms);</span>
+<span class="fc" id="L163">            theGenerator.init(myParams);</span>
+<span class="fc" id="L164">        }</span>
+
+        @Override
+        public BouncyKeyPair generateKeyPair() {
+            /* Generate and return the keyPair */
+<span class="fc" id="L169">            final AsymmetricCipherKeyPair myPair = theGenerator.generateKeyPair();</span>
+<span class="fc" id="L170">            final BouncySnovaPublicKey myPublic = new BouncySnovaPublicKey(getKeySpec(), (SnovaPublicKeyParameters) myPair.getPublic());</span>
+<span class="fc" id="L171">            final BouncySnovaPrivateKey myPrivate = new BouncySnovaPrivateKey(getKeySpec(), (SnovaPrivateKeyParameters) myPair.getPrivate());</span>
+<span class="fc" id="L172">            return new BouncyKeyPair(myPublic, myPrivate);</span>
+        }
+
+        @Override
+        public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) throws GordianException {
+            /* Protect against exceptions */
+            try {
+                /* Check the keyPair type and keySpecs */
+<span class="fc" id="L180">                BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());</span>
+
+                /* build and return the encoding */
+<span class="fc" id="L183">                final BouncySnovaPrivateKey myPrivateKey = (BouncySnovaPrivateKey) getPrivateKey(pKeyPair);</span>
+<span class="fc" id="L184">                final SnovaPrivateKeyParameters myParms = myPrivateKey.getPrivateKey();</span>
+<span class="fc" id="L185">                final PrivateKeyInfo myInfo = PrivateKeyInfoFactory.createPrivateKeyInfo(myParms, null);</span>
+<span class="fc" id="L186">                return new PKCS8EncodedKeySpec(myInfo.getEncoded());</span>
+
+<span class="nc" id="L188">            } catch (IOException e) {</span>
+<span class="nc" id="L189">                throw new GordianCryptoException(ERROR_PARSE, e);</span>
+            }
+        }
+
+        @Override
+        public BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
+                                           final PKCS8EncodedKeySpec pPrivateKey) throws GordianException {
+            /* Protect against exceptions */
+            try {
+                /* Check the keySpecs */
+<span class="fc" id="L199">                checkKeySpec(pPrivateKey);</span>
+
+                /* derive keyPair */
+<span class="fc" id="L202">                final BouncySnovaPublicKey myPublic = derivePublicKey(pPublicKey);</span>
+<span class="fc" id="L203">                final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());</span>
+<span class="fc" id="L204">                final SnovaPrivateKeyParameters myParms = (SnovaPrivateKeyParameters) PrivateKeyFactory.createKey(myInfo);</span>
+<span class="fc" id="L205">                final BouncySnovaPrivateKey myPrivate = new BouncySnovaPrivateKey(getKeySpec(), myParms);</span>
+<span class="fc" id="L206">                final BouncyKeyPair myPair = new BouncyKeyPair(myPublic, myPrivate);</span>
+
+                /* Check that we have a matching pair */
+<span class="fc" id="L209">                GordianKeyPairValidity.checkValidity(getFactory(), myPair);</span>
+
+                /* Return the keyPair */
+<span class="fc" id="L212">                return myPair;</span>
+
+<span class="nc" id="L214">            } catch (IOException e) {</span>
+<span class="nc" id="L215">                throw new GordianCryptoException(ERROR_PARSE, e);</span>
+            }
+        }
+
+        @Override
+        public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) throws GordianException {
+            /* Protect against exceptions */
+            try {
+                /* Check the keyPair type and keySpecs */
+<span class="fc" id="L224">                BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());</span>
+
+                /* build and return the encoding */
+<span class="fc" id="L227">                final BouncySnovaPublicKey myPublicKey = (BouncySnovaPublicKey) getPublicKey(pKeyPair);</span>
+<span class="fc" id="L228">                final SnovaPublicKeyParameters myParms = myPublicKey.getPublicKey();</span>
+<span class="fc" id="L229">                final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfoFactory.createSubjectPublicKeyInfo(myParms);</span>
+<span class="fc" id="L230">                return new X509EncodedKeySpec(myInfo.getEncoded());</span>
+
+<span class="nc" id="L232">            } catch (IOException e) {</span>
+<span class="nc" id="L233">                throw new GordianCryptoException(ERROR_PARSE, e);</span>
+            }
+        }
+
+        @Override
+        public BouncyKeyPair derivePublicOnlyKeyPair(final X509EncodedKeySpec pEncodedKey) throws GordianException {
+<span class="fc" id="L239">            final BouncySnovaPublicKey myPublic = derivePublicKey(pEncodedKey);</span>
+<span class="fc" id="L240">            return new BouncyKeyPair(myPublic);</span>
+        }
+
+        /**
+         * Derive public key from encoded.
+         * @param pEncodedKey the encoded key
+         * @return the public key
+         * @throws GordianException on error
+         */
+        private BouncySnovaPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws GordianException {
+            /* Protect against exceptions */
+            try {
+                /* Check the keySpecs */
+<span class="fc" id="L253">                checkKeySpec(pEncodedKey);</span>
+
+                /* derive publicKey */
+<span class="fc" id="L256">                final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());</span>
+<span class="fc" id="L257">                final SnovaPublicKeyParameters myParms = (SnovaPublicKeyParameters) PublicKeyFactory.createKey(myInfo);</span>
+<span class="fc" id="L258">                return new BouncySnovaPublicKey(getKeySpec(), myParms);</span>
+
+<span class="nc" id="L260">            } catch (IOException e) {</span>
+<span class="nc" id="L261">                throw new GordianCryptoException(ERROR_PARSE, e);</span>
+            }
+        }
+    }
+
+    /**
+     * Snova signer.
+     */
+    public static class BouncySnovaSignature
+            extends BouncyDigestSignature {
+        /**
+         * The Snova Signer.
+         */
+        private final SnovaSigner theSigner;
+
+        /**
+         * Constructor.
+         * @param pFactory the factory
+         * @param pSpec the signatureSpec.
+         * @throws GordianException on error
+         */
+        BouncySnovaSignature(final GordianBaseFactory pFactory,
+                             final GordianSignatureSpec pSpec) throws GordianException {
+            /* Initialise underlying class */
+<span class="fc" id="L285">            super(pFactory, pSpec);</span>
+<span class="fc" id="L286">            theSigner = new SnovaSigner();</span>
+<span class="fc" id="L287">        }</span>
+
+        @Override
+        public void initForSigning(final GordianSignParams pParams) throws GordianException {
+            /* Initialise detail */
+<span class="fc" id="L292">            super.initForSigning(pParams);</span>
+<span class="fc" id="L293">            final BouncyKeyPair myPair = getKeyPair();</span>
+<span class="fc" id="L294">            BouncyKeyPair.checkKeyPair(myPair);</span>
+
+            /* Initialise and set the signer */
+<span class="fc" id="L297">            final BouncySnovaPrivateKey myPrivate = (BouncySnovaPrivateKey) myPair.getPrivateKey();</span>
+<span class="fc" id="L298">            final CipherParameters myParms = new ParametersWithRandom(myPrivate.getPrivateKey(), getRandom());</span>
+<span class="fc" id="L299">            theSigner.init(true, myParms);</span>
+<span class="fc" id="L300">        }</span>
+
+        @Override
+        public void initForVerify(final GordianSignParams pParams) throws GordianException {
+            /* Initialise detail */
+<span class="fc" id="L305">            super.initForVerify(pParams);</span>
+<span class="fc" id="L306">            final BouncyKeyPair myPair = getKeyPair();</span>
+<span class="fc" id="L307">            BouncyKeyPair.checkKeyPair(myPair);</span>
+
+            /* Initialise and set the signer */
+<span class="fc" id="L310">            final BouncySnovaPublicKey myPublic = (BouncySnovaPublicKey) myPair.getPublicKey();</span>
+<span class="fc" id="L311">            theSigner.init(false, myPublic.getPublicKey());</span>
+<span class="fc" id="L312">        }</span>
+
+        @Override
+        public byte[] sign() throws GordianException {
+            /* Check that we are in signing mode */
+<span class="fc" id="L317">            checkMode(GordianSignatureMode.SIGN);</span>
+
+            /* Sign the message */
+<span class="fc" id="L320">            return theSigner.generateSignature(getDigest());</span>
+        }
+
+        @Override
+        public boolean verify(final byte[] pSignature) throws GordianException {
+            /* Check that we are in verify mode */
+<span class="fc" id="L326">            checkMode(GordianSignatureMode.VERIFY);</span>
+
+            /* Verify the message */
+<span class="fc" id="L329">            return theSigner.verifySignature(getDigest(), pSignature);</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseXAnalysisXferOut.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.atlas.data.analysis.analyse</a> &gt; <span class="el_source">MoneyWiseXAnalysisXferOut.java</span></div><h1>MoneyWiseXAnalysisXferOut.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.atlas.data.analysis.analyse;
+
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioBucket.MoneyWiseXAnalysisPortfolioBucketList;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisSecurityBucket;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTaxBasisBucket.MoneyWiseXAnalysisTaxBasisBucketList;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisSecurityAttr;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisSecurityValues;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding;
+import net.sourceforge.joceanus.moneywise.tax.MoneyWiseCashType;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
+
+import java.time.temporal.ChronoUnit;
+
+/**
+ * Debit XferOut Analysis.
+ */
+public class MoneyWiseXAnalysisXferOut {
+    /**
+     * The Amount Tax threshold for &quot;small&quot; transactions (£3000).
+     */
+<span class="fc" id="L43">    static final OceanusMoney LIMIT_VALUE = OceanusMoney.getWholeUnits(3000);</span>
+
+    /**
+     * The Rate Tax threshold for &quot;small&quot; transactions (5%).
+     */
+<span class="fc" id="L48">    static final OceanusRate LIMIT_RATE = OceanusRate.getWholePercentage(5);</span>
+
+    /**
+     * The portfolioBuckets.
+     */
+    private final MoneyWiseXAnalysisPortfolioBucketList thePortfolios;
+
+    /**
+     * The taxBasisBuckets.
+     */
+    private final MoneyWiseXAnalysisTaxBasisBucketList theTaxBases;
+
+    /**
+     * The analysis state.
+     */
+    private final MoneyWiseXAnalysisState theState;
+
+    /**
+     * The transAnalyser.
+     */
+    private final MoneyWiseXAnalysisTransAnalyser theTransAnalyser;
+
+    /**
+     * The securityAnalyser.
+     */
+    private final MoneyWiseXAnalysisSecurity theSecurity;
+
+    /**
+     * The transaction.
+     */
+    private MoneyWiseXAnalysisTransaction theTransaction;
+
+    /**
+     * Constructor.
+     * @param pAnalyser the event analyser
+     * @param pSecurity the securityAnalyser
+     */
+    MoneyWiseXAnalysisXferOut(final MoneyWiseXAnalysisEventAnalyser pAnalyser,
+<span class="fc" id="L86">                              final MoneyWiseXAnalysisSecurity pSecurity) {</span>
+        /* Store parameters */
+<span class="fc" id="L88">        final MoneyWiseXAnalysis myAnalysis = pAnalyser.getAnalysis();</span>
+<span class="fc" id="L89">        thePortfolios = myAnalysis.getPortfolios();</span>
+<span class="fc" id="L90">        theTaxBases = myAnalysis.getTaxBasis();</span>
+<span class="fc" id="L91">        theState = pAnalyser.getState();</span>
+<span class="fc" id="L92">        theSecurity = pSecurity;</span>
+<span class="fc" id="L93">        theTransAnalyser = theSecurity.getTransAnalyser();</span>
+<span class="fc" id="L94">    }</span>
+
+    /**
+     * Process a transaction that is a transferOut.
+     * @param pTrans  the transaction
+     */
+    void processTransferOut(final MoneyWiseXAnalysisTransaction pTrans) {
+        /* Record the transaction */
+<span class="fc" id="L102">        theTransaction = pTrans;</span>
+
+        /* Access credit account and category */
+<span class="fc" id="L105">        final MoneyWiseAssetBase myCredit = (MoneyWiseAssetBase) theTransaction.getCreditAccount();</span>
+<span class="fc" id="L106">        final MoneyWiseSecurityHolding myDebit = (MoneyWiseSecurityHolding) theTransaction.getDebitAccount();</span>
+
+        /* Adjust the credit account bucket */
+<span class="fc" id="L109">        theTransAnalyser.processCreditAsset(myCredit);</span>
+
+        /* Adjust the debit transfer details */
+<span class="fc" id="L112">        processDebitXferOut(myDebit);</span>
+<span class="fc" id="L113">    }</span>
+
+    /**
+     * Process the credit side of a transfer in transaction.
+     * @param pTrans  the transaction
+     */
+    void processDebitXferOut(final MoneyWiseXAnalysisTransaction pTrans) {
+        /* Record the transaction */
+<span class="nc" id="L121">        theTransaction = pTrans;</span>
+
+        /* Process the debit */
+<span class="nc" id="L124">        final MoneyWiseSecurityHolding myDebit = (MoneyWiseSecurityHolding) theTransaction.getDebitAccount();</span>
+<span class="nc" id="L125">        processDebitXferOut(myDebit);</span>
+<span class="nc" id="L126">    }</span>
+
+    /**
+     * Process the debit side of a transfer out transaction.
+     * &lt;p&gt;
+     * This capital event relates only to the Debit Account
+     * @param pHolding the debit holding
+     */
+    private void processDebitXferOut(final MoneyWiseSecurityHolding pHolding) {
+        /* Access the Asset Security Bucket */
+<span class="fc" id="L136">        final MoneyWiseXAnalysisSecurityBucket myAsset = thePortfolios.getBucket(pHolding);</span>
+<span class="fc" id="L137">        final MoneyWiseXAnalysisSecurityValues myValues = myAsset.getValues();</span>
+
+        /* Determine the stock value of the asset */
+<span class="fc" id="L140">        final OceanusMoney myStockValue = myValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.VALUATION);</span>
+
+        /* Determine the debit amount */
+<span class="fc bfc" id="L143" title="All 2 branches covered.">        OceanusMoney myAmount = myAsset.isForeignCurrency()</span>
+<span class="fc" id="L144">                ? theTransAnalyser.adjustForeignAssetDebit(myValues.getRatioValue(MoneyWiseXAnalysisSecurityAttr.EXCHANGERATE))</span>
+<span class="fc" id="L145">                : theTransaction.getDebitAmount();</span>
+<span class="fc" id="L146">        myAmount = new OceanusMoney(myAmount);</span>
+<span class="fc" id="L147">        myAmount.negate();</span>
+
+        /* Assume that the allowed cost is the full value */
+<span class="fc" id="L150">        final OceanusUnits myUnits = myValues.getUnitsValue(MoneyWiseXAnalysisSecurityAttr.UNITS);</span>
+        final OceanusMoney myAllowedCost;
+<span class="fc" id="L152">        final OceanusMoney myCost = myValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.RESIDUALCOST);</span>
+
+        /* Determine the delta units */
+<span class="fc" id="L155">        OceanusUnits myDeltaUnits = theTransaction.getDebitUnitsDelta();</span>
+<span class="fc bfc" id="L156" title="All 2 branches covered.">        if (theTransaction.getCategoryClass().isSecurityClosure()) {</span>
+<span class="fc" id="L157">            myDeltaUnits = new OceanusUnits(myUnits);</span>
+<span class="fc" id="L158">            myDeltaUnits.negate();</span>
+        }
+<span class="fc bfc" id="L160" title="All 2 branches covered.">        final boolean isCapitalDistribution = myDeltaUnits == null;</span>
+
+        /* If this is not a capital distribution */
+<span class="fc bfc" id="L163" title="All 2 branches covered.">        if (!isCapitalDistribution) {</span>
+            /* The allowed cost is the relevant fraction of the cost */
+<span class="fc" id="L165">            myAllowedCost = myCost.valueAtWeight(myDeltaUnits, myUnits);</span>
+<span class="fc" id="L166">            myAllowedCost.negate();</span>
+
+            /* Record delta to units and costDilution */
+<span class="fc" id="L169">            myAsset.adjustUnits(myDeltaUnits);</span>
+<span class="fc" id="L170">            final OceanusUnits myNewUnits = myValues.getUnitsValue(MoneyWiseXAnalysisSecurityAttr.UNITS);</span>
+<span class="fc" id="L171">            final OceanusRatio myCostDilution = new OceanusRatio(myNewUnits, myUnits);</span>
+<span class="fc" id="L172">            myValues.setValue(MoneyWiseXAnalysisSecurityAttr.COSTDILUTION, myCostDilution);</span>
+
+        /* else we are performing a capital distribution */
+<span class="fc" id="L175">        } else {</span>
+            /* Determine whether this is a large cash transaction */
+<span class="fc" id="L177">            final OceanusMoney myPortion = myStockValue.valueAtRate(LIMIT_RATE);</span>
+<span class="pc bpc" id="L178" title="1 of 2 branches missed.">            final boolean isLargeCash = myAmount.compareTo(LIMIT_VALUE) &gt; 0</span>
+<span class="pc bnc" id="L179" title="All 2 branches missed.">                    &amp;&amp; myAmount.compareTo(myPortion) &gt; 0;</span>
+
+            /* If this is large cash */
+<span class="pc bpc" id="L182" title="1 of 2 branches missed.">            if (isLargeCash) {</span>
+                /* Determine the consideration and costDilution */
+<span class="nc" id="L184">                final OceanusMoney myConsideration = new OceanusMoney(myAmount);</span>
+<span class="nc" id="L185">                myConsideration.addAmount(myStockValue);</span>
+<span class="nc" id="L186">                myValues.setValue(MoneyWiseXAnalysisSecurityAttr.CONSIDERATION, myConsideration);</span>
+<span class="nc" id="L187">                final OceanusRatio myCostDilution = new OceanusRatio(myStockValue, myConsideration);</span>
+<span class="nc" id="L188">                myValues.setValue(MoneyWiseXAnalysisSecurityAttr.COSTDILUTION, myCostDilution);</span>
+
+                /* Determine the allowedCost as a proportion of the consideration */
+<span class="nc" id="L191">                myAllowedCost = myCost.valueAtWeight(myAmount, myConsideration);</span>
+
+                /* else this is viewed as small and is taken out of the cost */
+<span class="nc" id="L194">            } else {</span>
+                /* Set the allowed cost to be the least of the cost or the returned cash */
+<span class="pc bpc" id="L196" title="1 of 2 branches missed.">                myAllowedCost = myAmount.compareTo(myCost) &gt; 0</span>
+<span class="nc" id="L197">                        ? new OceanusMoney(myCost)</span>
+<span class="fc" id="L198">                        : new OceanusMoney(myAmount);</span>
+            }
+
+            /* Record details */
+<span class="pc bpc" id="L202" title="1 of 2 branches missed.">            myValues.setValue(MoneyWiseXAnalysisSecurityAttr.CASHTYPE, isLargeCash</span>
+<span class="nc" id="L203">                    ? MoneyWiseCashType.LARGECASH</span>
+<span class="fc" id="L204">                    : MoneyWiseCashType.SMALLCASH);</span>
+        }
+
+        /* Determine the delta to the cost */
+<span class="fc" id="L208">        final OceanusMoney myDeltaCost = new OceanusMoney(myAllowedCost);</span>
+<span class="fc" id="L209">        myDeltaCost.negate();</span>
+
+        /* If we have a delta to the cost */
+<span class="pc bpc" id="L212" title="1 of 2 branches missed.">        if (myDeltaCost.isNonZero()) {</span>
+            /* Adjust the cost */
+<span class="fc" id="L214">            myAsset.adjustResidualCost(myDeltaCost);</span>
+        }
+
+        /* Determine the gain */
+<span class="fc" id="L218">        final OceanusMoney myCapitalGain = new OceanusMoney(myAmount);</span>
+<span class="fc" id="L219">        myCapitalGain.addAmount(myDeltaCost);</span>
+
+        /* If we have a delta to the gains */
+<span class="fc bfc" id="L222" title="All 2 branches covered.">        if (myCapitalGain.isNonZero()) {</span>
+            /* Adjust the gains */
+<span class="fc" id="L224">            myAsset.adjustRealisedGains(myCapitalGain);</span>
+<span class="fc" id="L225">            myValues.setValue(MoneyWiseXAnalysisSecurityAttr.CAPITALGAIN, myCapitalGain);</span>
+
+            /* If this is a chargeable Gain */
+<span class="pc bpc" id="L228" title="1 of 2 branches missed.">            if (myAsset.getSecurity().getCategoryClass().isChargeableGains()) {</span>
+                /* Determine the # of years that the bond has been open */
+<span class="nc" id="L230">                final OceanusDate myCurrent = theTransaction.getTransaction().getDate();</span>
+<span class="nc" id="L231">                final OceanusDate myStart = myValues.getDateValue(MoneyWiseXAnalysisSecurityAttr.STARTDATE);</span>
+<span class="nc" id="L232">                final int myYears = (int) ChronoUnit.YEARS.between(myStart.getDate(), myCurrent.getDate()) + 1;</span>
+<span class="nc" id="L233">                final OceanusRatio myRatio = new OceanusRatio(String.valueOf(myYears)).getInverseRatio();</span>
+<span class="nc" id="L234">                final OceanusMoney mySlice = myCapitalGain.valueAtRatio(myRatio);</span>
+
+                /* Record details */
+<span class="nc" id="L237">                myValues.setValue(MoneyWiseXAnalysisSecurityAttr.SLICEYEARS, myYears);</span>
+<span class="nc" id="L238">                myValues.setValue(MoneyWiseXAnalysisSecurityAttr.SLICEGAIN, mySlice);</span>
+
+                /* Adjust slices */
+<span class="nc" id="L241">                theTaxBases.recordChargeableGain(theTransaction.getTransaction(), myCapitalGain, mySlice, myYears);</span>
+            }
+
+            /* Adjust the capitalGains category bucket */
+<span class="fc" id="L245">            theSecurity.adjustStandardGain(pHolding, myCapitalGain);</span>
+        }
+
+        /* Adjust the valuation */
+<span class="fc" id="L249">        theSecurity.adjustAssetValuation(myAsset);</span>
+
+        /* record details */
+<span class="fc" id="L252">        myValues.setValue(MoneyWiseXAnalysisSecurityAttr.RETURNEDCASH, myAmount);</span>
+<span class="fc" id="L253">        myValues.setValue(MoneyWiseXAnalysisSecurityAttr.ALLOWEDCOST, myAllowedCost);</span>
+
+        /* Register the transaction */
+<span class="fc" id="L256">        theState.registerBucketInterest(myAsset);</span>
+<span class="fc" id="L257">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

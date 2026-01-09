@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseXAnalysisLoanCategoryBucket.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets</a> &gt; <span class="el_source">MoneyWiseXAnalysisLoanCategoryBucket.java</span></div><h1>MoneyWiseXAnalysisLoanCategoryBucket.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets;
+
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataList;
+import net.sourceforge.joceanus.metis.field.MetisFieldItem;
+import net.sourceforge.joceanus.metis.field.MetisFieldSet;
+import net.sourceforge.joceanus.metis.list.MetisListIndexed;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisLoanBucket.MoneyWiseXAnalysisLoanBucketList;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseLoan;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseLoanCategory;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+
+import java.util.Iterator;
+import java.util.List;
+
+/**
+ * Loan Category Bucket.
+ */
+public final class MoneyWiseXAnalysisLoanCategoryBucket
+        extends MoneyWiseXAnalysisAccountCategoryBucket&lt;MoneyWiseLoan, MoneyWiseLoanCategory&gt; {
+    /**
+     * Local Report fields.
+     */
+<span class="fc" id="L41">    private static final MetisFieldSet&lt;MoneyWiseXAnalysisLoanCategoryBucket&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseXAnalysisLoanCategoryBucket.class);</span>
+
+    /*
+     * Declare Fields.
+     */
+    static {
+<span class="fc" id="L47">        FIELD_DEFS.declareLocalField(MoneyWiseBasicDataType.LOANCATEGORY, MoneyWiseXAnalysisLoanCategoryBucket::getAccountCategory);</span>
+<span class="fc" id="L48">    }</span>
+
+    /**
+     * The loan category.
+     */
+    private final MoneyWiseLoanCategory theCategory;
+
+    /**
+     * Is the category active?
+     */
+    private boolean isActive;
+
+    /**
+     * Constructor.
+     * @param pCurrency the currency
+     * @param pCategory the account category
+     */
+    MoneyWiseXAnalysisLoanCategoryBucket(final MoneyWiseCurrency pCurrency,
+                                         final MoneyWiseLoanCategory pCategory) {
+<span class="fc" id="L67">        super(pCurrency);</span>
+<span class="fc" id="L68">        theCategory = pCategory;</span>
+<span class="fc" id="L69">    }</span>
+
+    @Override
+    public MetisFieldSet&lt;MoneyWiseXAnalysisLoanCategoryBucket&gt; getDataFieldSet() {
+<span class="nc" id="L73">        return FIELD_DEFS;</span>
+    }
+
+    @Override
+    public String getName() {
+<span class="nc bnc" id="L78" title="All 2 branches missed.">        return theCategory == null</span>
+<span class="nc" id="L79">                ? NAME_TOTALS.getId()</span>
+<span class="nc" id="L80">                : theCategory.getName();</span>
+    }
+
+    @Override
+    public Integer getIndexedId() {
+<span class="fc" id="L85">        return theCategory.getIndexedId();</span>
+    }
+
+    @Override
+    public MoneyWiseLoanCategory getAccountCategory() {
+<span class="fc" id="L90">        return theCategory;</span>
+    }
+
+    /**
+     * Is the bucket active?
+     * @return true/false
+     */
+    public boolean isActive() {
+<span class="fc" id="L98">        return isActive;</span>
+    }
+
+    /**
+     * Update active flag for Loan Bucket.
+     * @param pBucket the Loan bucket
+     */
+    void updateActive(final MoneyWiseXAnalysisLoanBucket pBucket) {
+<span class="fc" id="L106">        isActive |= pBucket.isActive();</span>
+<span class="fc" id="L107">    }</span>
+
+    /**
+     * Update active flag for Loan Category Bucket.
+     * @param pBucket the Loan category bucket
+     */
+    void updateActive(final MoneyWiseXAnalysisLoanCategoryBucket pBucket) {
+<span class="fc" id="L114">        isActive |= pBucket.isActive();</span>
+<span class="fc" id="L115">    }</span>
+
+    /**
+     * LoanCategoryBucket list class.
+     */
+    public static final class MoneyWiseXAnalysisLoanCategoryBucketList
+            implements MetisFieldItem, MetisDataList&lt;MoneyWiseXAnalysisLoanCategoryBucket&gt; {
+        /**
+         * Local Report fields.
+         */
+<span class="fc" id="L125">        private static final MetisFieldSet&lt;MoneyWiseXAnalysisLoanCategoryBucketList&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseXAnalysisLoanCategoryBucketList.class);</span>
+
+        /*
+         * Declare Fields.
+         */
+        static {
+<span class="fc" id="L131">            FIELD_DEFS.declareLocalField(MoneyWiseXAnalysisBucketResource.ANALYSIS_NAME, MoneyWiseXAnalysisLoanCategoryBucketList::getAnalysis);</span>
+<span class="fc" id="L132">            FIELD_DEFS.declareLocalField(MoneyWiseXAnalysisBucketResource.ANALYSIS_TOTALS, MoneyWiseXAnalysisLoanCategoryBucketList::getTotals);</span>
+<span class="fc" id="L133">        }</span>
+
+        /**
+         * The analysis.
+         */
+        private final MoneyWiseXAnalysis theAnalysis;
+
+        /**
+         * The list.
+         */
+        private final MetisListIndexed&lt;MoneyWiseXAnalysisLoanCategoryBucket&gt; theList;
+
+        /**
+         * The currency.
+         */
+        private final MoneyWiseCurrency theCurrency;
+
+        /**
+         * The totals.
+         */
+        private final MoneyWiseXAnalysisLoanCategoryBucket theTotals;
+
+        /**
+         * Do we have a foreign loan account?
+         */
+<span class="fc" id="L158">        private Boolean haveForeignCurrency = Boolean.FALSE;</span>
+
+        /**
+         * Construct a top-level List.
+         * @param pAnalysis the analysis
+         */
+<span class="fc" id="L164">        MoneyWiseXAnalysisLoanCategoryBucketList(final MoneyWiseXAnalysis pAnalysis) {</span>
+            /* Initialise class */
+<span class="fc" id="L166">            theAnalysis = pAnalysis;</span>
+<span class="fc" id="L167">            theCurrency = theAnalysis.getCurrency();</span>
+<span class="fc" id="L168">            theTotals = allocateTotalsBucket();</span>
+<span class="fc" id="L169">            theList = new MetisListIndexed&lt;&gt;();</span>
+<span class="fc" id="L170">            theList.setComparator((l, r) -&gt; l.getAccountCategory().compareTo(r.getAccountCategory()));</span>
+<span class="fc" id="L171">        }</span>
+
+        @Override
+        public MetisFieldSet&lt;MoneyWiseXAnalysisLoanCategoryBucketList&gt; getDataFieldSet() {
+<span class="nc" id="L175">            return FIELD_DEFS;</span>
+        }
+
+        @Override
+        public List&lt;MoneyWiseXAnalysisLoanCategoryBucket&gt; getUnderlyingList() {
+<span class="fc" id="L180">            return theList.getUnderlyingList();</span>
+        }
+
+        @Override
+        public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L185">            return getDataFieldSet().getName();</span>
+        }
+
+        /**
+         * Obtain item by id.
+         * @param pId the id to lookup
+         * @return the item (or null if not present)
+         */
+        public MoneyWiseXAnalysisLoanCategoryBucket findItemById(final Integer pId) {
+            /* Return results */
+<span class="fc" id="L195">            return theList.getItemById(pId);</span>
+        }
+
+        /**
+         * Obtain the Analysis.
+         * @return the analysis
+         */
+        public MoneyWiseXAnalysis getAnalysis() {
+<span class="nc" id="L203">            return theAnalysis;</span>
+        }
+
+        /**
+         * Obtain the Totals.
+         * @return the totals
+         */
+        public MoneyWiseXAnalysisLoanCategoryBucket getTotals() {
+<span class="fc" id="L211">            return theTotals;</span>
+        }
+
+        /**
+         * Do we have a foreign currency?
+         * @return true/false
+         */
+        public Boolean haveForeignCurrency() {
+<span class="fc" id="L219">            return haveForeignCurrency;</span>
+        }
+
+        /**
+         * Allocate the Totals CategoryBucket.
+         * @return the bucket
+         */
+        private MoneyWiseXAnalysisLoanCategoryBucket allocateTotalsBucket() {
+            /* Obtain the totals category */
+<span class="fc" id="L228">            return new MoneyWiseXAnalysisLoanCategoryBucket(theCurrency, null);</span>
+        }
+
+        /**
+         * Obtain the CashCategoryBucket for a given category.
+         * @param pCategory the category
+         * @return the bucket
+         */
+        MoneyWiseXAnalysisLoanCategoryBucket getBucket(final MoneyWiseLoanCategory pCategory) {
+            /* Locate the bucket in the list */
+<span class="fc" id="L238">            MoneyWiseXAnalysisLoanCategoryBucket myItem = findItemById(pCategory.getIndexedId());</span>
+
+            /* If the item does not yet exist */
+<span class="pc bpc" id="L241" title="1 of 2 branches missed.">            if (myItem == null) {</span>
+                /* Create the new bucket */
+<span class="fc" id="L243">                myItem = new MoneyWiseXAnalysisLoanCategoryBucket(theCurrency, pCategory);</span>
+
+                /* Add to the list */
+<span class="fc" id="L246">                theList.add(myItem);</span>
+            }
+
+            /* Return the bucket */
+<span class="fc" id="L250">            return myItem;</span>
+        }
+
+        /**
+         * Analyse loan accounts.
+         * @param pLoans the loan account buckets
+         */
+        public void analyseLoans(final MoneyWiseXAnalysisLoanBucketList pLoans) {
+            /* Sort the loans */
+<span class="fc" id="L259">            pLoans.sortBuckets();</span>
+
+            /* Loop through the buckets */
+<span class="fc" id="L262">            final Iterator&lt;MoneyWiseXAnalysisLoanBucket&gt; myIterator = pLoans.iterator();</span>
+<span class="fc bfc" id="L263" title="All 2 branches covered.">            while (myIterator.hasNext()) {</span>
+                /* Access bucket and category */
+<span class="fc" id="L265">                final MoneyWiseXAnalysisLoanBucket myCurr = myIterator.next();</span>
+<span class="fc" id="L266">                final MoneyWiseLoanCategory myCategory = myCurr.getCategory();</span>
+
+                /* Handle foreign asset */
+<span class="pc bpc" id="L269" title="1 of 2 branches missed.">                if (Boolean.TRUE.equals(myCurr.isForeignCurrency())) {</span>
+<span class="nc" id="L270">                    haveForeignCurrency = Boolean.TRUE;</span>
+                }
+
+                /* Calculate the delta */
+<span class="fc" id="L274">                myCurr.calculateDelta();</span>
+
+                /* Access category bucket and add values */
+<span class="fc" id="L277">                final MoneyWiseXAnalysisLoanCategoryBucket myBucket = getBucket(myCategory);</span>
+<span class="fc" id="L278">                myBucket.addValues(myCurr);</span>
+<span class="fc" id="L279">                myBucket.updateActive(myCurr);</span>
+<span class="fc" id="L280">            }</span>
+<span class="fc" id="L281">        }</span>
+
+        /**
+         * Build categories.
+         * @param pLoans the loan account buckets
+         */
+        public void buildCategories(final MoneyWiseXAnalysisLoanBucketList pLoans) {
+            /* Loop through the buckets */
+<span class="nc" id="L289">            final Iterator&lt;MoneyWiseXAnalysisLoanBucket&gt; myIterator = pLoans.iterator();</span>
+<span class="nc bnc" id="L290" title="All 2 branches missed.">            while (myIterator.hasNext()) {</span>
+                /* Access bucket and category */
+<span class="nc" id="L292">                final MoneyWiseXAnalysisLoanBucket myCurr = myIterator.next();</span>
+<span class="nc" id="L293">                final MoneyWiseLoanCategory myCategory = myCurr.getCategory();</span>
+<span class="nc" id="L294">                getBucket(myCategory);</span>
+
+                /* Access parent category */
+<span class="nc" id="L297">                getBucket(myCategory.getParentCategory());</span>
+<span class="nc" id="L298">            }</span>
+<span class="nc" id="L299">        }</span>
+
+        /**
+         * Produce totals for the categories.
+         */
+        public void produceTotals() {
+            /* Create a list of new buckets (to avoid breaking iterator on add) */
+<span class="fc" id="L306">            final MetisListIndexed&lt;MoneyWiseXAnalysisLoanCategoryBucket&gt; myTotals = new MetisListIndexed&lt;&gt;();</span>
+
+            /* Loop through the buckets */
+<span class="fc" id="L309">            Iterator&lt;MoneyWiseXAnalysisLoanCategoryBucket&gt; myIterator = iterator();</span>
+<span class="fc bfc" id="L310" title="All 2 branches covered.">            while (myIterator.hasNext()) {</span>
+<span class="fc" id="L311">                final MoneyWiseXAnalysisLoanCategoryBucket myCurr = myIterator.next();</span>
+
+                /* Obtain category and parent category */
+<span class="fc" id="L314">                final MoneyWiseLoanCategory myCategory = myCurr.getAccountCategory();</span>
+<span class="fc" id="L315">                final MoneyWiseLoanCategory myParent = myCategory.getParentCategory();</span>
+
+                /* Calculate delta for the category */
+<span class="fc" id="L318">                myCurr.calculateDelta();</span>
+
+                /* Access parent bucket */
+<span class="fc" id="L321">                MoneyWiseXAnalysisLoanCategoryBucket myTotal = findItemById(myParent.getIndexedId());</span>
+
+                /* If the bucket does not exist */
+<span class="pc bpc" id="L324" title="1 of 2 branches missed.">                if (myTotal == null) {</span>
+                    /* Look for bucket in the new list */
+<span class="fc" id="L326">                    myTotal = myTotals.getItemById(myParent.getIndexedId());</span>
+
+                    /* If the bucket is completely new */
+<span class="pc bpc" id="L329" title="1 of 2 branches missed.">                    if (myTotal == null) {</span>
+                        /* Create the new bucket and add to new list */
+<span class="fc" id="L331">                        myTotal = new MoneyWiseXAnalysisLoanCategoryBucket(theCurrency, myParent);</span>
+<span class="fc" id="L332">                        myTotals.add(myTotal);</span>
+                    }
+                }
+
+                /* Add the bucket to the totals */
+<span class="fc" id="L337">                myTotal.addValues(myCurr);</span>
+<span class="fc" id="L338">                myTotal.updateActive(myCurr);</span>
+
+                /* Add to totals bucket */
+<span class="fc" id="L341">                theTotals.addValues(myCurr);</span>
+<span class="fc" id="L342">            }</span>
+
+            /* Loop through the new totals */
+<span class="fc" id="L345">            myIterator = myTotals.listIterator();</span>
+<span class="fc bfc" id="L346" title="All 2 branches covered.">            while (myIterator.hasNext()) {</span>
+<span class="fc" id="L347">                final MoneyWiseXAnalysisLoanCategoryBucket myCurr = myIterator.next();</span>
+
+                /* Calculate delta for the category total */
+<span class="fc" id="L350">                myCurr.calculateDelta();</span>
+
+                /* Add it to the list */
+<span class="fc" id="L353">                theList.add(myCurr);</span>
+<span class="fc" id="L354">            }</span>
+
+            /* Sort the list */
+<span class="fc" id="L357">            theList.sortList();</span>
+
+            /* Calculate delta for the totals */
+<span class="fc" id="L360">            theTotals.calculateDelta();</span>
+<span class="fc" id="L361">        }</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

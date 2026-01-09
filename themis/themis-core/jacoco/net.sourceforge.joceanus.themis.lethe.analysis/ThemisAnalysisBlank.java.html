@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisAnalysisBlank.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.themis.lethe.analysis</a> &gt; <span class="el_source">ThemisAnalysisBlank.java</span></div><h1>ThemisAnalysisBlank.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Themis: Java Project Framework
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.themis.lethe.analysis;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+
+/**
+ * A series of blank lines.
+ */
+public class ThemisAnalysisBlank
+    implements ThemisAnalysisProcessed {
+    /**
+     * The in-line comments.
+     */
+    private static final String COMMENTS = &quot;&quot; + ThemisAnalysisChar.COMMENT + ThemisAnalysisChar.COMMENT;
+
+    /**
+     * The blankLines.
+     */
+    private final List&lt;ThemisAnalysisLine&gt; theBlanks;
+
+    /**
+     * Constructor.
+     * @param pParser the parser
+     * @param pLine the initial blank line
+     * @throws OceanusException on error
+     */
+    ThemisAnalysisBlank(final ThemisAnalysisParser pParser,
+<span class="nc" id="L46">                        final ThemisAnalysisLine pLine) throws OceanusException {</span>
+        /* Create the list of blank lines */
+<span class="nc" id="L48">        theBlanks = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L49">        theBlanks.add(pLine);</span>
+
+        /* While there are further lines */
+<span class="nc bnc" id="L52" title="All 2 branches missed.">        while (pParser.hasLines()) {</span>
+            /* Access next line */
+<span class="nc" id="L54">            final ThemisAnalysisLine myLine = (ThemisAnalysisLine) pParser.peekNextLine();</span>
+
+            /* It it is also blank */
+<span class="nc bnc" id="L57" title="All 2 branches missed.">            if (isBlank(myLine)) {</span>
+                /* Add the blank line and remove from input */
+<span class="nc" id="L59">                theBlanks.add(myLine);</span>
+<span class="nc" id="L60">                pParser.popNextLine();</span>
+
+                /* else break loop */
+            } else {
+                break;
+            }
+<span class="nc" id="L66">        }</span>
+<span class="nc" id="L67">    }</span>
+
+    @Override
+    public int getNumLines() {
+<span class="nc" id="L71">        return theBlanks.size();</span>
+    }
+
+    /**
+     * Is the line blank?
+     * @param pLine the line
+     * @return true/false
+     */
+    static boolean isBlank(final ThemisAnalysisLine pLine) {
+<span class="nc bnc" id="L80" title="All 4 branches missed.">        return pLine.getLength() == 0 || pLine.startsWithSequence(COMMENTS);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

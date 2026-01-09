@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianXCoreAgreementComposite.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.gordianknot.impl.core.xagree</a> &gt; <span class="el_source">GordianXCoreAgreementComposite.java</span></div><h1>GordianXCoreAgreementComposite.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * GordianKnot: Security Suite
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.gordianknot.impl.core.xagree;
+
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementType;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianKDFType;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
+import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianAgreementResult.GordianDerivationId;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataConverter;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
+import net.sourceforge.joceanus.gordianknot.impl.core.kdf.GordianHKDFEngine;
+import net.sourceforge.joceanus.gordianknot.impl.core.kdf.GordianHKDFParams;
+import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianCompositeKeyPair;
+import org.bouncycastle.asn1.ASN1EncodableVector;
+import org.bouncycastle.asn1.ASN1OctetString;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.DEROctetString;
+import org.bouncycastle.asn1.DERSequence;
+import org.bouncycastle.asn1.misc.MiscObjectIdentifiers;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+
+import java.io.IOException;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
+
+/**
+ * Implementation engine for composite Agreements.
+ */
+public class GordianXCoreAgreementComposite extends GordianXCoreAgreementEngine {
+    /**
+     * The factory.
+     */
+    private final GordianBaseFactory theFactory;
+
+    /**
+     * List of underlying engines.
+     */
+    private final List&lt;GordianXCoreAgreementEngine&gt; theEngines;
+
+    /**
+     * The builder.
+     */
+    private final GordianXCoreAgreementBuilder theBuilder;
+
+    /**
+     * The builder.
+     */
+    private final GordianXCoreAgreementState theState;
+
+    /**
+     * Constructor.
+     * @param pSupplier the supplier
+     * @param pSpec the agreementSpec
+     * @param pEngines the engines
+     * @throws GordianException on error
+     */
+    GordianXCoreAgreementComposite(final GordianXCoreAgreementSupplier pSupplier,
+                                   final GordianAgreementSpec pSpec,
+                                   final List&lt;GordianXCoreAgreementEngine&gt; pEngines) throws GordianException {
+<span class="nc" id="L85">        super(pSupplier, pSpec);</span>
+<span class="nc" id="L86">        theFactory = pSupplier.getFactory();</span>
+<span class="nc" id="L87">        theEngines = pEngines;</span>
+<span class="nc" id="L88">        theBuilder = getBuilder();</span>
+<span class="nc" id="L89">        theState = theBuilder.getState();</span>
+<span class="nc" id="L90">    }</span>
+
+    /**
+     * Obtain list of subAgreementSpecs.
+     * @param pSpec the composite agreement Spec
+     * @return the list of subAgreementSpecs
+     */
+    static List&lt;GordianAgreementSpec&gt; getSubAgreements(final GordianAgreementSpec pSpec) {
+        /* Create the list */
+<span class="nc" id="L99">        final List&lt;GordianAgreementSpec&gt; mySpecs = new ArrayList&lt;&gt;();</span>
+
+        /* Switch signed agreements to Basic sub agreements */
+<span class="nc bnc" id="L102" title="All 2 branches missed.">        final GordianAgreementType myType = pSpec.getAgreementType().isSigned()</span>
+<span class="nc" id="L103">                ? GordianAgreementType.BASIC</span>
+<span class="nc" id="L104">                : pSpec.getAgreementType();</span>
+<span class="nc" id="L105">        final GordianKDFType myKDF = pSpec.getKDFType();</span>
+
+        /* Loop through the keyPairs */
+<span class="nc" id="L108">        final GordianKeyPairSpec myKeyPairSpec = pSpec.getKeyPairSpec();</span>
+<span class="nc" id="L109">        final Iterator&lt;GordianKeyPairSpec&gt; myIterator = myKeyPairSpec.keySpecIterator();</span>
+<span class="nc bnc" id="L110" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L111">            final GordianKeyPairSpec mySpec = myIterator.next();</span>
+            /* Determine the agreementType (note that we have no confirmation) */
+<span class="nc" id="L113">            mySpecs.add(new GordianAgreementSpec(mySpec, myType, myKDF));</span>
+<span class="nc" id="L114">        }</span>
+
+        /* Return the list */
+<span class="nc" id="L117">        return mySpecs;</span>
+    }
+
+    @Override
+    public void buildClientHello() throws GordianException {
+        /* Access the client and server keyPairs */
+<span class="nc" id="L123">        final GordianXCoreAgreementParticipant myClient = theState.getClient();</span>
+<span class="nc" id="L124">        final GordianCompositeKeyPair myClientKeyPair = (GordianCompositeKeyPair) myClient.getKeyPair();</span>
+<span class="nc bnc" id="L125" title="All 2 branches missed.">        final Iterator&lt;GordianKeyPair&gt; myClientIterator = myClientKeyPair == null ? null : myClientKeyPair.iterator();</span>
+<span class="nc" id="L126">        final GordianXCoreAgreementParticipant myServer = theState.getServer();</span>
+<span class="nc" id="L127">        final GordianCompositeKeyPair myServerKeyPair = (GordianCompositeKeyPair) myServer.getKeyPair();</span>
+<span class="nc" id="L128">        final Iterator&lt;GordianKeyPair&gt; myServerIterator = myServerKeyPair.iterator();</span>
+
+        /* Protect against exceptions */
+        try {
+            /* Create vectors for ephemeral keyPairs and encapsulated */
+<span class="nc" id="L133">            final ASN1EncodableVector myEphemeral = new ASN1EncodableVector();</span>
+<span class="nc" id="L134">            final ASN1EncodableVector myEncapsulated = new ASN1EncodableVector();</span>
+
+            /* Loop through the engines */
+<span class="nc bnc" id="L137" title="All 2 branches missed.">            for (GordianXCoreAgreementEngine myEngine : theEngines) {</span>
+                /* Access engine details */
+<span class="nc" id="L139">                final GordianXCoreAgreementState myEngState = myEngine.getBuilder().getState();</span>
+<span class="nc" id="L140">                final GordianXCoreAgreementParticipant myEngClient = myEngState.getClient();</span>
+<span class="nc" id="L141">                final GordianXCoreAgreementParticipant myEngServer = myEngState.getServer();</span>
+
+                /* Update keyPairs and initVector */
+<span class="nc bnc" id="L144" title="All 2 branches missed.">                myEngClient.setKeyPair(myClientKeyPair == null ? null : myClientIterator.next());</span>
+<span class="nc" id="L145">                myEngServer.setKeyPair(myServerIterator.next());</span>
+<span class="nc" id="L146">                myEngClient.setInitVector(myClient.getInitVector());</span>
+
+                /* Build clientHello details in the engine */
+<span class="nc" id="L149">                myEngine.buildClientHello();</span>
+
+                /* Add any Ephemeral to keySpec sequence */
+<span class="nc" id="L152">                final X509EncodedKeySpec myEngEphemeral = myEngClient.getEphemeralKeySpec();</span>
+<span class="nc bnc" id="L153" title="All 2 branches missed.">                if (myEngEphemeral != null) {</span>
+<span class="nc" id="L154">                    myEphemeral.add(SubjectPublicKeyInfo.getInstance(myEngEphemeral));</span>
+                }
+
+                /* Add any encapsulated to sequence */
+<span class="nc" id="L158">                final byte[] myEngEncapsulated = myEngState.getEncapsulated();</span>
+<span class="nc bnc" id="L159" title="All 2 branches missed.">                if (myEngEncapsulated != null) {</span>
+<span class="nc" id="L160">                    myEncapsulated.add(new DEROctetString(myEngEncapsulated));</span>
+                }
+<span class="nc" id="L162">            }</span>
+
+            /* Record combined ephemeral and encapsulated */
+<span class="nc bnc" id="L165" title="All 2 branches missed.">            if (myEphemeral.size() &gt; 0) {</span>
+<span class="nc" id="L166">                final AlgorithmIdentifier myId = new AlgorithmIdentifier(MiscObjectIdentifiers.id_alg_composite);</span>
+<span class="nc" id="L167">                final SubjectPublicKeyInfo myInfo = new SubjectPublicKeyInfo(myId, new DERSequence(myEphemeral).getEncoded());</span>
+<span class="nc" id="L168">                myClient.setEphemeralKeySpec(new X509EncodedKeySpec(myInfo.getEncoded()));</span>
+            }
+<span class="nc bnc" id="L170" title="All 2 branches missed.">            if (myEncapsulated.size() &gt; 0) {</span>
+<span class="nc" id="L171">                theState.setEncapsulated(new DERSequence(myEncapsulated).getEncoded());</span>
+            }
+
+            /* catch exceptions */
+<span class="nc" id="L175">        } catch (IOException e) {</span>
+<span class="nc" id="L176">            throw new GordianIOException(&quot;Failed to build combined clientHello&quot;, e);</span>
+<span class="nc" id="L177">        }</span>
+
+        /* Sort out the result if anonymous */
+<span class="nc bnc" id="L180" title="All 2 branches missed.">        if (theState.getSpec().getAgreementType().isAnonymous()) {</span>
+<span class="nc" id="L181">            mergeResults();</span>
+        }
+<span class="nc" id="L183">    }</span>
+
+    /**
+     * Process the clientHello.
+     * @throws GordianException on error
+     */
+    public void processClientHello() throws GordianException {
+        /* Access the client and server keyPairs */
+<span class="nc" id="L191">        final GordianXCoreAgreementParticipant myClient = theState.getClient();</span>
+<span class="nc" id="L192">        final GordianCompositeKeyPair myClientKeyPair = (GordianCompositeKeyPair) myClient.getKeyPair();</span>
+<span class="nc bnc" id="L193" title="All 2 branches missed.">        final Iterator&lt;GordianKeyPair&gt; myClientIterator = myClientKeyPair == null ? null : myClientKeyPair.iterator();</span>
+<span class="nc" id="L194">        final GordianXCoreAgreementParticipant myServer = theState.getServer();</span>
+<span class="nc" id="L195">        final GordianCompositeKeyPair myServerKeyPair = (GordianCompositeKeyPair) myServer.getKeyPair();</span>
+<span class="nc" id="L196">        final Iterator&lt;GordianKeyPair&gt; myServerIterator = myServerKeyPair.iterator();</span>
+<span class="nc" id="L197">        final GordianCompositeKeyPair myEphemeralKeyPair = (GordianCompositeKeyPair) myClient.getEphemeralKeyPair();</span>
+<span class="nc bnc" id="L198" title="All 2 branches missed.">        final Iterator&lt;GordianKeyPair&gt; myEphemeralIterator = myEphemeralKeyPair == null ? null : myEphemeralKeyPair.iterator();</span>
+
+        /* Protect against exceptions */
+        try {
+            /* Create vector for ephemeral keyPairs and access encapsulated sequence */
+<span class="nc" id="L203">            final ASN1EncodableVector myEphemeral = new ASN1EncodableVector();</span>
+<span class="nc" id="L204">            final byte[] myEncapsulated = theState.getEncapsulated();</span>
+<span class="nc bnc" id="L205" title="All 2 branches missed.">            final Enumeration&lt;?&gt; enEnc = myEncapsulated == null ? null : ASN1Sequence.getInstance(myEncapsulated).getObjects();</span>
+
+            /* Loop through the engines */
+<span class="nc bnc" id="L208" title="All 2 branches missed.">            for (GordianXCoreAgreementEngine myEngine : theEngines) {</span>
+                /* Access engine details */
+<span class="nc" id="L210">                final GordianXCoreAgreementState myEngState = myEngine.getBuilder().getState();</span>
+<span class="nc" id="L211">                final GordianXCoreAgreementParticipant myEngClient = myEngState.getClient();</span>
+<span class="nc" id="L212">                final GordianXCoreAgreementParticipant myEngServer = myEngState.getServer();</span>
+
+                /* Update keyPairs and initVector */
+<span class="nc bnc" id="L215" title="All 2 branches missed.">                myEngClient.setKeyPair(myClientKeyPair == null ? null : myClientIterator.next());</span>
+<span class="nc" id="L216">                myEngServer.setKeyPair(myServerIterator.next());</span>
+<span class="nc" id="L217">                myEngClient.setInitVector(myClient.getInitVector());</span>
+<span class="nc" id="L218">                myEngServer.setInitVector(myServer.getInitVector());</span>
+<span class="nc bnc" id="L219" title="All 2 branches missed.">                myEngClient.setEphemeralKeyPair(myEphemeralKeyPair == null ? null : myEphemeralIterator.next());</span>
+<span class="nc bnc" id="L220" title="All 2 branches missed.">                myEngState.setEncapsulated(enEnc == null ? null : ASN1OctetString.getInstance(enEnc.nextElement()).getOctets());</span>
+
+                /* Process clientHello details in the engine */
+<span class="nc" id="L223">                myEngine.processClientHello();</span>
+
+                /* Add any Ephemeral to keySpec sequence */
+<span class="nc" id="L226">                final X509EncodedKeySpec myEngEphemeral = myEngClient.getEphemeralKeySpec();</span>
+<span class="nc bnc" id="L227" title="All 2 branches missed.">                if (myEngEphemeral != null) {</span>
+<span class="nc" id="L228">                    myEphemeral.add(SubjectPublicKeyInfo.getInstance(myEngEphemeral));</span>
+                }
+<span class="nc" id="L230">            }</span>
+
+            /* Record combined ephemeral */
+<span class="nc bnc" id="L233" title="All 2 branches missed.">            if (myEphemeral.size() &gt; 0) {</span>
+<span class="nc" id="L234">                final AlgorithmIdentifier myId = new AlgorithmIdentifier(MiscObjectIdentifiers.id_alg_composite);</span>
+<span class="nc" id="L235">                final SubjectPublicKeyInfo myInfo = new SubjectPublicKeyInfo(myId, new DERSequence(myEphemeral).getEncoded());</span>
+<span class="nc" id="L236">                myClient.setEphemeralKeySpec(new X509EncodedKeySpec(myInfo.getEncoded()));</span>
+            }
+
+            /* catch exceptions */
+<span class="nc" id="L240">        } catch (IOException e) {</span>
+<span class="nc" id="L241">            throw new GordianIOException(&quot;Failed to process combined clientHello&quot;, e);</span>
+<span class="nc" id="L242">        }</span>
+
+        /* Sort out the result if no confirm */
+<span class="nc bnc" id="L245" title="All 2 branches missed.">        if (!Boolean.TRUE.equals(theState.getSpec().withConfirm())) {</span>
+<span class="nc" id="L246">            mergeResults();</span>
+        }
+<span class="nc" id="L248">    }</span>
+
+    @Override
+    public void processServerHello() throws GordianException {
+        /* Access the client and server keyPairs */
+<span class="nc" id="L253">        final GordianXCoreAgreementParticipant myServer = theState.getServer();</span>
+<span class="nc" id="L254">        final GordianCompositeKeyPair myEphemeralKeyPair = (GordianCompositeKeyPair) myServer.getEphemeralKeyPair();</span>
+<span class="nc bnc" id="L255" title="All 2 branches missed.">        final Iterator&lt;GordianKeyPair&gt; myEphemeralIterator = myEphemeralKeyPair == null ? null : myEphemeralKeyPair.iterator();</span>
+
+        /* Protect against exceptions */
+        try {
+            /* Create vector for ephemeral keyPairs and access encapsulated sequence */
+<span class="nc" id="L260">            final ASN1EncodableVector myEphemeral = new ASN1EncodableVector();</span>
+
+            /* Loop through the engines */
+<span class="nc bnc" id="L263" title="All 2 branches missed.">            for (GordianXCoreAgreementEngine myEngine : theEngines) {</span>
+                /* Access engine details */
+<span class="nc" id="L265">                final GordianXCoreAgreementState myEngState = myEngine.getBuilder().getState();</span>
+<span class="nc" id="L266">                final GordianXCoreAgreementParticipant myEngServer = myEngState.getServer();</span>
+
+                /* Store initVector and ephemeral keyPair */
+<span class="nc" id="L269">                myEngServer.setInitVector(myServer.getInitVector());</span>
+<span class="nc bnc" id="L270" title="All 2 branches missed.">                myEngServer.setEphemeralKeyPair(myEphemeralIterator == null ? null : myEphemeralIterator.next());</span>
+
+                /* Process serverHello details in the engine */
+<span class="nc" id="L273">                myEngine.processServerHello();</span>
+
+                /* Add any Ephemeral to keySpec sequence */
+<span class="nc" id="L276">                final X509EncodedKeySpec myEngEphemeral = myEngServer.getEphemeralKeySpec();</span>
+<span class="nc bnc" id="L277" title="All 2 branches missed.">                if (myEngEphemeral != null) {</span>
+<span class="nc" id="L278">                    myEphemeral.add(SubjectPublicKeyInfo.getInstance(myEngEphemeral));</span>
+                }
+<span class="nc" id="L280">            }</span>
+
+            /* Record combined ephemeral */
+<span class="nc bnc" id="L283" title="All 2 branches missed.">            if (myEphemeral.size() &gt; 0) {</span>
+<span class="nc" id="L284">                final AlgorithmIdentifier myId = new AlgorithmIdentifier(MiscObjectIdentifiers.id_alg_composite);</span>
+<span class="nc" id="L285">                final SubjectPublicKeyInfo myInfo = new SubjectPublicKeyInfo(myId, new DERSequence(myEphemeral).getEncoded());</span>
+<span class="nc" id="L286">                myServer.setEphemeralKeySpec(new X509EncodedKeySpec(myInfo.getEncoded()));</span>
+            }
+
+            /* catch exceptions */
+<span class="nc" id="L290">        } catch (IOException e) {</span>
+<span class="nc" id="L291">            throw new GordianIOException(&quot;Failed to process combined clientHello&quot;, e);</span>
+<span class="nc" id="L292">        }</span>
+
+        /* Sort out the result */
+<span class="nc" id="L295">        mergeResults();</span>
+<span class="nc" id="L296">    }</span>
+
+    @Override
+    public void processClientConfirm() throws GordianException {
+        /* Sort out the result */
+<span class="nc" id="L301">        mergeResults();</span>
+<span class="nc" id="L302">    }</span>
+
+    /**
+     * Merge and store the result.
+     * @throws GordianException on error
+     */
+    private void mergeResults() throws GordianException {
+        /* Protect against exceptions */
+<span class="nc" id="L310">        final GordianHKDFParams myParams = GordianHKDFParams.extractOnly();</span>
+        try {
+            /* Create the HKDF parameters */
+<span class="nc" id="L313">            final GordianDigestSpec myDigestSpec = new GordianDigestSpec(GordianDerivationId.COMPOSITE.getDigestType());</span>
+<span class="nc" id="L314">            Random myRandom = null;</span>
+
+            /* Loop through the engines */
+<span class="nc bnc" id="L317" title="All 2 branches missed.">            for (GordianXCoreAgreementEngine myEngine : theEngines) {</span>
+                /* Access the secret result */
+<span class="nc" id="L319">                final byte[] myPart = (byte[]) myEngine.getBuilder().getState().getResult();</span>
+
+                /* Handle random bytes */
+<span class="nc bnc" id="L322" title="All 2 branches missed.">                if (myRandom == null) {</span>
+                    /* Build the 64-bit seed, create the seeded random and populate bytes */
+<span class="nc" id="L324">                    final long mySeed = GordianDataConverter.byteArrayToLong(myPart);</span>
+<span class="nc" id="L325">                    myRandom = new Random(mySeed);</span>
+<span class="nc" id="L326">                    final byte[] myBytes = new byte[Long.BYTES];</span>
+<span class="nc" id="L327">                    myRandom.nextBytes(myBytes);</span>
+<span class="nc" id="L328">                    myParams.withSalt(myBytes);</span>
+                }
+
+                /* Add part to parameters */
+<span class="nc" id="L332">                myParams.withIKM(myPart);</span>
+<span class="nc" id="L333">                Arrays.fill(myPart, (byte) 0);</span>
+<span class="nc" id="L334">            }</span>
+
+            /* Derive the bytes and store as secret */
+<span class="nc" id="L337">            final GordianHKDFEngine myEngine = new GordianHKDFEngine(theFactory, myDigestSpec);</span>
+<span class="nc" id="L338">            theBuilder.storeSecret(myEngine.deriveBytes(myParams));</span>
+
+        } finally {
+<span class="nc" id="L341">            myParams.clearParameters();</span>
+        }
+<span class="nc" id="L343">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

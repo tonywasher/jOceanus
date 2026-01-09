@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianDigestInputStream.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.gordianknot.impl.core.stream</a> &gt; <span class="el_source">GordianDigestInputStream.java</span></div><h1>GordianDigestInputStream.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * GordianKnot: Security Suite
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.gordianknot.impl.core.stream;
+
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
+import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigest;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import org.bouncycastle.util.Arrays;
+
+import java.io.InputStream;
+
+/**
+ * Input stream Digest implementation.
+ */
+class GordianDigestInputStream
+        extends GordianInputStream {
+    /**
+     * The digest.
+     */
+    private final GordianDigest theDigest;
+
+    /**
+     * The expected result.
+     */
+    private final byte[] theExpected;
+
+    /**
+     * The MacStream.
+     */
+    private final GordianMacInputStream theMacStream;
+
+    /**
+     * Constructor.
+     * @param pDigest the digest
+     * @param pExpected the expected result
+     * @param pInput the underlying input stream
+     * @param pMacStream the MacStream
+     */
+    GordianDigestInputStream(final GordianDigest pDigest,
+                             final byte[] pExpected,
+                             final InputStream pInput,
+                             final GordianMacInputStream pMacStream) {
+        /* Initialise underlying class */
+<span class="fc" id="L58">        super(pInput);</span>
+
+        /* Store parameters */
+<span class="fc" id="L61">        theDigest = pDigest;</span>
+<span class="fc" id="L62">        theExpected = Arrays.copyOf(pExpected, pExpected.length);</span>
+<span class="fc" id="L63">        theMacStream = pMacStream;</span>
+
+        /* Create processed buffer */
+<span class="fc" id="L66">        setProcessedBuffer(new GordianDigestBuffer(this));</span>
+
+        /* Report the expected Digest to the Mac */
+<span class="fc" id="L69">        theMacStream.setExpectedDigest(theExpected);</span>
+<span class="fc" id="L70">    }</span>
+
+    /**
+     * Obtain the Digest.
+     * @return the digest
+     */
+    public GordianDigest getDigest() {
+<span class="fc" id="L77">        return theDigest;</span>
+    }
+
+    /**
+     * Check result.
+     * @throws GordianException on error
+     */
+    void checkResult() throws GordianException {
+        /* Calculate digest */
+<span class="fc" id="L86">        final byte[] myResult = theDigest.finish();</span>
+
+        /* Check valid digest */
+<span class="pc bpc" id="L89" title="1 of 2 branches missed.">        if (!Arrays.areEqual(myResult, theExpected)) {</span>
+<span class="nc" id="L90">            throw new GordianDataException(&quot;Invalid Digest&quot;);</span>
+        }
+<span class="fc" id="L92">    }</span>
+
+    /**
+     * Buffer to hold the processed data prior to returning it to the caller.
+     */
+    private static final class GordianDigestBuffer
+            extends GordianProcessedBuffer {
+        /**
+         * The InputStream.
+         */
+        private final GordianDigestInputStream theStream;
+
+        /**
+         * The digest.
+         */
+        private final GordianDigest theDigest;
+
+        /**
+         * Constructor.
+         * @param pStream the input stream
+         */
+<span class="fc" id="L113">        GordianDigestBuffer(final GordianDigestInputStream pStream) {</span>
+<span class="fc" id="L114">            theStream = pStream;</span>
+<span class="fc" id="L115">            theDigest = theStream.getDigest();</span>
+<span class="fc" id="L116">        }</span>
+
+        @Override
+        public int processBytes(final byte[] pBuffer,
+                                final int pLength) throws GordianException {
+            /* Initialise variables */
+<span class="fc" id="L122">            final int iLength = pLength;</span>
+
+            /* If we have EOF from the input stream */
+<span class="fc bfc" id="L125" title="All 2 branches covered.">            if (iLength == -1) {</span>
+                /* Record the fact and reset the read length to zero */
+<span class="fc" id="L127">                setEOFSeen();</span>
+<span class="fc" id="L128">                theStream.checkResult();</span>
+<span class="fc" id="L129">                return -1;</span>
+            }
+
+            /* Update the digest */
+<span class="fc" id="L133">            theDigest.update(pBuffer, 0, iLength);</span>
+
+            /* Set up buffer variables */
+<span class="fc" id="L136">            setBuffer(pBuffer, iLength);</span>
+<span class="fc" id="L137">            return iLength;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

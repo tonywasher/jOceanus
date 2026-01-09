@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseAnalysisManager.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.lethe.data.analysis.data</a> &gt; <span class="el_source">MoneyWiseAnalysisManager.java</span></div><h1>MoneyWiseAnalysisManager.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.lethe.data.analysis.data;
+
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataMap;
+import net.sourceforge.joceanus.metis.field.MetisFieldItem;
+import net.sourceforge.joceanus.metis.field.MetisFieldSet;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisCashBucket.MoneyWiseAnalysisCashBucketList;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisCashCategoryBucket.MoneyWiseAnalysisCashCategoryBucketList;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisDepositBucket.MoneyWiseAnalysisDepositBucketList;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisDepositCategoryBucket.MoneyWiseAnalysisDepositCategoryBucketList;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisLoanBucket.MoneyWiseAnalysisLoanBucketList;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisLoanCategoryBucket.MoneyWiseAnalysisLoanCategoryBucketList;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisPayeeBucket.MoneyWiseAnalysisPayeeBucketList;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisPortfolioBucket.MoneyWiseAnalysisPortfolioBucketList;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisTaxBasisBucket.MoneyWiseAnalysisTaxBasisBucketList;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisTransCategoryBucket.MoneyWiseAnalysisTransCategoryBucketList;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisTransTagBucket.MoneyWiseAnalysisTransTagBucketList;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisAccountAttr;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisPayeeAttr;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisSecurityAttr;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisTaxBasisAttr;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisTransAttr;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
+
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * Analysis manager.
+ */
+public class MoneyWiseAnalysisManager
+        implements MetisFieldItem, MetisDataMap&lt;OceanusDateRange, MoneyWiseAnalysis&gt; {
+    /**
+     * Logger.
+     */
+<span class="fc" id="L56">    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(MoneyWiseAnalysisManager.class);</span>
+
+    /**
+     * Local Report fields.
+     */
+<span class="fc" id="L61">    private static final MetisFieldSet&lt;MoneyWiseAnalysisManager&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseAnalysisManager.class);</span>
+
+    /*
+     * Declare Fields.
+     */
+    static {
+<span class="fc" id="L67">        FIELD_DEFS.declareLocalField(MoneyWiseAnalysisDataResource.ANALYSIS_NAME, MoneyWiseAnalysisManager::getAnalysis);</span>
+<span class="fc" id="L68">    }</span>
+
+    /**
+     * The analysis map.
+     */
+    private final Map&lt;OceanusDateRange, MoneyWiseAnalysis&gt; theAnalysisMap;
+
+    /**
+     * The base analysis.
+     */
+    private final MoneyWiseAnalysis theAnalysis;
+
+    /**
+     * Do we have active securities?
+     */
+<span class="fc" id="L83">    private Boolean haveActiveSecurities = Boolean.FALSE;</span>
+
+    /**
+     * Do we have a foreign account?
+     */
+<span class="fc" id="L88">    private Boolean haveForeignCurrency = Boolean.FALSE;</span>
+
+    /**
+     * Constructor.
+     * @param pAnalysis the new analysis
+     */
+<span class="fc" id="L94">    public MoneyWiseAnalysisManager(final MoneyWiseAnalysis pAnalysis) {</span>
+        /* Store the parameters */
+<span class="fc" id="L96">        theAnalysis = pAnalysis;</span>
+
+        /* Create the analysis map */
+<span class="fc" id="L99">        theAnalysisMap = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L100">    }</span>
+
+    @Override
+    public MetisFieldSet&lt;MoneyWiseAnalysisManager&gt; getDataFieldSet() {
+<span class="fc" id="L104">        return FIELD_DEFS;</span>
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L109">        return getClass().getSimpleName();</span>
+    }
+
+    @Override
+    public Map&lt;OceanusDateRange, MoneyWiseAnalysis&gt; getUnderlyingMap() {
+<span class="nc" id="L114">        return theAnalysisMap;</span>
+    }
+
+    /**
+     * Is the analysis manager idle?
+     * @return true/false
+     */
+    public boolean isIdle() {
+<span class="nc" id="L122">        return theAnalysis.isIdle();</span>
+    }
+
+    /**
+     * Obtain the base analysis.
+     * @return the base analysis
+     */
+    public MoneyWiseAnalysis getAnalysis() {
+<span class="fc" id="L130">        return theAnalysis;</span>
+    }
+
+    /**
+     * Do we have a foreign currency?
+     * @return true/false
+     */
+    public Boolean haveForeignCurrency() {
+<span class="fc" id="L138">        return haveForeignCurrency;</span>
+    }
+
+    /**
+     * Do we have active securities?
+     * @return true/false
+     */
+    public Boolean haveActiveSecurities() {
+<span class="fc" id="L146">        return haveActiveSecurities;</span>
+    }
+
+    /**
+     * Obtain an analysis for a date.
+     * @param pDate the date for the analysis.
+     * @return the analysis
+     */
+    public MoneyWiseAnalysis getDatedAnalysis(final OceanusDate pDate) {
+        /* Create the new Range */
+<span class="nc" id="L156">        final OceanusDateRange myRange = new OceanusDateRange(null, pDate);</span>
+
+        /* Look for the existing analysis */
+<span class="nc" id="L159">        MoneyWiseAnalysis myAnalysis = theAnalysisMap.get(myRange);</span>
+<span class="nc bnc" id="L160" title="All 2 branches missed.">        if (myAnalysis == null) {</span>
+            /* Create the new event analysis */
+<span class="nc" id="L162">            myAnalysis = new MoneyWiseAnalysis(this, pDate);</span>
+<span class="nc" id="L163">            produceTotals(myAnalysis);</span>
+
+            /* Check the totals */
+<span class="nc" id="L166">            checkTotals(myAnalysis);</span>
+
+            /* Put it into the map */
+<span class="nc" id="L169">            theAnalysisMap.put(myRange, myAnalysis);</span>
+        }
+
+        /* return the analysis */
+<span class="nc" id="L173">        return myAnalysis;</span>
+    }
+
+    /**
+     * Obtain an analysis for a range.
+     * @param pRange the date range for the analysis.
+     * @return the analysis
+     */
+    public MoneyWiseAnalysis getRangedAnalysis(final OceanusDateRange pRange) {
+        /* Look for the existing analysis */
+<span class="nc" id="L183">        MoneyWiseAnalysis myAnalysis = theAnalysisMap.get(pRange);</span>
+<span class="nc bnc" id="L184" title="All 2 branches missed.">        if (myAnalysis == null) {</span>
+            /* Create the new event analysis */
+<span class="nc" id="L186">            myAnalysis = new MoneyWiseAnalysis(this, pRange);</span>
+<span class="nc" id="L187">            produceTotals(myAnalysis);</span>
+
+            /* Check the totals */
+<span class="nc" id="L190">            checkTotals(myAnalysis);</span>
+
+            /* Put it into the map */
+<span class="nc" id="L193">            theAnalysisMap.put(pRange, myAnalysis);</span>
+        }
+
+        /* return the analysis */
+<span class="nc" id="L197">        return myAnalysis;</span>
+    }
+
+    /**
+     * Analyse the base analysis.
+     */
+    public void analyseBase() {
+        /* Produce totals for the base analysis */
+<span class="fc" id="L205">        produceTotals(theAnalysis);</span>
+<span class="fc" id="L206">    }</span>
+
+    /**
+     * Produce Totals for an analysis.
+     * @param pAnalysis the analysis.
+     */
+    private void produceTotals(final MoneyWiseAnalysis pAnalysis) {
+        /* Create the market analysis */
+<span class="fc" id="L214">        final MoneyWiseAnalysisMarket myMarket = new MoneyWiseAnalysisMarket(pAnalysis);</span>
+
+        /* Analyse the deposits */
+<span class="fc" id="L217">        final MoneyWiseAnalysisDepositBucketList myDeposits = pAnalysis.getDeposits();</span>
+<span class="fc" id="L218">        final MoneyWiseAnalysisDepositCategoryBucketList myDepositCategories = pAnalysis.getDepositCategories();</span>
+<span class="fc" id="L219">        myDepositCategories.analyseDeposits(myMarket, myDeposits);</span>
+<span class="fc" id="L220">        myDepositCategories.produceTotals();</span>
+<span class="fc" id="L221">        haveForeignCurrency = myDepositCategories.haveForeignCurrency();</span>
+
+        /* Analyse the cash */
+<span class="fc" id="L224">        final MoneyWiseAnalysisCashBucketList myCash = pAnalysis.getCash();</span>
+<span class="fc" id="L225">        final MoneyWiseAnalysisCashCategoryBucketList myCashCategories = pAnalysis.getCashCategories();</span>
+<span class="fc" id="L226">        myCashCategories.analyseCash(myMarket, myCash);</span>
+<span class="fc" id="L227">        myCashCategories.produceTotals();</span>
+<span class="fc" id="L228">        haveForeignCurrency |= myCashCategories.haveForeignCurrency();</span>
+
+        /* Analyse the loans */
+<span class="fc" id="L231">        final MoneyWiseAnalysisLoanBucketList myLoans = pAnalysis.getLoans();</span>
+<span class="fc" id="L232">        final MoneyWiseAnalysisLoanCategoryBucketList myLoanCategories = pAnalysis.getLoanCategories();</span>
+<span class="fc" id="L233">        myLoanCategories.analyseLoans(myMarket, myLoans);</span>
+<span class="fc" id="L234">        myLoanCategories.produceTotals();</span>
+<span class="fc" id="L235">        haveForeignCurrency |= myLoanCategories.haveForeignCurrency();</span>
+
+        /* Analyse the securities */
+<span class="fc" id="L238">        final MoneyWiseAnalysisPortfolioBucketList myPortfolios = pAnalysis.getPortfolios();</span>
+<span class="fc" id="L239">        myPortfolios.analyseSecurities(myMarket);</span>
+<span class="fc" id="L240">        haveForeignCurrency |= myPortfolios.haveForeignCurrency();</span>
+<span class="fc" id="L241">        haveActiveSecurities = myPortfolios.haveActiveSecurities();</span>
+
+        /* Propagate market totals */
+<span class="fc" id="L244">        myMarket.propagateTotals();</span>
+
+        /* Analyse the Payees */
+<span class="fc" id="L247">        final MoneyWiseAnalysisPayeeBucketList myPayees = pAnalysis.getPayees();</span>
+<span class="fc" id="L248">        myPayees.produceTotals();</span>
+
+        /* Analyse the TransactionCategories */
+<span class="fc" id="L251">        final MoneyWiseAnalysisTransCategoryBucketList myTransCategories = pAnalysis.getTransCategories();</span>
+<span class="fc" id="L252">        myTransCategories.produceTotals();</span>
+
+        /* Analyse the TaxBasis */
+<span class="fc" id="L255">        final MoneyWiseAnalysisTaxBasisBucketList myTaxBasis = pAnalysis.getTaxBasis();</span>
+<span class="fc" id="L256">        myTaxBasis.produceTotals();</span>
+
+        /* Sort the transaction Tag list */
+<span class="fc" id="L259">        final MoneyWiseAnalysisTransTagBucketList myTags = pAnalysis.getTransactionTags();</span>
+<span class="fc" id="L260">        myTags.sortBuckets();</span>
+<span class="fc" id="L261">    }</span>
+
+    /**
+     * Check totals for an analysis.
+     * @param pAnalysis the analysis to check
+     */
+    private static void checkTotals(final MoneyWiseAnalysis pAnalysis) {
+        /* Obtain Totals bucket */
+<span class="nc" id="L269">        final MoneyWiseAnalysisDepositCategoryBucket myDepCat = pAnalysis.getDepositCategories().getTotals();</span>
+<span class="nc" id="L270">        final MoneyWiseAnalysisCashCategoryBucket myCashCat = pAnalysis.getCashCategories().getTotals();</span>
+<span class="nc" id="L271">        final MoneyWiseAnalysisLoanCategoryBucket myLoanCat = pAnalysis.getLoanCategories().getTotals();</span>
+<span class="nc" id="L272">        final MoneyWiseAnalysisPortfolioBucket myPort = pAnalysis.getPortfolios().getTotals();</span>
+<span class="nc" id="L273">        final MoneyWiseAnalysisPayeeBucket myPayee = pAnalysis.getPayees().getTotals();</span>
+<span class="nc" id="L274">        final MoneyWiseAnalysisTransCategoryBucket myTrans = pAnalysis.getTransCategories().getTotals();</span>
+<span class="nc" id="L275">        final MoneyWiseAnalysisTaxBasisBucket myTax = pAnalysis.getTaxBasis().getTotals();</span>
+
+        /* Handle null data */
+<span class="nc bnc" id="L278" title="All 2 branches missed.">        if (myDepCat == null) {</span>
+<span class="nc" id="L279">            return;</span>
+        }
+
+        /* Access totals */
+<span class="nc" id="L283">        OceanusMoney myDepTotal = myDepCat.getValues().getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUEDELTA);</span>
+<span class="nc" id="L284">        final OceanusMoney myCashTotal = myCashCat.getValues().getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUEDELTA);</span>
+<span class="nc" id="L285">        final OceanusMoney myLoanTotal = myLoanCat.getValues().getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUEDELTA);</span>
+<span class="nc" id="L286">        final OceanusMoney myPortTotal = myPort.getValues().getMoneyValue(MoneyWiseAnalysisSecurityAttr.VALUEDELTA);</span>
+<span class="nc" id="L287">        final OceanusMoney myPayTotal = myPayee.getValues().getMoneyValue(MoneyWiseAnalysisPayeeAttr.PROFIT);</span>
+<span class="nc" id="L288">        final OceanusMoney myEvtTotal = myTrans.getValues().getMoneyValue(MoneyWiseAnalysisTransAttr.PROFIT);</span>
+<span class="nc" id="L289">        final OceanusMoney myTaxTotal = myTax.getValues().getMoneyValue(MoneyWiseAnalysisTaxBasisAttr.GROSS);</span>
+
+        /* Create a copy */
+<span class="nc" id="L292">        myDepTotal = new OceanusMoney(myDepTotal);</span>
+
+        /* Add sub-accounts */
+<span class="nc" id="L295">        myDepTotal.addAmount(myCashTotal);</span>
+<span class="nc" id="L296">        myDepTotal.addAmount(myLoanTotal);</span>
+<span class="nc" id="L297">        myDepTotal.addAmount(myPortTotal);</span>
+
+        /* Check identities */
+<span class="nc bnc" id="L300" title="All 2 branches missed.">        if (!myDepTotal.equals(myPayTotal)) {</span>
+<span class="nc" id="L301">            LOGGER.error(&quot;Payee total mismatch&quot;);</span>
+        }
+<span class="nc bnc" id="L303" title="All 2 branches missed.">        if (!myDepTotal.equals(myEvtTotal)) {</span>
+<span class="nc" id="L304">            LOGGER.error(&quot;TransactionCategory total mismatch&quot;);</span>
+        }
+<span class="nc bnc" id="L306" title="All 2 branches missed.">        if (!myDepTotal.equals(myTaxTotal)) {</span>
+<span class="nc" id="L307">            LOGGER.error(&quot;TaxBasis total mismatch&quot;);</span>
+        }
+<span class="nc" id="L309">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

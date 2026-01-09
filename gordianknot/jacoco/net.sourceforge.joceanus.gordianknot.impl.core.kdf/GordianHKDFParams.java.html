@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianHKDFParams.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.gordianknot.impl.core.kdf</a> &gt; <span class="el_source">GordianHKDFParams.java</span></div><h1>GordianHKDFParams.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * GordianKnot: Security Suite
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.gordianknot.impl.core.kdf;
+
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+
+/**
+ * HKDF parameters.
+ */
+public final class GordianHKDFParams {
+    /**
+     * The initial keying material.
+     */
+    private final List&lt;byte[]&gt; theIKMs;
+
+    /**
+     * The salts.
+     */
+    private final List&lt;byte[]&gt; theSalts;
+
+    /**
+     * The pseudo-random key.
+     */
+    private final byte[] thePRK;
+
+    /**
+     * The expanding info.
+     */
+    private final List&lt;byte[]&gt; theInfo;
+
+    /**
+     * The mode.
+     */
+    private final GordianHKDFMode theMode;
+
+    /**
+     * The expand length.
+     */
+    private final int theLength;
+
+    /**
+     * Constructor.
+     * @param pMode theMode
+     * @param pPRK the pseudo-random key
+     * @param pLength the length
+     * @throws GordianException on error
+     */
+    private GordianHKDFParams(final GordianHKDFMode pMode,
+                              final byte[] pPRK,
+<span class="fc" id="L70">                              final int pLength) throws GordianException {</span>
+        /* Store parameters */
+<span class="fc" id="L72">        theMode = pMode;</span>
+<span class="fc bfc" id="L73" title="All 2 branches covered.">        thePRK = pPRK == null ? null : pPRK.clone();</span>
+<span class="fc" id="L74">        theLength = pLength;</span>
+<span class="fc" id="L75">        theIKMs = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L76">        theSalts = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L77">        theInfo = new ArrayList&lt;&gt;();</span>
+
+        /* Check PRK */
+<span class="pc bpc" id="L80" title="2 of 6 branches missed.">        if (GordianHKDFMode.EXPAND.equals(theMode)</span>
+                &amp;&amp; (thePRK == null || pPRK.length == 0)) {
+<span class="nc" id="L82">            throw new GordianDataException(&quot;PRK must be non-null and non-zero length for expandOnly&quot;);</span>
+        }
+
+        /* Check length */
+<span class="pc bpc" id="L86" title="1 of 4 branches missed.">        if (theMode.doExpand() &amp;&amp; theLength &lt;= 0) {</span>
+<span class="nc" id="L87">            throw new GordianDataException(&quot;Length must be greater than zero&quot;);</span>
+        }
+<span class="fc" id="L89">    }</span>
+
+    /**
+     * Create an extractOnly parameters.
+     * @return an extractOnly parameters
+     * @throws GordianException on error
+     */
+    public static GordianHKDFParams extractOnly() throws GordianException {
+<span class="fc" id="L97">        return new GordianHKDFParams(GordianHKDFMode.EXTRACT, null, 0);</span>
+    }
+
+    /**
+     * Create an expandOnly parameters.
+     * @param pPRK the pseudo-random key
+     * @param pLength the length
+     * @return an expandOnly parameters
+     * @throws GordianException on error
+     */
+    public static GordianHKDFParams expandOnly(final byte[] pPRK,
+                                               final int pLength) throws GordianException {
+<span class="fc" id="L109">        return new GordianHKDFParams(GordianHKDFMode.EXPAND, pPRK, pLength);</span>
+    }
+
+    /**
+     * Create an extractThenExpand parameters.
+     * @param pLength the length
+     * @return an extractThenExpand parameters
+     * @throws GordianException on error
+     */
+    public static GordianHKDFParams extractThenExpand(final int pLength) throws GordianException {
+<span class="fc" id="L119">        return new GordianHKDFParams(GordianHKDFMode.EXTRACTTHENEXPAND, null, pLength);</span>
+    }
+
+    /**
+     * Obtain the mode.
+     * @return the mode
+     */
+    GordianHKDFMode getMode() {
+<span class="fc" id="L127">        return theMode;</span>
+    }
+
+    /**
+     * Obtain the PRK.
+     * @return the pseudo-random key
+     */
+    byte[] getPRK() {
+<span class="fc" id="L135">        return thePRK;</span>
+    }
+
+    /**
+     * Add initial keying material.
+     * @param pIKM the initial keying material
+     * @return the parameters
+     */
+    public GordianHKDFParams withIKM(final byte[] pIKM) {
+<span class="pc bpc" id="L144" title="2 of 4 branches missed.">        if (pIKM != null &amp;&amp; pIKM.length &gt; 0) {</span>
+<span class="fc" id="L145">            theIKMs.add(pIKM.clone());</span>
+        }
+<span class="fc" id="L147">        return this;</span>
+    }
+
+    /**
+     * Obtain the ikmIterator.
+     * @return the iterator.
+     */
+    Iterator&lt;byte[]&gt; ikmIterator() {
+<span class="fc" id="L155">        return theIKMs.iterator();</span>
+    }
+
+    /**
+     * Add salt.
+     * @param pSalt the salt
+     * @return the parameters
+     */
+    public GordianHKDFParams withSalt(final byte[] pSalt) {
+<span class="pc bpc" id="L164" title="1 of 4 branches missed.">        if (pSalt != null &amp;&amp; pSalt.length &gt; 0) {</span>
+<span class="fc" id="L165">            theSalts.add(pSalt.clone());</span>
+        }
+<span class="fc" id="L167">        return this;</span>
+    }
+
+    /**
+     * Obtain the saltIterator.
+     * @return the iterator.
+     */
+    Iterator&lt;byte[]&gt; saltIterator() {
+<span class="fc" id="L175">        return theSalts.iterator();</span>
+    }
+
+    /**
+     * Add info.
+     * @param pInfo the info
+     * @return the parameters
+     */
+    public GordianHKDFParams withInfo(final byte[] pInfo) {
+<span class="pc bpc" id="L184" title="2 of 4 branches missed.">        if (pInfo != null &amp;&amp; pInfo.length &gt; 0) {</span>
+<span class="fc" id="L185">            theInfo.add(pInfo.clone());</span>
+        }
+<span class="fc" id="L187">        return this;</span>
+    }
+
+    /**
+     * Obtain the infoIterator.
+     * @return the iterator.
+     */
+    Iterator&lt;byte[]&gt; infoIterator() {
+<span class="fc" id="L195">        return theInfo.iterator();</span>
+    }
+
+    /**
+     * Obtain the length.
+     * @return the length
+     */
+    int getLength() {
+<span class="fc" id="L203">        return theLength;</span>
+    }
+
+    /**
+     * Clear parameters.
+     */
+    public void clearParameters() {
+        /* Clear all initial keying materials */
+<span class="fc bfc" id="L211" title="All 2 branches covered.">        for (final byte[] myIKM : theIKMs) {</span>
+<span class="fc" id="L212">            Arrays.fill(myIKM, (byte) 0);</span>
+<span class="fc" id="L213">        }</span>
+
+        /* Clear all salts */
+<span class="fc bfc" id="L216" title="All 2 branches covered.">        for (final byte[] mySalt : theSalts) {</span>
+<span class="fc" id="L217">            Arrays.fill(mySalt, (byte) 0);</span>
+<span class="fc" id="L218">        }</span>
+
+        /* Clear all info */
+<span class="fc bfc" id="L221" title="All 2 branches covered.">        for (final byte[] myInfo : theInfo) {</span>
+<span class="fc" id="L222">            Arrays.fill(myInfo, (byte) 0);</span>
+<span class="fc" id="L223">        }</span>
+
+        /* Clear PRK */
+<span class="fc bfc" id="L226" title="All 2 branches covered.">        if (thePRK != null) {</span>
+<span class="fc" id="L227">            Arrays.fill(thePRK, (byte) 0);</span>
+        }
+<span class="fc" id="L229">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,413 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseUKDividendScheme.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.tax.uk</a> &gt; <span class="el_source">MoneyWiseUKDividendScheme.java</span></div><h1>MoneyWiseUKDividendScheme.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.tax.uk;
+
+import net.sourceforge.joceanus.metis.field.MetisFieldSet;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
+import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
+import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxResource;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+/**
+ * Dividend Tax Scheme.
+ */
+public abstract class MoneyWiseUKDividendScheme
+        extends MoneyWiseUKIncomeScheme {
+    /*
+     * Local Report fields.
+     */
+    static {
+<span class="fc" id="L39">        MetisFieldSet.newFieldSet(MoneyWiseUKDividendScheme.class);</span>
+<span class="fc" id="L40">    }</span>
+
+    /**
+     * Constructor.
+     */
+    protected MoneyWiseUKDividendScheme() {
+<span class="fc" id="L46">        this(Boolean.TRUE);</span>
+<span class="fc" id="L47">    }</span>
+
+    /**
+     * Constructor.
+     * @param pReliefAvailable Is tax relief available?
+     */
+    protected MoneyWiseUKDividendScheme(final Boolean pReliefAvailable) {
+<span class="fc" id="L54">        super(pReliefAvailable);</span>
+<span class="fc" id="L55">    }</span>
+
+    /**
+     * Obtain theTaxCredit rate for dividend.
+     * @param pTaxYear the taxYear
+     * @return the taxCredit rate
+     */
+    protected abstract OceanusRate getTaxCreditRate(MoneyWiseUKTaxYear pTaxYear);
+
+    @Override
+    protected OceanusMoney adjustAllowances(final MoneyWiseUKTaxConfig pConfig,
+                                            final OceanusMoney pAmount) {
+        /* Adjust against the basic allowance */
+<span class="nc" id="L68">        final OceanusMoney myRemaining = super.adjustAllowances(pConfig, pAmount);</span>
+
+        /* If we have any dividends left */
+<span class="nc bnc" id="L71" title="All 2 branches missed.">        if (myRemaining.isNonZero()) {</span>
+            /* Adjust the dividend allowance noting that it still counts against the taxBand */
+<span class="nc" id="L73">            adjustForAllowance(pConfig.getDividendAllowance(), myRemaining);</span>
+        }
+
+        /* Return unallocated income */
+<span class="nc" id="L77">        return myRemaining;</span>
+    }
+
+    @Override
+    protected OceanusMoney getAmountInAllowance(final MoneyWiseUKTaxConfig pConfig,
+                                                final OceanusMoney pAmount) {
+        /* Obtain the amount covered by the basic allowance */
+<span class="nc" id="L84">        OceanusMoney myAmount = super.getAmountInAllowance(pConfig, pAmount);</span>
+
+        /* If we have income left over */
+<span class="nc bnc" id="L87" title="All 2 branches missed.">        if (myAmount.compareTo(pAmount) &lt; 0) {</span>
+            /* Calculate remaining amount */
+<span class="nc" id="L89">            final OceanusMoney myRemaining = new OceanusMoney(pAmount);</span>
+<span class="nc" id="L90">            myRemaining.subtractAmount(myAmount);</span>
+
+            /* Calculate the amount covered by dividend allowance */
+<span class="nc" id="L93">            final OceanusMoney myXtra = getAmountInBand(pConfig.getDividendAllowance(), myRemaining);</span>
+
+            /* Determine the total amount covered by the allowance */
+<span class="nc" id="L96">            myAmount = new OceanusMoney(myAmount);</span>
+<span class="nc" id="L97">            myAmount.addAmount(myXtra);</span>
+        }
+
+        /* return the amount */
+<span class="nc" id="L101">        return myAmount;</span>
+    }
+
+    /**
+     * Obtain the base rate.
+     * @return the base rate
+     */
+    protected OceanusRate getBaseRate() {
+<span class="nc" id="L109">        return null;</span>
+    }
+
+    /**
+     * Obtain the higher rate.
+     * @return the higher rate
+     */
+    protected OceanusRate getHigherRate() {
+<span class="nc" id="L117">        return null;</span>
+    }
+
+    /**
+     * Obtain the additional rate.
+     * @return the additional rate
+     */
+    protected OceanusRate getAdditionalRate() {
+<span class="nc" id="L125">        return null;</span>
+    }
+
+    @Override
+    protected Iterator&lt;MoneyWiseTaxBand&gt; taxBandIterator(final MoneyWiseUKTaxConfig pConfig,
+                                                         final MoneyWiseTaxClass pBasis) {
+
+        /* Create a new List */
+<span class="nc" id="L133">        final List&lt;MoneyWiseTaxBand&gt; myList = new ArrayList&lt;&gt;();</span>
+
+        /* Access underlying iterator */
+<span class="nc" id="L136">        final Iterator&lt;MoneyWiseTaxBand&gt; myIterator = super.taxBandIterator(pConfig, pBasis);</span>
+<span class="nc" id="L137">        MoneyWiseTaxBand myBand = myIterator.next();</span>
+<span class="nc" id="L138">        OceanusMoney myAmount = myBand.getAmount();</span>
+<span class="nc" id="L139">        OceanusRate myRate = getBaseRate();</span>
+
+        /* If we are a LoHigher instance */
+<span class="nc bnc" id="L142" title="All 2 branches missed.">        if (this instanceof MoneyWiseUKDividendLoHigherRateScheme) {</span>
+            /* Access the true basic band and merge in the lower rate */
+<span class="nc" id="L144">            myBand = myIterator.next();</span>
+<span class="nc" id="L145">            myAmount = new OceanusMoney(myAmount);</span>
+<span class="nc" id="L146">            myAmount.addAmount(myBand.getAmount());</span>
+        }
+
+        /* Add the basic band */
+<span class="nc bnc" id="L150" title="All 2 branches missed.">        if (myRate == null) {</span>
+<span class="nc" id="L151">            myRate = myBand.getRate();</span>
+        }
+<span class="nc" id="L153">        myList.add(new MoneyWiseTaxBand(myAmount, myRate));</span>
+
+        /* If we have a &quot;higher&quot; band */
+<span class="nc bnc" id="L156" title="All 2 branches missed.">        if (myIterator.hasNext()) {</span>
+            /* Add the higher band */
+<span class="nc" id="L158">            myBand = myIterator.next();</span>
+<span class="nc" id="L159">            myRate = getHigherRate();</span>
+<span class="nc bnc" id="L160" title="All 2 branches missed.">            if (myRate == null) {</span>
+<span class="nc" id="L161">                myRate = myBand.getRate();</span>
+            }
+<span class="nc" id="L163">            myList.add(new MoneyWiseTaxBand(myBand.getAmount(), myRate));</span>
+        }
+
+        /* If we have an &quot;additional&quot; band */
+<span class="nc bnc" id="L167" title="All 2 branches missed.">        if (myIterator.hasNext()) {</span>
+            /* Add the higher band */
+<span class="nc" id="L169">            myBand = myIterator.next();</span>
+<span class="nc" id="L170">            myRate = getAdditionalRate();</span>
+<span class="nc bnc" id="L171" title="All 2 branches missed.">            if (myRate == null) {</span>
+<span class="nc" id="L172">                myRate = myBand.getRate();</span>
+            }
+<span class="nc" id="L174">            myList.add(new MoneyWiseTaxBand(myBand.getAmount(), myRate));</span>
+        }
+
+        /* Loop through remaining tax bands */
+<span class="nc bnc" id="L178" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L179">            myBand = myIterator.next();</span>
+<span class="nc" id="L180">            myList.add(myBand);</span>
+        }
+
+        /* Return the iterator */
+<span class="nc" id="L184">        return myList.iterator();</span>
+    }
+
+    /**
+     * As Income Scheme.
+     */
+    public static class MoneyWiseUKDividendAsIncomeScheme
+            extends MoneyWiseUKDividendScheme {
+        /**
+         * Local Report fields.
+         */
+<span class="fc" id="L195">        private static final MetisFieldSet&lt;MoneyWiseUKDividendAsIncomeScheme&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKDividendAsIncomeScheme.class);</span>
+
+        /**
+         * Constructor.
+         */
+<span class="fc" id="L200">        protected MoneyWiseUKDividendAsIncomeScheme() {</span>
+<span class="fc" id="L201">        }</span>
+
+        @Override
+        protected OceanusRate getTaxCreditRate(final MoneyWiseUKTaxYear pTaxYear) {
+<span class="nc" id="L205">            return pTaxYear.getTaxBands().getBasicTaxRate();</span>
+        }
+
+        @Override
+        public MetisFieldSet&lt;MoneyWiseUKDividendAsIncomeScheme&gt; getDataFieldSet() {
+<span class="nc" id="L210">            return FIELD_DEFS;</span>
+        }
+    }
+
+    /**
+     * Base Rate Scheme.
+     */
+    public static class MoneyWiseUKDividendBaseRateScheme
+            extends MoneyWiseUKDividendScheme {
+        /**
+         * Local Report fields.
+         */
+<span class="fc" id="L222">        private static final MetisFieldSet&lt;MoneyWiseUKDividendBaseRateScheme&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKDividendBaseRateScheme.class);</span>
+
+        /*
+         * Declare Fields.
+         */
+        static {
+<span class="fc" id="L228">            FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.SCHEME_BASE_RATE, MoneyWiseUKDividendBaseRateScheme::getBaseRate);</span>
+<span class="fc" id="L229">        }</span>
+
+        /**
+         * The Base Rate.
+         */
+        private final OceanusRate theBaseRate;
+
+        /**
+         * Constructor.
+         * @param pRate the base rate
+         * @param pReliefAvailable Is tax relief available?
+         */
+        protected MoneyWiseUKDividendBaseRateScheme(final OceanusRate pRate,
+                                                    final Boolean pReliefAvailable) {
+<span class="fc" id="L243">            super(pReliefAvailable);</span>
+<span class="fc" id="L244">            theBaseRate = pRate;</span>
+<span class="fc" id="L245">        }</span>
+
+        /**
+         * Constructor.
+         * @param pRate the base rate
+         */
+        protected MoneyWiseUKDividendBaseRateScheme(final OceanusRate pRate) {
+<span class="fc" id="L252">            this(pRate, Boolean.TRUE);</span>
+<span class="fc" id="L253">        }</span>
+
+        @Override
+        protected OceanusRate getBaseRate() {
+<span class="nc" id="L257">            return theBaseRate;</span>
+        }
+
+        @Override
+        protected OceanusRate getTaxCreditRate(final MoneyWiseUKTaxYear pTaxYear) {
+<span class="nc" id="L262">            return theBaseRate;</span>
+        }
+
+        @Override
+        public MetisFieldSet&lt;? extends MoneyWiseUKDividendBaseRateScheme&gt; getDataFieldSet() {
+<span class="nc" id="L267">            return FIELD_DEFS;</span>
+        }
+    }
+
+    /**
+     * Higher Rate Scheme.
+     */
+    public static class MoneyWiseUKDividendHigherRateScheme
+            extends MoneyWiseUKDividendBaseRateScheme {
+        /**
+         * Local Report fields.
+         */
+<span class="fc" id="L279">        private static final MetisFieldSet&lt;MoneyWiseUKDividendHigherRateScheme&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKDividendHigherRateScheme.class);</span>
+
+        /*
+         * Declare Fields.
+         */
+        static {
+<span class="fc" id="L285">            FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.SCHEME_HIGH_RATE, MoneyWiseUKDividendHigherRateScheme::getHigherRate);</span>
+<span class="fc" id="L286">        }</span>
+
+        /**
+         * The Higher Rate.
+         */
+        private final OceanusRate theHighRate;
+
+        /**
+         * Constructor.
+         * @param pRate the base rate
+         * @param pHighRate the higher rate
+         */
+        protected MoneyWiseUKDividendHigherRateScheme(final OceanusRate pRate,
+                                                      final OceanusRate pHighRate) {
+<span class="fc" id="L300">            this(pRate, pHighRate, Boolean.FALSE);</span>
+<span class="fc" id="L301">        }</span>
+
+        /**
+         * Constructor.
+         * @param pRate the base rate
+         * @param pHighRate the higher rate
+         * @param pReliefAvailable Is tax relief available?
+         */
+        protected MoneyWiseUKDividendHigherRateScheme(final OceanusRate pRate,
+                                                      final OceanusRate pHighRate,
+                                                      final Boolean pReliefAvailable) {
+<span class="fc" id="L312">            super(pRate, pReliefAvailable);</span>
+<span class="fc" id="L313">            theHighRate = pHighRate;</span>
+<span class="fc" id="L314">        }</span>
+
+        @Override
+        protected OceanusRate getHigherRate() {
+<span class="nc" id="L318">            return theHighRate;</span>
+        }
+
+        @Override
+        public MetisFieldSet&lt;? extends MoneyWiseUKDividendHigherRateScheme&gt; getDataFieldSet() {
+<span class="nc" id="L323">            return FIELD_DEFS;</span>
+        }
+    }
+
+    /**
+     * LoHigher Rate Scheme.
+     */
+    public static class MoneyWiseUKDividendLoHigherRateScheme
+            extends MoneyWiseUKDividendHigherRateScheme {
+        /**
+         * Local Report fields.
+         */
+<span class="fc" id="L335">        private static final MetisFieldSet&lt;MoneyWiseUKDividendLoHigherRateScheme&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKDividendLoHigherRateScheme.class);</span>
+
+        /**
+         * Constructor.
+         * @param pRate the base rate
+         * @param pHigherRate the higher rate
+         */
+        protected MoneyWiseUKDividendLoHigherRateScheme(final OceanusRate pRate,
+                                                        final OceanusRate pHigherRate) {
+<span class="fc" id="L344">            super(pRate, pHigherRate);</span>
+<span class="fc" id="L345">        }</span>
+
+        @Override
+        public MetisFieldSet&lt;MoneyWiseUKDividendLoHigherRateScheme&gt; getDataFieldSet() {
+<span class="nc" id="L349">            return FIELD_DEFS;</span>
+        }
+    }
+
+    /**
+     * Additional Rate Scheme.
+     */
+    public static class MoneyWiseUKDividendAdditionalRateScheme
+            extends MoneyWiseUKDividendHigherRateScheme {
+        /**
+         * Local Report fields.
+         */
+<span class="fc" id="L361">        private static final MetisFieldSet&lt;MoneyWiseUKDividendAdditionalRateScheme&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKDividendAdditionalRateScheme.class);</span>
+
+        /*
+         * Declare Fields.
+         */
+        static {
+<span class="fc" id="L367">            FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.SCHEME_ADDITIONAL_RATE, MoneyWiseUKDividendHigherRateScheme::getAdditionalRate);</span>
+<span class="fc" id="L368">        }</span>
+
+        /**
+         * The Additional Rate.
+         */
+        private final OceanusRate theAdditionalRate;
+
+        /**
+         * Constructor.
+         * @param pRate the base rate
+         * @param pHighRate the higher rate
+         * @param pAddRate the additional rate
+         */
+        protected MoneyWiseUKDividendAdditionalRateScheme(final OceanusRate pRate,
+                                                          final OceanusRate pHighRate,
+                                                          final OceanusRate pAddRate) {
+<span class="fc" id="L384">            this(pRate, pHighRate, pAddRate, Boolean.FALSE);</span>
+<span class="fc" id="L385">        }</span>
+
+        /**
+         * Constructor.
+         * @param pRate the base rate
+         * @param pHighRate the higher rate
+         * @param pAddRate the additional rate
+         * @param pReliefAvailable Is tax relief available?
+         */
+        protected MoneyWiseUKDividendAdditionalRateScheme(final OceanusRate pRate,
+                                                          final OceanusRate pHighRate,
+                                                          final OceanusRate pAddRate,
+                                                          final Boolean pReliefAvailable) {
+<span class="fc" id="L398">            super(pRate, pHighRate, pReliefAvailable);</span>
+<span class="fc" id="L399">            theAdditionalRate = pAddRate;</span>
+<span class="fc" id="L400">        }</span>
+
+        @Override
+        protected OceanusRate getAdditionalRate() {
+<span class="nc" id="L404">            return theAdditionalRate;</span>
+        }
+
+        @Override
+        public MetisFieldSet&lt;MoneyWiseUKDividendAdditionalRateScheme&gt; getDataFieldSet() {
+<span class="nc" id="L409">            return FIELD_DEFS;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

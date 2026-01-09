@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisXAnalysisSolver.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.themis.xanalysis.solver</a> &gt; <span class="el_source">ThemisXAnalysisSolver.java</span></div><h1>ThemisXAnalysisSolver.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Themis: Java Project Framework
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.themis.xanalysis.solver;
+
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.themis.xanalysis.solver.proj.ThemisXAnalysisSolverModule;
+import net.sourceforge.joceanus.themis.xanalysis.solver.proj.ThemisXAnalysisSolverPackage;
+import net.sourceforge.joceanus.themis.xanalysis.solver.proj.ThemisXAnalysisSolverProject;
+import net.sourceforge.joceanus.themis.xanalysis.solver.reflect.ThemisXAnalysisReflectJar;
+
+/**
+ * Solver.
+ */
+public class ThemisXAnalysisSolver {
+    /**
+     * The state.
+     */
+    private final ThemisXAnalysisSolverProjectState theState;
+
+    /**
+     * The error.
+     */
+    private OceanusException theError;
+
+    /**
+     * Constructor.
+     * @param pProject the project
+     */
+<span class="fc" id="L43">    public ThemisXAnalysisSolver(final ThemisXAnalysisSolverProject pProject) {</span>
+        /* Create the state */
+<span class="fc" id="L45">        theState = new ThemisXAnalysisSolverProjectState(pProject);</span>
+
+        /* Process external classes */
+<span class="fc" id="L48">        try (ThemisXAnalysisReflectJar myJar = new ThemisXAnalysisReflectJar(pProject.getProjectParser())) {</span>
+            /* Process javaLang and other external classes */
+<span class="fc" id="L50">            myJar.processExternalClasses(theState.getExternalClassMap());</span>
+<span class="nc" id="L51">        } catch (OceanusException e) {</span>
+<span class="nc" id="L52">            theError = e;</span>
+<span class="fc" id="L53">        }</span>
+
+        /* If we have no error */
+<span class="pc bpc" id="L56" title="1 of 2 branches missed.">        if (theError == null) {</span>
+            /* Loop through all packages */
+<span class="fc bfc" id="L58" title="All 2 branches covered.">            for (ThemisXAnalysisSolverModule myModule : pProject.getModules()) {</span>
+<span class="fc bfc" id="L59" title="All 2 branches covered.">                for (ThemisXAnalysisSolverPackage myPackage : myModule.getPackages()) {</span>
+                    /* Process each package */
+<span class="fc" id="L61">                    theState.processPackage(myPackage);</span>
+<span class="fc" id="L62">                }</span>
+<span class="fc" id="L63">            }</span>
+        }
+<span class="fc" id="L65">     }</span>
+
+    /**
+     * Obtain the error.
+     * @return the error
+     */
+    public OceanusException getError() {
+<span class="nc" id="L72">        return theError;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

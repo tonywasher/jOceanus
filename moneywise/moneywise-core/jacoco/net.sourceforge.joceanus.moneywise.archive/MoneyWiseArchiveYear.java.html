@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseArchiveYear.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.archive</a> &gt; <span class="el_source">MoneyWiseArchiveYear.java</span></div><h1>MoneyWiseArchiveYear.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.archive;
+
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusFiscalYear;
+
+/**
+ * Simple class to define an archive year.
+ */
+public final class MoneyWiseArchiveYear {
+    /**
+     * Year boundary.
+     */
+    private static final int YEAR_BDY = 60;
+
+    /**
+     * Year constant.
+     */
+    private static final int YEAR_1900 = 1900;
+
+    /**
+     * Year constant.
+     */
+    private static final int YEAR_2000 = 2000;
+
+    /**
+     * The date.
+     */
+    private final OceanusDate theDate;
+
+    /**
+     * The range name.
+     */
+    private final String theRangeName;
+
+    /**
+     * Constructor.
+     * @param pName the range name
+     */
+<span class="nc" id="L55">    MoneyWiseArchiveYear(final String pName) {</span>
+        /* Store parameters */
+<span class="nc" id="L57">        theRangeName = pName;</span>
+
+        /* Isolate the year part */
+<span class="nc" id="L60">        final int myLen = pName.length();</span>
+<span class="nc" id="L61">        int myYear = Integer.parseInt(pName.substring(myLen - 2));</span>
+
+        /* Calculate the actual year */
+<span class="nc bnc" id="L64" title="All 2 branches missed.">        if (myYear &lt; YEAR_BDY) {</span>
+<span class="nc" id="L65">            myYear += YEAR_2000;</span>
+        } else {
+<span class="nc" id="L67">            myYear += YEAR_1900;</span>
+        }
+
+        /* Create the date */
+<span class="nc" id="L71">        final OceanusFiscalYear myFiscal = OceanusFiscalYear.UK;</span>
+<span class="nc" id="L72">        theDate = new OceanusDate(myYear, myFiscal.getFirstMonth(), myFiscal.getFirstDay());</span>
+<span class="nc" id="L73">        theDate.adjustDay(-1);</span>
+<span class="nc" id="L74">    }</span>
+
+    /**
+     * Get the date.
+     * @return the date
+     */
+    OceanusDate getDate() {
+<span class="nc" id="L81">        return theDate;</span>
+    }
+
+    /**
+     * Get the range name.
+     * @return the name
+     */
+    String getRangeName() {
+<span class="nc" id="L89">        return theRangeName;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

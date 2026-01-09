@@ -1,0 +1,486 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianLeaEngine.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.gordianknot.impl.ext.engines</a> &gt; <span class="el_source">GordianLeaEngine.java</span></div><h1>GordianLeaEngine.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * GordianKnot: Security Suite
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.gordianknot.impl.ext.engines;
+
+import org.bouncycastle.crypto.BlockCipher;
+import org.bouncycastle.crypto.CipherParameters;
+import org.bouncycastle.crypto.DataLengthException;
+import org.bouncycastle.crypto.OutputLengthException;
+import org.bouncycastle.crypto.params.KeyParameter;
+import org.bouncycastle.util.Pack;
+
+/**
+ * LEA Cipher engine.
+ */
+public class GordianLeaEngine
+        implements BlockCipher {
+    /**
+     * Base number of rounds.
+     */
+    private static final int BASEROUNDS = 16;
+
+    /**
+     * Number of words in state.
+     */
+    private static final int NUMWORDS = 4;
+
+    /**
+     * Number of words in 128-bit key.
+     */
+    private static final int NUMWORDS128 = 4;
+
+    /**
+     * Mask for mod 4.
+     */
+    private static final int MASK128 = NUMWORDS128 - 1;
+
+    /**
+     * Number of words in 192-bit key.
+     */
+    private static final int NUMWORDS192 = 6;
+
+    /**
+     * Number of words in 256-bit key.
+     */
+    private static final int NUMWORDS256 = 8;
+
+    /**
+     * Mask for mod 8.
+     */
+    private static final int MASK256 = NUMWORDS256 - 1;
+
+    /**
+     * BlockSize.
+     */
+    private static final int BLOCKSIZE = NUMWORDS * Integer.BYTES;
+
+    /**
+     * keyIndex0.
+     */
+    private static final int KEY0 = 0;
+
+    /**
+     * keyIndex1.
+     */
+    private static final int KEY1 = 1;
+
+    /**
+     * keyIndex2.
+     */
+    private static final int KEY2 = 2;
+
+    /**
+     * keyIndex3.
+     */
+    private static final int KEY3 = 3;
+
+    /**
+     * keyIndex4.
+     */
+    private static final int KEY4 = 4;
+
+    /**
+     * keyIndex5.
+     */
+    private static final int KEY5 = 5;
+
+    /**
+     * Rotate1.
+     */
+    private static final int ROT1 = 1;
+
+    /**
+     * Rotate3.
+     */
+    private static final int ROT3 = 3;
+
+    /**
+     * Rotate5.
+     */
+    private static final int ROT5 = 5;
+
+    /**
+     * Rotate6.
+     */
+    private static final int ROT6 = 6;
+
+    /**
+     * Rotate9.
+     */
+    private static final int ROT9 = 9;
+
+    /**
+     * Rotate11.
+     */
+    private static final int ROT11 = 11;
+
+    /**
+     * Rotate13.
+     */
+    private static final int ROT13 = 13;
+
+    /**
+     * Rotate17.
+     */
+    private static final int ROT17 = 17;
+
+    /**
+     * Delta values.
+     */
+<span class="fc" id="L144">    private static final int[] DELTA = {</span>
+            0xc3efe9db, 0x44626b02, 0x79e27c8a, 0x78df30ec, 0x715ea49e, 0xc785da0a, 0xe04ef22a, 0xe5c40957
+    };
+
+    /**
+     * The work buffer.
+     */
+    private final int[] theBlock;
+
+    /**
+     * The # of rounds.
+     */
+    private int theRounds;
+
+    /**
+     * The round keys.
+     */
+    private int[][] theRoundKeys;
+
+    /**
+     * Are we encrypting?
+     */
+    private boolean forEncryption;
+
+    /**
+     * Constructor.
+     */
+<span class="fc" id="L171">    public GordianLeaEngine() {</span>
+<span class="fc" id="L172">        theBlock = new int[NUMWORDS];</span>
+<span class="fc" id="L173">    }</span>
+
+    @Override
+    public void init(final boolean pEncrypt,
+                     final CipherParameters pParams) {
+        /* Reject invalid parameters */
+<span class="pc bpc" id="L179" title="1 of 2 branches missed.">        if (!(pParams instanceof KeyParameter)) {</span>
+<span class="nc" id="L180">            throw new IllegalArgumentException(&quot;Invalid parameter passed to LEA init - &quot;</span>
+<span class="nc" id="L181">                    + pParams.getClass().getName());</span>
+        }
+
+        /* Validate keyLength */
+<span class="fc" id="L185">        final byte[] myKey = ((KeyParameter) pParams).getKey();</span>
+<span class="fc" id="L186">        final int myKeyLen = myKey.length;</span>
+<span class="pc bpc" id="L187" title="3 of 6 branches missed.">        if ((((myKeyLen &lt;&lt; 1) % BLOCKSIZE) != 0)</span>
+                || myKeyLen &lt; BLOCKSIZE
+                || myKeyLen &gt; (BLOCKSIZE &lt;&lt; 1)) {
+<span class="nc" id="L190">            throw new IllegalArgumentException(&quot;KeyBitSize must be 128, 192 or 256&quot;);</span>
+        }
+
+        /* Generate the round keys */
+<span class="fc" id="L194">        forEncryption = pEncrypt;</span>
+<span class="fc" id="L195">        generateRoundKeys(myKey);</span>
+<span class="fc" id="L196">    }</span>
+
+    @Override
+    public void reset() {
+        /* NoOp */
+<span class="fc" id="L201">    }</span>
+
+    @Override
+    public String getAlgorithmName() {
+<span class="fc" id="L205">        return &quot;LEA&quot;;</span>
+    }
+
+    @Override
+    public int getBlockSize() {
+<span class="fc" id="L210">        return BLOCKSIZE;</span>
+    }
+
+    @Override
+    public int processBlock(final byte[] pInput,
+                            final int pInOff,
+                            final byte[] pOutput,
+                            final int pOutOff) {
+        /* Check buffers */
+<span class="fc" id="L219">        checkBuffer(pInput, pInOff, false);</span>
+<span class="fc" id="L220">        checkBuffer(pOutput, pOutOff, true);</span>
+
+        /* Perform the encryption/decryption */
+<span class="fc bfc" id="L223" title="All 2 branches covered.">        return forEncryption</span>
+<span class="fc" id="L224">                ? encryptBlock(pInput, pInOff, pOutput, pOutOff)</span>
+<span class="fc" id="L225">                : decryptBlock(pInput, pInOff, pOutput, pOutOff);</span>
+    }
+
+    /**
+     * Obtain buffer length (allowing for null).
+     * @param pBuffer the buffer
+     * @return the length
+     */
+    private static int bufLength(final byte[] pBuffer) {
+<span class="pc bpc" id="L234" title="1 of 2 branches missed.">        return pBuffer == null ? 0 : pBuffer.length;</span>
+    }
+
+    /**
+     * Check buffer.
+     * @param pBuffer the buffer
+     * @param pOffset the offset
+     * @param pOutput is this an output buffer?
+     */
+    private static void checkBuffer(final byte[] pBuffer,
+                                    final int pOffset,
+                                    final boolean pOutput) {
+        /* Access lengths */
+<span class="fc" id="L247">        final int myBufLen = bufLength(pBuffer);</span>
+<span class="fc" id="L248">        final int myLast = pOffset + BLOCKSIZE;</span>
+
+        /* Check for negative values and buffer overflow */
+<span class="pc bpc" id="L251" title="2 of 4 branches missed.">        final boolean badLen = pOffset &lt; 0 || myLast &lt; 0;</span>
+<span class="pc bpc" id="L252" title="2 of 4 branches missed.">        if (badLen || myLast &gt; myBufLen) {</span>
+<span class="nc bnc" id="L253" title="All 2 branches missed.">            throw pOutput</span>
+<span class="nc" id="L254">                    ? new OutputLengthException(&quot;Output buffer too short.&quot;)</span>
+<span class="nc" id="L255">                    : new DataLengthException(&quot;Input buffer too short.&quot;);</span>
+        }
+<span class="fc" id="L257">    }</span>
+
+    /**
+     * Encrypt a block.
+     * @param pInput the input buffer
+     * @param pInOff the input offset
+     * @param pOutput the output offset
+     * @param pOutOff the output offset
+     * @return the bytes processed
+     */
+    private int encryptBlock(final byte[] pInput,
+                             final int pInOff,
+                             final byte[] pOutput,
+                             final int pOutOff) {
+        /* Load the bytes into the block */
+<span class="fc" id="L272">        Pack.littleEndianToInt(pInput, pInOff, theBlock, 0, NUMWORDS);</span>
+
+        /* Loop through the rounds */
+<span class="fc bfc" id="L275" title="All 2 branches covered.">        for (int i = 0; i &lt; theRounds; i++) {</span>
+<span class="fc" id="L276">            encryptRound(i);</span>
+        }
+
+        /* Output the bytes from the block */
+<span class="fc" id="L280">        Pack.intToLittleEndian(theBlock, pOutput, pOutOff);</span>
+
+        /* Return # of bytes processed */
+<span class="fc" id="L283">        return BLOCKSIZE;</span>
+    }
+
+    /**
+     * Encrypt a round.
+     * @param pRound the round#
+     */
+    private void encryptRound(final int pRound) {
+<span class="fc" id="L291">        final int[] myKeys = theRoundKeys[pRound];</span>
+<span class="fc" id="L292">        int myIndex = (NUMWORDS - 1 + pRound) % NUMWORDS;</span>
+<span class="fc" id="L293">        int myNextIndex = leftIndex(myIndex);</span>
+<span class="fc" id="L294">        theBlock[myIndex] = ror32((theBlock[myNextIndex] ^ myKeys[KEY4]) + (theBlock[myIndex] ^ myKeys[KEY5]), ROT3);</span>
+<span class="fc" id="L295">        myIndex = myNextIndex;</span>
+<span class="fc" id="L296">        myNextIndex = leftIndex(myIndex);</span>
+<span class="fc" id="L297">        theBlock[myIndex] = ror32((theBlock[myNextIndex] ^ myKeys[KEY2]) + (theBlock[myIndex] ^ myKeys[KEY3]), ROT5);</span>
+<span class="fc" id="L298">        myIndex = myNextIndex;</span>
+<span class="fc" id="L299">        myNextIndex = leftIndex(myIndex);</span>
+<span class="fc" id="L300">        theBlock[myIndex] = rol32((theBlock[myNextIndex] ^ myKeys[KEY0]) + (theBlock[myIndex] ^ myKeys[KEY1]), ROT9);</span>
+<span class="fc" id="L301">    }</span>
+
+    /**
+     * Return the left of an index.
+     * @param pIndex the index
+     * @return the left of an index
+     */
+    private static int leftIndex(final int pIndex) {
+<span class="fc bfc" id="L309" title="All 2 branches covered.">        return pIndex == 0 ? NUMWORDS - 1 : pIndex - 1;</span>
+    }
+
+    /**
+     * Decrypt a block.
+     * @param pInput the input buffer
+     * @param pInOff the input offset
+     * @param pOutput the output offset
+     * @param pOutOff the output offset
+     * @return the bytes processed
+     */
+    private int decryptBlock(final byte[] pInput,
+                             final int pInOff,
+                             final byte[] pOutput,
+                             final int pOutOff) {
+
+        /* Load the bytes into the block */
+<span class="fc" id="L326">        Pack.littleEndianToInt(pInput, pInOff, theBlock, 0, NUMWORDS);</span>
+
+        /* Loop through the rounds */
+<span class="fc bfc" id="L329" title="All 2 branches covered.">        for (int i = theRounds - 1; i &gt;= 0; i--) {</span>
+<span class="fc" id="L330">            decryptRound(i);</span>
+        }
+
+        /* Output the bytes from the block */
+<span class="fc" id="L334">        Pack.intToLittleEndian(theBlock, pOutput, pOutOff);</span>
+
+        /* Return # of bytes processed */
+<span class="fc" id="L337">        return BLOCKSIZE;</span>
+    }
+
+    /**
+     * Decrypt a round.
+     * @param pRound the round#
+     */
+    private void decryptRound(final int pRound) {
+<span class="fc" id="L345">        final int[] myKeys = theRoundKeys[pRound];</span>
+<span class="fc" id="L346">        int myPrevIndex = pRound % NUMWORDS;</span>
+<span class="fc" id="L347">        int myIndex = rightIndex(myPrevIndex);</span>
+<span class="fc" id="L348">        theBlock[myIndex] = (ror32(theBlock[myIndex], ROT9) - (theBlock[myPrevIndex] ^ myKeys[KEY0])) ^ myKeys[KEY1];</span>
+<span class="fc" id="L349">        myPrevIndex = myIndex;</span>
+<span class="fc" id="L350">        myIndex = rightIndex(myIndex);</span>
+<span class="fc" id="L351">        theBlock[myIndex] = (rol32(theBlock[myIndex], ROT5) - (theBlock[myPrevIndex] ^ myKeys[KEY2])) ^ myKeys[KEY3];</span>
+<span class="fc" id="L352">        myPrevIndex = myIndex;</span>
+<span class="fc" id="L353">        myIndex = rightIndex(myIndex);</span>
+<span class="fc" id="L354">        theBlock[myIndex] = (rol32(theBlock[myIndex], ROT3) - (theBlock[myPrevIndex] ^ myKeys[KEY4])) ^ myKeys[KEY5];</span>
+<span class="fc" id="L355">    }</span>
+
+    /**
+     * Return the left of an index.
+     * @param pIndex the index
+     * @return the left of an index
+     */
+    private static int rightIndex(final int pIndex) {
+<span class="fc bfc" id="L363" title="All 2 branches covered.">        return pIndex == NUMWORDS - 1 ? 0 : pIndex + 1;</span>
+    }
+
+    /**
+     * Generate the round keys.
+     * @param pKey the key
+     */
+    private void generateRoundKeys(final byte[] pKey) {
+        /* Determine the rounds and allocate round keys */
+<span class="fc" id="L372">        theRounds = (pKey.length &gt;&gt; 1) + BASEROUNDS;</span>
+<span class="fc" id="L373">        theRoundKeys = new int[theRounds][NUMWORDS192];</span>
+<span class="fc" id="L374">        final int numWords = pKey.length / Integer.BYTES;</span>
+
+        /* Create and initialise working array */
+<span class="fc" id="L377">        final int[] myT = new int[numWords];</span>
+<span class="fc" id="L378">        Pack.littleEndianToInt(pKey, 0, myT, 0, numWords);</span>
+
+        /* Switch on number of words in the key */
+<span class="fc bfc" id="L381" title="All 3 branches covered.">        switch (numWords) {</span>
+            case NUMWORDS128:
+<span class="fc" id="L383">                generate128RoundKeys(myT);</span>
+<span class="fc" id="L384">                break;</span>
+            case NUMWORDS192:
+<span class="fc" id="L386">                generate192RoundKeys(myT);</span>
+<span class="fc" id="L387">                break;</span>
+            case NUMWORDS256:
+            default:
+<span class="fc" id="L390">                generate256RoundKeys(myT);</span>
+                break;
+        }
+<span class="fc" id="L393">    }</span>
+
+    /**
+     * Generate the round keys from 128-bit key.
+     * @param pWork the working keys
+     */
+    private void generate128RoundKeys(final int[] pWork) {
+<span class="fc bfc" id="L400" title="All 2 branches covered.">        for (int i = 0; i &lt; theRounds; ++i) {</span>
+<span class="fc" id="L401">            final int myDelta = rol32(DELTA[i &amp; MASK128], i);</span>
+
+<span class="fc" id="L403">            int j = 0;</span>
+<span class="fc" id="L404">            pWork[j] = rol32(pWork[j++] + myDelta, ROT1);</span>
+<span class="fc" id="L405">            pWork[j] = rol32(pWork[j] + rol32(myDelta, j++), ROT3);</span>
+<span class="fc" id="L406">            pWork[j] = rol32(pWork[j] + rol32(myDelta, j++), ROT6);</span>
+<span class="fc" id="L407">            pWork[j] = rol32(pWork[j] + rol32(myDelta, j), ROT11);</span>
+
+<span class="fc" id="L409">            final int[] myKeys = theRoundKeys[i];</span>
+<span class="fc" id="L410">            myKeys[KEY0] = pWork[KEY0];</span>
+<span class="fc" id="L411">            myKeys[KEY1] = pWork[KEY1];</span>
+<span class="fc" id="L412">            myKeys[KEY2] = pWork[KEY2];</span>
+<span class="fc" id="L413">            myKeys[KEY3] = pWork[KEY1];</span>
+<span class="fc" id="L414">            myKeys[KEY4] = pWork[KEY3];</span>
+<span class="fc" id="L415">            myKeys[KEY5] = pWork[KEY1];</span>
+        }
+<span class="fc" id="L417">    }</span>
+
+    /**
+     * Generate the round keys from 192-bit key.
+     * @param pWork the working keys
+     */
+    private void generate192RoundKeys(final int[] pWork) {
+<span class="fc bfc" id="L424" title="All 2 branches covered.">        for (int i = 0; i &lt; theRounds; ++i) {</span>
+<span class="fc" id="L425">            final int myDelta = rol32(DELTA[i % NUMWORDS192], i);</span>
+
+<span class="fc" id="L427">            int j = 0;</span>
+<span class="fc" id="L428">            pWork[j] = rol32(pWork[j] + rol32(myDelta, j++), ROT1);</span>
+<span class="fc" id="L429">            pWork[j] = rol32(pWork[j] + rol32(myDelta, j++), ROT3);</span>
+<span class="fc" id="L430">            pWork[j] = rol32(pWork[j] + rol32(myDelta, j++), ROT6);</span>
+<span class="fc" id="L431">            pWork[j] = rol32(pWork[j] + rol32(myDelta, j++), ROT11);</span>
+<span class="fc" id="L432">            pWork[j] = rol32(pWork[j] + rol32(myDelta, j++), ROT13);</span>
+<span class="fc" id="L433">            pWork[j] = rol32(pWork[j] + rol32(myDelta, j++), ROT17);</span>
+<span class="fc" id="L434">            System.arraycopy(pWork, 0, theRoundKeys[i], 0, j);</span>
+        }
+<span class="fc" id="L436">    }</span>
+
+    /**
+     * Generate the round keys from 256-bit key.
+     * @param pWork the working keys
+     */
+    private void generate256RoundKeys(final int[] pWork) {
+<span class="fc" id="L443">        int index = 0;</span>
+<span class="fc bfc" id="L444" title="All 2 branches covered.">        for (int i = 0; i &lt; theRounds; ++i) {</span>
+<span class="fc" id="L445">            final int myDelta = rol32(DELTA[i &amp; MASK256], i);</span>
+<span class="fc" id="L446">            final int[] myKeys = theRoundKeys[i];</span>
+
+<span class="fc" id="L448">            int j = 0;</span>
+<span class="fc" id="L449">            myKeys[j] = rol32(pWork[index &amp; MASK256] + myDelta, ROT1);</span>
+<span class="fc" id="L450">            pWork[index++ &amp; MASK256] = myKeys[j++];</span>
+<span class="fc" id="L451">            myKeys[j] = rol32(pWork[index &amp; MASK256] + rol32(myDelta, j), ROT3);</span>
+<span class="fc" id="L452">            pWork[index++ &amp; MASK256] = myKeys[j++];</span>
+<span class="fc" id="L453">            myKeys[j] = rol32(pWork[index &amp; MASK256] + rol32(myDelta, j), ROT6);</span>
+<span class="fc" id="L454">            pWork[index++ &amp; MASK256] = myKeys[j++];</span>
+<span class="fc" id="L455">            myKeys[j] = rol32(pWork[index &amp; MASK256] + rol32(myDelta, j), ROT11);</span>
+<span class="fc" id="L456">            pWork[index++ &amp; MASK256] = myKeys[j++];</span>
+<span class="fc" id="L457">            myKeys[j] = rol32(pWork[index &amp; MASK256] + rol32(myDelta, j), ROT13);</span>
+<span class="fc" id="L458">            pWork[index++ &amp; MASK256] = myKeys[j++];</span>
+<span class="fc" id="L459">            myKeys[j] = rol32(pWork[index &amp; MASK256] + rol32(myDelta, j), ROT17);</span>
+<span class="fc" id="L460">            pWork[index++ &amp; MASK256] = myKeys[j];</span>
+        }
+<span class="fc" id="L462">    }</span>
+
+    /**
+     * rotate left.
+     * @param pValue the value to rotate
+     * @param pBits the # of bits to rotate
+     * @return the rotated value
+     */
+    private static int rol32(final int pValue,
+                             final int pBits) {
+<span class="fc" id="L472">        return (pValue &lt;&lt; pBits) | (pValue &gt;&gt;&gt; (Integer.SIZE - pBits));</span>
+    }
+
+    /**
+     * rotate right.
+     * @param pValue the value to rotate
+     * @param pBits the # of bits to rotate
+     * @return the rotated value
+     */
+    private static int ror32(final int pValue,
+                             final int pBits) {
+<span class="fc" id="L483">        return (pValue &gt;&gt;&gt; pBits) | (pValue &lt;&lt; (Integer.SIZE - pBits));</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

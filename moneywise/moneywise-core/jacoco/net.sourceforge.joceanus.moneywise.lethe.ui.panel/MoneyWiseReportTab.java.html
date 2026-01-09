@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseReportTab.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.lethe.ui.panel</a> &gt; <span class="el_source">MoneyWiseReportTab.java</span></div><h1>MoneyWiseReportTab.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.lethe.ui.panel;
+
+import org.w3c.dom.Document;
+
+import net.sourceforge.joceanus.metis.ui.MetisErrorPanel;
+import net.sourceforge.joceanus.metis.report.MetisReportEvent;
+import net.sourceforge.joceanus.metis.report.MetisReportHTMLBuilder;
+import net.sourceforge.joceanus.metis.report.MetisReportManager;
+import net.sourceforge.joceanus.metis.viewer.MetisViewerEntry;
+import net.sourceforge.joceanus.metis.viewer.MetisViewerManager;
+import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisManager;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisSecurityBucket;
+import net.sourceforge.joceanus.moneywise.lethe.reports.MoneyWiseReportBuilder;
+import net.sourceforge.joceanus.moneywise.lethe.reports.MoneyWiseReportStyleSheet;
+import net.sourceforge.joceanus.moneywise.lethe.reports.MoneyWiseReportType;
+import net.sourceforge.joceanus.moneywise.ui.MoneyWiseGoToId;
+import net.sourceforge.joceanus.moneywise.ui.MoneyWiseUIResource;
+import net.sourceforge.joceanus.moneywise.lethe.ui.controls.MoneyWiseAnalysisSelect.MoneyWiseStatementSelect;
+import net.sourceforge.joceanus.moneywise.lethe.ui.controls.MoneyWiseReportSelect;
+import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter;
+import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisSecurityFilter;
+import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
+import net.sourceforge.joceanus.prometheus.ui.PrometheusGoToEvent;
+import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
+import net.sourceforge.joceanus.prometheus.views.PrometheusViewerEntryId;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+import net.sourceforge.joceanus.oceanus.event.OceanusEvent;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
+import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
+import net.sourceforge.joceanus.tethys.api.button.TethysUIDateRangeSelector;
+import net.sourceforge.joceanus.tethys.api.control.TethysUIHTMLManager;
+import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.tethys.api.pane.TethysUIBorderPaneManager;
+import net.sourceforge.joceanus.tethys.api.pane.TethysUIPaneFactory;
+import net.sourceforge.joceanus.tethys.api.pane.TethysUIScrollPaneManager;
+
+/**
+ * Report panel.
+ */
+public class MoneyWiseReportTab
+        implements OceanusEventProvider&lt;PrometheusDataEvent&gt;, TethysUIComponent {
+    /**
+     * Text for DataEntry Title.
+     */
+<span class="nc" id="L68">    private static final String NLS_DATAENTRY = MoneyWiseUIResource.REPORT_DATAENTRY.getValue();</span>
+
+    /**
+     * The Event Manager.
+     */
+    private final OceanusEventManager&lt;PrometheusDataEvent&gt; theEventManager;
+
+    /**
+     * The Data View.
+     */
+    private final MoneyWiseView theView;
+
+    /**
+     * The Panel.
+     */
+    private final TethysUIBorderPaneManager thePanel;
+
+    /**
+     * The HTML pane.
+     */
+    private final TethysUIHTMLManager theHTMLPane;
+
+    /**
+     * The Report selection Panel.
+     */
+    private final MoneyWiseReportSelect theSelect;
+
+    /**
+     * The Spot Analysis Entry.
+     */
+    private final MetisViewerEntry theSpotEntry;
+
+    /**
+     * The Error Panel.
+     */
+    private final MetisErrorPanel theError;
+
+    /**
+     * The Report Manager.
+     */
+    private final MetisReportManager&lt;MoneyWiseAnalysisFilter&lt;?, ?&gt;&gt; theManager;
+
+    /**
+     * The ReportBuilder.
+     */
+    private final MoneyWiseReportBuilder theBuilder;
+
+    /**
+     * Constructor for Report Window.
+     * @param pView the data view
+     * @throws OceanusException on error
+     */
+<span class="nc" id="L120">    public MoneyWiseReportTab(final MoneyWiseView pView) throws OceanusException {</span>
+        /* Store the view */
+<span class="nc" id="L122">        theView = pView;</span>
+
+        /* Access GUI Factory */
+<span class="nc" id="L125">        final TethysUIFactory&lt;?&gt; myFactory = pView.getGuiFactory();</span>
+
+        /* Create the event manager */
+<span class="nc" id="L128">        theEventManager = new OceanusEventManager&lt;&gt;();</span>
+
+        /* Create the Panel */
+<span class="nc" id="L131">        final TethysUIPaneFactory myPanes = myFactory.paneFactory();</span>
+<span class="nc" id="L132">        thePanel = myPanes.newBorderPane();</span>
+
+        /* Create the top level debug entry for this view */
+<span class="nc" id="L135">        final MetisViewerManager myDataMgr = theView.getViewerManager();</span>
+<span class="nc" id="L136">        final MetisViewerEntry mySection = theView.getViewerEntry(PrometheusViewerEntryId.VIEW);</span>
+<span class="nc" id="L137">        final MetisViewerEntry myReport = myDataMgr.newEntry(mySection, NLS_DATAENTRY);</span>
+<span class="nc" id="L138">        theSpotEntry = myDataMgr.newEntry(myReport, PrometheusViewerEntryId.ANALYSIS.toString());</span>
+<span class="nc" id="L139">        theSpotEntry.setVisible(false);</span>
+
+        /* Create the HTML Pane */
+<span class="nc" id="L142">        theHTMLPane = myFactory.controlFactory().newHTMLManager();</span>
+
+        /* Create Report Manager */
+<span class="nc" id="L145">        theManager = new MetisReportManager&lt;&gt;(new MetisReportHTMLBuilder(pView.getDataFormatter()));</span>
+
+        /* Create the report builder */
+<span class="nc" id="L148">        theBuilder = new MoneyWiseReportBuilder(theManager);</span>
+
+        /* Create the Report Selection panel */
+<span class="nc" id="L151">        theSelect = new MoneyWiseReportSelect(myFactory);</span>
+
+        /* Create the error panel for this view */
+<span class="nc" id="L154">        theError = theView.getToolkit().getToolkit().newErrorPanel(myReport);</span>
+
+        /* Create a scroll pane */
+<span class="nc" id="L157">        final TethysUIScrollPaneManager myHTMLScroll = myPanes.newScrollPane();</span>
+<span class="nc" id="L158">        myHTMLScroll.setContent(theHTMLPane);</span>
+
+        /* Create the header panel */
+<span class="nc" id="L161">        final TethysUIBorderPaneManager myHeader = myPanes.newBorderPane();</span>
+<span class="nc" id="L162">        myHeader.setCentre(theSelect);</span>
+<span class="nc" id="L163">        myHeader.setNorth(theError);</span>
+
+        /* Now define the panel */
+<span class="nc" id="L166">        thePanel.setNorth(myHeader);</span>
+<span class="nc" id="L167">        thePanel.setCentre(myHTMLScroll);</span>
+
+        /* Load the CSS */
+<span class="nc" id="L170">        theHTMLPane.setCSSContent(MoneyWiseReportStyleSheet.CSS_REPORT);</span>
+
+        /* Create listeners */
+<span class="nc" id="L173">        theView.getEventRegistrar().addEventListener(e -&gt; refreshData());</span>
+<span class="nc" id="L174">        theManager.getEventRegistrar().addEventListener(this::handleGoToRequest);</span>
+<span class="nc" id="L175">        theError.getEventRegistrar().addEventListener(e -&gt; handleErrorPane());</span>
+<span class="nc" id="L176">        final OceanusEventRegistrar&lt;PrometheusDataEvent&gt; myRegistrar = theSelect.getEventRegistrar();</span>
+<span class="nc" id="L177">        myRegistrar.addEventListener(PrometheusDataEvent.SELECTIONCHANGED, e -&gt; handleReportRequest());</span>
+<span class="nc" id="L178">        myRegistrar.addEventListener(PrometheusDataEvent.PRINT, e -&gt; theHTMLPane.printIt());</span>
+<span class="nc" id="L179">        myRegistrar.addEventListener(PrometheusDataEvent.SAVETOFILE, e -&gt; theHTMLPane.saveToFile());</span>
+<span class="nc" id="L180">        theHTMLPane.getEventRegistrar().addEventListener(TethysUIEvent.BUILDPAGE, e -&gt; {</span>
+<span class="nc" id="L181">            theManager.processReference(e.getDetails(String.class), theHTMLPane);</span>
+<span class="nc" id="L182">            e.consume();</span>
+<span class="nc" id="L183">        });</span>
+<span class="nc" id="L184">    }</span>
+
+    @Override
+    public TethysUIComponent getUnderlying() {
+<span class="nc" id="L188">        return thePanel;</span>
+    }
+
+    @Override
+    public OceanusEventRegistrar&lt;PrometheusDataEvent&gt; getEventRegistrar() {
+<span class="nc" id="L193">        return theEventManager.getEventRegistrar();</span>
+    }
+
+    @Override
+    public void setEnabled(final boolean pEnabled) {
+        /* Pass on to important elements */
+<span class="nc" id="L199">        theSelect.setEnabled(pEnabled);</span>
+<span class="nc" id="L200">        theError.setEnabled(pEnabled);</span>
+<span class="nc" id="L201">        theHTMLPane.setEnabled(pEnabled);</span>
+<span class="nc" id="L202">    }</span>
+
+    @Override
+    public void setVisible(final boolean pVisible) {
+<span class="nc" id="L206">        thePanel.setVisible(pVisible);</span>
+<span class="nc" id="L207">    }</span>
+
+    /**
+     * Refresh views/controls after a load/update of underlying data.
+     */
+    private void refreshData() {
+        /* Obtain the active profile */
+<span class="nc" id="L214">        OceanusProfile myTask = theView.getActiveTask();</span>
+<span class="nc" id="L215">        myTask = myTask.startTask(&quot;Reports&quot;);</span>
+
+        /* Protect against exceptions */
+        try {
+            /* Hide the instant debug since it is now invalid */
+<span class="nc" id="L220">            theSpotEntry.setVisible(false);</span>
+
+            /* Refresh the data */
+<span class="nc" id="L223">            theSelect.setRange(theView.getRange());</span>
+<span class="nc" id="L224">            theSelect.setSecurities(theView.hasActiveSecurities());</span>
+<span class="nc" id="L225">            buildReport();</span>
+
+            /* Create SavePoint */
+<span class="nc" id="L228">            theSelect.createSavePoint();</span>
+<span class="nc" id="L229">        } catch (OceanusException e) {</span>
+            /* Show the error */
+<span class="nc" id="L231">            theView.addError(e);</span>
+
+            /* Restore SavePoint */
+<span class="nc" id="L234">            theSelect.restoreSavePoint();</span>
+<span class="nc" id="L235">        }</span>
+
+        /* Complete the task */
+<span class="nc" id="L238">        myTask.end();</span>
+<span class="nc" id="L239">    }</span>
+
+    /**
+     * Build the report.
+     * @throws OceanusException on error
+     */
+    private void buildReport() throws OceanusException {
+        /* Access the values from the selection */
+<span class="nc" id="L247">        final MoneyWiseReportType myReportType = theSelect.getReportType();</span>
+<span class="nc" id="L248">        final OceanusDateRange myRange = theSelect.getDateRange();</span>
+<span class="nc" id="L249">        final MoneyWiseAnalysisManager myManager = theView.getAnalysisManager();</span>
+<span class="nc" id="L250">        final MoneyWiseAnalysisSecurityBucket mySecurity = theSelect.getSecurity();</span>
+
+        /* set lockDown of selection */
+<span class="nc" id="L253">        theSelect.setEnabled(true);</span>
+
+        /* Skip if we have no analysis */
+<span class="nc bnc" id="L256" title="All 2 branches missed.">        if (myManager.isIdle()) {</span>
+<span class="nc" id="L257">            theHTMLPane.setHTMLContent(&quot;&quot;, &quot;&quot;);</span>
+<span class="nc" id="L258">            return;</span>
+        }
+
+        /* Access the appropriate analysis */
+<span class="nc bnc" id="L262" title="All 2 branches missed.">        final MoneyWiseAnalysis myAnalysis = myReportType.isPointInTime()</span>
+<span class="nc" id="L263">                ? myManager.getDatedAnalysis(myRange.getEnd())</span>
+<span class="nc" id="L264">                : myManager.getRangedAnalysis(myRange);</span>
+
+        /* Record analysis and build report */
+<span class="nc" id="L267">        theSelect.setAnalysis(myAnalysis);</span>
+<span class="nc" id="L268">        final Document myDoc = theBuilder.createReport(myAnalysis, myReportType, mySecurity);</span>
+
+        /* Declare to debugger */
+<span class="nc" id="L271">        theSpotEntry.setObject(myAnalysis);</span>
+<span class="nc" id="L272">        theSpotEntry.setVisible(true);</span>
+
+        /* Declare the document */
+<span class="nc" id="L275">        theManager.setDocument(myDoc);</span>
+
+        /* Create initial display version */
+<span class="nc" id="L278">        final String myText = theManager.formatXML();</span>
+<span class="nc" id="L279">        theHTMLPane.setHTMLContent(myText, &quot;&quot;);</span>
+<span class="nc" id="L280">    }</span>
+
+    /**
+     * handleErrorPane.
+     */
+    private void handleErrorPane() {
+        /* Determine whether we have an error */
+<span class="nc" id="L287">        final boolean isError = theError.hasError();</span>
+
+        /* Hide selection panel on error */
+<span class="nc bnc" id="L290" title="All 2 branches missed.">        theSelect.setVisible(!isError);</span>
+
+        /* Lock HTML area */
+<span class="nc bnc" id="L293" title="All 2 branches missed.">        theHTMLPane.setEnabled(!isError);</span>
+<span class="nc" id="L294">    }</span>
+
+    /**
+     * handleGoToRequest.
+     * @param pEvent the event
+     */
+    private void handleGoToRequest(final OceanusEvent&lt;MetisReportEvent&gt; pEvent) {
+        /* Access the filter */
+<span class="nc" id="L302">        final MoneyWiseAnalysisFilter&lt;?, ?&gt; myFilter = pEvent.getDetails(MoneyWiseAnalysisFilter.class);</span>
+
+        /* If we are currently showing Asset Gains */
+<span class="nc bnc" id="L305" title="All 2 branches missed.">        if (MoneyWiseReportType.ASSETGAINS.equals(theSelect.getReportType())) {</span>
+            /* Select the capital gains report */
+<span class="nc" id="L307">            final MoneyWiseAnalysisSecurityBucket myBucket = ((MoneyWiseAnalysisSecurityFilter) myFilter).getBucket();</span>
+<span class="nc" id="L308">            theSelect.setSecurity(myBucket);</span>
+
+            /* else we are selecting a statement */
+<span class="nc" id="L311">        } else {</span>
+            /* Create the details of the report */
+<span class="nc" id="L313">            final TethysUIDateRangeSelector mySelect = theSelect.getDateRangeSelector();</span>
+<span class="nc" id="L314">            final MoneyWiseStatementSelect myStatement = new MoneyWiseStatementSelect(mySelect, myFilter);</span>
+
+            /* Request the action */
+<span class="nc" id="L317">            theEventManager.fireEvent(PrometheusDataEvent.GOTOWINDOW, new PrometheusGoToEvent&lt;&gt;(MoneyWiseGoToId.STATEMENT, myStatement));</span>
+        }
+<span class="nc" id="L319">    }</span>
+
+    /**
+     * handleReportRequest.
+     */
+    private void handleReportRequest() {
+        /* Protect against exceptions */
+        try {
+            /* build the report */
+<span class="nc" id="L328">            buildReport();</span>
+
+            /* Create SavePoint */
+<span class="nc" id="L331">            theSelect.createSavePoint();</span>
+
+            /* Catch Exceptions */
+<span class="nc" id="L334">        } catch (OceanusException e) {</span>
+            /* Build the error */
+<span class="nc" id="L336">            final OceanusException myError = new MoneyWiseDataException(&quot;Failed to change selection&quot;, e);</span>
+
+            /* Show the error */
+<span class="nc" id="L339">            theError.addError(myError);</span>
+<span class="nc" id="L340">            handleErrorPane();</span>
+
+            /* Restore SavePoint */
+<span class="nc" id="L343">            theSelect.restoreSavePoint();</span>
+<span class="nc" id="L344">        }</span>
+<span class="nc" id="L345">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PrometheusMapsDataSetTouch.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Prometheus Core Application Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.prometheus.maps</a> &gt; <span class="el_source">PrometheusMapsDataSetTouch.java</span></div><h1>PrometheusMapsDataSetTouch.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Prometheus: Application Framework
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.prometheus.maps;
+
+import net.sourceforge.joceanus.metis.field.MetisFieldItem;
+import net.sourceforge.joceanus.metis.field.MetisFieldSet;
+import net.sourceforge.joceanus.metis.list.MetisListKey;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+/**
+ * DataTouchMap for dataSet/editSet.
+ */
+public class PrometheusMapsDataSetTouch
+        implements MetisFieldItem {
+    /**
+     * Report fields.
+     */
+<span class="nc" id="L36">    private static final MetisFieldSet&lt;PrometheusMapsDataSetTouch&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(PrometheusMapsDataSetTouch.class);</span>
+
+    /*
+     * Declare Fields.
+     */
+    static {
+<span class="nc" id="L42">        FIELD_DEFS.declareLocalField(PrometheusMapsResource.MAPS_TOUCHMAP, PrometheusMapsDataSetTouch::getTouchMap);</span>
+<span class="nc" id="L43">    }</span>
+
+    /**
+     * The map of listKey to listMap.
+     */
+    private final Map&lt;MetisListKey, PrometheusMapsListTouch&gt; theListMap;
+
+    /**
+     * Constructor.
+     */
+<span class="nc" id="L53">    PrometheusMapsDataSetTouch() {</span>
+<span class="nc" id="L54">        theListMap = new LinkedHashMap&lt;&gt;();</span>
+<span class="nc" id="L55">    }</span>
+
+    @Override
+    public MetisFieldSetDef getDataFieldSet() {
+<span class="nc" id="L59">            return FIELD_DEFS;</span>
+        }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L64">        return PrometheusMapsDataSetTouch.class.getSimpleName();</span>
+    }
+
+    /**
+     * Obtain the list map.
+     * @return the map
+     */
+    private Map&lt;MetisListKey, PrometheusMapsListTouch&gt; getTouchMap() {
+<span class="nc" id="L72">        return theListMap;</span>
+    }
+
+    /**
+     * Record touch.
+     * @param pTouchedItem the item that is touched
+     * @param pTouchingItem the item that touches
+     */
+    void recordTouch(final PrometheusDataItem pTouchedItem,
+                     final PrometheusDataItem pTouchingItem) {
+        /* Access correct map and record the touch */
+<span class="nc" id="L83">        MetisListKey myKey = pTouchedItem.getItemType();</span>
+<span class="nc" id="L84">        PrometheusMapsListTouch myMap = theListMap.computeIfAbsent(myKey,</span>
+                PrometheusMapsListTouch::new);
+<span class="nc" id="L86">        myMap.recordTouchedBy(pTouchedItem, pTouchingItem);</span>
+
+        /* Access correct map and record the touch */
+<span class="nc" id="L89">        myKey = pTouchingItem.getItemType();</span>
+<span class="nc" id="L90">        myMap = theListMap.computeIfAbsent(myKey,</span>
+                PrometheusMapsListTouch::new);
+<span class="nc" id="L92">        myMap.recordTouches(pTouchedItem, pTouchingItem);</span>
+<span class="nc" id="L93">    }</span>
+
+    /**
+     * Is the item touched?
+     * @param pItem the item
+     * @return true/false
+     */
+    boolean isTouched(final PrometheusDataItem pItem) {
+<span class="nc" id="L101">        final PrometheusMapsListTouch myMap = theListMap.get(pItem.getItemType());</span>
+<span class="nc bnc" id="L102" title="All 4 branches missed.">        return myMap != null &amp;&amp; myMap.isTouched(pItem);</span>
+    }
+
+    /**
+     * Reset the map.
+     */
+    void resetMap() {
+<span class="nc" id="L109">        theListMap.clear();</span>
+<span class="nc" id="L110">    }</span>
+ }
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseTableTransCategory.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.database</a> &gt; <span class="el_source">MoneyWiseTableTransCategory.java</span></div><h1>MoneyWiseTableTransCategory.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.database;
+
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
+import net.sourceforge.joceanus.prometheus.database.PrometheusColumnDefinition;
+import net.sourceforge.joceanus.prometheus.database.PrometheusDataStore;
+import net.sourceforge.joceanus.prometheus.database.PrometheusTableDefinition;
+import net.sourceforge.joceanus.prometheus.database.PrometheusTableDefinition.PrometheusSortOrder;
+import net.sourceforge.joceanus.prometheus.database.PrometheusTableEncrypted;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+
+/**
+ * TableEncrypted extension for Transaction Category.
+ * @author Tony Washer
+ */
+public class MoneyWiseTableTransCategory
+        extends PrometheusTableEncrypted&lt;MoneyWiseTransCategory&gt; {
+    /**
+     * The name of the Category table.
+     */
+<span class="fc" id="L43">    protected static final String TABLE_NAME = MoneyWiseTransCategory.LIST_NAME;</span>
+
+    /**
+     * Constructor.
+     * @param pDatabase the database control
+     */
+    protected MoneyWiseTableTransCategory(final PrometheusDataStore pDatabase) {
+<span class="fc" id="L50">        super(pDatabase, TABLE_NAME);</span>
+<span class="fc" id="L51">        final PrometheusTableDefinition myTableDef = getTableDef();</span>
+
+        /* Declare the columns */
+<span class="fc" id="L54">        final PrometheusColumnDefinition myCatCol = myTableDef.addReferenceColumn(MoneyWiseStaticDataType.TRANSTYPE, MoneyWiseTableTransCategoryType.TABLE_NAME);</span>
+<span class="fc" id="L55">        final PrometheusColumnDefinition myParentCol = myTableDef.addNullIntegerColumn(PrometheusDataResource.DATAGROUP_PARENT);</span>
+<span class="fc" id="L56">        myTableDef.addEncryptedColumn(PrometheusDataResource.DATAITEM_FIELD_NAME, PrometheusDataItem.NAMELEN);</span>
+<span class="fc" id="L57">        myTableDef.addNullEncryptedColumn(PrometheusDataResource.DATAITEM_FIELD_DESC, PrometheusDataItem.DESCLEN);</span>
+
+        /* Declare Sort Columns */
+<span class="fc" id="L60">        myParentCol.setSortOrder(PrometheusSortOrder.DESCENDING);</span>
+<span class="fc" id="L61">        myCatCol.setSortOrder(PrometheusSortOrder.ASCENDING);</span>
+<span class="fc" id="L62">    }</span>
+
+    @Override
+    protected void declareData(final PrometheusDataSet pData) {
+<span class="fc" id="L66">        final MoneyWiseDataSet myData = (MoneyWiseDataSet) pData;</span>
+<span class="fc" id="L67">        setList(myData.getTransCategories());</span>
+<span class="fc" id="L68">    }</span>
+
+    @Override
+    protected PrometheusDataValues loadValues() throws OceanusException {
+        /* Access the table definition */
+<span class="fc" id="L73">        final PrometheusTableDefinition myTableDef = getTableDef();</span>
+
+        /* Build data values */
+<span class="fc" id="L76">        final PrometheusDataValues myValues = getRowValues(MoneyWiseTransCategory.OBJECT_NAME);</span>
+<span class="fc" id="L77">        myValues.addValue(MoneyWiseStaticDataType.TRANSTYPE, myTableDef.getIntegerValue(MoneyWiseStaticDataType.TRANSTYPE));</span>
+<span class="fc" id="L78">        myValues.addValue(PrometheusDataResource.DATAGROUP_PARENT, myTableDef.getIntegerValue(PrometheusDataResource.DATAGROUP_PARENT));</span>
+<span class="fc" id="L79">        myValues.addValue(PrometheusDataResource.DATAITEM_FIELD_NAME, myTableDef.getBinaryValue(PrometheusDataResource.DATAITEM_FIELD_NAME));</span>
+<span class="fc" id="L80">        myValues.addValue(PrometheusDataResource.DATAITEM_FIELD_DESC, myTableDef.getBinaryValue(PrometheusDataResource.DATAITEM_FIELD_DESC));</span>
+
+        /* Return the values */
+<span class="fc" id="L83">        return myValues;</span>
+    }
+
+    @Override
+    protected void setFieldValue(final MoneyWiseTransCategory pItem,
+                                 final MetisDataFieldId iField) throws OceanusException {
+        /* Switch on field id */
+<span class="fc" id="L90">        final PrometheusTableDefinition myTableDef = getTableDef();</span>
+<span class="fc bfc" id="L91" title="All 2 branches covered.">        if (MoneyWiseStaticDataType.TRANSTYPE.equals(iField)) {</span>
+<span class="fc" id="L92">            myTableDef.setIntegerValue(iField, pItem.getCategoryTypeId());</span>
+<span class="fc bfc" id="L93" title="All 2 branches covered.">        } else if (PrometheusDataResource.DATAGROUP_PARENT.equals(iField)) {</span>
+<span class="fc" id="L94">            myTableDef.setIntegerValue(iField, pItem.getParentCategoryId());</span>
+<span class="fc bfc" id="L95" title="All 2 branches covered.">        } else if (PrometheusDataResource.DATAITEM_FIELD_NAME.equals(iField)) {</span>
+<span class="fc" id="L96">            myTableDef.setBinaryValue(iField, pItem.getNameBytes());</span>
+<span class="fc bfc" id="L97" title="All 2 branches covered.">        } else if (PrometheusDataResource.DATAITEM_FIELD_DESC.equals(iField)) {</span>
+<span class="fc" id="L98">            myTableDef.setBinaryValue(iField, pItem.getDescBytes());</span>
+        } else {
+<span class="fc" id="L100">            super.setFieldValue(pItem, iField);</span>
+        }
+<span class="fc" id="L102">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

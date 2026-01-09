@@ -1,0 +1,956 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PrometheusDataInfoSet.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Prometheus Core Application Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.prometheus.data</a> &gt; <span class="el_source">PrometheusDataInfoSet.java</span></div><h1>PrometheusDataInfoSet.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Prometheus: Application Framework
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.prometheus.data;
+
+import net.sourceforge.joceanus.metis.data.MetisDataDifference;
+import net.sourceforge.joceanus.metis.data.MetisDataEditState;
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.metis.data.MetisDataState;
+import net.sourceforge.joceanus.metis.field.MetisFieldItem;
+import net.sourceforge.joceanus.metis.field.MetisFieldSet;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoItem.PrometheusDataInfoList;
+import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataItem.PrometheusStaticList;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Spliterator;
+import java.util.function.Consumer;
+
+/**
+ * Representation of an information set extension of a DataItem.
+ * @author Tony Washer
+ * @param &lt;T&gt; the data type
+ */
+public abstract class PrometheusDataInfoSet&lt;T extends PrometheusDataInfoItem&gt;
+        implements MetisFieldItem, Iterable&lt;T&gt; {
+    /**
+     * Report fields.
+     */
+    @SuppressWarnings(&quot;rawtypes&quot;)
+<span class="nc" id="L49">    private static final MetisFieldSet&lt;PrometheusDataInfoSet&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(PrometheusDataInfoSet.class);</span>
+
+    /*
+     * FieldIds.
+     */
+    static {
+<span class="nc" id="L55">        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFO_OWNER, PrometheusDataInfoSet::getOwner);</span>
+<span class="nc" id="L56">        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFOSET_VALUES, PrometheusDataInfoSet::getValues);</span>
+<span class="nc" id="L57">    }</span>
+
+    /**
+     * The Owner to which this set belongs.
+     */
+    private final PrometheusDataItem theOwner;
+
+    /**
+     * The InfoTypes for the InfoSet.
+     */
+    private final PrometheusStaticList&lt;?&gt; theTypeList;
+
+    /**
+     * The DataInfoList for the InfoSet.
+     */
+    private final PrometheusDataInfoList&lt;T&gt; theInfoList;
+
+    /**
+     * The Map of the DataInfo.
+     */
+    private final Map&lt;PrometheusDataInfoClass, PrometheusDataInfoItem&gt; theMap;
+
+    /**
+     * The class of the entries.
+     */
+    private final Class&lt;T&gt; theClass;
+
+    /**
+     * Constructor.
+     * @param pOwner the Owner to which this Set belongs
+     * @param pTypeList the infoTypeList for the set
+     * @param pInfoList the infoList for the set
+     */
+    protected PrometheusDataInfoSet(final PrometheusDataItem pOwner,
+                                    final PrometheusStaticList&lt;?&gt; pTypeList,
+<span class="nc" id="L92">                                    final PrometheusDataInfoList&lt;T&gt; pInfoList) {</span>
+        /* Store the Owner and InfoType List */
+<span class="nc" id="L94">        theOwner = pOwner;</span>
+<span class="nc" id="L95">        theTypeList = pTypeList;</span>
+<span class="nc" id="L96">        theInfoList = pInfoList;</span>
+<span class="nc" id="L97">        theClass = theInfoList.getBaseClass();</span>
+
+        /* Create the Map */
+<span class="nc" id="L100">        theMap = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L101">    }</span>
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L105">        return this.getDataFieldSet().getName();</span>
+    }
+
+    /**
+     * Obtain owner.
+     * @return the owner
+     */
+    public PrometheusDataItem getOwner() {
+<span class="nc" id="L113">        return theOwner;</span>
+    }
+
+    /**
+     * Obtain values.
+     * @return the values
+     */
+    private Map&lt;PrometheusDataInfoClass, PrometheusDataInfoItem&gt; getValues() {
+<span class="nc" id="L121">        return theMap;</span>
+    }
+
+    /**
+     * Obtain class iterator for the underlying infoClasses.
+     * @return the Iterator
+     */
+    public abstract Iterator&lt;PrometheusDataInfoClass&gt; classIterator();
+
+    /**
+     * Clone the dataInfoSet.
+     * @param pSource the InfoSet to clone
+     */
+    @SuppressWarnings(&quot;unchecked&quot;)
+    protected void cloneTheDataInfoSet(final PrometheusDataInfoSet&lt;T&gt; pSource) {
+        /* Clone the InfoSet for each Event in the underlying Map */
+<span class="nc bnc" id="L137" title="All 2 branches missed.">        for (Entry&lt;PrometheusDataInfoClass, PrometheusDataInfoItem&gt; myEntry : pSource.theMap.entrySet()) {</span>
+            /* Create the new value */
+<span class="nc" id="L139">            final PrometheusDataInfoItem myValue = myEntry.getValue();</span>
+
+            /* If this is an instance of a LinkSet */
+<span class="nc bnc" id="L142" title="All 2 branches missed.">            if (myValue instanceof PrometheusDataInfoLinkSet) {</span>
+                /* Clone the infoLinkSet */
+<span class="nc" id="L144">                final PrometheusDataInfoLinkSet&lt;T&gt; mySet = (PrometheusDataInfoLinkSet&lt;T&gt;) myValue;</span>
+<span class="nc" id="L145">                final PrometheusDataInfoItem myNew = new PrometheusDataInfoLinkSet&lt;&gt;(theInfoList, mySet);</span>
+<span class="nc" id="L146">                theMap.put(myEntry.getKey(), myNew);</span>
+
+                /* else its a standard entry */
+<span class="nc" id="L149">            } else {</span>
+                /* Add to the map */
+<span class="nc" id="L151">                final PrometheusDataInfoItem myNew = theInfoList.addCopyItem(myValue);</span>
+<span class="nc" id="L152">                theMap.put(myEntry.getKey(), myNew);</span>
+            }
+<span class="nc" id="L154">        }</span>
+<span class="nc" id="L155">    }</span>
+
+    /**
+     * Obtain the value for the infoClass.
+     * @param &lt;X&gt; the infoClass
+     * @param pInfoClass the Info Class
+     * @param pClass the Value Class
+     * @return the value
+     */
+    public &lt;X&gt; X getValue(final PrometheusDataInfoClass pInfoClass,
+                          final Class&lt;X&gt; pClass) {
+        /* Reject if called for LinkSet */
+<span class="nc bnc" id="L167" title="All 2 branches missed.">        if (pInfoClass.isLinkSet()) {</span>
+<span class="nc" id="L168">            throw new UnsupportedOperationException();</span>
+        }
+
+        /* Access existing entry */
+<span class="nc" id="L172">        final PrometheusDataInfoItem myValue = theMap.get(pInfoClass);</span>
+
+        /* If we have no entry, return null */
+<span class="nc bnc" id="L175" title="All 2 branches missed.">        if (myValue == null) {</span>
+<span class="nc" id="L176">            return null;</span>
+        }
+
+        /* Return the value */
+<span class="nc" id="L180">        return myValue.getValue(pClass);</span>
+    }
+
+    /**
+     * Obtain the list iterator for the infoClass.
+     * @param pInfoClass the Info Class
+     * @return the iterator
+     */
+    public List&lt;?&gt; getListValue(final PrometheusDataInfoClass pInfoClass) {
+        /* Reject if not called for LinkSet */
+<span class="nc bnc" id="L190" title="All 2 branches missed.">        if (!pInfoClass.isLinkSet()) {</span>
+<span class="nc" id="L191">            throw new UnsupportedOperationException();</span>
+        }
+
+        /* Access existing entry */
+<span class="nc" id="L195">        final PrometheusDataInfoLinkSet&lt;T&gt; mySet = getInfoLinkSet(pInfoClass);</span>
+
+        /* Return list if it is available */
+<span class="nc bnc" id="L198" title="All 2 branches missed.">        return mySet == null</span>
+<span class="nc" id="L199">                ? null</span>
+<span class="nc" id="L200">                : mySet.getActive();</span>
+    }
+
+    /**
+     * Is there active values for the infoClass?
+     * @param pInfoClass the info class
+     * @return true/false
+     */
+    public boolean isExisting(final PrometheusDataInfoClass pInfoClass) {
+        /* Access the value */
+<span class="nc" id="L210">        final PrometheusDataInfoItem myInfo = theMap.get(pInfoClass);</span>
+<span class="nc bnc" id="L211" title="All 2 branches missed.">        if (myInfo instanceof PrometheusDataInfoLinkSet) {</span>
+            /* Access the info */
+<span class="nc" id="L213">            final PrometheusDataInfoLinkSet&lt;T&gt; mySet = getInfoLinkSet(pInfoClass);</span>
+<span class="nc" id="L214">            return mySet.isExisting();</span>
+        }
+
+        /* Handle standard info */
+<span class="nc bnc" id="L218" title="All 4 branches missed.">        return (myInfo != null) &amp;&amp; !myInfo.isDeleted();</span>
+    }
+
+    /**
+     * Obtain the field value for the infoClass.
+     * @param pInfoClass the Info Class
+     * @return the value
+     */
+    public PrometheusEncryptedPair getField(final PrometheusDataInfoClass pInfoClass) {
+        /* Reject if called for LinkSet */
+<span class="nc bnc" id="L228" title="All 2 branches missed.">        if (pInfoClass.isLinkSet()) {</span>
+<span class="nc" id="L229">            throw new UnsupportedOperationException();</span>
+        }
+
+        /* Access existing entry */
+<span class="nc" id="L233">        final PrometheusDataInfoItem myValue = theMap.get(pInfoClass);</span>
+
+        /* If we have no entry, return null */
+<span class="nc bnc" id="L236" title="All 2 branches missed.">        if (myValue == null) {</span>
+<span class="nc" id="L237">            return null;</span>
+        }
+
+        /* Return the field */
+<span class="nc" id="L241">        return myValue.getField();</span>
+    }
+
+    /**
+     * Obtain the field value for the infoClass.
+     * @param pInfoClass the Info Class
+     * @return the value
+     */
+    public T getInfo(final PrometheusDataInfoClass pInfoClass) {
+        /* Reject if called for LinkSet */
+<span class="nc bnc" id="L251" title="All 2 branches missed.">        if (pInfoClass.isLinkSet()) {</span>
+<span class="nc" id="L252">            throw new UnsupportedOperationException();</span>
+        }
+
+        /* Return the info */
+<span class="nc" id="L256">        final PrometheusDataInfoItem myInfo = theMap.get(pInfoClass);</span>
+<span class="nc" id="L257">        return theClass.cast(myInfo);</span>
+    }
+
+    /**
+     * link the value for the infoClass.
+     * @param pInfoClass the Info Class
+     * @param pLink the link value
+     * @throws OceanusException on error
+     */
+    public void linkValue(final PrometheusDataInfoClass pInfoClass,
+                          final PrometheusDataItem pLink) throws OceanusException {
+        /* Reject if not called for LinkSet */
+<span class="nc bnc" id="L269" title="All 2 branches missed.">        if (!pInfoClass.isLinkSet()) {</span>
+<span class="nc" id="L270">            throw new UnsupportedOperationException();</span>
+        }
+
+        /* Access existing set */
+<span class="nc" id="L274">        PrometheusDataInfoLinkSet&lt;T&gt; mySet = getInfoLinkSet(pInfoClass);</span>
+
+        /* If we have no set, create one */
+<span class="nc bnc" id="L277" title="All 2 branches missed.">        if (mySet == null) {</span>
+            /* Obtain infoType */
+<span class="nc" id="L279">            final PrometheusStaticDataItem myInfoType = theTypeList.findItemByClass(pInfoClass);</span>
+
+            /* Allocate the new set */
+<span class="nc" id="L282">            mySet = new PrometheusDataInfoLinkSet&lt;&gt;(theInfoList, theOwner, myInfoType);</span>
+
+            /* Add to the map */
+<span class="nc" id="L285">            theMap.put(pInfoClass, mySet);</span>
+        }
+
+        /* Locate any existing link */
+<span class="nc" id="L289">        T myItem = mySet.getItemForValue(pLink);</span>
+
+        /* If this is a new link */
+<span class="nc bnc" id="L292" title="All 2 branches missed.">        if (myItem == null) {</span>
+            /* Obtain infoType */
+<span class="nc" id="L294">            final PrometheusStaticDataItem myInfoType = theTypeList.findItemByClass(pInfoClass);</span>
+
+            /* Create the entry and add to list */
+<span class="nc" id="L297">            myItem = theInfoList.addNewItem(theOwner, myInfoType);</span>
+<span class="nc" id="L298">            myItem.setValue(pLink);</span>
+<span class="nc" id="L299">            myItem.setNewVersion();</span>
+
+            /* link the item */
+<span class="nc" id="L302">            mySet.linkItem(myItem);</span>
+<span class="nc" id="L303">            mySet.sortLinks();</span>
+
+            /* else if this is a deleted link */
+<span class="nc bnc" id="L306" title="All 2 branches missed.">        } else if (myItem.isDeleted()) {</span>
+            /* Restore the value */
+<span class="nc" id="L308">            myItem.setDeleted(false);</span>
+        }
+<span class="nc" id="L310">    }</span>
+
+    /**
+     * set the list value for the infoClass.
+     * @param pInfoClass the Info Class
+     * @param pLinks the links value
+     * @throws OceanusException on error
+     */
+    public void setListValue(final PrometheusDataInfoClass pInfoClass,
+                             final List&lt;? extends PrometheusDataItem&gt; pLinks) throws OceanusException {
+        /* Reject if not called for LinkSet */
+<span class="nc bnc" id="L321" title="All 2 branches missed.">        if (!pInfoClass.isLinkSet()) {</span>
+<span class="nc" id="L322">            throw new UnsupportedOperationException();</span>
+        }
+
+        /* Access existing set */
+<span class="nc" id="L326">        PrometheusDataInfoLinkSet&lt;T&gt; mySet = getInfoLinkSet(pInfoClass);</span>
+
+        /* If we now have no selected values */
+<span class="nc bnc" id="L329" title="All 4 branches missed.">        if (pLinks == null || pLinks.isEmpty()) {</span>
+            /* If we have a set */
+<span class="nc bnc" id="L331" title="All 2 branches missed.">            if (mySet != null) {</span>
+                /* Clear all values in linkSet */
+<span class="nc" id="L333">                mySet.clearAllLinks();</span>
+<span class="nc" id="L334">                theMap.remove(pInfoClass);</span>
+            }
+
+            /* Else we have selected values */
+        } else {
+            /* If we do not currently have a set */
+<span class="nc bnc" id="L340" title="All 2 branches missed.">            if (mySet == null) {</span>
+                /* Obtain infoType */
+<span class="nc" id="L342">                final PrometheusStaticDataItem myInfoType = theTypeList.findItemByClass(pInfoClass);</span>
+
+                /* Allocate the new set */
+<span class="nc" id="L345">                mySet = new PrometheusDataInfoLinkSet&lt;&gt;(theInfoList, theOwner, myInfoType);</span>
+
+                /* Add to the map */
+<span class="nc" id="L348">                theMap.put(pInfoClass, mySet);</span>
+            }
+
+            /* Clear out unnecessary links */
+<span class="nc" id="L352">            mySet.clearUnnecessaryLinks(pLinks);</span>
+
+            /* Add new links */
+<span class="nc" id="L355">            mySet.addNewLinks(pLinks);</span>
+<span class="nc" id="L356">            mySet.sortLinks();</span>
+        }
+<span class="nc" id="L358">    }</span>
+
+    /**
+     * Obtain the infoLinkSet for the infoClass.
+     * @param pInfoClass the Info Class
+     * @return the value
+     */
+    @SuppressWarnings(&quot;unchecked&quot;)
+    protected PrometheusDataInfoLinkSet&lt;T&gt; getInfoLinkSet(final PrometheusDataInfoClass pInfoClass) {
+        /* Reject if not called for LinkSet */
+<span class="nc bnc" id="L368" title="All 2 branches missed.">        if (!pInfoClass.isLinkSet()) {</span>
+<span class="nc" id="L369">            throw new UnsupportedOperationException();</span>
+        }
+
+        /* Return the info */
+<span class="nc" id="L373">        final PrometheusDataInfoItem myInfo = theMap.get(pInfoClass);</span>
+<span class="nc" id="L374">        return (PrometheusDataInfoLinkSet&lt;T&gt;) myInfo;</span>
+    }
+
+    /**
+     * Determine whether a particular field has changed in this edit view.
+     * @param pInfoClass the class to test
+     * @return &lt;code&gt;true/false&lt;/code&gt;
+     */
+    public MetisDataDifference fieldChanged(final PrometheusDataInfoClass pInfoClass) {
+        /* If this is called for LinkSet */
+<span class="nc bnc" id="L384" title="All 2 branches missed.">        if (pInfoClass.isLinkSet()) {</span>
+            /* Access the info */
+<span class="nc" id="L386">            final PrometheusDataInfoLinkSet&lt;T&gt; mySet = getInfoLinkSet(pInfoClass);</span>
+<span class="nc bnc" id="L387" title="All 2 branches missed.">            return mySet == null</span>
+<span class="nc" id="L388">                    ? MetisDataDifference.IDENTICAL</span>
+<span class="nc" id="L389">                    : mySet.fieldChanged();</span>
+        }
+
+        /* Access the info */
+<span class="nc" id="L393">        final T myInfo = getInfo(pInfoClass);</span>
+
+        /* Return change details */
+<span class="nc bnc" id="L396" title="All 2 branches missed.">        if (myInfo == null) {</span>
+<span class="nc" id="L397">            return MetisDataDifference.DIFFERENT;</span>
+        }
+<span class="nc bnc" id="L399" title="All 2 branches missed.">        return myInfo.hasHistory()</span>
+<span class="nc bnc" id="L400" title="All 2 branches missed.">                || MetisDataState.NEW.equals(myInfo.getState())</span>
+<span class="nc" id="L401">                ? MetisDataDifference.DIFFERENT</span>
+<span class="nc" id="L402">                : MetisDataDifference.IDENTICAL;</span>
+    }
+
+    /**
+     * Set the value for the infoClass.
+     * @param pInfoClass the Info Class
+     * @param pValue the Value
+     * @throws OceanusException on error
+     */
+    public void setValue(final PrometheusDataInfoClass pInfoClass,
+                         final Object pValue) throws OceanusException {
+        /* Reject if called for LinkSet */
+<span class="nc bnc" id="L414" title="All 2 branches missed.">        if (pInfoClass.isLinkSet()) {</span>
+<span class="nc" id="L415">            throw new UnsupportedOperationException();</span>
+        }
+
+        /* Determine whether this is a deletion */
+<span class="nc bnc" id="L419" title="All 2 branches missed.">        final boolean bDelete = pValue == null;</span>
+
+        /* Obtain the Map value */
+<span class="nc" id="L422">        PrometheusDataInfoItem myValue = theMap.get(pInfoClass);</span>
+
+        /* If we are deleting */
+<span class="nc bnc" id="L425" title="All 2 branches missed.">        if (bDelete) {</span>
+            /* Mark existing value as deleted */
+<span class="nc bnc" id="L427" title="All 2 branches missed.">            if (myValue != null) {</span>
+<span class="nc" id="L428">                myValue.markDeleted();</span>
+            }
+
+            /* Return to caller */
+<span class="nc" id="L432">            return;</span>
+        }
+
+        /* If we have no entry */
+<span class="nc bnc" id="L436" title="All 2 branches missed.">        if (myValue == null) {</span>
+            /* Obtain infoType */
+<span class="nc" id="L438">            final PrometheusStaticDataItem myInfoType = theTypeList.findItemByClass(pInfoClass);</span>
+
+            /* Create the entry and add to list */
+<span class="nc" id="L441">            myValue = theInfoList.addNewItem(theOwner, myInfoType);</span>
+<span class="nc" id="L442">            myValue.setNewVersion();</span>
+
+            /* Insert the value into the map */
+<span class="nc" id="L445">            theMap.put(pInfoClass, myValue);</span>
+        }
+
+        /* Update the value */
+<span class="nc" id="L449">        myValue.setValue(pValue);</span>
+<span class="nc" id="L450">    }</span>
+
+    /**
+     * Sort linkSets.
+     */
+    @SuppressWarnings(&quot;unchecked&quot;)
+    public void sortLinkSets() {
+        /* Loop through each existing value */
+<span class="nc bnc" id="L458" title="All 2 branches missed.">        for (PrometheusDataInfoItem myValue : theMap.values()) {</span>
+            /* If this is an instance of a LinkSet */
+<span class="nc bnc" id="L460" title="All 2 branches missed.">            if (myValue instanceof PrometheusDataInfoLinkSet) {</span>
+                /* Pass call to linkSet */
+<span class="nc" id="L462">                final PrometheusDataInfoLinkSet&lt;T&gt; mySet = (PrometheusDataInfoLinkSet&lt;T&gt;) myValue;</span>
+<span class="nc" id="L463">                mySet.sortLinks();</span>
+            }
+<span class="nc" id="L465">        }</span>
+<span class="nc" id="L466">    }</span>
+
+    /**
+     * Register Info.
+     * @param pInfo the info to register
+     * @throws OceanusException on error
+     */
+    public void registerInfo(final T pInfo) throws OceanusException {
+        /* Obtain the existing Map value */
+<span class="nc" id="L475">        final PrometheusDataInfoClass myClass = pInfo.getInfoClass();</span>
+
+        /* If this is an instance of a LinkSet */
+<span class="nc bnc" id="L478" title="All 2 branches missed.">        if (myClass.isLinkSet()) {</span>
+            /* Access existing entry */
+<span class="nc" id="L480">            PrometheusDataInfoLinkSet&lt;T&gt; mySet = getInfoLinkSet(myClass);</span>
+<span class="nc bnc" id="L481" title="All 2 branches missed.">            if (mySet == null) {</span>
+                /* Allocate the new set */
+<span class="nc" id="L483">                mySet = new PrometheusDataInfoLinkSet&lt;&gt;(theInfoList, theOwner, pInfo.getInfoType());</span>
+
+                /* Add to the map */
+<span class="nc" id="L486">                theMap.put(myClass, mySet);</span>
+            }
+
+            /* link the item */
+<span class="nc" id="L490">            mySet.linkItem(pInfo);</span>
+
+            /* else it is a standard item */
+<span class="nc" id="L493">        } else {</span>
+            /* Access existing entry */
+<span class="nc" id="L495">            final PrometheusDataInfoItem myValue = theMap.get(myClass);</span>
+
+            /* Reject if duplicate and not re-registration */
+<span class="nc bnc" id="L498" title="All 4 branches missed.">            if ((myValue != null) &amp;&amp; !myValue.getIndexedId().equals(pInfo.getIndexedId())) {</span>
+<span class="nc" id="L499">                throw new IllegalArgumentException(&quot;Duplicate information type &quot; + pInfo.getInfoClass());</span>
+            }
+
+            /* Add to the map */
+<span class="nc" id="L503">            theMap.put(myClass, pInfo);</span>
+        }
+<span class="nc" id="L505">    }</span>
+
+    /**
+     * deRegister Info.
+     * @param pInfo the info to deRegister
+     */
+    public void deRegisterInfo(final T pInfo) {
+        /* Obtain the existing Map value */
+<span class="nc" id="L513">        final PrometheusDataInfoClass myClass = pInfo.getInfoClass();</span>
+
+        /* If this is an instance of a LinkSet */
+<span class="nc bnc" id="L516" title="All 2 branches missed.">        if (myClass.isLinkSet()) {</span>
+            /* Access existing entry */
+<span class="nc" id="L518">            final PrometheusDataInfoLinkSet&lt;T&gt; mySet = getInfoLinkSet(myClass);</span>
+<span class="nc bnc" id="L519" title="All 2 branches missed.">            if (mySet != null) {</span>
+                /* Unlink the item */
+<span class="nc" id="L521">                mySet.unlinkItem(pInfo);</span>
+
+                /* If the set is now empty */
+<span class="nc bnc" id="L524" title="All 2 branches missed.">                if (mySet.isEmpty()) {</span>
+                    /* Remove the set from the map */
+<span class="nc" id="L526">                    theMap.remove(myClass);</span>
+                }
+            }
+
+            /* else it is a standard info */
+<span class="nc" id="L531">        } else {</span>
+            /* Remove from the map */
+<span class="nc" id="L533">            theMap.remove(myClass);</span>
+        }
+<span class="nc" id="L535">    }</span>
+
+    /**
+     * deRegister Info.
+     * @param pInfo the info to deRegister
+     */
+    public void rewindInfoLinkSet(final T pInfo) {
+        /* Obtain the existing Map value */
+<span class="nc" id="L543">        final PrometheusDataInfoClass myClass = pInfo.getInfoClass();</span>
+
+        /* If this is an instance of a LinkSet */
+<span class="nc bnc" id="L546" title="All 2 branches missed.">        if (myClass.isLinkSet()) {</span>
+            /* Access existing entry */
+<span class="nc" id="L548">            final PrometheusDataInfoLinkSet&lt;T&gt; mySet = getInfoLinkSet(myClass);</span>
+<span class="nc bnc" id="L549" title="All 2 branches missed.">            if (mySet != null) {</span>
+                /* reSort the links */
+<span class="nc" id="L551">                mySet.sortLinks();</span>
+            } else {
+                /* Remove the set from the map */
+<span class="nc" id="L554">                theMap.remove(myClass);</span>
+            }
+
+            /* illegal operation */
+<span class="nc" id="L558">        } else {</span>
+<span class="nc" id="L559">            throw new UnsupportedOperationException();</span>
+        }
+<span class="nc" id="L561">    }</span>
+
+    /**
+     * wipe information regarding the infoClass.
+     * @param pInfoClass the Info Class
+     */
+    public void wipeInfo(final PrometheusDataInfoClass pInfoClass) {
+        /* If we have an item for the class */
+<span class="nc" id="L569">        final PrometheusDataInfoItem myInfo = theMap.get(pInfoClass);</span>
+<span class="nc bnc" id="L570" title="All 2 branches missed.">        if (myInfo != null) {</span>
+            /* Remove and unlink it */
+<span class="nc" id="L572">            theMap.remove(pInfoClass);</span>
+<span class="nc" id="L573">            theInfoList.remove(myInfo);</span>
+        }
+<span class="nc" id="L575">    }</span>
+
+    /**
+     * touch underlying items.
+     */
+    @SuppressWarnings(&quot;unchecked&quot;)
+    public void touchUnderlyingItems() {
+        /* Loop through each existing value */
+<span class="nc bnc" id="L583" title="All 2 branches missed.">        for (PrometheusDataInfoItem myValue : theMap.values()) {</span>
+            /* If this is an instance of a LinkSet */
+<span class="nc bnc" id="L585" title="All 2 branches missed.">            if (myValue instanceof PrometheusDataInfoLinkSet) {</span>
+                /* Pass call to linkSet */
+<span class="nc" id="L587">                final PrometheusDataInfoLinkSet&lt;T&gt; mySet = (PrometheusDataInfoLinkSet&lt;T&gt;) myValue;</span>
+<span class="nc" id="L588">                mySet.touchUnderlyingItems();</span>
+
+                /* else this is a standard DataInfo */
+<span class="nc" id="L591">            } else {</span>
+                /* Touch the underlying items */
+<span class="nc" id="L593">                myValue.touchUnderlyingItems();</span>
+            }
+<span class="nc" id="L595">        }</span>
+<span class="nc" id="L596">    }</span>
+
+    /**
+     * touch underlying items after update.
+     */
+    @SuppressWarnings(&quot;unchecked&quot;)
+    public void touchOnUpdate() {
+        /* Loop through each existing value */
+<span class="nc bnc" id="L604" title="All 2 branches missed.">        for (PrometheusDataInfoItem myValue : theMap.values()) {</span>
+            /* If this is an instance of a LinkSet */
+<span class="nc bnc" id="L606" title="All 2 branches missed.">            if (myValue instanceof PrometheusDataInfoLinkSet) {</span>
+                /* Pass call to linkSet */
+<span class="nc" id="L608">                final PrometheusDataInfoLinkSet&lt;T&gt; mySet = (PrometheusDataInfoLinkSet&lt;T&gt;) myValue;</span>
+<span class="nc" id="L609">                mySet.touchOnUpdate();</span>
+
+                /* else this is a standard DataInfo */
+<span class="nc" id="L612">            } else {</span>
+                /* Touch the underlying items */
+<span class="nc" id="L614">                myValue.touchOnUpdate();</span>
+            }
+<span class="nc" id="L616">        }</span>
+<span class="nc" id="L617">    }</span>
+
+    /**
+     * Determine whether the set has changes.
+     * @return &lt;code&gt;true/false&lt;/code&gt;
+     */
+    @SuppressWarnings(&quot;unchecked&quot;)
+    public boolean hasHistory() {
+<span class="nc" id="L625">        boolean bChanges = false;</span>
+
+        /* Loop through each existing value */
+<span class="nc bnc" id="L628" title="All 2 branches missed.">        for (PrometheusDataInfoItem myValue : theMap.values()) {</span>
+            /* If this is an instance of a LinkSet */
+<span class="nc bnc" id="L630" title="All 2 branches missed.">            if (myValue instanceof PrometheusDataInfoLinkSet) {</span>
+                /* Pass call to linkSet */
+<span class="nc" id="L632">                final PrometheusDataInfoLinkSet&lt;T&gt; mySet = (PrometheusDataInfoLinkSet&lt;T&gt;) myValue;</span>
+<span class="nc" id="L633">                bChanges |= mySet.hasHistory();</span>
+
+<span class="nc" id="L635">            } else {</span>
+                /* Check for history */
+<span class="nc" id="L637">                bChanges |= myValue.hasHistory();</span>
+            }
+<span class="nc" id="L639">        }</span>
+
+        /* return result */
+<span class="nc" id="L642">        return bChanges;</span>
+    }
+
+    /**
+     * Push history.
+     */
+    @SuppressWarnings(&quot;unchecked&quot;)
+    public void pushHistory() {
+        /* Loop through each existing value */
+<span class="nc bnc" id="L651" title="All 2 branches missed.">        for (PrometheusDataInfoItem myValue : theMap.values()) {</span>
+            /* If this is an instance of a LinkSet */
+<span class="nc bnc" id="L653" title="All 2 branches missed.">            if (myValue instanceof PrometheusDataInfoLinkSet) {</span>
+                /* Pass call to linkSet */
+<span class="nc" id="L655">                final PrometheusDataInfoLinkSet&lt;T&gt; mySet = (PrometheusDataInfoLinkSet&lt;T&gt;) myValue;</span>
+<span class="nc" id="L656">                mySet.pushHistory();</span>
+
+<span class="nc" id="L658">            } else {</span>
+                /* Push history for the value */
+<span class="nc" id="L660">                myValue.pushHistory();</span>
+            }
+<span class="nc" id="L662">        }</span>
+<span class="nc" id="L663">    }</span>
+
+    /**
+     * Pop history.
+     */
+    @SuppressWarnings(&quot;unchecked&quot;)
+    public void popHistory() {
+        /* Iterate through table values */
+<span class="nc" id="L671">        final Iterator&lt;PrometheusDataInfoItem&gt; myIterator = theMap.values().iterator();</span>
+<span class="nc bnc" id="L672" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L673">            final PrometheusDataInfoItem myValue = myIterator.next();</span>
+
+            /* If this is an instance of a LinkSet */
+<span class="nc bnc" id="L676" title="All 2 branches missed.">            if (myValue instanceof PrometheusDataInfoLinkSet) {</span>
+                /* Pass call to linkSet */
+<span class="nc" id="L678">                final PrometheusDataInfoLinkSet&lt;T&gt; mySet = (PrometheusDataInfoLinkSet&lt;T&gt;) myValue;</span>
+<span class="nc" id="L679">                mySet.popHistory();</span>
+
+                /* If the set is now empty */
+<span class="nc bnc" id="L682" title="All 2 branches missed.">                if (mySet.isEmpty()) {</span>
+                    /* Remove the value */
+<span class="nc" id="L684">                    myIterator.remove();</span>
+                }
+
+                /* else this is a standard element */
+<span class="nc" id="L688">            } else {</span>
+                /* If the entry should be removed */
+<span class="nc bnc" id="L690" title="All 2 branches missed.">                if (myValue.getOriginalValues().getVersion() &gt; theInfoList.getVersion()) {</span>
+                    /* Remove the value */
+<span class="nc" id="L692">                    myIterator.remove();</span>
+<span class="nc" id="L693">                    myValue.unLink();</span>
+<span class="nc" id="L694">                    continue;</span>
+                }
+
+                /* Pop the value */
+<span class="nc" id="L698">                myValue.popHistory();</span>
+            }
+<span class="nc" id="L700">        }</span>
+<span class="nc" id="L701">    }</span>
+
+    /**
+     * Check for history.
+     * @return &lt;code&gt;true&lt;/code&gt; if changes were made, &lt;code&gt;false&lt;/code&gt; otherwise
+     */
+    @SuppressWarnings(&quot;unchecked&quot;)
+    public boolean checkForHistory() {
+        /* Loop through each existing value */
+<span class="nc" id="L710">        boolean bChanges = false;</span>
+<span class="nc bnc" id="L711" title="All 2 branches missed.">        for (PrometheusDataInfoItem myValue : theMap.values()) {</span>
+            /* If this is an instance of a LinkSet */
+<span class="nc bnc" id="L713" title="All 2 branches missed.">            if (myValue instanceof PrometheusDataInfoLinkSet) {</span>
+                /* Pass call to linkSet */
+<span class="nc" id="L715">                final PrometheusDataInfoLinkSet&lt;T&gt; mySet = (PrometheusDataInfoLinkSet&lt;T&gt;) myValue;</span>
+<span class="nc" id="L716">                bChanges |= mySet.checkForHistory();</span>
+
+<span class="nc" id="L718">            } else {</span>
+                /* If this is a newly created item */
+<span class="nc bnc" id="L720" title="All 2 branches missed.">                if (!myValue.hasHistory()) {</span>
+<span class="nc" id="L721">                    bChanges = true;</span>
+
+                    /* else existing entry */
+                } else {
+                    /* Check for history */
+<span class="nc" id="L726">                    bChanges |= myValue.checkForHistory();</span>
+                }
+            }
+<span class="nc" id="L729">        }</span>
+
+        /* return result */
+<span class="nc" id="L732">        return bChanges;</span>
+    }
+
+    /**
+     * Set values as deleted/restored.
+     * @param bDeleted &lt;code&gt;true/false&lt;/code&gt;
+     */
+    public void setDeleted(final boolean bDeleted) {
+        /* If we are restoring */
+<span class="nc bnc" id="L741" title="All 2 branches missed.">        if (!bDeleted) {</span>
+            /* Handle separately */
+<span class="nc" id="L743">            setRestored();</span>
+<span class="nc" id="L744">            return;</span>
+        }
+
+        /* For each existing value */
+<span class="nc bnc" id="L748" title="All 2 branches missed.">        for (PrometheusDataInfoItem myValue : theMap.values()) {</span>
+            /* If the value is active */
+<span class="nc bnc" id="L750" title="All 2 branches missed.">            if (!myValue.isDeleted()) {</span>
+                /* Set the value as deleted */
+<span class="nc" id="L752">                myValue.setDeleted(true);</span>
+            }
+<span class="nc" id="L754">        }</span>
+<span class="nc" id="L755">    }</span>
+
+    /**
+     * Restore values that we deleted at the same time as the owner.
+     */
+    private void setRestored() {
+        /* Access the version of the owner */
+<span class="nc" id="L762">        int myVersion = theOwner.getValueSetVersion();</span>
+
+        /* We are restoring an edit version if delete was in this session */
+<span class="nc bnc" id="L765" title="All 2 branches missed.">        final boolean bEditRestore = myVersion &gt; 0;</span>
+<span class="nc bnc" id="L766" title="All 2 branches missed.">        if (!bEditRestore) {</span>
+            /* Access underlying version if not editRestore */
+<span class="nc" id="L768">            myVersion = theOwner.getBase().getValueSetVersion();</span>
+        }
+
+        /* For each existing value */
+<span class="nc bnc" id="L772" title="All 2 branches missed.">        for (PrometheusDataInfoItem myValue : theMap.values()) {</span>
+            /* If this is an instance of a LinkSet */
+<span class="nc bnc" id="L774" title="All 2 branches missed.">            if (myValue instanceof PrometheusDataInfoLinkSet) {</span>
+                /* Pass call to linkSet */
+<span class="nc" id="L776">                myValue.setDeleted(false);</span>
+
+            } else {
+                /* Access version of value */
+<span class="nc bnc" id="L780" title="All 2 branches missed.">                final int myValueVersion = bEditRestore</span>
+<span class="nc" id="L781">                        ? myValue.getValueSetVersion()</span>
+<span class="nc" id="L782">                        : myValue.getBase().getValueSetVersion();</span>
+
+                /* If the value was deleted at same time as owner */
+<span class="nc bnc" id="L785" title="All 2 branches missed.">                if (myValueVersion == myVersion) {</span>
+                    /* Set the value as restored */
+<span class="nc" id="L787">                    myValue.setDeleted(false);</span>
+                }
+            }
+<span class="nc" id="L790">        }</span>
+<span class="nc" id="L791">    }</span>
+
+    /**
+     * Get the EditState for this item.
+     * @return the EditState
+     */
+    public MetisDataEditState getEditState() {
+        /* Loop through each existing value */
+<span class="nc bnc" id="L799" title="All 2 branches missed.">        for (PrometheusDataInfoItem myValue : theMap.values()) {</span>
+            /* If we have changes */
+<span class="nc bnc" id="L801" title="All 2 branches missed.">            if (myValue.hasHistory()) {</span>
+                /* Note that new state is changed */
+<span class="nc" id="L803">                return MetisDataEditState.VALID;</span>
+            }
+<span class="nc" id="L805">        }</span>
+
+        /* Default to clean */
+<span class="nc" id="L808">        return MetisDataEditState.CLEAN;</span>
+    }
+
+    /**
+     * Get the State for this infoSet.
+     * @return the State
+     */
+    public MetisDataState getState() {
+        /* Default to clean */
+<span class="nc" id="L817">        final MetisDataState myState = MetisDataState.CLEAN;</span>
+
+        /* Loop through each existing value */
+<span class="nc bnc" id="L820" title="All 2 branches missed.">        for (PrometheusDataInfoItem myValue : theMap.values()) {</span>
+            /* If we have changes */
+<span class="nc bnc" id="L822" title="All 2 branches missed.">            if (myValue.getState() != MetisDataState.CLEAN) {</span>
+                /* Note that new state is changed */
+<span class="nc" id="L824">                return MetisDataState.CHANGED;</span>
+            }
+<span class="nc" id="L826">        }</span>
+
+        /* return result */
+<span class="nc" id="L829">        return myState;</span>
+    }
+
+    @Override
+    public Iterator&lt;T&gt; iterator() {
+<span class="nc" id="L834">        return new InfoIterator();</span>
+    }
+
+    @Override
+    public void forEach(final Consumer&lt;? super T&gt; pAction) {
+<span class="nc" id="L839">        final Iterator&lt;T&gt; myIterator = iterator();</span>
+<span class="nc bnc" id="L840" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L841">            pAction.accept(myIterator.next());</span>
+        }
+<span class="nc" id="L843">    }</span>
+
+    @Override
+    public Spliterator&lt;T&gt; spliterator() {
+<span class="nc" id="L847">        throw new UnsupportedOperationException();</span>
+    }
+
+    /**
+     * Is the infoSet empty?
+     * @return true/false.
+     */
+    public boolean isEmpty() {
+<span class="nc" id="L855">        return theMap.isEmpty();</span>
+    }
+
+    /**
+     * Remove items.
+     */
+    public void removeItems() {
+<span class="nc" id="L862">        final InfoIterator myIterator = new InfoIterator();</span>
+<span class="nc bnc" id="L863" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L864">            final T myItem = myIterator.next();</span>
+<span class="nc" id="L865">            myItem.removeItem();</span>
+<span class="nc" id="L866">        }</span>
+<span class="nc" id="L867">    }</span>
+
+    /**
+     * Iterator class.
+     */
+    private final class InfoIterator
+            implements Iterator&lt;T&gt; {
+        /**
+         * Overall iterator.
+         */
+        private final Iterator&lt;PrometheusDataInfoItem&gt; theIterator;
+
+        /**
+         * Local iterator.
+         */
+        private Iterator&lt;T&gt; theSetIterator;
+
+        /**
+         * Constructor.
+         */
+<span class="nc" id="L887">        private InfoIterator() {</span>
+            /* Allocate iterator */
+<span class="nc" id="L889">            theIterator = theMap.values().iterator();</span>
+<span class="nc" id="L890">        }</span>
+
+        @Override
+        public boolean hasNext() {
+            /* If we have a set iterator with more to go */
+<span class="nc bnc" id="L895" title="All 2 branches missed.">            if (theSetIterator != null</span>
+<span class="nc bnc" id="L896" title="All 2 branches missed.">                    &amp;&amp; theSetIterator.hasNext()) {</span>
+                /* We have a next item */
+<span class="nc" id="L898">                return true;</span>
+            }
+
+            /* No longer have a valid setIterator */
+<span class="nc" id="L902">            theSetIterator = null;</span>
+
+            /* Check for next entry */
+<span class="nc" id="L905">            return theIterator.hasNext();</span>
+        }
+
+        @Override
+        @SuppressWarnings(&quot;unchecked&quot;)
+        public T next() {
+            /* If we have a set iterator with more to go */
+<span class="nc bnc" id="L912" title="All 2 branches missed.">            if (theSetIterator != null</span>
+<span class="nc bnc" id="L913" title="All 2 branches missed.">                    &amp;&amp; theSetIterator.hasNext()) {</span>
+                /* Return the item */
+<span class="nc" id="L915">                return theSetIterator.next();</span>
+            }
+
+            /* No longer have a valid setIterator */
+<span class="nc" id="L919">            theSetIterator = null;</span>
+
+            /* Obtain the next item */
+<span class="nc" id="L922">            final PrometheusDataInfoItem myItem = theIterator.next();</span>
+
+            /* If this is an infoLinkSet */
+<span class="nc bnc" id="L925" title="All 2 branches missed.">            if (myItem instanceof PrometheusDataInfoLinkSet) {</span>
+                /* Access set iterator and return first element */
+<span class="nc" id="L927">                final PrometheusDataInfoLinkSet&lt;T&gt; mySet = (PrometheusDataInfoLinkSet&lt;T&gt;) myItem;</span>
+<span class="nc" id="L928">                theSetIterator = mySet.iterator();</span>
+<span class="nc" id="L929">                return theSetIterator.next();</span>
+            }
+
+            /* Return the item */
+<span class="nc" id="L933">            return theClass.cast(myItem);</span>
+        }
+
+        @Override
+        public void remove() {
+<span class="nc" id="L938">            throw new UnsupportedOperationException();</span>
+        }
+
+        @Override
+        public void forEachRemaining(final Consumer&lt;? super T&gt; pAction) {
+<span class="nc bnc" id="L943" title="All 2 branches missed.">            while (hasNext()) {</span>
+<span class="nc" id="L944">                pAction.accept(next());</span>
+            }
+<span class="nc" id="L946">        }</span>
+    }
+
+    /**
+     * Obtain the field for the infoSet class.
+     * @param pClass the class
+     * @return the field
+     */
+    public abstract MetisDataFieldId getFieldForClass(PrometheusDataInfoClass pClass);
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

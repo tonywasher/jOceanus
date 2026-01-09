@@ -1,0 +1,420 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseSecurityClass.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.data.statics</a> &gt; <span class="el_source">MoneyWiseSecurityClass.java</span></div><h1>MoneyWiseSecurityClass.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.data.statics;
+
+import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
+import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataClass;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+
+/**
+ * Enumeration of Security Type Classes.
+ */
+<span class="fc" id="L26">public enum MoneyWiseSecurityClass</span>
+        implements PrometheusStaticDataClass {
+    /**
+     * Shares.
+     * &lt;p&gt;
+     * This is a share security and represents stock held in a company.
+     */
+<span class="fc" id="L33">    SHARES(1, 0),</span>
+
+    /**
+     * Growth Unit Trust or OEIC.
+     * &lt;p&gt;
+     * This is a UnitTrust account and represents a mutual fund that reinvests income.
+     */
+<span class="fc" id="L40">    GROWTHUNITTRUST(2, 1),</span>
+
+    /**
+     * Income Unit Trust or OEIC.
+     * &lt;p&gt;
+     * This is a UnitTrust account and represents a mutual fund that provides income.
+     */
+<span class="fc" id="L47">    INCOMEUNITTRUST(3, 2),</span>
+
+    /**
+     * Life Bond.
+     * &lt;p&gt;
+     * This is a LifeBond account, which is a specialised form of an {@link #GROWTHUNITTRUST}
+     * security. It simply differs in tax treatment.
+     */
+<span class="fc" id="L55">    LIFEBOND(4, 3),</span>
+
+    /**
+     * Endowment.
+     * &lt;p&gt;
+     * This is a Endowment account, which is a specialised form of an {@link #GROWTHUNITTRUST}
+     * security. It simply differs in tax treatment.
+     */
+<span class="fc" id="L63">    ENDOWMENT(5, 4),</span>
+
+    /**
+     * Property.
+     * &lt;p&gt;
+     * This is a Property account, which represents an owned property.
+     */
+<span class="fc" id="L70">    PROPERTY(6, 5),</span>
+
+    /**
+     * Vehicle.
+     * &lt;p&gt;
+     * This is a Vehicle account, which represents a road vehicle.
+     */
+<span class="fc" id="L77">    VEHICLE(7, 6),</span>
+
+    /**
+     * Defined Contribution Pension Pot.
+     * &lt;p&gt;
+     * This is a defined contribution PensionPot. TaxFree contributions can be made to this Pot via
+     * an Income:Pension transaction. It should have a single unit valued at the size of the
+     * PensionPot.
+     */
+<span class="fc" id="L86">    DEFINEDCONTRIBUTION(8, 7),</span>
+
+    /**
+     * DefinedBenefit PensionPot.
+     * &lt;p&gt;
+     * This is a defined Benefit Pension Pot. TaxFree contributions can be made to this Pot via an
+     * Income:Pension transaction. It should have a single unit valued at the annual income value.
+     * Its valuation is the annual income multiplied by 20.
+     */
+<span class="fc" id="L95">    DEFINEDBENEFIT(9, 8),</span>
+
+    /**
+     * StatePension PensionPot.
+     * &lt;p&gt;
+     * This is a state Pension Pot. It should have a single unit valued at the weekly income value.
+     * Its valuation is the weekly income multiplied by 52*20. It is a singular Security.
+     */
+<span class="fc" id="L103">    STATEPENSION(10, 9),</span>
+
+    /**
+     * StockOption.
+     * &lt;p&gt;
+     * This is stockOption. It relates to an option to buy a particular stock at a particular price
+     * at a later date.
+     */
+<span class="fc" id="L111">    STOCKOPTION(11, 10),</span>
+
+    /**
+     * Generic Asset Account.
+     * &lt;p&gt;
+     * This is a generic asset account and represents items whose value is determined by the product
+     * of the number units held and the most recent unit price.
+     */
+<span class="fc" id="L119">    ASSET(12, 11);</span>
+
+    /**
+     * Number of Pension Years for valuation.
+     */
+    private static final int PENSION_YEARS = 20;
+
+    /**
+     * Number of Pension Weeks for valuation.
+     */
+    private static final int PENSION_WEEKS = 52;
+
+    /**
+     * The String name.
+     */
+    private String theName;
+
+    /**
+     * Class Id.
+     */
+    private final int theId;
+
+    /**
+     * Class Order.
+     */
+    private final int theOrder;
+
+    /**
+     * Constructor.
+     * @param uId the Id
+     * @param uOrder the default order.
+     */
+    MoneyWiseSecurityClass(final int uId,
+<span class="fc" id="L152">                           final int uOrder) {</span>
+<span class="fc" id="L153">        theId = uId;</span>
+<span class="fc" id="L154">        theOrder = uOrder;</span>
+<span class="fc" id="L155">    }</span>
+
+    @Override
+    public int getClassId() {
+<span class="fc" id="L159">        return theId;</span>
+    }
+
+    @Override
+    public int getOrder() {
+<span class="fc" id="L164">        return theOrder;</span>
+    }
+
+    @Override
+    public String toString() {
+        /* If we have not yet loaded the name */
+<span class="fc bfc" id="L170" title="All 2 branches covered.">        if (theName == null) {</span>
+            /* Load the name */
+<span class="fc" id="L172">            theName = MoneyWiseStaticResource.getKeyForSecurityType(this).getValue();</span>
+        }
+
+        /* return the name */
+<span class="fc" id="L176">        return theName;</span>
+    }
+
+    /**
+     * get value from id.
+     * @param id the id value
+     * @return the corresponding enum object
+     * @throws OceanusException on error
+     */
+    public static MoneyWiseSecurityClass fromId(final int id) throws OceanusException {
+<span class="nc bnc" id="L186" title="All 2 branches missed.">        for (MoneyWiseSecurityClass myClass : values()) {</span>
+<span class="nc bnc" id="L187" title="All 2 branches missed.">            if (myClass.getClassId() == id) {</span>
+<span class="nc" id="L188">                return myClass;</span>
+            }
+        }
+<span class="nc" id="L191">        throw new MoneyWiseDataException(&quot;Invalid ClassId for &quot; + MoneyWiseStaticDataType.SECURITYTYPE.toString() + &quot;:&quot; + id);</span>
+    }
+
+    /**
+     * Determine whether the SecurityType is a pension.
+     * @return &lt;code&gt;true&lt;/code&gt; if the security type is a pension, &lt;code&gt;false&lt;/code&gt; otherwise.
+     */
+    public boolean isPension() {
+<span class="pc bpc" id="L199" title="1 of 2 branches missed.">        switch (this) {</span>
+            case DEFINEDBENEFIT:
+            case DEFINEDCONTRIBUTION:
+            case STATEPENSION:
+<span class="nc" id="L203">                return true;</span>
+            default:
+<span class="fc" id="L205">                return false;</span>
+        }
+    }
+
+    /**
+     * Determine whether the SecurityType is a dividend provider.
+     * @return &lt;code&gt;true&lt;/code&gt; if the security type is a dividend provider, &lt;code&gt;false&lt;/code&gt;
+     * otherwise.
+     */
+    public boolean isDividend() {
+<span class="nc bnc" id="L215" title="All 2 branches missed.">        switch (this) {</span>
+            case SHARES:
+            case INCOMEUNITTRUST:
+            case GROWTHUNITTRUST:
+<span class="nc" id="L219">                return true;</span>
+            default:
+<span class="nc" id="L221">                return false;</span>
+        }
+    }
+
+    /**
+     * Determine whether the SecurityType is shares.
+     * @return &lt;code&gt;true&lt;/code&gt; if the security type is shares, &lt;code&gt;false&lt;/code&gt; otherwise.
+     */
+    public boolean isShares() {
+<span class="nc bnc" id="L230" title="All 2 branches missed.">        return this == SHARES;</span>
+    }
+
+    /**
+     * Determine whether the SecurityType is option.
+     * @return &lt;code&gt;true&lt;/code&gt; if the security type is option, &lt;code&gt;false&lt;/code&gt; otherwise.
+     */
+    public boolean isOption() {
+<span class="pc bpc" id="L238" title="1 of 2 branches missed.">        return this == STOCKOPTION;</span>
+    }
+
+    /**
+     * Determine whether the SecurityType needs a symbol.
+     * @return &lt;code&gt;true&lt;/code&gt; if the security type needs a symbol, &lt;code&gt;false&lt;/code&gt; otherwise.
+     */
+    public boolean needsSymbol() {
+<span class="fc bfc" id="L246" title="All 2 branches covered.">        switch (this) {</span>
+            case SHARES:
+            case GROWTHUNITTRUST:
+            case INCOMEUNITTRUST:
+            case LIFEBOND:
+<span class="fc" id="L251">                return true;</span>
+            default:
+<span class="fc" id="L253">                return false;</span>
+        }
+    }
+
+    /**
+     * Determine whether the SecurityType needs a region.
+     * @return &lt;code&gt;true&lt;/code&gt; if the security type needs a region, &lt;code&gt;false&lt;/code&gt; otherwise.
+     */
+    public boolean needsRegion() {
+<span class="pc bpc" id="L262" title="1 of 2 branches missed.">        switch (this) {</span>
+            case INCOMEUNITTRUST:
+            case GROWTHUNITTRUST:
+            case LIFEBOND:
+<span class="nc" id="L266">                return true;</span>
+            default:
+<span class="fc" id="L268">                return false;</span>
+        }
+    }
+
+    /**
+     * Determine whether the SecurityType needs market as a parent.
+     * @return &lt;code&gt;true&lt;/code&gt; if the security type needs market as a parent, &lt;code&gt;false&lt;/code&gt;
+     * otherwise.
+     */
+    public boolean needsMarketParent() {
+<span class="pc bpc" id="L278" title="1 of 2 branches missed.">        switch (this) {</span>
+            case ASSET:
+            case PROPERTY:
+            case VEHICLE:
+            case ENDOWMENT:
+<span class="nc" id="L283">                return true;</span>
+            default:
+<span class="fc" id="L285">                return false;</span>
+        }
+    }
+
+    /**
+     * Determine whether the SecurityType can be tax free.
+     * @return &lt;code&gt;true&lt;/code&gt; if the security type can be tax free, &lt;code&gt;false&lt;/code&gt; otherwise.
+     */
+    public boolean canTaxFree() {
+<span class="nc bnc" id="L294" title="All 2 branches missed.">        switch (this) {</span>
+            case SHARES:
+            case INCOMEUNITTRUST:
+            case GROWTHUNITTRUST:
+            case PROPERTY:
+<span class="nc" id="L299">                return true;</span>
+            default:
+<span class="nc" id="L301">                return false;</span>
+        }
+    }
+
+    /**
+     * Determine whether the SecurityType is subject to Capital Gains.
+     * @return &lt;code&gt;true&lt;/code&gt; if the security type is subject to Capital Gains,
+     * &lt;code&gt;false&lt;/code&gt; otherwise.
+     */
+    public boolean isCapitalGains() {
+<span class="nc bnc" id="L311" title="All 2 branches missed.">        switch (this) {</span>
+            case SHARES:
+            case INCOMEUNITTRUST:
+            case GROWTHUNITTRUST:
+            case PROPERTY:
+<span class="nc" id="L316">                return true;</span>
+            default:
+<span class="nc" id="L318">                return false;</span>
+        }
+    }
+
+    /**
+     * Determine whether the SecurityType is subject to Residential Gains.
+     * @return &lt;code&gt;true&lt;/code&gt; if the security type is subject to Residential Gains,
+     * &lt;code&gt;false&lt;/code&gt; otherwise.
+     */
+    public boolean isResidentialGains() {
+<span class="pc bpc" id="L328" title="1 of 2 branches missed.">        return this == PROPERTY;</span>
+    }
+
+    /**
+     * Determine whether the SecurityType is subject to Chargeable Gains.
+     * @return &lt;code&gt;true&lt;/code&gt; if the security type is subject to Chargeable Gains,
+     * &lt;code&gt;false&lt;/code&gt; otherwise.
+     */
+    public boolean isChargeableGains() {
+<span class="pc bpc" id="L337" title="1 of 2 branches missed.">        return this == LIFEBOND;</span>
+    }
+
+    /**
+     * Determine whether the SecurityType is Capital.
+     * @return &lt;code&gt;true&lt;/code&gt; if the security type is Capital, &lt;code&gt;false&lt;/code&gt; otherwise.
+     */
+    public boolean isCapital() {
+<span class="nc bnc" id="L345" title="All 2 branches missed.">        switch (this) {</span>
+            case SHARES:
+            case LIFEBOND:
+            case INCOMEUNITTRUST:
+            case GROWTHUNITTRUST:
+<span class="nc" id="L350">                return true;</span>
+            default:
+<span class="nc" id="L352">                return false;</span>
+        }
+    }
+
+    /**
+     * Determine whether the SecurityType is UnitTrust.
+     * @return &lt;code&gt;true&lt;/code&gt; if the security type is Capital, &lt;code&gt;false&lt;/code&gt; otherwise.
+     */
+    public boolean isUnitTrust() {
+<span class="nc bnc" id="L361" title="All 2 branches missed.">        switch (this) {</span>
+            case INCOMEUNITTRUST:
+            case GROWTHUNITTRUST:
+<span class="nc" id="L364">                return true;</span>
+            default:
+<span class="nc" id="L366">                return false;</span>
+        }
+    }
+
+    /**
+     * Is this a statePension?
+     * @return &lt;code&gt;true&lt;/code&gt; if the SecurityType is statePension, &lt;code&gt;false&lt;/code&gt; otherwise.
+     */
+    public boolean isStatePension() {
+<span class="fc bfc" id="L375" title="All 2 branches covered.">        return this == STATEPENSION;</span>
+    }
+
+    /**
+     * Is this a singular security?.
+     * @return &lt;code&gt;true&lt;/code&gt; if the SecurityType is singular, &lt;code&gt;false&lt;/code&gt; otherwise.
+     */
+    public boolean isSingular() {
+<span class="fc" id="L383">        return isStatePension();</span>
+    }
+
+    /**
+     * Is this an autoUnits?
+     * @return &lt;code&gt;true&lt;/code&gt; if the SecurityType is an autoUnits, &lt;code&gt;false&lt;/code&gt; otherwise.
+     */
+    public boolean isAutoUnits() {
+<span class="pc bpc" id="L391" title="1 of 2 branches missed.">        switch (this) {</span>
+            case ENDOWMENT:
+            case STATEPENSION:
+            case DEFINEDCONTRIBUTION:
+            case DEFINEDBENEFIT:
+<span class="nc" id="L396">                return true;</span>
+            default:
+<span class="fc" id="L398">                return false;</span>
+        }
+    }
+
+    /**
+     * Obtain autoUnits.
+     * @return the number of units for this security if active.
+     */
+    public int getAutoUnits() {
+<span class="nc bnc" id="L407" title="All 4 branches missed.">        switch (this) {</span>
+            case ENDOWMENT:
+            case DEFINEDCONTRIBUTION:
+<span class="nc" id="L410">                return 1;</span>
+            case STATEPENSION:
+<span class="nc" id="L412">                return PENSION_YEARS * PENSION_WEEKS;</span>
+            case DEFINEDBENEFIT:
+<span class="nc" id="L414">                return PENSION_YEARS;</span>
+            default:
+<span class="nc" id="L416">                return 0;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

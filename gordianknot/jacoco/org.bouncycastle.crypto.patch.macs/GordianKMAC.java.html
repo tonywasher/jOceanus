@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianKMAC.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">org.bouncycastle.crypto.patch.macs</a> &gt; <span class="el_source">GordianKMAC.java</span></div><h1>GordianKMAC.java</h1><pre class="source lang-java linenums">package org.bouncycastle.crypto.patch.macs;
+
+import org.bouncycastle.crypto.CipherParameters;
+import org.bouncycastle.crypto.DataLengthException;
+import org.bouncycastle.crypto.Mac;
+import org.bouncycastle.crypto.Xof;
+import org.bouncycastle.crypto.digests.CSHAKEDigest;
+import org.bouncycastle.crypto.digests.XofUtils;
+import org.bouncycastle.crypto.params.KeyParameter;
+import org.bouncycastle.util.Arrays;
+import org.bouncycastle.util.Strings;
+
+/**
+ * KMAC - MAC with optional XOF mode.
+ * &lt;p&gt;
+ * From NIST Special Publication 800-185 - SHA-3 Derived Functions:cSHAKE, KMAC, TupleHash and ParallelHash
+ * &lt;/p&gt;
+ */
+public class GordianKMAC
+        implements Mac, Xof
+{
+<span class="fc" id="L22">    private static final byte[] padding = new byte[100];</span>
+
+    private final CSHAKEDigest cshake;
+    private final int bitLength;
+    private final int outputLength;
+
+    private byte[] key;
+    private boolean initialised;
+    private boolean firstOutput;
+
+    /**
+     * Base constructor.
+     *
+     * @param bitLength bit length of the underlying SHAKE function, 128 or 256.
+     * @param S         the customization string - available for local use.
+     */
+    public GordianKMAC(int bitLength, byte[] S)
+<span class="fc" id="L39">    {</span>
+<span class="fc" id="L40">        this.cshake = new CSHAKEDigest(bitLength, Strings.toByteArray(&quot;KMAC&quot;), S);</span>
+<span class="fc" id="L41">        this.bitLength = bitLength;</span>
+<span class="fc" id="L42">        this.outputLength = bitLength * 2 / 8;</span>
+<span class="fc" id="L43">    }</span>
+
+    public void init(CipherParameters params)
+            throws IllegalArgumentException
+    {
+<span class="fc" id="L48">        KeyParameter kParam = (KeyParameter)params;</span>
+
+<span class="fc" id="L50">        this.key = Arrays.clone(kParam.getKey());</span>
+<span class="fc" id="L51">        this.initialised = true;</span>
+
+<span class="fc" id="L53">        reset();</span>
+<span class="fc" id="L54">    }</span>
+
+    public String getAlgorithmName()
+    {
+<span class="nc" id="L58">        return &quot;KMAC&quot; + cshake.getAlgorithmName().substring(6);</span>
+    }
+
+    public int getByteLength()
+    {
+<span class="nc" id="L63">        return cshake.getByteLength();</span>
+    }
+
+    public int getMacSize()
+    {
+<span class="fc" id="L68">        return outputLength;</span>
+    }
+
+    public int getDigestSize()
+    {
+<span class="nc" id="L73">        return outputLength;</span>
+    }
+
+    public void update(byte in)
+            throws IllegalStateException
+    {
+<span class="nc bnc" id="L79" title="All 2 branches missed.">        if (!initialised)</span>
+        {
+<span class="nc" id="L81">            throw new IllegalStateException(&quot;KMAC not initialized&quot;);</span>
+        }
+
+<span class="nc" id="L84">        cshake.update(in);</span>
+<span class="nc" id="L85">    }</span>
+
+    public void update(byte[] in, int inOff, int len)
+            throws DataLengthException, IllegalStateException
+    {
+<span class="pc bpc" id="L90" title="1 of 2 branches missed.">        if (!initialised)</span>
+        {
+<span class="nc" id="L92">            throw new IllegalStateException(&quot;KMAC not initialized&quot;);</span>
+        }
+
+<span class="fc" id="L95">        cshake.update(in, inOff, len);</span>
+<span class="fc" id="L96">    }</span>
+
+    public int doFinal(byte[] out, int outOff)
+            throws DataLengthException, IllegalStateException
+    {
+<span class="pc bpc" id="L101" title="1 of 2 branches missed.">        if (firstOutput)</span>
+        {
+<span class="pc bpc" id="L103" title="1 of 2 branches missed.">            if (!initialised)</span>
+            {
+<span class="nc" id="L105">                throw new IllegalStateException(&quot;KMAC not initialized&quot;);</span>
+            }
+
+<span class="fc" id="L108">            byte[] encOut = XofUtils.rightEncode(getMacSize() * 8);</span>
+
+<span class="fc" id="L110">            cshake.update(encOut, 0, encOut.length);</span>
+        }
+
+<span class="fc" id="L113">        int rv = cshake.doFinal(out, outOff, getMacSize());</span>
+
+<span class="fc" id="L115">        reset();</span>
+
+<span class="fc" id="L117">        return rv;</span>
+    }
+
+    public int doFinal(byte[] out, int outOff, int outLen)
+    {
+<span class="fc bfc" id="L122" title="All 2 branches covered.">        if (firstOutput)</span>
+        {
+<span class="pc bpc" id="L124" title="1 of 2 branches missed.">            if (!initialised)</span>
+            {
+<span class="nc" id="L126">                throw new IllegalStateException(&quot;KMAC not initialized&quot;);</span>
+            }
+
+<span class="fc" id="L129">            byte[] encOut = XofUtils.rightEncode(0); // Same as doOutput;</span>
+
+<span class="fc" id="L131">            cshake.update(encOut, 0, encOut.length);</span>
+        }
+
+<span class="fc" id="L134">        int rv = cshake.doFinal(out, outOff, outLen);</span>
+
+<span class="fc" id="L136">        reset();</span>
+
+<span class="fc" id="L138">        return rv;</span>
+    }
+
+    public int doOutput(byte[] out, int outOff, int outLen)
+    {
+<span class="fc bfc" id="L143" title="All 2 branches covered.">        if (firstOutput)</span>
+        {
+<span class="pc bpc" id="L145" title="1 of 2 branches missed.">            if (!initialised)</span>
+            {
+<span class="nc" id="L147">                throw new IllegalStateException(&quot;KMAC not initialized&quot;);</span>
+            }
+
+<span class="fc" id="L150">            byte[] encOut = XofUtils.rightEncode(0);</span>
+
+<span class="fc" id="L152">            cshake.update(encOut, 0, encOut.length);</span>
+
+<span class="fc" id="L154">            firstOutput = false;</span>
+        }
+
+<span class="fc" id="L157">        return cshake.doOutput(out, outOff, outLen);</span>
+    }
+
+    public void reset()
+    {
+<span class="fc" id="L162">        cshake.reset();</span>
+
+<span class="pc bpc" id="L164" title="1 of 2 branches missed.">        if (key != null)</span>
+        {
+<span class="fc bfc" id="L166" title="All 2 branches covered.">            if (bitLength == 128)</span>
+            {
+<span class="fc" id="L168">                bytePad(key, 168);</span>
+            }
+            else
+            {
+<span class="fc" id="L172">                bytePad(key, 136);</span>
+            }
+        }
+
+<span class="fc" id="L176">        firstOutput = true;</span>
+<span class="fc" id="L177">    }</span>
+
+    private void bytePad(byte[] X, int w)
+    {
+<span class="fc" id="L181">        byte[] bytes = XofUtils.leftEncode(w);</span>
+<span class="fc" id="L182">        update(bytes, 0, bytes.length);</span>
+<span class="fc" id="L183">        byte[] encX = encode(X);</span>
+<span class="fc" id="L184">        update(encX, 0, encX.length);</span>
+
+<span class="fc" id="L186">        int required = w - ((bytes.length + encX.length) % w);</span>
+
+<span class="pc bpc" id="L188" title="2 of 4 branches missed.">        if (required &gt; 0 &amp;&amp; required != w)</span>
+        {
+<span class="fc bfc" id="L190" title="All 2 branches covered.">            while (required &gt; padding.length)</span>
+            {
+<span class="fc" id="L192">                update(padding, 0, padding.length);</span>
+<span class="fc" id="L193">                required -= padding.length;</span>
+            }
+
+<span class="fc" id="L196">            update(padding, 0, required);</span>
+        }
+<span class="fc" id="L198">    }</span>
+
+    private static byte[] encode(byte[] X)
+    {
+<span class="fc" id="L202">        return Arrays.concatenate(XofUtils.leftEncode(X.length * 8), X);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

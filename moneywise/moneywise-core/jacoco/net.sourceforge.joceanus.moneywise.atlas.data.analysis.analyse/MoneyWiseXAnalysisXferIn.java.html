@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseXAnalysisXferIn.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.atlas.data.analysis.analyse</a> &gt; <span class="el_source">MoneyWiseXAnalysisXferIn.java</span></div><h1>MoneyWiseXAnalysisXferIn.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.atlas.data.analysis.analyse;
+
+import net.sourceforge.joceanus.moneywise.exc.MoneyWiseLogicException;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioBucket.MoneyWiseXAnalysisPortfolioBucketList;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisSecurityBucket;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisSecurityAttr;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisSecurityValues;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePortfolio;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePortfolio.MoneyWisePortfolioList;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurity;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurity.MoneyWiseSecurityList;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePortfolioClass;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseSecurityClass;
+import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
+
+/**
+ * Credit XferIn Analysis.
+ */
+public class MoneyWiseXAnalysisXferIn {
+    /**
+     * The analysis.
+     */
+    private final MoneyWiseXAnalysis theAnalysis;
+
+    /**
+     * The portfolioBuckets.
+     */
+    private final MoneyWiseXAnalysisPortfolioBucketList thePortfolios;
+
+    /**
+     * The analysis state.
+     */
+    private final MoneyWiseXAnalysisState theState;
+
+    /**
+     * The transAnalyser.
+     */
+    private final MoneyWiseXAnalysisTransAnalyser theTransAnalyser;
+
+    /**
+     * The securityAnalyser.
+     */
+    private final MoneyWiseXAnalysisSecurity theSecurity;
+
+    /**
+     * The statePension bucket.
+     */
+    private final MoneyWiseXAnalysisSecurityBucket theStatePension;
+
+    /**
+     * The transaction.
+     */
+    private MoneyWiseXAnalysisTransaction theTransaction;
+
+    /**
+     * Constructor.
+     * @param pAnalyser the event analyser
+     * @param pSecurity the securityAnalyser
+     * @throws OceanusException on error
+     */
+    MoneyWiseXAnalysisXferIn(final MoneyWiseXAnalysisEventAnalyser pAnalyser,
+<span class="fc" id="L86">                             final MoneyWiseXAnalysisSecurity pSecurity) throws OceanusException {</span>
+        /* Initialise values */
+<span class="fc" id="L88">        theAnalysis = pAnalyser.getAnalysis();</span>
+<span class="fc" id="L89">        thePortfolios = theAnalysis.getPortfolios();</span>
+<span class="fc" id="L90">        theState = pAnalyser.getState();</span>
+<span class="fc" id="L91">        theSecurity = pSecurity;</span>
+<span class="fc" id="L92">        theTransAnalyser = theSecurity.getTransAnalyser();</span>
+
+        /* Access the StatePension */
+<span class="fc" id="L95">        theStatePension = getStatePension(theAnalysis.getEditSet());</span>
+<span class="fc" id="L96">    }</span>
+
+    /**
+     * Obtain statePension bucket.
+     * @param pEditSet the editSet
+     * @return the statePension bucket
+     * @throws OceanusException on error
+     */
+    private MoneyWiseXAnalysisSecurityBucket getStatePension(final PrometheusEditSet pEditSet) throws OceanusException  {
+        /* Access the singular portfolio and security */
+<span class="fc" id="L106">        final MoneyWisePortfolioList myPortfolioList = pEditSet.getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class);</span>
+<span class="fc" id="L107">        final MoneyWisePortfolio myPensionPort = myPortfolioList.getSingularClass(MoneyWisePortfolioClass.PENSION);</span>
+<span class="fc" id="L108">        final MoneyWiseSecurity myStatePension = pEditSet.getDataList(MoneyWiseBasicDataType.SECURITY, MoneyWiseSecurityList.class).getSingularClass(MoneyWiseSecurityClass.STATEPENSION);</span>
+
+        /* If they exist, access the bucket */
+<span class="pc bpc" id="L111" title="2 of 4 branches missed.">        if (myPensionPort != null</span>
+                &amp;&amp; myStatePension != null) {
+<span class="fc" id="L113">            final MoneyWiseSecurityHolding myHolding = myPortfolioList.getSecurityHoldingsMap().declareHolding(myPensionPort, myStatePension);</span>
+<span class="fc" id="L114">            return theAnalysis.getPortfolios().getBucket(myHolding);</span>
+        }
+
+        /* Default to no bucket */
+<span class="nc" id="L118">        throw new MoneyWiseLogicException(&quot;StatePension not found&quot;);</span>
+    }
+
+    /**
+     * Process a transaction that is a transferIn.
+     * @param pTrans  the transaction
+     */
+    void processTransferIn(final MoneyWiseXAnalysisTransaction pTrans) {
+        /* Record the transaction */
+<span class="fc" id="L127">        theTransaction = pTrans;</span>
+
+        /* Access debit account and category */
+<span class="fc" id="L130">        final MoneyWiseAssetBase myDebit = (MoneyWiseAssetBase) theTransaction.getDebitAccount();</span>
+<span class="fc" id="L131">        final MoneyWiseSecurityHolding myCredit = (MoneyWiseSecurityHolding) theTransaction.getCreditAccount();</span>
+<span class="fc" id="L132">        final boolean isPayee = theTransAnalyser.isPayee(myDebit);</span>
+
+        /* Process debit asset */
+<span class="fc bfc" id="L135" title="All 2 branches covered.">        if (!isPayee) {</span>
+<span class="fc" id="L136">            theTransAnalyser.processDebitAsset(myDebit);</span>
+        }
+
+        /* Adjust the credit transfer details */
+<span class="fc" id="L140">        processCreditXferIn(myCredit);</span>
+
+        /* Process debit payee */
+<span class="fc bfc" id="L143" title="All 2 branches covered.">        if (isPayee) {</span>
+<span class="fc" id="L144">            theTransAnalyser.processDebitPayee((MoneyWisePayee) myDebit);</span>
+        }
+<span class="fc" id="L146">    }</span>
+
+    /**
+     * Process the credit side of a transfer in transaction.
+     * @param pTrans  the transaction
+     */
+    void processCreditXferIn(final MoneyWiseXAnalysisTransaction pTrans) {
+        /* Record the transaction */
+<span class="nc" id="L154">        theTransaction = pTrans;</span>
+
+        /* Process the credit */
+<span class="nc" id="L157">        final MoneyWiseSecurityHolding myCredit = (MoneyWiseSecurityHolding) theTransaction.getCreditAccount();</span>
+<span class="nc" id="L158">        processCreditXferIn(myCredit);</span>
+<span class="nc" id="L159">    }</span>
+
+    /**
+     * Process the credit side of a transfer in transaction.
+     * @param pHolding the credit holding
+     */
+    private void processCreditXferIn(final MoneyWiseSecurityHolding pHolding) {
+        /* Obtain credit amount and credit delta units */
+<span class="fc" id="L167">        final OceanusUnits myDeltaUnits = theTransaction.getCreditUnitsDelta();</span>
+
+        /* Access the Asset Security Bucket */
+<span class="fc" id="L170">        final MoneyWiseXAnalysisSecurityBucket myAsset = thePortfolios.getBucket(pHolding);</span>
+<span class="fc" id="L171">        final MoneyWiseXAnalysisSecurityValues myValues = myAsset.getValues();</span>
+
+        /* If this is a foreign asset */
+<span class="fc bfc" id="L174" title="All 2 branches covered.">        final OceanusMoney myAmount = myAsset.isForeignCurrency()</span>
+<span class="fc" id="L175">                ? theTransAnalyser.adjustForeignAssetCredit(myValues.getRatioValue(MoneyWiseXAnalysisSecurityAttr.EXCHANGERATE))</span>
+<span class="fc" id="L176">                : theTransaction.getCreditAmount();</span>
+
+        /* Adjust the residual cost */
+<span class="fc" id="L179">        myAsset.adjustResidualCost(myAmount);</span>
+
+        /* If there is no change to the # of units */
+<span class="pc bpc" id="L182" title="2 of 4 branches missed.">        if (myDeltaUnits == null || myDeltaUnits.isZero()) {</span>
+            /* Adjust the funded value and ensure the startDate */
+<span class="nc" id="L184">            myAsset.adjustFunded(myAmount);</span>
+<span class="nc" id="L185">            myAsset.ensureStartDate(theTransaction.getTransaction().getDate());</span>
+
+            /* else record change in units */
+        } else {
+<span class="fc" id="L189">            myAsset.adjustUnits(myDeltaUnits);</span>
+        }
+
+        /* Adjust the valuation */
+<span class="fc" id="L193">        theSecurity.adjustAssetValuation(myAsset);</span>
+
+        /* Register the interest in the bucket */
+<span class="fc" id="L196">        theState.registerBucketInterest(myAsset);</span>
+<span class="fc" id="L197">    }</span>
+
+    /**
+     * Process statePension contribution.
+     * @param pAmount the statePension contribution
+     */
+    void processStatePensionContribution(final OceanusMoney pAmount) {
+        /* Adjust the cost and investment */
+<span class="nc" id="L205">        theStatePension.adjustResidualCost(pAmount);</span>
+<span class="nc" id="L206">        theStatePension.adjustFunded(pAmount);</span>
+
+        /* Adjust the valuation */
+<span class="nc" id="L209">        theStatePension.adjustValuation();</span>
+
+        /* Register the interest in the bucket */
+<span class="nc" id="L212">        theState.registerBucketInterest(theStatePension);</span>
+<span class="nc" id="L213">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,511 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisAnalysisScanner.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.themis.lethe.analysis</a> &gt; <span class="el_source">ThemisAnalysisScanner.java</span></div><h1>ThemisAnalysisScanner.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Themis: Java Project Framework
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.themis.lethe.analysis;
+
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.themis.exc.ThemisDataException;
+
+import java.util.ArrayDeque;
+import java.util.Deque;
+
+/**
+ * Scanner for headers and trailers.
+ */
+public class ThemisAnalysisScanner {
+    /**
+     * Terminator processor.
+     */
+    @FunctionalInterface
+    private interface ThemisScannerTerminator {
+        /**
+         * Handle Terminator.
+         * @param pTerminator the terminator
+         * @throws OceanusException on error
+         */
+        void handle(char pTerminator) throws OceanusException;
+    }
+
+    /**
+     * The source.
+     */
+    private final ThemisAnalysisSource theSource;
+
+    /**
+     * The list of result lines.
+     */
+    private Deque&lt;ThemisAnalysisElement&gt; theResults;
+
+    /**
+     * The current line.
+     */
+    private ThemisAnalysisLine theCurLine;
+
+    /**
+     * The length of the current line.
+     */
+    private int theLength;
+
+    /**
+     * The current position in the line.
+     */
+    private int theCurPos;
+
+    /**
+     * Are we investigating a potential comment?
+     */
+    private boolean maybeComment;
+
+    /**
+     * Should we skip generics?
+     */
+    private boolean skipGenerics;
+
+    /**
+     * Constructor.
+     *
+     * @param pSource the source
+     */
+<span class="nc" id="L82">    ThemisAnalysisScanner(final ThemisAnalysisSource pSource) {</span>
+<span class="nc" id="L83">        theSource = pSource;</span>
+<span class="nc" id="L84">        theResults = new ArrayDeque&lt;&gt;();</span>
+<span class="nc" id="L85">    }</span>
+
+    /**
+     * Set skip generics flag.
+     */
+    void skipGenerics() {
+<span class="nc" id="L91">        skipGenerics = true;</span>
+<span class="nc" id="L92">    }</span>
+
+    /**
+     * Scan For Terminator.
+     *
+     * @param pLine       the current line
+     * @param pTerminator the terminator
+     * @return the results
+     * @throws OceanusException on error
+     */
+    Deque&lt;ThemisAnalysisElement&gt; scanForTerminator(final ThemisAnalysisLine pLine,
+                                                   final char pTerminator) throws OceanusException {
+        /* Initialise scan */
+<span class="nc" id="L105">        initialiseScan(pLine);</span>
+
+        /* Loop through the line */
+        for (;;) {
+            /* If we have finished the line */
+<span class="nc bnc" id="L110" title="All 2 branches missed.">            if (theCurPos == theLength) {</span>
+                /* Shift to the next line */
+<span class="nc" id="L112">                shiftToNextLine(true);</span>
+<span class="nc" id="L113">                maybeComment = false;</span>
+            }
+
+            /* Access current character */
+<span class="nc" id="L117">            final char myChar = theCurLine.charAt(theCurPos);</span>
+
+            /* Check for trailing line comments */
+<span class="nc bnc" id="L120" title="All 2 branches missed.">            if (checkComments(myChar)) {</span>
+<span class="nc" id="L121">                continue;</span>
+            }
+
+            /* Break loop if this is a terminator */
+<span class="nc bnc" id="L125" title="All 2 branches missed.">            if (checkForTerminator(myChar, pTerminator, this::handleEOLTerminator)) {</span>
+<span class="nc" id="L126">                break;</span>
+            }
+<span class="nc" id="L128">        }</span>
+
+        /* return the results */
+<span class="nc" id="L131">        return theResults;</span>
+    }
+
+    /**
+     * Scan For Separator.
+     *
+     * @param pSeparator the separator
+     * @return the results
+     * @throws OceanusException on error
+     */
+    Deque&lt;ThemisAnalysisElement&gt; scanForSeparator(final char pSeparator) throws OceanusException {
+        /* Initialise scan */
+<span class="nc" id="L143">        initialiseScan((ThemisAnalysisLine) theSource.popNextLine());</span>
+
+        /* Loop through the line */
+        for (;;) {
+            /* If we have finished the line */
+<span class="nc bnc" id="L148" title="All 2 branches missed.">            if (theCurPos == theLength) {</span>
+                /* Shift to the next line */
+<span class="nc bnc" id="L150" title="All 2 branches missed.">                if (shiftToNextLine(false)) {</span>
+<span class="nc" id="L151">                    break;</span>
+                }
+<span class="nc" id="L153">                maybeComment = false;</span>
+            }
+
+            /* Access current character */
+<span class="nc" id="L157">            final char myChar = theCurLine.charAt(theCurPos);</span>
+
+            /* Check for trailing line comments */
+<span class="nc bnc" id="L160" title="All 2 branches missed.">            if (checkComments(myChar)) {</span>
+<span class="nc" id="L161">                continue;</span>
+            }
+
+            /* Break loop if this is a terminator */
+<span class="nc bnc" id="L165" title="All 2 branches missed.">            if (checkForTerminator(myChar, pSeparator, this::handleSeparator)) {</span>
+<span class="nc" id="L166">                break;</span>
+            }
+<span class="nc" id="L168">        }</span>
+
+        /* return the results */
+<span class="nc" id="L171">        return theResults;</span>
+    }
+
+    /**
+     * Check For Separator.
+     *
+     * @param pSeparator the separator
+     * @return the results
+     * @throws OceanusException on error
+     */
+    boolean checkForSeparator(final char pSeparator) throws OceanusException {
+        /* Initialise scan */
+<span class="nc" id="L183">        initialiseScan((ThemisAnalysisLine) theSource.popNextLine());</span>
+
+        /* Loop through the line */
+        for (;;) {
+            /* If we have finished the line */
+<span class="nc bnc" id="L188" title="All 2 branches missed.">            if (theCurPos == theLength) {</span>
+                /* Shift to the next line */
+<span class="nc bnc" id="L190" title="All 2 branches missed.">                if (shiftToNextLine(false)) {</span>
+<span class="nc" id="L191">                    restoreStack(pSeparator);</span>
+<span class="nc" id="L192">                    return false;</span>
+                }
+<span class="nc" id="L194">                maybeComment = false;</span>
+            }
+
+            /* Access current character */
+<span class="nc" id="L198">            final char myChar = theCurLine.charAt(theCurPos);</span>
+
+            /* Check for trailing line comments */
+<span class="nc bnc" id="L201" title="All 2 branches missed.">            if (checkComments(myChar)) {</span>
+<span class="nc" id="L202">                continue;</span>
+            }
+
+            /* Break loop if this is a terminator */
+<span class="nc bnc" id="L206" title="All 2 branches missed.">            if (checkForTerminator(myChar, pSeparator, this::restoreStack)) {</span>
+<span class="nc" id="L207">                return true;</span>
+            }
+<span class="nc" id="L209">        }</span>
+    }
+
+    /**
+     * Initialise scan.
+     *
+     * @param pLine       the current line
+     */
+    private void initialiseScan(final ThemisAnalysisLine pLine) {
+        /* Clear the results array */
+<span class="nc" id="L219">        theResults.clear();</span>
+
+        /* Access line details */
+<span class="nc" id="L222">        theCurLine = pLine;</span>
+<span class="nc" id="L223">        theLength = theCurLine.getLength();</span>
+
+        /* reset flags */
+<span class="nc" id="L226">        theCurPos = 0;</span>
+<span class="nc" id="L227">        maybeComment = false;</span>
+<span class="nc" id="L228">    }</span>
+
+    /**
+     * Check for comment.
+     * @param pChar the current character
+     * @return reloop true/false
+     * @throws OceanusException on error
+     */
+    private boolean checkComments(final char pChar) throws OceanusException {
+        /* If this is the comment character */
+<span class="nc bnc" id="L238" title="All 2 branches missed.">        if (pChar == ThemisAnalysisChar.COMMENT) {</span>
+            /* Flip flag */
+<span class="nc bnc" id="L240" title="All 2 branches missed.">            maybeComment = !maybeComment;</span>
+
+            /* If we have double comment */
+<span class="nc bnc" id="L243" title="All 2 branches missed.">            if (!maybeComment) {</span>
+                /* Strip trailing comments and re-loop */
+<span class="nc" id="L245">                theCurLine.stripTrailingComments();</span>
+<span class="nc" id="L246">                theCurPos = theLength;</span>
+<span class="nc" id="L247">                return true;</span>
+            }
+        } else {
+<span class="nc" id="L250">            maybeComment = false;</span>
+        }
+
+        /* Continue */
+<span class="nc" id="L254">        return false;</span>
+    }
+
+    /**
+     * Scan For Terminator.
+     *
+     * @param pChar the current character
+     * @param pTerminator the terminator
+     * @param pHandler the handler
+     * @return terminator found true/false
+     * @throws OceanusException on error
+     */
+    private boolean checkForTerminator(final char pChar,
+                                       final char pTerminator,
+                                       final ThemisScannerTerminator pHandler) throws OceanusException {
+        /* If this is a single/double quote */
+<span class="nc bnc" id="L270" title="All 4 branches missed.">        if (pChar == ThemisAnalysisChar.SINGLEQUOTE</span>
+                || pChar == ThemisAnalysisChar.DOUBLEQUOTE) {
+            /* Find the end of the sequence and skip the quotes */
+<span class="nc" id="L273">            final int myEnd = theCurLine.findEndOfQuotedSequence(theCurPos);</span>
+<span class="nc" id="L274">            theCurPos = myEnd + 1;</span>
+
+            /* If we have found the terminator */
+<span class="nc bnc" id="L277" title="All 2 branches missed.">        } else if (pChar == pTerminator) {</span>
+            /* Handle the terminator */
+<span class="nc" id="L279">            pHandler.handle(pTerminator);</span>
+<span class="nc" id="L280">            return true;</span>
+
+            /* If this is a parenthesisOpen character */
+<span class="nc bnc" id="L283" title="All 2 branches missed.">        } else if (pChar == ThemisAnalysisChar.PARENTHESIS_OPEN) {</span>
+            /* Handle the nested sequence */
+<span class="nc" id="L285">            handleNestedSequence(ThemisAnalysisChar.PARENTHESIS_CLOSE);</span>
+
+            /* If this is a braceOpen character */
+<span class="nc bnc" id="L288" title="All 2 branches missed.">        } else if (pChar == ThemisAnalysisChar.BRACE_OPEN) {</span>
+            /* Handle the nested sequence */
+<span class="nc" id="L290">            handleNestedSequence(ThemisAnalysisChar.BRACE_CLOSE);</span>
+
+            /* If we should skip Generics and this is a genericOpen character */
+<span class="nc bnc" id="L293" title="All 4 branches missed.">        } else if (skipGenerics &amp;&amp; pChar == ThemisAnalysisChar.GENERIC_OPEN) {</span>
+            /* Handle the nested sequence */
+<span class="nc" id="L295">            handleNestedSequence(ThemisAnalysisChar.GENERIC_CLOSE);</span>
+
+            /* else move to next character */
+        } else {
+            /* Increment position */
+<span class="nc" id="L300">            theCurPos++;</span>
+        }
+
+        /* not found */
+<span class="nc" id="L304">        return false;</span>
+    }
+
+    /**
+     * Handle Terminator at End of Line.
+     * @param pTerminator the terminator
+     * @throws OceanusException on error
+     */
+    private void handleEOLTerminator(final char pTerminator) throws OceanusException {
+        /* Must be at the end of the line */
+<span class="nc bnc" id="L314" title="All 2 branches missed.">        if (theCurPos != theLength - 1) {</span>
+<span class="nc" id="L315">            throw new ThemisDataException(&quot;Not at end of line&quot;);</span>
+        }
+
+        /* Strip end character, add to results and break loop */
+<span class="nc" id="L319">        theCurLine.stripEndChar(pTerminator);</span>
+<span class="nc" id="L320">        theResults.add(theCurLine);</span>
+<span class="nc" id="L321">    }</span>
+
+    /**
+     * Handle Separator (possible mid-line).
+     * @param pTerminator the terminator
+     */
+    private void handleSeparator(final char pTerminator) {
+        /* If separator is not at end of line */
+<span class="nc bnc" id="L329" title="All 2 branches missed.">        if (theCurPos != theLength - 1) {</span>
+            /* Strip to end character and add to results */
+<span class="nc" id="L331">            final ThemisAnalysisLine myLine = theCurLine.stripUpToPosition(theCurPos - 1);</span>
+<span class="nc" id="L332">            theResults.add(myLine);</span>
+
+            /* Return a non-blank line to the stack and break loop */
+<span class="nc" id="L335">            theCurLine.stripStartChar(pTerminator);</span>
+<span class="nc bnc" id="L336" title="All 2 branches missed.">            if (!ThemisAnalysisBlank.isBlank(theCurLine)) {</span>
+<span class="nc" id="L337">                theSource.pushLine(theCurLine);</span>
+            }
+
+            /* else terminator is at end of line */
+<span class="nc" id="L341">        } else {</span>
+            /* Strip end character, add to results and break loop */
+<span class="nc" id="L343">            theCurLine.stripEndChar(pTerminator);</span>
+<span class="nc" id="L344">            theResults.add(theCurLine);</span>
+        }
+<span class="nc" id="L346">    }</span>
+
+    /**
+     * Restore the stack.
+     * @param pTerminator the terminator
+     */
+    private void restoreStack(final char pTerminator) {
+        /* Restore current line */
+<span class="nc bnc" id="L354" title="All 2 branches missed.">        if (theCurLine != null) {</span>
+<span class="nc" id="L355">            theSource.pushLine(theCurLine);</span>
+        }
+
+        /* Loop through the results */
+<span class="nc bnc" id="L359" title="All 2 branches missed.">        while (!theResults.isEmpty()) {</span>
+<span class="nc" id="L360">            theSource.pushLine(theResults.removeLast());</span>
+        }
+<span class="nc" id="L362">    }</span>
+
+    /**
+     * Scan For Generic Terminator.
+     *
+     * @param pLine the current line
+     * @return the results
+     * @throws OceanusException on error
+     */
+    Deque&lt;ThemisAnalysisElement&gt; scanForGeneric(final ThemisAnalysisLine pLine) throws OceanusException {
+<span class="nc" id="L372">        return scanForContents(pLine, ThemisAnalysisChar.GENERIC_CLOSE);</span>
+    }
+
+    /**
+     * Scan For Parenthesis Terminator.
+     *
+     * @param pLine the current line
+     * @return the results
+     * @throws OceanusException on error
+     */
+    Deque&lt;ThemisAnalysisElement&gt; scanForParenthesis(final ThemisAnalysisLine pLine) throws OceanusException {
+<span class="nc" id="L383">        return scanForContents(pLine, ThemisAnalysisChar.PARENTHESIS_CLOSE);</span>
+    }
+
+    /**
+     * Scan For Array Terminator.
+     *
+     * @param pLine the current line
+     * @return the results
+     * @throws OceanusException on error
+     */
+    Deque&lt;ThemisAnalysisElement&gt; scanForArray(final ThemisAnalysisLine pLine) throws OceanusException {
+<span class="nc" id="L394">        return scanForContents(pLine, ThemisAnalysisChar.ARRAY_CLOSE);</span>
+    }
+
+    /**
+     * Scan For Terminator across multiple lines.
+     *
+     * @param pLine       the current line
+     * @param pTerminator the terminator
+     * @return the results
+     * @throws OceanusException on error
+     */
+    private Deque&lt;ThemisAnalysisElement&gt; scanForContents(final ThemisAnalysisLine pLine,
+                                                         final char pTerminator) throws OceanusException {
+        /* Allocate array */
+<span class="nc" id="L408">        theResults = new ArrayDeque&lt;&gt;();</span>
+
+        /* Access line details */
+<span class="nc" id="L411">        theCurLine = pLine;</span>
+<span class="nc" id="L412">        theLength = theCurLine.getLength();</span>
+<span class="nc" id="L413">        theCurPos = 0;</span>
+
+        /* Locate the end of the sequence */
+<span class="nc" id="L416">        handleNestedSequence(pTerminator);</span>
+
+        /* Strip to end character and add to results */
+<span class="nc" id="L419">        final ThemisAnalysisLine myLine = theCurLine.stripUpToPosition(theCurPos - 1);</span>
+<span class="nc" id="L420">        theResults.add(myLine);</span>
+
+        /* Return a non-blank line to the stack and break loop */
+<span class="nc bnc" id="L423" title="All 2 branches missed.">        if (!ThemisAnalysisBlank.isBlank(theCurLine)) {</span>
+<span class="nc" id="L424">            theSource.pushLine(theCurLine);</span>
+        }
+
+        /* Return the results */
+<span class="nc" id="L428">        return theResults;</span>
+    }
+
+    /**
+     * Shift to next line.
+     * @param pErrorOnEmpty throw exception on empty
+     * @return empty true/false
+     * @throws OceanusException on error
+     */
+    private boolean shiftToNextLine(final boolean pErrorOnEmpty) throws OceanusException {
+        /* Add current line to the results */
+<span class="nc" id="L439">        theResults.add(theCurLine);</span>
+<span class="nc" id="L440">        theCurLine = null;</span>
+
+        /* Check for additional lines */
+<span class="nc bnc" id="L443" title="All 2 branches missed.">        if (!theSource.hasLines()) {</span>
+            /* Throw exception if required, else return empty */
+<span class="nc bnc" id="L445" title="All 2 branches missed.">            if (pErrorOnEmpty) {</span>
+<span class="nc" id="L446">                throw new ThemisDataException(&quot;Did not find terminator&quot;);</span>
+            }
+<span class="nc" id="L448">            return true;</span>
+        }
+
+        /* Access the next line */
+<span class="nc" id="L452">        final ThemisAnalysisElement myEl = theSource.popNextLine();</span>
+<span class="nc" id="L453">        theCurLine = (ThemisAnalysisLine) myEl;</span>
+<span class="nc" id="L454">        theLength = theCurLine.getLength();</span>
+<span class="nc" id="L455">        theCurPos = 0;</span>
+
+        /* Handle empty lines */
+<span class="nc bnc" id="L458" title="All 4 branches missed.">        return theLength == 0 &amp;&amp; shiftToNextLine(pErrorOnEmpty);</span>
+    }
+
+    /**
+     * Handle nested sequence.
+     *
+     * @param pNestEnd the nest end character
+     * @throws OceanusException on error
+     */
+    private void handleNestedSequence(final char pNestEnd) throws OceanusException {
+        /* Access the nest start character */
+<span class="nc" id="L469">        final char myNestStart = theCurLine.charAt(theCurPos);</span>
+
+        /* Look for end of nest in this line */
+<span class="nc" id="L472">        int myNested = theCurLine.findEndOfNestedSequence(theCurPos, 0, pNestEnd, myNestStart);</span>
+
+        /* While the end of the nest is not found */
+<span class="nc bnc" id="L475" title="All 2 branches missed.">        while (myNested &lt; 0) {</span>
+            /* Shift to the next line */
+<span class="nc" id="L477">            shiftToNextLine(true);</span>
+
+            /* Repeat test for end of nest */
+<span class="nc" id="L480">            myNested = theCurLine.findEndOfNestedSequence(0, myNested, pNestEnd, myNestStart);</span>
+        }
+
+        /* Adjust position */
+<span class="nc" id="L484">        theCurPos = myNested + 1;</span>
+<span class="nc" id="L485">    }</span>
+
+    /**
+     * Scanner Source.
+     */
+    public interface ThemisAnalysisSource {
+        /**
+         * Are there more lines to process?
+         * @return true/false
+         */
+        boolean hasLines();
+
+        /**
+         * Pop next line from list.
+         * @return the next line
+         * @throws OceanusException on error
+         */
+        ThemisAnalysisElement popNextLine() throws OceanusException;
+
+        /**
+         * Push line back onto stack.
+         * @param pLine to line to push onto stack
+         */
+        void pushLine(ThemisAnalysisElement pLine);
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

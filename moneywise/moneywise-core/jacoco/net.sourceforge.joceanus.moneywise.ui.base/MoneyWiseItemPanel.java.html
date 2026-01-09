@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseItemPanel.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.ui.base</a> &gt; <span class="el_source">MoneyWiseItemPanel.java</span></div><h1>MoneyWiseItemPanel.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.ui.base;
+
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.metis.field.MetisFieldVersionValues;
+import net.sourceforge.joceanus.metis.list.MetisListKey;
+import net.sourceforge.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCategoryBase;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseRegion;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransTag;
+import net.sourceforge.joceanus.moneywise.lethe.ui.controls.MoneyWiseAnalysisSelect.MoneyWiseStatementSelect;
+import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter;
+import net.sourceforge.joceanus.moneywise.ui.MoneyWiseGoToId;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoClass;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues.PrometheusInfoSetItem;
+import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataItem;
+import net.sourceforge.joceanus.prometheus.ui.PrometheusGoToEvent;
+import net.sourceforge.joceanus.prometheus.ui.panel.PrometheusDataItemPanel;
+import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIGenericWrapper;
+import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollMenu;
+import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollSubMenu;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * MoneyWise Data Item Panel.
+ * @param &lt;T&gt; the item type
+ */
+public abstract class MoneyWiseItemPanel&lt;T extends PrometheusDataItem&gt;
+        extends PrometheusDataItemPanel&lt;T, MoneyWiseGoToId&gt; {
+    /**
+     * Filter text.
+     */
+    private static final String FILTER_MENU = &quot;Filter&quot;;
+
+    /**
+     * The Owning table.
+     */
+    private final MoneyWiseBaseTable&lt;T&gt; theOwner;
+
+    /**
+     * The DataItem GoToMenuMap.
+     */
+    private final List&lt;PrometheusDataItem&gt; theGoToItemList;
+
+    /**
+     * The Filter GoToMenuMap.
+     */
+    private final List&lt;MoneyWiseAnalysisFilter&lt;?, ?&gt;&gt; theGoToFilterList;
+
+    /**
+     * Constructor.
+     * @param pFactory the GUI factory
+     * @param pEditSet the edit set
+     * @param pOwner the owning table
+     */
+    protected MoneyWiseItemPanel(final TethysUIFactory&lt;?&gt; pFactory,
+                                 final PrometheusEditSet pEditSet,
+                                 final MoneyWiseBaseTable&lt;T&gt; pOwner) {
+<span class="nc" id="L82">        super(pFactory, pEditSet, pOwner.getErrorPanel());</span>
+<span class="nc" id="L83">        theOwner = pOwner;</span>
+<span class="nc" id="L84">        theGoToFilterList = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L85">        theGoToItemList = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L86">        getFieldSet().setChanged(this::isFieldChanged);</span>
+<span class="nc" id="L87">    }</span>
+
+    /**
+     * Obtain the owner.
+     * @return the owner
+     */
+    protected MoneyWiseBaseTable&lt;T&gt; getOwner() {
+<span class="nc" id="L94">        return theOwner;</span>
+    }
+
+    /**
+     * Set preferred Size.
+     */
+    void setPreferredSize() {
+        /* we should take up a quarter if the standard panel dimensions */
+<span class="nc" id="L102">        final int[] mySize = getFactory().getProgramDefinitions().getPanelDimensions();</span>
+<span class="nc" id="L103">        getFieldSet().setPreferredWidthAndHeight(mySize[0], mySize[1] &gt;&gt; 2);</span>
+<span class="nc" id="L104">    }</span>
+
+    /**
+     * is field changed?
+     *
+     * @param pField the field
+     * @param pItem  the item
+     * @return true/false
+     */
+    private boolean isFieldChanged(final T pItem,
+                                   final MetisDataFieldId pField) {
+        /* If the field is a dataInfoClass as part of an infoSetItem */
+<span class="nc bnc" id="L116" title="All 4 branches missed.">        if (pField instanceof PrometheusDataInfoClass myClass</span>
+<span class="nc" id="L117">                &amp;&amp; pItem instanceof PrometheusInfoSetItem myItem) {</span>
+            /* Check with the infoSet whether the field has changed */
+<span class="nc" id="L119">            return myItem.getInfoSet().fieldChanged(myClass).isDifferent();</span>
+        }
+
+        /* Look at the base values as a standard item */
+<span class="nc" id="L123">        final MetisFieldVersionValues myBaseValues = getBaseValues();</span>
+<span class="nc bnc" id="L124" title="All 4 branches missed.">        return pField != null</span>
+                &amp;&amp; myBaseValues != null;
+    }
+
+    /**
+     * is Valid name?
+     * @param pNewName the new name
+     * @return error message or null
+     */
+    public String isValidName(final String pNewName) {
+<span class="nc" id="L134">        return theOwner.isValidName(pNewName, getItem());</span>
+    }
+
+    /**
+     * is Valid description?
+     * @param pNewDesc the new description
+     * @return error message or null
+     */
+    public String isValidDesc(final String pNewDesc) {
+<span class="nc" id="L143">        return theOwner.isValidDesc(pNewDesc, getItem());</span>
+    }
+
+    @Override
+    protected void buildGoToMenu(final TethysUIScrollMenu&lt;TethysUIGenericWrapper&gt; pMenu) {
+        /* Clear the goTo lists */
+<span class="nc" id="L149">        theGoToFilterList.clear();</span>
+<span class="nc" id="L150">        theGoToItemList.clear();</span>
+
+        /* Clear the menu */
+<span class="nc" id="L153">        pMenu.removeAllItems();</span>
+
+        /* Declare the goTo items */
+<span class="nc" id="L156">        declareGoToItems(getEditSet().hasUpdates());</span>
+
+        /* Process the goTo items */
+<span class="nc" id="L159">        processGoToItems(pMenu);</span>
+<span class="nc" id="L160">    }</span>
+
+    /**
+     * Declare GoTo Items.
+     * @param pUpdates are there active updates?
+     */
+    protected abstract void declareGoToItems(boolean pUpdates);
+
+    /**
+     * Declare GoTo Item.
+     * @param pItem the item to declare
+     */
+    protected void declareGoToItem(final PrometheusDataItem pItem) {
+        /* Ignore null items */
+<span class="nc bnc" id="L174" title="All 2 branches missed.">        if (pItem == null) {</span>
+<span class="nc" id="L175">            return;</span>
+        }
+
+        /* Ignore if the item is already listed */
+<span class="nc bnc" id="L179" title="All 2 branches missed.">        if (theGoToItemList.contains(pItem)) {</span>
+<span class="nc" id="L180">            return;</span>
+        }
+
+        /* remember the item */
+<span class="nc" id="L184">        theGoToItemList.add(pItem);</span>
+<span class="nc" id="L185">    }</span>
+
+    /**
+     * Declare GoTo Filter.
+     * @param pFilter the filter to declare
+     */
+    protected void declareGoToFilter(final MoneyWiseAnalysisFilter&lt;?, ?&gt; pFilter) {
+        /* Ignore null filters */
+<span class="nc bnc" id="L193" title="All 2 branches missed.">        if (pFilter == null) {</span>
+<span class="nc" id="L194">            return;</span>
+        }
+
+        /* Ignore if the item is already listed */
+<span class="nc bnc" id="L198" title="All 2 branches missed.">        if (theGoToFilterList.contains(pFilter)) {</span>
+<span class="nc" id="L199">            return;</span>
+        }
+
+        /* remember the item */
+<span class="nc" id="L203">        theGoToFilterList.add(pFilter);</span>
+<span class="nc" id="L204">    }</span>
+
+    /**
+     * Declare GoTo Filter.
+     * @param pFilter the filter to declare
+     */
+    protected void declareGoToFilter(final MoneyWiseXAnalysisFilter&lt;?, ?&gt; pFilter) {
+        /* TODO */
+<span class="nc" id="L212">    }</span>
+
+    /**
+     * Process goTo items.
+     * @param pMenu the menu
+     */
+    private void processGoToItems(final TethysUIScrollMenu&lt;TethysUIGenericWrapper&gt; pMenu) {
+        /* Process goTo filters */
+<span class="nc" id="L220">        processGoToFilters(pMenu);</span>
+
+        /* Create a simple map for top-level categories */
+<span class="nc" id="L223">        final Map&lt;MetisListKey, TethysUIScrollSubMenu&lt;TethysUIGenericWrapper&gt;&gt; myMap = new HashMap&lt;&gt;();</span>
+
+        /* Loop through the items */
+<span class="nc bnc" id="L226" title="All 2 branches missed.">        for (PrometheusDataItem myItem : theGoToItemList) {</span>
+            /* Determine DataType and obtain parent menu */
+<span class="nc" id="L228">            final MetisListKey myType = myItem.getItemType();</span>
+<span class="nc" id="L229">            final TethysUIScrollSubMenu&lt;TethysUIGenericWrapper&gt; myMenu = myMap.computeIfAbsent(myType, t -&gt; pMenu.addSubMenu(myType.getItemName()));</span>
+
+            /* set default values */
+<span class="nc" id="L232">            MoneyWiseGoToId myId = null;</span>
+<span class="nc" id="L233">            String myName = null;</span>
+
+            /* Handle differing items */
+<span class="nc bnc" id="L236" title="All 2 branches missed.">            if (myItem instanceof PrometheusStaticDataItem myStatic) {</span>
+<span class="nc" id="L237">                myId = MoneyWiseGoToId.STATIC;</span>
+<span class="nc" id="L238">                myName = myStatic.getName();</span>
+<span class="nc bnc" id="L239" title="All 2 branches missed.">            } else if (myItem instanceof MoneyWiseAssetBase myAccount) {</span>
+<span class="nc" id="L240">                myId = MoneyWiseGoToId.ACCOUNT;</span>
+<span class="nc" id="L241">                myName = myAccount.getName();</span>
+<span class="nc bnc" id="L242" title="All 2 branches missed.">            } else if (myItem instanceof MoneyWiseCategoryBase myCategory) {</span>
+<span class="nc" id="L243">                myId = MoneyWiseGoToId.CATEGORY;</span>
+<span class="nc" id="L244">                myName = myCategory.getName();</span>
+<span class="nc bnc" id="L245" title="All 2 branches missed.">            } else if (myItem instanceof MoneyWiseRegion myRegion) {</span>
+<span class="nc" id="L246">                myId = MoneyWiseGoToId.REGION;</span>
+<span class="nc" id="L247">                myName = myRegion.getName();</span>
+<span class="nc bnc" id="L248" title="All 2 branches missed.">            } else if (myItem instanceof MoneyWiseTransTag myTag) {</span>
+<span class="nc" id="L249">                myId = MoneyWiseGoToId.TAG;</span>
+<span class="nc" id="L250">                myName = myTag.getName();</span>
+            }
+
+            /* Build the item */
+<span class="nc" id="L254">            final PrometheusGoToEvent&lt;MoneyWiseGoToId&gt; myEvent = createGoToEvent(myId, myItem);</span>
+<span class="nc" id="L255">            myMenu.getSubMenu().addItem(new TethysUIGenericWrapper(myEvent), myName);</span>
+<span class="nc" id="L256">        }</span>
+<span class="nc" id="L257">    }</span>
+
+    /**
+     * Process goTo filters.
+     * @param pMenu the menu
+     */
+    private void processGoToFilters(final TethysUIScrollMenu&lt;TethysUIGenericWrapper&gt; pMenu) {
+        /* Create a simple map for top-level categories */
+<span class="nc" id="L265">        TethysUIScrollSubMenu&lt;TethysUIGenericWrapper&gt; myMenu = null;</span>
+
+        /* Loop through the items */
+<span class="nc bnc" id="L268" title="All 2 branches missed.">        for (MoneyWiseAnalysisFilter&lt;?, ?&gt; myFilter : theGoToFilterList) {</span>
+            /* If this is a new menu */
+<span class="nc bnc" id="L270" title="All 2 branches missed.">            if (myMenu == null) {</span>
+                /* Create a new JMenu and add it to the popUp */
+<span class="nc" id="L272">                myMenu = pMenu.addSubMenu(FILTER_MENU);</span>
+            }
+
+            /* Determine action */
+<span class="nc" id="L276">            final MoneyWiseStatementSelect myStatement = new MoneyWiseStatementSelect(null, myFilter);</span>
+<span class="nc" id="L277">            final MoneyWiseGoToId myId = MoneyWiseGoToId.STATEMENT;</span>
+
+            /* Build the item */
+<span class="nc" id="L280">            final PrometheusGoToEvent&lt;MoneyWiseGoToId&gt; myEvent = createGoToEvent(myId, myStatement);</span>
+<span class="nc" id="L281">            myMenu.getSubMenu().addItem(new TethysUIGenericWrapper(myEvent), myFilter.getName());</span>
+<span class="nc" id="L282">        }</span>
+<span class="nc" id="L283">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

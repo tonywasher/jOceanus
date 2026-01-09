@@ -1,0 +1,476 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseMarketRatesTable.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.ui.panel</a> &gt; <span class="el_source">MoneyWiseMarketRatesTable.java</span></div><h1>MoneyWiseMarketRatesTable.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.ui.panel;
+
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.metis.ui.MetisErrorPanel;
+import net.sourceforge.joceanus.metis.data.MetisDataDifference;
+import net.sourceforge.joceanus.metis.ui.MetisAction;
+import net.sourceforge.joceanus.metis.ui.MetisIcon;
+import net.sourceforge.joceanus.metis.viewer.MetisViewerEntry;
+import net.sourceforge.joceanus.metis.viewer.MetisViewerManager;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
+import net.sourceforge.joceanus.moneywise.ui.base.MoneyWiseBaseTable;
+import net.sourceforge.joceanus.moneywise.ui.controls.MoneyWiseSpotRatesSelect;
+import net.sourceforge.joceanus.moneywise.views.MoneyWiseSpotExchangeRate;
+import net.sourceforge.joceanus.moneywise.ui.MoneyWiseUIResource;
+import net.sourceforge.joceanus.moneywise.views.MoneyWiseSpotExchangeRate.MoneyWiseSpotExchangeList;
+import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
+import net.sourceforge.joceanus.moneywise.views.MoneyWiseViewResource;
+import net.sourceforge.joceanus.moneywise.views.MoneyWiseYQLDownloader;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
+import net.sourceforge.joceanus.prometheus.ui.PrometheusActionButtons;
+import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
+import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
+import net.sourceforge.joceanus.prometheus.views.PrometheusUIEvent;
+import net.sourceforge.joceanus.prometheus.views.PrometheusViewerEntryId;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.event.OceanusEvent;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.tethys.api.button.TethysUIButton;
+import net.sourceforge.joceanus.tethys.api.control.TethysUIControl.TethysUIIconMapSet;
+import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.tethys.api.pane.TethysUIBorderPaneManager;
+import net.sourceforge.joceanus.tethys.api.pane.TethysUIPaneFactory;
+import net.sourceforge.joceanus.tethys.api.table.TethysUITableManager;
+
+/**
+ * MoneyWise SpotRates Table.
+ */
+public class MoneyWiseMarketRatesTable
+        extends MoneyWiseBaseTable&lt;MoneyWiseSpotExchangeRate&gt; {
+    /**
+     * The SpotRates selection panel.
+     */
+    private final MoneyWiseSpotRatesSelect theSelect;
+
+    /**
+     * The exchangeRates list.
+     */
+    private MoneyWiseSpotExchangeList theRates;
+
+    /**
+     * The selected date.
+     */
+    private OceanusDate theDate;
+
+    /**
+     * Constructor.
+     * @param pView the view
+     * @param pEditSet the editSet
+     * @param pError the error panel
+     */
+    MoneyWiseMarketRatesTable(final MoneyWiseView pView,
+                              final PrometheusEditSet pEditSet,
+                              final MetisErrorPanel pError) {
+        /* Store parameters */
+<span class="nc" id="L87">        super(pView, pEditSet, pError, MoneyWiseBasicDataType.EXCHANGERATE);</span>
+
+        /* Access Gui factory */
+<span class="nc" id="L90">        final TethysUIFactory&lt;?&gt; myGuiFactory = pView.getGuiFactory();</span>
+<span class="nc" id="L91">        final TethysUITableManager&lt;MetisDataFieldId, MoneyWiseSpotExchangeRate&gt; myTable = getTable();</span>
+
+        /* Create new button */
+<span class="nc" id="L94">        final TethysUIButton myNewButton = myGuiFactory.buttonFactory().newButton();</span>
+<span class="nc" id="L95">        MetisIcon.configureNewIconButton(myNewButton);</span>
+
+        /* Create a selection panel */
+<span class="nc" id="L98">        theSelect = new MoneyWiseSpotRatesSelect(myGuiFactory, pView);</span>
+
+        /* Set table configuration */
+<span class="nc" id="L101">        myTable.setDisabled(MoneyWiseSpotExchangeRate::isDisabled)</span>
+<span class="nc" id="L102">                .setComparator(MoneyWiseSpotExchangeRate::compareTo);</span>
+
+        /* Create the description column */
+<span class="nc" id="L105">        myTable.declareStringColumn(MoneyWiseBasicResource.XCHGRATE_FROM)</span>
+<span class="nc" id="L106">                .setCellValueFactory(r -&gt; r.getToCurrency().getDesc())</span>
+<span class="nc" id="L107">                .setEditable(false)</span>
+<span class="nc" id="L108">                .setColumnWidth(WIDTH_NAME);</span>
+
+        /* Create the symbol column */
+<span class="nc" id="L111">        myTable.declareStringColumn(MoneyWiseBasicResource.XCHGRATE_TO)</span>
+<span class="nc" id="L112">                .setCellValueFactory(r -&gt; r.getToCurrency().getName())</span>
+<span class="nc" id="L113">                .setName(MoneyWiseUIResource.SPOTRATE_COLUMN_SYMBOL.getValue())</span>
+<span class="nc" id="L114">                .setEditable(false)</span>
+<span class="nc" id="L115">                .setColumnWidth(WIDTH_NAME);</span>
+
+        /* Create the price column */
+<span class="nc" id="L118">        myTable.declareRatioColumn(MoneyWiseBasicResource.XCHGRATE_RATE)</span>
+<span class="nc" id="L119">                .setCellValueFactory(MoneyWiseSpotExchangeRate::getExchangeRate)</span>
+<span class="nc" id="L120">                .setEditable(true)</span>
+<span class="nc bnc" id="L121" title="All 2 branches missed.">                .setCellEditable(r -&gt; !r.isDisabled())</span>
+<span class="nc" id="L122">                .setColumnWidth(WIDTH_PRICE)</span>
+<span class="nc" id="L123">                .setOnCommit((r, v) -&gt; updateField(MoneyWiseSpotExchangeRate::setExchangeRate, r, v));</span>
+
+        /* Create the previous rate column */
+<span class="nc" id="L126">        myTable.declareRatioColumn(MoneyWiseViewResource.SPOTRATE_PREVRATE)</span>
+<span class="nc" id="L127">                .setCellValueFactory(MoneyWiseSpotExchangeRate::getPrevRate)</span>
+<span class="nc" id="L128">                .setName(MoneyWiseViewResource.SPOTRATE_PREVRATE.getValue())</span>
+<span class="nc" id="L129">                .setEditable(false)</span>
+<span class="nc" id="L130">                .setColumnWidth(WIDTH_PRICE);</span>
+
+        /* Create the previous date column */
+<span class="nc" id="L133">        myTable.declareDateColumn(MoneyWiseViewResource.SPOTEVENT_PREVDATE)</span>
+<span class="nc" id="L134">                .setCellValueFactory(MoneyWiseSpotExchangeRate::getPrevDate)</span>
+<span class="nc" id="L135">                .setName(MoneyWiseViewResource.SPOTEVENT_PREVDATE.getValue())</span>
+<span class="nc" id="L136">                .setEditable(false)</span>
+<span class="nc" id="L137">                .setColumnWidth(WIDTH_DATE);</span>
+
+        /* Create the Active column */
+<span class="nc" id="L140">        final TethysUIIconMapSet&lt;MetisAction&gt; myActionMapSet = MetisIcon.configureStatusIconButton(myGuiFactory);</span>
+<span class="nc" id="L141">        myTable.declareIconColumn(PrometheusDataResource.DATAITEM_TOUCH, MetisAction.class)</span>
+<span class="nc" id="L142">                .setIconMapSet(r -&gt; myActionMapSet)</span>
+<span class="nc bnc" id="L143" title="All 4 branches missed.">                .setCellValueFactory(r -&gt; r.getExchangeRate() != null &amp;&amp; !r.isDisabled() ? MetisAction.DELETE : MetisAction.DO)</span>
+<span class="nc" id="L144">                .setName(MoneyWiseUIResource.STATICDATA_ACTIVE.getValue())</span>
+<span class="nc" id="L145">                .setEditable(true)</span>
+<span class="nc bnc" id="L146" title="All 4 branches missed.">                .setCellEditable(r -&gt; r.getExchangeRate() != null &amp;&amp; !r.isDisabled())</span>
+<span class="nc" id="L147">                .setColumnWidth(WIDTH_ICON)</span>
+<span class="nc" id="L148">                .setOnCommit((r, v) -&gt; updateField(this::deleteRow, r, v));</span>
+
+        /* Add listeners */
+<span class="nc" id="L151">        theSelect.getEventRegistrar().addEventListener(PrometheusDataEvent.SELECTIONCHANGED, e -&gt; handleNewSelection());</span>
+<span class="nc" id="L152">        theSelect.getEventRegistrar().addEventListener(PrometheusDataEvent.DOWNLOAD, e -&gt; downloadPrices());</span>
+<span class="nc" id="L153">        pView.getEventRegistrar().addEventListener(e -&gt; refreshData());</span>
+<span class="nc" id="L154">        pEditSet.getEventRegistrar().addEventListener(e -&gt; updateTableData());</span>
+<span class="nc" id="L155">    }</span>
+
+    /**
+     * Obtain the selection panel.
+     * @return the select panel
+     */
+    MoneyWiseSpotRatesSelect getSelect() {
+<span class="nc" id="L162">        return theSelect;</span>
+    }
+
+    @Override
+    protected void refreshData() {
+        /* Obtain the active profile */
+<span class="nc" id="L168">        OceanusProfile myTask = getView().getActiveTask();</span>
+<span class="nc" id="L169">        myTask = myTask.startTask(&quot;SpotRates1&quot;);</span>
+
+        /* Refresh the data */
+<span class="nc" id="L172">        theSelect.refreshData();</span>
+
+        /* Access the selection details */
+<span class="nc" id="L175">        setSelection(theSelect.getDate());</span>
+
+        /* Create SavePoint */
+<span class="nc" id="L178">        theSelect.createSavePoint();</span>
+
+        /* Complete the task */
+<span class="nc" id="L181">        myTask.end();</span>
+<span class="nc" id="L182">    }</span>
+
+    /**
+     * Set Selection to the date.
+     * @param pDate the Date for the extract
+     */
+    public void setSelection(final OceanusDate pDate) {
+        /* Record selection */
+<span class="nc" id="L190">        theDate = pDate;</span>
+
+        /* If selection is valid */
+<span class="nc bnc" id="L193" title="All 2 branches missed.">        if (theDate != null) {</span>
+            /* Create the new list */
+<span class="nc" id="L195">            theRates = new MoneyWiseSpotExchangeList(getView(), pDate);</span>
+
+            /* Update Next/Previous values */
+<span class="nc" id="L198">            theSelect.setAdjacent(theRates.getPrev(), theRates.getNext());</span>
+
+            /* else invalid selection */
+        } else {
+            /* Set no selection */
+<span class="nc" id="L203">            theRates = null;</span>
+<span class="nc" id="L204">            theSelect.setAdjacent(null, null);</span>
+        }
+
+        /* Update other details */
+<span class="nc" id="L208">        getTable().setItems(theRates.getUnderlyingList());</span>
+<span class="nc" id="L209">        getEditEntry().setDataList(theRates);</span>
+<span class="nc" id="L210">        theSelect.setEnabled(true);</span>
+<span class="nc" id="L211">    }</span>
+
+    /**
+     * handle new selection.
+     */
+    private void handleNewSelection() {
+        /* Access selection */
+<span class="nc" id="L218">        final OceanusDate myDate = theSelect.getDate();</span>
+
+        /* If the selection differs */
+<span class="nc bnc" id="L221" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(theDate, myDate)) {</span>
+            /* Set selection */
+<span class="nc" id="L223">            setSelection(myDate);</span>
+
+            /* Create SavePoint */
+<span class="nc" id="L226">            theSelect.createSavePoint();</span>
+        }
+<span class="nc" id="L228">    }</span>
+
+    @Override
+    protected boolean isFiltered(final MoneyWiseSpotExchangeRate pRow) {
+        /* Handle filter */
+<span class="nc bnc" id="L233" title="All 2 branches missed.">        return !pRow.isDisabled();</span>
+    }
+
+    @Override
+    protected void deleteRow(final MoneyWiseSpotExchangeRate pRow,
+                             final Object pValue) throws OceanusException {
+<span class="nc" id="L239">        pRow.setExchangeRate(null);</span>
+<span class="nc" id="L240">    }</span>
+
+    /**
+     * Determine Focus.
+     */
+    public void determineFocus() {
+        /* Request the focus */
+<span class="nc" id="L247">        getTable().requestFocus();</span>
+<span class="nc" id="L248">    }</span>
+
+    @Override
+    protected void notifyChanges() {
+<span class="nc bnc" id="L252" title="All 2 branches missed.">        theSelect.setEnabled(!hasUpdates());</span>
+<span class="nc" id="L253">        super.notifyChanges();</span>
+<span class="nc" id="L254">    }</span>
+
+    /**
+     * Download prices.
+     */
+    private void downloadPrices() {
+        /* Cancel editing */
+<span class="nc" id="L261">        cancelEditing();</span>
+
+        /* Protect against exceptions */
+        try {
+            /* Download Rates */
+<span class="nc bnc" id="L266" title="All 2 branches missed.">            if (MoneyWiseYQLDownloader.downloadRates(theRates)) {</span>
+                /* Increment data version */
+<span class="nc" id="L268">                getEditSet().incrementVersion();</span>
+
+                /* Update components to reflect changes */
+<span class="nc" id="L271">                updateTableData();</span>
+<span class="nc" id="L272">                notifyChanges();</span>
+            }
+<span class="nc" id="L274">        } catch (OceanusException e) {</span>
+            /* Show the error */
+<span class="nc" id="L276">            setError(e);</span>
+<span class="nc" id="L277">        }</span>
+<span class="nc" id="L278">    }</span>
+
+    /**
+     * SpotRates Panel.
+     */
+    public static class MoneyWiseSpotRatesPanel
+            implements TethysUIComponent, OceanusEventProvider&lt;PrometheusDataEvent&gt; {
+        /**
+         * Text for DataEntry Title.
+         */
+<span class="nc" id="L288">        private static final String NLS_DATAENTRY = MoneyWiseUIResource.RATES_DATAENTRY.getValue();</span>
+
+        /**
+         * The Event Manager.
+         */
+        private final OceanusEventManager&lt;PrometheusDataEvent&gt; theEventManager;
+
+        /**
+         * The updateSet.
+         */
+        private final PrometheusEditSet theEditSet;
+
+        /**
+         * The error panel.
+         */
+        private final MetisErrorPanel theError;
+
+        /**
+         * The action buttons.
+         */
+        private final PrometheusActionButtons theActionButtons;
+
+        /**
+         * The table.
+         */
+        private final MoneyWiseMarketRatesTable theTable;
+
+        /**
+         * The panel.
+         */
+        private final TethysUIBorderPaneManager thePanel;
+
+        /**
+         * The viewer entry.
+         */
+        private final MetisViewerEntry theViewerRate;
+
+        /**
+         * Constructor.
+         *
+         * @param pView the data view
+         */
+<span class="nc" id="L330">        public MoneyWiseSpotRatesPanel(final MoneyWiseView pView) {</span>
+            /* Build the Update set and entry */
+<span class="nc" id="L332">            theEditSet = new PrometheusEditSet(pView);</span>
+
+            /* Create the event manager */
+<span class="nc" id="L335">            theEventManager = new OceanusEventManager&lt;&gt;();</span>
+
+            /* Create the top level viewer entry for this view */
+<span class="nc" id="L338">            final MetisViewerEntry mySection = pView.getViewerEntry(PrometheusViewerEntryId.VIEW);</span>
+<span class="nc" id="L339">            final MetisViewerManager myViewer = pView.getViewerManager();</span>
+<span class="nc" id="L340">            theViewerRate = myViewer.newEntry(mySection, NLS_DATAENTRY);</span>
+<span class="nc" id="L341">            theViewerRate.setTreeObject(theEditSet);</span>
+
+            /* Create the error panel for this view */
+<span class="nc" id="L344">            theError = pView.getToolkit().getToolkit().newErrorPanel(theViewerRate);</span>
+
+            /* Create the table */
+<span class="nc" id="L347">            theTable = new MoneyWiseMarketRatesTable(pView, theEditSet, theError);</span>
+
+            /* Create the action buttons */
+<span class="nc" id="L350">            final TethysUIFactory&lt;?&gt; myGuiFactory = pView.getGuiFactory();</span>
+<span class="nc" id="L351">            theActionButtons = new PrometheusActionButtons(myGuiFactory, theEditSet);</span>
+<span class="nc" id="L352">            theActionButtons.setVisible(false);</span>
+
+            /* Create the header panel */
+<span class="nc" id="L355">            final TethysUIPaneFactory myPanes = myGuiFactory.paneFactory();</span>
+<span class="nc" id="L356">            final TethysUIBorderPaneManager myHeader = myPanes.newBorderPane();</span>
+<span class="nc" id="L357">            myHeader.setCentre(theTable.getSelect());</span>
+<span class="nc" id="L358">            myHeader.setNorth(theError);</span>
+<span class="nc" id="L359">            myHeader.setEast(theActionButtons);</span>
+
+            /* Create the panel */
+<span class="nc" id="L362">            thePanel = myPanes.newBorderPane();</span>
+<span class="nc" id="L363">            thePanel.setNorth(myHeader);</span>
+<span class="nc" id="L364">            thePanel.setCentre(theTable);</span>
+
+            /* Add listeners */
+<span class="nc" id="L367">            theError.getEventRegistrar().addEventListener(e -&gt; handleErrorPane());</span>
+<span class="nc" id="L368">            theActionButtons.getEventRegistrar().addEventListener(this::handleActionButtons);</span>
+<span class="nc" id="L369">            theTable.getEventRegistrar().addEventListener(e -&gt; notifyChanges());</span>
+<span class="nc" id="L370">        }</span>
+
+        @Override
+        public TethysUIComponent getUnderlying() {
+<span class="nc" id="L374">            return thePanel;</span>
+        }
+
+        @Override
+        public void setEnabled(final boolean pEnabled) {
+<span class="nc" id="L379">            thePanel.setEnabled(pEnabled);</span>
+<span class="nc" id="L380">        }</span>
+
+        @Override
+        public void setVisible(final boolean pVisible) {
+<span class="nc" id="L384">            thePanel.setVisible(pVisible);</span>
+<span class="nc" id="L385">        }</span>
+
+        @Override
+        public OceanusEventRegistrar&lt;PrometheusDataEvent&gt; getEventRegistrar() {
+<span class="nc" id="L389">            return theEventManager.getEventRegistrar();</span>
+        }
+
+        /**
+         * handleErrorPane.
+         */
+        private void handleErrorPane() {
+            /* Determine whether we have an error */
+<span class="nc" id="L397">            final boolean isError = theError.hasError();</span>
+
+            /* Hide selection panel on error */
+<span class="nc bnc" id="L400" title="All 2 branches missed.">            theTable.getSelect().setVisible(!isError);</span>
+
+            /* Lock scroll area */
+<span class="nc bnc" id="L403" title="All 2 branches missed.">            theTable.setEnabled(!isError);</span>
+
+            /* Lock Action Buttons */
+<span class="nc bnc" id="L406" title="All 2 branches missed.">            theActionButtons.setEnabled(!isError);</span>
+<span class="nc" id="L407">        }</span>
+
+        /**
+         * handle Action Buttons.
+         * @param pEvent the event
+         */
+        private void handleActionButtons(final OceanusEvent&lt;PrometheusUIEvent&gt; pEvent) {
+            /* Cancel editing */
+<span class="nc" id="L415">            theTable.cancelEditing();</span>
+
+            /* Perform the command */
+<span class="nc" id="L418">            theEditSet.processCommand(pEvent.getEventId(), theError);</span>
+
+            /* Adjust for changes */
+<span class="nc" id="L421">            theTable.notifyChanges();</span>
+<span class="nc" id="L422">        }</span>
+
+        /**
+         * Determine Focus.
+         */
+        public void determineFocus() {
+            /* Request the focus */
+<span class="nc" id="L429">            theTable.determineFocus();</span>
+
+            /* Focus on the Data entry */
+<span class="nc" id="L432">            theViewerRate.setFocus();</span>
+<span class="nc" id="L433">        }</span>
+
+        /**
+         * Call underlying controls to take notice of changes in view/selection.
+         */
+        private void notifyChanges() {
+            /* Determine whether we have updates */
+<span class="nc" id="L440">            final boolean hasUpdates = hasUpdates();</span>
+
+            /* Update the table buttons */
+<span class="nc" id="L443">            theActionButtons.setEnabled(true);</span>
+<span class="nc" id="L444">            theActionButtons.setVisible(hasUpdates);</span>
+
+            /* Notify listeners */
+<span class="nc" id="L447">            theEventManager.fireEvent(PrometheusDataEvent.ADJUSTVISIBILITY);</span>
+<span class="nc" id="L448">        }</span>
+
+        /**
+         * Does the panel have updates?
+         * @return true/false
+         */
+        public boolean hasUpdates() {
+<span class="nc" id="L455">            return theTable.hasUpdates();</span>
+        }
+
+        /**
+         * Does the panel have a session?
+         * @return true/false
+         */
+        public boolean hasSession() {
+<span class="nc" id="L463">            return theTable.hasUpdates();</span>
+        }
+
+        /**
+         * Does the panel have errors?
+         * @return true/false
+         */
+        public boolean hasErrors() {
+<span class="nc" id="L471">            return theTable.hasErrors();</span>
+        }
+    }
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

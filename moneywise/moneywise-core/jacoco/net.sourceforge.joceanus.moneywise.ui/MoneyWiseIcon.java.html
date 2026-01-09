@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseIcon.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.ui</a> &gt; <span class="el_source">MoneyWiseIcon.java</span></div><h1>MoneyWiseIcon.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.ui;
+
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
+
+import net.sourceforge.joceanus.metis.ui.MetisIcon;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetDirection;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIIconId;
+import net.sourceforge.joceanus.tethys.api.button.TethysUIButtonFactory;
+import net.sourceforge.joceanus.tethys.api.control.TethysUIControl.TethysUIIconMapSet;
+import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
+
+/**
+ * MoneyWise Icon IDs.
+ */
+<span class="nc" id="L33">public enum MoneyWiseIcon implements TethysUIIconId {</span>
+    /**
+     * The program icon.
+     */
+<span class="nc" id="L37">    SMALL(&quot;icons/MoneyWiseSmall.png&quot;),</span>
+
+    /**
+     * The program icon.
+     */
+<span class="nc" id="L42">    BIG(&quot;icons/MoneyWiseBig.png&quot;),</span>
+
+    /**
+     * The splash program icon.
+     */
+<span class="nc" id="L47">    SPLASH(&quot;icons/MoneyWiseSplash.png&quot;),</span>
+
+    /**
+     * The locked icon.
+     */
+<span class="nc" id="L52">    LOCKED(&quot;icons/BlueJellyClosedBook.png&quot;),</span>
+
+    /**
+     * The unlocked icon.
+     */
+<span class="nc" id="L57">    UNLOCKED(&quot;icons/BlueJellyOpenBook.png&quot;),</span>
+
+    /**
+     * The unlock-able icon.
+     */
+<span class="nc" id="L62">    UNLOCKABLE(&quot;icons/GreenJellyClosedBook.png&quot;),</span>
+
+    /**
+     * The lock-able icon.
+     */
+<span class="nc" id="L67">    LOCKABLE(&quot;icons/GreenJellyOpenBook.png&quot;),</span>
+
+    /**
+     * The DirectionTo locked icon.
+     */
+<span class="nc" id="L72">    DIRTOLOCKED(&quot;icons/BlueJellyDirectionTo.png&quot;),</span>
+
+    /**
+     * The DirectionFrom locked icon.
+     */
+<span class="nc" id="L77">    DIRFROMLOCKED(&quot;icons/BlueJellyDirectionFrom.png&quot;),</span>
+
+    /**
+     * The DirectionTo icon.
+     */
+<span class="nc" id="L82">    DIRTO(&quot;icons/GreenJellyDirectionTo.png&quot;),</span>
+
+    /**
+     * The DirectionFrom icon.
+     */
+<span class="nc" id="L87">    DIRFROM(&quot;icons/GreenJellyDirectionFrom.png&quot;),</span>
+
+    /**
+     * The frozen reconciled icon.
+     */
+<span class="nc" id="L92">    FROZENRECONCILED(&quot;icons/BlueJellyCheck.png&quot;),</span>
+
+    /**
+     * The cleared check box.
+     */
+<span class="nc" id="L97">    BOXCLEAR(&quot;icons/GreenJellyClearBox.png&quot;),</span>
+
+    /**
+     * The set check box.
+     */
+<span class="nc" id="L102">    BOXCHECK(&quot;icons/GreenJellyCheckBox.png&quot;),</span>
+
+    /**
+     * The frozen cleared check box.
+     */
+<span class="nc" id="L107">    FROZENBOXCLEAR(&quot;icons/BlueJellyClearBox.png&quot;),</span>
+
+    /**
+     * The frozen set check box.
+     */
+<span class="nc" id="L112">    FROZENBOXCHECK(&quot;icons/BlueJellyCheckBox.png&quot;);</span>
+
+    /**
+     * Reconcile Button ToolTip.
+     */
+<span class="nc" id="L117">    private static final String TIP_RECONCILE = MoneyWiseUIResource.ICON_RECONCILE.getValue();</span>
+
+    /**
+     * Release Button ToolTip.
+     */
+<span class="nc" id="L122">    private static final String TIP_RELEASE = MoneyWiseUIResource.ICON_RELEASE.getValue();</span>
+
+    /**
+     * Frozen Button ToolTip.
+     */
+<span class="nc" id="L127">    private static final String TIP_FROZEN = MoneyWiseUIResource.ICON_FROZEN.getValue();</span>
+
+    /**
+     * Locked Button ToolTip.
+     */
+<span class="nc" id="L132">    private static final String TIP_LOCKED = MoneyWiseUIResource.ICON_LOCKED.getValue();</span>
+
+    /**
+     * Lock Button ToolTip.
+     */
+<span class="nc" id="L137">    private static final String TIP_LOCK = MoneyWiseUIResource.ICON_LOCK.getValue();</span>
+
+    /**
+     * UnLock Button ToolTip.
+     */
+<span class="nc" id="L142">    private static final String TIP_UNLOCK = MoneyWiseUIResource.ICON_UNLOCK.getValue();</span>
+
+    /**
+     * DirectionTo Button ToolTip.
+     */
+<span class="nc" id="L147">    private static final String TIP_DIRTO = MoneyWiseUIResource.ICON_DIRTO.getValue();</span>
+
+    /**
+     * DirectionFrom Button ToolTip.
+     */
+<span class="nc" id="L152">    private static final String TIP_DIRFROM = MoneyWiseUIResource.ICON_DIRFROM.getValue();</span>
+
+    /**
+     * Source name.
+     */
+    private final String theSource;
+
+    /**
+     * Constructor.
+     * @param pSourceName the source name
+     */
+<span class="nc" id="L163">    MoneyWiseIcon(final String pSourceName) {</span>
+<span class="nc" id="L164">        theSource = pSourceName;</span>
+<span class="nc" id="L165">    }</span>
+
+    @Override
+    public String getSourceName() {
+<span class="nc" id="L169">        return theSource;</span>
+    }
+
+    @Override
+    public InputStream getInputStream() {
+<span class="nc" id="L174">        return MoneyWiseIcon.class.getResourceAsStream(theSource);</span>
+    }
+
+    /**
+     * Configure locked icon button.
+     * @param pFactory the gui factory
+     * @return the mapSet configuration
+     */
+    public static Map&lt;Boolean, TethysUIIconMapSet&lt;Boolean&gt;&gt; configureLockedIconButton(final TethysUIFactory&lt;?&gt; pFactory) {
+        /* Create the map */
+<span class="nc" id="L184">        final Map&lt;Boolean, TethysUIIconMapSet&lt;Boolean&gt;&gt; myMap = new HashMap&lt;&gt;();</span>
+
+        /* Create the TRUE state */
+<span class="nc" id="L187">        final TethysUIButtonFactory&lt;?&gt; myButtons = pFactory.buttonFactory();</span>
+<span class="nc" id="L188">        TethysUIIconMapSet&lt;Boolean&gt; myMapSet = myButtons.newIconMapSet(MetisIcon.ICON_SIZE);</span>
+<span class="nc" id="L189">        myMapSet.setMappingsForValue(Boolean.TRUE, Boolean.FALSE, UNLOCKABLE, TIP_UNLOCK);</span>
+<span class="nc" id="L190">        myMapSet.setMappingsForValue(Boolean.FALSE, Boolean.TRUE, LOCKABLE, TIP_LOCK);</span>
+<span class="nc" id="L191">        myMap.put(Boolean.TRUE, myMapSet);</span>
+
+        /* Create the FALSE state */
+<span class="nc" id="L194">        myMapSet = myButtons.newIconMapSet(MetisIcon.ICON_SIZE);</span>
+<span class="nc" id="L195">        myMapSet.setMappingsForValue(Boolean.TRUE, Boolean.TRUE, LOCKED, TIP_LOCKED);</span>
+<span class="nc" id="L196">        myMapSet.setMappingsForValue(Boolean.FALSE, Boolean.FALSE, UNLOCKED, MetisIcon.TIP_ACTIVE);</span>
+<span class="nc" id="L197">        myMap.put(Boolean.FALSE, myMapSet);</span>
+
+        /* Return the map */
+<span class="nc" id="L200">        return myMap;</span>
+    }
+
+    /**
+     * Configure reconciled icon button.
+     * @param pFactory the gui factory
+     * @return the mapSet configuration
+     */
+    public static Map&lt;Boolean, TethysUIIconMapSet&lt;Boolean&gt;&gt; configureReconciledIconButton(final TethysUIFactory&lt;?&gt; pFactory) {
+        /* Create the map */
+<span class="nc" id="L210">        final Map&lt;Boolean, TethysUIIconMapSet&lt;Boolean&gt;&gt; myMap = new HashMap&lt;&gt;();</span>
+
+        /* Create the FALSE state */
+<span class="nc" id="L213">        final TethysUIButtonFactory&lt;?&gt; myButtons = pFactory.buttonFactory();</span>
+<span class="nc" id="L214">        TethysUIIconMapSet&lt;Boolean&gt; myMapSet = myButtons.newIconMapSet(MetisIcon.ICON_SIZE);</span>
+<span class="nc" id="L215">        myMapSet.setMappingsForValue(Boolean.TRUE, Boolean.FALSE, MetisIcon.COMMIT, TIP_RELEASE);</span>
+<span class="nc" id="L216">        myMapSet.setMappingsForValue(Boolean.FALSE, Boolean.TRUE, TIP_RECONCILE);</span>
+<span class="nc" id="L217">        myMap.put(Boolean.FALSE, myMapSet);</span>
+
+        /* Create the TRUE state */
+<span class="nc" id="L220">        myMapSet = myButtons.newIconMapSet(MetisIcon.ICON_SIZE);</span>
+<span class="nc" id="L221">        myMapSet.setMappingsForValue(Boolean.TRUE, Boolean.TRUE, FROZENRECONCILED, TIP_FROZEN);</span>
+<span class="nc" id="L222">        myMap.put(Boolean.TRUE, myMapSet);</span>
+
+        /* Return the map */
+<span class="nc" id="L225">        return myMap;</span>
+    }
+
+    /**
+     * Configure direction icon button.
+     * @param pFactory the gui factory
+     * @return the mapSet configuration
+     */
+    public static Map&lt;Boolean, TethysUIIconMapSet&lt;MoneyWiseAssetDirection&gt;&gt; configureDirectionIconButton(final TethysUIFactory&lt;?&gt; pFactory) {
+        /* Create the map */
+<span class="nc" id="L235">        final Map&lt;Boolean, TethysUIIconMapSet&lt;MoneyWiseAssetDirection&gt;&gt; myMap = new HashMap&lt;&gt;();</span>
+
+        /* Create the FALSE state */
+<span class="nc" id="L238">        final TethysUIButtonFactory&lt;?&gt; myButtons = pFactory.buttonFactory();</span>
+<span class="nc" id="L239">        TethysUIIconMapSet&lt;MoneyWiseAssetDirection&gt; myMapSet = myButtons.newIconMapSet(MetisIcon.ICON_SIZE);</span>
+<span class="nc" id="L240">        myMapSet.setMappingsForValue(MoneyWiseAssetDirection.TO, MoneyWiseAssetDirection.FROM, DIRTO, TIP_DIRTO);</span>
+<span class="nc" id="L241">        myMapSet.setMappingsForValue(MoneyWiseAssetDirection.FROM, MoneyWiseAssetDirection.TO, DIRFROM, TIP_DIRFROM);</span>
+<span class="nc" id="L242">        myMap.put(Boolean.FALSE, myMapSet);</span>
+
+        /* Create the TRUE state */
+<span class="nc" id="L245">        myMapSet = myButtons.newIconMapSet(MetisIcon.ICON_SIZE);</span>
+<span class="nc" id="L246">        myMapSet.setMappingsForValue(MoneyWiseAssetDirection.TO, MoneyWiseAssetDirection.TO, DIRTOLOCKED, TIP_DIRTO);</span>
+<span class="nc" id="L247">        myMapSet.setMappingsForValue(MoneyWiseAssetDirection.FROM, MoneyWiseAssetDirection.FROM, DIRFROMLOCKED, TIP_DIRFROM);</span>
+<span class="nc" id="L248">        myMap.put(Boolean.TRUE, myMapSet);</span>
+
+        /* Return the map */
+<span class="nc" id="L251">        return myMap;</span>
+    }
+
+    /**
+     * Configure option icon button.
+     * @param pFactory the gui factory
+     * @return the mapSet configuration
+     */
+    public static Map&lt;Boolean, TethysUIIconMapSet&lt;Boolean&gt;&gt; configureOptionIconButton(final TethysUIFactory&lt;?&gt; pFactory) {
+        /* Create the map */
+<span class="nc" id="L261">        final Map&lt;Boolean, TethysUIIconMapSet&lt;Boolean&gt;&gt; myMap = new HashMap&lt;&gt;();</span>
+
+        /* Create the TRUE state */
+<span class="nc" id="L264">        final TethysUIButtonFactory&lt;?&gt; myButtons = pFactory.buttonFactory();</span>
+<span class="nc" id="L265">        TethysUIIconMapSet&lt;Boolean&gt; myMapSet = myButtons.newIconMapSet(MetisIcon.ICON_SIZE);</span>
+<span class="nc" id="L266">        myMapSet.setMappingsForValue(Boolean.TRUE, Boolean.FALSE, BOXCHECK);</span>
+<span class="nc" id="L267">        myMapSet.setMappingsForValue(Boolean.FALSE, Boolean.TRUE, BOXCLEAR);</span>
+<span class="nc" id="L268">        myMap.put(Boolean.TRUE, myMapSet);</span>
+
+        /* Create the FALSE state */
+<span class="nc" id="L271">        myMapSet = myButtons.newIconMapSet(MetisIcon.ICON_SIZE);</span>
+<span class="nc" id="L272">        myMapSet.setMappingsForValue(Boolean.TRUE, Boolean.TRUE, FROZENBOXCHECK);</span>
+<span class="nc" id="L273">        myMapSet.setMappingsForValue(Boolean.FALSE, Boolean.FALSE, FROZENBOXCLEAR);</span>
+<span class="nc" id="L274">        myMap.put(Boolean.FALSE, myMapSet);</span>
+
+        /* Return the map */
+<span class="nc" id="L277">        return myMap;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

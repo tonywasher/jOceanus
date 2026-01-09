@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PrometheusDBConfig.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Prometheus Core Application Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.prometheus.database</a> &gt; <span class="el_source">PrometheusDBConfig.java</span></div><h1>PrometheusDBConfig.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Prometheus: Application Framework
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.prometheus.database;
+
+import net.sourceforge.joceanus.prometheus.database.PrometheusDatabase.PrometheusDatabasePreferenceKey;
+import net.sourceforge.joceanus.prometheus.database.PrometheusDatabase.PrometheusDatabasePreferences;
+
+/**
+ * Database config.
+ */
+public class PrometheusDBConfig {
+    /**
+     * Default user name.
+     */
+    private static final String DEFAULT_USER = &quot;testUser&quot;;
+
+    /**
+     * Default password.
+     */
+<span class="nc" id="L34">    private static final char[] DEFAULT_PASS = &quot;testPass&quot;.toCharArray();</span>
+
+    /**
+     * Default server.
+     */
+    private static final String DEFAULT_SERVER = &quot;localhost&quot;;
+
+    /**
+     * Default batchSize.
+     */
+    private static final int DEFAULT_BATCH = 50;
+
+    /**
+     * JDBC Driver.
+     */
+    private PrometheusJDBCDriver theDriver;
+
+    /**
+     * Username.
+     */
+    private String theUser;
+
+    /**
+     * Password.
+     */
+    private char[] thePassword;
+
+    /**
+     * Server.
+     */
+    private String theServer;
+
+    /**
+     * Instance.
+     */
+    private String theInstance;
+
+    /**
+     * Port.
+     */
+    private Integer thePort;
+
+    /**
+     * BatchSize.
+     */
+    private int theBatch;
+
+    /**
+     * Constructor.
+     */
+<span class="nc" id="L84">    public PrometheusDBConfig() {</span>
+<span class="nc" id="L85">    }</span>
+
+    /**
+     * Set the driver.
+     * @param pDriver the driver
+     */
+    public void setDriver(final PrometheusJDBCDriver pDriver) {
+<span class="nc" id="L92">        theDriver = pDriver;</span>
+<span class="nc" id="L93">    }</span>
+
+    /**
+     * Get driver.
+     * @return the driver
+     */
+    public PrometheusJDBCDriver getDriver() {
+<span class="nc" id="L100">        return theDriver;</span>
+    }
+
+    /**
+     * Set the user.
+     * @param pUser the user
+     */
+    public void setUser(final String pUser) {
+<span class="nc" id="L108">        theUser = pUser;</span>
+<span class="nc" id="L109">    }</span>
+
+    /**
+     * Get user.
+     * @return the user
+     */
+    public String getUser() {
+<span class="nc" id="L116">        return theUser;</span>
+    }
+
+    /**
+     * Set the password.
+     * @param pPassword the password
+     */
+    public void setPassword(final char[] pPassword) {
+<span class="nc" id="L124">        thePassword = pPassword;</span>
+<span class="nc" id="L125">    }</span>
+
+    /**
+     * Get password.
+     * @return the password
+     */
+    public char[] getPassword() {
+<span class="nc" id="L132">        return thePassword;</span>
+    }
+
+    /**
+     * Set the server.
+     * @param pServer the server
+     */
+    public void setServer(final String pServer) {
+<span class="nc" id="L140">        theServer = pServer;</span>
+<span class="nc" id="L141">    }</span>
+
+    /**
+     * Get server.
+     * @return the server
+     */
+    public String getServer() {
+<span class="nc" id="L148">        return theServer;</span>
+    }
+
+    /**
+     * Set the instance.
+     * @param pInstance the instance
+     */
+    public void setInstance(final String pInstance) {
+<span class="nc" id="L156">        theInstance = pInstance;</span>
+<span class="nc" id="L157">    }</span>
+
+    /**
+     * Get instance.
+     * @return the instance
+     */
+    public String getInstance() {
+<span class="nc" id="L164">        return theInstance;</span>
+    }
+
+    /**
+     * Set the port.
+     * @param pPort the port
+     */
+    public void setPort(final Integer pPort) {
+<span class="nc" id="L172">        thePort = pPort;</span>
+<span class="nc" id="L173">    }</span>
+
+    /**
+     * Get port.
+     * @return the port
+     */
+    public Integer getPort() {
+<span class="nc" id="L180">        return thePort;</span>
+    }
+
+    /**
+     * Set the batchSize.
+     * @param pSize the batchSize
+     */
+    public void setBatchSize(final int pSize) {
+<span class="nc" id="L188">        theBatch = pSize;</span>
+<span class="nc" id="L189">    }</span>
+
+    /**
+     * Get batchSize.
+     * @return the batchSize
+     */
+    public int getBatchSize() {
+<span class="nc" id="L196">        return theBatch;</span>
+    }
+
+    /**
+     * Construct config from prefs.
+     * @param pPreferences the preferences
+     * @return the config
+     */
+    public static PrometheusDBConfig fromPrefs(final PrometheusDatabasePreferences pPreferences) {
+<span class="nc" id="L205">        final PrometheusDBConfig myConfig = new PrometheusDBConfig();</span>
+<span class="nc" id="L206">        myConfig.setDriver(pPreferences.getEnumValue(PrometheusDatabasePreferenceKey.DBDRIVER, PrometheusJDBCDriver.class));</span>
+<span class="nc" id="L207">        myConfig.setUser(pPreferences.getStringValue(PrometheusDatabasePreferenceKey.DBUSER));</span>
+<span class="nc" id="L208">        myConfig.setPassword(pPreferences.getCharArrayValue(PrometheusDatabasePreferenceKey.DBPASS));</span>
+<span class="nc" id="L209">        myConfig.setServer(pPreferences.getStringValue(PrometheusDatabasePreferenceKey.DBSERVER));</span>
+<span class="nc" id="L210">        myConfig.setBatchSize(pPreferences.getIntegerValue(PrometheusDatabasePreferenceKey.DBBATCH));</span>
+<span class="nc bnc" id="L211" title="All 2 branches missed.">        if (myConfig.getDriver().usePort()) {</span>
+<span class="nc" id="L212">            myConfig.setPort(pPreferences.getIntegerValue(PrometheusDatabasePreferenceKey.DBPORT));</span>
+        }
+<span class="nc bnc" id="L214" title="All 2 branches missed.">        if (myConfig.getDriver().useInstance()) {</span>
+<span class="nc" id="L215">            myConfig.setInstance(pPreferences.getStringValue(PrometheusDatabasePreferenceKey.DBINSTANCE));</span>
+        }
+<span class="nc" id="L217">        return myConfig;</span>
+    }
+
+    /**
+     * Construct a simple postgres config.
+     * @return the config
+     */
+    public static PrometheusDBConfig postgres() {
+<span class="nc" id="L225">        final PrometheusDBConfig myConfig = new PrometheusDBConfig();</span>
+<span class="nc" id="L226">        myConfig.setDriver(PrometheusJDBCDriver.POSTGRESQL);</span>
+<span class="nc" id="L227">        myConfig.setUser(DEFAULT_USER);</span>
+<span class="nc" id="L228">        myConfig.setPassword(DEFAULT_PASS);</span>
+<span class="nc" id="L229">        myConfig.setServer(DEFAULT_SERVER);</span>
+<span class="nc" id="L230">        myConfig.setPort(PrometheusJDBCDriver.PORT_POSTGRESQL);</span>
+<span class="nc" id="L231">        myConfig.setBatchSize(DEFAULT_BATCH);</span>
+<span class="nc" id="L232">        return myConfig;</span>
+    }
+
+    /**
+     * Construct a simple mysql config.
+     * @return the config
+     */
+    public static PrometheusDBConfig mysql() {
+<span class="nc" id="L240">        final PrometheusDBConfig myConfig = new PrometheusDBConfig();</span>
+<span class="nc" id="L241">        myConfig.setDriver(PrometheusJDBCDriver.MYSQL);</span>
+<span class="nc" id="L242">        myConfig.setUser(DEFAULT_USER);</span>
+<span class="nc" id="L243">        myConfig.setPassword(DEFAULT_PASS);</span>
+<span class="nc" id="L244">        myConfig.setServer(DEFAULT_SERVER);</span>
+<span class="nc" id="L245">        myConfig.setPort(PrometheusJDBCDriver.PORT_MARIADB);</span>
+<span class="nc" id="L246">        myConfig.setBatchSize(DEFAULT_BATCH);</span>
+<span class="nc" id="L247">        return myConfig;</span>
+    }
+
+    /**
+     * Construct a simple mariaDB config.
+     * @return the config
+     */
+    public static PrometheusDBConfig mariaDB() {
+<span class="nc" id="L255">        final PrometheusDBConfig myConfig = new PrometheusDBConfig();</span>
+<span class="nc" id="L256">        myConfig.setDriver(PrometheusJDBCDriver.MARIADB);</span>
+<span class="nc" id="L257">        myConfig.setUser(DEFAULT_USER);</span>
+<span class="nc" id="L258">        myConfig.setPassword(DEFAULT_PASS);</span>
+<span class="nc" id="L259">        myConfig.setServer(DEFAULT_SERVER);</span>
+<span class="nc" id="L260">        myConfig.setPort(PrometheusJDBCDriver.PORT_MARIADB);</span>
+<span class="nc" id="L261">        myConfig.setBatchSize(DEFAULT_BATCH);</span>
+<span class="nc" id="L262">        return myConfig;</span>
+    }
+
+    /**
+     * Construct a simple selserver config.
+     * @return the config
+     */
+    public static PrometheusDBConfig sqlserver() {
+<span class="nc" id="L270">        final PrometheusDBConfig myConfig = new PrometheusDBConfig();</span>
+<span class="nc" id="L271">        myConfig.setDriver(PrometheusJDBCDriver.SQLSERVER);</span>
+<span class="nc" id="L272">        myConfig.setUser(DEFAULT_USER);</span>
+<span class="nc" id="L273">        myConfig.setPassword(DEFAULT_PASS);</span>
+<span class="nc" id="L274">        myConfig.setServer(DEFAULT_SERVER);</span>
+<span class="nc" id="L275">        myConfig.setInstance(PrometheusJDBCDriver.INSTANCE_SQLEXPRESS);</span>
+<span class="nc" id="L276">        myConfig.setBatchSize(DEFAULT_BATCH);</span>
+<span class="nc" id="L277">        return myConfig;</span>
+    }
+
+    /**
+     * Construct a simple h2 config.
+     * @return the config
+     */
+    public static PrometheusDBConfig h2() {
+<span class="nc" id="L285">        final PrometheusDBConfig myConfig = new PrometheusDBConfig();</span>
+<span class="nc" id="L286">        myConfig.setDriver(PrometheusJDBCDriver.H2);</span>
+<span class="nc" id="L287">        myConfig.setUser(DEFAULT_USER);</span>
+<span class="nc" id="L288">        myConfig.setPassword(DEFAULT_PASS);</span>
+<span class="nc" id="L289">        myConfig.setServer(DEFAULT_SERVER);</span>
+<span class="nc" id="L290">        myConfig.setBatchSize(DEFAULT_BATCH);</span>
+<span class="nc" id="L291">        return myConfig;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

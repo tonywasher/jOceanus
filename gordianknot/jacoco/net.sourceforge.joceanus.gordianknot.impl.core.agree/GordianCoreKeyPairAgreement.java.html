@@ -1,0 +1,430 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCoreKeyPairAgreement.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.gordianknot.impl.core.agree</a> &gt; <span class="el_source">GordianCoreKeyPairAgreement.java</span></div><h1>GordianCoreKeyPairAgreement.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * GordianKnot: Security Suite
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.gordianknot.impl.core.agree;
+
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreement;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementFactory;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementStatus;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianKDFType;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianAgreementMessageASN1.GordianMessageType;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPair;
+import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianPrivateKey;
+import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianPublicKey;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.crypto.DerivationFunction;
+import org.bouncycastle.crypto.DerivationParameters;
+import org.bouncycastle.crypto.agreement.kdf.ConcatenationKDFGenerator;
+import org.bouncycastle.crypto.digests.SHA256Digest;
+import org.bouncycastle.crypto.digests.SHA512Digest;
+import org.bouncycastle.crypto.generators.KDF2BytesGenerator;
+import org.bouncycastle.crypto.params.KDFParameters;
+import org.bouncycastle.util.Arrays;
+
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Objects;
+
+/**
+ * Core KeyPairAgreement.
+ */
+public abstract class GordianCoreKeyPairAgreement
+    extends GordianCoreAgreement
+    implements GordianAgreement {
+    /**
+     * The keyDerivation function.
+     */
+    private DerivationFunction theKDF;
+
+    /**
+     * The clientId.
+     */
+    private Integer theClientId;
+
+    /**
+     * Constructor.
+     * @param pFactory the factory
+     * @param pSpec the agreementSpec
+     */
+    protected GordianCoreKeyPairAgreement(final GordianBaseFactory pFactory,
+                                          final GordianAgreementSpec pSpec) {
+<span class="fc" id="L68">        super(pFactory, pSpec);</span>
+<span class="fc" id="L69">    }</span>
+
+    /**
+     * Obtain the agreement factory.
+     * @return the factory
+     */
+    protected GordianCoreAgreementFactory getAgreementFactory() {
+<span class="fc" id="L76">        return (GordianCoreAgreementFactory) getFactory().getAsyncFactory().getAgreementFactory();</span>
+    }
+
+    /**
+     * CheckKeyPair.
+     * @param pKeyPair the keyPair
+     * @throws GordianException on error
+     */
+    protected void checkKeyPair(final GordianKeyPair pKeyPair) throws GordianException {
+        /* Check that the KeyPair is valid */
+<span class="fc" id="L86">        final GordianAgreementFactory myAgrees = getAgreementFactory();</span>
+<span class="pc bpc" id="L87" title="1 of 2 branches missed.">        if (!myAgrees.validAgreementSpecForKeyPair(pKeyPair, getAgreementSpec())) {</span>
+<span class="nc" id="L88">            throw new GordianDataException(&quot;Incorrect KeyPair type&quot;);</span>
+        }
+<span class="fc" id="L90">    }</span>
+
+    /**
+     * Obtain public key from pair.
+     * @param pKeyPair the keyPair
+     * @return the public key
+     */
+    protected GordianPublicKey getPublicKey(final GordianKeyPair pKeyPair) {
+
+<span class="fc" id="L99">        return ((GordianCoreKeyPair) pKeyPair).getPublicKey();</span>
+    }
+
+    /**
+     * Obtain private key from pair.
+     * @param pKeyPair the keyPair
+     * @return the private key
+     * @throws GordianException on error
+     */
+    protected GordianPrivateKey getPrivateKey(final GordianKeyPair pKeyPair) throws GordianException {
+<span class="pc bpc" id="L109" title="1 of 2 branches missed.">        if (pKeyPair.isPublicOnly()) {</span>
+<span class="nc" id="L110">            throw new GordianDataException(&quot;missing privateKey&quot;);</span>
+        }
+<span class="fc" id="L112">        return ((GordianCoreKeyPair) pKeyPair).getPrivateKey();</span>
+    }
+
+    @Override
+    protected void storeSecret(final byte[] pSecret) throws GordianException {
+        /* Protect against failure */
+<span class="fc" id="L118">        final byte[] mySecret = new byte[pSecret.length];</span>
+        try {
+            /* If we have a kdf */
+<span class="fc bfc" id="L121" title="All 2 branches covered.">            if (theKDF != null) {</span>
+                /* Create KDF Parameters */
+<span class="fc" id="L123">                final KDFParameters myParms = new KDFParameters(pSecret, new byte[0]);</span>
+<span class="fc" id="L124">                theKDF.init(myParms);</span>
+
+                /* Create the secret */
+<span class="fc" id="L127">                theKDF.generateBytes(mySecret, 0, mySecret.length);</span>
+<span class="fc" id="L128">                processSecret(mySecret);</span>
+
+<span class="fc" id="L130">            } else {</span>
+                /* Just process the secret */
+<span class="fc" id="L132">                processSecret(pSecret);</span>
+            }
+
+            /* Clear buffers */
+        } finally {
+            /* Clear the secret */
+<span class="fc" id="L138">            Arrays.fill(mySecret, (byte) 0);</span>
+<span class="fc" id="L139">            Arrays.fill(pSecret, (byte) 0);</span>
+        }
+<span class="fc" id="L141">    }</span>
+
+    /**
+     * Enable additional derivation of secret.
+     */
+    protected void enableDerivation() {
+        /* Only enable derivation if it is not none */
+<span class="fc" id="L148">        final GordianAgreementSpec mySpec = getAgreementSpec();</span>
+<span class="fc bfc" id="L149" title="All 2 branches covered.">        if (!GordianKDFType.NONE.equals(mySpec.getKDFType())) {</span>
+<span class="fc" id="L150">            theKDF = newDerivationFunction();</span>
+        }
+<span class="fc" id="L152">    }</span>
+
+    /**
+     * Obtain the required derivation function.
+     * @return the derivation function
+     */
+    protected DerivationFunction newDerivationFunction() {
+<span class="fc" id="L159">        final GordianAgreementSpec mySpec = getAgreementSpec();</span>
+<span class="fc bfc" id="L160" title="All 5 branches covered.">        switch (mySpec.getKDFType()) {</span>
+            case SHA256KDF:
+<span class="fc" id="L162">                return new KDF2BytesGenerator(new SHA256Digest());</span>
+            case SHA512KDF:
+<span class="fc" id="L164">                return new KDF2BytesGenerator(new SHA512Digest());</span>
+            case SHA256CKDF:
+<span class="fc" id="L166">                return new ConcatenationKDFGenerator(new SHA256Digest());</span>
+            case SHA512CKDF:
+<span class="fc" id="L168">                return new ConcatenationKDFGenerator(new SHA512Digest());</span>
+            case NONE:
+            default:
+<span class="fc" id="L171">                return new GordianNullKeyDerivation();</span>
+        }
+    }
+
+    @Override
+    public void reset() {
+        /* Reset underlying details */
+<span class="fc" id="L178">        super.reset();</span>
+
+        /* Reset client details */
+<span class="fc" id="L181">        theClientId = null;</span>
+<span class="fc" id="L182">    }</span>
+
+    /**
+     * Store client id.
+     * @param pId the id
+     */
+    protected void storeClientId(final Integer pId) {
+        /* Store the initVector */
+<span class="fc" id="L190">        theClientId = pId;</span>
+<span class="fc" id="L191">    }</span>
+
+    /**
+     * Obtain the clientId.
+     * @return the clientId
+     */
+    protected Integer getClientId() {
+<span class="fc" id="L198">        return theClientId;</span>
+    }
+
+    /**
+     * Build clientHello message.
+     * @return the clientHello message
+     * @throws GordianException on error
+     */
+    protected GordianAgreementMessageASN1 buildClientHelloASN1() throws GordianException {
+<span class="fc" id="L207">        return buildClientHelloASN1(null, null);</span>
+    }
+
+    /**
+     * Build clientHello message.
+     * @param pEncapsulated the encapsulated message
+     * @return the clientHello message
+     * @throws GordianException on error
+     */
+    protected GordianAgreementMessageASN1 buildClientHelloASN1(final byte[] pEncapsulated) throws GordianException {
+<span class="fc" id="L217">        return buildClientHelloASN1(pEncapsulated, null);</span>
+    }
+
+    /**
+     * Build clientHello message.
+     * @param pEphemeral the ephemeral publicKey
+     * @return the clientHello message
+     * @throws GordianException on error
+     */
+    protected GordianAgreementMessageASN1 buildClientHelloASN1(final X509EncodedKeySpec pEphemeral) throws GordianException {
+<span class="fc" id="L227">        return buildClientHelloASN1(null, pEphemeral);</span>
+    }
+
+    /**
+     * Build clientHello message.
+     * @param pEncapsulated the encapsulated message
+     * @param pEphemeral the ephemeral publicKey
+     * @return the clientHello message
+     * @throws GordianException on error
+     */
+    GordianAgreementMessageASN1 buildClientHelloASN1(final byte[] pEncapsulated,
+                                                     final X509EncodedKeySpec pEphemeral) throws GordianException {
+        /* Must be in clean state */
+<span class="fc" id="L240">        checkStatus(GordianAgreementStatus.CLEAN);</span>
+
+        /* Access the algorithm details */
+<span class="fc" id="L243">        final GordianCoreAgreementFactory myFactory = getAgreementFactory();</span>
+<span class="fc" id="L244">        final GordianAgreementSpec mySpec = getAgreementSpec();</span>
+<span class="fc" id="L245">        final AlgorithmIdentifier myAlgId = myFactory.getIdentifierForSpec(mySpec);</span>
+<span class="fc" id="L246">        final AlgorithmIdentifier myResId = getIdentifierForResult();</span>
+
+        /* Determine the clientId */
+<span class="fc bfc" id="L249" title="All 2 branches covered.">        if (theClientId == null) {</span>
+<span class="fc bfc" id="L250" title="All 2 branches covered.">            theClientId = mySpec.getAgreementType().isAnonymous()</span>
+<span class="fc" id="L251">                    ? null</span>
+<span class="fc" id="L252">                    : myFactory.getNextId();</span>
+        }
+
+        /* Create the clientHello */
+<span class="fc" id="L256">        return GordianAgreementMessageASN1.newClientHello(theClientId)</span>
+<span class="fc" id="L257">                .setAgreementId(myAlgId)</span>
+<span class="fc" id="L258">                .setResultId(myResId)</span>
+<span class="fc" id="L259">                .setEncapsulated(pEncapsulated)</span>
+<span class="fc" id="L260">                .setEphemeral(pEphemeral)</span>
+<span class="fc" id="L261">                .setInitVector(newClientIV());</span>
+    }
+
+    /**
+     * Parse the incoming clientHello message.
+     * @param pClientHello the incoming clientHello message
+     * @throws GordianException on error
+     */
+    protected void parseClientHelloASN1(final GordianAgreementMessageASN1 pClientHello) throws GordianException {
+        /* Access message parts */
+<span class="fc" id="L271">        final AlgorithmIdentifier myAlgId = pClientHello.getAgreementId();</span>
+<span class="fc" id="L272">        final AlgorithmIdentifier myResId = pClientHello.getResultId();</span>
+<span class="fc" id="L273">        final byte[] myInitVector = pClientHello.getInitVector();</span>
+<span class="fc" id="L274">        theClientId = pClientHello.getClientId();</span>
+
+        /* Check agreementSpec */
+<span class="fc" id="L277">        final GordianCoreAgreementFactory myFactory = getAgreementFactory();</span>
+<span class="fc" id="L278">        final GordianAgreementSpec mySpec = myFactory.getSpecForIdentifier(myAlgId);</span>
+<span class="pc bpc" id="L279" title="1 of 2 branches missed.">        if (!Objects.equals(mySpec, getAgreementSpec())) {</span>
+<span class="nc" id="L280">            throw new GordianDataException(ERROR_INVSPEC);</span>
+        }
+
+        /* Process result identifier */
+<span class="fc" id="L284">        processResultIdentifier(myResId);</span>
+
+        /* Store client initVector */
+<span class="fc" id="L287">        storeClientIV(myInitVector);</span>
+<span class="fc" id="L288">    }</span>
+
+    /**
+     * Build serverHello message.
+     * @return the serverHello message
+     * @throws GordianException on error
+     */
+    protected GordianAgreementMessageASN1 buildServerHello() throws GordianException {
+<span class="fc" id="L296">        return buildServerHello(null, null);</span>
+    }
+
+    /**
+     * Build serverHello message.
+     * @param pEphemeral the ephemeral publicKey
+     * @param pConfirmation the confirmationTag
+     * @return the serverHello message
+     * @throws GordianException on error
+     */
+    protected GordianAgreementMessageASN1 buildServerHello(final X509EncodedKeySpec pEphemeral,
+                                                           final byte[] pConfirmation) throws GordianException {
+        /* Access message parts */
+<span class="fc" id="L309">        final GordianCoreAgreementFactory myFactory = getAgreementFactory();</span>
+<span class="fc" id="L310">        final GordianAgreementSpec mySpec = getAgreementSpec();</span>
+<span class="fc" id="L311">        final AlgorithmIdentifier myAlgId = myFactory.getIdentifierForSpec(mySpec);</span>
+
+        /* Determine the serverId */
+<span class="fc bfc" id="L314" title="All 2 branches covered.">        final Integer myServerId = Boolean.TRUE.equals(mySpec.withConfirm()) ?  myFactory.getNextId() : null;</span>
+
+        /* Create the serverHello */
+<span class="fc" id="L317">        final GordianAgreementMessageASN1 myServerHello = GordianAgreementMessageASN1.newServerHello(theClientId, myServerId)</span>
+<span class="fc" id="L318">                                                                  .setAgreementId(myAlgId)</span>
+<span class="fc" id="L319">                                                                  .setInitVector(getServerIV())</span>
+<span class="fc" id="L320">                                                                  .setEphemeral(pEphemeral)</span>
+<span class="fc" id="L321">                                                                  .setConfirmation(pConfirmation);</span>
+
+        /* If there is a server confirmation, set status */
+<span class="fc bfc" id="L324" title="All 2 branches covered.">        if (pConfirmation != null) {</span>
+<span class="fc" id="L325">            setStatus(GordianAgreementStatus.AWAITING_CLIENTCONFIRM);</span>
+        }
+
+        /* return the serverHello */
+<span class="fc" id="L329">        return myServerHello;</span>
+    }
+
+    /**
+     * Build serverHello message.
+     * @param pEphemeral the ephemeral publicKey
+     * @param pSignId the signatureId
+     * @param pSignature the signature
+     * @return the serverHello message
+     * @throws GordianException on error
+     */
+    protected GordianAgreementMessageASN1 buildServerHello(final X509EncodedKeySpec pEphemeral,
+                                                           final AlgorithmIdentifier pSignId,
+                                                           final byte[] pSignature) throws GordianException {
+        /* Create the serverHello */
+<span class="fc" id="L344">        final GordianCoreAgreementFactory myFactory = getAgreementFactory();</span>
+<span class="fc" id="L345">        final GordianAgreementSpec mySpec = getAgreementSpec();</span>
+<span class="fc" id="L346">        final AlgorithmIdentifier myAlgId = myFactory.getIdentifierForSpec(mySpec);</span>
+<span class="fc" id="L347">        return GordianAgreementMessageASN1.newServerHello(theClientId, null)</span>
+<span class="fc" id="L348">                .setAgreementId(myAlgId)</span>
+<span class="fc" id="L349">                .setInitVector(getServerIV())</span>
+<span class="fc" id="L350">                .setEphemeral(pEphemeral)</span>
+<span class="fc" id="L351">                .setSignature(pSignId, pSignature);</span>
+    }
+
+    /**
+     * Parse the incoming serverHello message.
+     * @param pServerHello the serverHello message
+     * @return the parsed ASN1
+     * @throws GordianException on error
+     */
+    protected GordianAgreementMessageASN1 parseServerHello(final byte[] pServerHello) throws GordianException {
+        /* Must be in awaiting serverHello state */
+<span class="nc" id="L362">        checkStatus(GordianAgreementStatus.AWAITING_SERVERHELLO);</span>
+
+        /* Access the sequence */
+<span class="nc" id="L365">        final GordianAgreementMessageASN1 myServerHello = GordianAgreementMessageASN1.getInstance(pServerHello);</span>
+<span class="nc" id="L366">        myServerHello.checkMessageType(GordianMessageType.SERVERHELLO);</span>
+
+        /* Parse the serverHello */
+<span class="nc" id="L369">        parseServerHelloASN1(myServerHello);</span>
+
+        /* Return the ASN1 */
+<span class="nc" id="L372">        return myServerHello;</span>
+    }
+
+    /**
+     * Parse the incoming serverHello message.
+     * @param pServerHello the serverHello ASN1
+     * @throws GordianException on error
+     */
+    protected void parseServerHelloASN1(final GordianAgreementMessageASN1 pServerHello) throws GordianException {
+        /* Access message parts */
+<span class="fc" id="L382">        final AlgorithmIdentifier myAlgId = pServerHello.getAgreementId();</span>
+<span class="fc" id="L383">        final byte[] myInitVector = pServerHello.getInitVector();</span>
+
+        /* Check clientId */
+<span class="pc bpc" id="L386" title="1 of 2 branches missed.">        if (!Objects.equals(theClientId, pServerHello.getClientId())) {</span>
+<span class="nc" id="L387">            throw new GordianDataException(&quot;Mismatch on clientId&quot;);</span>
+        }
+
+        /* Check agreementSpec */
+<span class="fc" id="L391">        final GordianCoreAgreementFactory myFactory = getAgreementFactory();</span>
+<span class="fc" id="L392">        final GordianAgreementSpec mySpec = myFactory.getSpecForIdentifier(myAlgId);</span>
+<span class="pc bpc" id="L393" title="1 of 2 branches missed.">        if (!Objects.equals(mySpec, getAgreementSpec())) {</span>
+<span class="nc" id="L394">            throw new GordianDataException(ERROR_INVSPEC);</span>
+        }
+
+        /* Store server initVector */
+<span class="fc" id="L398">        storeServerIV(myInitVector);</span>
+<span class="fc" id="L399">    }</span>
+
+    /**
+     * NullKeyDerivation.
+     */
+<span class="fc" id="L404">    public static final class GordianNullKeyDerivation</span>
+            implements DerivationFunction {
+        /**
+         * The key.
+         */
+        private byte[] theKey;
+
+        @Override
+        public int generateBytes(final byte[] pBuffer,
+                                 final int pOffset,
+                                 final int pLength) {
+            /* Create the array that is to be copied */
+<span class="fc" id="L416">            final byte[] myKey = Arrays.copyOf(theKey, pLength);</span>
+<span class="fc" id="L417">            Arrays.fill(theKey, (byte) 0);</span>
+<span class="fc" id="L418">            System.arraycopy(myKey, 0, pBuffer, pOffset, pLength);</span>
+<span class="fc" id="L419">            Arrays.fill(myKey, (byte) 0);</span>
+<span class="fc" id="L420">            return pLength;</span>
+        }
+
+        @Override
+        public void init(final DerivationParameters pParms) {
+<span class="fc" id="L425">            final byte[] mySecret = ((KDFParameters) pParms).getSharedSecret();</span>
+<span class="fc" id="L426">            theKey = Arrays.copyOf(mySecret, mySecret.length);</span>
+<span class="fc" id="L427">        }</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

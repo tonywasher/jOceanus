@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisXAnalysisStatsModule.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.themis.xanalysis.stats</a> &gt; <span class="el_source">ThemisXAnalysisStatsModule.java</span></div><h1>ThemisXAnalysisStatsModule.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Themis: Java Project Framework
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.themis.xanalysis.stats;
+
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.themis.xanalysis.parser.proj.ThemisXAnalysisModule;
+import net.sourceforge.joceanus.themis.xanalysis.parser.proj.ThemisXAnalysisPackage;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Statistics Module.
+ */
+public class ThemisXAnalysisStatsModule {
+    /**
+     * The underlying module.
+     */
+    private final ThemisXAnalysisModule theModule;
+
+    /**
+     * The stats.
+     */
+    private final ThemisXAnalysisStats theStats;
+
+    /**
+     * The list of packages.
+     */
+    private final List&lt;ThemisXAnalysisStatsPackage&gt; thePackages;
+
+    /**
+     * Constructor.
+     * @param pModule the parsed module
+     * @throws OceanusException on error
+     */
+<span class="fc" id="L50">    ThemisXAnalysisStatsModule(final ThemisXAnalysisModule pModule) throws OceanusException {</span>
+        /* Store the parameters */
+<span class="fc" id="L52">        theModule = pModule;</span>
+
+        /* Create the stats */
+<span class="fc" id="L55">        theStats = new ThemisXAnalysisStats();</span>
+
+        /* Create the list and map */
+<span class="fc" id="L58">        thePackages = new ArrayList&lt;&gt;();</span>
+
+        /* Initialise the packages */
+<span class="fc bfc" id="L61" title="All 2 branches covered.">        for (ThemisXAnalysisPackage myPackage : theModule.getPackages()) {</span>
+<span class="fc" id="L62">            final ThemisXAnalysisStatsPackage myStatsPackage = new ThemisXAnalysisStatsPackage(myPackage);</span>
+<span class="fc" id="L63">            thePackages.add(myStatsPackage);</span>
+<span class="fc" id="L64">        }</span>
+<span class="fc" id="L65">    }</span>
+
+    /**
+     * Obtain the module.
+     * @return the module
+     */
+    public ThemisXAnalysisModule getUnderlying() {
+<span class="nc" id="L72">        return theModule;</span>
+    }
+
+    /**
+     * Obtain the stats.
+     * @return the stats
+     */
+    public ThemisXAnalysisStats getStats() {
+<span class="nc" id="L80">        return theStats;</span>
+    }
+
+    /**
+     * Obtain the packages.
+     * @return the packages
+     */
+    public List&lt;ThemisXAnalysisStatsPackage&gt; getPackages() {
+<span class="nc" id="L88">        return thePackages;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L93">        return theModule.toString();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

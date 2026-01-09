@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseAnalysisSecurityPriceCursor.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.lethe.data.analysis.data</a> &gt; <span class="el_source">MoneyWiseAnalysisSecurityPriceCursor.java</span></div><h1>MoneyWiseAnalysisSecurityPriceCursor.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.lethe.data.analysis.data;
+
+import java.util.Currency;
+import java.util.HashMap;
+import java.util.ListIterator;
+import java.util.Map;
+
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurity;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice.MoneyWiseSecurityPriceDataMap;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataInstanceMap;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
+
+/**
+ * Quick access to dated security Prices on an analysis pass.
+ */
+public class MoneyWiseAnalysisSecurityPriceCursor {
+    /**
+     * SecurityPrice data map.
+     */
+    private final MoneyWiseSecurityPriceDataMap theDataMap;
+
+    /**
+     * Cursor map.
+     */
+    private final Map&lt;MoneyWiseSecurity, MoneyWiseSecurityCursor&gt; theCursorMap;
+
+    /**
+     * Constructor.
+     * @param pData the dataSet
+     */
+<span class="fc" id="L50">    protected MoneyWiseAnalysisSecurityPriceCursor(final MoneyWiseDataSet pData) {</span>
+        /* Obtain the data map */
+<span class="fc" id="L52">        theDataMap = pData.getSecurityPriceDataMap();</span>
+
+        /* Create the cursor map */
+<span class="fc" id="L55">        theCursorMap = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L56">    }</span>
+
+    /**
+     * Obtain price for security and date.
+     * @param pSecurity the security
+     * @param pDate the date
+     * @return the security price
+     */
+    public OceanusPrice getSecurityPrice(final MoneyWiseSecurity pSecurity,
+                                         final OceanusDate pDate) {
+        /* Access cursor and return rate */
+<span class="nc" id="L67">        final MoneyWiseSecurityCursor myCursor = getCursor(pSecurity);</span>
+<span class="nc" id="L68">        return myCursor.getSecurityPrice(pDate);</span>
+    }
+
+    /**
+     * Obtain security cursor.
+     * @param pSecurity the security
+     * @return the cursor
+     */
+    private MoneyWiseSecurityCursor getCursor(final MoneyWiseSecurity pSecurity) {
+        /* Look for existing cursor */
+<span class="nc" id="L78">        MoneyWiseSecurityCursor myCursor = theCursorMap.get(pSecurity);</span>
+
+        /* If we do not have a cursor */
+<span class="nc bnc" id="L81" title="All 2 branches missed.">        if (myCursor == null) {</span>
+            /* Allocate new cursor */
+<span class="nc" id="L83">            myCursor = new MoneyWiseSecurityCursor(pSecurity);</span>
+<span class="nc" id="L84">            theCursorMap.put(pSecurity, myCursor);</span>
+        }
+
+        /* return the cursor */
+<span class="nc" id="L88">        return myCursor;</span>
+    }
+
+    /**
+     * Security Cursor class.
+     */
+    private final class MoneyWiseSecurityCursor {
+        /**
+         * SecurityPrice iterator.
+         */
+        private final ListIterator&lt;MoneyWiseSecurityPrice&gt; theIterator;
+
+        /**
+         * The current price.
+         */
+        private OceanusPrice theCurrent;
+
+        /**
+         * The next date.
+         */
+        private OceanusDate theNextDate;
+
+        /**
+         * The next price.
+         */
+        private OceanusPrice theNextPrice;
+
+        /**
+         * Constructor.
+         * @param pSecurity the security
+         */
+<span class="nc" id="L119">        private MoneyWiseSecurityCursor(final MoneyWiseSecurity pSecurity) {</span>
+            /* Create the default price */
+<span class="nc" id="L121">            final Currency myCurrency = pSecurity.getCurrency();</span>
+<span class="nc" id="L122">            theCurrent = OceanusPrice.getWholeUnits(PrometheusDataInstanceMap.ONE, myCurrency);</span>
+
+            /* Access the Price list */
+<span class="nc" id="L125">            theIterator = theDataMap.priceIterator(pSecurity);</span>
+
+            /* If we have an iterator */
+<span class="nc bnc" id="L128" title="All 2 branches missed.">            if (theIterator != null) {</span>
+                /* move the cursor */
+<span class="nc" id="L130">                moveCursor();</span>
+            }
+<span class="nc" id="L132">        }</span>
+
+        /**
+         * Move the cursor.
+         */
+        private void moveCursor() {
+            /* If we have an iterator */
+<span class="nc bnc" id="L139" title="All 2 branches missed.">            if (theIterator.hasPrevious()) {</span>
+                /* access next rate and record */
+<span class="nc" id="L141">                final MoneyWiseSecurityPrice myPrice = theIterator.previous();</span>
+<span class="nc" id="L142">                theNextPrice = myPrice.getPrice();</span>
+<span class="nc" id="L143">                theNextDate = myPrice.getDate();</span>
+<span class="nc" id="L144">            } else {</span>
+<span class="nc" id="L145">                theNextDate = null;</span>
+<span class="nc" id="L146">                theNextPrice = null;</span>
+            }
+<span class="nc" id="L148">        }</span>
+
+        /**
+         * Obtain security price for date.
+         * @param pDate the date
+         * @return the security price
+         */
+        private OceanusPrice getSecurityPrice(final OceanusDate pDate) {
+            /* if we have a later price */
+<span class="nc bnc" id="L157" title="All 2 branches missed.">            if (theNextDate != null) {</span>
+                /* while we need to move the cursor */
+<span class="nc bnc" id="L159" title="All 2 branches missed.">                while (pDate.compareTo(theNextDate) &gt;= 0) {</span>
+                    /* store price */
+<span class="nc" id="L161">                    theCurrent = theNextPrice;</span>
+
+                    /* move the cursor */
+<span class="nc" id="L164">                    moveCursor();</span>
+                }
+            }
+
+            /* Return the price */
+<span class="nc" id="L169">            return theCurrent;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

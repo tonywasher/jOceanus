@@ -1,0 +1,600 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCoreKeySet.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.gordianknot.impl.core.keyset</a> &gt; <span class="el_source">GordianCoreKeySet.java</span></div><h1>GordianCoreKeySet.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * GordianKnot: Security Suite
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.gordianknot.impl.core.keyset;
+
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
+import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherFactory;
+import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
+import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeyType;
+import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
+import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
+import net.sourceforge.joceanus.gordianknot.api.key.GordianKeyGenerator;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
+import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetAADCipher;
+import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetCipher;
+import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianParameters;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianPersonalisation.GordianPersonalId;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianValidator;
+import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreWrapper;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
+import net.sourceforge.joceanus.gordianknot.impl.core.key.GordianCoreKeyGenerator;
+import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianKeySetRecipe.GordianKeySetParameters;
+
+import java.io.IOException;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Random;
+import java.util.function.Predicate;
+
+/**
+ * A full set of symmetric keys, subject to the relevant predicate.
+ */
+public final class GordianCoreKeySet
+    implements GordianBaseKeySet {
+    /**
+     * The factory.
+     */
+    private final GordianBaseFactory theFactory;
+
+    /**
+     * The keySetSpec.
+     */
+    private final GordianKeySetSpec theSpec;
+
+    /**
+     * Map of KeySpec to symKey.
+     */
+    private final Map&lt;GordianSymKeySpec, GordianKey&lt;GordianSymKeySpec&gt;&gt; theSymKeyMap;
+
+    /**
+     * The underlying Cipher.
+     */
+    private final GordianMultiCipher theCipher;
+
+    /**
+     * Constructor.
+     *
+     * @param pFactory the factory
+     * @param pSpec the keySetSpec
+     * @throws GordianException on error
+     */
+    GordianCoreKeySet(final GordianBaseFactory pFactory,
+<span class="fc" id="L90">                      final GordianKeySetSpec pSpec) throws GordianException {</span>
+        /* Store parameters */
+<span class="fc" id="L92">        theFactory = pFactory;</span>
+<span class="fc" id="L93">        theSpec = pSpec;</span>
+
+        /* Create maps */
+<span class="fc" id="L96">        theSymKeyMap = new HashMap&lt;&gt;();</span>
+
+        /* Create the cipher */
+<span class="fc" id="L99">        theCipher = new GordianMultiCipher(this);</span>
+<span class="fc" id="L100">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param pSource the source
+     * @throws GordianException on error
+     */
+<span class="nc" id="L108">    private GordianCoreKeySet(final GordianCoreKeySet pSource) throws GordianException {</span>
+        /* Copy factory */
+<span class="nc" id="L110">        theFactory = pSource.getFactory();</span>
+<span class="nc" id="L111">        theSpec = pSource.getKeySetSpec();</span>
+
+        /* Copy the symKeyMap */
+<span class="nc" id="L114">        theSymKeyMap = new HashMap&lt;&gt;(pSource.getSymKeyMap());</span>
+
+        /* Create the cipher */
+<span class="nc" id="L117">        theCipher = new GordianMultiCipher(this);</span>
+<span class="nc" id="L118">    }</span>
+
+    /**
+     * Obtain the factory.
+     * @return the factory
+     */
+    public GordianBaseFactory getFactory() {
+<span class="fc" id="L125">        return theFactory;</span>
+    }
+
+    @Override
+    public GordianKeySetSpec getKeySetSpec() {
+<span class="fc" id="L130">        return theSpec;</span>
+    }
+
+    @Override
+    public Map&lt;GordianSymKeySpec, GordianKey&lt;GordianSymKeySpec&gt;&gt; getSymKeyMap() {
+<span class="fc" id="L135">        return theSymKeyMap;</span>
+    }
+
+    @Override
+    public GordianCoreKeySet cloneIt() throws GordianException  {
+<span class="nc" id="L140">        return new GordianCoreKeySet(this);</span>
+    }
+
+    /**
+     * Obtain the encryption length for a length of data.
+     * @param pDataLength the dataLength
+     * @return the encryption length
+     */
+    public static int getAADEncryptionLength(final int pDataLength) {
+<span class="fc" id="L149">        return GordianKeySetData.getEncryptionLength(pDataLength) + GordianCoreKeySetAADCipher.MACSIZE;</span>
+    }
+
+    @Override
+    public int getKeyWrapLength(final GordianLength pKeyLen) {
+<span class="fc" id="L154">        return getDataWrapLength(pKeyLen.getByteLength());</span>
+    }
+
+    /**
+     * Obtain the wrapped length for a length of data.
+     * @param pDataLength the dataLength
+     * @return the wrapped length
+     */
+    public static int getDataWrapLength(final int pDataLength) {
+<span class="fc" id="L163">        return GordianCoreWrapper.getKeyWrapLength(pDataLength, GordianKeySetData.BLOCKLEN)</span>
+<span class="fc" id="L164">                + GordianKeySetData.getEncryptionOverhead()</span>
+<span class="fc" id="L165">                + GordianCoreWrapper.getKeyWrapExpansion(GordianKeySetData.BLOCKLEN);</span>
+    }
+
+    /**
+     * Obtain the keySet wrap length.
+     * @param pKeyLen the keyLength.
+     * @return the wrapped length
+     */
+    public static int getKeySetWrapLength(final GordianLength pKeyLen) {
+        /* Count the number of KeySetSymTypes for 256 bit keys */
+<span class="nc" id="L175">        int myCount = 0;</span>
+<span class="nc bnc" id="L176" title="All 2 branches missed.">        for (GordianSymKeyType myType : GordianSymKeyType.values()) {</span>
+<span class="nc bnc" id="L177" title="All 2 branches missed.">            if (GordianValidator.validStdBlockSymKeyTypeForKeyLength(myType, pKeyLen)) {</span>
+<span class="nc" id="L178">                myCount++;</span>
+            }
+        }
+
+        /* Determine the length of the encoded keySet prior to wrapping */
+<span class="nc" id="L183">        final int mySize = GordianKeySetASN1.getEncodedLength(pKeyLen.getByteLength(), myCount);</span>
+<span class="nc" id="L184">        return getDataWrapLength(mySize);</span>
+    }
+
+    @Override
+    public int getPrivateKeyWrapLength(final GordianKeyPair pKeyPair) throws GordianException {
+        /* Determine and check the keySpec */
+<span class="fc" id="L190">        final GordianKeyPairFactory myFactory = theFactory.getAsyncFactory().getKeyPairFactory();</span>
+<span class="fc" id="L191">        final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(pKeyPair.getKeyPairSpec());</span>
+<span class="fc" id="L192">        final PKCS8EncodedKeySpec myPrivateKey = myGenerator.getPKCS8Encoding(pKeyPair);</span>
+<span class="fc" id="L193">        return getDataWrapLength(myPrivateKey.getEncoded().length);</span>
+    }
+
+    @Override
+    public int getKeySetWrapLength() {
+        /* Obtain the count of valid symKeyTypes */
+<span class="fc" id="L199">        final GordianValidator myValidator = theFactory.getValidator();</span>
+<span class="fc" id="L200">        final Predicate&lt;GordianSymKeyType&gt; myPredicate = myValidator.supportedKeySetSymKeyTypes(theSpec.getKeyLength());</span>
+<span class="fc" id="L201">        final int myCount = (int) Arrays.stream(GordianSymKeyType.values()).filter(myPredicate).count();</span>
+
+        /* Determine the size of the encoded ASN1 keySet */
+<span class="fc" id="L204">        final int mySize = GordianKeySetASN1.getEncodedLength(theSpec.getKeyLength().getByteLength(), myCount);</span>
+<span class="fc" id="L205">        return getDataWrapLength(mySize);</span>
+    }
+
+    @Override
+    public GordianKeySetCipher createCipher() throws GordianException {
+<span class="fc" id="L210">        return new GordianCoreKeySetCipher(this, false);</span>
+    }
+
+    @Override
+    public GordianKeySetAADCipher createAADCipher() throws GordianException {
+<span class="fc" id="L215">        return new GordianCoreKeySetAADCipher(this);</span>
+    }
+
+    @Override
+    public byte[] encryptBytes(final byte[] pBytes) throws GordianException {
+        /* Generate set of keys and initialisation vector */
+<span class="fc" id="L221">        final GordianKeySetRecipe myRecipe =  GordianKeySetRecipe.newRecipe(theFactory, theSpec, false);</span>
+<span class="fc" id="L222">        final GordianKeySetParameters myParams = myRecipe.getParameters();</span>
+
+        /* Initialise the ciphers */
+<span class="fc" id="L225">        theCipher.initCiphers(myParams, true);</span>
+<span class="fc" id="L226">        final int myOutLen = GordianKeySetRecipe.HDRLEN + theCipher.getOutputLength(pBytes.length);</span>
+<span class="fc" id="L227">        final byte[] myOutput = new byte[myOutLen];</span>
+
+        /* build the output */
+<span class="fc" id="L230">        myRecipe.buildHeader(myOutput);</span>
+<span class="fc" id="L231">        theCipher.finish(pBytes, 0, pBytes.length, myOutput, GordianKeySetRecipe.HDRLEN);</span>
+<span class="fc" id="L232">        return myOutput;</span>
+    }
+
+    @Override
+    public byte[] decryptBytes(final byte[] pBytes) throws GordianException {
+        /* Parse the bytes into the separate parts */
+<span class="fc" id="L238">        final GordianKeySetRecipe myRecipe = GordianKeySetRecipe.parseRecipe(theFactory, theSpec, pBytes, false);</span>
+<span class="fc" id="L239">        final GordianKeySetParameters myParams = myRecipe.getParameters();</span>
+
+        /* Initialise the ciphers */
+<span class="fc" id="L242">        theCipher.initCiphers(myParams, false);</span>
+<span class="fc" id="L243">        final int myOutLen = theCipher.getOutputLength(pBytes.length - GordianKeySetRecipe.HDRLEN);</span>
+<span class="fc" id="L244">        final byte[] myOutput = new byte[myOutLen];</span>
+
+        /* Build output */
+<span class="fc" id="L247">        final int myLen = theCipher.finish(pBytes, GordianKeySetRecipe.HDRLEN,</span>
+                pBytes.length - GordianKeySetRecipe.HDRLEN, myOutput, 0);
+<span class="pc bpc" id="L249" title="1 of 2 branches missed.">        return myLen == myOutLen</span>
+<span class="nc" id="L250">                ? myOutput</span>
+<span class="fc" id="L251">                : Arrays.copyOf(myOutput, myLen);</span>
+    }
+
+    @Override
+    public byte[] encryptAADBytes(final byte[] pBytes,
+                                  final byte[] pAAD) throws GordianException {
+        /* Creat cipher and initialise to encrypt */
+<span class="nc" id="L258">        final GordianKeySetAADCipher myCipher = createAADCipher();</span>
+<span class="nc" id="L259">        myCipher.initForEncrypt(pAAD);</span>
+
+        /* Build the output buffer */
+<span class="nc" id="L262">        final int myOutLen = myCipher.getOutputLength(pBytes.length);</span>
+<span class="nc" id="L263">        final byte[] myOutput = new byte[myOutLen];</span>
+
+        /* build the and return the output */
+<span class="nc" id="L266">        final int myLen = theCipher.finish(pBytes, 0, pBytes.length, myOutput, 0);</span>
+<span class="nc bnc" id="L267" title="All 2 branches missed.">        return myLen == myOutLen</span>
+<span class="nc" id="L268">               ? myOutput</span>
+<span class="nc" id="L269">               : Arrays.copyOf(myOutput, myLen);</span>
+    }
+
+    @Override
+    public byte[] decryptAADBytes(final byte[] pBytes,
+                                  final byte[] pAAD) throws GordianException {
+        /* Creat cipher and initialise to encrypt */
+<span class="nc" id="L276">        final GordianKeySetAADCipher myCipher = createAADCipher();</span>
+<span class="nc" id="L277">        myCipher.initForDecrypt(pAAD);</span>
+
+        /* Build the output buffer */
+<span class="nc" id="L280">        final int myOutLen = myCipher.getOutputLength(pBytes.length);</span>
+<span class="nc" id="L281">        final byte[] myOutput = new byte[myOutLen];</span>
+
+        /* build the and return the output */
+<span class="nc" id="L284">        final int myLen = theCipher.finish(pBytes, 0, pBytes.length, myOutput, 0);</span>
+<span class="nc bnc" id="L285" title="All 2 branches missed.">        return myLen == myOutLen</span>
+<span class="nc" id="L286">               ? myOutput</span>
+<span class="nc" id="L287">               : Arrays.copyOf(myOutput, myLen);</span>
+    }
+
+    @Override
+    public byte[] secureKey(final GordianKey&lt;?&gt; pKeyToSecure) throws GordianException {
+        /* Generate set of keys */
+<span class="fc" id="L293">        final GordianKeySetRecipe myRecipe = GordianKeySetRecipe.newRecipe(theFactory, theSpec, false);</span>
+<span class="fc" id="L294">        final GordianKeySetParameters myParams = myRecipe.getParameters();</span>
+
+        /* secure the key */
+<span class="fc" id="L297">        final byte[] myBytes = theCipher.secureKey(myParams, pKeyToSecure);</span>
+
+        /* Package and return the encrypted bytes */
+<span class="fc" id="L300">        return buildExternal(myRecipe, myBytes);</span>
+    }
+
+    @Override
+    public &lt;T extends GordianKeySpec&gt; GordianKey&lt;T&gt; deriveKey(final byte[] pSecuredKey,
+                                                              final T pKeyType) throws GordianException {
+        /* Parse the bytes into the separate parts */
+<span class="fc" id="L307">        final GordianKeySetRecipe myRecipe = GordianKeySetRecipe.parseRecipe(theFactory, theSpec, pSecuredKey, false);</span>
+<span class="fc" id="L308">        final GordianKeySetParameters myParams = myRecipe.getParameters();</span>
+
+        /* Unwrap the key and return it */
+<span class="fc" id="L311">        return theCipher.deriveKey(myParams, pSecuredKey, GordianKeySetRecipe.HDRLEN, pKeyType);</span>
+    }
+
+    @Override
+    public byte[] secureBytes(final byte[] pBytesToSecure) throws GordianException {
+        /* Generate set of keys */
+<span class="fc" id="L317">        final GordianKeySetRecipe myRecipe = GordianKeySetRecipe.newRecipe(theFactory, theSpec, false);</span>
+<span class="fc" id="L318">        final GordianKeySetParameters myParams = myRecipe.getParameters();</span>
+
+        /* secure the key */
+<span class="fc" id="L321">        final byte[] myBytes = theCipher.secureBytes(myParams, pBytesToSecure);</span>
+
+        /* Package and return the encrypted bytes */
+<span class="fc" id="L324">        return buildExternal(myRecipe, myBytes);</span>
+    }
+
+    @Override
+    public byte[] deriveBytes(final byte[] pSecuredBytes) throws GordianException {
+        /* Parse the bytes into the separate parts */
+<span class="fc" id="L330">        final GordianKeySetRecipe myRecipe = GordianKeySetRecipe.parseRecipe(theFactory, theSpec, pSecuredBytes, false);</span>
+<span class="fc" id="L331">        final GordianKeySetParameters myParams = myRecipe.getParameters();</span>
+
+        /* Unwrap the bytes and return them */
+<span class="fc" id="L334">        return theCipher.deriveBytes(myParams, pSecuredBytes, GordianKeySetRecipe.HDRLEN);</span>
+   }
+
+    @Override
+    public byte[] securePrivateKey(final GordianKeyPair pKeyPair) throws GordianException {
+        /* Generate set of keys */
+<span class="fc" id="L340">        final GordianKeySetRecipe myRecipe = GordianKeySetRecipe.newRecipe(theFactory, theSpec, false);</span>
+<span class="fc" id="L341">        final GordianKeySetParameters myParams = myRecipe.getParameters();</span>
+
+        /* Wrap the key */
+<span class="fc" id="L344">        final byte[] myBytes = theCipher.securePrivateKey(myParams, pKeyPair);</span>
+
+        /* Package and return the encrypted bytes */
+<span class="fc" id="L347">        return buildExternal(myRecipe, myBytes);</span>
+    }
+
+    @Override
+    public GordianKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKeySpec,
+                                        final byte[] pSecuredPrivateKey) throws GordianException {
+        /* Access the PKCS8Encoding */
+<span class="fc" id="L354">        final PKCS8EncodedKeySpec myPrivate = derivePrivateKeySpec(pSecuredPrivateKey);</span>
+
+        /* Determine and check the keySpec */
+<span class="fc" id="L357">        final GordianKeyPairFactory myFactory = theFactory.getAsyncFactory().getKeyPairFactory();</span>
+<span class="fc" id="L358">        final GordianKeyPairSpec myKeySpec = myFactory.determineKeyPairSpec(pPublicKeySpec);</span>
+<span class="pc bpc" id="L359" title="1 of 2 branches missed.">        if (!myKeySpec.equals(myFactory.determineKeyPairSpec(myPrivate))) {</span>
+<span class="nc" id="L360">            throw new GordianLogicException(&quot;Mismatch on keySpecs&quot;);</span>
+        }
+
+        /* Derive the keyPair */
+<span class="fc" id="L364">        final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(myKeySpec);</span>
+<span class="fc" id="L365">        return myGenerator.deriveKeyPair(pPublicKeySpec, myPrivate);</span>
+    }
+
+    /**
+     * derive privateKeySpec.
+     * @param pSecuredPrivateKey the secured private keySpec
+     * @return the private keySpec
+     * @throws GordianException on error
+     */
+    private PKCS8EncodedKeySpec derivePrivateKeySpec(final byte[] pSecuredPrivateKey) throws GordianException {
+        /* Parse the bytes into the separate parts */
+<span class="fc" id="L376">        final GordianKeySetRecipe myRecipe = GordianKeySetRecipe.parseRecipe(theFactory, theSpec, pSecuredPrivateKey, false);</span>
+<span class="fc" id="L377">        final GordianKeySetParameters myParams = myRecipe.getParameters();</span>
+
+        /* Unwrap the key and return it */
+<span class="fc" id="L380">        return theCipher.derivePrivateKeySpec(myParams, pSecuredPrivateKey, GordianKeySetRecipe.HDRLEN);</span>
+    }
+
+    @Override
+    public byte[] secureKeySet(final GordianKeySet pKeySetToSecure) throws GordianException {
+        /* Protect against exceptions */
+        try {
+            /* Encode the keySet */
+<span class="fc" id="L388">            final GordianKeySetASN1 myEncoded = new GordianKeySetASN1((GordianCoreKeySet) pKeySetToSecure);</span>
+<span class="fc" id="L389">            final byte[] myBytesToSecure = myEncoded.toASN1Primitive().getEncoded();</span>
+
+            /* secure the keySet */
+<span class="fc" id="L392">            return secureBytes(myBytesToSecure);</span>
+
+            /* Handle exceptions */
+<span class="nc" id="L395">        } catch (IOException e) {</span>
+<span class="nc" id="L396">            throw new GordianIOException(&quot;Failed to secure KeySet&quot;, e);</span>
+        }
+    }
+
+    @Override
+    public GordianCoreKeySet deriveKeySet(final byte[] pSecuredKeySet) throws GordianException {
+        /* Unwrap the bytes and resolve them */
+<span class="fc" id="L403">        final byte[] mySecuredBytes = deriveBytes(pSecuredKeySet);</span>
+<span class="fc" id="L404">        final GordianKeySetASN1 myEncoded = GordianKeySetASN1.getInstance(mySecuredBytes);</span>
+
+        /* Build the keySet and return it */
+<span class="fc" id="L407">        return (GordianCoreKeySet) myEncoded.buildKeySet(theFactory);</span>
+    }
+
+    /**
+     * Secure the factory.
+     * @param pFactoryToSecure the factory to secure
+     * @return the secure factory
+     * @throws GordianException on error
+     */
+    public byte[] secureFactory(final GordianFactory pFactoryToSecure) throws GordianException {
+        /* Protect the operation */
+<span class="fc" id="L418">        byte[] myBuffer = null;</span>
+        try {
+            /* Access the parameters */
+<span class="fc" id="L421">            final GordianParameters myParams = ((GordianBaseFactory) pFactoryToSecure).getParameters();</span>
+
+            /* Reject request if this is a namedFactory */
+<span class="pc bpc" id="L424" title="1 of 2 branches missed.">            if (!myParams.isInternal()) {</span>
+<span class="nc" id="L425">                throw new GordianDataException(&quot;Unable to lock named factory&quot;);</span>
+            }
+
+            /* Return the encrypted seeds */
+<span class="fc" id="L429">            myBuffer = myParams.getSecuritySeeds();</span>
+<span class="fc" id="L430">            return encryptBytes(myBuffer);</span>
+
+            /* Clear the buffer */
+        } finally {
+<span class="pc bpc" id="L434" title="1 of 2 branches missed.">            if (myBuffer != null) {</span>
+<span class="fc" id="L435">                Arrays.fill(myBuffer, (byte) 0);</span>
+            }
+        }
+    }
+
+    /**
+     * derive the secured factory.
+     * @param pSecuredFactory the secured factory
+     * @return the factory
+     * @throws GordianException on error
+     */
+    public GordianFactory deriveFactory(final byte[] pSecuredFactory) throws GordianException {
+        /* Decrypt the bytes */
+<span class="fc" id="L448">        final byte[] myBytes = decryptBytes(pSecuredFactory);</span>
+
+        /* Check that the buffer is the correct length */
+<span class="fc" id="L451">        final int mySeedLen = GordianParameters.SEED_LEN.getByteLength();</span>
+<span class="pc bpc" id="L452" title="1 of 2 branches missed.">        if (myBytes.length != mySeedLen) {</span>
+<span class="nc" id="L453">            throw new IllegalArgumentException(&quot;Invalid secured factory&quot;);</span>
+        }
+
+        /* Create parameters and factory */
+<span class="fc" id="L457">        final GordianParameters myParams = new GordianParameters(myBytes);</span>
+<span class="fc" id="L458">        return theFactory.newFactory(myParams);</span>
+    }
+
+    /**
+     * build external format.
+     * @param pRecipe the recipe
+     * @param pBytes the output bytes
+     * @return the external form
+     */
+    private static byte[] buildExternal(final GordianKeySetRecipe pRecipe,
+                                        final byte[] pBytes) {
+<span class="fc" id="L469">        final byte[] myOutput = new byte[GordianKeySetRecipe.HDRLEN + pBytes.length];</span>
+<span class="fc" id="L470">        pRecipe.buildHeader(myOutput);</span>
+<span class="fc" id="L471">        System.arraycopy(pBytes, 0, myOutput, GordianKeySetRecipe.HDRLEN, pBytes.length);</span>
+<span class="fc" id="L472">        return myOutput;</span>
+    }
+
+    @Override
+    public void declareSymKey(final GordianKey&lt;GordianSymKeySpec&gt; pKey) throws GordianException {
+        /* Access keyType */
+<span class="fc" id="L478">        final GordianSymKeySpec myKeyType = pKey.getKeyType();</span>
+
+        /* Check that the key is supported */
+<span class="fc" id="L481">        final GordianValidator myValidator = theFactory.getValidator();</span>
+<span class="pc bpc" id="L482" title="1 of 2 branches missed.">        if (!myValidator.supportedKeySetSymKeySpecs(theSpec.getKeyLength()).test(myKeyType)) {</span>
+<span class="nc" id="L483">            throw new GordianDataException(&quot;invalid keyType&quot;);</span>
+        }
+
+        /* Look for existing key of this type */
+<span class="fc" id="L487">        final GordianKey&lt;GordianSymKeySpec&gt; myExisting = theSymKeyMap.get(myKeyType);</span>
+<span class="pc bpc" id="L488" title="1 of 2 branches missed.">        if (myExisting != null) {</span>
+            /* Must be some mistake */
+<span class="nc" id="L490">            throw new GordianDataException(&quot;keyType already declared&quot;);</span>
+
+            /* else new key */
+        } else {
+            /* Store into map and cipher */
+<span class="fc" id="L495">            theSymKeyMap.put(myKeyType, pKey);</span>
+<span class="fc" id="L496">            theCipher.declareSymKey(pKey);</span>
+        }
+<span class="fc" id="L498">    }</span>
+
+    /**
+     * Build key set from random.
+     * @throws GordianException on error
+     */
+    void buildFromRandom() throws GordianException {
+        /* Loop through the symmetricKeys values */
+<span class="fc" id="L506">        final GordianLength myKeyLen = theSpec.getKeyLength();</span>
+<span class="fc" id="L507">        final GordianValidator myValidator = theFactory.getValidator();</span>
+<span class="fc" id="L508">        final Predicate&lt;GordianSymKeyType&gt; mySymPredicate = myValidator.supportedKeySetSymKeyTypes(myKeyLen);</span>
+<span class="fc bfc" id="L509" title="All 2 branches covered.">        for (final GordianSymKeyType myType : GordianSymKeyType.values()) {</span>
+            /* If this is supported for a keySet */
+<span class="fc bfc" id="L511" title="All 2 branches covered.">            if (mySymPredicate.test(myType)) {</span>
+                /* Generate the key */
+<span class="fc" id="L513">                final GordianSymKeySpec mySpec = new GordianSymKeySpec(myType, myKeyLen);</span>
+<span class="fc" id="L514">                final GordianCipherFactory myCipherFactory = theFactory.getCipherFactory();</span>
+<span class="fc" id="L515">                final GordianKeyGenerator&lt;GordianSymKeySpec&gt; myGenerator = myCipherFactory.getKeyGenerator(mySpec);</span>
+<span class="fc" id="L516">                final GordianKey&lt;GordianSymKeySpec&gt; myKey = myGenerator.generateKey();</span>
+
+                /* Add to map and cipher */
+<span class="fc" id="L519">                theSymKeyMap.put(mySpec, myKey);</span>
+<span class="fc" id="L520">                theCipher.declareSymKey(myKey);</span>
+            }
+        }
+<span class="fc" id="L523">    }</span>
+
+    /**
+     * Build key set from secret.
+     * @param pSecret the secret.
+     * @throws GordianException on error
+     */
+    public void buildFromSecret(final byte[] pSecret) throws GordianException {
+        /* Check Secret length */
+<span class="pc bpc" id="L532" title="1 of 2 branches missed.">        if (GordianParameters.SECRET_LEN.getByteLength() != pSecret.length) {</span>
+<span class="nc" id="L533">            throw new GordianLogicException(&quot;Invalid secret length&quot;);</span>
+        }
+
+        /* Loop through the symmetricKeys values */
+<span class="fc" id="L537">        final GordianLength myKeyLen = theSpec.getKeyLength();</span>
+<span class="fc" id="L538">        final GordianValidator myValidator = theFactory.getValidator();</span>
+<span class="fc" id="L539">        final Predicate&lt;GordianSymKeyType&gt; mySymPredicate = myValidator.supportedKeySetSymKeyTypes(myKeyLen);</span>
+<span class="fc" id="L540">        final Random mySeededRandom = theFactory.getPersonalisation().getSeededRandom(GordianPersonalId.KEYSETGENRANDOM, pSecret);</span>
+<span class="fc bfc" id="L541" title="All 2 branches covered.">        for (final GordianSymKeyType myType : GordianSymKeyType.values()) {</span>
+            /* If this is supported for a keySet */
+<span class="fc bfc" id="L543" title="All 2 branches covered.">            if (mySymPredicate.test(myType)) {</span>
+                /* Generate the key and add to map */
+<span class="fc" id="L545">                final GordianSymKeySpec mySpec = new GordianSymKeySpec(myType, myKeyLen);</span>
+<span class="fc" id="L546">                final GordianKey&lt;GordianSymKeySpec&gt; myKey = generateKey(mySpec, pSecret, mySeededRandom);</span>
+<span class="fc" id="L547">                theSymKeyMap.put(mySpec, myKey);</span>
+<span class="fc" id="L548">                theCipher.declareSymKey(myKey);</span>
+            }
+        }
+<span class="fc" id="L551">    }</span>
+
+    /**
+     * Generate key for a Key Type from the secret and initVector.
+     * @param &lt;T&gt; the class of key
+     * @param pKeyType the keyType
+     * @param pSecret the derived Secret
+     * @param pSeededRandom the seededRandom.
+     * @return the generated key
+     * @throws GordianException on error
+     */
+    private &lt;T extends GordianKeySpec&gt; GordianKey&lt;T&gt; generateKey(final T pKeyType,
+                                                                 final byte[] pSecret,
+                                                                 final Random pSeededRandom) throws GordianException {
+        /* Generate a new Secret Key from the secret */
+<span class="fc" id="L566">        final GordianCipherFactory myFactory = theFactory.getCipherFactory();</span>
+<span class="fc" id="L567">        final GordianCoreKeyGenerator&lt;T&gt; myGenerator = (GordianCoreKeyGenerator&lt;T&gt;) myFactory.getKeyGenerator(pKeyType);</span>
+<span class="fc" id="L568">        return myGenerator.generateKeyFromSecret(pSecret, pSeededRandom);</span>
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+<span class="pc bpc" id="L574" title="1 of 2 branches missed.">        if (pThat == this) {</span>
+<span class="nc" id="L575">            return true;</span>
+        }
+<span class="pc bpc" id="L577" title="1 of 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L578">            return false;</span>
+        }
+
+        /* Make sure that the object is the same class */
+<span class="pc bpc" id="L582" title="1 of 2 branches missed.">        if (!(pThat instanceof GordianCoreKeySet)) {</span>
+<span class="nc" id="L583">            return false;</span>
+        }
+
+        /* Access the target field */
+<span class="fc" id="L587">        final GordianCoreKeySet myThat = (GordianCoreKeySet) pThat;</span>
+
+        /* Check differences */
+<span class="pc bpc" id="L590" title="1 of 2 branches missed.">        return theFactory.equals(myThat.getFactory())</span>
+<span class="pc bpc" id="L591" title="1 of 2 branches missed.">                &amp;&amp; theSpec.equals(myThat.getKeySetSpec())</span>
+<span class="pc bpc" id="L592" title="1 of 2 branches missed.">                &amp;&amp; theSymKeyMap.equals(myThat.getSymKeyMap());</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="nc" id="L597">        return Objects.hash(theFactory, theSpec, theSymKeyMap);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

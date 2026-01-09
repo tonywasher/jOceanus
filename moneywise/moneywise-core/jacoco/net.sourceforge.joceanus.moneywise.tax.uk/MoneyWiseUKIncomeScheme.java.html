@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseUKIncomeScheme.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.tax.uk</a> &gt; <span class="el_source">MoneyWiseUKIncomeScheme.java</span></div><h1>MoneyWiseUKIncomeScheme.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.tax.uk;
+
+import net.sourceforge.joceanus.metis.field.MetisFieldItem;
+import net.sourceforge.joceanus.metis.field.MetisFieldSet;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
+import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxBandSet;
+import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
+import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxResource;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+
+import java.util.Iterator;
+
+/**
+ * Income Tax Scheme.
+ */
+public class MoneyWiseUKIncomeScheme
+        implements MetisFieldItem {
+    /**
+     * Local Report fields.
+     */
+<span class="fc" id="L39">    private static final MetisFieldSet&lt;MoneyWiseUKIncomeScheme&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKIncomeScheme.class);</span>
+
+    /*
+     * Declare Fields.
+     */
+    static {
+<span class="fc" id="L45">        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.SCHEME_RELIEF_AVAILABLE, MoneyWiseUKIncomeScheme::taxReliefAvailable);</span>
+<span class="fc" id="L46">    }</span>
+
+    /**
+     * Tax Relief available.
+     */
+    private final Boolean reliefAvailable;
+
+    /**
+     * Constructor.
+     */
+    protected MoneyWiseUKIncomeScheme() {
+<span class="fc" id="L57">        this(Boolean.TRUE);</span>
+<span class="fc" id="L58">    }</span>
+
+    /**
+     * Constructor.
+     * @param pReliefAvailable Is tax relief available?
+     */
+<span class="fc" id="L64">    protected MoneyWiseUKIncomeScheme(final Boolean pReliefAvailable) {</span>
+<span class="fc" id="L65">        reliefAvailable = pReliefAvailable;</span>
+<span class="fc" id="L66">    }</span>
+
+    /**
+     * Is tax relief available?
+     * @return true/false
+     */
+    public Boolean taxReliefAvailable() {
+<span class="nc" id="L73">        return reliefAvailable;</span>
+    }
+
+    /**
+     * Allocate the amount to the appropriate tax bands.
+     * @param pConfig the taxConfig
+     * @param pBasis the taxBasis
+     * @param pAmount the amount to be allocated
+     * @return the tax bands
+     */
+    protected MoneyWiseTaxBandSet allocateToTaxBands(final MoneyWiseUKTaxConfig pConfig,
+                                                     final MoneyWiseTaxClass pBasis,
+                                                     final OceanusMoney pAmount) {
+        /* Handle negative amounts */
+<span class="nc" id="L87">        final OceanusMoney myAmount = new OceanusMoney(pAmount);</span>
+<span class="nc bnc" id="L88" title="All 2 branches missed.">        if (!myAmount.isPositive()) {</span>
+<span class="nc" id="L89">            myAmount.setZero();</span>
+        }
+
+        /* Determine the taxBand set */
+<span class="nc" id="L93">        final MoneyWiseTaxBandSet myTaxBands = determineTaxBands(pConfig, pBasis, myAmount);</span>
+
+        /* Adjust allowances and taxBands */
+<span class="nc" id="L96">        final OceanusMoney myRemaining = adjustAllowances(pConfig, myAmount);</span>
+<span class="nc" id="L97">        adjustTaxBands(pConfig, myRemaining);</span>
+
+        /* return the taxBands */
+<span class="nc" id="L100">        return myTaxBands;</span>
+    }
+
+    /**
+     * Determine the taxBand set.
+     * @param pConfig the taxConfig
+     * @param pBasis the taxBasis
+     * @param pAmount the amount to be allocated
+     * @return the amount remaining
+     */
+    private MoneyWiseTaxBandSet determineTaxBands(final MoneyWiseUKTaxConfig pConfig,
+                                                   final MoneyWiseTaxClass pBasis,
+                                                   final OceanusMoney pAmount) {
+        /* Create a new taxBand set */
+<span class="nc" id="L114">        final MoneyWiseTaxBandSet myTaxBands = new MoneyWiseTaxBandSet();</span>
+<span class="nc" id="L115">        final OceanusMoney myRemaining = new OceanusMoney(pAmount);</span>
+
+        /* Determine allowance */
+<span class="nc" id="L118">        final OceanusMoney myAllowance = new OceanusMoney(getAmountInAllowance(pConfig, myRemaining));</span>
+<span class="nc bnc" id="L119" title="All 4 branches missed.">        if (myAllowance.isNonZero() &amp;&amp; reliefAvailable) {</span>
+<span class="nc" id="L120">            myTaxBands.addTaxBand(new MoneyWiseTaxBand(myAllowance, OceanusRate.getWholePercentage(0)));</span>
+<span class="nc" id="L121">            myRemaining.subtractAmount(myAllowance);</span>
+        }
+
+        /* Loop through the taxBands */
+<span class="nc" id="L125">        final Iterator&lt;MoneyWiseTaxBand&gt; myIterator = taxBandIterator(pConfig, pBasis);</span>
+<span class="nc bnc" id="L126" title="All 2 branches missed.">        while (myRemaining.isNonZero()</span>
+<span class="nc bnc" id="L127" title="All 2 branches missed.">                &amp;&amp; myIterator.hasNext()) {</span>
+            /* Determine amount in band */
+<span class="nc" id="L129">            final MoneyWiseTaxBand myBand = myIterator.next();</span>
+<span class="nc" id="L130">            OceanusMoney myAmount = getAmountInBand(myBand.getAmount(), myRemaining);</span>
+
+            /* Add any held-over allowance */
+<span class="nc bnc" id="L133" title="All 4 branches missed.">            if (!reliefAvailable &amp;&amp; myAllowance.isNonZero()) {</span>
+<span class="nc" id="L134">                myAmount = new OceanusMoney(myAmount);</span>
+<span class="nc" id="L135">                myAmount.addAmount(myAllowance);</span>
+<span class="nc" id="L136">                myAllowance.setZero();</span>
+            }
+
+            /* allocate band and adjust */
+<span class="nc" id="L140">            myTaxBands.addTaxBand(new MoneyWiseTaxBand(myAmount, myBand.getRate()));</span>
+<span class="nc" id="L141">            myRemaining.subtractAmount(myAmount);</span>
+<span class="nc" id="L142">        }</span>
+
+        /* Return the taxBands */
+<span class="nc" id="L145">        return myTaxBands;</span>
+    }
+
+    /**
+     * Obtain the taxBand iterator.
+     * @param pConfig the taxConfig
+     * @param pBasis the taxBasis
+     * @return the iterator
+     */
+    protected Iterator&lt;MoneyWiseTaxBand&gt; taxBandIterator(final MoneyWiseUKTaxConfig pConfig,
+                                                         final MoneyWiseTaxClass pBasis) {
+<span class="nc" id="L156">        return pConfig.getTaxBands().iterator();</span>
+    }
+
+    /**
+     * Obtain the taxFree amount.
+     * @param pConfig the taxConfig
+     * @param pAmount the amount that is to be adjusted
+     * @return the amount remaining
+     */
+    protected OceanusMoney getAmountInAllowance(final MoneyWiseUKTaxConfig pConfig,
+                                                final OceanusMoney pAmount) {
+        /* Obtain the amount covered by the allowance */
+<span class="nc" id="L168">        return getAmountInBand(pConfig.getAllowance(), pAmount);</span>
+    }
+
+    /**
+     * Adjust Allowances.
+     * @param pConfig the taxConfig
+     * @param pAmount the amount that is to be adjusted
+     * @return the amount remaining
+     */
+    protected OceanusMoney adjustAllowances(final MoneyWiseUKTaxConfig pConfig,
+                                            final OceanusMoney pAmount) {
+        /* Adjust the basic allowance */
+<span class="nc" id="L180">        return adjustForAllowance(pConfig.getAllowance(), pAmount);</span>
+    }
+
+    /**
+     * Adjust TaxBands.
+     * @param pConfig the taxConfig
+     * @param pAmount the amount that is to be adjusted
+     */
+    protected void adjustTaxBands(final MoneyWiseUKTaxConfig pConfig,
+                                  final OceanusMoney pAmount) {
+        /* Loop through the taxBands */
+<span class="nc" id="L191">        OceanusMoney myRemaining = pAmount;</span>
+<span class="nc bnc" id="L192" title="All 2 branches missed.">        for (MoneyWiseTaxBand myBand : pConfig.getTaxBands()) {</span>
+            /* If we have nothing left to adjust, we have finished */
+<span class="nc bnc" id="L194" title="All 2 branches missed.">            if (myRemaining.isZero()</span>
+<span class="nc bnc" id="L195" title="All 2 branches missed.">                    || myBand.getAmount() == null) {</span>
+<span class="nc" id="L196">                break;</span>
+            }
+
+            /* Adjust the band */
+<span class="nc" id="L200">            myRemaining = adjustForAllowance(myBand.getAmount(), myRemaining);</span>
+<span class="nc" id="L201">        }</span>
+<span class="nc" id="L202">    }</span>
+
+    /**
+     * Adjust For an allowance/band.
+     * @param pAllowance the allowance
+     * @param pAmount the amount that is to be adjusted
+     * @return the amount remaining
+     */
+    protected OceanusMoney adjustForAllowance(final OceanusMoney pAllowance,
+                                              final OceanusMoney pAmount) {
+        /* Take a copy of the amount */
+<span class="nc" id="L213">        final OceanusMoney myRemaining = new OceanusMoney(pAmount);</span>
+
+        /* If we have exhausted the allowance */
+<span class="nc bnc" id="L216" title="All 2 branches missed.">        if (myRemaining.compareTo(pAllowance) &gt; 0) {</span>
+            /* Subtract allowance */
+<span class="nc" id="L218">            myRemaining.subtractAmount(pAllowance);</span>
+<span class="nc" id="L219">            pAllowance.setZero();</span>
+
+            /* else the allowance covers everything */
+        } else {
+            /* adjust the allowance */
+<span class="nc" id="L224">            pAllowance.subtractAmount(myRemaining);</span>
+<span class="nc" id="L225">            myRemaining.setZero();</span>
+        }
+
+        /* return the remaining amount */
+<span class="nc" id="L229">        return myRemaining;</span>
+    }
+
+    /**
+     * Obtain the amount of income that falls in a band.
+     * @param pBand the band
+     * @param pAmount the amount available
+     * @return the amount within the band
+     */
+    protected static OceanusMoney getAmountInBand(final OceanusMoney pBand,
+                                                  final OceanusMoney pAmount) {
+        /* Return the lesser of the two */
+<span class="nc bnc" id="L241" title="All 4 branches missed.">        return pBand != null &amp;&amp; pAmount.compareTo(pBand) &gt; 0</span>
+<span class="nc" id="L242">                ? pBand</span>
+<span class="nc" id="L243">                : pAmount;</span>
+    }
+
+    @Override
+    public MetisFieldSet&lt;? extends MoneyWiseUKIncomeScheme&gt; getDataFieldSet() {
+<span class="nc" id="L248">        return FIELD_DEFS;</span>
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L253">        return getDataFieldSet().getName();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

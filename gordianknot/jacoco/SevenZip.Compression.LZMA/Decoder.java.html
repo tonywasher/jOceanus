@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Decoder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">SevenZip.Compression.LZMA</a> &gt; <span class="el_source">Decoder.java</span></div><h1>Decoder.java</h1><pre class="source lang-java linenums">package SevenZip.Compression.LZMA;
+
+import SevenZip.Compression.RangeCoder.BitTreeDecoder;
+import SevenZip.Compression.LZMA.Base;
+import SevenZip.Compression.LZ.OutWindow;
+import java.io.IOException;
+
+public class Decoder
+{
+<span class="fc" id="L10">	class LenDecoder</span>
+	{
+<span class="fc" id="L12">		short[] m_Choice = new short[2];</span>
+<span class="fc" id="L13">		BitTreeDecoder[] m_LowCoder = new BitTreeDecoder[Base.kNumPosStatesMax];</span>
+<span class="fc" id="L14">		BitTreeDecoder[] m_MidCoder = new BitTreeDecoder[Base.kNumPosStatesMax];</span>
+<span class="fc" id="L15">		BitTreeDecoder m_HighCoder = new BitTreeDecoder(Base.kNumHighLenBits);</span>
+<span class="fc" id="L16">		int m_NumPosStates = 0;</span>
+		
+		public void Create(int numPosStates)
+		{
+<span class="fc bfc" id="L20" title="All 2 branches covered.">			for (; m_NumPosStates &lt; numPosStates; m_NumPosStates++)</span>
+			{
+<span class="fc" id="L22">				m_LowCoder[m_NumPosStates] = new BitTreeDecoder(Base.kNumLowLenBits);</span>
+<span class="fc" id="L23">				m_MidCoder[m_NumPosStates] = new BitTreeDecoder(Base.kNumMidLenBits);</span>
+			}
+<span class="fc" id="L25">		}</span>
+		
+		public void Init()
+		{
+<span class="fc" id="L29">			SevenZip.Compression.RangeCoder.Decoder.InitBitModels(m_Choice);</span>
+<span class="fc bfc" id="L30" title="All 2 branches covered.">			for (int posState = 0; posState &lt; m_NumPosStates; posState++)</span>
+			{
+<span class="fc" id="L32">				m_LowCoder[posState].Init();</span>
+<span class="fc" id="L33">				m_MidCoder[posState].Init();</span>
+			}
+<span class="fc" id="L35">			m_HighCoder.Init();</span>
+<span class="fc" id="L36">		}</span>
+		
+		public int Decode(SevenZip.Compression.RangeCoder.Decoder rangeDecoder, int posState) throws IOException
+		{
+<span class="fc bfc" id="L40" title="All 2 branches covered.">			if (rangeDecoder.DecodeBit(m_Choice, 0) == 0)</span>
+<span class="fc" id="L41">				return m_LowCoder[posState].Decode(rangeDecoder);</span>
+<span class="fc" id="L42">			int symbol = Base.kNumLowLenSymbols;</span>
+<span class="fc bfc" id="L43" title="All 2 branches covered.">			if (rangeDecoder.DecodeBit(m_Choice, 1) == 0)</span>
+<span class="fc" id="L44">				symbol += m_MidCoder[posState].Decode(rangeDecoder);</span>
+			else
+<span class="fc" id="L46">				symbol += Base.kNumMidLenSymbols + m_HighCoder.Decode(rangeDecoder);</span>
+<span class="fc" id="L47">			return symbol;</span>
+		}
+	}
+	
+<span class="fc" id="L51">	class LiteralDecoder</span>
+	{
+<span class="fc" id="L53">		class Decoder2</span>
+		{
+<span class="fc" id="L55">			short[] m_Decoders = new short[0x300];</span>
+			
+			public void Init()
+			{
+<span class="fc" id="L59">				SevenZip.Compression.RangeCoder.Decoder.InitBitModels(m_Decoders);</span>
+<span class="fc" id="L60">			}</span>
+			
+			public byte DecodeNormal(SevenZip.Compression.RangeCoder.Decoder rangeDecoder) throws IOException
+			{
+<span class="fc" id="L64">				int symbol = 1;</span>
+				do
+<span class="fc" id="L66">					symbol = (symbol &lt;&lt; 1) | rangeDecoder.DecodeBit(m_Decoders, symbol);</span>
+<span class="fc bfc" id="L67" title="All 2 branches covered.">				while (symbol &lt; 0x100);</span>
+<span class="fc" id="L68">				return (byte)symbol;</span>
+			}
+			
+			public byte DecodeWithMatchByte(SevenZip.Compression.RangeCoder.Decoder rangeDecoder, byte matchByte) throws IOException
+			{
+<span class="fc" id="L73">				int symbol = 1;</span>
+				do
+				{
+<span class="fc" id="L76">					int matchBit = (matchByte &gt;&gt; 7) &amp; 1;</span>
+<span class="fc" id="L77">					matchByte &lt;&lt;= 1;</span>
+<span class="fc" id="L78">					int bit = rangeDecoder.DecodeBit(m_Decoders, ((1 + matchBit) &lt;&lt; 8) + symbol);</span>
+<span class="fc" id="L79">					symbol = (symbol &lt;&lt; 1) | bit;</span>
+<span class="fc bfc" id="L80" title="All 2 branches covered.">					if (matchBit != bit)</span>
+					{
+<span class="fc bfc" id="L82" title="All 2 branches covered.">						while (symbol &lt; 0x100)</span>
+<span class="fc" id="L83">							symbol = (symbol &lt;&lt; 1) | rangeDecoder.DecodeBit(m_Decoders, symbol);</span>
+						break;
+					}
+				}
+<span class="pc bpc" id="L87" title="1 of 2 branches missed.">				while (symbol &lt; 0x100);</span>
+<span class="fc" id="L88">				return (byte)symbol;</span>
+			}
+		}
+		
+		Decoder2[] m_Coders;
+		int m_NumPrevBits;
+		int m_NumPosBits;
+		int m_PosMask;
+		
+		public void Create(int numPosBits, int numPrevBits)
+		{
+<span class="pc bpc" id="L99" title="5 of 6 branches missed.">			if (m_Coders != null &amp;&amp; m_NumPrevBits == numPrevBits &amp;&amp; m_NumPosBits == numPosBits)</span>
+<span class="nc" id="L100">				return;</span>
+<span class="fc" id="L101">			m_NumPosBits = numPosBits;</span>
+<span class="fc" id="L102">			m_PosMask = (1 &lt;&lt; numPosBits) - 1;</span>
+<span class="fc" id="L103">			m_NumPrevBits = numPrevBits;</span>
+<span class="fc" id="L104">			int numStates = 1 &lt;&lt; (m_NumPrevBits + m_NumPosBits);</span>
+<span class="fc" id="L105">			m_Coders = new Decoder2[numStates];</span>
+<span class="fc bfc" id="L106" title="All 2 branches covered.">			for (int i = 0; i &lt; numStates; i++)</span>
+<span class="fc" id="L107">				m_Coders[i] = new Decoder2();</span>
+<span class="fc" id="L108">		}</span>
+		
+		public void Init()
+		{
+<span class="fc" id="L112">			int numStates = 1 &lt;&lt; (m_NumPrevBits + m_NumPosBits);</span>
+<span class="fc bfc" id="L113" title="All 2 branches covered.">			for (int i = 0; i &lt; numStates; i++)</span>
+<span class="fc" id="L114">				m_Coders[i].Init();</span>
+<span class="fc" id="L115">		}</span>
+		
+		Decoder2 GetDecoder(int pos, byte prevByte)
+		{
+<span class="fc" id="L119">			return m_Coders[((pos &amp; m_PosMask) &lt;&lt; m_NumPrevBits) + ((prevByte &amp; 0xFF) &gt;&gt;&gt; (8 - m_NumPrevBits))];</span>
+		}
+	}
+	
+<span class="fc" id="L123">	OutWindow m_OutWindow = new OutWindow();</span>
+<span class="fc" id="L124">	SevenZip.Compression.RangeCoder.Decoder m_RangeDecoder = new SevenZip.Compression.RangeCoder.Decoder();</span>
+	
+<span class="fc" id="L126">	short[] m_IsMatchDecoders = new short[Base.kNumStates &lt;&lt; Base.kNumPosStatesBitsMax];</span>
+<span class="fc" id="L127">	short[] m_IsRepDecoders = new short[Base.kNumStates];</span>
+<span class="fc" id="L128">	short[] m_IsRepG0Decoders = new short[Base.kNumStates];</span>
+<span class="fc" id="L129">	short[] m_IsRepG1Decoders = new short[Base.kNumStates];</span>
+<span class="fc" id="L130">	short[] m_IsRepG2Decoders = new short[Base.kNumStates];</span>
+<span class="fc" id="L131">	short[] m_IsRep0LongDecoders = new short[Base.kNumStates &lt;&lt; Base.kNumPosStatesBitsMax];</span>
+	
+<span class="fc" id="L133">	BitTreeDecoder[] m_PosSlotDecoder = new BitTreeDecoder[Base.kNumLenToPosStates];</span>
+<span class="fc" id="L134">	short[] m_PosDecoders = new short[Base.kNumFullDistances - Base.kEndPosModelIndex];</span>
+	
+<span class="fc" id="L136">	BitTreeDecoder m_PosAlignDecoder = new BitTreeDecoder(Base.kNumAlignBits);</span>
+	
+<span class="fc" id="L138">	LenDecoder m_LenDecoder = new LenDecoder();</span>
+<span class="fc" id="L139">	LenDecoder m_RepLenDecoder = new LenDecoder();</span>
+	
+<span class="fc" id="L141">	LiteralDecoder m_LiteralDecoder = new LiteralDecoder();</span>
+	
+<span class="fc" id="L143">	int m_DictionarySize = -1;</span>
+<span class="fc" id="L144">	int m_DictionarySizeCheck =  -1;</span>
+	
+	int m_PosStateMask;
+	
+	public Decoder()
+<span class="fc" id="L149">	{</span>
+<span class="fc bfc" id="L150" title="All 2 branches covered.">		for (int i = 0; i &lt; Base.kNumLenToPosStates; i++)</span>
+<span class="fc" id="L151">			m_PosSlotDecoder[i] = new BitTreeDecoder(Base.kNumPosSlotBits);</span>
+<span class="fc" id="L152">	}</span>
+	
+	boolean SetDictionarySize(int dictionarySize)
+	{
+<span class="pc bpc" id="L156" title="1 of 2 branches missed.">		if (dictionarySize &lt; 0)</span>
+<span class="nc" id="L157">			return false;</span>
+<span class="pc bpc" id="L158" title="1 of 2 branches missed.">		if (m_DictionarySize != dictionarySize)</span>
+		{
+<span class="fc" id="L160">			m_DictionarySize = dictionarySize;</span>
+<span class="fc" id="L161">			m_DictionarySizeCheck = Math.max(m_DictionarySize, 1);</span>
+<span class="fc" id="L162">			m_OutWindow.Create(Math.max(m_DictionarySizeCheck, (1 &lt;&lt; 12)));</span>
+		}
+<span class="fc" id="L164">		return true;</span>
+	}
+	
+	boolean SetLcLpPb(int lc, int lp, int pb)
+	{
+<span class="pc bpc" id="L169" title="3 of 6 branches missed.">		if (lc &gt; Base.kNumLitContextBitsMax || lp &gt; 4 || pb &gt; Base.kNumPosStatesBitsMax)</span>
+<span class="nc" id="L170">			return false;</span>
+<span class="fc" id="L171">		m_LiteralDecoder.Create(lp, lc);</span>
+<span class="fc" id="L172">		int numPosStates = 1 &lt;&lt; pb;</span>
+<span class="fc" id="L173">		m_LenDecoder.Create(numPosStates);</span>
+<span class="fc" id="L174">		m_RepLenDecoder.Create(numPosStates);</span>
+<span class="fc" id="L175">		m_PosStateMask = numPosStates - 1;</span>
+<span class="fc" id="L176">		return true;</span>
+	}
+	
+	void Init() throws IOException
+	{
+<span class="fc" id="L181">		m_OutWindow.Init(false);</span>
+		
+<span class="fc" id="L183">		SevenZip.Compression.RangeCoder.Decoder.InitBitModels(m_IsMatchDecoders);</span>
+<span class="fc" id="L184">		SevenZip.Compression.RangeCoder.Decoder.InitBitModels(m_IsRep0LongDecoders);</span>
+<span class="fc" id="L185">		SevenZip.Compression.RangeCoder.Decoder.InitBitModels(m_IsRepDecoders);</span>
+<span class="fc" id="L186">		SevenZip.Compression.RangeCoder.Decoder.InitBitModels(m_IsRepG0Decoders);</span>
+<span class="fc" id="L187">		SevenZip.Compression.RangeCoder.Decoder.InitBitModels(m_IsRepG1Decoders);</span>
+<span class="fc" id="L188">		SevenZip.Compression.RangeCoder.Decoder.InitBitModels(m_IsRepG2Decoders);</span>
+<span class="fc" id="L189">		SevenZip.Compression.RangeCoder.Decoder.InitBitModels(m_PosDecoders);</span>
+		
+<span class="fc" id="L191">		m_LiteralDecoder.Init();</span>
+		int i;
+<span class="fc bfc" id="L193" title="All 2 branches covered.">		for (i = 0; i &lt; Base.kNumLenToPosStates; i++)</span>
+<span class="fc" id="L194">			m_PosSlotDecoder[i].Init();</span>
+<span class="fc" id="L195">		m_LenDecoder.Init();</span>
+<span class="fc" id="L196">		m_RepLenDecoder.Init();</span>
+<span class="fc" id="L197">		m_PosAlignDecoder.Init();</span>
+<span class="fc" id="L198">		m_RangeDecoder.Init();</span>
+<span class="fc" id="L199">	}</span>
+	
+	public boolean Code(java.io.InputStream inStream, java.io.OutputStream outStream,
+			long outSize) throws IOException
+	{
+<span class="fc" id="L204">		m_RangeDecoder.SetStream(inStream);</span>
+<span class="fc" id="L205">		m_OutWindow.SetStream(outStream);</span>
+<span class="fc" id="L206">		Init();</span>
+		
+<span class="fc" id="L208">		int state = Base.StateInit();</span>
+<span class="fc" id="L209">		int rep0 = 0, rep1 = 0, rep2 = 0, rep3 = 0;</span>
+		
+<span class="fc" id="L211">		long nowPos64 = 0;</span>
+<span class="fc" id="L212">		byte prevByte = 0;</span>
+<span class="pc bpc" id="L213" title="3 of 4 branches missed.">		while (outSize &lt; 0 || nowPos64 &lt; outSize)</span>
+		{
+<span class="fc" id="L215">			int posState = (int)nowPos64 &amp; m_PosStateMask;</span>
+<span class="fc bfc" id="L216" title="All 2 branches covered.">			if (m_RangeDecoder.DecodeBit(m_IsMatchDecoders, (state &lt;&lt; Base.kNumPosStatesBitsMax) + posState) == 0)</span>
+			{
+<span class="fc" id="L218">				LiteralDecoder.Decoder2 decoder2 = m_LiteralDecoder.GetDecoder((int)nowPos64, prevByte);</span>
+<span class="fc bfc" id="L219" title="All 2 branches covered.">				if (!Base.StateIsCharState(state))</span>
+<span class="fc" id="L220">					prevByte = decoder2.DecodeWithMatchByte(m_RangeDecoder, m_OutWindow.GetByte(rep0));</span>
+				else
+<span class="fc" id="L222">					prevByte = decoder2.DecodeNormal(m_RangeDecoder);</span>
+<span class="fc" id="L223">				m_OutWindow.PutByte(prevByte);</span>
+<span class="fc" id="L224">				state = Base.StateUpdateChar(state);</span>
+<span class="fc" id="L225">				nowPos64++;</span>
+<span class="fc" id="L226">			}</span>
+			else
+			{
+				int len;
+<span class="fc bfc" id="L230" title="All 2 branches covered.">				if (m_RangeDecoder.DecodeBit(m_IsRepDecoders, state) == 1)</span>
+				{
+<span class="fc" id="L232">					len = 0;</span>
+<span class="fc bfc" id="L233" title="All 2 branches covered.">					if (m_RangeDecoder.DecodeBit(m_IsRepG0Decoders, state) == 0)</span>
+					{
+<span class="fc bfc" id="L235" title="All 2 branches covered.">						if (m_RangeDecoder.DecodeBit(m_IsRep0LongDecoders, (state &lt;&lt; Base.kNumPosStatesBitsMax) + posState) == 0)</span>
+						{
+<span class="fc" id="L237">							state = Base.StateUpdateShortRep(state);</span>
+<span class="fc" id="L238">							len = 1;</span>
+						}
+					}
+					else
+					{
+						int distance;
+<span class="fc bfc" id="L244" title="All 2 branches covered.">						if (m_RangeDecoder.DecodeBit(m_IsRepG1Decoders, state) == 0)</span>
+<span class="fc" id="L245">							distance = rep1;</span>
+						else
+						{
+<span class="fc bfc" id="L248" title="All 2 branches covered.">							if (m_RangeDecoder.DecodeBit(m_IsRepG2Decoders, state) == 0)</span>
+<span class="fc" id="L249">								distance = rep2;</span>
+							else
+							{
+<span class="fc" id="L252">								distance = rep3;</span>
+<span class="fc" id="L253">								rep3 = rep2;</span>
+							}
+<span class="fc" id="L255">							rep2 = rep1;</span>
+						}
+<span class="fc" id="L257">						rep1 = rep0;</span>
+<span class="fc" id="L258">						rep0 = distance;</span>
+					}
+<span class="fc bfc" id="L260" title="All 2 branches covered.">					if (len == 0)</span>
+					{
+<span class="fc" id="L262">						len = m_RepLenDecoder.Decode(m_RangeDecoder, posState) + Base.kMatchMinLen;</span>
+<span class="fc" id="L263">						state = Base.StateUpdateRep(state);</span>
+					}
+				}
+				else
+				{
+<span class="fc" id="L268">					rep3 = rep2;</span>
+<span class="fc" id="L269">					rep2 = rep1;</span>
+<span class="fc" id="L270">					rep1 = rep0;</span>
+<span class="fc" id="L271">					len = Base.kMatchMinLen + m_LenDecoder.Decode(m_RangeDecoder, posState);</span>
+<span class="fc" id="L272">					state = Base.StateUpdateMatch(state);</span>
+<span class="fc" id="L273">					int posSlot = m_PosSlotDecoder[Base.GetLenToPosState(len)].Decode(m_RangeDecoder);</span>
+<span class="fc bfc" id="L274" title="All 2 branches covered.">					if (posSlot &gt;= Base.kStartPosModelIndex)</span>
+					{
+<span class="fc" id="L276">						int numDirectBits = (posSlot &gt;&gt; 1) - 1;</span>
+<span class="fc" id="L277">						rep0 = ((2 | (posSlot &amp; 1)) &lt;&lt; numDirectBits);</span>
+<span class="fc bfc" id="L278" title="All 2 branches covered.">						if (posSlot &lt; Base.kEndPosModelIndex)</span>
+<span class="fc" id="L279">							rep0 += BitTreeDecoder.ReverseDecode(m_PosDecoders,</span>
+									rep0 - posSlot - 1, m_RangeDecoder, numDirectBits);
+						else
+						{
+<span class="fc" id="L283">							rep0 += (m_RangeDecoder.DecodeDirectBits(</span>
+									numDirectBits - Base.kNumAlignBits) &lt;&lt; Base.kNumAlignBits);
+<span class="fc" id="L285">							rep0 += m_PosAlignDecoder.ReverseDecode(m_RangeDecoder);</span>
+<span class="fc bfc" id="L286" title="All 2 branches covered.">							if (rep0 &lt; 0)</span>
+							{
+<span class="pc bpc" id="L288" title="1 of 2 branches missed.">								if (rep0 == -1)</span>
+<span class="fc" id="L289">									break;</span>
+<span class="nc" id="L290">								return false;</span>
+							}
+						}
+<span class="fc" id="L293">					}</span>
+					else
+<span class="fc" id="L295">						rep0 = posSlot;</span>
+				}
+<span class="pc bpc" id="L297" title="2 of 4 branches missed.">				if (rep0 &gt;= nowPos64 || rep0 &gt;= m_DictionarySizeCheck)</span>
+				{
+					// m_OutWindow.Flush();
+<span class="nc" id="L300">					return false;</span>
+				}
+<span class="fc" id="L302">				m_OutWindow.CopyBlock(rep0, len);</span>
+<span class="fc" id="L303">				nowPos64 += len;</span>
+<span class="fc" id="L304">				prevByte = m_OutWindow.GetByte(0);</span>
+			}
+<span class="fc" id="L306">		}</span>
+<span class="fc" id="L307">		m_OutWindow.Flush();</span>
+<span class="fc" id="L308">		m_OutWindow.ReleaseStream();</span>
+<span class="fc" id="L309">		m_RangeDecoder.ReleaseStream();</span>
+<span class="fc" id="L310">		return true;</span>
+	}
+	
+	public boolean SetDecoderProperties(byte[] properties)
+	{
+<span class="pc bpc" id="L315" title="1 of 2 branches missed.">		if (properties.length &lt; 5)</span>
+<span class="nc" id="L316">			return false;</span>
+<span class="fc" id="L317">		int val = properties[0] &amp; 0xFF;</span>
+<span class="fc" id="L318">		int lc = val % 9;</span>
+<span class="fc" id="L319">		int remainder = val / 9;</span>
+<span class="fc" id="L320">		int lp = remainder % 5;</span>
+<span class="fc" id="L321">		int pb = remainder / 5;</span>
+<span class="fc" id="L322">		int dictionarySize = 0;</span>
+<span class="fc bfc" id="L323" title="All 2 branches covered.">		for (int i = 0; i &lt; 4; i++)</span>
+<span class="fc" id="L324">			dictionarySize += ((int)(properties[1 + i]) &amp; 0xFF) &lt;&lt; (i * 8);</span>
+<span class="pc bpc" id="L325" title="1 of 2 branches missed.">		if (!SetLcLpPb(lc, lp, pb))</span>
+<span class="nc" id="L326">			return false;</span>
+<span class="fc" id="L327">		return SetDictionarySize(dictionarySize);</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

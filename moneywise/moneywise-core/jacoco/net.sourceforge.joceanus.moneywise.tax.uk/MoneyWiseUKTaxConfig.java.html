@@ -1,0 +1,398 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseUKTaxConfig.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.tax.uk</a> &gt; <span class="el_source">MoneyWiseUKTaxConfig.java</span></div><h1>MoneyWiseUKTaxConfig.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.tax.uk;
+
+import net.sourceforge.joceanus.metis.field.MetisFieldItem;
+import net.sourceforge.joceanus.metis.field.MetisFieldSet;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
+import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxBandSet;
+import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
+import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxConfig;
+import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxResource;
+import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxSource;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+
+/**
+ * Tax configuration.
+ */
+public class MoneyWiseUKTaxConfig
+        implements MetisFieldItem, MoneyWiseTaxConfig {
+    /**
+     * Local Report fields.
+     */
+<span class="nc" id="L40">    private static final MetisFieldSet&lt;MoneyWiseUKTaxConfig&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKTaxConfig.class);</span>
+
+    /*
+     * Declare Fields.
+     */
+    static {
+<span class="nc" id="L46">        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXYEAR_NAME, MoneyWiseUKTaxConfig::getTaxYear);</span>
+<span class="nc" id="L47">        FIELD_DEFS.declareLocalField(MoneyWiseStaticDataType.TAXBASIS, MoneyWiseUKTaxConfig::getTaxSource);</span>
+<span class="nc" id="L48">        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXCONFIG_GROSS, MoneyWiseUKTaxConfig::getGrossTaxable);</span>
+<span class="nc" id="L49">        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXCONFIG_PRESAVINGS, MoneyWiseUKTaxConfig::getGrossPreSavings);</span>
+<span class="nc" id="L50">        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXCONFIG_BIRTHDAY, MoneyWiseUKTaxConfig::getBirthday);</span>
+<span class="nc" id="L51">        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXCONFIG_AGE, MoneyWiseUKTaxConfig::getClientAge);</span>
+<span class="nc" id="L52">        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXCONFIG_AGEALLOWANCE, MoneyWiseUKTaxConfig::hasAgeRelatedAllowance);</span>
+<span class="nc" id="L53">        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.ALLOWANCE_BASIC, MoneyWiseUKTaxConfig::getAllowance);</span>
+<span class="nc" id="L54">        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.ALLOWANCE_RENTAL, MoneyWiseUKTaxConfig::getRentalAllowance);</span>
+<span class="nc" id="L55">        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.ALLOWANCE_SAVINGS, MoneyWiseUKTaxConfig::getSavingsAllowance);</span>
+<span class="nc" id="L56">        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.ALLOWANCE_DIVIDEND, MoneyWiseUKTaxConfig::getDividendAllowance);</span>
+<span class="nc" id="L57">        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.ALLOWANCE_CAPITAL, MoneyWiseUKTaxConfig::getCapitalAllowance);</span>
+<span class="nc" id="L58">        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXYEAR_BANDS, MoneyWiseUKTaxConfig::getTaxBands);</span>
+<span class="nc" id="L59">        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXBANDS_LOSAVINGS, MoneyWiseUKTaxConfig::getLoSavingsBand);</span>
+<span class="nc" id="L60">    }</span>
+
+    /**
+     * TaxYear.
+     */
+    private final MoneyWiseUKTaxYear theTaxYear;
+
+    /**
+     * The taxSource.
+     */
+    private final MoneyWiseTaxSource theTaxSource;
+
+    /**
+     * Gross Taxable Income.
+     */
+    private final OceanusMoney theGrossTaxable;
+
+    /**
+     * Gross PreSavings.
+     */
+    private final OceanusMoney theGrossPreSavings;
+
+    /**
+     * The client birthday.
+     */
+    private final OceanusDate theBirthday;
+
+    /**
+     * The client age in the tax year.
+     */
+    private final Integer theClientAge;
+
+    /**
+     * Do we have an age related allowance.
+     */
+    private boolean hasAgeRelatedAllowance;
+
+    /**
+     * Basic Allowance.
+     */
+    private final OceanusMoney theAllowance;
+
+    /**
+     * Rental Allowance.
+     */
+    private final OceanusMoney theRentalAllowance;
+
+    /**
+     * Savings Allowance.
+     */
+    private final OceanusMoney theSavingsAllowance;
+
+    /**
+     * Dividend Allowance.
+     */
+    private final OceanusMoney theDividendAllowance;
+
+    /**
+     * Capital Allowance.
+     */
+    private final OceanusMoney theCapitalAllowance;
+
+    /**
+     * Tax Bands.
+     */
+    private final MoneyWiseTaxBandSet theTaxBands;
+
+    /**
+     * LoSavings Band.
+     */
+    private final MoneyWiseTaxBand theLoSavings;
+
+    /**
+     * Constructor.
+     * @param pTaxYear the taxYear
+     * @param pTaxSource the tax source
+     * @param pBirthday the client birthday
+     */
+    protected MoneyWiseUKTaxConfig(final MoneyWiseUKTaxYear pTaxYear,
+                                   final MoneyWiseTaxSource pTaxSource,
+<span class="nc" id="L140">                                   final OceanusDate pBirthday) {</span>
+        /* Store details */
+<span class="nc" id="L142">        theTaxYear = pTaxYear;</span>
+<span class="nc" id="L143">        theTaxSource = pTaxSource;</span>
+<span class="nc" id="L144">        theBirthday = pBirthday;</span>
+<span class="nc" id="L145">        theClientAge = theBirthday.ageOn(pTaxYear.getYearEnd());</span>
+
+        /* calculate the gross taxable income and preSavings */
+<span class="nc" id="L148">        theGrossPreSavings = determineGrossPreSavings();</span>
+<span class="nc" id="L149">        theGrossTaxable = determineGrossTaxableIncome();</span>
+
+        /* Access the basic allowances */
+<span class="nc" id="L152">        final MoneyWiseUKBasicAllowance myAllowances = theTaxYear.getAllowances();</span>
+
+        /* Calculate the allowances */
+<span class="nc" id="L155">        theAllowance = new OceanusMoney(myAllowances.calculateBasicAllowance(this));</span>
+<span class="nc" id="L156">        theRentalAllowance = new OceanusMoney(myAllowances.getRentalAllowance());</span>
+<span class="nc" id="L157">        theSavingsAllowance = new OceanusMoney(myAllowances.calculateSavingsAllowance(this));</span>
+<span class="nc" id="L158">        theDividendAllowance = new OceanusMoney(myAllowances.calculateDividendAllowance());</span>
+<span class="nc" id="L159">        theCapitalAllowance = new OceanusMoney(myAllowances.getCapitalAllowance());</span>
+
+        /* Access the taxBands */
+<span class="nc" id="L162">        final MoneyWiseUKTaxBands myBands = theTaxYear.getTaxBands();</span>
+<span class="nc" id="L163">        theTaxBands = new MoneyWiseTaxBandSet(myBands.getStandardSet());</span>
+
+        /* Calculate the loSavings band */
+<span class="nc" id="L166">        theLoSavings = myAllowances.calculateLoSavingsBand(this, myBands.getLoSavings());</span>
+<span class="nc" id="L167">    }</span>
+
+    /**
+     * Constructor.
+     * @param pSource the source configuration
+     */
+<span class="nc" id="L173">    private MoneyWiseUKTaxConfig(final MoneyWiseUKTaxConfig pSource) {</span>
+        /* Copy basic details */
+<span class="nc" id="L175">        theTaxYear = pSource.getTaxYear();</span>
+<span class="nc" id="L176">        theTaxSource = pSource.getTaxSource();</span>
+<span class="nc" id="L177">        theGrossTaxable = pSource.getGrossTaxable();</span>
+<span class="nc" id="L178">        theGrossPreSavings = pSource.getGrossPreSavings();</span>
+<span class="nc" id="L179">        theBirthday = pSource.getBirthday();</span>
+<span class="nc" id="L180">        theClientAge = pSource.getClientAge();</span>
+<span class="nc" id="L181">        hasAgeRelatedAllowance = pSource.hasAgeRelatedAllowance();</span>
+
+        /* Copy the allowances */
+<span class="nc" id="L184">        theAllowance = new OceanusMoney(pSource.getAllowance());</span>
+<span class="nc" id="L185">        theRentalAllowance = new OceanusMoney(pSource.getRentalAllowance());</span>
+<span class="nc" id="L186">        theSavingsAllowance = new OceanusMoney(pSource.getSavingsAllowance());</span>
+<span class="nc" id="L187">        theDividendAllowance = new OceanusMoney(pSource.getDividendAllowance());</span>
+<span class="nc" id="L188">        theCapitalAllowance = new OceanusMoney(pSource.getCapitalAllowance());</span>
+
+        /* Copy the taxBands */
+<span class="nc" id="L191">        theTaxBands = new MoneyWiseTaxBandSet(pSource.getTaxBands());</span>
+<span class="nc" id="L192">        theLoSavings = new MoneyWiseTaxBand(pSource.getLoSavingsBand());</span>
+<span class="nc" id="L193">    }</span>
+
+    /**
+     * Obtain the tax year.
+     * @return the tax year
+     */
+    public MoneyWiseUKTaxYear getTaxYear() {
+<span class="nc" id="L200">        return theTaxYear;</span>
+    }
+
+    /**
+     * Obtain the tax bases.
+     * @return the bases
+     */
+    public MoneyWiseTaxSource getTaxSource() {
+<span class="nc" id="L208">        return theTaxSource;</span>
+    }
+
+    /**
+     * Obtain the gross preSavings income.
+     * @return the gross preSavings
+     */
+    public OceanusMoney getGrossPreSavings() {
+<span class="nc" id="L216">        return theGrossPreSavings;</span>
+    }
+
+    /**
+     * Obtain the gross taxable income.
+     * @return the gross taxable
+     */
+    public OceanusMoney getGrossTaxable() {
+<span class="nc" id="L224">        return theGrossTaxable;</span>
+    }
+
+    /**
+     * Obtain the client birthday.
+     * @return the birthday
+     */
+    public OceanusDate getBirthday() {
+<span class="nc" id="L232">        return theBirthday;</span>
+    }
+
+    /**
+     * Obtain the client age.
+     * @return the gross taxable
+     */
+    public Integer getClientAge() {
+<span class="nc" id="L240">        return theClientAge;</span>
+    }
+
+    /**
+     * Do we have an age related allowance?
+     * @return true/false
+     */
+    public boolean hasAgeRelatedAllowance() {
+<span class="nc" id="L248">        return hasAgeRelatedAllowance;</span>
+    }
+
+    /**
+     * Set whether we have an age related allowance?
+     * @param pFlag true/false
+     */
+    protected void setHasAgeRelatedAllowance(final boolean pFlag) {
+<span class="nc" id="L256">        hasAgeRelatedAllowance = pFlag;</span>
+<span class="nc" id="L257">    }</span>
+
+    /**
+     * Obtain the allowance.
+     * @return the allowance
+     */
+    public OceanusMoney getAllowance() {
+<span class="nc" id="L264">        return theAllowance;</span>
+    }
+
+    /**
+     * Obtain the rental allowance.
+     * @return the rental allowance
+     */
+    public OceanusMoney getRentalAllowance() {
+<span class="nc" id="L272">        return theRentalAllowance;</span>
+    }
+
+    /**
+     * Obtain the savings allowance.
+     * @return the allowance
+     */
+    public OceanusMoney getSavingsAllowance() {
+<span class="nc" id="L280">        return theSavingsAllowance;</span>
+    }
+
+    /**
+     * Obtain the dividend allowance.
+     * @return the allowance
+     */
+    public OceanusMoney getDividendAllowance() {
+<span class="nc" id="L288">        return theDividendAllowance;</span>
+    }
+
+    /**
+     * Obtain the capital allowance.
+     * @return the allowance
+     */
+    public OceanusMoney getCapitalAllowance() {
+<span class="nc" id="L296">        return theCapitalAllowance;</span>
+    }
+
+    /**
+     * Obtain the tax bands.
+     * @return the tax bands
+     */
+    public MoneyWiseTaxBandSet getTaxBands() {
+<span class="nc" id="L304">        return theTaxBands;</span>
+    }
+
+    /**
+     * Obtain the low savings band.
+     * @return the low savings band
+     */
+    public MoneyWiseTaxBand getLoSavingsBand() {
+<span class="nc" id="L312">        return theLoSavings;</span>
+    }
+
+    @Override
+    public MetisFieldSet&lt;MoneyWiseUKTaxConfig&gt; getDataFieldSet() {
+<span class="nc" id="L317">        return FIELD_DEFS;</span>
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L322">        return FIELD_DEFS.getName();</span>
+    }
+
+    @Override
+    public MoneyWiseUKTaxConfig cloneIt() {
+<span class="nc" id="L327">        return new MoneyWiseUKTaxConfig(this);</span>
+    }
+
+    /**
+     * Determine the gross taxable income.
+     * @return the gross taxable income
+     */
+    private OceanusMoney determineGrossTaxableIncome() {
+        /* Initialise income to preSavings */
+<span class="nc" id="L336">        final OceanusMoney myIncome = new OceanusMoney(theGrossPreSavings);</span>
+
+        /* Add taxed interest to income */
+<span class="nc" id="L339">        myIncome.addAmount(theTaxSource.getAmountForTaxBasis(MoneyWiseTaxClass.TAXEDINTEREST));</span>
+
+        /* Add unTaxed interest to income */
+<span class="nc" id="L342">        myIncome.addAmount(theTaxSource.getAmountForTaxBasis(MoneyWiseTaxClass.UNTAXEDINTEREST));</span>
+
+        /* Add share dividends to income */
+<span class="nc" id="L345">        myIncome.addAmount(theTaxSource.getAmountForTaxBasis(MoneyWiseTaxClass.DIVIDEND));</span>
+
+        /* Add unit trust dividends to income */
+<span class="nc" id="L348">        myIncome.addAmount(theTaxSource.getAmountForTaxBasis(MoneyWiseTaxClass.UNITTRUSTDIVIDEND));</span>
+
+        /* Add foreign dividends to income */
+<span class="nc" id="L351">        myIncome.addAmount(theTaxSource.getAmountForTaxBasis(MoneyWiseTaxClass.FOREIGNDIVIDEND));</span>
+
+        /* Add chargeable gains to income */
+<span class="nc" id="L354">        myIncome.addAmount(theTaxSource.getAmountForTaxBasis(MoneyWiseTaxClass.CHARGEABLEGAINS));</span>
+
+        /* Capital Gains does not class as taxable income */
+
+        /* Return the gross taxable amount */
+<span class="nc" id="L359">        return myIncome;</span>
+    }
+
+    /**
+     * Determine the gross preSavings income.
+     * @return the gross preSavings income
+     */
+    private OceanusMoney determineGrossPreSavings() {
+        /* Access the basic allowances */
+<span class="nc" id="L368">        final MoneyWiseUKBasicAllowance myAllowances = theTaxYear.getAllowances();</span>
+
+        /* Initialise income to correct currency */
+<span class="nc" id="L371">        final OceanusMoney myIncome = new OceanusMoney(myAllowances.getAllowance());</span>
+<span class="nc" id="L372">        myIncome.setZero();</span>
+
+        /* Add the salary to income */
+<span class="nc" id="L375">        myIncome.addAmount(theTaxSource.getAmountForTaxBasis(MoneyWiseTaxClass.SALARY));</span>
+
+        /* Add the other income to income */
+<span class="nc" id="L378">        myIncome.addAmount(theTaxSource.getAmountForTaxBasis(MoneyWiseTaxClass.OTHERINCOME));</span>
+
+        /* Add the rental to income */
+<span class="nc" id="L381">        myIncome.addAmount(theTaxSource.getAmountForTaxBasis(MoneyWiseTaxClass.RENTALINCOME));</span>
+
+        /* Access the room rental income */
+<span class="nc" id="L384">        final OceanusMoney myChargeable = theTaxSource.getAmountForTaxBasis(MoneyWiseTaxClass.ROOMRENTAL);</span>
+
+        /* If we have a chargeable element */
+<span class="nc" id="L387">        final OceanusMoney myAllowance = myAllowances.getRentalAllowance();</span>
+<span class="nc bnc" id="L388" title="All 2 branches missed.">        if (myChargeable.compareTo(myAllowance) &gt; 0) {</span>
+            /* Add the chargeable element to income */
+<span class="nc" id="L390">            myChargeable.subtractAmount(myAllowance);</span>
+<span class="nc" id="L391">            myIncome.addAmount(myChargeable);</span>
+        }
+
+        /* Return the gross preSavings amount */
+<span class="nc" id="L395">        return myIncome;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

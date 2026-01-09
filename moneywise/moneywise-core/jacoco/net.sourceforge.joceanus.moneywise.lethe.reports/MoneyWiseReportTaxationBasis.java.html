@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseReportTaxationBasis.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.lethe.reports</a> &gt; <span class="el_source">MoneyWiseReportTaxationBasis.java</span></div><h1>MoneyWiseReportTaxationBasis.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.lethe.reports;
+
+import net.sourceforge.joceanus.metis.report.MetisReportBase;
+import net.sourceforge.joceanus.metis.report.MetisReportHTMLBuilder;
+import net.sourceforge.joceanus.metis.report.MetisReportHTMLBuilder.MetisHTMLTable;
+import net.sourceforge.joceanus.metis.report.MetisReportManager;
+import net.sourceforge.joceanus.metis.report.MetisReportReferenceManager.DelayedTable;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisTaxBasisAccountBucket;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisTaxBasisBucket;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisTaxBasisBucket.MoneyWiseAnalysisTaxBasisBucketList;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisTaxBasisAttr;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisTaxBasisValues;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisValuesResource;
+import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter;
+import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisTaxBasisFilter;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import java.util.Iterator;
+
+/**
+ * Taxation Basis report builder.
+ */
+public class MoneyWiseReportTaxationBasis
+        extends MetisReportBase&lt;MoneyWiseAnalysis, MoneyWiseAnalysisFilter&lt;?, ?&gt;&gt; {
+    /**
+     * The Title text.
+     */
+<span class="nc" id="L49">    private static final String TEXT_TITLE = MoneyWiseReportResource.TAXBASIS_TITLE.getValue();</span>
+
+    /**
+     * The Net text.
+     */
+<span class="nc" id="L54">    private static final String TEXT_NETT = MoneyWiseAnalysisValuesResource.TAXATTR_NETT.getValue();</span>
+
+    /**
+     * The Gross text.
+     */
+<span class="nc" id="L59">    private static final String TEXT_GROSS = MoneyWiseAnalysisValuesResource.TAXATTR_GROSS.getValue();</span>
+
+    /**
+     * HTML builder.
+     */
+    private final MetisReportHTMLBuilder theBuilder;
+
+    /**
+     * The Formatter.
+     */
+    private final OceanusDataFormatter theFormatter;
+
+    /**
+     * Constructor.
+     * @param pManager the Report Manager
+     */
+<span class="nc" id="L75">    protected MoneyWiseReportTaxationBasis(final MetisReportManager&lt;MoneyWiseAnalysisFilter&lt;?, ?&gt;&gt; pManager) {</span>
+        /* Access underlying utilities */
+<span class="nc" id="L77">        theBuilder = pManager.getBuilder();</span>
+<span class="nc" id="L78">        theFormatter = theBuilder.getDataFormatter();</span>
+<span class="nc" id="L79">    }</span>
+
+    @Override
+    public Document createReport(final MoneyWiseAnalysis pAnalysis) {
+        /* Access the bucket lists */
+<span class="nc" id="L84">        final MoneyWiseAnalysisTaxBasisBucketList myTaxBasis = pAnalysis.getTaxBasis();</span>
+<span class="nc" id="L85">        final OceanusDateRange myRange = pAnalysis.getDateRange();</span>
+
+        /* Obtain the totals bucket */
+<span class="nc" id="L88">        final MoneyWiseAnalysisTaxBasisBucket myTotals = myTaxBasis.getTotals();</span>
+
+        /* Start the report */
+<span class="nc" id="L91">        final Element myBody = theBuilder.startReport();</span>
+<span class="nc" id="L92">        theBuilder.makeTitle(myBody, TEXT_TITLE, theFormatter.formatObject(myRange));</span>
+
+        /* Initialise the table */
+<span class="nc" id="L95">        final MetisHTMLTable myTable = theBuilder.startTable(myBody);</span>
+<span class="nc" id="L96">        theBuilder.startHdrRow(myTable);</span>
+<span class="nc" id="L97">        theBuilder.makeTitleCell(myTable);</span>
+<span class="nc" id="L98">        theBuilder.makeTitleCell(myTable, TEXT_NETT);</span>
+<span class="nc" id="L99">        theBuilder.makeTitleCell(myTable, TEXT_GROSS);</span>
+
+        /* Loop through the TaxBasis Buckets */
+<span class="nc" id="L102">        final Iterator&lt;MoneyWiseAnalysisTaxBasisBucket&gt; myIterator = myTaxBasis.iterator();</span>
+<span class="nc bnc" id="L103" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L104">            final MoneyWiseAnalysisTaxBasisBucket myBucket = myIterator.next();</span>
+
+            /* Access the tax basis */
+<span class="nc" id="L107">            final boolean hasAccounts = myBucket.hasAccounts();</span>
+
+            /* Access the amount */
+<span class="nc" id="L110">            final MoneyWiseAnalysisTaxBasisValues myValues = myBucket.getValues();</span>
+<span class="nc" id="L111">            final OceanusMoney myGross = myValues.getMoneyValue(MoneyWiseAnalysisTaxBasisAttr.GROSS);</span>
+<span class="nc" id="L112">            final OceanusMoney myNett = myValues.getMoneyValue(MoneyWiseAnalysisTaxBasisAttr.NETT);</span>
+
+            /* If we have a non-zero value */
+<span class="nc bnc" id="L115" title="All 2 branches missed.">            if (myGross.isNonZero()) {</span>
+                /* Access bucket name */
+<span class="nc" id="L117">                final String myName = myBucket.getName();</span>
+
+                /* Format the detail */
+<span class="nc" id="L120">                theBuilder.startRow(myTable);</span>
+<span class="nc bnc" id="L121" title="All 2 branches missed.">                if (hasAccounts) {</span>
+<span class="nc" id="L122">                    theBuilder.makeDelayLinkCell(myTable, myName);</span>
+                } else {
+<span class="nc" id="L124">                    theBuilder.makeFilterLinkCell(myTable, myName);</span>
+                }
+<span class="nc" id="L126">                theBuilder.makeValueCell(myTable, myNett);</span>
+<span class="nc" id="L127">                theBuilder.makeValueCell(myTable, myGross);</span>
+
+                /* Create links */
+<span class="nc bnc" id="L130" title="All 2 branches missed.">                if (hasAccounts) {</span>
+<span class="nc" id="L131">                    setDelayedTable(myName, myTable, myBucket);</span>
+                } else {
+<span class="nc" id="L133">                    setFilterForId(myName, myBucket);</span>
+                }
+            }
+<span class="nc" id="L136">        }</span>
+
+        /* Access values */
+<span class="nc" id="L139">        final MoneyWiseAnalysisTaxBasisValues myValues = myTotals.getValues();</span>
+
+        /* Format the total */
+<span class="nc" id="L142">        theBuilder.startTotalRow(myTable);</span>
+<span class="nc" id="L143">        theBuilder.makeTitleCell(myTable, MoneyWiseReportBuilder.TEXT_TOTAL);</span>
+<span class="nc" id="L144">        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisTaxBasisAttr.NETT));</span>
+<span class="nc" id="L145">        theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisTaxBasisAttr.GROSS));</span>
+
+        /* Return the document */
+<span class="nc" id="L148">        return theBuilder.getDocument();</span>
+    }
+
+    @Override
+    public MetisHTMLTable createDelayedTable(final DelayedTable pTable) {
+        /* Access the source */
+<span class="nc" id="L154">        final Object mySource = pTable.getSource();</span>
+<span class="nc bnc" id="L155" title="All 2 branches missed.">        if (mySource instanceof MoneyWiseAnalysisTaxBasisBucket mySourceBucket) {</span>
+<span class="nc" id="L156">            return createDelayedAccounts(pTable.getParent(), mySourceBucket);</span>
+        }
+
+        /* Return the null table */
+<span class="nc" id="L160">        return null;</span>
+    }
+
+    /**
+     * Create a delayed accounts table.
+     * @param pParent the parent table
+     * @param pSource the source bucket
+     * @return the new document fragment
+     */
+    protected MetisHTMLTable createDelayedAccounts(final MetisHTMLTable pParent,
+                                                   final MoneyWiseAnalysisTaxBasisBucket pSource) {
+        /* Create an embedded table */
+<span class="nc" id="L172">        final MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);</span>
+
+        /* Loop through the Account Buckets */
+<span class="nc" id="L175">        final Iterator&lt;MoneyWiseAnalysisTaxBasisAccountBucket&gt; myIterator = pSource.accountIterator();</span>
+<span class="nc bnc" id="L176" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L177">            final MoneyWiseAnalysisTaxBasisAccountBucket myBucket = myIterator.next();</span>
+
+            /* Access bucket name */
+<span class="nc" id="L180">            final String myName = myBucket.getName();</span>
+<span class="nc" id="L181">            final String mySimpleName = myBucket.getSimpleName();</span>
+
+            /* Access values */
+<span class="nc" id="L184">            final MoneyWiseAnalysisTaxBasisValues myValues = myBucket.getValues();</span>
+
+            /* Create the SubCategory row */
+<span class="nc" id="L187">            theBuilder.startRow(myTable);</span>
+<span class="nc" id="L188">            theBuilder.makeFilterLinkCell(myTable, myName, mySimpleName);</span>
+<span class="nc" id="L189">            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisTaxBasisAttr.NETT));</span>
+<span class="nc" id="L190">            theBuilder.makeTotalCell(myTable, myValues.getMoneyValue(MoneyWiseAnalysisTaxBasisAttr.GROSS));</span>
+
+            /* Record the selection */
+<span class="nc" id="L193">            setFilterForId(myName, myBucket);</span>
+<span class="nc" id="L194">        }</span>
+
+        /* Return the table */
+<span class="nc" id="L197">        return myTable;</span>
+    }
+
+    @Override
+    public MoneyWiseAnalysisFilter&lt;?, MoneyWiseAnalysisTaxBasisAttr&gt; processFilter(final Object pSource) {
+<span class="nc bnc" id="L202" title="All 2 branches missed.">        if (pSource instanceof MoneyWiseAnalysisTaxBasisBucket mySource) {</span>
+            /* Create the new filter */
+<span class="nc" id="L204">            return new MoneyWiseAnalysisTaxBasisFilter(mySource);</span>
+        }
+<span class="nc" id="L206">        return null;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

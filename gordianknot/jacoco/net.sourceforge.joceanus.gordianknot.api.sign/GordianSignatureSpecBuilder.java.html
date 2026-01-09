@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianSignatureSpecBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.gordianknot.api.sign</a> &gt; <span class="el_source">GordianSignatureSpecBuilder.java</span></div><h1>GordianSignatureSpecBuilder.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * GordianKnot: Security Suite
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.gordianknot.api.sign;
+
+import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
+import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
+import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpecBuilder;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairType;
+
+import java.util.Arrays;
+import java.util.List;
+
+/**
+ * Signature Specification Builder.
+ */
+public final class GordianSignatureSpecBuilder {
+    /**
+     * Private constructor.
+     */
+    private GordianSignatureSpecBuilder() {
+    }
+
+    /**
+     * Create RSASpec.
+     * @param pSignatureType the signatureType
+     * @param pDigestSpec the digestSpec
+     * @return the SignatureSpec
+     */
+    public static GordianSignatureSpec rsa(final GordianSignatureType pSignatureType,
+                                           final GordianDigestSpec pDigestSpec) {
+<span class="fc" id="L45">        return new GordianSignatureSpec(GordianKeyPairType.RSA, pSignatureType, pDigestSpec);</span>
+    }
+
+    /**
+     * Create DSASpec.
+     * @param pSignatureType the signatureType
+     * @param pDigestSpec the digestSpec
+     * @return the SignatureSpec
+     */
+    public static GordianSignatureSpec dsa(final GordianSignatureType pSignatureType,
+                                           final GordianDigestSpec pDigestSpec) {
+<span class="fc" id="L56">        return new GordianSignatureSpec(GordianKeyPairType.DSA, pSignatureType, pDigestSpec);</span>
+    }
+
+    /**
+     * Create ECSpec.
+     * @param pSignatureType the signatureType
+     * @param pDigestSpec the digestSpec
+     * @return the SignatureSpec
+     */
+    public static GordianSignatureSpec ec(final GordianSignatureType pSignatureType,
+                                          final GordianDigestSpec pDigestSpec) {
+<span class="fc" id="L67">        return new GordianSignatureSpec(GordianKeyPairType.EC, pSignatureType, pDigestSpec);</span>
+    }
+
+    /**
+     * Create SM2Spec.
+     * @param pDigestSpec the digestSpec
+     * @return the SignatureSpec
+     */
+    public static GordianSignatureSpec sm2(final GordianDigestSpec pDigestSpec) {
+<span class="fc" id="L76">        return new GordianSignatureSpec(GordianKeyPairType.SM2, pDigestSpec);</span>
+    }
+
+    /**
+     * Create DSTU4145Spec.
+     * @return the SignatureSpec
+     */
+    public static GordianSignatureSpec dstu4145() {
+<span class="fc" id="L84">        return new GordianSignatureSpec(GordianKeyPairType.DSTU4145, GordianDigestSpecBuilder.gost());</span>
+    }
+
+    /**
+     * Create GOST2012Spec.
+     * @param pLength the length
+     * @return the SignatureSpec
+     */
+    public static GordianSignatureSpec gost2012(final GordianLength pLength) {
+<span class="fc" id="L93">        return new GordianSignatureSpec(GordianKeyPairType.GOST2012, GordianDigestSpecBuilder.streebog(pLength));</span>
+    }
+
+    /**
+     * Create EdDSASpec.
+     * @return the SignatureSpec
+     */
+    public static GordianSignatureSpec edDSA() {
+<span class="fc" id="L101">        return new GordianSignatureSpec(GordianKeyPairType.EDDSA, GordianSignatureType.NATIVE);</span>
+    }
+
+    /**
+     * Create SLHDSASpec.
+     * @return the SignatureSpec
+     */
+    public static GordianSignatureSpec slhdsa() {
+<span class="fc" id="L109">        return new GordianSignatureSpec(GordianKeyPairType.SLHDSA, GordianSignatureType.NATIVE);</span>
+    }
+
+    /**
+     * Create MLDSASpec.
+     * @return the SignatureSpec
+     */
+    public static GordianSignatureSpec mldsa() {
+<span class="fc" id="L117">        return new GordianSignatureSpec(GordianKeyPairType.MLDSA, GordianSignatureType.NATIVE);</span>
+    }
+
+    /**
+     * Create falconSpec.
+     * @return the SignatureSpec
+     */
+    public static GordianSignatureSpec falcon() {
+<span class="fc" id="L125">        return new GordianSignatureSpec(GordianKeyPairType.FALCON, GordianSignatureType.NATIVE);</span>
+    }
+
+    /**
+     * Create mayoSpec.
+     * @return the SignatureSpec
+     */
+    public static GordianSignatureSpec mayo() {
+<span class="fc" id="L133">        return new GordianSignatureSpec(GordianKeyPairType.MAYO, GordianSignatureType.NATIVE);</span>
+    }
+
+    /**
+     * Create mayoSpec.
+     * @return the SignatureSpec
+     */
+    public static GordianSignatureSpec snova() {
+<span class="fc" id="L141">        return new GordianSignatureSpec(GordianKeyPairType.SNOVA, GordianSignatureType.NATIVE);</span>
+    }
+
+    /**
+     * Create picnicSpec.
+     * @return the SignatureSpec
+     */
+    public static GordianSignatureSpec picnic() {
+<span class="fc" id="L149">        return new GordianSignatureSpec(GordianKeyPairType.PICNIC, GordianSignatureType.NATIVE);</span>
+    }
+
+    /**
+     * Create picnicSpec.
+     * @param pDigest the digestSpec
+     * @return the SignatureSpec
+     */
+    public static GordianSignatureSpec picnic(final GordianDigestSpec pDigest) {
+<span class="fc" id="L158">        return new GordianSignatureSpec(GordianKeyPairType.PICNIC, GordianSignatureType.NATIVE, pDigest);</span>
+    }
+
+    /**
+     * Create xmssSpec.
+     * @return the SignatureSpec
+     */
+    public static GordianSignatureSpec xmss() {
+<span class="fc" id="L166">        return new GordianSignatureSpec(GordianKeyPairType.XMSS, GordianSignatureType.NATIVE);</span>
+    }
+
+    /**
+     * Create xmssPHSpec.
+     * @return the SignatureSpec
+     */
+    public static GordianSignatureSpec xmssph() {
+<span class="fc" id="L174">        return new GordianSignatureSpec(GordianKeyPairType.XMSS, GordianSignatureType.PREHASH);</span>
+    }
+
+    /**
+     * Create lmsSpec.
+     * @return the SignatureSpec
+     */
+    public static GordianSignatureSpec lms() {
+<span class="fc" id="L182">        return new GordianSignatureSpec(GordianKeyPairType.LMS, GordianSignatureType.NATIVE);</span>
+    }
+
+    /**
+     * Create CompositeSpec.
+     * @param pSpecs the list of encryptorSpecs
+     * @return the encryptorSpec
+     */
+    public static GordianSignatureSpec composite(final GordianSignatureSpec... pSpecs) {
+<span class="nc" id="L191">        return composite(Arrays.asList(pSpecs));</span>
+    }
+
+    /**
+     * Create CompositeSpec.
+     * @param pSpecs the list of encryptorSpecs
+     * @return the encryptorSpec
+     */
+    public static GordianSignatureSpec composite(final List&lt;GordianSignatureSpec&gt; pSpecs) {
+<span class="fc" id="L200">        return new GordianSignatureSpec(GordianKeyPairType.COMPOSITE, pSpecs);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

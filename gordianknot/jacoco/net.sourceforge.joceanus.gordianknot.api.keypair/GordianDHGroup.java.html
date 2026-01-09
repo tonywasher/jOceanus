@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianDHGroup.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.gordianknot.api.keypair</a> &gt; <span class="el_source">GordianDHGroup.java</span></div><h1>GordianDHGroup.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * GordianKnot: Security Suite
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.gordianknot.api.keypair;
+
+import org.bouncycastle.crypto.agreement.DHStandardGroups;
+import org.bouncycastle.crypto.params.DHParameters;
+
+/**
+ * DH Groups.
+ */
+<span class="fc" id="L25">public enum GordianDHGroup {</span>
+    /**
+     * ffdhe 2048.
+     */
+<span class="fc" id="L29">    FFDHE2048(DHStandardGroups.rfc7919_ffdhe2048),</span>
+
+    /**
+     * std 2048.
+     */
+<span class="fc" id="L34">    STD2048(DHStandardGroups.rfc3526_2048),</span>
+
+    /**
+     * std 1024.
+     */
+<span class="fc" id="L39">    STD1024(DHStandardGroups.rfc2409_1024),</span>
+
+    /**
+     * std 2048.
+     */
+<span class="fc" id="L44">    STD1536(DHStandardGroups.rfc3526_1536),</span>
+
+    /**
+     * std 3072.
+     */
+<span class="fc" id="L49">    STD3072(DHStandardGroups.rfc3526_3072),</span>
+
+    /**
+     * ffdhe 3072.
+     */
+<span class="fc" id="L54">    FFDHE3072(DHStandardGroups.rfc7919_ffdhe3072),</span>
+
+    /**
+     * std 4096.
+     */
+<span class="fc" id="L59">    STD4096(DHStandardGroups.rfc3526_4096),</span>
+
+    /**
+     * ffdhe 4096.
+     */
+<span class="fc" id="L64">    FFDHE4096(DHStandardGroups.rfc7919_ffdhe4096),</span>
+
+    /**
+     * std 6144.
+     */
+<span class="fc" id="L69">    STD6144(DHStandardGroups.rfc3526_6144),</span>
+
+    /**
+     * ffdhe 6144.
+     */
+<span class="fc" id="L74">    FFDHE6144(DHStandardGroups.rfc7919_ffdhe6144),</span>
+
+    /**
+     * std 8192.
+     */
+<span class="fc" id="L79">    STD8192(DHStandardGroups.rfc3526_8192),</span>
+
+    /**
+     * ffdhe 8192.
+     */
+<span class="fc" id="L84">    FFDHE8192(DHStandardGroups.rfc7919_ffdhe8192);</span>
+
+    /**
+     * The DH Group.
+     */
+    private final DHParameters theParameters;
+
+    /**
+     * Constructor.
+     * @param pParams the parameters
+     */
+<span class="fc" id="L95">    GordianDHGroup(final DHParameters pParams) {</span>
+<span class="fc" id="L96">        theParameters = pParams;</span>
+<span class="fc" id="L97">    }</span>
+
+    /**
+     * Obtain the parameters.
+     * @return the parameters
+     */
+    public DHParameters getParameters() {
+<span class="fc" id="L104">        return theParameters;</span>
+    }
+
+    /**
+     * Obtain the group for parameters.
+     * @param pParams the parameters
+     * @return the group
+     */
+    public static GordianDHGroup getGroupForParams(final DHParameters pParams) {
+        /* Loop through the values */
+<span class="pc bpc" id="L114" title="1 of 2 branches missed.">        for (GordianDHGroup myGroup: values()) {</span>
+<span class="pc bpc" id="L115" title="1 of 2 branches missed.">            if (myGroup.getParameters().equals(pParams)) {</span>
+<span class="fc" id="L116">                return myGroup;</span>
+            }
+        }
+<span class="nc" id="L119">        return null;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

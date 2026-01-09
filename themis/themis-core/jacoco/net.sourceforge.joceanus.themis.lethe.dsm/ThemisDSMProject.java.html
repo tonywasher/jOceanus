@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisDSMProject.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.themis.lethe.dsm</a> &gt; <span class="el_source">ThemisDSMProject.java</span></div><h1>ThemisDSMProject.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Themis: Java Project Framework
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.themis.lethe.dsm;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.themis.exc.ThemisIOException;
+import net.sourceforge.joceanus.themis.lethe.analysis.ThemisAnalysisMaven;
+
+/**
+ * DSM Project.
+ */
+public class ThemisDSMProject {
+    /**
+     * The location of the project.
+     */
+    private final File theLocation;
+
+    /**
+     * The name of the project.
+     */
+    private final String theProject;
+
+    /**
+     * The list of Modules.
+     */
+    private final List&lt;ThemisDSMModule&gt; theModules;
+
+    /**
+     * The error.
+     */
+    private OceanusException theError;
+
+    /**
+     * Constructor.
+     * @param pLocation the location of the project
+     */
+<span class="nc" id="L59">    public ThemisDSMProject(final File pLocation) {</span>
+        /* Store values */
+<span class="nc" id="L61">        theLocation = pLocation;</span>
+<span class="nc" id="L62">        theProject = pLocation.getName();</span>
+<span class="nc" id="L63">        theModules = new ArrayList&lt;&gt;();</span>
+
+        /* Process the project */
+<span class="nc" id="L66">        parseProjectFile(new File(theLocation, ThemisAnalysisMaven.POM));</span>
+<span class="nc" id="L67">    }</span>
+
+    /**
+     * Return the location of the project.
+     * @return the location
+     */
+    File getLocation() {
+<span class="nc" id="L74">        return theLocation;</span>
+    }
+
+    /**
+     * Return the project name.
+     * @return the name
+     */
+    String getProjectName() {
+<span class="nc" id="L82">        return theProject;</span>
+    }
+
+    /**
+     * Obtain the default module.
+     * @return the default
+     */
+    public ThemisDSMModule getDefaultModule() {
+<span class="nc" id="L90">        final List&lt;ThemisDSMModule&gt; myList = listModules();</span>
+<span class="nc bnc" id="L91" title="All 2 branches missed.">        return myList.isEmpty() ? null : myList.get(0);</span>
+    }
+
+    /**
+     * Does the project have modules.
+     * @return true/false
+     */
+    public boolean hasModules() {
+<span class="nc bnc" id="L99" title="All 2 branches missed.">        return !theModules.isEmpty();</span>
+    }
+
+    /**
+     * Obtain the error.
+     * @return error
+     */
+    public OceanusException getError() {
+<span class="nc" id="L107">        return theError;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L112">        return getProjectName();</span>
+    }
+
+    /**
+     * Obtain a list of all modules and submodules that contain packages.
+     * @return the list
+     */
+    public List&lt;ThemisDSMModule&gt; listModules() {
+        /* Create result list and loop through the modules */
+<span class="nc" id="L121">        final List&lt;ThemisDSMModule&gt; myList = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L122" title="All 2 branches missed.">        for (ThemisDSMModule myModule : theModules) {</span>
+            /* Only add the module if it has packages */
+<span class="nc bnc" id="L124" title="All 2 branches missed.">            if (myModule.hasPackages()) {</span>
+<span class="nc" id="L125">                myList.add(myModule);</span>
+            }
+
+            /* Add any subModules */
+<span class="nc" id="L129">            myList.addAll(myModule.listModules());</span>
+<span class="nc" id="L130">        }</span>
+
+        /* Sort the modules */
+<span class="nc" id="L133">        myList.sort(ThemisDSMModule::compareTo);</span>
+
+        /* Return the list */
+<span class="nc" id="L136">        return myList;</span>
+    }
+
+    /**
+     * Parse the maven top-level project file.
+     * @param pPom the project file
+     */
+    private void parseProjectFile(final File pPom) {
+        /* If the pom file does not exist, just return */
+<span class="nc bnc" id="L145" title="All 2 branches missed.">        if (!pPom.exists()) {</span>
+<span class="nc" id="L146">            return;</span>
+        }
+
+        /* Protect against exceptions */
+<span class="nc" id="L150">        try (InputStream myInStream = new FileInputStream(pPom)) {</span>
+            /* Parse the Project definition file */
+<span class="nc" id="L152">            final ThemisAnalysisMaven myPom = new ThemisAnalysisMaven(myInStream);</span>
+
+            /* Loop through the modules */
+<span class="nc bnc" id="L155" title="All 2 branches missed.">            for (final String myModuleName : myPom.getModules()) {</span>
+<span class="nc" id="L156">                 final File myModuleDir = new File(pPom.getParentFile(), myModuleName);</span>
+<span class="nc" id="L157">                final ThemisDSMModule myModule = new ThemisDSMModule(myModuleDir);</span>
+<span class="nc" id="L158">                theModules.add(myModule);</span>
+<span class="nc" id="L159">                myModule.processModulesAndPackages();</span>
+<span class="nc" id="L160">            }</span>
+
+            /* If we have no modules in the project, then we are a single module project */
+<span class="nc bnc" id="L163" title="All 2 branches missed.">            if (theModules.isEmpty()) {</span>
+<span class="nc" id="L164">                final ThemisDSMModule myModule = new ThemisDSMModule(theLocation);</span>
+<span class="nc" id="L165">                theModules.add(myModule);</span>
+<span class="nc" id="L166">                myModule.processModulesAndPackages();</span>
+            }
+
+            /* Sort the modules */
+<span class="nc" id="L170">            theModules.sort(Comparator.comparing(ThemisDSMModule::getModuleName));</span>
+
+            /* Catch exceptions */
+<span class="nc" id="L173">        } catch (IOException</span>
+                | OceanusException e) {
+            /* Save Exception */
+<span class="nc" id="L176">            theModules.clear();</span>
+<span class="nc" id="L177">            theError = new ThemisIOException(&quot;Failed to parse Project file&quot;, e);</span>
+<span class="nc" id="L178">        }</span>
+<span class="nc" id="L179">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWisePortfolioClass.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.data.statics</a> &gt; <span class="el_source">MoneyWisePortfolioClass.java</span></div><h1>MoneyWisePortfolioClass.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.data.statics;
+
+import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
+import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataClass;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+
+/**
+ * Enumeration of Portfolio Type Classes.
+ */
+<span class="fc" id="L26">public enum MoneyWisePortfolioClass</span>
+        implements PrometheusStaticDataClass {
+    /**
+     * Standard.
+     * &lt;p&gt;
+     * This is a standard portfolio.
+     */
+<span class="fc" id="L33">    STANDARD(1, 0),</span>
+
+    /**
+     * ISA.
+     * &lt;p&gt;
+     * This is a TaxFree portfolio.
+     */
+<span class="fc" id="L40">    TAXFREE(2, 1),</span>
+
+    /**
+     * Pension.
+     * &lt;p&gt;
+     * This is a Pension. and is singular
+     */
+<span class="fc" id="L47">    PENSION(3, 2),</span>
+
+    /**
+     * SIPP.
+     * &lt;p&gt;
+     * This is a SIPP Portfolio.
+     */
+<span class="fc" id="L54">    SIPP(4, 3);</span>
+
+    /**
+     * The String name.
+     */
+    private String theName;
+
+    /**
+     * Class Id.
+     */
+    private final int theId;
+
+    /**
+     * Class Order.
+     */
+    private final int theOrder;
+
+    /**
+     * Constructor.
+     * @param uId the Id
+     * @param uOrder the default order.
+     */
+    MoneyWisePortfolioClass(final int uId,
+<span class="fc" id="L77">                            final int uOrder) {</span>
+<span class="fc" id="L78">        theId = uId;</span>
+<span class="fc" id="L79">        theOrder = uOrder;</span>
+<span class="fc" id="L80">    }</span>
+
+    @Override
+    public int getClassId() {
+<span class="fc" id="L84">        return theId;</span>
+    }
+
+    @Override
+    public int getOrder() {
+<span class="fc" id="L89">        return theOrder;</span>
+    }
+
+    @Override
+    public String toString() {
+        /* If we have not yet loaded the name */
+<span class="fc bfc" id="L95" title="All 2 branches covered.">        if (theName == null) {</span>
+            /* Load the name */
+<span class="fc" id="L97">            theName = MoneyWiseStaticResource.getKeyForPortfolioType(this).getValue();</span>
+        }
+
+        /* return the name */
+<span class="fc" id="L101">        return theName;</span>
+    }
+
+    /**
+     * get value from id.
+     * @param id the id value
+     * @return the corresponding enum object
+     * @throws OceanusException on error
+     */
+    public static MoneyWisePortfolioClass fromId(final int id) throws OceanusException {
+<span class="nc bnc" id="L111" title="All 2 branches missed.">        for (MoneyWisePortfolioClass myClass : values()) {</span>
+<span class="nc bnc" id="L112" title="All 2 branches missed.">            if (myClass.getClassId() == id) {</span>
+<span class="nc" id="L113">                return myClass;</span>
+            }
+        }
+<span class="nc" id="L116">        throw new MoneyWiseDataException(&quot;Invalid ClassId for &quot; + MoneyWiseStaticDataType.PORTFOLIOTYPE.toString() + &quot;:&quot; + id);</span>
+    }
+
+    /**
+     * Determine whether the PortfolioType is tax free.
+     * @return &lt;code&gt;true&lt;/code&gt; if the PortfolioTtype is tax free, &lt;code&gt;false&lt;/code&gt; otherwise.
+     */
+    public boolean isTaxFree() {
+<span class="fc bfc" id="L124" title="All 2 branches covered.">        return this != STANDARD;</span>
+    }
+
+    /**
+     * Determine whether the PortfolioType is a pension.
+     * @return &lt;code&gt;true&lt;/code&gt; if the PortfolioType is pension, &lt;code&gt;false&lt;/code&gt; otherwise.
+     */
+    public boolean isPension() {
+<span class="nc bnc" id="L132" title="All 2 branches missed.">        switch (this) {</span>
+            case PENSION:
+            case SIPP:
+<span class="nc" id="L135">                return true;</span>
+            default:
+<span class="nc" id="L137">                return false;</span>
+        }
+    }
+
+    /**
+     * Determine whether the PortfolioType owns securities.
+     * @return &lt;code&gt;true&lt;/code&gt; if the PortfolioType owns securities, &lt;code&gt;false&lt;/code&gt; otherwise.
+     */
+    public boolean holdsSecurities() {
+<span class="nc bnc" id="L146" title="All 2 branches missed.">        switch (this) {</span>
+            case STANDARD:
+            case TAXFREE:
+            case SIPP:
+<span class="nc" id="L150">                return true;</span>
+            default:
+<span class="nc" id="L152">                return false;</span>
+        }
+    }
+
+    /**
+     * Determine whether the PortfolioType can hold pension securities.
+     * @return &lt;code&gt;true&lt;/code&gt; if the PortfolioType owns pensions, &lt;code&gt;false&lt;/code&gt; otherwise.
+     */
+    public boolean holdsPensions() {
+<span class="fc bfc" id="L161" title="All 2 branches covered.">        return this == PENSION;</span>
+    }
+
+    /**
+     * Is this a singular portfolio?.
+     * @return &lt;code&gt;true&lt;/code&gt; if the PortfolioType is singular, &lt;code&gt;false&lt;/code&gt; otherwise.
+     */
+    public boolean isSingular() {
+<span class="fc" id="L169">        return holdsPensions();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

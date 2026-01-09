@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisAnalysisBlock.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.themis.lethe.analysis</a> &gt; <span class="el_source">ThemisAnalysisBlock.java</span></div><h1>ThemisAnalysisBlock.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Themis: Java Project Framework
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.themis.lethe.analysis;
+
+import java.util.ArrayDeque;
+import java.util.Deque;
+
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.themis.lethe.analysis.ThemisAnalysisContainer.ThemisAnalysisAdoptable;
+
+/**
+ * Block construct.
+ */
+public class ThemisAnalysisBlock
+        implements ThemisAnalysisContainer, ThemisAnalysisAdoptable {
+    /**
+     * The Header.
+     */
+    private final ThemisAnalysisLine theHeader;
+
+    /**
+     * The properties.
+     */
+    private final ThemisAnalysisProperties theProperties;
+
+    /**
+     * The contents.
+     */
+    private final Deque&lt;ThemisAnalysisElement&gt; theContents;
+
+    /**
+     * The number of lines.
+     */
+    private final int theNumLines;
+
+    /**
+     * The parent.
+     */
+    private ThemisAnalysisContainer theParent;
+
+    /**
+     * The dataMap.
+     */
+    private final ThemisAnalysisDataMap theDataMap;
+
+    /**
+     * Constructor.
+     * @param pParser the parser
+     * @param pLine the initial class line
+     * @throws OceanusException on error
+     */
+    ThemisAnalysisBlock(final ThemisAnalysisParser pParser,
+<span class="nc" id="L67">                        final ThemisAnalysisLine pLine) throws OceanusException {</span>
+        /* Store parameters */
+<span class="nc" id="L69">        theHeader = pLine;</span>
+<span class="nc" id="L70">        theNumLines = 2;</span>
+
+        /* Store parameters */
+<span class="nc" id="L73">        theProperties = pLine.getProperties();</span>
+<span class="nc" id="L74">        theParent = pParser.getParent();</span>
+<span class="nc" id="L75">        theDataMap = new ThemisAnalysisDataMap(theParent.getDataMap());</span>
+
+        /* Create the arrays */
+<span class="nc" id="L78">        final Deque&lt;ThemisAnalysisElement&gt; myLines = ThemisAnalysisBuilder.processBody(pParser);</span>
+
+        /* Create a parser */
+<span class="nc" id="L81">        theContents = new ArrayDeque&lt;&gt;();</span>
+<span class="nc" id="L82">        final ThemisAnalysisParser myParser = new ThemisAnalysisParser(myLines, theContents, this);</span>
+<span class="nc" id="L83">        myParser.processLines();</span>
+<span class="nc" id="L84">    }</span>
+
+    @Override
+    public Deque&lt;ThemisAnalysisElement&gt; getContents() {
+<span class="nc" id="L88">        return theContents;</span>
+    }
+
+    @Override
+    public ThemisAnalysisContainer getParent() {
+<span class="nc" id="L93">        return theParent;</span>
+    }
+
+    @Override
+    public void setParent(final ThemisAnalysisContainer pParent) {
+<span class="nc" id="L98">        theParent = pParent;</span>
+<span class="nc" id="L99">        theDataMap.setParent(pParent.getDataMap());</span>
+<span class="nc" id="L100">    }</span>
+
+    @Override
+    public ThemisAnalysisDataMap getDataMap() {
+<span class="nc" id="L104">        return theDataMap;</span>
+    }
+
+    @Override
+    public int getNumLines() {
+<span class="nc" id="L109">        return theNumLines;</span>
+    }
+
+    /**
+     * Is the block synchronized.
+     * @return true/false
+     */
+    public boolean isSynchronized() {
+<span class="nc" id="L117">        return theProperties.hasModifier(ThemisAnalysisModifier.SYNCHRONIZED);</span>
+    }
+
+    @Override
+    public String toString() {
+        /* Create builder */
+<span class="nc" id="L123">        final StringBuilder myBuilder = new StringBuilder();</span>
+
+        /* Handle flags */
+<span class="nc bnc" id="L126" title="All 2 branches missed.">        if (theHeader.getProperties().hasModifier(ThemisAnalysisModifier.STATIC)) {</span>
+<span class="nc" id="L127">            myBuilder.append(ThemisAnalysisModifier.STATIC);</span>
+<span class="nc" id="L128">            myBuilder.append(ThemisAnalysisChar.BLANK);</span>
+        }
+<span class="nc bnc" id="L130" title="All 2 branches missed.">        if (theHeader.getProperties().hasModifier(ThemisAnalysisModifier.SYNCHRONIZED)) {</span>
+<span class="nc" id="L131">            myBuilder.append(ThemisAnalysisModifier.SYNCHRONIZED);</span>
+<span class="nc" id="L132">            myBuilder.append(ThemisAnalysisChar.BLANK);</span>
+        }
+
+        /* Add header */
+<span class="nc" id="L136">        myBuilder.append(theHeader);</span>
+<span class="nc" id="L137">        return myBuilder.toString();</span>
+    }
+
+    /**
+     * Check for block sequence.
+     * @param pLine the line to check
+     * @return true/false
+     */
+    static boolean checkBlock(final ThemisAnalysisLine pLine) {
+        /* Only interested in possible blocks */
+<span class="nc bnc" id="L147" title="All 2 branches missed.">        if (!pLine.endsWithChar(ThemisAnalysisChar.BRACE_OPEN)) {</span>
+<span class="nc" id="L148">            return false;</span>
+        }
+
+        /* Check for synchronised block */
+<span class="nc bnc" id="L152" title="All 2 branches missed.">        if (pLine.getProperties().hasModifier(ThemisAnalysisModifier.SYNCHRONIZED)</span>
+<span class="nc bnc" id="L153" title="All 2 branches missed.">                &amp;&amp; pLine.startsWithChar(ThemisAnalysisChar.PARENTHESIS_OPEN)) {</span>
+<span class="nc" id="L154">            return true;</span>
+        }
+
+        /* Check for standard block */
+<span class="nc bnc" id="L158" title="All 2 branches missed.">        return pLine.getLength() == 1;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

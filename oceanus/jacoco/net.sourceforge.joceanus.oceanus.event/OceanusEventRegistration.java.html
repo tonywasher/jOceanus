@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OceanusEventRegistration.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Oceanus Java Core Utilities</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.oceanus.event</a> &gt; <span class="el_source">OceanusEventRegistration.java</span></div><h1>OceanusEventRegistration.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Oceanus: Java Utilities
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.oceanus.event;
+
+import net.sourceforge.joceanus.oceanus.event.OceanusEvent.OceanusEventListener;
+
+/**
+ * Registration structure for event listeners.
+ * @param &lt;E&gt; The event id type
+ */
+public class OceanusEventRegistration&lt;E extends Enum&lt;E&gt;&gt; {
+    /**
+     * manager id.
+     */
+    private final Integer theMgrId;
+
+    /**
+     * Event listener.
+     */
+    private final OceanusEventListener&lt;E&gt; theListener;
+
+    /**
+     * Action Id.
+     */
+    private final E theEventId;
+
+    /**
+     * registration id.
+     */
+    private Integer theRegId;
+
+    /**
+     * Constructor.
+     * @param pMgrId the manager Id
+     * @param pListener the listener
+     */
+    protected OceanusEventRegistration(final Integer pMgrId,
+                                       final OceanusEventListener&lt;E&gt; pListener) {
+<span class="nc" id="L53">        this(pMgrId, null, pListener);</span>
+<span class="nc" id="L54">    }</span>
+
+    /**
+     * Constructor.
+     * @param pMgrId the manager Id
+     * @param pEventId the eventId to filter on
+     * @param pListener the listener
+     */
+    protected OceanusEventRegistration(final Integer pMgrId,
+                                       final E pEventId,
+<span class="nc" id="L64">                                       final OceanusEventListener&lt;E&gt; pListener) {</span>
+<span class="nc" id="L65">        theMgrId = pMgrId;</span>
+<span class="nc" id="L66">        theEventId = pEventId;</span>
+<span class="nc" id="L67">        theListener = pListener;</span>
+<span class="nc" id="L68">    }</span>
+
+    /**
+     * Is the event aimed at this registration.
+     * @param pEvent the event
+     * @return true/false
+     */
+    public boolean isRelevant(final OceanusEvent&lt;E&gt; pEvent) {
+<span class="nc bnc" id="L76" title="All 2 branches missed.">        return theMgrId == pEvent.getSourceId();</span>
+    }
+
+    /**
+     * Obtain the registration id.
+     * @return the id
+     */
+    protected Integer getRegId() {
+<span class="nc" id="L84">        return theRegId;</span>
+    }
+
+    /**
+     * Set the registration id.
+     * @param pId the id
+     */
+    protected void setRegId(final Integer pId) {
+<span class="nc" id="L92">        theRegId = pId;</span>
+<span class="nc" id="L93">    }</span>
+
+    /**
+     * Process the relevant event.
+     * @param pEvent the event.
+     */
+    protected void processEvent(final OceanusEvent&lt;E&gt; pEvent) {
+<span class="nc" id="L100">        theListener.handleEvent(pEvent);</span>
+<span class="nc" id="L101">    }</span>
+
+    /**
+     * Is the event filtered?
+     * @param pEventId the event Id
+     * @return true/false
+     */
+    protected boolean isFiltered(final E pEventId) {
+<span class="nc bnc" id="L109" title="All 2 branches missed.">        return theEventId != null</span>
+<span class="nc bnc" id="L110" title="All 2 branches missed.">               &amp;&amp; !theEventId.equals(pEventId);</span>
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        /* Handle trivial cases */
+<span class="nc bnc" id="L116" title="All 2 branches missed.">        if (o == null) {</span>
+<span class="nc" id="L117">            return false;</span>
+        }
+<span class="nc bnc" id="L119" title="All 2 branches missed.">        if (o.getClass() != getClass()) {</span>
+<span class="nc" id="L120">            return false;</span>
+        }
+
+        /* Cast as Registration */
+<span class="nc" id="L124">        final OceanusEventRegistration&lt;?&gt; myReg = (OceanusEventRegistration&lt;?&gt;) o;</span>
+
+        /* Compare fields */
+<span class="nc" id="L127">        return theRegId.equals(myReg.getRegId());</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="nc" id="L132">        return theRegId;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

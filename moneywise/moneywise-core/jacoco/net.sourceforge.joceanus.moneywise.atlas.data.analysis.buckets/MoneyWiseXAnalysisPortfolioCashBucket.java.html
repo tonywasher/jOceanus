@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseXAnalysisPortfolioCashBucket.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets</a> &gt; <span class="el_source">MoneyWiseXAnalysisPortfolioCashBucket.java</span></div><h1>MoneyWiseXAnalysisPortfolioCashBucket.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets;
+
+import net.sourceforge.joceanus.metis.field.MetisFieldSet;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisAccountAttr;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisAccountValues;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePortfolio;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+
+/**
+ * The Portfolio Cash Bucket class.
+ */
+public final class MoneyWiseXAnalysisPortfolioCashBucket
+        extends MoneyWiseXAnalysisAccountBucket&lt;MoneyWisePortfolio&gt; {
+    /**
+     * Local Report fields.
+     */
+<span class="fc" id="L35">    private static final MetisFieldSet&lt;MoneyWiseXAnalysisPortfolioCashBucket&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseXAnalysisPortfolioCashBucket.class);</span>
+
+    /**
+     * Constructor.
+     * @param pAnalysis the analysis
+     * @param pPortfolio the portfolio
+     */
+    MoneyWiseXAnalysisPortfolioCashBucket(final MoneyWiseXAnalysis pAnalysis,
+                                          final MoneyWisePortfolio pPortfolio) {
+        /* Call super-constructor */
+<span class="fc" id="L45">        super(pAnalysis, pPortfolio);</span>
+<span class="fc" id="L46">    }</span>
+
+    /**
+     * Constructor.
+     * @param pAnalysis the analysis
+     * @param pBase the underlying bucket
+     */
+    MoneyWiseXAnalysisPortfolioCashBucket(final MoneyWiseXAnalysis pAnalysis,
+                                          final MoneyWiseXAnalysisPortfolioCashBucket pBase) {
+        /* Call super-constructor */
+<span class="nc" id="L56">        super(pAnalysis, pBase);</span>
+<span class="nc" id="L57">    }</span>
+
+    /**
+     * Constructor.
+     * @param pAnalysis the analysis
+     * @param pBase the underlying bucket
+     * @param pDate the date for the bucket
+     */
+    MoneyWiseXAnalysisPortfolioCashBucket(final MoneyWiseXAnalysis pAnalysis,
+                                          final MoneyWiseXAnalysisPortfolioCashBucket pBase,
+                                          final OceanusDate pDate) {
+        /* Call super-constructor */
+<span class="nc" id="L69">        super(pAnalysis, pBase, pDate);</span>
+<span class="nc" id="L70">    }</span>
+
+    /**
+     * Constructor.
+     * @param pAnalysis the analysis
+     * @param pBase the underlying bucket
+     * @param pRange the range for the bucket
+     */
+    MoneyWiseXAnalysisPortfolioCashBucket(final MoneyWiseXAnalysis pAnalysis,
+                                          final MoneyWiseXAnalysisPortfolioCashBucket pBase,
+                                          final OceanusDateRange pRange) {
+        /* Call super-constructor */
+<span class="nc" id="L82">        super(pAnalysis, pBase, pRange);</span>
+<span class="nc" id="L83">    }</span>
+
+    @Override
+    public MetisFieldSet&lt;MoneyWiseXAnalysisPortfolioCashBucket&gt; getDataFieldSet() {
+<span class="nc" id="L87">        return FIELD_DEFS;</span>
+    }
+
+    @Override
+    public Long getBucketId() {
+<span class="nc" id="L92">        return getAccount().getExternalId();</span>
+    }
+
+    /**
+     * Add Values.
+     * @param pBucket the portfolio cash bucket
+     */
+    void addValues(final MoneyWiseXAnalysisPortfolioCashBucket pBucket) {
+        /* Add values */
+<span class="fc" id="L101">        addValues(getValues(), pBucket.getValues());</span>
+
+        /* Add base values */
+<span class="fc" id="L104">        addValues(getBaseValues(), pBucket.getBaseValues());</span>
+<span class="fc" id="L105">    }</span>
+
+    /**
+     * Add bucket to totals.
+     * @param pTotals the totals
+     * @param pSource the values to add
+     */
+    private static void addValues(final MoneyWiseXAnalysisAccountValues pTotals,
+                                  final MoneyWiseXAnalysisAccountValues pSource) {
+        /* Add valuation values */
+<span class="fc" id="L115">        OceanusMoney myValue = pTotals.getMoneyValue(MoneyWiseXAnalysisAccountAttr.VALUATION);</span>
+<span class="fc" id="L116">        myValue = new OceanusMoney(myValue);</span>
+<span class="fc" id="L117">        final OceanusMoney mySrcValue = pSource.getMoneyValue(MoneyWiseXAnalysisAccountAttr.VALUATION);</span>
+<span class="fc" id="L118">        myValue.addAmount(mySrcValue);</span>
+<span class="fc" id="L119">        pTotals.setValue(MoneyWiseXAnalysisAccountAttr.VALUATION, myValue);</span>
+<span class="fc" id="L120">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

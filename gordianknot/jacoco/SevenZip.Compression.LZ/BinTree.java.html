@@ -1,0 +1,383 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BinTree.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">SevenZip.Compression.LZ</a> &gt; <span class="el_source">BinTree.java</span></div><h1>BinTree.java</h1><pre class="source lang-java linenums">// LZ.BinTree
+
+package SevenZip.Compression.LZ;
+import java.io.IOException;
+
+
+<span class="fc" id="L7">public class BinTree extends InWindow</span>
+{
+	int _cyclicBufferPos;
+<span class="fc" id="L10">	int _cyclicBufferSize = 0;</span>
+	int _matchMaxLen;
+	
+	int[] _son;
+	int[] _hash;
+	
+<span class="fc" id="L16">	int _cutValue = 0xFF;</span>
+	int _hashMask;
+<span class="fc" id="L18">	int _hashSizeSum = 0;</span>
+	
+<span class="fc" id="L20">	boolean HASH_ARRAY = true;</span>
+
+	static final int kHash2Size = 1 &lt;&lt; 10;
+	static final int kHash3Size = 1 &lt;&lt; 16;
+	static final int kBT2HashSize = 1 &lt;&lt; 16;
+	static final int kStartMaxLen = 1;
+	static final int kHash3Offset = kHash2Size;
+	static final int kEmptyHashValue = 0;
+	static final int kMaxValForNormalize = (1 &lt;&lt; 30) - 1;
+	
+<span class="fc" id="L30">	int kNumHashDirectBytes = 0;</span>
+<span class="fc" id="L31">	int kMinMatchCheck = 4;</span>
+<span class="fc" id="L32">	int kFixHashSize = kHash2Size + kHash3Size;</span>
+
+	public void SetType(int numHashBytes)
+	{
+<span class="pc bpc" id="L36" title="1 of 2 branches missed.">		HASH_ARRAY = (numHashBytes &gt; 2);</span>
+<span class="pc bpc" id="L37" title="1 of 2 branches missed.">		if (HASH_ARRAY)</span>
+		{
+<span class="fc" id="L39">			kNumHashDirectBytes = 0;</span>
+<span class="fc" id="L40">			kMinMatchCheck = 4;</span>
+<span class="fc" id="L41">			kFixHashSize = kHash2Size + kHash3Size;</span>
+		}
+		else
+		{
+<span class="nc" id="L45">			kNumHashDirectBytes = 2;</span>
+<span class="nc" id="L46">			kMinMatchCheck = 2 + 1;</span>
+<span class="nc" id="L47">			kFixHashSize = 0;</span>
+		}
+<span class="fc" id="L49">	}</span>
+	
+
+	
+
+	public void Init() throws IOException
+	{
+<span class="fc" id="L56">		super.Init();</span>
+<span class="fc bfc" id="L57" title="All 2 branches covered.">		for (int i = 0; i &lt; _hashSizeSum; i++)</span>
+<span class="fc" id="L58">			_hash[i] = kEmptyHashValue;</span>
+<span class="fc" id="L59">		_cyclicBufferPos = 0;</span>
+<span class="fc" id="L60">		ReduceOffsets(-1);</span>
+<span class="fc" id="L61">	}</span>
+	
+	public void MovePos() throws IOException
+	{
+<span class="pc bpc" id="L65" title="1 of 2 branches missed.">		if (++_cyclicBufferPos &gt;= _cyclicBufferSize)</span>
+<span class="nc" id="L66">			_cyclicBufferPos = 0;</span>
+<span class="fc" id="L67">		super.MovePos();</span>
+<span class="pc bpc" id="L68" title="1 of 2 branches missed.">		if (_pos == kMaxValForNormalize)</span>
+<span class="nc" id="L69">			Normalize();</span>
+<span class="fc" id="L70">	}</span>
+	
+
+	
+	
+	
+	
+	
+	
+	public boolean Create(int historySize, int keepAddBufferBefore,
+			int matchMaxLen, int keepAddBufferAfter)
+	{
+<span class="pc bpc" id="L82" title="1 of 2 branches missed.">		if (historySize &gt; kMaxValForNormalize - 256)</span>
+<span class="nc" id="L83">			return false;</span>
+<span class="fc" id="L84">		_cutValue = 16 + (matchMaxLen &gt;&gt; 1);</span>
+
+<span class="fc" id="L86">		int windowReservSize = (historySize + keepAddBufferBefore +</span>
+				matchMaxLen + keepAddBufferAfter) / 2 + 256;
+		
+<span class="fc" id="L89">		super.Create(historySize + keepAddBufferBefore, matchMaxLen + keepAddBufferAfter, windowReservSize);</span>
+		
+<span class="fc" id="L91">		_matchMaxLen = matchMaxLen;</span>
+
+<span class="fc" id="L93">		int cyclicBufferSize = historySize + 1;</span>
+<span class="pc bpc" id="L94" title="1 of 2 branches missed.">		if (_cyclicBufferSize != cyclicBufferSize)</span>
+<span class="fc" id="L95">			_son = new int[(_cyclicBufferSize = cyclicBufferSize) * 2];</span>
+
+<span class="fc" id="L97">		int hs = kBT2HashSize;</span>
+
+<span class="pc bpc" id="L99" title="1 of 2 branches missed.">		if (HASH_ARRAY)</span>
+		{
+<span class="fc" id="L101">			hs = historySize - 1;</span>
+<span class="fc" id="L102">			hs |= (hs &gt;&gt; 1);</span>
+<span class="fc" id="L103">			hs |= (hs &gt;&gt; 2);</span>
+<span class="fc" id="L104">			hs |= (hs &gt;&gt; 4);</span>
+<span class="fc" id="L105">			hs |= (hs &gt;&gt; 8);</span>
+<span class="fc" id="L106">			hs &gt;&gt;= 1;</span>
+<span class="fc" id="L107">			hs |= 0xFFFF;</span>
+<span class="pc bpc" id="L108" title="1 of 2 branches missed.">			if (hs &gt; (1 &lt;&lt; 24))</span>
+<span class="nc" id="L109">				hs &gt;&gt;= 1;</span>
+<span class="fc" id="L110">			_hashMask = hs;</span>
+<span class="fc" id="L111">			hs++;</span>
+<span class="fc" id="L112">			hs += kFixHashSize;</span>
+		}
+<span class="pc bpc" id="L114" title="1 of 2 branches missed.">		if (hs != _hashSizeSum)</span>
+<span class="fc" id="L115">			_hash = new int [_hashSizeSum = hs];</span>
+<span class="fc" id="L116">		return true;</span>
+	}
+	public int GetMatches(int[] distances) throws IOException
+	{
+		int lenLimit;
+<span class="fc bfc" id="L121" title="All 2 branches covered.">		if (_pos + _matchMaxLen &lt;= _streamPos)</span>
+<span class="fc" id="L122">			lenLimit = _matchMaxLen;</span>
+		else
+		{
+<span class="fc" id="L125">			lenLimit = _streamPos - _pos;</span>
+<span class="fc bfc" id="L126" title="All 2 branches covered.">			if (lenLimit &lt; kMinMatchCheck)</span>
+			{
+<span class="fc" id="L128">				MovePos();</span>
+<span class="fc" id="L129">				return 0;</span>
+			}
+		}
+
+<span class="fc" id="L133">		int offset = 0;</span>
+<span class="pc bpc" id="L134" title="1 of 2 branches missed.">		int matchMinPos = (_pos &gt; _cyclicBufferSize) ? (_pos - _cyclicBufferSize) : 0;</span>
+<span class="fc" id="L135">		int cur = _bufferOffset + _pos;</span>
+<span class="fc" id="L136">		int maxLen = kStartMaxLen; // to avoid items for len &lt; hashSize;</span>
+<span class="fc" id="L137">		int hashValue, hash2Value = 0, hash3Value = 0;</span>
+		
+<span class="pc bpc" id="L139" title="1 of 2 branches missed.">		if (HASH_ARRAY)</span>
+		{
+<span class="fc" id="L141">			int temp = CrcTable[_bufferBase[cur] &amp; 0xFF] ^ (_bufferBase[cur + 1] &amp; 0xFF);</span>
+<span class="fc" id="L142">			hash2Value = temp &amp; (kHash2Size - 1);</span>
+<span class="fc" id="L143">			temp ^= ((int)(_bufferBase[cur + 2] &amp; 0xFF) &lt;&lt; 8);</span>
+<span class="fc" id="L144">			hash3Value = temp &amp; (kHash3Size - 1);</span>
+<span class="fc" id="L145">			hashValue = (temp ^ (CrcTable[_bufferBase[cur + 3] &amp; 0xFF] &lt;&lt; 5)) &amp; _hashMask;</span>
+<span class="fc" id="L146">		}</span>
+		else
+<span class="nc" id="L148">			hashValue = ((_bufferBase[cur] &amp; 0xFF) ^ ((int)(_bufferBase[cur + 1] &amp; 0xFF) &lt;&lt; 8));</span>
+
+<span class="fc" id="L150">		int curMatch = _hash[kFixHashSize + hashValue];</span>
+<span class="pc bpc" id="L151" title="1 of 2 branches missed.">		if (HASH_ARRAY)</span>
+		{
+<span class="fc" id="L153">			int curMatch2 = _hash[hash2Value];</span>
+<span class="fc" id="L154">			int curMatch3 = _hash[kHash3Offset + hash3Value];</span>
+<span class="fc" id="L155">			_hash[hash2Value] = _pos;</span>
+<span class="fc" id="L156">			_hash[kHash3Offset + hash3Value] = _pos;</span>
+<span class="fc bfc" id="L157" title="All 2 branches covered.">			if (curMatch2 &gt; matchMinPos)</span>
+<span class="fc bfc" id="L158" title="All 2 branches covered.">				if (_bufferBase[_bufferOffset + curMatch2] == _bufferBase[cur])</span>
+				{
+<span class="fc" id="L160">					distances[offset++] = maxLen = 2;</span>
+<span class="fc" id="L161">					distances[offset++] = _pos - curMatch2 - 1;</span>
+				}
+<span class="fc bfc" id="L163" title="All 2 branches covered.">			if (curMatch3 &gt; matchMinPos)</span>
+<span class="fc bfc" id="L164" title="All 2 branches covered.">				if (_bufferBase[_bufferOffset + curMatch3] == _bufferBase[cur])</span>
+				{
+<span class="fc bfc" id="L166" title="All 2 branches covered.">					if (curMatch3 == curMatch2)</span>
+<span class="fc" id="L167">						offset -= 2;</span>
+<span class="fc" id="L168">					distances[offset++] = maxLen = 3;</span>
+<span class="fc" id="L169">					distances[offset++] = _pos - curMatch3 - 1;</span>
+<span class="fc" id="L170">					curMatch2 = curMatch3;</span>
+				}
+<span class="fc bfc" id="L172" title="All 4 branches covered.">			if (offset != 0 &amp;&amp; curMatch2 == curMatch)</span>
+			{
+<span class="fc" id="L174">				offset -= 2;</span>
+<span class="fc" id="L175">				maxLen = kStartMaxLen;</span>
+			}
+		}
+
+<span class="fc" id="L179">		_hash[kFixHashSize + hashValue] = _pos;</span>
+
+<span class="fc" id="L181">		int ptr0 = (_cyclicBufferPos &lt;&lt; 1) + 1;</span>
+<span class="fc" id="L182">		int ptr1 = (_cyclicBufferPos &lt;&lt; 1);</span>
+
+		int len0, len1;
+<span class="fc" id="L185">		len0 = len1 = kNumHashDirectBytes;</span>
+
+<span class="pc bpc" id="L187" title="1 of 2 branches missed.">		if (kNumHashDirectBytes != 0)</span>
+		{
+<span class="nc bnc" id="L189" title="All 2 branches missed.">			if (curMatch &gt; matchMinPos)</span>
+			{
+<span class="nc bnc" id="L191" title="All 2 branches missed.">				if (_bufferBase[_bufferOffset + curMatch + kNumHashDirectBytes] !=</span>
+						_bufferBase[cur + kNumHashDirectBytes])
+				{
+<span class="nc" id="L194">					distances[offset++] = maxLen = kNumHashDirectBytes;</span>
+<span class="nc" id="L195">					distances[offset++] = _pos - curMatch - 1;</span>
+				}
+			}
+		}
+
+<span class="fc" id="L200">		int count = _cutValue;</span>
+
+		while (true)
+		{
+<span class="pc bpc" id="L204" title="1 of 4 branches missed.">			if (curMatch &lt;= matchMinPos || count-- == 0)</span>
+			{
+<span class="fc" id="L206">				_son[ptr0] = _son[ptr1] = kEmptyHashValue;</span>
+<span class="fc" id="L207">				break;</span>
+			}
+<span class="fc" id="L209">			int delta = _pos - curMatch;</span>
+<span class="pc bpc" id="L210" title="1 of 2 branches missed.">			int cyclicPos = ((delta &lt;= _cyclicBufferPos) ?</span>
+<span class="fc" id="L211">				(_cyclicBufferPos - delta) :</span>
+<span class="pc" id="L212">				(_cyclicBufferPos - delta + _cyclicBufferSize)) &lt;&lt; 1;</span>
+
+<span class="fc" id="L214">			int pby1 = _bufferOffset + curMatch;</span>
+<span class="fc" id="L215">			int len = Math.min(len0, len1);</span>
+<span class="fc bfc" id="L216" title="All 2 branches covered.">			if (_bufferBase[pby1 + len] == _bufferBase[cur + len])</span>
+			{
+<span class="fc bfc" id="L218" title="All 2 branches covered.">				while(++len != lenLimit)</span>
+<span class="fc bfc" id="L219" title="All 2 branches covered.">					if (_bufferBase[pby1 + len] != _bufferBase[cur + len])</span>
+<span class="fc" id="L220">						break;</span>
+<span class="fc bfc" id="L221" title="All 2 branches covered.">				if (maxLen &lt; len)</span>
+				{
+<span class="fc" id="L223">					distances[offset++] = maxLen = len;</span>
+<span class="fc" id="L224">					distances[offset++] = delta - 1;</span>
+<span class="fc bfc" id="L225" title="All 2 branches covered.">					if (len == lenLimit)</span>
+					{
+<span class="fc" id="L227">						_son[ptr1] = _son[cyclicPos];</span>
+<span class="fc" id="L228">						_son[ptr0] = _son[cyclicPos + 1];</span>
+<span class="fc" id="L229">						break;</span>
+					}
+				}
+			}
+<span class="fc bfc" id="L233" title="All 2 branches covered.">			if ((_bufferBase[pby1 + len] &amp; 0xFF) &lt; (_bufferBase[cur + len] &amp; 0xFF))</span>
+			{
+<span class="fc" id="L235">				_son[ptr1] = curMatch;</span>
+<span class="fc" id="L236">				ptr1 = cyclicPos + 1;</span>
+<span class="fc" id="L237">				curMatch = _son[ptr1];</span>
+<span class="fc" id="L238">				len1 = len;</span>
+			}
+			else
+			{
+<span class="fc" id="L242">				_son[ptr0] = curMatch;</span>
+<span class="fc" id="L243">				ptr0 = cyclicPos;</span>
+<span class="fc" id="L244">				curMatch = _son[ptr0];</span>
+<span class="fc" id="L245">				len0 = len;</span>
+			}
+<span class="fc" id="L247">		}</span>
+<span class="fc" id="L248">		MovePos();</span>
+<span class="fc" id="L249">		return offset;</span>
+	}
+
+	public void Skip(int num) throws IOException
+	{
+		do
+		{
+			int lenLimit;
+<span class="fc bfc" id="L257" title="All 2 branches covered.">			if (_pos + _matchMaxLen &lt;= _streamPos)</span>
+<span class="fc" id="L258">			lenLimit = _matchMaxLen;</span>
+			else
+			{
+<span class="fc" id="L261">				lenLimit = _streamPos - _pos;</span>
+<span class="fc bfc" id="L262" title="All 2 branches covered.">				if (lenLimit &lt; kMinMatchCheck)</span>
+				{
+<span class="fc" id="L264">					MovePos();</span>
+<span class="fc" id="L265">					continue;</span>
+				}
+			}
+
+<span class="pc bpc" id="L269" title="1 of 2 branches missed.">			int matchMinPos = (_pos &gt; _cyclicBufferSize) ? (_pos - _cyclicBufferSize) : 0;</span>
+<span class="fc" id="L270">			int cur = _bufferOffset + _pos;</span>
+			
+			int hashValue;
+
+<span class="pc bpc" id="L274" title="1 of 2 branches missed.">			if (HASH_ARRAY)</span>
+			{
+<span class="fc" id="L276">				int temp = CrcTable[_bufferBase[cur] &amp; 0xFF] ^ (_bufferBase[cur + 1] &amp; 0xFF);</span>
+<span class="fc" id="L277">				int hash2Value = temp &amp; (kHash2Size - 1);</span>
+<span class="fc" id="L278">				_hash[hash2Value] = _pos;</span>
+<span class="fc" id="L279">				temp ^= ((int)(_bufferBase[cur + 2] &amp; 0xFF) &lt;&lt; 8);</span>
+<span class="fc" id="L280">				int hash3Value = temp &amp; (kHash3Size - 1);</span>
+<span class="fc" id="L281">				_hash[kHash3Offset + hash3Value] = _pos;</span>
+<span class="fc" id="L282">				hashValue = (temp ^ (CrcTable[_bufferBase[cur + 3] &amp; 0xFF] &lt;&lt; 5)) &amp; _hashMask;</span>
+<span class="fc" id="L283">			}</span>
+			else
+<span class="nc" id="L285">				hashValue = ((_bufferBase[cur] &amp; 0xFF) ^ ((int)(_bufferBase[cur + 1] &amp; 0xFF) &lt;&lt; 8));</span>
+
+<span class="fc" id="L287">			int curMatch = _hash[kFixHashSize + hashValue];</span>
+<span class="fc" id="L288">			_hash[kFixHashSize + hashValue] = _pos;</span>
+
+<span class="fc" id="L290">			int ptr0 = (_cyclicBufferPos &lt;&lt; 1) + 1;</span>
+<span class="fc" id="L291">			int ptr1 = (_cyclicBufferPos &lt;&lt; 1);</span>
+
+			int len0, len1;
+<span class="fc" id="L294">			len0 = len1 = kNumHashDirectBytes;</span>
+
+<span class="fc" id="L296">			int count = _cutValue;</span>
+			while (true)
+			{
+<span class="pc bpc" id="L299" title="1 of 4 branches missed.">				if (curMatch &lt;= matchMinPos || count-- == 0)</span>
+				{
+<span class="fc" id="L301">					_son[ptr0] = _son[ptr1] = kEmptyHashValue;</span>
+<span class="fc" id="L302">					break;</span>
+				}
+
+<span class="fc" id="L305">				int delta = _pos - curMatch;</span>
+<span class="pc bpc" id="L306" title="1 of 2 branches missed.">				int cyclicPos = ((delta &lt;= _cyclicBufferPos) ?</span>
+<span class="fc" id="L307">					(_cyclicBufferPos - delta) :</span>
+<span class="pc" id="L308">					(_cyclicBufferPos - delta + _cyclicBufferSize)) &lt;&lt; 1;</span>
+
+<span class="fc" id="L310">				int pby1 = _bufferOffset + curMatch;</span>
+<span class="fc" id="L311">				int len = Math.min(len0, len1);</span>
+<span class="fc bfc" id="L312" title="All 2 branches covered.">				if (_bufferBase[pby1 + len] == _bufferBase[cur + len])</span>
+				{
+<span class="fc bfc" id="L314" title="All 2 branches covered.">					while (++len != lenLimit)</span>
+<span class="fc bfc" id="L315" title="All 2 branches covered.">						if (_bufferBase[pby1 + len] != _bufferBase[cur + len])</span>
+<span class="fc" id="L316">							break;</span>
+<span class="fc bfc" id="L317" title="All 2 branches covered.">					if (len == lenLimit)</span>
+					{
+<span class="fc" id="L319">						_son[ptr1] = _son[cyclicPos];</span>
+<span class="fc" id="L320">						_son[ptr0] = _son[cyclicPos + 1];</span>
+<span class="fc" id="L321">						break;</span>
+					}
+				}
+<span class="fc bfc" id="L324" title="All 2 branches covered.">				if ((_bufferBase[pby1 + len] &amp; 0xFF) &lt; (_bufferBase[cur + len] &amp; 0xFF))</span>
+				{
+<span class="fc" id="L326">					_son[ptr1] = curMatch;</span>
+<span class="fc" id="L327">					ptr1 = cyclicPos + 1;</span>
+<span class="fc" id="L328">					curMatch = _son[ptr1];</span>
+<span class="fc" id="L329">					len1 = len;</span>
+				}
+				else
+				{
+<span class="fc" id="L333">					_son[ptr0] = curMatch;</span>
+<span class="fc" id="L334">					ptr0 = cyclicPos;</span>
+<span class="fc" id="L335">					curMatch = _son[ptr0];</span>
+<span class="fc" id="L336">					len0 = len;</span>
+				}
+<span class="fc" id="L338">			}</span>
+<span class="fc" id="L339">			MovePos();</span>
+		}
+<span class="fc bfc" id="L341" title="All 2 branches covered.">		while (--num != 0);</span>
+<span class="fc" id="L342">	}</span>
+	
+	void NormalizeLinks(int[] items, int numItems, int subValue)
+	{
+<span class="nc bnc" id="L346" title="All 2 branches missed.">		for (int i = 0; i &lt; numItems; i++)</span>
+		{
+<span class="nc" id="L348">			int value = items[i];</span>
+<span class="nc bnc" id="L349" title="All 2 branches missed.">			if (value &lt;= subValue)</span>
+<span class="nc" id="L350">				value = kEmptyHashValue;</span>
+			else
+<span class="nc" id="L352">				value -= subValue;</span>
+<span class="nc" id="L353">			items[i] = value;</span>
+		}
+<span class="nc" id="L355">	}</span>
+	
+	void Normalize()
+	{
+<span class="nc" id="L359">		int subValue = _pos - _cyclicBufferSize;</span>
+<span class="nc" id="L360">		NormalizeLinks(_son, _cyclicBufferSize * 2, subValue);</span>
+<span class="nc" id="L361">		NormalizeLinks(_hash, _hashSizeSum, subValue);</span>
+<span class="nc" id="L362">		ReduceOffsets(subValue);</span>
+<span class="nc" id="L363">	}</span>
+	
+<span class="nc" id="L365">	public void SetCutValue(int cutValue) { _cutValue = cutValue; }</span>
+
+<span class="fc" id="L367">	private static final int[] CrcTable = new int[256];</span>
+
+	static
+	{
+<span class="fc bfc" id="L371" title="All 2 branches covered.">		for (int i = 0; i &lt; 256; i++)</span>
+		{
+<span class="fc" id="L373">			int r = i;</span>
+<span class="fc bfc" id="L374" title="All 2 branches covered.">			for (int j = 0; j &lt; 8; j++)</span>
+<span class="fc bfc" id="L375" title="All 2 branches covered.">				if ((r &amp; 1) != 0)</span>
+<span class="fc" id="L376">					r = (r &gt;&gt;&gt; 1) ^ 0xEDB88320;</span>
+				else
+<span class="fc" id="L378">					r &gt;&gt;&gt;= 1;</span>
+<span class="fc" id="L379">			CrcTable[i] = r;</span>
+		}
+<span class="fc" id="L381">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

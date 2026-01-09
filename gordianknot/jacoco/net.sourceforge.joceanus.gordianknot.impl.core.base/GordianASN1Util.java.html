@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianASN1Util.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.gordianknot.impl.core.base</a> &gt; <span class="el_source">GordianASN1Util.java</span></div><h1>GordianASN1Util.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * GordianKnot: Security Suite
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.gordianknot.impl.core.base;
+
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
+import org.bouncycastle.asn1.ASN1Object;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+
+import java.io.IOException;
+
+/**
+ * ASN1 Utilities.
+ */
+public final class GordianASN1Util {
+    /**
+     *  Base our ids off bouncyCastle.
+     */
+<span class="fc" id="L35">    private static final ASN1ObjectIdentifier BASEOID = BCObjectIdentifiers.bc.branch(&quot;100&quot;);</span>
+
+    /**
+     *  FactoryOID.
+     */
+<span class="fc" id="L40">    public static final ASN1ObjectIdentifier FACTORYOID = BASEOID.branch(&quot;1&quot;);</span>
+
+    /**
+     *  SymmetricOID branch.
+     */
+<span class="fc" id="L45">    public static final ASN1ObjectIdentifier SYMOID = BASEOID.branch(&quot;2&quot;);</span>
+
+    /**
+     *  AsymmetricOID branch.
+     */
+<span class="fc" id="L50">    public static final ASN1ObjectIdentifier ASYMOID = BASEOID.branch(&quot;3&quot;);</span>
+
+    /**
+     *  ExtensionsOID branch.
+     */
+<span class="fc" id="L55">    public static final ASN1ObjectIdentifier EXTOID = BASEOID.branch(&quot;4&quot;);</span>
+
+    /**
+     * Private constructor.
+     */
+    private GordianASN1Util() {
+    }
+
+    /**
+     * Obtain the byte Length of an encoded sequence field.
+     * @param pLength the length of the sequence
+     * @return the byte length
+     */
+    public static int getLengthSequence(final int pLength) {
+        /* Type + length + encoded length */
+<span class="fc" id="L70">        return 1 + pLength + getLengthValue(pLength);</span>
+    }
+
+    /**
+     * Obtain the byte Length of an encoded byte array field.
+     * @param pLength the length of the field
+     * @return the byte length
+     */
+    public static int getLengthByteArrayField(final int pLength) {
+        /* Type + length + encoded length */
+<span class="fc" id="L80">        return 1 + pLength + getLengthValue(pLength);</span>
+    }
+
+    /**
+     * Obtain the byte Length of an encoded integer field.
+     * @param pValue the value
+     * @return the byte length
+     */
+    public static int getLengthIntegerField(final int pValue) {
+        /* Type + length + encoded value */
+<span class="fc" id="L90">        return 2 + getLengthValue(pValue);</span>
+    }
+
+    /**
+     * Obtain the byte Length of an encoded integer value.
+     * @param pValue the value
+     * @return the byte length
+     */
+    public static int getLengthValue(final int pValue) {
+        /* Handle small lengths */
+<span class="fc bfc" id="L100" title="All 2 branches covered.">        if (pValue &lt;= Byte.MAX_VALUE) {</span>
+<span class="fc" id="L101">            return 1;</span>
+        }
+
+        /*  Loop while we work out the length */
+<span class="fc" id="L105">        int myLen = pValue &gt;&gt; Byte.SIZE;</span>
+<span class="fc" id="L106">        int myResult = 2;</span>
+<span class="fc bfc" id="L107" title="All 2 branches covered.">        while (myLen &gt; 0) {</span>
+<span class="fc" id="L108">            myResult++;</span>
+<span class="fc" id="L109">            myLen &gt;&gt;= Byte.SIZE;</span>
+        }
+
+        /* Return the length */
+<span class="fc" id="L113">        return myResult;</span>
+    }
+
+    /**
+     * Obtain the Length of an algorithmId field.
+     * @param pValue the value
+     * @return the byte length
+     */
+    public static int getLengthAlgorithmField(final AlgorithmIdentifier pValue) {
+        /* Protect against exceptions */
+        try {
+            /* Get the encoded length */
+<span class="fc" id="L125">            final byte[] myEncoded = pValue.toASN1Primitive().getEncoded();</span>
+
+            /* Type + encoded value */
+<span class="fc" id="L128">            return myEncoded.length;</span>
+
+            /* handle exceptions */
+<span class="nc" id="L131">        } catch (IOException e) {</span>
+<span class="nc" id="L132">            throw new IllegalArgumentException(e);</span>
+        }
+    }
+
+    /**
+     * Extension class for ASN1Object.
+     */
+<span class="fc" id="L139">    public abstract static class GordianASN1Object</span>
+            extends ASN1Object {
+        /**
+         * Obtain encodedBytes.
+         * @return the bytes
+         * @throws GordianException on error
+         */
+        public byte[] getEncodedBytes() throws GordianException {
+            try {
+<span class="fc" id="L148">                return toASN1Primitive().getEncoded();</span>
+<span class="nc" id="L149">            } catch (IOException e) {</span>
+<span class="nc" id="L150">                throw new GordianIOException(&quot;Failed to generate ASN1&quot;, e);</span>
+            }
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

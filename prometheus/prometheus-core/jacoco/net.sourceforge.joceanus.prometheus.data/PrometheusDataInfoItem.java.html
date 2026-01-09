@@ -1,0 +1,903 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PrometheusDataInfoItem.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Prometheus Core Application Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.prometheus.data</a> &gt; <span class="el_source">PrometheusDataInfoItem.java</span></div><h1>PrometheusDataInfoItem.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Prometheus: Application Framework
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.prometheus.data;
+
+import net.sourceforge.joceanus.metis.field.MetisFieldSet;
+import net.sourceforge.joceanus.metis.list.MetisListKey;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateFormatter;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimalParser;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+import net.sourceforge.joceanus.prometheus.exc.PrometheusDataException;
+import net.sourceforge.joceanus.prometheus.exc.PrometheusLogicException;
+
+import java.util.Date;
+
+/**
+ * Representation of an information extension of a DataItem.
+ * @author Tony Washer
+ */
+public abstract class PrometheusDataInfoItem
+        extends PrometheusEncryptedDataItem {
+    /**
+     * Maximum DataLength.
+     */
+    public static final int DATALEN = 512;
+
+    /**
+     * Report fields.
+     */
+<span class="nc" id="L50">    private static final PrometheusEncryptedFieldSet&lt;PrometheusDataInfoItem&gt; FIELD_DEFS = PrometheusEncryptedFieldSet.newEncryptedFieldSet(PrometheusDataInfoItem.class);</span>
+
+    /*
+     * FieldIds.
+     */
+    static {
+<span class="nc" id="L56">        FIELD_DEFS.declareLinkField(PrometheusDataResource.DATAINFO_TYPE);</span>
+<span class="nc" id="L57">        FIELD_DEFS.declareLinkField(PrometheusDataResource.DATAINFO_OWNER);</span>
+<span class="nc" id="L58">        FIELD_DEFS.declareEncryptedContextField(PrometheusDataResource.DATAINFO_VALUE);</span>
+<span class="nc" id="L59">        FIELD_DEFS.declareDerivedVersionedField(PrometheusDataResource.DATAINFO_LINK);</span>
+    }
+
+    /**
+     * Invalid Data Type Error.
+     */
+<span class="nc" id="L65">    protected static final String ERROR_BADDATATYPE = PrometheusDataResource.DATAINFO_ERROR_TYPE.getValue();</span>
+
+    /**
+     * Invalid Data Error.
+     */
+<span class="nc" id="L70">    protected static final String ERROR_BADDATA = PrometheusDataResource.DATAINFO_ERROR_DATA.getValue();</span>
+
+    /**
+     * Invalid Info Class Error.
+     */
+<span class="nc" id="L75">    protected static final String ERROR_BADINFOCLASS = PrometheusDataResource.DATAINFO_ERROR_CLASS.getValue();</span>
+
+    /**
+     * Copy Constructor.
+     * @param pList the list
+     * @param pInfo The Info to copy
+     */
+    protected PrometheusDataInfoItem(final PrometheusDataInfoList&lt;?&gt; pList,
+                                     final PrometheusDataInfoItem pInfo) {
+        /* Set standard values */
+<span class="nc" id="L85">        super(pList, pInfo);</span>
+<span class="nc" id="L86">    }</span>
+
+    /**
+     * Edit Constructor.
+     * @param pList the list
+     */
+    protected PrometheusDataInfoItem(final PrometheusDataInfoList&lt;?&gt; pList) {
+        /* Set standard values */
+<span class="nc" id="L94">        super(pList, 0);</span>
+<span class="nc" id="L95">    }</span>
+
+    /**
+     * Secure constructor.
+     * @param pList the list
+     * @param uId the id
+     * @param uKeySetId the keySet id
+     * @param uInfoTypeId the info id
+     * @param uOwnerId the owner id
+     * @throws OceanusException on error
+     */
+    protected PrometheusDataInfoItem(final PrometheusDataInfoList&lt;?&gt; pList,
+                                     final Integer uId,
+                                     final Integer uKeySetId,
+                                     final Integer uInfoTypeId,
+                                     final Integer uOwnerId) throws OceanusException {
+        /* Initialise the item */
+<span class="nc" id="L112">        super(pList, uId);</span>
+
+        /* Record the Ids */
+<span class="nc" id="L115">        setValueInfoType(uInfoTypeId);</span>
+<span class="nc" id="L116">        setValueOwner(uOwnerId);</span>
+
+        /* Store the keySetId */
+<span class="nc" id="L119">        setDataKeySet(uKeySetId);</span>
+<span class="nc" id="L120">    }</span>
+
+    /**
+     * Basic constructor.
+     * @param pList the list
+     * @param uId the id
+     * @param pInfoType the info type
+     * @param pOwner the owner
+     */
+    protected PrometheusDataInfoItem(final PrometheusDataInfoList&lt;?&gt; pList,
+                                     final Integer uId,
+                                     final PrometheusStaticDataItem pInfoType,
+                                     final PrometheusDataItem pOwner) {
+        /* Initialise the item */
+<span class="nc" id="L134">        super(pList, uId);</span>
+
+        /* Record the parameters */
+<span class="nc" id="L137">        setValueInfoType(pInfoType);</span>
+<span class="nc" id="L138">        setValueOwner(pOwner);</span>
+<span class="nc" id="L139">    }</span>
+
+    /**
+     * Basic constructor.
+     * @param pList the list
+     * @param pValues the values
+     * @throws OceanusException on error
+     */
+    protected PrometheusDataInfoItem(final PrometheusDataInfoList&lt;?&gt; pList,
+                                     final PrometheusDataValues pValues) throws OceanusException {
+        /* Initialise the item */
+<span class="nc" id="L150">        super(pList, pValues);</span>
+
+        /* Store the InfoType */
+<span class="nc" id="L153">        Object myValue = pValues.getValue(PrometheusDataResource.DATAINFO_TYPE);</span>
+<span class="nc bnc" id="L154" title="All 2 branches missed.">        if (myValue instanceof Integer i) {</span>
+<span class="nc" id="L155">            setValueInfoType(i);</span>
+<span class="nc bnc" id="L156" title="All 2 branches missed.">        } else if (myValue instanceof String s) {</span>
+<span class="nc" id="L157">            setValueInfoType(s);</span>
+<span class="nc bnc" id="L158" title="All 2 branches missed.">        } else if (myValue instanceof PrometheusStaticDataItem myStatic) {</span>
+<span class="nc" id="L159">            setValueInfoType(myStatic);</span>
+        }
+
+        /* Store the Owner */
+<span class="nc" id="L163">        myValue = pValues.getValue(PrometheusDataResource.DATAINFO_OWNER);</span>
+<span class="nc bnc" id="L164" title="All 2 branches missed.">        if (myValue instanceof Integer i) {</span>
+<span class="nc" id="L165">            setValueOwner(i);</span>
+<span class="nc bnc" id="L166" title="All 2 branches missed.">        } else if (myValue instanceof String s) {</span>
+<span class="nc" id="L167">            setValueOwner(s);</span>
+<span class="nc bnc" id="L168" title="All 2 branches missed.">        } else if (myValue instanceof PrometheusDataItem myItem) {</span>
+<span class="nc" id="L169">            setValueOwner(myItem);</span>
+        }
+<span class="nc" id="L171">    }</span>
+
+    @Override
+    public String toString() {
+        /* Access Info Type Value */
+<span class="nc" id="L176">        final PrometheusEncryptedValues myValues = getValues();</span>
+<span class="nc" id="L177">        final Object myType = myValues.getValue(PrometheusDataResource.DATAINFO_TYPE, Object.class);</span>
+<span class="nc bnc" id="L178" title="All 2 branches missed.">        if (!(myType instanceof PrometheusStaticDataItem)) {</span>
+<span class="nc" id="L179">            return super.toString();</span>
+        }
+
+        /* Access InfoType */
+<span class="nc" id="L183">        final PrometheusStaticDataItem myInfoType = (PrometheusStaticDataItem) myType;</span>
+
+        /* Access class */
+<span class="nc" id="L186">        return myInfoType.getName() + &quot;=&quot; + super.toString();</span>
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+        /* Access Info Type Value */
+<span class="nc" id="L192">        final PrometheusEncryptedValues myValues = getValues();</span>
+<span class="nc" id="L193">        final Object myType = myValues.getValue(PrometheusDataResource.DATAINFO_TYPE, Object.class);</span>
+<span class="nc bnc" id="L194" title="All 2 branches missed.">        if (!(myType instanceof PrometheusStaticDataItem)) {</span>
+<span class="nc" id="L195">            return super.formatObject(pFormatter);</span>
+        }
+
+        /* Access InfoType */
+<span class="nc" id="L199">        final PrometheusStaticDataItem myInfoType = getInfoType();</span>
+
+        /* Access formatter */
+<span class="nc" id="L202">        final OceanusDataFormatter myFormatter = getDataSet().getDataFormatter();</span>
+<span class="nc" id="L203">        final PrometheusDataInfoClass myInfoClass = (PrometheusDataInfoClass) myInfoType.getStaticClass();</span>
+
+        /* Switch on type of Data */
+<span class="nc bnc" id="L206" title="All 2 branches missed.">        switch (myInfoClass.getDataType()) {</span>
+            case LINK:
+            case LINKPAIR:
+            case LINKSET:
+<span class="nc" id="L210">                return myFormatter.formatObject(getLink());</span>
+            default:
+<span class="nc" id="L212">                return myFormatter.formatObject(getValue(Object.class));</span>
+        }
+    }
+
+    /**
+     * Obtain InfoType.
+     * @return the InfoTypeId
+     */
+    public abstract PrometheusStaticDataItem getInfoType();
+
+    /**
+     * Obtain InfoClass.
+     * @return the InfoClass
+     */
+    public abstract PrometheusDataInfoClass getInfoClass();
+
+    /**
+     * Obtain InfoTypeId.
+     * @return the InfoTypeId
+     */
+    public Integer getInfoTypeId() {
+<span class="nc" id="L233">        return getInfoType().getIndexedId();</span>
+    }
+
+    /**
+     * Obtain Owner.
+     * @return the Owner
+     */
+    public abstract PrometheusDataItem getOwner();
+
+    /**
+     * Obtain OwnerId.
+     * @return the OwnerId
+     */
+    public Integer getOwnerId() {
+<span class="nc" id="L247">        return getOwner().getIndexedId();</span>
+    }
+
+    /**
+     * Obtain Link.
+     * @param &lt;X&gt; the link type
+     * @param pClass the class of the link
+     * @return the Link
+     */
+    public &lt;X extends PrometheusDataItem&gt; X getLink(final Class&lt;X&gt; pClass) {
+<span class="nc" id="L257">        return getValues().getValue(PrometheusDataResource.DATAINFO_LINK, pClass);</span>
+    }
+
+    /**
+     * Get Link name.
+     * @return the link name
+     */
+    public String getLinkName() {
+<span class="nc" id="L265">        return null;</span>
+    }
+
+    /**
+     * Obtain Link.
+     * @return the Link
+     */
+    protected PrometheusDataItem getLink() {
+<span class="nc" id="L273">        return getValues().getValue(PrometheusDataResource.DATAINFO_LINK, PrometheusDataItem.class);</span>
+    }
+
+    /**
+     * Obtain Value as object.
+     * @param &lt;X&gt; the object type
+     * @param pClass the object class
+     * @return the Value
+     */
+    public &lt;X&gt; X getValue(final Class&lt;X&gt; pClass) {
+<span class="nc" id="L283">        return getValues().getValue(PrometheusDataResource.DATAINFO_VALUE, pClass);</span>
+    }
+
+    /**
+     * Obtain Value as underlying object.
+     * @return the Value
+     */
+    public PrometheusEncryptedPair getField() {
+<span class="nc" id="L291">        return getField(getValues());</span>
+    }
+
+    /**
+     * Obtain Encrypted Bytes.
+     * @return the Bytes
+     */
+    public byte[] getValueBytes() {
+<span class="nc" id="L299">        return getValues().getEncryptedBytes(PrometheusDataResource.DATAINFO_VALUE);</span>
+    }
+
+    /**
+     * Obtain Value as object.
+     * @param &lt;X&gt; the object type
+     * @param pValueSet the valueSet
+     * @param pClass the object class
+     * @return the Value
+     */
+    public static &lt;X&gt; X getValue(final PrometheusEncryptedValues pValueSet,
+                                 final Class&lt;X&gt; pClass) {
+<span class="nc bnc" id="L311" title="All 2 branches missed.">        return pValueSet.isDeletion()</span>
+<span class="nc" id="L312">                ? null</span>
+<span class="nc" id="L313">                : pValueSet.getValue(PrometheusDataResource.DATAINFO_VALUE, pClass);</span>
+    }
+
+    /**
+     * Obtain Value as encrypted field.
+     * @param pValueSet the valueSet
+     * @return the Value
+     */
+    public static PrometheusEncryptedPair getField(final PrometheusEncryptedValues pValueSet) {
+<span class="nc bnc" id="L322" title="All 2 branches missed.">        return pValueSet.isDeletion()</span>
+<span class="nc" id="L323">                ? null</span>
+<span class="nc" id="L324">                : pValueSet.getEncryptedPair(PrometheusDataResource.DATAINFO_VALUE);</span>
+    }
+
+
+    /**
+     * Set InfoType.
+     * @param pValue the info Type
+     */
+    protected final void setValueInfoType(final PrometheusStaticDataItem pValue) {
+<span class="nc" id="L333">        getValues().setUncheckedValue(PrometheusDataResource.DATAINFO_TYPE, pValue);</span>
+<span class="nc" id="L334">    }</span>
+
+    /**
+     * Set InfoType Id.
+     * @param pId the info Type id
+     */
+    protected final void setValueInfoType(final Integer pId) {
+<span class="nc" id="L341">        getValues().setUncheckedValue(PrometheusDataResource.DATAINFO_TYPE, pId);</span>
+<span class="nc" id="L342">    }</span>
+
+    /**
+     * Set InfoType Name.
+     * @param pName the info Type name
+     */
+    protected final void setValueInfoType(final String pName) {
+<span class="nc" id="L349">        getValues().setUncheckedValue(PrometheusDataResource.DATAINFO_TYPE, pName);</span>
+<span class="nc" id="L350">    }</span>
+
+    /**
+     * Set Owner.
+     * @param pValue the owner
+     */
+    protected final void setValueOwner(final PrometheusDataItem pValue) {
+<span class="nc" id="L357">        getValues().setUncheckedValue(PrometheusDataResource.DATAINFO_OWNER, pValue);</span>
+<span class="nc" id="L358">    }</span>
+
+    /**
+     * Set Owner id.
+     * @param pId the owner id
+     */
+    protected final void setValueOwner(final Integer pId) {
+<span class="nc" id="L365">        getValues().setUncheckedValue(PrometheusDataResource.DATAINFO_OWNER, pId);</span>
+<span class="nc" id="L366">    }</span>
+
+    /**
+     * Set Owner name.
+     * @param pName the owner name
+     */
+    protected final void setValueOwner(final String pName) {
+<span class="nc" id="L373">        getValues().setUncheckedValue(PrometheusDataResource.DATAINFO_OWNER, pName);</span>
+<span class="nc" id="L374">    }</span>
+
+    /**
+     * Set Value.
+     * @param pValue the value
+     * @throws OceanusException on error
+     */
+    protected void setValueValue(final Object pValue) throws OceanusException {
+<span class="nc" id="L382">        getValues().setDeletion(false);</span>
+<span class="nc" id="L383">        setEncryptedValue(PrometheusDataResource.DATAINFO_VALUE, pValue);</span>
+<span class="nc" id="L384">    }</span>
+
+    /**
+     * Set value.
+     * @param pValue the value
+     */
+    protected void setValueValue(final PrometheusEncryptedPair pValue) {
+<span class="nc" id="L391">        final PrometheusEncryptedValues myValues = getValues();</span>
+<span class="nc" id="L392">        myValues.setDeletion(false);</span>
+<span class="nc" id="L393">        myValues.setUncheckedValue(PrometheusDataResource.DATAINFO_VALUE, pValue);</span>
+<span class="nc" id="L394">    }</span>
+
+    /**
+     * Set Object Value.
+     * @param &lt;X&gt; the object type
+     * @param pBytes the value
+     * @param pClass the object class
+     * @throws OceanusException on error
+     */
+    protected &lt;X&gt; void setValueBytes(final byte[] pBytes,
+                                     final Class&lt;X&gt; pClass) throws OceanusException {
+<span class="nc" id="L405">        setEncryptedValue(PrometheusDataResource.DATAINFO_VALUE, pBytes, pClass);</span>
+<span class="nc" id="L406">    }</span>
+
+    /**
+     * Set link.
+     * @param pLink the link
+     */
+    protected void setValueLink(final PrometheusDataItem pLink) {
+<span class="nc" id="L413">        final PrometheusEncryptedValues myValues = getValues();</span>
+<span class="nc" id="L414">        myValues.setDeletion(false);</span>
+<span class="nc" id="L415">        myValues.setUncheckedValue(PrometheusDataResource.DATAINFO_LINK, pLink);</span>
+<span class="nc" id="L416">    }</span>
+
+    /**
+     * Set link id.
+     * @param pId the linkId
+     */
+    private void setValueLink(final Integer pId) {
+<span class="nc" id="L423">        final PrometheusEncryptedValues myValues = getValues();</span>
+<span class="nc" id="L424">        myValues.setUncheckedValue(PrometheusDataResource.DATAINFO_LINK, pId);</span>
+<span class="nc" id="L425">    }</span>
+
+    /**
+     * Set link id.
+     * @param pId the linkId
+     */
+    private void setValueLink(final Long pId) {
+<span class="nc" id="L432">        final PrometheusEncryptedValues myValues = getValues();</span>
+<span class="nc" id="L433">        myValues.setUncheckedValue(PrometheusDataResource.DATAINFO_LINK, pId);</span>
+<span class="nc" id="L434">    }</span>
+
+    /**
+     * Set link name.
+     * @param pName the linkName
+     */
+    protected void setValueLink(final String pName) {
+<span class="nc" id="L441">        final PrometheusEncryptedValues myValues = getValues();</span>
+<span class="nc" id="L442">        myValues.setUncheckedValue(PrometheusDataResource.DATAINFO_LINK, pName);</span>
+<span class="nc" id="L443">    }</span>
+
+    /**
+     * Mark deleted.
+     */
+    public void markDeleted() {
+        /* Set deletion indication */
+<span class="nc" id="L450">        getValues().setDeletion(true);</span>
+<span class="nc" id="L451">    }</span>
+
+    @Override
+    public void touchUnderlyingItems() {
+        /* Pass call on */
+<span class="nc" id="L456">        super.touchUnderlyingItems();</span>
+
+        /* Touch the info type */
+<span class="nc" id="L459">        getInfoType().touchItem(this);</span>
+<span class="nc" id="L460">    }</span>
+
+    /**
+     * Set Value.
+     * @param pValue the Value
+     * @throws OceanusException on error
+     */
+    protected void setValue(final Object pValue) throws OceanusException {
+        /* Access the info Type */
+<span class="nc" id="L469">        final PrometheusStaticDataItem myType = getInfoType();</span>
+<span class="nc" id="L470">        final PrometheusDataInfoClass myClass = (PrometheusDataInfoClass) myType.getStaticClass();</span>
+
+        /* Access the DataSet and parser */
+<span class="nc" id="L473">        final PrometheusDataSet myDataSet = getDataSet();</span>
+<span class="nc" id="L474">        final OceanusDataFormatter myFormatter = myDataSet.getDataFormatter();</span>
+<span class="nc" id="L475">        final OceanusDecimalParser myParser = myFormatter.getDecimalParser();</span>
+
+        /* Switch on Info Class */
+<span class="nc" id="L478">        boolean bValueOK = false;</span>
+<span class="nc bnc" id="L479" title="All 12 branches missed.">        switch (myClass.getDataType()) {</span>
+            case DATE:
+<span class="nc" id="L481">                bValueOK = setDateValue(myFormatter.getDateFormatter(), pValue);</span>
+<span class="nc" id="L482">                break;</span>
+            case INTEGER:
+<span class="nc" id="L484">                bValueOK = setIntegerValue(myFormatter, pValue);</span>
+<span class="nc" id="L485">                break;</span>
+            case LINK:
+            case LINKSET:
+<span class="nc" id="L488">                bValueOK = setLinkValue(pValue);</span>
+<span class="nc" id="L489">                break;</span>
+            case LINKPAIR:
+<span class="nc" id="L491">                bValueOK = setLinkPairValue(pValue);</span>
+<span class="nc" id="L492">                break;</span>
+            case STRING:
+<span class="nc" id="L494">                bValueOK = setStringValue(pValue);</span>
+<span class="nc" id="L495">                break;</span>
+            case CHARARRAY:
+<span class="nc" id="L497">                bValueOK = setCharArrayValue(pValue);</span>
+<span class="nc" id="L498">                break;</span>
+            case MONEY:
+<span class="nc" id="L500">                bValueOK = setMoneyValue(myParser, pValue);</span>
+<span class="nc" id="L501">                break;</span>
+            case RATE:
+<span class="nc" id="L503">                bValueOK = setRateValue(myParser, pValue);</span>
+<span class="nc" id="L504">                break;</span>
+            case UNITS:
+<span class="nc" id="L506">                bValueOK = setUnitsValue(myParser, pValue);</span>
+<span class="nc" id="L507">                break;</span>
+            case PRICE:
+<span class="nc" id="L509">                bValueOK = setPriceValue(myParser, pValue);</span>
+<span class="nc" id="L510">                break;</span>
+            case RATIO:
+<span class="nc" id="L512">                bValueOK = setRatioValue(myParser, pValue);</span>
+<span class="nc" id="L513">                break;</span>
+            default:
+                break;
+        }
+
+        /* Reject invalid value */
+<span class="nc bnc" id="L519" title="All 2 branches missed.">        if (!bValueOK) {</span>
+<span class="nc" id="L520">            throw new PrometheusLogicException(this, ERROR_BADDATATYPE);</span>
+        }
+<span class="nc" id="L522">    }</span>
+
+    /**
+     * Set Date Value.
+     * @param pFormatter the date formatter
+     * @param pValue the Value
+     * @return is value valid true/false
+     * @throws OceanusException on error
+     */
+    private boolean setDateValue(final OceanusDateFormatter pFormatter,
+                                 final Object pValue) throws OceanusException {
+        try {
+            /* Handle various forms */
+<span class="nc bnc" id="L535" title="All 2 branches missed.">            if (pValue instanceof Date d) {</span>
+<span class="nc" id="L536">                setValueValue(new OceanusDate(d));</span>
+<span class="nc" id="L537">                return true;</span>
+<span class="nc bnc" id="L538" title="All 2 branches missed.">            } else if (pValue instanceof OceanusDate) {</span>
+<span class="nc" id="L539">                setValueValue(pValue);</span>
+<span class="nc" id="L540">                return true;</span>
+<span class="nc bnc" id="L541" title="All 2 branches missed.">            } else if (pValue instanceof byte[] ba) {</span>
+<span class="nc" id="L542">                setValueBytes(ba, OceanusDate.class);</span>
+<span class="nc" id="L543">                return true;</span>
+<span class="nc bnc" id="L544" title="All 2 branches missed.">            } else if (pValue instanceof String s) {</span>
+<span class="nc" id="L545">                setValueValue(pFormatter.parseDate(s));</span>
+<span class="nc" id="L546">                return true;</span>
+            }
+<span class="nc" id="L548">        } catch (IllegalArgumentException e) {</span>
+<span class="nc" id="L549">            throw new PrometheusDataException(pValue, ERROR_BADDATA, e);</span>
+<span class="nc" id="L550">        }</span>
+<span class="nc" id="L551">        return false;</span>
+    }
+
+    /**
+     * Set Integer Value.
+     * @param pFormatter the data formatter
+     * @param pValue the Value
+     * @return is value valid true/false
+     * @throws OceanusException on error
+     */
+    private boolean setIntegerValue(final OceanusDataFormatter pFormatter,
+                                    final Object pValue) throws OceanusException {
+        try {
+            /* Handle various forms */
+<span class="nc bnc" id="L565" title="All 2 branches missed.">            if (pValue instanceof Integer) {</span>
+<span class="nc" id="L566">                setValueValue(pValue);</span>
+<span class="nc" id="L567">                return true;</span>
+<span class="nc bnc" id="L568" title="All 2 branches missed.">            } else if (pValue instanceof byte[] ba) {</span>
+<span class="nc" id="L569">                setValueBytes(ba, Integer.class);</span>
+<span class="nc" id="L570">                return true;</span>
+<span class="nc bnc" id="L571" title="All 2 branches missed.">            } else if (pValue instanceof String s) {</span>
+<span class="nc" id="L572">                setValueValue(pFormatter.parseValue(s, Integer.class));</span>
+<span class="nc" id="L573">                return true;</span>
+            }
+<span class="nc" id="L575">        } catch (IllegalArgumentException e) {</span>
+<span class="nc" id="L576">            throw new PrometheusDataException(pValue, ERROR_BADDATA, e);</span>
+<span class="nc" id="L577">        }</span>
+<span class="nc" id="L578">        return false;</span>
+    }
+
+    /**
+     * Set Link Value.
+     * @param pValue the Value
+     * @return is value valid true/false
+     * @throws OceanusException on error
+     */
+    private boolean setLinkValue(final Object pValue) throws OceanusException {
+        try {
+            /* Handle various forms */
+<span class="nc bnc" id="L590" title="All 2 branches missed.">            if (pValue instanceof Integer i) {</span>
+<span class="nc" id="L591">                setValueValue(pValue);</span>
+<span class="nc" id="L592">                setValueLink(i);</span>
+<span class="nc" id="L593">                return true;</span>
+<span class="nc bnc" id="L594" title="All 2 branches missed.">            } else if (pValue instanceof byte[] ba) {</span>
+<span class="nc" id="L595">                setValueBytes(ba, Integer.class);</span>
+<span class="nc" id="L596">                setValueLink(getValue(Integer.class));</span>
+<span class="nc" id="L597">                return true;</span>
+<span class="nc bnc" id="L598" title="All 2 branches missed.">            } else if (pValue instanceof String s) {</span>
+<span class="nc" id="L599">                setValueLink(s);</span>
+<span class="nc" id="L600">                return true;</span>
+<span class="nc bnc" id="L601" title="All 2 branches missed.">            } else if (pValue instanceof PrometheusDataItem myItem) {</span>
+<span class="nc" id="L602">                setValueValue(myItem.getIndexedId());</span>
+<span class="nc" id="L603">                setValueLink(myItem);</span>
+<span class="nc" id="L604">                return true;</span>
+            }
+<span class="nc" id="L606">        } catch (IllegalArgumentException e) {</span>
+<span class="nc" id="L607">            throw new PrometheusDataException(pValue, ERROR_BADDATA, e);</span>
+<span class="nc" id="L608">        }</span>
+<span class="nc" id="L609">        return false;</span>
+    }
+
+    /**
+     * Set Link Value.
+     * @param pValue the Value
+     * @return is value valid true/false
+     * @throws OceanusException on error
+     */
+    private boolean setLinkPairValue(final Object pValue) throws OceanusException {
+        try {
+            /* Handle various forms */
+<span class="nc bnc" id="L621" title="All 2 branches missed.">            if (pValue instanceof Long l) {</span>
+<span class="nc" id="L622">                setValueValue(pValue);</span>
+<span class="nc" id="L623">                setValueLink(l);</span>
+<span class="nc" id="L624">                return true;</span>
+<span class="nc bnc" id="L625" title="All 2 branches missed.">            } else if (pValue instanceof byte[] ba) {</span>
+<span class="nc" id="L626">                setValueBytes(ba, Long.class);</span>
+<span class="nc" id="L627">                setValueLink(getValue(Long.class));</span>
+<span class="nc" id="L628">                return true;</span>
+<span class="nc bnc" id="L629" title="All 2 branches missed.">            } else if (pValue instanceof String s) {</span>
+<span class="nc" id="L630">                setValueLink(s);</span>
+<span class="nc" id="L631">                return true;</span>
+<span class="nc bnc" id="L632" title="All 2 branches missed.">            } else if (pValue instanceof PrometheusDataItem myItem) {</span>
+<span class="nc" id="L633">                setValueValue(myItem.getIndexedId());</span>
+<span class="nc" id="L634">                setValueLink(myItem);</span>
+<span class="nc" id="L635">                return true;</span>
+            }
+<span class="nc" id="L637">        } catch (IllegalArgumentException e) {</span>
+<span class="nc" id="L638">            throw new PrometheusDataException(pValue, ERROR_BADDATA, e);</span>
+<span class="nc" id="L639">        }</span>
+<span class="nc" id="L640">        return false;</span>
+    }
+
+    /**
+     * Set String Value.
+     * @param pValue the Value
+     * @return is value valid true/false
+     * @throws OceanusException on error
+     */
+    private boolean setStringValue(final Object pValue) throws OceanusException {
+        /* Handle various forms */
+<span class="nc bnc" id="L651" title="All 2 branches missed.">        if (pValue instanceof String) {</span>
+<span class="nc" id="L652">            setValueValue(pValue);</span>
+<span class="nc" id="L653">            return true;</span>
+<span class="nc bnc" id="L654" title="All 2 branches missed.">        } else if (pValue instanceof byte[] ba) {</span>
+<span class="nc" id="L655">            setValueBytes(ba, String.class);</span>
+<span class="nc" id="L656">            return true;</span>
+        }
+<span class="nc" id="L658">        return false;</span>
+    }
+
+    /**
+     * Set CharArray Value.
+     * @param pValue the Value
+     * @return is value valid true/false
+     * @throws OceanusException on error
+     */
+    private boolean setCharArrayValue(final Object pValue) throws OceanusException {
+        /* Handle various forms */
+<span class="nc bnc" id="L669" title="All 2 branches missed.">        if (pValue instanceof char[]) {</span>
+<span class="nc" id="L670">            setValueValue(pValue);</span>
+<span class="nc" id="L671">            return true;</span>
+<span class="nc bnc" id="L672" title="All 2 branches missed.">        } else if (pValue instanceof byte[] ba) {</span>
+<span class="nc" id="L673">            setValueBytes(ba, char[].class);</span>
+<span class="nc" id="L674">            return true;</span>
+<span class="nc bnc" id="L675" title="All 2 branches missed.">        } else if (pValue instanceof String s) {</span>
+<span class="nc" id="L676">            setValueValue(s.toCharArray());</span>
+<span class="nc" id="L677">            return true;</span>
+        }
+<span class="nc" id="L679">        return false;</span>
+    }
+
+    /**
+     * Set Money Value.
+     * @param pParser the parser
+     * @param pValue the Value
+     * @return is value valid true/false
+     * @throws OceanusException on error
+     */
+    private boolean setMoneyValue(final OceanusDecimalParser pParser,
+                                  final Object pValue) throws OceanusException {
+        /* Handle various forms */
+<span class="nc bnc" id="L692" title="All 2 branches missed.">        if (pValue instanceof OceanusMoney) {</span>
+<span class="nc" id="L693">            setValueValue(pValue);</span>
+<span class="nc" id="L694">            return true;</span>
+<span class="nc bnc" id="L695" title="All 2 branches missed.">        } else if (pValue instanceof byte[] ba) {</span>
+<span class="nc" id="L696">            setValueBytes(ba, OceanusMoney.class);</span>
+<span class="nc" id="L697">            return true;</span>
+<span class="nc bnc" id="L698" title="All 2 branches missed.">        } else if (pValue instanceof String s) {</span>
+<span class="nc" id="L699">            setValueValue(pParser.parseMoneyValue(s));</span>
+<span class="nc" id="L700">            return true;</span>
+        }
+<span class="nc" id="L702">        return false;</span>
+    }
+
+    /**
+     * Set Rate Value.
+     * @param pParser the parser
+     * @param pValue the Value
+     * @return is value valid true/false
+     * @throws OceanusException on error
+     */
+    private boolean setRateValue(final OceanusDecimalParser pParser,
+                                 final Object pValue) throws OceanusException {
+        /* Handle various forms */
+<span class="nc bnc" id="L715" title="All 2 branches missed.">        if (pValue instanceof OceanusRate) {</span>
+<span class="nc" id="L716">            setValueValue(pValue);</span>
+<span class="nc" id="L717">            return true;</span>
+<span class="nc bnc" id="L718" title="All 2 branches missed.">        } else if (pValue instanceof byte[] ba) {</span>
+<span class="nc" id="L719">            setValueBytes(ba, OceanusRate.class);</span>
+<span class="nc" id="L720">            return true;</span>
+<span class="nc bnc" id="L721" title="All 2 branches missed.">        } else if (pValue instanceof String s) {</span>
+<span class="nc" id="L722">            setValueValue(pParser.parseRateValue(s));</span>
+<span class="nc" id="L723">            return true;</span>
+        }
+<span class="nc" id="L725">        return false;</span>
+    }
+
+    /**
+     * Set Ratio Value.
+     * @param pParser the parser
+     * @param pValue the Value
+     * @return is value valid true/false
+     * @throws OceanusException on error
+     */
+    private boolean setRatioValue(final OceanusDecimalParser pParser,
+                                  final Object pValue) throws OceanusException {
+        /* Handle various forms */
+<span class="nc bnc" id="L738" title="All 2 branches missed.">        if (pValue instanceof OceanusRatio) {</span>
+<span class="nc" id="L739">            setValueValue(pValue);</span>
+<span class="nc" id="L740">            return true;</span>
+<span class="nc bnc" id="L741" title="All 2 branches missed.">        } else if (pValue instanceof byte[] ba) {</span>
+<span class="nc" id="L742">            setValueBytes(ba, OceanusRatio.class);</span>
+<span class="nc" id="L743">            return true;</span>
+<span class="nc bnc" id="L744" title="All 2 branches missed.">        } else if (pValue instanceof String s) {</span>
+<span class="nc" id="L745">            setValueValue(pParser.parseRatioValue(s));</span>
+<span class="nc" id="L746">            return true;</span>
+        }
+<span class="nc" id="L748">        return false;</span>
+    }
+
+    /**
+     * Set Units Value.
+     * @param pParser the parser
+     * @param pValue the Value
+     * @return is value valid true/false
+     * @throws OceanusException on error
+     */
+    private boolean setUnitsValue(final OceanusDecimalParser pParser,
+                                  final Object pValue) throws OceanusException {
+        /* Handle various forms */
+<span class="nc bnc" id="L761" title="All 2 branches missed.">        if (pValue instanceof OceanusUnits) {</span>
+<span class="nc" id="L762">            setValueValue(pValue);</span>
+<span class="nc" id="L763">            return true;</span>
+<span class="nc bnc" id="L764" title="All 2 branches missed.">        } else if (pValue instanceof byte[] ba) {</span>
+<span class="nc" id="L765">            setValueBytes(ba, OceanusUnits.class);</span>
+<span class="nc" id="L766">            return true;</span>
+<span class="nc bnc" id="L767" title="All 2 branches missed.">        } else if (pValue instanceof String s) {</span>
+<span class="nc" id="L768">            setValueValue(pParser.parseUnitsValue(s));</span>
+<span class="nc" id="L769">            return true;</span>
+        }
+<span class="nc" id="L771">        return false;</span>
+    }
+
+    /**
+     * Set Price Value.
+     * @param pParser the parser
+     * @param pValue the Value
+     * @return is value valid true/false
+     * @throws OceanusException on error
+     */
+    private boolean setPriceValue(final OceanusDecimalParser pParser,
+                                  final Object pValue) throws OceanusException {
+        /* Handle various forms */
+<span class="nc bnc" id="L784" title="All 2 branches missed.">        if (pValue instanceof OceanusPrice) {</span>
+<span class="nc" id="L785">            setValueValue(pValue);</span>
+<span class="nc" id="L786">            return true;</span>
+<span class="nc bnc" id="L787" title="All 2 branches missed.">        } else if (pValue instanceof byte[] ba) {</span>
+<span class="nc" id="L788">            setValueBytes(ba, OceanusPrice.class);</span>
+<span class="nc" id="L789">            return true;</span>
+<span class="nc bnc" id="L790" title="All 2 branches missed.">        } else if (pValue instanceof String s) {</span>
+<span class="nc" id="L791">            setValueValue(pParser.parsePriceValue(s));</span>
+<span class="nc" id="L792">            return true;</span>
+        }
+<span class="nc" id="L794">        return false;</span>
+    }
+
+    @Override
+    public void rewindToVersion(final int pVersion) {
+        /* Do the actual rewind */
+<span class="nc" id="L800">        super.rewindToVersion(pVersion);</span>
+
+        /* If this is a linkSet type */
+<span class="nc bnc" id="L803" title="All 2 branches missed.">        if (getInfoClass().isLinkSet()) {</span>
+            /* Note the rewind */
+<span class="nc" id="L805">            rewindInfoLinkSet();</span>
+        }
+<span class="nc" id="L807">    }</span>
+
+    /**
+     * rewind any infoSet links.
+     */
+    public void rewindInfoLinkSet() {
+<span class="nc" id="L813">    }</span>
+
+    @Override
+    public int compareValues(final PrometheusDataItem pThat) {
+        /* Compare the owner and infoType */
+<span class="nc" id="L818">        final PrometheusDataInfoItem myThat = (PrometheusDataInfoItem) pThat;</span>
+<span class="nc" id="L819">        int iDiff = getOwner().compareTo(myThat.getOwner());</span>
+<span class="nc bnc" id="L820" title="All 2 branches missed.">        if (iDiff == 0) {</span>
+<span class="nc" id="L821">            iDiff = getInfoType().compareTo(myThat.getInfoType());</span>
+        }
+<span class="nc" id="L823">        return iDiff;</span>
+    }
+
+    /**
+     * List class for DataInfo.
+     * @param &lt;T&gt; the DataType
+     */
+    public abstract static class PrometheusDataInfoList&lt;T extends PrometheusDataInfoItem&gt;
+            extends PrometheusEncryptedList&lt;T&gt; {
+        /*
+         * Report fields.
+         */
+        static {
+<span class="nc" id="L836">            MetisFieldSet.newFieldSet(PrometheusDataInfoList.class);</span>
+<span class="nc" id="L837">        }</span>
+
+        /**
+         * Construct a generic data info list.
+         * @param pBaseClass the class of the underlying object
+         * @param pData the dataSet
+         * @param pItemType the list type
+         * @param pStyle the style of the list
+         */
+        protected PrometheusDataInfoList(final Class&lt;T&gt; pBaseClass,
+                                         final PrometheusDataSet pData,
+                                         final MetisListKey pItemType,
+                                         final PrometheusListStyle pStyle) {
+<span class="nc" id="L850">            super(pBaseClass, pData, pItemType, pStyle);</span>
+<span class="nc" id="L851">        }</span>
+
+        /**
+         * Constructor for a cloned List.
+         * @param pSource the source List
+         */
+        protected PrometheusDataInfoList(final PrometheusDataInfoList&lt;T&gt; pSource) {
+<span class="nc" id="L858">            super(pSource);</span>
+<span class="nc" id="L859">        }</span>
+
+        @Override
+        public boolean includeDataXML() {
+<span class="nc" id="L863">            return false;</span>
+        }
+
+        @Override
+        protected abstract PrometheusDataInfoList&lt;T&gt; getEmptyList(PrometheusListStyle pStyle);
+
+        /**
+         * Add new item to the list.
+         * @param pOwner the owner
+         * @param pInfoType the information
+         * @return the new info item
+         */
+        protected abstract T addNewItem(PrometheusDataItem pOwner,
+                                        PrometheusStaticDataItem pInfoType);
+
+        /**
+         * Add an info Item to the list.
+         * @param pId the Id
+         * @param pOwner the owner
+         * @param pInfoClass the infoClass
+         * @param pValue the value
+         * @throws OceanusException on error
+         */
+        public abstract void addInfoItem(Integer pId,
+                                         PrometheusDataItem pOwner,
+                                         PrometheusDataInfoClass pInfoClass,
+                                         Object pValue) throws OceanusException;
+
+        @Override
+        public void updateMaps() {
+            /* No activity, managed by owner */
+<span class="nc" id="L894">        }</span>
+
+        @Override
+        protected PrometheusDataMapItem allocateDataMap() {
+            /* Unused */
+<span class="nc" id="L899">            throw new UnsupportedOperationException();</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

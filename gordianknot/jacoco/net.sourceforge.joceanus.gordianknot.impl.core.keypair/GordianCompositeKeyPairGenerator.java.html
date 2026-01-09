@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianCompositeKeyPairGenerator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.gordianknot.impl.core.keypair</a> &gt; <span class="el_source">GordianCompositeKeyPairGenerator.java</span></div><h1>GordianCompositeKeyPairGenerator.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * GordianKnot: Security Suite
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.gordianknot.impl.core.keypair;
+
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
+import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianCompositeKeyPair.GordianStateAwareCompositeKeyPair;
+import org.bouncycastle.asn1.ASN1EncodableVector;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.DERSequence;
+import org.bouncycastle.asn1.misc.MiscObjectIdentifiers;
+import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+
+import java.io.IOException;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
+
+/**
+ * CompositeKeyPair generator.
+ */
+public class GordianCompositeKeyPairGenerator
+        implements GordianKeyPairGenerator {
+    /**
+     * The keyPairSpec.
+     */
+    private final GordianKeyPairSpec theSpec;
+
+    /**
+     * The keyPairFactory.
+     */
+    private final GordianKeyPairFactory theFactory;
+
+    /**
+     * The list of generators.
+     */
+    private final List&lt;GordianKeyPairGenerator&gt; theGenerators;
+
+    /**
+     * is the composite keyPair stateAware?.
+     */
+    private final boolean isStateAware;
+
+    /**
+     * Constructor.
+     * @param pFactory the asymFactory.
+     * @param pSpec the keyPairSetSpec.
+     * @throws GordianException on error
+     */
+    GordianCompositeKeyPairGenerator(final GordianKeyPairFactory pFactory,
+<span class="fc" id="L75">                                     final GordianKeyPairSpec pSpec) throws GordianException {</span>
+        /* Store the spec. */
+<span class="fc" id="L77">        theSpec = pSpec;</span>
+<span class="fc" id="L78">        theFactory = pFactory;</span>
+<span class="fc" id="L79">        theGenerators = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L80">        boolean stateAware = false;</span>
+
+        /* Loop through the asymKeySpecs */
+<span class="fc" id="L83">        final Iterator&lt;GordianKeyPairSpec&gt; myIterator = pSpec.keySpecIterator();</span>
+<span class="fc bfc" id="L84" title="All 2 branches covered.">        while (myIterator.hasNext()) {</span>
+<span class="fc" id="L85">            final GordianKeyPairSpec mySpec = myIterator.next();</span>
+
+            /* create generator and add it to list */
+<span class="fc" id="L88">            theGenerators.add(pFactory.getKeyPairGenerator(mySpec));</span>
+<span class="fc" id="L89">            stateAware = mySpec.isStateAware();</span>
+<span class="fc" id="L90">        }</span>
+
+        /* Record stateAwareness */
+<span class="fc" id="L93">        isStateAware = stateAware;</span>
+<span class="fc" id="L94">    }</span>
+
+    @Override
+    public GordianKeyPairSpec getKeySpec() {
+<span class="nc" id="L98">        return theSpec;</span>
+    }
+
+    @Override
+    public GordianCompositeKeyPair generateKeyPair() {
+        /* Create the new empty keyPairSet */
+<span class="fc bfc" id="L104" title="All 2 branches covered.">        final GordianCompositeKeyPair myKeyPair = isStateAware ? new GordianStateAwareCompositeKeyPair(theSpec)</span>
+<span class="fc" id="L105">                                                               : new GordianCompositeKeyPair(theSpec);</span>
+
+        /* Loop through the generators */
+<span class="fc bfc" id="L108" title="All 2 branches covered.">        for (GordianKeyPairGenerator myGenerator : theGenerators) {</span>
+            /* create keyPair and add it to composite */
+<span class="fc" id="L110">            myKeyPair.addKeyPair(myGenerator.generateKeyPair());</span>
+<span class="fc" id="L111">        }</span>
+
+        /* Return the keyPair */
+<span class="fc" id="L114">        return myKeyPair;</span>
+    }
+
+    @Override
+    public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) throws GordianException {
+        /* Protect against exceptions */
+        try {
+            /* Create the new empty keyPair */
+<span class="fc" id="L122">            final GordianCompositeKeyPair myPair = (GordianCompositeKeyPair) pKeyPair;</span>
+
+            /* Loop through the generators */
+<span class="fc" id="L125">            final Iterator&lt;GordianKeyPair&gt; myIterator = myPair.iterator();</span>
+<span class="fc" id="L126">            final ASN1EncodableVector ks = new ASN1EncodableVector();</span>
+<span class="fc bfc" id="L127" title="All 2 branches covered.">            for (GordianKeyPairGenerator myGenerator : theGenerators) {</span>
+                /* create encodedKeySpec and add it to set */
+<span class="fc" id="L129">                ks.add(SubjectPublicKeyInfo.getInstance(myGenerator.getX509Encoding(myIterator.next()).getEncoded()));</span>
+<span class="fc" id="L130">            }</span>
+
+            /* Build the x509 encoding */
+<span class="fc" id="L133">            final AlgorithmIdentifier myId = new AlgorithmIdentifier(MiscObjectIdentifiers.id_alg_composite);</span>
+<span class="fc" id="L134">            final SubjectPublicKeyInfo myInfo = new SubjectPublicKeyInfo(myId, new DERSequence(ks).getEncoded());</span>
+<span class="fc" id="L135">            return new X509EncodedKeySpec(myInfo.getEncoded());</span>
+<span class="nc" id="L136">        } catch (IOException e) {</span>
+<span class="nc" id="L137">            throw new GordianIOException(&quot;Failed to derive keySpec&quot;, e);</span>
+        }
+    }
+
+    @Override
+    public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) throws GordianException {
+        /* Protect against exceptions */
+        try {
+            /* Create the new empty keyPair */
+<span class="fc" id="L146">            final GordianCompositeKeyPair myPair = (GordianCompositeKeyPair) pKeyPair;</span>
+
+            /* Loop through the generators */
+<span class="fc" id="L149">            final Iterator&lt;GordianKeyPair&gt; myIterator = myPair.iterator();</span>
+<span class="fc" id="L150">            final ASN1EncodableVector ks = new ASN1EncodableVector();</span>
+<span class="fc bfc" id="L151" title="All 2 branches covered.">            for (GordianKeyPairGenerator myGenerator : theGenerators) {</span>
+                /* create encodedKeySpec and add it to set */
+<span class="fc" id="L153">                ks.add(PrivateKeyInfo.getInstance(myGenerator.getPKCS8Encoding(myIterator.next()).getEncoded()));</span>
+<span class="fc" id="L154">            }</span>
+
+<span class="fc" id="L156">            final AlgorithmIdentifier myId = new AlgorithmIdentifier(MiscObjectIdentifiers.id_alg_composite);</span>
+<span class="fc" id="L157">            final PrivateKeyInfo myInfo = new PrivateKeyInfo(myId, new DERSequence(ks));</span>
+<span class="fc" id="L158">            return new PKCS8EncodedKeySpec(myInfo.getEncoded());</span>
+<span class="nc" id="L159">        } catch (IOException e) {</span>
+<span class="nc" id="L160">            throw new GordianIOException(&quot;Failed to derive keySpec&quot;, e);</span>
+        }
+    }
+
+    @Override
+    public GordianCompositeKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKeySet,
+                                                 final PKCS8EncodedKeySpec pPrivateKeySet) throws GordianException {
+        /* CheckKeySpecs */
+<span class="fc" id="L168">        checkKeySpec(pPublicKeySet);</span>
+<span class="fc" id="L169">        checkKeySpec(pPrivateKeySet);</span>
+
+        /* Protect against exceptions */
+        try {
+            /* Parse the Public ASN1 */
+<span class="fc" id="L174">            final ASN1Sequence myPubSequence = ASN1Sequence.getInstance(pPublicKeySet.getEncoded());</span>
+<span class="fc" id="L175">            final SubjectPublicKeyInfo myPubInfo = SubjectPublicKeyInfo.getInstance(myPubSequence);</span>
+<span class="fc" id="L176">            final ASN1Sequence myPubKeys = ASN1Sequence.getInstance(myPubInfo.getPublicKeyData().getBytes());</span>
+
+            /* Parse the Private ASN1 */
+<span class="fc" id="L179">            final ASN1Sequence myPrivSequence = ASN1Sequence.getInstance(pPrivateKeySet.getEncoded());</span>
+<span class="fc" id="L180">            final PrivateKeyInfo myPrivInfo = PrivateKeyInfo.getInstance(myPrivSequence);</span>
+<span class="fc" id="L181">            final ASN1Sequence myPrivKeys = ASN1Sequence.getInstance(myPrivInfo.getPrivateKey().getOctets());</span>
+
+            /* Create the keySet */
+<span class="fc bfc" id="L184" title="All 2 branches covered.">            final GordianCompositeKeyPair myPair = isStateAware ? new GordianStateAwareCompositeKeyPair(theSpec)</span>
+<span class="fc" id="L185">                                                                : new GordianCompositeKeyPair(theSpec);</span>
+
+            /* Build the list from the keys sequence */
+<span class="fc" id="L188">            final Enumeration&lt;?&gt; enPub = myPubKeys.getObjects();</span>
+<span class="fc" id="L189">            final Enumeration&lt;?&gt; enPriv = myPrivKeys.getObjects();</span>
+<span class="fc bfc" id="L190" title="All 2 branches covered.">            for (GordianKeyPairGenerator myGenerator : theGenerators) {</span>
+<span class="fc" id="L191">                final SubjectPublicKeyInfo myPubKInfo = SubjectPublicKeyInfo.getInstance(enPub.nextElement());</span>
+<span class="fc" id="L192">                final X509EncodedKeySpec myX509 = new X509EncodedKeySpec(myPubKInfo.getEncoded());</span>
+<span class="fc" id="L193">                final PrivateKeyInfo myPrivKInfo = PrivateKeyInfo.getInstance(enPriv.nextElement());</span>
+<span class="fc" id="L194">                final PKCS8EncodedKeySpec myPKCS8 = new PKCS8EncodedKeySpec(myPrivKInfo.getEncoded());</span>
+<span class="fc" id="L195">                myPair.addKeyPair(myGenerator.deriveKeyPair(myX509, myPKCS8));</span>
+<span class="fc" id="L196">            }</span>
+
+            /* return the composite pair */
+<span class="fc" id="L199">            return myPair;</span>
+
+            /* Handle exceptions */
+<span class="nc" id="L202">        } catch (IOException e) {</span>
+<span class="nc" id="L203">            throw new GordianIOException(&quot;Failed to encode keySpec&quot;, e);</span>
+        }
+    }
+
+    @Override
+    public GordianCompositeKeyPair derivePublicOnlyKeyPair(final X509EncodedKeySpec pPublicKeySet) throws GordianException {
+        /* CheckKeySpecs */
+<span class="fc" id="L210">        checkKeySpec(pPublicKeySet);</span>
+
+        /* Protect against exceptions */
+        try {
+            /* Parse the ASN1 */
+<span class="fc" id="L215">            final ASN1Sequence mySequence = ASN1Sequence.getInstance(pPublicKeySet.getEncoded());</span>
+<span class="fc" id="L216">            final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(mySequence);</span>
+<span class="fc" id="L217">            final ASN1Sequence myKeys = ASN1Sequence.getInstance(myInfo.getPublicKeyData().getBytes());</span>
+
+            /* Create the keySet */
+<span class="fc" id="L220">            final GordianCompositeKeyPair myPair = new GordianCompositeKeyPair(theSpec);</span>
+
+            /* Build the list from the keys sequence */
+<span class="fc" id="L223">            final Enumeration&lt;?&gt; en = myKeys.getObjects();</span>
+<span class="fc bfc" id="L224" title="All 2 branches covered.">            for (GordianKeyPairGenerator myGenerator : theGenerators) {</span>
+<span class="fc" id="L225">                final SubjectPublicKeyInfo myPKInfo = SubjectPublicKeyInfo.getInstance(en.nextElement());</span>
+<span class="fc" id="L226">                final X509EncodedKeySpec myX509 = new X509EncodedKeySpec(myPKInfo.getEncoded());</span>
+<span class="fc" id="L227">                myPair.addKeyPair(myGenerator.derivePublicOnlyKeyPair(myX509));</span>
+<span class="fc" id="L228">            }</span>
+
+            /* return the composite pair */
+<span class="fc" id="L231">            return myPair;</span>
+
+            /* Handle exceptions */
+<span class="nc" id="L234">        } catch (IOException e) {</span>
+<span class="nc" id="L235">            throw new GordianIOException(&quot;Failed to encode keySpec&quot;, e);</span>
+        }
+    }
+
+    /**
+     * Check keySpec.
+     * @param pKeySpec the keySpec.
+     * @throws GordianException on error
+     */
+    private void checkKeySpec(final PKCS8EncodedKeySpec pKeySpec) throws GordianException {
+<span class="fc" id="L245">        final GordianKeyPairSpec myKeySpec = theFactory.determineKeyPairSpec(pKeySpec);</span>
+<span class="pc bpc" id="L246" title="1 of 2 branches missed.">        if (!theSpec.equals(myKeySpec)) {</span>
+<span class="nc" id="L247">            throw new GordianDataException(&quot;KeySpec not supported by this KeyPairGenerator&quot;);</span>
+        }
+<span class="fc" id="L249">    }</span>
+
+    /**
+     * Check keySpec.
+     * @param pKeySpec the keySpec.
+     * @throws GordianException on error
+     */
+    private void checkKeySpec(final X509EncodedKeySpec pKeySpec) throws GordianException {
+<span class="fc" id="L257">        final GordianKeyPairSpec myKeySpec = theFactory.determineKeyPairSpec(pKeySpec);</span>
+<span class="pc bpc" id="L258" title="1 of 2 branches missed.">        if (!theSpec.equals(myKeySpec)) {</span>
+<span class="nc" id="L259">            throw new GordianDataException(&quot;KeySpec not supported by this KeyPairGenerator&quot;);</span>
+        }
+<span class="fc" id="L261">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

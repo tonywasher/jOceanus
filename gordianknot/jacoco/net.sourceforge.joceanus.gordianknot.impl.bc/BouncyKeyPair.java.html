@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BouncyKeyPair.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.gordianknot.impl.bc</a> &gt; <span class="el_source">BouncyKeyPair.java</span></div><h1>BouncyKeyPair.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * GordianKnot: Security Suite
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.gordianknot.impl.bc;
+
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianStateAwareKeyPair;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPair;
+import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianPrivateKey;
+import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianPrivateKey.GordianStateAwarePrivateKey;
+import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianPublicKey;
+import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
+
+import java.util.Objects;
+
+/**
+ * BouncyCastle Asymmetric KeyPair.
+ */
+public class BouncyKeyPair
+        extends GordianCoreKeyPair {
+    /**
+     * Constructor.
+     * @param pPublic the public key
+     */
+    protected BouncyKeyPair(final BouncyPublicKey&lt;?&gt; pPublic) {
+<span class="fc" id="L42">        this(pPublic, null);</span>
+<span class="fc" id="L43">    }</span>
+
+    /**
+     * Constructor.
+     * @param pPublic the public key
+     * @param pPrivate the private key
+     */
+    protected BouncyKeyPair(final BouncyPublicKey&lt;?&gt; pPublic,
+                            final BouncyPrivateKey&lt;?&gt; pPrivate) {
+<span class="fc" id="L52">        super(pPublic, pPrivate);</span>
+<span class="fc" id="L53">    }</span>
+
+    @Override
+    public BouncyPublicKey&lt;?&gt; getPublicKey() {
+<span class="fc" id="L57">        return (BouncyPublicKey&lt;?&gt;) super.getPublicKey();</span>
+    }
+
+    @Override
+    public BouncyPrivateKey&lt;?&gt; getPrivateKey() {
+<span class="fc" id="L62">        return (BouncyPrivateKey&lt;?&gt;) super.getPrivateKey();</span>
+    }
+
+    @Override
+    public BouncyKeyPair getPublicOnly() {
+<span class="fc" id="L67">        return new BouncyKeyPair(getPublicKey());</span>
+    }
+
+    /**
+     * Check for bouncyKeyPair.
+     * @param pKeyPair the keyPair to check
+     * @throws GordianException on error
+     */
+    public static void checkKeyPair(final GordianKeyPair pKeyPair) throws GordianException {
+        /* Check that it is a BouncyKeyPair */
+<span class="pc bpc" id="L77" title="1 of 2 branches missed.">        if (!(pKeyPair instanceof BouncyKeyPair)) {</span>
+            /* Reject keyPair */
+<span class="nc" id="L79">            throw new GordianDataException(&quot;Invalid KeyPair&quot;);</span>
+        }
+<span class="fc" id="L81">    }</span>
+
+    /**
+     * Check for bouncyKeyPair.
+     * @param pKeyPair the keyPair to check
+     * @param pSpec the required keySpec
+     * @throws GordianException on error
+     */
+    public static void checkKeyPair(final GordianKeyPair pKeyPair,
+                                    final GordianKeyPairSpec pSpec) throws GordianException {
+        /* Check the keyPair */
+<span class="fc" id="L92">        checkKeyPair(pKeyPair);</span>
+
+        /* Check that it the correct key type */
+<span class="pc bpc" id="L95" title="1 of 2 branches missed.">        if (!pSpec.equals(pKeyPair.getKeyPairSpec())) {</span>
+            /* Reject keyPair */
+<span class="nc" id="L97">            throw new GordianDataException(&quot;Invalid KeyPairType&quot;);</span>
+        }
+<span class="fc" id="L99">    }</span>
+
+    /**
+     * Bouncy PublicKey.
+     * @param &lt;T&gt; parameter type
+     */
+    public abstract static class BouncyPublicKey&lt;T extends AsymmetricKeyParameter&gt;
+            extends GordianPublicKey {
+        /**
+         * Public Key details.
+         */
+        private final T theKey;
+
+        /**
+         * Constructor.
+         * @param pKeySpec the key spec
+         * @param pKey the key
+         */
+        protected BouncyPublicKey(final GordianKeyPairSpec pKeySpec,
+                                  final T pKey) {
+<span class="fc" id="L119">            super(pKeySpec);</span>
+<span class="fc" id="L120">            theKey = pKey;</span>
+<span class="fc" id="L121">        }</span>
+
+        /**
+         * Obtain the public key.
+         * @return the key
+         */
+        public T getPublicKey() {
+<span class="fc" id="L128">            return theKey;</span>
+        }
+
+        /**
+         * matchKey.
+         * @param pThat the key to match
+         * @return true/false
+         */
+        protected abstract boolean matchKey(AsymmetricKeyParameter pThat);
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle the trivial cases */
+<span class="fc bfc" id="L141" title="All 2 branches covered.">            if (pThat == this) {</span>
+<span class="fc" id="L142">                return true;</span>
+            }
+<span class="pc bpc" id="L144" title="1 of 2 branches missed.">            if (pThat == null) {</span>
+<span class="nc" id="L145">                return false;</span>
+            }
+
+            /* Make sure that the object is the same class */
+<span class="pc bpc" id="L149" title="1 of 2 branches missed.">            if (!(pThat instanceof BouncyPublicKey)) {</span>
+<span class="nc" id="L150">                return false;</span>
+            }
+
+            /* Access the target field */
+<span class="fc" id="L154">            final BouncyPublicKey&lt;?&gt; myThat = (BouncyPublicKey&lt;?&gt;) pThat;</span>
+
+            /* Check differences */
+<span class="pc bpc" id="L157" title="1 of 2 branches missed.">            return getKeySpec().equals(myThat.getKeySpec())</span>
+<span class="pc bpc" id="L158" title="1 of 2 branches missed.">                    &amp;&amp; matchKey(myThat.getPublicKey());</span>
+        }
+
+        @Override
+        public int hashCode() {
+<span class="nc" id="L163">            return Objects.hash(getKeySpec().hashCode(), theKey);</span>
+        }
+    }
+
+    /**
+     * Bouncy PrivateKey.
+     * @param &lt;T&gt; parameter type
+     */
+    public abstract static class BouncyPrivateKey&lt;T extends AsymmetricKeyParameter&gt;
+            extends GordianPrivateKey {
+        /**
+         * Private Key details.
+         */
+        private final T theKey;
+
+        /**
+         * Constructor.
+         * @param pKeySpec the key spec
+         * @param pKey the key
+         */
+        protected BouncyPrivateKey(final GordianKeyPairSpec pKeySpec,
+                                   final T pKey) {
+<span class="fc" id="L185">            super(pKeySpec);</span>
+<span class="fc" id="L186">            theKey = pKey;</span>
+<span class="fc" id="L187">        }</span>
+
+        /**
+         * Obtain the private key.
+         * @return the key
+         */
+        public T getPrivateKey() {
+<span class="fc" id="L194">            return theKey;</span>
+        }
+
+        /**
+         * matchKey.
+         * @param pThat the key to match
+         * @return true/false
+         */
+        protected abstract boolean matchKey(AsymmetricKeyParameter pThat);
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle the trivial cases */
+<span class="pc bpc" id="L207" title="1 of 2 branches missed.">            if (pThat == this) {</span>
+<span class="nc" id="L208">                return true;</span>
+            }
+<span class="pc bpc" id="L210" title="1 of 2 branches missed.">            if (pThat == null) {</span>
+<span class="nc" id="L211">                return false;</span>
+            }
+
+            /* Make sure that the object is the same class */
+<span class="pc bpc" id="L215" title="1 of 2 branches missed.">            if (!(pThat instanceof BouncyPrivateKey)) {</span>
+<span class="nc" id="L216">                return false;</span>
+            }
+
+            /* Access the target field */
+<span class="fc" id="L220">            final BouncyPrivateKey&lt;?&gt; myThat = (BouncyPrivateKey&lt;?&gt;) pThat;</span>
+
+            /* Check differences */
+<span class="pc bpc" id="L223" title="1 of 2 branches missed.">            return getKeySpec().equals(myThat.getKeySpec())</span>
+<span class="pc bpc" id="L224" title="1 of 2 branches missed.">                    &amp;&amp; matchKey(myThat.getPrivateKey());</span>
+        }
+
+        @Override
+        public int hashCode() {
+<span class="nc" id="L229">            return Objects.hash(getKeySpec(), theKey);</span>
+        }
+    }
+
+    /**
+     * Bouncy StateAware PrivateKey.
+     * @param &lt;T&gt; parameter type
+     */
+    public abstract static class BouncyStateAwarePrivateKey&lt;T extends AsymmetricKeyParameter&gt;
+            extends BouncyPrivateKey&lt;T&gt;
+            implements GordianStateAwarePrivateKey {
+        /**
+         * The private key.
+         */
+        private final T thePrivateKey;
+
+        /**
+         * Constructor.
+         * @param pKeySpec the key spec
+         * @param pKey the key
+         */
+        protected BouncyStateAwarePrivateKey(final GordianKeyPairSpec pKeySpec,
+                                             final T pKey) {
+<span class="fc" id="L252">            super(pKeySpec, pKey);</span>
+<span class="fc" id="L253">            thePrivateKey = pKey;</span>
+<span class="fc" id="L254">        }</span>
+
+        @Override
+        public T getPrivateKey() {
+<span class="fc" id="L258">            return thePrivateKey;</span>
+        }
+
+        @Override
+        public abstract BouncyStateAwarePrivateKey&lt;T&gt; getKeyShard(int pNumUsages);
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle the trivial cases */
+<span class="pc bpc" id="L267" title="1 of 2 branches missed.">            if (pThat == this) {</span>
+<span class="nc" id="L268">                return true;</span>
+            }
+<span class="pc bpc" id="L270" title="1 of 2 branches missed.">            if (pThat == null) {</span>
+<span class="nc" id="L271">                return false;</span>
+            }
+
+            /* Make sure that the object is the same class */
+<span class="pc bpc" id="L275" title="1 of 2 branches missed.">            if (!(pThat instanceof BouncyStateAwarePrivateKey)) {</span>
+<span class="nc" id="L276">                return false;</span>
+            }
+
+            /* Access the target field */
+<span class="fc" id="L280">            final BouncyStateAwarePrivateKey&lt;?&gt; myThat = (BouncyStateAwarePrivateKey&lt;?&gt;) pThat;</span>
+
+            /* Check differences */
+<span class="pc bpc" id="L283" title="1 of 2 branches missed.">            return getKeySpec().equals(myThat.getKeySpec())</span>
+<span class="pc bpc" id="L284" title="1 of 2 branches missed.">                    &amp;&amp; matchKey(myThat.getPrivateKey());</span>
+        }
+
+        @Override
+        public int hashCode() {
+<span class="nc" id="L289">            return Objects.hash(getKeySpec(), thePrivateKey);</span>
+        }
+    }
+
+    /**
+     * Bouncy StateAware KeyPair.
+      */
+    public static class BouncyStateAwareKeyPair
+            extends BouncyKeyPair
+            implements GordianStateAwareKeyPair {
+        /**
+         * Constructor.
+         * @param pPublic the public key
+         * @param pPrivate the private key
+         */
+        BouncyStateAwareKeyPair(final BouncyPublicKey&lt;?&gt; pPublic,
+                                final BouncyStateAwarePrivateKey&lt;?&gt; pPrivate) {
+<span class="fc" id="L306">            super(pPublic, pPrivate);</span>
+<span class="fc" id="L307">        }</span>
+
+        @Override
+        public BouncyStateAwarePrivateKey&lt;?&gt; getPrivateKey() {
+<span class="fc" id="L311">            return (BouncyStateAwarePrivateKey&lt;?&gt;) super.getPrivateKey();</span>
+        }
+
+        @Override
+        public long getUsagesRemaining() {
+<span class="nc" id="L316">            return getPrivateKey().getUsagesRemaining();</span>
+        }
+
+        @Override
+        public BouncyStateAwareKeyPair getKeyPairShard(final int pNumUsages) {
+<span class="nc" id="L321">            return new BouncyStateAwareKeyPair(getPublicKey(), getPrivateKey().getKeyShard(pNumUsages));</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

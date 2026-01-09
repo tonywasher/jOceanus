@@ -1,0 +1,956 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BouncyXDHKeyPair.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.gordianknot.impl.bc</a> &gt; <span class="el_source">BouncyXDHKeyPair.java</span></div><h1>BouncyXDHKeyPair.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * GordianKnot: Security Suite
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.gordianknot.impl.bc;
+
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
+import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
+import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianAgreementMessageASN1;
+import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreAnonymousAgreement;
+import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreBasicAgreement;
+import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreEphemeralAgreement;
+import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreSignedAgreement;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
+import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
+import net.sourceforge.joceanus.gordianknot.impl.core.xagree.GordianXCoreAgreementFactory;
+import org.bouncycastle.asn1.ASN1Encoding;
+import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
+import org.bouncycastle.crypto.RawAgreement;
+import org.bouncycastle.crypto.agreement.X25519Agreement;
+import org.bouncycastle.crypto.agreement.X448Agreement;
+import org.bouncycastle.crypto.agreement.XDHUnifiedAgreement;
+import org.bouncycastle.crypto.generators.X25519KeyPairGenerator;
+import org.bouncycastle.crypto.generators.X448KeyPairGenerator;
+import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
+import org.bouncycastle.crypto.params.X25519KeyGenerationParameters;
+import org.bouncycastle.crypto.params.X25519PrivateKeyParameters;
+import org.bouncycastle.crypto.params.X25519PublicKeyParameters;
+import org.bouncycastle.crypto.params.X448KeyGenerationParameters;
+import org.bouncycastle.crypto.params.X448PrivateKeyParameters;
+import org.bouncycastle.crypto.params.X448PublicKeyParameters;
+import org.bouncycastle.crypto.params.XDHUPrivateParameters;
+import org.bouncycastle.crypto.params.XDHUPublicParameters;
+import org.bouncycastle.crypto.util.PrivateKeyFactory;
+import org.bouncycastle.crypto.util.PrivateKeyInfoFactory;
+import org.bouncycastle.crypto.util.PublicKeyFactory;
+import org.bouncycastle.crypto.util.SubjectPublicKeyInfoFactory;
+
+import java.io.IOException;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Arrays;
+
+/**
+ * EdwardsCurve XDH KeyPair classes.
+ */
+public final class BouncyXDHKeyPair {
+    /**
+     * Private constructor.
+     */
+    private BouncyXDHKeyPair() {
+    }
+
+    /**
+     * Bouncy EdwardsX25519 PublicKey.
+     */
+    public static class BouncyX25519PublicKey
+            extends BouncyPublicKey&lt;X25519PublicKeyParameters&gt; {
+        /**
+         * Constructor.
+         * @param pKeySpec the keySpec
+         * @param pPublicKey the public key
+         */
+        BouncyX25519PublicKey(final GordianKeyPairSpec pKeySpec,
+                              final X25519PublicKeyParameters pPublicKey) {
+<span class="fc" id="L87">            super(pKeySpec, pPublicKey);</span>
+<span class="fc" id="L88">        }</span>
+
+        @Override
+        protected boolean matchKey(final AsymmetricKeyParameter pThat) {
+            /* Access keys */
+<span class="fc" id="L93">            final X25519PublicKeyParameters myThis = getPublicKey();</span>
+<span class="fc" id="L94">            final X25519PublicKeyParameters myThat = (X25519PublicKeyParameters) pThat;</span>
+
+            /* Compare keys */
+<span class="fc" id="L97">            return Arrays.equals(myThis.getEncoded(), myThat.getEncoded());</span>
+        }
+    }
+
+    /**
+     * Bouncy EdwardsX25519 PrivateKey.
+     */
+    public static class BouncyX25519PrivateKey
+            extends BouncyPrivateKey&lt;X25519PrivateKeyParameters&gt; {
+        /**
+         * Constructor.
+         * @param pKeySpec the keySpec
+         * @param pPrivateKey the private key
+         */
+        BouncyX25519PrivateKey(final GordianKeyPairSpec pKeySpec,
+                               final X25519PrivateKeyParameters pPrivateKey) {
+<span class="fc" id="L113">            super(pKeySpec, pPrivateKey);</span>
+<span class="fc" id="L114">        }</span>
+
+
+        @Override
+        protected boolean matchKey(final AsymmetricKeyParameter pThat) {
+            /* Access keys */
+<span class="nc" id="L120">            final X25519PrivateKeyParameters myThis = getPrivateKey();</span>
+<span class="nc" id="L121">            final X25519PrivateKeyParameters myThat = (X25519PrivateKeyParameters) pThat;</span>
+
+            /* Compare keys */
+<span class="nc" id="L124">            return Arrays.equals(myThis.getEncoded(), myThat.getEncoded());</span>
+        }
+    }
+
+    /**
+     * Bouncy EdwardsX448 PublicKey.
+     */
+    public static class BouncyX448PublicKey
+            extends BouncyPublicKey&lt;X448PublicKeyParameters&gt; {
+        /**
+         * Constructor.
+         * @param pKeySpec the keySpec
+         * @param pPublicKey the public key
+         */
+        BouncyX448PublicKey(final GordianKeyPairSpec pKeySpec,
+                            final X448PublicKeyParameters pPublicKey) {
+<span class="fc" id="L140">            super(pKeySpec, pPublicKey);</span>
+<span class="fc" id="L141">        }</span>
+
+        @Override
+        protected boolean matchKey(final AsymmetricKeyParameter pThat) {
+            /* Access keys */
+<span class="fc" id="L146">            final X448PublicKeyParameters myThis = getPublicKey();</span>
+<span class="fc" id="L147">            final X448PublicKeyParameters myThat = (X448PublicKeyParameters) pThat;</span>
+
+            /* Compare keys */
+<span class="fc" id="L150">            return Arrays.equals(myThis.getEncoded(), myThat.getEncoded());</span>
+        }
+    }
+
+    /**
+     * Bouncy EdwardsX448 PrivateKey.
+     */
+    public static class BouncyX448PrivateKey
+            extends BouncyPrivateKey&lt;X448PrivateKeyParameters&gt; {
+        /**
+         * Constructor.
+         * @param pKeySpec the keySpec
+         * @param pPrivateKey the private key
+         */
+        BouncyX448PrivateKey(final GordianKeyPairSpec pKeySpec,
+                             final X448PrivateKeyParameters pPrivateKey) {
+<span class="fc" id="L166">            super(pKeySpec, pPrivateKey);</span>
+<span class="fc" id="L167">        }</span>
+
+
+        @Override
+        protected boolean matchKey(final AsymmetricKeyParameter pThat) {
+            /* Access keys */
+<span class="fc" id="L173">            final X448PrivateKeyParameters myThis = getPrivateKey();</span>
+<span class="fc" id="L174">            final X448PrivateKeyParameters myThat = (X448PrivateKeyParameters) pThat;</span>
+
+            /* Compare keys */
+<span class="fc" id="L177">            return Arrays.equals(myThis.getEncoded(), myThat.getEncoded());</span>
+        }
+    }
+
+    /**
+     * BouncyCastle EdwardsX25519 KeyPair generator.
+     */
+    public static class BouncyX25519KeyPairGenerator
+            extends BouncyKeyPairGenerator {
+        /**
+         * Generator.
+         */
+        private final X25519KeyPairGenerator theGenerator;
+
+        /**
+         * Constructor.
+         * @param pFactory the Security Factory
+         * @param pKeySpec the keySpec
+         */
+        BouncyX25519KeyPairGenerator(final GordianBaseFactory pFactory,
+                                     final GordianKeyPairSpec pKeySpec) {
+            /* Initialise underlying class */
+<span class="fc" id="L199">            super(pFactory, pKeySpec);</span>
+
+            /* Create the generator */
+<span class="fc" id="L202">            theGenerator = new X25519KeyPairGenerator();</span>
+
+            /* Initialise the generator */
+<span class="fc" id="L205">            final X25519KeyGenerationParameters myParams = new X25519KeyGenerationParameters(getRandom());</span>
+<span class="fc" id="L206">            theGenerator.init(myParams);</span>
+<span class="fc" id="L207">        }</span>
+
+        @Override
+        public BouncyKeyPair generateKeyPair() {
+            /* Generate and return the keyPair */
+<span class="fc" id="L212">            final AsymmetricCipherKeyPair myPair = theGenerator.generateKeyPair();</span>
+<span class="fc" id="L213">            final BouncyX25519PublicKey myPublic = new BouncyX25519PublicKey(getKeySpec(), (X25519PublicKeyParameters) myPair.getPublic());</span>
+<span class="fc" id="L214">            final BouncyX25519PrivateKey myPrivate = new BouncyX25519PrivateKey(getKeySpec(), (X25519PrivateKeyParameters) myPair.getPrivate());</span>
+<span class="fc" id="L215">            return new BouncyKeyPair(myPublic, myPrivate);</span>
+        }
+
+        @Override
+        public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) throws GordianException {
+            /* Protect against exceptions */
+            try {
+                /* Check the keyPair type and keySpecs */
+<span class="fc" id="L223">                BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());</span>
+
+                /* build and return the encoding */
+<span class="fc" id="L226">                final BouncyX25519PrivateKey myPrivateKey = (BouncyX25519PrivateKey) getPrivateKey(pKeyPair);</span>
+<span class="fc" id="L227">                final X25519PrivateKeyParameters myParms = myPrivateKey.getPrivateKey();</span>
+<span class="fc" id="L228">                final PrivateKeyInfo myInfo = PrivateKeyInfoFactory.createPrivateKeyInfo(myParms);</span>
+<span class="fc" id="L229">                return new PKCS8EncodedKeySpec(myInfo.getEncoded());</span>
+
+<span class="nc" id="L231">            } catch (IOException e) {</span>
+<span class="nc" id="L232">                throw new GordianCryptoException(ERROR_PARSE, e);</span>
+            }
+        }
+
+        @Override
+        public BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
+                                           final PKCS8EncodedKeySpec pPrivateKey) throws GordianException {
+            /* Protect against exceptions */
+            try {
+                /* Check the keySpecs */
+<span class="fc" id="L242">                checkKeySpec(pPrivateKey);</span>
+
+                /* derive keyPair */
+<span class="fc" id="L245">                final BouncyX25519PublicKey myPublic = derivePublicKey(pPublicKey);</span>
+<span class="fc" id="L246">                final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());</span>
+<span class="fc" id="L247">                final X25519PrivateKeyParameters myParms = (X25519PrivateKeyParameters) PrivateKeyFactory.createKey(myInfo);</span>
+<span class="fc" id="L248">                final BouncyX25519PrivateKey myPrivate = new BouncyX25519PrivateKey(getKeySpec(), myParms);</span>
+<span class="fc" id="L249">                final BouncyKeyPair myPair = new BouncyKeyPair(myPublic, myPrivate);</span>
+
+                /* Check that we have a matching pair */
+<span class="fc" id="L252">                GordianKeyPairValidity.checkValidity(getFactory(), myPair);</span>
+
+                /* Return the derived keyPair */
+<span class="fc" id="L255">                return myPair;</span>
+
+<span class="nc" id="L257">            } catch (IOException e) {</span>
+<span class="nc" id="L258">                throw new GordianCryptoException(ERROR_PARSE, e);</span>
+            }
+        }
+
+        @Override
+        public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) throws GordianException {
+            /* Protect against exceptions */
+            try {
+                /* Check the keyPair type and keySpecs */
+<span class="fc" id="L267">                BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());</span>
+
+                /* build and return the encoding */
+<span class="fc" id="L270">                final BouncyX25519PublicKey myPublicKey = (BouncyX25519PublicKey) getPublicKey(pKeyPair);</span>
+<span class="fc" id="L271">                final X25519PublicKeyParameters myParms = myPublicKey.getPublicKey();</span>
+<span class="fc" id="L272">                final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfoFactory.createSubjectPublicKeyInfo(myParms);</span>
+<span class="fc" id="L273">                final byte[] myBytes = myInfo.getEncoded(ASN1Encoding.DER);</span>
+<span class="fc" id="L274">                return new X509EncodedKeySpec(myBytes);</span>
+
+<span class="nc" id="L276">            } catch (IOException e) {</span>
+<span class="nc" id="L277">                throw new GordianCryptoException(ERROR_PARSE, e);</span>
+            }
+        }
+
+        @Override
+        public BouncyKeyPair derivePublicOnlyKeyPair(final X509EncodedKeySpec pEncodedKey) throws GordianException {
+<span class="fc" id="L283">            final BouncyX25519PublicKey myPublic = derivePublicKey(pEncodedKey);</span>
+<span class="fc" id="L284">            return new BouncyKeyPair(myPublic);</span>
+        }
+
+        /**
+         * Derive public key from encoded.
+         * @param pEncodedKey the encoded key
+         * @return the public key
+         * @throws GordianException on error
+         */
+        private BouncyX25519PublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws GordianException {
+            /* Protect against exceptions */
+            try {
+                /* Check the keySpecs */
+<span class="fc" id="L297">                checkKeySpec(pEncodedKey);</span>
+
+                /* derive publicKey */
+<span class="fc" id="L300">                final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());</span>
+<span class="fc" id="L301">                final X25519PublicKeyParameters myParms = (X25519PublicKeyParameters) PublicKeyFactory.createKey(myInfo);</span>
+<span class="fc" id="L302">                return new BouncyX25519PublicKey(getKeySpec(), myParms);</span>
+
+<span class="nc" id="L304">            } catch (IOException e) {</span>
+<span class="nc" id="L305">                throw new GordianCryptoException(ERROR_PARSE, e);</span>
+            }
+        }
+    }
+
+    /**
+     * BouncyCastle EdwardsX448 KeyPair generator.
+     */
+    public static class BouncyX448KeyPairGenerator
+            extends BouncyKeyPairGenerator {
+        /**
+         * Generator.
+         */
+        private final X448KeyPairGenerator theGenerator;
+
+        /**
+         * Constructor.
+         * @param pFactory the Security Factory
+         * @param pKeySpec the keySpec
+         */
+        BouncyX448KeyPairGenerator(final GordianBaseFactory pFactory,
+                                   final GordianKeyPairSpec pKeySpec) {
+            /* Initialise underlying class */
+<span class="fc" id="L328">            super(pFactory, pKeySpec);</span>
+
+            /* Create the generator */
+<span class="fc" id="L331">            theGenerator = new X448KeyPairGenerator();</span>
+
+            /* Initialise the generator */
+<span class="fc" id="L334">            final X448KeyGenerationParameters myParams = new X448KeyGenerationParameters(getRandom());</span>
+<span class="fc" id="L335">            theGenerator.init(myParams);</span>
+<span class="fc" id="L336">        }</span>
+
+        @Override
+        public BouncyKeyPair generateKeyPair() {
+            /* Generate and return the keyPair */
+<span class="fc" id="L341">            final AsymmetricCipherKeyPair myPair = theGenerator.generateKeyPair();</span>
+<span class="fc" id="L342">            final BouncyX448PublicKey myPublic = new BouncyX448PublicKey(getKeySpec(), (X448PublicKeyParameters) myPair.getPublic());</span>
+<span class="fc" id="L343">            final BouncyX448PrivateKey myPrivate = new BouncyX448PrivateKey(getKeySpec(), (X448PrivateKeyParameters) myPair.getPrivate());</span>
+<span class="fc" id="L344">            return new BouncyKeyPair(myPublic, myPrivate);</span>
+        }
+
+        @Override
+        public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) throws GordianException {
+            /* Protect against exceptions */
+            try {
+                /* Check the keyPair type and keySpecs */
+<span class="fc" id="L352">                BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());</span>
+
+                /* build and return the encoding */
+<span class="fc" id="L355">                final BouncyX448PrivateKey myPrivateKey = (BouncyX448PrivateKey) getPrivateKey(pKeyPair);</span>
+<span class="fc" id="L356">                final X448PrivateKeyParameters myParms = myPrivateKey.getPrivateKey();</span>
+<span class="fc" id="L357">                final PrivateKeyInfo myInfo = PrivateKeyInfoFactory.createPrivateKeyInfo(myParms);</span>
+<span class="fc" id="L358">                return new PKCS8EncodedKeySpec(myInfo.getEncoded());</span>
+
+<span class="nc" id="L360">            } catch (IOException e) {</span>
+<span class="nc" id="L361">                throw new GordianCryptoException(ERROR_PARSE, e);</span>
+            }
+        }
+
+        @Override
+        public BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
+                                           final PKCS8EncodedKeySpec pPrivateKey) throws GordianException {
+            /* Protect against exceptions */
+            try {
+                /* Check the keySpecs */
+<span class="fc" id="L371">                checkKeySpec(pPrivateKey);</span>
+
+                /* derive keyPair */
+<span class="fc" id="L374">                final BouncyX448PublicKey myPublic = derivePublicKey(pPublicKey);</span>
+<span class="fc" id="L375">                final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());</span>
+<span class="fc" id="L376">                final X448PrivateKeyParameters myParms = (X448PrivateKeyParameters) PrivateKeyFactory.createKey(myInfo);</span>
+<span class="fc" id="L377">                final BouncyX448PrivateKey myPrivate = new BouncyX448PrivateKey(getKeySpec(), myParms);</span>
+<span class="fc" id="L378">                final BouncyKeyPair myPair = new BouncyKeyPair(myPublic, myPrivate);</span>
+
+                /* Check that we have a matching pair */
+<span class="fc" id="L381">                GordianKeyPairValidity.checkValidity(getFactory(), myPair);</span>
+
+                /* Return the keyPair */
+<span class="fc" id="L384">                return myPair;</span>
+
+<span class="nc" id="L386">            } catch (IOException e) {</span>
+<span class="nc" id="L387">                throw new GordianCryptoException(ERROR_PARSE, e);</span>
+            }
+        }
+
+        @Override
+        public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) throws GordianException {
+            /* Protect against exceptions */
+            try {
+                /* Check the keyPair type and keySpecs */
+<span class="fc" id="L396">                BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());</span>
+
+                /* build and return the encoding */
+<span class="fc" id="L399">                final BouncyX448PublicKey myPublicKey = (BouncyX448PublicKey) getPublicKey(pKeyPair);</span>
+<span class="fc" id="L400">                final X448PublicKeyParameters myParms = myPublicKey.getPublicKey();</span>
+<span class="fc" id="L401">                final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfoFactory.createSubjectPublicKeyInfo(myParms);</span>
+<span class="fc" id="L402">                final byte[] myBytes = myInfo.getEncoded(ASN1Encoding.DER);</span>
+<span class="fc" id="L403">                return new X509EncodedKeySpec(myBytes);</span>
+
+<span class="nc" id="L405">            } catch (IOException e) {</span>
+<span class="nc" id="L406">                throw new GordianCryptoException(ERROR_PARSE, e);</span>
+            }
+        }
+
+        @Override
+        public BouncyKeyPair derivePublicOnlyKeyPair(final X509EncodedKeySpec pEncodedKey) throws GordianException {
+<span class="fc" id="L412">            final BouncyX448PublicKey myPublic = derivePublicKey(pEncodedKey);</span>
+<span class="fc" id="L413">            return new BouncyKeyPair(myPublic);</span>
+        }
+
+        /**
+         * Derive public key from encoded.
+         * @param pEncodedKey the encoded key
+         * @return the public key
+         * @throws GordianException on error
+         */
+        private BouncyX448PublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws GordianException {
+            /* Protect against exceptions */
+            try {
+                /* Check the keySpecs */
+<span class="fc" id="L426">                checkKeySpec(pEncodedKey);</span>
+
+                /* derive publicKey */
+<span class="fc" id="L429">                final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());</span>
+<span class="fc" id="L430">                final X448PublicKeyParameters myParms = (X448PublicKeyParameters) PublicKeyFactory.createKey(myInfo);</span>
+<span class="fc" id="L431">                return new BouncyX448PublicKey(getKeySpec(), myParms);</span>
+
+<span class="nc" id="L433">            } catch (IOException e) {</span>
+<span class="nc" id="L434">                throw new GordianCryptoException(ERROR_PARSE, e);</span>
+            }
+        }
+    }
+
+    /**
+     * Establish the agreement.
+     * @param pKeyPair the keyPair
+     * @return the agreement
+     */
+    private static RawAgreement establishAgreement(final GordianKeyPair pKeyPair) {
+<span class="fc bfc" id="L445" title="All 2 branches covered.">        return pKeyPair.getKeyPairSpec().getEdwardsElliptic().is25519()</span>
+<span class="fc" id="L446">                       ? new X25519Agreement()</span>
+<span class="fc" id="L447">                       : new X448Agreement();</span>
+    }
+
+    /**
+     * XDH Anonymous.
+     */
+    public static class BouncyXDHAnonymousAgreement
+            extends GordianCoreAnonymousAgreement {
+        /**
+         * The agreement.
+         */
+        private RawAgreement theAgreement;
+
+        /**
+         * Constructor.
+         * @param pFactory the security factory
+         * @param pSpec the agreementSpec
+         */
+        BouncyXDHAnonymousAgreement(final GordianBaseFactory pFactory,
+                                    final GordianAgreementSpec pSpec) {
+            /* Initialise underlying class */
+<span class="fc" id="L468">            super(pFactory, pSpec);</span>
+
+            /* Enable derivation */
+<span class="fc" id="L471">            enableDerivation();</span>
+<span class="fc" id="L472">        }</span>
+
+        @Override
+        public GordianAgreementMessageASN1 createClientHelloASN1(final GordianKeyPair pServer) throws GordianException {
+            /* Check keyPair */
+<span class="fc" id="L477">            BouncyKeyPair.checkKeyPair(pServer);</span>
+<span class="fc" id="L478">            checkKeyPair(pServer);</span>
+
+            /* Establish agreement */
+<span class="fc" id="L481">            theAgreement = establishAgreement(pServer);</span>
+
+            /* Create an ephemeral keyPair */
+<span class="fc" id="L484">            final GordianKeyPairFactory myFactory = getFactory().getAsyncFactory().getKeyPairFactory();</span>
+<span class="fc" id="L485">            final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(pServer.getKeyPairSpec());</span>
+<span class="fc" id="L486">            final GordianKeyPair myPair = myGenerator.generateKeyPair();</span>
+<span class="fc" id="L487">            final BouncyPrivateKey&lt;?&gt; myPrivate = (BouncyPrivateKey&lt;?&gt;) getPrivateKey(myPair);</span>
+
+            /* Create the request  */
+<span class="fc" id="L490">            final X509EncodedKeySpec myKeySpec = myGenerator.getX509Encoding(myPair);</span>
+<span class="fc" id="L491">            final GordianAgreementMessageASN1 myClientHello = buildClientHelloASN1(myKeySpec);</span>
+
+            /* Derive the secret */
+<span class="fc" id="L494">            theAgreement.init(myPrivate.getPrivateKey());</span>
+<span class="fc" id="L495">            final BouncyPublicKey&lt;?&gt; myTarget = (BouncyPublicKey&lt;?&gt;) getPublicKey(pServer);</span>
+<span class="fc" id="L496">            final byte[] mySecret = new byte[theAgreement.getAgreementSize()];</span>
+<span class="fc" id="L497">            theAgreement.calculateAgreement(myTarget.getPublicKey(), mySecret, 0);</span>
+<span class="fc" id="L498">            storeSecret(mySecret);</span>
+<span class="fc" id="L499">            return myClientHello;</span>
+        }
+
+        @Override
+        public void acceptClientHelloASN1(final GordianKeyPair pServer,
+                                          final GordianAgreementMessageASN1 pClientHello) throws GordianException {
+            /* Check keyPair */
+<span class="fc" id="L506">            BouncyKeyPair.checkKeyPair(pServer);</span>
+<span class="fc" id="L507">            checkKeyPair(pServer);</span>
+
+            /* Establish agreement */
+<span class="fc" id="L510">            theAgreement = establishAgreement(pServer);</span>
+
+            /* Parse request */
+<span class="fc" id="L513">            final BouncyPrivateKey&lt;?&gt; myPrivate = (BouncyPrivateKey&lt;?&gt;) getPrivateKey(pServer);</span>
+<span class="fc" id="L514">            final X509EncodedKeySpec myKeySpec = pClientHello.getEphemeral();</span>
+<span class="fc" id="L515">            final GordianKeyPairFactory myFactory = getFactory().getAsyncFactory().getKeyPairFactory();</span>
+<span class="fc" id="L516">            final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(pServer.getKeyPairSpec());</span>
+
+            /* Derive partner key */
+<span class="fc" id="L519">            final GordianKeyPair myPartner = myGenerator.derivePublicOnlyKeyPair(myKeySpec);</span>
+<span class="fc" id="L520">            final BouncyPublicKey&lt;?&gt; myPublic = (BouncyPublicKey&lt;?&gt;) getPublicKey(myPartner);</span>
+
+            /* Derive the secret */
+<span class="fc" id="L523">            theAgreement.init(myPrivate.getPrivateKey());</span>
+<span class="fc" id="L524">            final byte[] mySecret = new byte[theAgreement.getAgreementSize()];</span>
+<span class="fc" id="L525">            theAgreement.calculateAgreement(myPublic.getPublicKey(), mySecret, 0);</span>
+<span class="fc" id="L526">            storeSecret(mySecret);</span>
+<span class="fc" id="L527">        }</span>
+    }
+
+    /**
+     * XDH Basic Agreement.
+     */
+    public static class BouncyXDHBasicAgreement
+            extends GordianCoreBasicAgreement {
+        /**
+         * Agreement.
+         */
+        private RawAgreement theAgreement;
+
+        /**
+         * Constructor.
+         * @param pFactory the security factory
+         * @param pSpec the agreementSpec
+         */
+        BouncyXDHBasicAgreement(final GordianBaseFactory pFactory,
+                                final GordianAgreementSpec pSpec) {
+            /* Initialise underlying class */
+<span class="fc" id="L548">            super(pFactory, pSpec);</span>
+
+            /* Create the agreement */
+<span class="fc" id="L551">            enableDerivation();</span>
+<span class="fc" id="L552">        }</span>
+
+        @Override
+        public GordianAgreementMessageASN1 acceptClientHelloASN1(final GordianKeyPair pClient,
+                                                                 final GordianKeyPair pServer,
+                                                                 final GordianAgreementMessageASN1 pClientHello) throws GordianException {
+            /* Check keyPair */
+<span class="fc" id="L559">            BouncyKeyPair.checkKeyPair(pClient);</span>
+<span class="fc" id="L560">            checkKeyPair(pClient);</span>
+<span class="fc" id="L561">            BouncyKeyPair.checkKeyPair(pServer);</span>
+<span class="fc" id="L562">            checkKeyPair(pServer);</span>
+
+            /* Establish agreement */
+<span class="fc" id="L565">            theAgreement = establishAgreement(pServer);</span>
+
+            /* Process clientHello */
+<span class="fc" id="L568">            processClientHelloASN1(pServer, pClientHello);</span>
+<span class="fc" id="L569">            final BouncyPrivateKey&lt;?&gt; myPrivate = (BouncyPrivateKey&lt;?&gt;) getPrivateKey(pServer);</span>
+<span class="fc" id="L570">            final BouncyPublicKey&lt;?&gt; myPublic = (BouncyPublicKey&lt;?&gt;) getPublicKey(pClient);</span>
+
+            /* Derive the secret */
+<span class="fc" id="L573">            theAgreement.init(myPrivate.getPrivateKey());</span>
+<span class="fc" id="L574">            final byte[] mySecret = new byte[theAgreement.getAgreementSize()];</span>
+<span class="fc" id="L575">            theAgreement.calculateAgreement(myPublic.getPublicKey(), mySecret, 0);</span>
+<span class="fc" id="L576">            storeSecret(mySecret);</span>
+
+            /* Return the serverHello */
+<span class="fc" id="L579">            return buildServerHello();</span>
+        }
+
+        @Override
+        public void acceptServerHelloASN1(final GordianKeyPair pServer,
+                                          final GordianAgreementMessageASN1 pServerHello) throws GordianException {
+            /* Check keyPair */
+<span class="fc" id="L586">            BouncyKeyPair.checkKeyPair(pServer);</span>
+<span class="fc" id="L587">            checkKeyPair(pServer);</span>
+
+            /* Establish agreement */
+<span class="fc" id="L590">            theAgreement = establishAgreement(pServer);</span>
+
+            /* process the serverHello */
+<span class="fc" id="L593">            processServerHelloASN1(pServerHello);</span>
+<span class="fc" id="L594">            final BouncyPrivateKey&lt;?&gt; myPrivate = (BouncyPrivateKey&lt;?&gt;) getPrivateKey(getClientKeyPair());</span>
+
+            /* Calculate agreement */
+<span class="fc" id="L597">            theAgreement.init(myPrivate.getPrivateKey());</span>
+<span class="fc" id="L598">            final BouncyPublicKey&lt;?&gt; mySrcPublic = (BouncyPublicKey&lt;?&gt;) getPublicKey(pServer);</span>
+<span class="fc" id="L599">            final byte[] mySecret = new byte[theAgreement.getAgreementSize()];</span>
+<span class="fc" id="L600">            theAgreement.calculateAgreement(mySrcPublic.getPublicKey(), mySecret, 0);</span>
+<span class="fc" id="L601">            storeSecret(mySecret);</span>
+<span class="fc" id="L602">        }</span>
+    }
+
+    /**
+     * XDH Signed Agreement.
+     */
+    public static class BouncyXDHSignedAgreement
+            extends GordianCoreSignedAgreement {
+        /**
+         * Agreement.
+         */
+        private RawAgreement theAgreement;
+
+        /**
+         * Constructor.
+         * @param pFactory the security factory
+         * @param pSpec the agreementSpec
+         */
+        BouncyXDHSignedAgreement(final GordianBaseFactory pFactory,
+                                 final GordianAgreementSpec pSpec) {
+            /* Initialise underlying class */
+<span class="fc" id="L623">            super(pFactory, pSpec);</span>
+
+            /* Create the agreement */
+<span class="fc" id="L626">            enableDerivation();</span>
+<span class="fc" id="L627">        }</span>
+
+        @Override
+        public GordianAgreementMessageASN1 acceptClientHelloASN1(final GordianKeyPair pServer,
+                                                                 final GordianAgreementMessageASN1 pClientHello) throws GordianException {
+            /* Process clientHello */
+<span class="fc" id="L633">            BouncyKeyPair.checkKeyPair(pServer);</span>
+<span class="fc" id="L634">            processClientHelloASN1(pClientHello);</span>
+<span class="fc" id="L635">            final BouncyPrivateKey&lt;?&gt; myPrivate = (BouncyPrivateKey&lt;?&gt;) getPrivateKey(getServerEphemeralKeyPair());</span>
+<span class="fc" id="L636">            final BouncyPublicKey&lt;?&gt; myPublic = (BouncyPublicKey&lt;?&gt;) getPublicKey(getClientEphemeralKeyPair());</span>
+
+            /* Establish agreement */
+<span class="fc" id="L639">            theAgreement = establishAgreement(getServerEphemeralKeyPair());</span>
+
+            /* Derive the secret */
+<span class="fc" id="L642">            theAgreement.init(myPrivate.getPrivateKey());</span>
+<span class="fc" id="L643">            final byte[] mySecret = new byte[theAgreement.getAgreementSize()];</span>
+<span class="fc" id="L644">            theAgreement.calculateAgreement(myPublic.getPublicKey(), mySecret, 0);</span>
+<span class="fc" id="L645">            storeSecret(mySecret);</span>
+
+            /* Return the serverHello */
+<span class="fc" id="L648">            return buildServerHelloASN1(pServer);</span>
+        }
+
+        @Override
+        public void acceptServerHelloASN1(final GordianKeyPair pServer,
+                                          final GordianAgreementMessageASN1 pServerHello) throws GordianException {
+            /* process the serverHello */
+<span class="fc" id="L655">            BouncyKeyPair.checkKeyPair(pServer);</span>
+<span class="fc" id="L656">            processServerHelloASN1(pServer, pServerHello);</span>
+<span class="fc" id="L657">            final BouncyPrivateKey&lt;?&gt; myPrivate = (BouncyPrivateKey&lt;?&gt;) getPrivateKey(getClientEphemeralKeyPair());</span>
+<span class="fc" id="L658">            final BouncyPublicKey&lt;?&gt; mySrcPublic = (BouncyPublicKey&lt;?&gt;) getPublicKey(getServerEphemeralKeyPair());</span>
+
+            /* Establish agreement */
+<span class="fc" id="L661">            theAgreement = establishAgreement(getServerEphemeralKeyPair());</span>
+
+            /* Calculate agreement */
+<span class="fc" id="L664">            theAgreement.init(myPrivate.getPrivateKey());</span>
+<span class="fc" id="L665">            final byte[] mySecret = new byte[theAgreement.getAgreementSize()];</span>
+<span class="fc" id="L666">            theAgreement.calculateAgreement(mySrcPublic.getPublicKey(), mySecret, 0);</span>
+<span class="fc" id="L667">            storeSecret(mySecret);</span>
+<span class="fc" id="L668">        }</span>
+    }
+
+    /**
+     * XDH Unified Agreement.
+     */
+    public static class BouncyXDHUnifiedAgreement
+            extends GordianCoreEphemeralAgreement {
+        /**
+         * Agreement.
+         */
+        private XDHUnifiedAgreement theAgreement;
+
+        /**
+         * Constructor.
+         * @param pFactory the security factory
+         * @param pSpec the agreementSpec
+         */
+        BouncyXDHUnifiedAgreement(final GordianBaseFactory pFactory,
+                                  final GordianAgreementSpec pSpec) {
+            /* Initialise underlying class */
+<span class="fc" id="L689">            super(pFactory, pSpec);</span>
+
+            /* Add in the derivation function */
+<span class="fc" id="L692">            enableDerivation();</span>
+<span class="fc" id="L693">        }</span>
+
+        @Override
+        public GordianAgreementMessageASN1 acceptClientHelloASN1(final GordianKeyPair pClient,
+                                                                 final GordianKeyPair pServer,
+                                                                 final GordianAgreementMessageASN1 pClientHello) throws GordianException {
+            /* Establish agreement */
+<span class="fc" id="L700">            theAgreement = new XDHUnifiedAgreement(establishAgreement(pServer));</span>
+
+            /* process clientHello */
+<span class="fc" id="L703">            BouncyKeyPair.checkKeyPair(pClient);</span>
+<span class="fc" id="L704">            BouncyKeyPair.checkKeyPair(pServer);</span>
+<span class="fc" id="L705">            processClientHelloASN1(pClient, pServer, pClientHello);</span>
+
+            /* Initialise agreement */
+<span class="fc" id="L708">            final BouncyPrivateKey&lt;?&gt; myPrivate = (BouncyPrivateKey&lt;?&gt;) getPrivateKey(pServer);</span>
+<span class="fc" id="L709">            final BouncyPrivateKey&lt;?&gt; myEphPrivate = (BouncyPrivateKey&lt;?&gt;) getPrivateKey(getServerEphemeralKeyPair());</span>
+<span class="fc" id="L710">            final BouncyPublicKey&lt;?&gt; myEphPublic = (BouncyPublicKey&lt;?&gt;) getPublicKey(getServerEphemeralKeyPair());</span>
+<span class="fc" id="L711">            final XDHUPrivateParameters myPrivParams = new XDHUPrivateParameters(myPrivate.getPrivateKey(),</span>
+<span class="fc" id="L712">                    myEphPrivate.getPrivateKey(), myEphPublic.getPublicKey());</span>
+<span class="fc" id="L713">            theAgreement.init(myPrivParams);</span>
+
+            /* Calculate agreement */
+<span class="fc" id="L716">            final BouncyPublicKey&lt;?&gt; mySrcPublic = (BouncyPublicKey&lt;?&gt;) getPublicKey(pClient);</span>
+<span class="fc" id="L717">            final BouncyPublicKey&lt;?&gt; mySrcEphPublic = (BouncyPublicKey&lt;?&gt;) getPublicKey(getClientEphemeralKeyPair());</span>
+<span class="fc" id="L718">            final XDHUPublicParameters myPubParams = new XDHUPublicParameters(mySrcPublic.getPublicKey(),</span>
+<span class="fc" id="L719">                    mySrcEphPublic.getPublicKey());</span>
+<span class="fc" id="L720">            final byte[] mySecret = new byte[theAgreement.getAgreementSize()];</span>
+<span class="fc" id="L721">            theAgreement.calculateAgreement(myPubParams, mySecret, 0);</span>
+<span class="fc" id="L722">            storeSecret(mySecret);</span>
+
+            /* Return the serverHello */
+<span class="fc" id="L725">            return buildServerHello();</span>
+        }
+
+        @Override
+        public GordianAgreementMessageASN1 acceptServerHelloASN1(final GordianKeyPair pServer,
+                                                                 final GordianAgreementMessageASN1 pServerHello) throws GordianException {
+            /* Check keyPair */
+<span class="fc" id="L732">            BouncyKeyPair.checkKeyPair(pServer);</span>
+<span class="fc" id="L733">            checkKeyPair(pServer);</span>
+
+            /* Establish agreement */
+<span class="fc" id="L736">            theAgreement = new XDHUnifiedAgreement(establishAgreement(pServer));</span>
+
+            /* process the serverHello */
+<span class="fc" id="L739">            processServerHelloASN1(pServer, pServerHello);</span>
+
+            /* Initialise agreement */
+<span class="fc" id="L742">            final BouncyPrivateKey&lt;?&gt; myPrivate = (BouncyPrivateKey&lt;?&gt;) getPrivateKey(getClientKeyPair());</span>
+<span class="fc" id="L743">            final BouncyPrivateKey&lt;?&gt; myEphPrivate = (BouncyPrivateKey&lt;?&gt;) getPrivateKey(getClientEphemeralKeyPair());</span>
+<span class="fc" id="L744">            final BouncyPublicKey&lt;?&gt; myEphPublic = (BouncyPublicKey&lt;?&gt;) getPublicKey(getClientEphemeralKeyPair());</span>
+<span class="fc" id="L745">            final XDHUPrivateParameters myPrivParams = new XDHUPrivateParameters(myPrivate.getPrivateKey(),</span>
+<span class="fc" id="L746">                    myEphPrivate.getPrivateKey(), myEphPublic.getPublicKey());</span>
+<span class="fc" id="L747">            theAgreement.init(myPrivParams);</span>
+
+            /* Calculate agreement */
+<span class="fc" id="L750">            final BouncyPublicKey&lt;?&gt; mySrcPublic = (BouncyPublicKey&lt;?&gt;) getPublicKey(pServer);</span>
+<span class="fc" id="L751">            final BouncyPublicKey&lt;?&gt; mySrcEphPublic = (BouncyPublicKey&lt;?&gt;) getPublicKey(getServerEphemeralKeyPair());</span>
+<span class="fc" id="L752">            final XDHUPublicParameters myPubParams = new XDHUPublicParameters(mySrcPublic.getPublicKey(),</span>
+<span class="fc" id="L753">                    mySrcEphPublic.getPublicKey());</span>
+<span class="fc" id="L754">            final byte[] mySecret = new byte[theAgreement.getAgreementSize()];</span>
+<span class="fc" id="L755">            theAgreement.calculateAgreement(myPubParams, mySecret, 0);</span>
+<span class="fc" id="L756">            storeSecret(mySecret);</span>
+
+            /* Return confirmation if needed */
+<span class="fc" id="L759">            return buildClientConfirmASN1();</span>
+        }
+    }
+
+    /**
+     * Establish the agreement.
+     * @param pSpec the keyPairSpec
+     * @return the agreement
+     */
+    private static RawAgreement establishAgreement(final GordianKeyPairSpec pSpec) {
+<span class="nc bnc" id="L769" title="All 2 branches missed.">        return pSpec.getEdwardsElliptic().is25519()</span>
+<span class="nc" id="L770">                ? new X25519Agreement()</span>
+<span class="nc" id="L771">                : new X448Agreement();</span>
+    }
+
+    /**
+     * XDH Anonymous XAgreement Engine.
+     */
+    public static class BouncyXDHAnonXAgreementEngine
+            extends BouncyXAgreementBase {
+        /**
+         * The agreement.
+         */
+        private final RawAgreement theAgreement;
+
+        /**
+         * Constructor.
+         * @param pFactory the security factory
+         * @param pSpec the agreementSpec
+         * @throws GordianException on error
+         */
+        BouncyXDHAnonXAgreementEngine(final GordianXCoreAgreementFactory pFactory,
+                                      final GordianAgreementSpec pSpec) throws GordianException {
+            /* Initialize underlying class */
+<span class="nc" id="L793">            super(pFactory, pSpec);</span>
+
+            /* Create the agreement */
+<span class="nc" id="L796">            theAgreement = establishAgreement(pSpec.getKeyPairSpec());</span>
+<span class="nc" id="L797">        }</span>
+
+        @Override
+        public void buildClientHello() throws GordianException {
+            /* Access keys */
+<span class="nc" id="L802">            final BouncyPublicKey&lt;?&gt; myPublic = (BouncyPublicKey&lt;?&gt;) getPublicKey(getServerKeyPair());</span>
+<span class="nc" id="L803">            final BouncyPrivateKey&lt;?&gt; myPrivate = (BouncyPrivateKey&lt;?&gt;) getPrivateKey(getClientEphemeral());</span>
+
+            /* Derive the secret */
+<span class="nc" id="L806">            theAgreement.init(myPrivate.getPrivateKey());</span>
+<span class="nc" id="L807">            final byte[] mySecret = new byte[theAgreement.getAgreementSize()];</span>
+<span class="nc" id="L808">            theAgreement.calculateAgreement(myPublic.getPublicKey(), mySecret, 0);</span>
+
+            /* Store secret */
+<span class="nc" id="L811">            storeSecret(mySecret);</span>
+<span class="nc" id="L812">        }</span>
+
+        @Override
+        public void processClientHello() throws GordianException {
+            /* Access keys */
+<span class="nc" id="L817">            final BouncyPublicKey&lt;?&gt; myPublic = (BouncyPublicKey&lt;?&gt;) getPublicKey(getClientEphemeral());</span>
+<span class="nc" id="L818">            final BouncyPrivateKey&lt;?&gt; myPrivate = (BouncyPrivateKey&lt;?&gt;) getPrivateKey(getServerKeyPair());</span>
+
+            /* Derive the secret */
+<span class="nc" id="L821">            theAgreement.init(myPrivate.getPrivateKey());</span>
+<span class="nc" id="L822">            final byte[] mySecret = new byte[theAgreement.getAgreementSize()];</span>
+<span class="nc" id="L823">            theAgreement.calculateAgreement(myPublic.getPublicKey(), mySecret, 0);</span>
+
+            /* Store secret */
+<span class="nc" id="L826">            storeSecret(mySecret);</span>
+<span class="nc" id="L827">        }</span>
+    }
+
+    /**
+     * DH Basic XAgreement Engine.
+     */
+    public static class BouncyXDHBasicXAgreementEngine
+            extends BouncyXAgreementBase {
+        /**
+         * The agreement.
+         */
+        private final RawAgreement theAgreement;
+
+        /**
+         * Constructor.
+         * @param pFactory the security factory
+         * @param pSpec the agreementSpec
+         * @throws GordianException on error
+         */
+        BouncyXDHBasicXAgreementEngine(final GordianXCoreAgreementFactory pFactory,
+                                       final GordianAgreementSpec pSpec) throws GordianException {
+            /* Initialize underlying class */
+<span class="nc" id="L849">            super(pFactory, pSpec);</span>
+
+            /* Create the agreement */
+<span class="nc" id="L852">            theAgreement = establishAgreement(pSpec.getKeyPairSpec());</span>
+<span class="nc" id="L853">        }</span>
+
+        @Override
+        public void processClientHello() throws GordianException {
+            /* Access keys */
+<span class="nc" id="L858">            final BouncyPublicKey&lt;?&gt; myPublic = (BouncyPublicKey&lt;?&gt;) getPublicKey(getClientKeyPair());</span>
+<span class="nc" id="L859">            final BouncyPrivateKey&lt;?&gt; myPrivate = (BouncyPrivateKey&lt;?&gt;) getPrivateKey(getServerKeyPair());</span>
+
+            /* Derive the secret */
+<span class="nc" id="L862">            theAgreement.init(myPrivate.getPrivateKey());</span>
+<span class="nc" id="L863">            final byte[] mySecret = new byte[theAgreement.getAgreementSize()];</span>
+<span class="nc" id="L864">            theAgreement.calculateAgreement(myPublic.getPublicKey(), mySecret, 0);</span>
+
+            /* Store secret */
+<span class="nc" id="L867">            storeSecret(mySecret);</span>
+<span class="nc" id="L868">        }</span>
+
+        @Override
+        public void processServerHello() throws GordianException {
+            /* Access keys */
+<span class="nc" id="L873">            final BouncyPublicKey&lt;?&gt; myPublic = (BouncyPublicKey&lt;?&gt;) getPublicKey(getServerKeyPair());</span>
+<span class="nc" id="L874">            final BouncyPrivateKey&lt;?&gt; myPrivate = (BouncyPrivateKey&lt;?&gt;) getPrivateKey(getClientKeyPair());</span>
+
+            /* Derive the secret */
+<span class="nc" id="L877">            theAgreement.init(myPrivate.getPrivateKey());</span>
+<span class="nc" id="L878">            final byte[] mySecret = new byte[theAgreement.getAgreementSize()];</span>
+<span class="nc" id="L879">            theAgreement.calculateAgreement(myPublic.getPublicKey(), mySecret, 0);</span>
+
+            /* Store secret */
+<span class="nc" id="L882">            storeSecret(mySecret);</span>
+<span class="nc" id="L883">        }</span>
+    }
+
+    /**
+     * XDH Unified XAgreement Engine.
+     */
+    public static class BouncyXDHUnifiedXAgreementEngine
+            extends BouncyXAgreementBase {
+        /**
+         * The agreement.
+         */
+        private final XDHUnifiedAgreement theAgreement;
+
+        /**
+         * Constructor.
+         * @param pFactory the security factory
+         * @param pSpec the agreementSpec
+         * @throws GordianException on error
+         */
+        BouncyXDHUnifiedXAgreementEngine(final GordianXCoreAgreementFactory pFactory,
+                                         final GordianAgreementSpec pSpec) throws GordianException {
+            /* Initialize underlying class */
+<span class="nc" id="L905">            super(pFactory, pSpec);</span>
+
+            /* Create the agreement */
+<span class="nc" id="L908">            theAgreement = new XDHUnifiedAgreement(establishAgreement(pSpec.getKeyPairSpec()));</span>
+<span class="nc" id="L909">        }</span>
+
+        @Override
+        public void processClientHello() throws GordianException {
+            /* Access keys */
+<span class="nc" id="L914">            final BouncyPublicKey&lt;?&gt; myClientPublic = (BouncyPublicKey&lt;?&gt;) getPublicKey(getClientKeyPair());</span>
+<span class="nc" id="L915">            final BouncyPublicKey&lt;?&gt; myClientEphPublic = (BouncyPublicKey&lt;?&gt;) getPublicKey(getClientEphemeral());</span>
+<span class="nc" id="L916">            final BouncyPrivateKey&lt;?&gt; myPrivate = (BouncyPrivateKey&lt;?&gt;) getPrivateKey(getServerKeyPair());</span>
+<span class="nc" id="L917">            final BouncyPublicKey&lt;?&gt; myEphPublic = (BouncyPublicKey&lt;?&gt;) getPublicKey(getServerEphemeral());</span>
+<span class="nc" id="L918">            final BouncyPrivateKey&lt;?&gt; myEphPrivate = (BouncyPrivateKey&lt;?&gt;) getPrivateKey(getServerEphemeral());</span>
+
+            /* Derive the secret */
+<span class="nc" id="L921">            final XDHUPrivateParameters myPrivParams</span>
+<span class="nc" id="L922">                    = new XDHUPrivateParameters(myPrivate.getPrivateKey(), myEphPrivate.getPrivateKey(), myEphPublic.getPublicKey());</span>
+<span class="nc" id="L923">            theAgreement.init(myPrivParams);</span>
+<span class="nc" id="L924">            final byte[] mySecret = new byte[theAgreement.getAgreementSize()];</span>
+<span class="nc" id="L925">            final XDHUPublicParameters myPubParams</span>
+<span class="nc" id="L926">                    = new XDHUPublicParameters(myClientPublic.getPublicKey(), myClientEphPublic.getPublicKey());</span>
+<span class="nc" id="L927">            theAgreement.calculateAgreement(myPubParams, mySecret, 0);</span>
+
+            /* Store secret */
+<span class="nc" id="L930">            storeSecret(mySecret);</span>
+<span class="nc" id="L931">        }</span>
+
+        @Override
+        public void processServerHello() throws GordianException {
+            /* Access keys */
+<span class="nc" id="L936">            final BouncyPublicKey&lt;?&gt; myServerPublic = (BouncyPublicKey&lt;?&gt;) getPublicKey(getServerKeyPair());</span>
+<span class="nc" id="L937">            final BouncyPublicKey&lt;?&gt; myServerEphPublic = (BouncyPublicKey&lt;?&gt;) getPublicKey(getServerEphemeral());</span>
+<span class="nc" id="L938">            final BouncyPrivateKey&lt;?&gt; myPrivate = (BouncyPrivateKey&lt;?&gt;) getPrivateKey(getClientKeyPair());</span>
+<span class="nc" id="L939">            final BouncyPublicKey&lt;?&gt; myEphPublic = (BouncyPublicKey&lt;?&gt;) getPublicKey(getClientEphemeral());</span>
+<span class="nc" id="L940">            final BouncyPrivateKey&lt;?&gt; myEphPrivate = (BouncyPrivateKey&lt;?&gt;) getPrivateKey(getClientEphemeral());</span>
+
+            /* Derive the secret */
+<span class="nc" id="L943">            final XDHUPrivateParameters myPrivParams</span>
+<span class="nc" id="L944">                    = new XDHUPrivateParameters(myPrivate.getPrivateKey(), myEphPrivate.getPrivateKey(), myEphPublic.getPublicKey());</span>
+<span class="nc" id="L945">            theAgreement.init(myPrivParams);</span>
+<span class="nc" id="L946">            final byte[] mySecret = new byte[theAgreement.getAgreementSize()];</span>
+<span class="nc" id="L947">            final XDHUPublicParameters myPubParams</span>
+<span class="nc" id="L948">                    = new XDHUPublicParameters(myServerPublic.getPublicKey(), myServerEphPublic.getPublicKey());</span>
+<span class="nc" id="L949">            theAgreement.calculateAgreement(myPubParams, mySecret, 0);</span>
+
+            /* Store secret */
+<span class="nc" id="L952">            storeSecret(mySecret);</span>
+<span class="nc" id="L953">        }</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseQActionType.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.quicken.definitions</a> &gt; <span class="el_source">MoneyWiseQActionType.java</span></div><h1>MoneyWiseQActionType.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.quicken.definitions;
+
+/**
+ * Quicken Action Types.
+ */
+<span class="nc" id="L22">public enum MoneyWiseQActionType implements MoneyWiseQLineType {</span>
+    /**
+     * Buy.
+     */
+<span class="nc" id="L26">    BUY(&quot;Buy&quot;),</span>
+
+    /**
+     * BuyX.
+     */
+<span class="nc" id="L31">    BUYX(&quot;BuyX&quot;),</span>
+
+    /**
+     * Sell.
+     */
+<span class="nc" id="L36">    SELL(&quot;Sell&quot;),</span>
+
+    /**
+     * SellX.
+     */
+<span class="nc" id="L41">    SELLX(&quot;SellX&quot;),</span>
+
+    /**
+     * StockSplit.
+     */
+<span class="nc" id="L46">    STKSPLIT(&quot;StkSplit&quot;),</span>
+
+    /**
+     * SharesIn.
+     */
+<span class="nc" id="L51">    SHRSIN(&quot;ShrsIn&quot;),</span>
+
+    /**
+     * SharesOut.
+     */
+<span class="nc" id="L56">    SHRSOUT(&quot;ShrsOut&quot;),</span>
+
+    /**
+     * Dividend.
+     */
+<span class="nc" id="L61">    DIV(&quot;Div&quot;),</span>
+
+    /**
+     * DividendX.
+     */
+<span class="nc" id="L66">    DIVX(&quot;DivX&quot;),</span>
+
+    /**
+     * Reinvested Dividend.
+     */
+<span class="nc" id="L71">    REINVDIV(&quot;ReinvDiv&quot;),</span>
+
+    /**
+     * Return of Capital.
+     */
+<span class="nc" id="L76">    RTRNCAP(&quot;RtrnCap&quot;),</span>
+
+    /**
+     * Return of CapitalX.
+     */
+<span class="nc" id="L81">    RTRNCAPX(&quot;RtrnCapX&quot;),</span>
+
+    /**
+     * Transfer In.
+     */
+<span class="nc" id="L86">    XIN(&quot;XIn&quot;),</span>
+
+    /**
+     * Transfer Out.
+     */
+<span class="nc" id="L91">    XOUT(&quot;XOut&quot;),</span>
+
+    /**
+     * Miscellaneous Income.
+     */
+<span class="nc" id="L96">    MISCINC(&quot;MiscInc&quot;),</span>
+
+    /**
+     * Miscellaneous IncomeX.
+     */
+<span class="nc" id="L101">    MISCINCX(&quot;MiscIncX&quot;),</span>
+
+    /**
+     * Miscellaneous Expense.
+     */
+<span class="nc" id="L106">    MISCEXP(&quot;MiscExp&quot;),</span>
+
+    /**
+     * Miscellaneous ExpenseX.
+     */
+<span class="nc" id="L111">    MISCEXPX(&quot;MiscExpX&quot;),</span>
+
+    /**
+     * Cash/Miscellaneous Expense.
+     */
+<span class="nc" id="L116">    CASH(&quot;Cash&quot;),</span>
+
+    /**
+     * Options Grant.
+     */
+<span class="nc" id="L121">    GRANT(&quot;Grant&quot;),</span>
+
+    /**
+     * Options Vest.
+     */
+<span class="nc" id="L126">    VEST(&quot;Vest&quot;),</span>
+
+    /**
+     * Options Exercise.
+     */
+<span class="nc" id="L131">    EXERCISE(&quot;Exercise&quot;),</span>
+
+    /**
+     * Options ExercisX.
+     */
+<span class="nc" id="L136">    EXERCISEX(&quot;ExercisX&quot;),</span>
+
+    /**
+     * Options Expire.
+     */
+<span class="nc" id="L141">    EXPIRE(&quot;Expire&quot;),</span>
+
+    /**
+     * Short Sell.
+     */
+<span class="nc" id="L146">    SHTSELL(&quot;ShtSell&quot;),</span>
+
+    /**
+     * Cover ShortSell.
+     */
+<span class="nc" id="L151">    CVRSHRT(&quot;CvrShrt&quot;),</span>
+
+    /**
+     * Cover ShortSellX.
+     */
+<span class="nc" id="L156">    CVRSHRTX(&quot;CvrShrtX&quot;);</span>
+
+    /**
+     * The symbol.
+     */
+    private final String theSymbol;
+
+    /**
+     * Constructor.
+     * @param pSymbol the symbol
+     */
+<span class="nc" id="L167">    MoneyWiseQActionType(final String pSymbol) {</span>
+        /* Store symbol */
+<span class="nc" id="L169">        theSymbol = pSymbol;</span>
+<span class="nc" id="L170">    }</span>
+
+    @Override
+    public String getSymbol() {
+<span class="nc" id="L174">        return theSymbol;</span>
+    }
+
+    /**
+     * Parse a line to find the portfolio action type.
+     * @param pLine the line to parse
+     * @return the Portfolio Action type (or null if no match)
+     */
+    public static MoneyWiseQActionType parseLine(final String pLine) {
+        /* Loop through the values */
+<span class="nc bnc" id="L184" title="All 2 branches missed.">        for (MoneyWiseQActionType myType : values()) {</span>
+            /* Look for match */
+<span class="nc bnc" id="L186" title="All 2 branches missed.">            if (pLine.equals(myType.getSymbol())) {</span>
+                /* Return match if found */
+<span class="nc" id="L188">                return myType;</span>
+            }
+        }
+
+        /* Return no match */
+<span class="nc" id="L193">        return null;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

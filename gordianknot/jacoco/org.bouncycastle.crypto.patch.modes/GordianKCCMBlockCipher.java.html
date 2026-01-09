@@ -1,0 +1,433 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianKCCMBlockCipher.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">org.bouncycastle.crypto.patch.modes</a> &gt; <span class="el_source">GordianKCCMBlockCipher.java</span></div><h1>GordianKCCMBlockCipher.java</h1><pre class="source lang-java linenums">package org.bouncycastle.crypto.patch.modes;
+
+import java.io.ByteArrayOutputStream;
+
+import org.bouncycastle.crypto.BlockCipher;
+import org.bouncycastle.crypto.CipherParameters;
+import org.bouncycastle.crypto.DataLengthException;
+import org.bouncycastle.crypto.InvalidCipherTextException;
+import org.bouncycastle.crypto.OutputLengthException;
+import org.bouncycastle.crypto.modes.AEADBlockCipher;
+import org.bouncycastle.crypto.params.AEADParameters;
+import org.bouncycastle.crypto.params.ParametersWithIV;
+import org.bouncycastle.util.Arrays;
+
+/**
+ * Implementation of DSTU7624 CCM mode.
+ */
+public class GordianKCCMBlockCipher
+        implements AEADBlockCipher {
+
+    private static final int BYTES_IN_INT = 4;
+    private static final int BITS_IN_BYTE = 8;
+
+    private static final int MAX_MAC_BIT_LENGTH = 512;
+    private static final int MIN_MAC_BIT_LENGTH = 64;
+
+    private BlockCipher engine;
+
+    private int macSize;
+    private boolean forEncryption;
+
+    private byte[] initialAssociatedText;
+    private byte[] mac;
+    private byte[] macBlock;
+
+    private byte[] nonce;
+
+    private byte[] G1;
+    private byte[] buffer;
+
+    private byte[] s;
+    private byte[] counter;
+
+<span class="fc" id="L44">    private ExposedByteArrayOutputStream associatedText = new ExposedByteArrayOutputStream();</span>
+<span class="fc" id="L45">    private ExposedByteArrayOutputStream data = new ExposedByteArrayOutputStream();</span>
+
+<span class="fc" id="L47">    private int Nb_ = 4;</span>
+
+    private void setNb(int Nb) {
+<span class="pc bpc" id="L50" title="5 of 6 branches missed.">        if (Nb == 4 || Nb == 6 || Nb == 8) {</span>
+<span class="fc" id="L51">            Nb_ = Nb;</span>
+        } else {
+<span class="nc" id="L53">            throw new IllegalArgumentException(&quot;Nb = 4 is recommended by DSTU7624 but can be changed to only 6 or 8 in this implementation&quot;);</span>
+        }
+<span class="fc" id="L55">    }</span>
+
+    /**
+     * Base constructor. Nb value is set to 4.
+     *
+     * @param engine base cipher to use under CCM.
+     */
+    public GordianKCCMBlockCipher(BlockCipher engine) {
+<span class="fc" id="L63">        this(engine, 4);</span>
+<span class="fc" id="L64">    }</span>
+
+    /**
+     * Constructor allowing Nb configuration.
+     * &lt;p&gt;
+     * Nb is a parameter specified in CCM mode of DSTU7624 standard. This parameter specifies
+     * maximum possible length of input. It should be calculated as follows: Nb = 1/8 * (-3 +
+     * log[2]Nmax) + 1, where Nmax - length of input message in bits. For practical reasons Nmax
+     * usually less than 4Gb, e.g. for Nmax = 2^32 - 1, Nb = 4.
+     * &lt;/p&gt;
+     * @param engine base cipher to use under CCM.
+     * @param nB Nb value to use.
+     */
+    public GordianKCCMBlockCipher(BlockCipher engine,
+<span class="fc" id="L78">                                  int nB) {</span>
+<span class="fc" id="L79">        this.engine = engine;</span>
+<span class="fc" id="L80">        this.macSize = engine.getBlockSize();</span>
+<span class="fc" id="L81">        this.nonce = new byte[engine.getBlockSize()];</span>
+<span class="fc" id="L82">        this.initialAssociatedText = new byte[engine.getBlockSize()];</span>
+<span class="fc" id="L83">        this.mac = new byte[engine.getBlockSize()];</span>
+<span class="fc" id="L84">        this.macBlock = new byte[engine.getBlockSize()];</span>
+<span class="fc" id="L85">        this.G1 = new byte[engine.getBlockSize()];</span>
+<span class="fc" id="L86">        this.buffer = new byte[engine.getBlockSize()];</span>
+<span class="fc" id="L87">        this.s = new byte[engine.getBlockSize()];</span>
+<span class="fc" id="L88">        this.counter = new byte[engine.getBlockSize()];</span>
+<span class="fc" id="L89">        setNb(nB);</span>
+<span class="fc" id="L90">    }</span>
+
+    public void init(boolean forEncryption, CipherParameters params)
+            throws IllegalArgumentException {
+
+        CipherParameters cipherParameters;
+        byte[] nonce;
+<span class="fc bfc" id="L97" title="All 2 branches covered.">        if (params instanceof AEADParameters) {</span>
+
+<span class="fc" id="L99">            AEADParameters parameters = (AEADParameters) params;</span>
+
+<span class="pc bpc" id="L101" title="2 of 4 branches missed.">            if (parameters.getMacSize() &gt; MAX_MAC_BIT_LENGTH || parameters.getMacSize() &lt; MIN_MAC_BIT_LENGTH</span>
+<span class="pc bpc" id="L102" title="2 of 4 branches missed.">                || parameters.getMacSize() % 8 != 0 || parameters.getMacSize() % 8 &gt; engine.getBlockSize()) {</span>
+<span class="nc" id="L103">                throw new IllegalArgumentException(&quot;Invalid mac size specified&quot;);</span>
+            }
+
+<span class="fc" id="L106">            nonce = parameters.getNonce();</span>
+<span class="fc" id="L107">            macSize = parameters.getMacSize() / BITS_IN_BYTE;</span>
+<span class="fc" id="L108">            initialAssociatedText = parameters.getAssociatedText();</span>
+<span class="fc" id="L109">            cipherParameters = parameters.getKey();</span>
+<span class="pc bpc" id="L110" title="1 of 2 branches missed.">        } else if (params instanceof ParametersWithIV) {</span>
+<span class="fc" id="L111">            nonce = ((ParametersWithIV) params).getIV();</span>
+<span class="fc" id="L112">            macSize = engine.getBlockSize(); // use default blockSize for MAC if it is not specified</span>
+<span class="fc" id="L113">            initialAssociatedText = null;</span>
+<span class="fc" id="L114">            cipherParameters = ((ParametersWithIV) params).getParameters();</span>
+        } else {
+<span class="nc" id="L116">            throw new IllegalArgumentException(&quot;Invalid parameters specified&quot;);</span>
+        }
+
+<span class="pc bpc" id="L119" title="1 of 2 branches missed.">        if (nonce.length &gt; engine.getBlockSize()) {</span>
+<span class="nc" id="L120">            throw new IllegalArgumentException(&quot;IV must be at most &quot; + engine.getBlockSize() + &quot; long&quot;);</span>
+        }
+<span class="fc" id="L122">        this.nonce = Arrays.copyOf(nonce, engine.getBlockSize());</span>
+
+<span class="fc" id="L124">        this.mac = new byte[macSize];</span>
+<span class="fc" id="L125">        this.forEncryption = forEncryption;</span>
+<span class="fc" id="L126">        engine.init(true, cipherParameters);</span>
+<span class="fc" id="L127">        reset();</span>
+<span class="fc" id="L128">    }</span>
+
+    public String getAlgorithmName() {
+<span class="nc" id="L131">        return engine.getAlgorithmName() + &quot;/KCCM&quot;;</span>
+    }
+
+    public BlockCipher getUnderlyingCipher() {
+<span class="nc" id="L135">        return engine;</span>
+    }
+
+    public void processAADByte(byte in) {
+<span class="nc" id="L139">        associatedText.write(in);</span>
+<span class="nc" id="L140">    }</span>
+
+    public void processAADBytes(byte[] in, int inOff, int len) {
+<span class="fc" id="L143">        associatedText.write(in, inOff, len);</span>
+<span class="fc" id="L144">    }</span>
+
+    private void processAAD(byte[] assocText, int assocOff, int assocLen, int dataLen) {
+<span class="pc bpc" id="L147" title="1 of 2 branches missed.">        if (assocText.length &lt; (assocOff + assocLen)) {</span>
+<span class="nc" id="L148">            throw new DataLengthException(&quot;assocText buffer too short&quot;);</span>
+        }
+
+<span class="fc" id="L151">        System.arraycopy(nonce, 0, G1, 0, nonce.length - Nb_ - 1);</span>
+
+<span class="fc" id="L153">        intToBytes(dataLen, buffer, 0); // for G1</span>
+
+<span class="fc" id="L155">        System.arraycopy(buffer, 0, G1, nonce.length - Nb_ - 1, BYTES_IN_INT);</span>
+
+<span class="fc" id="L157">        G1[G1.length - 1] = getFlag(true, macSize);</span>
+
+<span class="fc" id="L159">        engine.processBlock(G1, 0, macBlock, 0);</span>
+
+<span class="fc" id="L161">        intToBytes(assocLen, buffer, 0); // for G2</span>
+
+<span class="pc bpc" id="L163" title="1 of 2 branches missed.">        if (assocLen &lt;= engine.getBlockSize() - Nb_) {</span>
+<span class="fc bfc" id="L164" title="All 2 branches covered.">            for (int byteIndex = 0; byteIndex &lt; assocLen; byteIndex++) {</span>
+<span class="fc" id="L165">                buffer[byteIndex + Nb_] ^= assocText[assocOff + byteIndex];</span>
+            }
+
+<span class="fc bfc" id="L168" title="All 2 branches covered.">            for (int byteIndex = 0; byteIndex &lt; engine.getBlockSize(); byteIndex++) {</span>
+<span class="fc" id="L169">                macBlock[byteIndex] ^= buffer[byteIndex];</span>
+            }
+
+<span class="fc" id="L172">            engine.processBlock(macBlock, 0, macBlock, 0);</span>
+
+<span class="fc" id="L174">            return;</span>
+        }
+
+<span class="nc bnc" id="L177" title="All 2 branches missed.">        for (int byteIndex = 0; byteIndex &lt; engine.getBlockSize(); byteIndex++) {</span>
+<span class="nc" id="L178">            macBlock[byteIndex] ^= buffer[byteIndex];</span>
+        }
+
+<span class="nc" id="L181">        engine.processBlock(macBlock, 0, macBlock, 0);</span>
+
+<span class="nc" id="L183">        int authLen = assocLen;</span>
+<span class="nc bnc" id="L184" title="All 2 branches missed.">        while (authLen &gt; 0) {</span>
+<span class="nc bnc" id="L185" title="All 4 branches missed.">            for (int byteIndex = 0; byteIndex &lt; engine.getBlockSize() &amp;&amp; byteIndex &lt; authLen; byteIndex++) {</span>
+<span class="nc" id="L186">                macBlock[byteIndex] ^= assocText[byteIndex + assocOff];</span>
+            }
+
+<span class="nc" id="L189">            engine.processBlock(macBlock, 0, macBlock, 0);</span>
+
+<span class="nc" id="L191">            assocOff += engine.getBlockSize();</span>
+<span class="nc" id="L192">            authLen -= engine.getBlockSize();</span>
+        }
+<span class="nc" id="L194">    }</span>
+
+    public int processByte(byte in, byte[] out, int outOff)
+            throws DataLengthException, IllegalStateException {
+<span class="nc" id="L198">        data.write(in);</span>
+
+<span class="nc" id="L200">        return 0;</span>
+    }
+
+    public int processBytes(byte[] in, int inOff, int inLen, byte[] out, int outOff)
+            throws DataLengthException, IllegalStateException {
+<span class="pc bpc" id="L205" title="1 of 2 branches missed.">        if (in.length &lt; (inOff + inLen)) {</span>
+<span class="nc" id="L206">            throw new DataLengthException(&quot;input buffer too short&quot;);</span>
+        }
+<span class="fc" id="L208">        data.write(in, inOff, inLen);</span>
+
+<span class="fc" id="L210">        return 0;</span>
+    }
+
+    public int processPacket(byte[] in, int inOff, int len, byte[] out, int outOff)
+            throws IllegalStateException, InvalidCipherTextException {
+<span class="pc bpc" id="L215" title="1 of 2 branches missed.">        if (in.length - inOff &lt; len) {</span>
+<span class="nc" id="L216">            throw new DataLengthException(&quot;input buffer too short&quot;);</span>
+        }
+<span class="fc bfc" id="L218" title="All 2 branches covered.">        int requiredOutLen = forEncryption</span>
+<span class="fc" id="L219">                                           ? len + macSize</span>
+<span class="fc" id="L220">                                           : len - macSize;</span>
+<span class="pc bpc" id="L221" title="1 of 2 branches missed.">        if (out.length - outOff &lt; requiredOutLen) {</span>
+<span class="nc" id="L222">            throw new OutputLengthException(&quot;output buffer too short&quot;);</span>
+        }
+
+<span class="fc bfc" id="L225" title="All 2 branches covered.">        if (associatedText.size() &gt; 0) {</span>
+<span class="fc bfc" id="L226" title="All 2 branches covered.">            if (forEncryption) {</span>
+<span class="fc" id="L227">                processAAD(associatedText.getBuffer(), 0, associatedText.size(), data.size());</span>
+            } else {
+<span class="fc" id="L229">                processAAD(associatedText.getBuffer(), 0, associatedText.size(), data.size() - macSize);</span>
+            }
+        }
+
+<span class="fc bfc" id="L233" title="All 2 branches covered.">        if (forEncryption) {</span>
+<span class="fc" id="L234">            CalculateMac(in, inOff, len);</span>
+<span class="fc" id="L235">            engine.processBlock(nonce, 0, s, 0);</span>
+
+<span class="fc" id="L237">            int totalLength = len;</span>
+<span class="fc bfc" id="L238" title="All 2 branches covered.">            while (totalLength &gt; 0) {</span>
+<span class="fc" id="L239">                ProcessBlock(in, inOff, totalLength, out, outOff);</span>
+<span class="fc" id="L240">                totalLength -= engine.getBlockSize();</span>
+<span class="fc" id="L241">                inOff += engine.getBlockSize();</span>
+<span class="fc" id="L242">                outOff += engine.getBlockSize();</span>
+            }
+
+<span class="fc" id="L245">            outOff += totalLength;</span>
+
+<span class="fc" id="L247">            applyCounter();</span>
+<span class="fc" id="L248">            engine.processBlock(s, 0, buffer, 0);</span>
+
+<span class="fc bfc" id="L250" title="All 2 branches covered.">            for (int byteIndex = 0; byteIndex &lt; macSize; byteIndex++) {</span>
+<span class="fc" id="L251">                out[outOff + byteIndex] = (byte) (buffer[byteIndex] ^ macBlock[byteIndex]);</span>
+            }
+
+<span class="fc" id="L254">            System.arraycopy(macBlock, 0, mac, 0, macSize);</span>
+
+<span class="fc" id="L256">            reset();</span>
+
+<span class="fc" id="L258">            return len + macSize;</span>
+        } else {
+<span class="fc" id="L260">            engine.processBlock(nonce, 0, s, 0);</span>
+
+<span class="fc" id="L262">            int totalLength = len - macSize;</span>
+<span class="fc bfc" id="L263" title="All 2 branches covered.">            while (totalLength &gt; 0) {</span>
+<span class="fc" id="L264">                ProcessBlock(in, inOff, totalLength, out, outOff);</span>
+<span class="fc" id="L265">                totalLength -= engine.getBlockSize();</span>
+<span class="fc" id="L266">                inOff += engine.getBlockSize();</span>
+<span class="fc" id="L267">                outOff += engine.getBlockSize();</span>
+            }
+
+<span class="fc" id="L270">            inOff += totalLength;</span>
+<span class="fc" id="L271">            outOff += totalLength;</span>
+
+<span class="fc" id="L273">            applyCounter();</span>
+<span class="fc" id="L274">            engine.processBlock(s, 0, buffer, 0);</span>
+
+<span class="fc" id="L276">            byte[] calculatedMac = new byte[macSize];</span>
+<span class="fc bfc" id="L277" title="All 2 branches covered.">            for (int byteIndex = 0; byteIndex &lt; macSize; byteIndex++) {</span>
+<span class="fc" id="L278">                calculatedMac[byteIndex] = (byte) (buffer[byteIndex] ^ in[inOff + byteIndex]);</span>
+            }
+
+<span class="fc" id="L281">            CalculateMac(out, 0, outOff);</span>
+
+<span class="fc" id="L283">            System.arraycopy(macBlock, 0, mac, 0, macSize);</span>
+
+<span class="pc bpc" id="L285" title="1 of 2 branches missed.">            if (!Arrays.constantTimeAreEqual(mac, calculatedMac)) {</span>
+<span class="nc" id="L286">                throw new InvalidCipherTextException(&quot;mac check failed&quot;);</span>
+            }
+
+<span class="fc" id="L289">            reset();</span>
+
+<span class="fc" id="L291">            return len - macSize;</span>
+        }
+    }
+
+    private void ProcessBlock(byte[] input, int inOff, int len, byte[] output, int outOff) {
+<span class="fc" id="L296">        applyCounter();</span>
+<span class="fc" id="L297">        engine.processBlock(s, 0, buffer, 0);</span>
+
+<span class="fc bfc" id="L299" title="All 4 branches covered.">        for (int byteIndex = 0; byteIndex &lt; engine.getBlockSize() &amp;&amp; byteIndex &lt; len; byteIndex++) {</span>
+<span class="fc" id="L300">            output[outOff + byteIndex] = (byte) (buffer[byteIndex] ^ input[inOff + byteIndex]);</span>
+        }
+<span class="fc" id="L302">    }</span>
+
+    private void CalculateMac(byte[] authText, int authOff, int len) {
+<span class="fc" id="L305">        int totalLen = len;</span>
+<span class="fc bfc" id="L306" title="All 2 branches covered.">        while (totalLen &gt; 0) {</span>
+<span class="fc bfc" id="L307" title="All 4 branches covered.">            for (int byteIndex = 0; byteIndex &lt; engine.getBlockSize() &amp;&amp; byteIndex &lt; totalLen; byteIndex++) {</span>
+<span class="fc" id="L308">                macBlock[byteIndex] ^= authText[authOff + byteIndex];</span>
+            }
+
+<span class="fc" id="L311">            engine.processBlock(macBlock, 0, macBlock, 0);</span>
+
+<span class="fc" id="L313">            totalLen -= engine.getBlockSize();</span>
+<span class="fc" id="L314">            authOff += engine.getBlockSize();</span>
+        }
+<span class="fc" id="L316">    }</span>
+
+    public int doFinal(byte[] out, int outOff)
+            throws IllegalStateException, InvalidCipherTextException {
+<span class="fc" id="L320">        int len = processPacket(data.getBuffer(), 0, data.size(), out, outOff);</span>
+
+<span class="fc" id="L322">        reset();</span>
+
+<span class="fc" id="L324">        return len;</span>
+    }
+
+    public byte[] getMac() {
+<span class="nc" id="L328">        return Arrays.clone(mac);</span>
+    }
+
+    public int getUpdateOutputSize(int len) {
+<span class="nc" id="L332">        return 0;</span>
+    }
+
+    public int getOutputSize(int len) {
+<span class="fc" id="L336">        int totalData = len + data.size();</span>
+
+<span class="fc bfc" id="L338" title="All 2 branches covered.">        if (forEncryption) {</span>
+<span class="fc" id="L339">            return totalData + macSize;</span>
+        }
+
+<span class="pc bpc" id="L342" title="1 of 2 branches missed.">        return totalData &lt; macSize</span>
+<span class="nc" id="L343">                                   ? 0</span>
+<span class="fc" id="L344">                                   : totalData - macSize;</span>
+    }
+
+    public void reset() {
+<span class="fc" id="L348">        Arrays.fill(G1, (byte) 0);</span>
+<span class="fc" id="L349">        Arrays.fill(buffer, (byte) 0);</span>
+<span class="fc" id="L350">        Arrays.fill(counter, (byte) 0);</span>
+<span class="fc" id="L351">        Arrays.fill(macBlock, (byte) 0);</span>
+<span class="fc" id="L352">        counter[0] = 0x01;</span>
+<span class="fc" id="L353">        data.reset();</span>
+<span class="fc" id="L354">        associatedText.reset();</span>
+
+<span class="fc bfc" id="L356" title="All 2 branches covered.">        if (initialAssociatedText != null) {</span>
+<span class="fc" id="L357">            processAADBytes(initialAssociatedText, 0, initialAssociatedText.length);</span>
+        }
+<span class="fc" id="L359">    }</span>
+
+    private void applyCounter() {
+        /* Apply Counter */
+<span class="fc bfc" id="L363" title="All 2 branches covered.">        for (int byteIndex = 0; byteIndex &lt; counter.length; byteIndex++) {</span>
+<span class="fc" id="L364">            s[byteIndex] += counter[byteIndex];</span>
+        }
+
+        /* Increment counter by 1 */
+<span class="pc bpc" id="L368" title="1 of 2 branches missed.">        for (int byteIndex = 0; byteIndex &lt; counter.length; byteIndex++) {</span>
+<span class="pc bpc" id="L369" title="1 of 2 branches missed.">            if (++counter[byteIndex] != 0) {</span>
+<span class="fc" id="L370">                break;</span>
+            }
+        }
+<span class="fc" id="L373">    }</span>
+
+    private void intToBytes(
+                            int num,
+                            byte[] outBytes,
+                            int outOff) {
+<span class="fc" id="L379">        outBytes[outOff + 3] = (byte) (num &gt;&gt; 24);</span>
+<span class="fc" id="L380">        outBytes[outOff + 2] = (byte) (num &gt;&gt; 16);</span>
+<span class="fc" id="L381">        outBytes[outOff + 1] = (byte) (num &gt;&gt; 8);</span>
+<span class="fc" id="L382">        outBytes[outOff] = (byte) num;</span>
+<span class="fc" id="L383">    }</span>
+
+    private byte getFlag(boolean authTextPresents, int macSize) {
+<span class="fc" id="L386">        StringBuffer flagByte = new StringBuffer();</span>
+
+<span class="pc bpc" id="L388" title="1 of 2 branches missed.">        if (authTextPresents) {</span>
+<span class="fc" id="L389">            flagByte.append(&quot;1&quot;);</span>
+        } else {
+<span class="nc" id="L391">            flagByte.append(&quot;0&quot;);</span>
+        }
+
+<span class="pc bpc" id="L394" title="3 of 6 branches missed.">        switch (macSize) {</span>
+            case 8:
+<span class="nc" id="L396">                flagByte.append(&quot;010&quot;); // binary 2</span>
+<span class="nc" id="L397">                break;</span>
+            case 16:
+<span class="fc" id="L399">                flagByte.append(&quot;011&quot;); // binary 3</span>
+<span class="fc" id="L400">                break;</span>
+            case 32:
+<span class="fc" id="L402">                flagByte.append(&quot;100&quot;); // binary 4</span>
+<span class="fc" id="L403">                break;</span>
+            case 48:
+<span class="nc" id="L405">                flagByte.append(&quot;101&quot;); // binary 5</span>
+<span class="nc" id="L406">                break;</span>
+            case 64:
+<span class="fc" id="L408">                flagByte.append(&quot;110&quot;); // binary 6</span>
+                break;
+        }
+
+<span class="fc" id="L412">        String binaryNb = Integer.toBinaryString(Nb_ - 1);</span>
+<span class="fc bfc" id="L413" title="All 2 branches covered.">        while (binaryNb.length() &lt; 4) {</span>
+<span class="fc" id="L414">            binaryNb = new StringBuffer(binaryNb).insert(0, &quot;0&quot;).toString();</span>
+        }
+
+<span class="fc" id="L417">        flagByte.append(binaryNb);</span>
+
+<span class="fc" id="L419">        return (byte) Integer.parseInt(flagByte.toString(), 2);</span>
+
+    }
+
+    private class ExposedByteArrayOutputStream
+            extends ByteArrayOutputStream {
+<span class="fc" id="L425">        public ExposedByteArrayOutputStream() {</span>
+<span class="fc" id="L426">        }</span>
+
+        public byte[] getBuffer() {
+<span class="fc" id="L429">            return this.buf;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisXAnalysisTypeParser.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.themis.xanalysis.parser.type</a> &gt; <span class="el_source">ThemisXAnalysisTypeParser.java</span></div><h1>ThemisXAnalysisTypeParser.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Themis: Java Project Framework
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.themis.xanalysis.parser.type;
+
+import com.github.javaparser.ast.type.Type;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
+import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisParserDef;
+
+/**
+ * Analysis Type Parser.
+ */
+public final class ThemisXAnalysisTypeParser {
+    /**
+     * Private Constructor.
+     */
+    private ThemisXAnalysisTypeParser() {
+    }
+
+    /**
+     * Parse a type.
+     * @param pParser the parser
+     * @param pType the type
+     * @return the parsed type
+     * @throws OceanusException on error
+     */
+    public static ThemisXAnalysisTypeInstance parseType(final ThemisXAnalysisParserDef pParser,
+                                                        final Type pType) throws OceanusException {
+        /* Handle null Type */
+<span class="fc bfc" id="L44" title="All 2 branches covered.">        if (pType == null) {</span>
+<span class="fc" id="L45">            return null;</span>
+        }
+
+        /* Allocate correct Type */
+<span class="pc bpc" id="L49" title="3 of 11 branches missed.">        switch (ThemisXAnalysisType.determineType(pParser, pType)) {</span>
+<span class="fc" id="L50">            case ARRAY:          return new ThemisXAnalysisTypeArray(pParser, pType.asArrayType());</span>
+<span class="fc" id="L51">            case CLASSINTERFACE: return new ThemisXAnalysisTypeClassInterface(pParser, pType.asClassOrInterfaceType());</span>
+<span class="nc" id="L52">            case INTERSECTION:   return new ThemisXAnalysisTypeIntersection(pParser, pType.asIntersectionType());</span>
+<span class="fc" id="L53">            case PARAMETER:      return new ThemisXAnalysisTypeParameter(pParser, pType.asTypeParameter());</span>
+<span class="fc" id="L54">            case PRIMITIVE:      return new ThemisXAnalysisTypePrimitive(pParser, pType.asPrimitiveType());</span>
+<span class="fc" id="L55">            case UNION:          return new ThemisXAnalysisTypeUnion(pParser, pType.asUnionType());</span>
+<span class="fc" id="L56">            case UNKNOWN:        return new ThemisXAnalysisTypeUnknown(pParser, pType.asUnknownType());</span>
+<span class="nc" id="L57">            case VAR:            return new ThemisXAnalysisTypeVar(pParser, pType.asVarType());</span>
+<span class="fc" id="L58">            case VOID:           return new ThemisXAnalysisTypeVoid(pParser, pType.asVoidType());</span>
+<span class="fc" id="L59">            case WILDCARD:       return new ThemisXAnalysisTypeWildcard(pParser, pType.asWildcardType());</span>
+<span class="nc" id="L60">            default:             throw pParser.buildException(&quot;Unsupported Type&quot;, pType);</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

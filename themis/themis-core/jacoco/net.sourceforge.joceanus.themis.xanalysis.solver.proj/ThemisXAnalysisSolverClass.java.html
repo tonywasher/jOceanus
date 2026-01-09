@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisXAnalysisSolverClass.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.themis.xanalysis.solver.proj</a> &gt; <span class="el_source">ThemisXAnalysisSolverClass.java</span></div><h1>ThemisXAnalysisSolverClass.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Themis: Java Project Framework
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.themis.xanalysis.solver.proj;
+
+import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance;
+import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisClassInstance;
+import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisMethodInstance;
+import net.sourceforge.joceanus.themis.xanalysis.solver.proj.ThemisXAnalysisSolverDef.ThemisXAnalysisSolverClassDef;
+import net.sourceforge.joceanus.themis.xanalysis.solver.proj.ThemisXAnalysisSolverDef.ThemisXAnalysisSolverFileDef;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Solver Class.
+ */
+public class ThemisXAnalysisSolverClass
+        implements ThemisXAnalysisSolverClassDef {
+    /**
+     * The fully qualified name of the class.
+     */
+    private final String theFullName;
+
+    /**
+     * The owning file.
+     */
+    private final ThemisXAnalysisSolverFileDef theFile;
+
+    /**
+     * The contained class.
+     */
+    private final ThemisXAnalysisClassInstance theClass;
+
+    /**
+     * The methods.
+     */
+    private final List&lt;ThemisXAnalysisSolverMethod&gt; theMethods;
+
+    /**
+     * Is the reference list circular?
+     */
+    private boolean isCircular;
+
+    /**
+     * Constructor.
+     * @param pFile the owning file
+     * @param pClass the parsed class
+     */
+    ThemisXAnalysisSolverClass(final ThemisXAnalysisSolverFileDef pFile,
+<span class="fc" id="L64">                               final ThemisXAnalysisClassInstance pClass) {</span>
+        /* Store the parameters */
+<span class="fc" id="L66">        theFile = pFile;</span>
+<span class="fc" id="L67">        theClass = pClass;</span>
+
+        /* Access the full name */
+<span class="fc" id="L70">        theFullName = theClass.getFullName();</span>
+
+        /* Populate the methodList */
+<span class="fc" id="L73">        theMethods = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L74">        final ThemisXAnalysisInstance myNode = (ThemisXAnalysisInstance) theClass;</span>
+<span class="fc bfc" id="L75" title="All 2 branches covered.">        for (ThemisXAnalysisInstance myMethod : myNode.discoverChildren(ThemisXAnalysisMethodInstance.class::isInstance)) {</span>
+<span class="fc" id="L76">            final ThemisXAnalysisSolverMethod mySolverMethod = new ThemisXAnalysisSolverMethod(this, (ThemisXAnalysisMethodInstance) myMethod);</span>
+<span class="fc" id="L77">            theMethods.add(mySolverMethod);</span>
+<span class="fc" id="L78">        }</span>
+<span class="fc" id="L79">    }</span>
+
+    /**
+     * Obtain the name of the class.
+     * @return the name
+     */
+    public String getName() {
+<span class="fc" id="L86">        return theClass.getName();</span>
+    }
+
+    @Override
+    public String getFullName() {
+<span class="fc" id="L91">        return theFullName;</span>
+    }
+
+    @Override
+    public ThemisXAnalysisSolverFileDef getOwningFile() {
+<span class="fc" id="L96">        return theFile;</span>
+    }
+
+    @Override
+    public ThemisXAnalysisClassInstance getUnderlyingClass() {
+<span class="fc" id="L101">        return theClass;</span>
+    }
+
+    /**
+     * Is this a top-level class?
+     * @return true/false
+     */
+    public boolean isTopLevel() {
+<span class="fc" id="L109">        return theClass.isTopLevel();</span>
+    }
+
+    /**
+     * Obtain the method list.
+     * @return the method list
+     */
+    public List&lt;ThemisXAnalysisSolverMethod&gt; getMethods() {
+<span class="nc" id="L117">        return theMethods;</span>
+    }
+
+    /**
+     * Obtain the package.
+     * @return the packageName
+     */
+    public String getPackageName() {
+<span class="fc" id="L125">        return theFile.getOwningPackage().toString();</span>
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+<span class="fc bfc" id="L131" title="All 2 branches covered.">        if (this == pThat) {</span>
+<span class="fc" id="L132">            return true;</span>
+        }
+<span class="pc bpc" id="L134" title="1 of 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L135">            return false;</span>
+        }
+
+        /* Make sure that the object is a DSMClass */
+<span class="pc bpc" id="L139" title="1 of 2 branches missed.">        if (!(pThat instanceof ThemisXAnalysisSolverClass myThat)) {</span>
+<span class="nc" id="L140">            return false;</span>
+        }
+
+        /* Check full name */
+<span class="fc" id="L144">        return theFullName.equals(myThat.getFullName());</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="nc" id="L149">        return theFullName.hashCode();</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L154">        return theFullName;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

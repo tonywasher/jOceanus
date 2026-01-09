@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseValidateLoanCategory.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.data.validate</a> &gt; <span class="el_source">MoneyWiseValidateLoanCategory.java</span></div><h1>MoneyWiseValidateLoanCategory.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.data.validate;
+
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCategoryBase;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseLoanCategory;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseLoanCategory.MoneyWiseLoanCategoryList;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseLoanCategoryClass;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseLoanCategoryType;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseLoanCategoryType.MoneyWiseLoanCategoryTypeList;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
+
+/**
+ * Validator for LoanCategory.
+ */
+<span class="fc" id="L33">public class MoneyWiseValidateLoanCategory</span>
+        extends MoneyWiseValidateCategory&lt;MoneyWiseLoanCategory&gt; {
+
+    @Override
+    public void validate(final PrometheusDataItem pCategory) {
+        /* Validate the base */
+<span class="fc" id="L39">        super.validate(pCategory);</span>
+
+        /* Access details */
+<span class="fc" id="L42">        final MoneyWiseLoanCategory myCategory = (MoneyWiseLoanCategory) pCategory;</span>
+<span class="fc" id="L43">        final MoneyWiseLoanCategoryType myCatType = myCategory.getCategoryType();</span>
+<span class="fc" id="L44">        final MoneyWiseLoanCategory myParent = myCategory.getParentCategory();</span>
+
+        /* LoanCategoryType must be non-null */
+<span class="pc bpc" id="L47" title="1 of 2 branches missed.">        if (myCatType == null) {</span>
+<span class="nc" id="L48">            pCategory.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseStaticDataType.DEPOSITTYPE);</span>
+        } else {
+            /* Access the class */
+<span class="fc" id="L51">            final MoneyWiseLoanCategoryClass myClass = myCatType.getLoanClass();</span>
+
+            /* LoanCategoryType must be enabled */
+<span class="pc bpc" id="L54" title="1 of 2 branches missed.">            if (!myCatType.getEnabled()) {</span>
+<span class="nc" id="L55">                pCategory.addError(PrometheusDataItem.ERROR_DISABLED, MoneyWiseStaticDataType.DEPOSITTYPE);</span>
+            }
+
+            /* Switch on the account class */
+<span class="fc bfc" id="L59" title="All 2 branches covered.">            if (MoneyWiseLoanCategoryClass.PARENT.equals(myClass)) {</span>
+                /* If parent exists */
+<span class="pc bpc" id="L61" title="1 of 2 branches missed.">                if (myParent != null) {</span>
+<span class="nc" id="L62">                    pCategory.addError(PrometheusDataItem.ERROR_EXIST, PrometheusDataResource.DATAGROUP_PARENT);</span>
+                }
+            } else {
+                /* Check parent */
+<span class="pc bpc" id="L66" title="1 of 2 branches missed.">                if (myParent == null) {</span>
+<span class="nc" id="L67">                    pCategory.addError(PrometheusDataItem.ERROR_MISSING, PrometheusDataResource.DATAGROUP_PARENT);</span>
+<span class="pc bpc" id="L68" title="1 of 2 branches missed.">                } else if (!myParent.isCategoryClass(MoneyWiseLoanCategoryClass.PARENT)) {</span>
+<span class="nc" id="L69">                    pCategory.addError(ERROR_BADPARENT, PrometheusDataResource.DATAGROUP_PARENT);</span>
+                } else {
+<span class="fc" id="L71">                    final String myName = myCategory.getName();</span>
+
+                    /* Check validity of parent */
+<span class="fc" id="L74">                    final MoneyWiseLoanCategoryClass myParentClass = myParent.getCategoryTypeClass();</span>
+<span class="pc bpc" id="L75" title="1 of 2 branches missed.">                    if (!MoneyWiseLoanCategoryClass.PARENT.equals(myParentClass)) {</span>
+<span class="nc" id="L76">                        pCategory.addError(ERROR_BADPARENT, PrometheusDataResource.DATAGROUP_PARENT);</span>
+                    }
+                    /* Check that name reflects parent */
+<span class="pc bpc" id="L79" title="2 of 4 branches missed.">                    if ((myName != null) &amp;&amp; !myName.startsWith(myParent.getName() + MoneyWiseCategoryBase.STR_SEP)) {</span>
+<span class="nc" id="L80">                        pCategory.addError(ERROR_MATCHPARENT, PrometheusDataResource.DATAGROUP_PARENT);</span>
+                    }
+                }
+            }
+        }
+
+        /* Set validation flag */
+<span class="pc bpc" id="L87" title="1 of 2 branches missed.">        if (!pCategory.hasErrors()) {</span>
+<span class="fc" id="L88">            pCategory.setValidEdit();</span>
+        }
+<span class="fc" id="L90">    }</span>
+
+    @Override
+    public void setDefaults(final MoneyWiseLoanCategory pParent,
+                            final MoneyWiseLoanCategory pCategory) throws OceanusException {
+        /* Set values */
+<span class="nc" id="L96">        final MoneyWiseLoanCategoryList myList = pCategory.getList();</span>
+<span class="nc" id="L97">        final MoneyWiseLoanCategoryTypeList myTypes</span>
+<span class="nc" id="L98">                = getEditSet().getDataList(MoneyWiseStaticDataType.LOANTYPE, MoneyWiseLoanCategoryTypeList.class);</span>
+<span class="nc bnc" id="L99" title="All 2 branches missed.">        pCategory.setCategoryType(myTypes.findItemByClass(pParent == null</span>
+<span class="nc" id="L100">                ? MoneyWiseLoanCategoryClass.PARENT</span>
+<span class="nc" id="L101">                : MoneyWiseLoanCategoryClass.LOAN));</span>
+<span class="nc" id="L102">        pCategory.setParentCategory(pParent);</span>
+<span class="nc" id="L103">        pCategory.setSubCategoryName(getUniqueName(myList, pParent));</span>
+<span class="nc" id="L104">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

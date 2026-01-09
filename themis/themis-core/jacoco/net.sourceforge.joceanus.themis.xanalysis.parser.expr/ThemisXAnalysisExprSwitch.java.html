@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisXAnalysisExprSwitch.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.themis.xanalysis.parser.expr</a> &gt; <span class="el_source">ThemisXAnalysisExprSwitch.java</span></div><h1>ThemisXAnalysisExprSwitch.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Themis: Java Project Framework
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.themis.xanalysis.parser.expr;
+
+import com.github.javaparser.ast.expr.SwitchExpr;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisParserDef;
+
+import java.util.List;
+
+/**
+ * Switch Expression Declaration.
+ */
+public class ThemisXAnalysisExprSwitch
+        extends ThemisXAnalysisBaseExpression&lt;SwitchExpr&gt; {
+    /**
+     * The selector.
+     */
+    private final ThemisXAnalysisExpressionInstance theSelector;
+
+    /**
+     * The cases.
+     */
+    private final List&lt;ThemisXAnalysisNodeInstance&gt; theCases;
+
+    /**
+     * Constructor.
+     * @param pParser the parser
+     * @param pExpression the expression
+     * @throws OceanusException on error
+     */
+    ThemisXAnalysisExprSwitch(final ThemisXAnalysisParserDef pParser,
+                              final SwitchExpr pExpression) throws OceanusException {
+<span class="nc" id="L48">        super(pParser, pExpression);</span>
+<span class="nc" id="L49">        theSelector = pParser.parseExpression(pExpression.getSelector());</span>
+<span class="nc" id="L50">        theCases = pParser.parseNodeList(pExpression.getEntries());</span>
+<span class="nc" id="L51">    }</span>
+
+    /**
+     * Obtain the selector.
+     * @return the selector
+     */
+    public ThemisXAnalysisExpressionInstance getSelector() {
+<span class="nc" id="L58">        return theSelector;</span>
+    }
+
+    /**
+     * Obtain the cases.
+     * @return the cases
+     */
+    public List&lt;ThemisXAnalysisNodeInstance&gt; getCases() {
+<span class="nc" id="L66">        return theCases;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

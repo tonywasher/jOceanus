@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseDepositTable.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.ui.panel</a> &gt; <span class="el_source">MoneyWiseDepositTable.java</span></div><h1>MoneyWiseDepositTable.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.ui.panel;
+
+import net.sourceforge.joceanus.metis.data.MetisDataDifference;
+import net.sourceforge.joceanus.metis.ui.MetisErrorPanel;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDeposit;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDeposit.MoneyWiseDepositList;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDepositRate;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDepositRate.MoneyWiseDepositRateList;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAssetCategory;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
+import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
+import net.sourceforge.joceanus.moneywise.ui.base.MoneyWiseAssetTable;
+import net.sourceforge.joceanus.moneywise.ui.dialog.MoneyWiseDepositDialog;
+import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
+import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
+import net.sourceforge.joceanus.prometheus.views.PrometheusEditEntry;
+import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
+import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollMenu;
+
+import java.util.Iterator;
+
+/**
+ * MoneyWise Deposit Table.
+ */
+public class MoneyWiseDepositTable
+        extends MoneyWiseAssetTable&lt;MoneyWiseDeposit&gt; {
+    /**
+     * The Rate UpdateEntry.
+     */
+    private final PrometheusEditEntry&lt;MoneyWiseDepositRate&gt; theRateEntry;
+
+    /**
+     * The Deposit dialog.
+     */
+    private final MoneyWiseDepositDialog theActiveDeposit;
+
+    /**
+     * The edit list.
+     */
+    private MoneyWiseDepositList theDeposits;
+
+    /**
+     * Constructor.
+     * @param pView the view
+     * @param pEditSet the editSet
+     * @param pError the error panel
+     */
+    MoneyWiseDepositTable(final MoneyWiseView pView,
+                          final PrometheusEditSet pEditSet,
+                          final MetisErrorPanel pError) {
+        /* Store parameters */
+<span class="nc" id="L75">        super(pView, pEditSet, pError, MoneyWiseBasicDataType.DEPOSIT);</span>
+
+        /* register the info/rateEntries */
+<span class="nc" id="L78">        getEditSet().registerType(MoneyWiseBasicDataType.DEPOSITINFO);</span>
+<span class="nc" id="L79">        theRateEntry = getEditSet().registerType(MoneyWiseBasicDataType.DEPOSITRATE);</span>
+
+        /* Access Gui factory */
+<span class="nc" id="L82">        final TethysUIFactory&lt;?&gt; myGuiFactory = pView.getGuiFactory();</span>
+
+        /* Create a Deposit panel */
+<span class="nc" id="L85">        theActiveDeposit = new MoneyWiseDepositDialog(myGuiFactory, pView, pEditSet, this);</span>
+<span class="nc" id="L86">        declareItemPanel(theActiveDeposit);</span>
+
+        /* Finish the table */
+<span class="nc" id="L89">        finishTable(true, true, true);</span>
+
+        /* Add listeners */
+<span class="nc" id="L92">        theActiveDeposit.getEventRegistrar().addEventListener(PrometheusDataEvent.ADJUSTVISIBILITY, e -&gt; handlePanelState());</span>
+<span class="nc" id="L93">    }</span>
+
+    @Override
+    protected boolean isItemEditing() {
+<span class="nc" id="L97">        return theActiveDeposit.isEditing();</span>
+    }
+
+    @Override
+    protected void refreshData() throws OceanusException {
+        /* Obtain the active profile */
+<span class="nc" id="L103">        OceanusProfile myTask = getView().getActiveTask();</span>
+<span class="nc" id="L104">        myTask = myTask.startTask(&quot;Deposits&quot;);</span>
+
+        /* Access list */
+<span class="nc" id="L107">        final MoneyWiseDataSet myData = getView().getData();</span>
+<span class="nc" id="L108">        final MoneyWiseDepositList myBase = myData.getDeposits();</span>
+<span class="nc" id="L109">        theDeposits = myBase.deriveEditList(getEditSet());</span>
+<span class="nc" id="L110">        getTable().setItems(theDeposits.getUnderlyingList());</span>
+
+        /* Get the Deposit rates list */
+<span class="nc" id="L113">        MoneyWiseDepositRateList myRates = myData.getDepositRates();</span>
+<span class="nc" id="L114">        myRates = myRates.deriveEditList(getEditSet());</span>
+<span class="nc" id="L115">        theRateEntry.setDataList(myRates);</span>
+
+        /* Notify panel of refresh */
+<span class="nc" id="L118">        theActiveDeposit.refreshData();</span>
+<span class="nc" id="L119">        restoreSelected();</span>
+
+        /* Complete the task */
+<span class="nc" id="L122">        myTask.end();</span>
+<span class="nc" id="L123">    }</span>
+
+    @Override
+    public void cancelEditing() {
+<span class="nc" id="L127">        super.cancelEditing();</span>
+<span class="nc" id="L128">        theActiveDeposit.setEditable(false);</span>
+<span class="nc" id="L129">    }</span>
+
+    /**
+     * Select Deposit.
+     * @param pDeposit the Deposit to select
+     */
+    void selectDeposit(final MoneyWiseDeposit pDeposit) {
+        /* Check whether we need to showAll */
+<span class="nc" id="L137">        checkShowAll(pDeposit);</span>
+
+        /* If we are changing the selection */
+<span class="nc" id="L140">        final MoneyWiseDeposit myCurrent = theActiveDeposit.getSelectedItem();</span>
+<span class="nc bnc" id="L141" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(myCurrent, pDeposit)) {</span>
+            /* Select the row and ensure that it is visible */
+<span class="nc" id="L143">            getTable().selectRow(pDeposit);</span>
+        }
+<span class="nc" id="L145">    }</span>
+
+    @Override
+    protected void handleRewind() {
+        /* Only action if we are not editing */
+<span class="nc bnc" id="L150" title="All 2 branches missed.">        if (!theActiveDeposit.isEditing()) {</span>
+            /* Handle the reWind */
+<span class="nc" id="L152">            setEnabled(true);</span>
+<span class="nc" id="L153">            super.handleRewind();</span>
+        }
+
+        /* Adjust for changes */
+<span class="nc" id="L157">        notifyChanges();</span>
+<span class="nc" id="L158">    }</span>
+
+    /**
+     * Handle panel state.
+     */
+    private void handlePanelState() {
+        /* Only action if we are not editing */
+<span class="nc bnc" id="L165" title="All 2 branches missed.">        if (!theActiveDeposit.isEditing()) {</span>
+            /* handle the edit transition */
+<span class="nc" id="L167">            setEnabled(true);</span>
+<span class="nc" id="L168">            final MoneyWiseDeposit myDeposit = theActiveDeposit.getSelectedItem();</span>
+<span class="nc" id="L169">            updateTableData();</span>
+<span class="nc bnc" id="L170" title="All 2 branches missed.">            if (myDeposit != null) {</span>
+<span class="nc" id="L171">                getTable().selectRow(myDeposit);</span>
+            } else {
+<span class="nc" id="L173">                restoreSelected();</span>
+            }
+<span class="nc" id="L175">        } else {</span>
+<span class="nc" id="L176">            getTable().cancelEditing();</span>
+        }
+
+        /* Note changes */
+<span class="nc" id="L180">        notifyChanges();</span>
+<span class="nc" id="L181">    }</span>
+
+    @Override
+    protected void buildCategoryMenu(final MoneyWiseDeposit pDeposit,
+                                     final TethysUIScrollMenu&lt;MoneyWiseAssetCategory&gt; pMenu) {
+        /* Build the menu */
+<span class="nc" id="L187">        theActiveDeposit.buildCategoryMenu(pMenu, pDeposit);</span>
+<span class="nc" id="L188">    }</span>
+
+    @Override
+    protected void buildParentMenu(final MoneyWiseDeposit pDeposit,
+                                   final TethysUIScrollMenu&lt;MoneyWisePayee&gt; pMenu) {
+        /* Build the menu */
+<span class="nc" id="L194">        theActiveDeposit.buildParentMenu(pMenu, pDeposit);</span>
+<span class="nc" id="L195">    }</span>
+
+    @Override
+    protected void buildCurrencyMenu(final MoneyWiseDeposit pDeposit,
+                                     final TethysUIScrollMenu&lt;MoneyWiseCurrency&gt; pMenu) {
+        /* Build the menu */
+<span class="nc" id="L201">        theActiveDeposit.buildCurrencyMenu(pMenu, pDeposit);</span>
+<span class="nc" id="L202">    }</span>
+
+    @Override
+    protected void addNewItem() {
+        /* Protect against Exceptions */
+        try {
+            /* Make sure that we have finished editing */
+<span class="nc" id="L209">            cancelEditing();</span>
+
+            /* Create a new profile */
+<span class="nc" id="L212">            final OceanusProfile myTask = getView().getNewProfile(&quot;addNewItem&quot;);</span>
+
+            /* Create the new asset */
+<span class="nc" id="L215">            myTask.startTask(&quot;buildItem&quot;);</span>
+<span class="nc" id="L216">            final MoneyWiseDeposit myDeposit = theDeposits.addNewItem();</span>
+<span class="nc" id="L217">            myDeposit.setDefaults();</span>
+
+            /* Set as new and adjust map */
+<span class="nc" id="L220">            myTask.startTask(&quot;incrementVersion&quot;);</span>
+<span class="nc" id="L221">            myDeposit.setNewVersion();</span>
+<span class="nc" id="L222">            myDeposit.adjustMapForItem();</span>
+<span class="nc" id="L223">            getEditSet().incrementVersion();</span>
+
+            /* Validate the new item */
+<span class="nc" id="L226">            myTask.startTask(&quot;validate&quot;);</span>
+<span class="nc" id="L227">            myDeposit.validate();</span>
+
+            /* update panel */
+<span class="nc" id="L230">            myTask.startTask(&quot;setItem&quot;);</span>
+<span class="nc" id="L231">            theActiveDeposit.setNewItem(myDeposit);</span>
+
+            /* Lock the table */
+<span class="nc" id="L234">            setTableEnabled(false);</span>
+<span class="nc" id="L235">            myTask.end();</span>
+
+            /* Handle Exceptions */
+<span class="nc" id="L238">        } catch (OceanusException e) {</span>
+            /* Build the error */
+<span class="nc" id="L240">            final OceanusException myError = new MoneyWiseDataException(&quot;Failed to create new deposit&quot;, e);</span>
+
+            /* Show the error */
+<span class="nc" id="L243">            setError(myError);</span>
+<span class="nc" id="L244">        }</span>
+<span class="nc" id="L245">    }</span>
+
+    @Override
+    protected Iterator&lt;PrometheusDataItem&gt; nameSpaceIterator() {
+<span class="nc" id="L249">        return assetNameSpaceIterator();</span>
+    }
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JcaFactory.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.gordianknot.impl.jca</a> &gt; <span class="el_source">JcaFactory.java</span></div><h1>JcaFactory.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * GordianKnot: Security Suite
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.gordianknot.impl.jca;
+
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
+import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherFactory;
+import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestFactory;
+import net.sourceforge.joceanus.gordianknot.api.factory.GordianAsyncFactory;
+import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianFactoryGenerator;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianParameters;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianValidator;
+import net.sourceforge.joceanus.gordianknot.impl.core.factory.GordianCoreFactory;
+
+/**
+ * Jca Factory.
+ */
+public class JcaFactory
+    extends GordianCoreFactory {
+    /**
+     * Constructor.
+     * @param pGenerator the factory generator
+     * @param pParameters the security parameters
+     * @throws GordianException on error
+     */
+    public JcaFactory(final GordianFactoryGenerator pGenerator,
+                      final GordianParameters pParameters) throws GordianException {
+        /* initialize underlying factory */
+<span class="fc" id="L44">        super(pGenerator, pParameters);</span>
+<span class="fc" id="L45">    }</span>
+
+    @Override
+    public GordianDigestFactory newDigestFactory(final GordianBaseFactory pFactory) {
+<span class="fc" id="L49">        return new JcaDigestFactory(this);</span>
+    }
+
+    @Override
+    public GordianCipherFactory newCipherFactory(final GordianBaseFactory pFactory) {
+<span class="fc" id="L54">        return new JcaCipherFactory(this);</span>
+    }
+
+    @Override
+    public GordianMacFactory newMacFactory(final GordianBaseFactory pFactory) {
+<span class="fc" id="L59">        return new JcaMacFactory(this);</span>
+    }
+
+    @Override
+    public GordianValidator newValidator() {
+<span class="fc" id="L64">        return new JcaValidator();</span>
+    }
+
+    @Override
+    public GordianAsyncFactory newAsyncFactory(final GordianBaseFactory pFactory) {
+<span class="fc" id="L69">        return new JcaAsyncFactory(this);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

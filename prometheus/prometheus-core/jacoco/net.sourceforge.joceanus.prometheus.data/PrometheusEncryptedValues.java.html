@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PrometheusEncryptedValues.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Prometheus Core Application Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.prometheus.data</a> &gt; <span class="el_source">PrometheusEncryptedValues.java</span></div><h1>PrometheusEncryptedValues.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Prometheus: Application Framework
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.prometheus.data;
+
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldDef;
+import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldSetDef;
+import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldVersionedDef;
+import net.sourceforge.joceanus.metis.field.MetisFieldVersionValues;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+
+import java.util.Iterator;
+
+/**
+ * Prometheus Set of versioned Values.
+ */
+public class PrometheusEncryptedValues
+        extends MetisFieldVersionValues {
+    /**
+     * Constructor.
+     * @param pItem the associated item
+     */
+    public PrometheusEncryptedValues(final PrometheusEncryptedDataItem pItem) {
+<span class="nc" id="L38">        super(pItem);</span>
+<span class="nc" id="L39">    }</span>
+
+    @Override
+    public PrometheusEncryptedValues cloneIt() {
+        /* Create the valueSet and initialise to existing values */
+<span class="nc" id="L44">        final PrometheusEncryptedValues mySet = new PrometheusEncryptedValues(getItem());</span>
+<span class="nc" id="L45">        mySet.copyFrom(this);</span>
+<span class="nc" id="L46">        return mySet;</span>
+    }
+
+    @Override
+    protected PrometheusEncryptedDataItem getItem() {
+<span class="nc" id="L51">        return (PrometheusEncryptedDataItem) super.getItem();</span>
+    }
+
+    @Override
+    public Object getValue(final MetisFieldDef pField) {
+        /* Access the underlying object */
+<span class="nc" id="L57">        final Object myValue = super.getValue(pField);</span>
+
+        /* If this is an encrypted value */
+<span class="nc bnc" id="L60" title="All 2 branches missed.">        return myValue instanceof PrometheusEncryptedPair myPair</span>
+<span class="nc" id="L61">                ? myPair.getValue()</span>
+<span class="nc" id="L62">                : myValue;</span>
+    }
+
+    /**
+     * Obtain the encrypted bytes.
+     * @param pFieldId the fieldId
+     * @return the encrypted bytes
+     */
+    public byte[] getEncryptedBytes(final MetisDataFieldId pFieldId) {
+        /* Access the underlying object */
+<span class="nc" id="L72">        final MetisFieldDef myField = getItem().getDataFieldSet().getField(pFieldId);</span>
+<span class="nc" id="L73">        return getEncryptedBytes(myField);</span>
+    }
+
+    /**
+     * Obtain the encrypted bytes.
+     * @param pField the field
+     * @return the encrypted bytes
+     */
+    public byte[] getEncryptedBytes(final MetisFieldDef pField) {
+        /* Access the underlying object */
+<span class="nc" id="L83">        final Object myValue = super.getValue(pField);</span>
+
+        /* If this is an encrypted value */
+<span class="nc bnc" id="L86" title="All 2 branches missed.">        return myValue instanceof PrometheusEncryptedPair myPair</span>
+<span class="nc" id="L87">                ? myPair.getBytes()</span>
+<span class="nc" id="L88">                : null;</span>
+    }
+
+    /**
+     * Obtain the encrypted pair.
+     * @param pFieldId the fieldId
+     * @return the encrypted pair
+     */
+    public PrometheusEncryptedPair getEncryptedPair(final MetisDataFieldId pFieldId) {
+        /* Access the underlying object */
+<span class="nc" id="L98">        final MetisFieldDef myField = getItem().getDataFieldSet().getField(pFieldId);</span>
+<span class="nc" id="L99">        return getEncryptedPair(myField);</span>
+    }
+
+    /**
+     * Obtain the encrypted pair.
+     * @param pField the field
+     * @return the encrypted pair
+     */
+    public PrometheusEncryptedPair getEncryptedPair(final MetisFieldDef pField) {
+        /* Access the underlying object */
+<span class="nc" id="L109">        final Object myValue = super.getValue(pField);</span>
+
+        /* If this is an encrypted value */
+<span class="nc bnc" id="L112" title="All 2 branches missed.">        return myValue instanceof PrometheusEncryptedPair myPair</span>
+<span class="nc" id="L113">                ? myPair</span>
+<span class="nc" id="L114">                : null;</span>
+    }
+
+    @Override
+    public void setValue(final MetisFieldDef pField,
+                         final Object pValue) throws OceanusException {
+        /* Reject if not in valueSet */
+<span class="nc bnc" id="L121" title="All 2 branches missed.">        if (!(pField instanceof MetisFieldVersionedDef)) {</span>
+<span class="nc" id="L122">            throw new IllegalArgumentException(ERROR_NOTVERSIONED);</span>
+        }
+
+        /* check the value type */
+<span class="nc" id="L126">        checkValueType(pField, pValue);</span>
+
+        /* If this is an encrypted field */
+<span class="nc" id="L129">        Object myValue = pValue;</span>
+<span class="nc bnc" id="L130" title="All 4 branches missed.">        if (pField instanceof PrometheusEncryptedField</span>
+                //&amp;&amp; theEncryptor != null
+                &amp;&amp; myValue != null) {
+            /* Encrypt the value */
+<span class="nc" id="L134">            final PrometheusEncryptedDataItem myItem = getItem();</span>
+<span class="nc" id="L135">            final PrometheusEncryptor myEncryptor = myItem.getEncryptor();</span>
+<span class="nc" id="L136">            myValue = myEncryptor.encryptValue(pValue, pField);</span>
+        }
+
+        /* Store the value */
+<span class="nc" id="L140">        setUncheckedValue(pField, myValue);</span>
+<span class="nc" id="L141">    }</span>
+
+    /**
+     * Update security for the values.
+     * @throws OceanusException on error
+     */
+    public void updateSecurity() throws OceanusException {
+        /* Loop through the fields */
+<span class="nc" id="L149">        final PrometheusEncryptedDataItem myItem = getItem();</span>
+<span class="nc" id="L150">        final PrometheusEncryptor myEncryptor = myItem.getEncryptor();</span>
+<span class="nc" id="L151">        final MetisFieldSetDef myFieldSet = getFields();</span>
+<span class="nc" id="L152">        final Iterator&lt;MetisFieldDef&gt; myIterator = myFieldSet.fieldIterator();</span>
+<span class="nc bnc" id="L153" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L154">            final MetisFieldDef myField = myIterator.next();</span>
+
+            /* Ignore non-encrypted fields */
+<span class="nc bnc" id="L157" title="All 2 branches missed.">            if (!(myField instanceof PrometheusEncryptedField)) {</span>
+<span class="nc" id="L158">                continue;</span>
+            }
+
+            /* Access the value */
+<span class="nc" id="L162">            final Object myValue = getValue(myField);</span>
+
+            /* Encrypt the value */
+<span class="nc" id="L165">            setUncheckedValue(myField, myEncryptor.encryptValue(myValue, myField));</span>
+<span class="nc" id="L166">        }</span>
+<span class="nc" id="L167">    }</span>
+
+    /**
+     * Adopt security for the values.
+     * @param pBaseValues the base values
+     * @throws OceanusException on error
+     */
+    public void adoptSecurity(final PrometheusEncryptedValues pBaseValues) throws OceanusException {
+        /* Loop through the fields */
+<span class="nc" id="L176">        final PrometheusEncryptedDataItem myItem = getItem();</span>
+<span class="nc" id="L177">        final PrometheusEncryptor myEncryptor = myItem.getEncryptor();</span>
+<span class="nc" id="L178">        final MetisFieldSetDef myFieldSet = getFields();</span>
+<span class="nc" id="L179">        final Iterator&lt;MetisFieldDef&gt; myIterator = myFieldSet.fieldIterator();</span>
+<span class="nc bnc" id="L180" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L181">            final MetisFieldDef myField = myIterator.next();</span>
+
+            /* Ignore non-encrypted fields */
+<span class="nc bnc" id="L184" title="All 2 branches missed.">            if (!(myField instanceof PrometheusEncryptedField)) {</span>
+<span class="nc" id="L185">                continue;</span>
+            }
+<span class="nc" id="L187">            final PrometheusEncryptedPair myValue = getEncryptedPair(myField);</span>
+<span class="nc bnc" id="L188" title="All 2 branches missed.">            if (myValue == null) {</span>
+<span class="nc" id="L189">                continue;</span>
+            }
+
+            /* Access the base object */
+<span class="nc bnc" id="L193" title="All 2 branches missed.">            Object myBaseObj = pBaseValues == null</span>
+<span class="nc" id="L194">                    ? null</span>
+<span class="nc" id="L195">                    : pBaseValues.getValue(myField);</span>
+<span class="nc bnc" id="L196" title="All 2 branches missed.">            if (!(myBaseObj instanceof PrometheusEncryptedPair)) {</span>
+<span class="nc" id="L197">                myBaseObj = null;</span>
+            }
+
+            /* Adopt encryption */
+<span class="nc" id="L201">            myEncryptor.adoptEncryption(myValue, (PrometheusEncryptedPair) myBaseObj);</span>
+<span class="nc" id="L202">        }</span>
+<span class="nc" id="L203">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

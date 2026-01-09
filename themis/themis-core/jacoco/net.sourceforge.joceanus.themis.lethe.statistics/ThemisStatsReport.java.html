@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisStatsReport.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.themis.lethe.statistics</a> &gt; <span class="el_source">ThemisStatsReport.java</span></div><h1>ThemisStatsReport.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Themis: Java Project Framework
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.themis.lethe.statistics;
+
+import javax.swing.text.html.HTML.Tag;
+
+/**
+ * DSM report.
+ */
+public final class ThemisStatsReport {
+    /**
+     * Private constructor.
+     */
+    private ThemisStatsReport() {
+    }
+
+    /**
+     * report on a stats element.
+     * @param pStats the stats to report on
+     * @return the report
+     */
+    public static String reportOnStats(final ThemisStatsBase pStats) {
+        /* Create a stringBuilder */
+<span class="nc" id="L38">        final StringBuilder myBuilder = new StringBuilder();</span>
+
+        /* Start document */
+<span class="nc" id="L41">        addStartElement(myBuilder, Tag.HTML);</span>
+<span class="nc" id="L42">        addStartElement(myBuilder, Tag.BODY);</span>
+
+        /* Build id table */
+<span class="nc" id="L45">        addStartElement(myBuilder, Tag.TABLE);</span>
+<span class="nc" id="L46">        buildIdTableHeader(myBuilder);</span>
+
+        /* Loop through the identity chain */
+<span class="nc" id="L49">        ThemisStatsBase myId = pStats;</span>
+<span class="nc" id="L50">        int myRowNo = 0;</span>
+<span class="nc bnc" id="L51" title="All 2 branches missed.">        while (myId != null) {</span>
+<span class="nc" id="L52">            buildIdTableRow(myBuilder, myId, myRowNo++);</span>
+<span class="nc" id="L53">            myId = myId.getParent();</span>
+        }
+
+        /* Finish the table */
+<span class="nc" id="L57">        addEndElement(myBuilder, Tag.TABLE);</span>
+
+<span class="nc" id="L59">        addStartElement(myBuilder, Tag.HR);</span>
+<span class="nc" id="L60">        addEndElement(myBuilder, Tag.HR);</span>
+
+        /* Build stats table */
+<span class="nc" id="L63">        addStartElement(myBuilder, Tag.TABLE);</span>
+<span class="nc" id="L64">        buildStatsTableHeader(myBuilder);</span>
+
+        /* If we have statistics */
+<span class="nc bnc" id="L67" title="All 2 branches missed.">        if (pStats != null) {</span>
+            /* Loop through the statistics */
+<span class="nc" id="L69">            myRowNo = 0;</span>
+<span class="nc bnc" id="L70" title="All 2 branches missed.">            for (ThemisStat myStat : ThemisStat.values()) {</span>
+<span class="nc" id="L71">                final Integer myValue = pStats.getStat(myStat);</span>
+<span class="nc bnc" id="L72" title="All 2 branches missed.">                 if (myValue != 0) {</span>
+<span class="nc" id="L73">                    buildStatsTableRow(myBuilder, myStat, myValue, myRowNo++);</span>
+                }
+            }
+        }
+
+        /* Finish the table */
+<span class="nc" id="L79">        addEndElement(myBuilder, Tag.TABLE);</span>
+
+        /* Finish document */
+<span class="nc" id="L82">        addEndElement(myBuilder, Tag.BODY);</span>
+<span class="nc" id="L83">        addEndElement(myBuilder, Tag.HTML);</span>
+<span class="nc" id="L84">        return myBuilder.toString();</span>
+    }
+
+    /**
+     * build the id table header.
+     * @param pBuilder the builder
+     */
+    private static void buildIdTableHeader(final StringBuilder pBuilder) {
+        /* Start the row */
+<span class="nc" id="L93">        addStartElementWithClass(pBuilder, Tag.TR, &quot;dsm-row-header&quot;);</span>
+
+        /* Build the headers */
+<span class="nc" id="L96">        addTextElementWithClass(pBuilder, Tag.TH, &quot;stats-name&quot;, &quot;Element&quot;);</span>
+<span class="nc" id="L97">        addTextElementWithClass(pBuilder, Tag.TH, &quot;stats-desc&quot;, &quot;Name&quot;);</span>
+
+        /* Complete the row */
+<span class="nc" id="L100">        addEndElement(pBuilder, Tag.TR);</span>
+<span class="nc" id="L101">    }</span>
+
+    /**
+     * build a row for the id table.
+     * @param pBuilder the builder
+     * @param pIdentity the identity to report on
+     * @param pRowNo the row number
+     */
+    private static void buildIdTableRow(final StringBuilder pBuilder,
+                                        final ThemisStatsBase pIdentity,
+                                        final int pRowNo) {
+        /* Start the row */
+<span class="nc bnc" id="L113" title="All 2 branches missed.">        final String myClass = (pRowNo % 2 == 0) ? &quot;dsm-row-even&quot; : &quot;dsm-row-odd&quot;;</span>
+<span class="nc" id="L114">        addStartElementWithClass(pBuilder, Tag.TR, myClass);</span>
+
+        /* Build the cells */
+<span class="nc" id="L117">        addTextElementWithClass(pBuilder, Tag.TD, &quot;dsm-cell-name-left&quot;, getIdElement(pIdentity));</span>
+<span class="nc" id="L118">        addTextElementWithClass(pBuilder, Tag.TD, &quot;dsm-cell-name-left&quot;, getIdName(pIdentity));</span>
+
+        /* Complete the row */
+<span class="nc" id="L121">        addEndElement(pBuilder, Tag.TR);</span>
+<span class="nc" id="L122">    }</span>
+
+    /**
+     * get the id element.
+     * @param pIdentity the identity to report on
+     * @return the element
+     */
+    private static String getIdElement(final ThemisStatsBase pIdentity) {
+<span class="nc bnc" id="L130" title="All 2 branches missed.">        if (pIdentity instanceof ThemisStatsProject) {</span>
+<span class="nc" id="L131">            return &quot;Project&quot;;</span>
+        }
+<span class="nc bnc" id="L133" title="All 2 branches missed.">        if (pIdentity instanceof ThemisStatsModule) {</span>
+<span class="nc" id="L134">            return &quot;Module&quot;;</span>
+        }
+<span class="nc bnc" id="L136" title="All 2 branches missed.">        if (pIdentity instanceof ThemisStatsPackage) {</span>
+<span class="nc" id="L137">            return &quot;Package&quot;;</span>
+        }
+<span class="nc bnc" id="L139" title="All 2 branches missed.">        if (pIdentity instanceof ThemisStatsFile) {</span>
+<span class="nc" id="L140">            return &quot;File&quot;;</span>
+        }
+<span class="nc bnc" id="L142" title="All 2 branches missed.">        if (pIdentity instanceof ThemisStatsClass myClass) {</span>
+<span class="nc" id="L143">            return myClass.getClassType().toString();</span>
+        }
+<span class="nc bnc" id="L145" title="All 2 branches missed.">        if (pIdentity instanceof ThemisStatsMethod) {</span>
+<span class="nc" id="L146">            return &quot;Method&quot;;</span>
+        }
+<span class="nc" id="L148">        return &quot;Unknown&quot;;</span>
+    }
+
+    /**
+     * get the id name.
+     * @param pIdentity the identity to report on
+     * @return the name
+     */
+    private static String getIdName(final ThemisStatsBase pIdentity) {
+<span class="nc bnc" id="L157" title="All 2 branches missed.">        if (pIdentity instanceof ThemisStatsProject myProject) {</span>
+<span class="nc" id="L158">            return myProject.getProject().getName();</span>
+        }
+<span class="nc bnc" id="L160" title="All 2 branches missed.">        if (pIdentity instanceof ThemisStatsModule myModule) {</span>
+<span class="nc" id="L161">            return myModule.getModule().getName();</span>
+        }
+<span class="nc bnc" id="L163" title="All 2 branches missed.">        if (pIdentity instanceof ThemisStatsPackage myPackage) {</span>
+<span class="nc" id="L164">            return myPackage.getPackage().getPackage();</span>
+        }
+<span class="nc bnc" id="L166" title="All 2 branches missed.">        if (pIdentity instanceof ThemisStatsFile myFile) {</span>
+<span class="nc" id="L167">            return myFile.getFile().getName();</span>
+        }
+<span class="nc bnc" id="L169" title="All 2 branches missed.">        if (pIdentity instanceof ThemisStatsClass myClass) {</span>
+<span class="nc" id="L170">            return myClass.getObject().getFullName();</span>
+        }
+<span class="nc bnc" id="L172" title="All 2 branches missed.">        if (pIdentity instanceof ThemisStatsMethod myMethod) {</span>
+<span class="nc" id="L173">            return myMethod.getMethod().toString();</span>
+        }
+<span class="nc" id="L175">        return &quot;Unknown&quot;;</span>
+    }
+
+    /**
+     * build the stats table header.
+     * @param pBuilder the builder
+     */
+    private static void buildStatsTableHeader(final StringBuilder pBuilder) {
+        /* Start the row */
+<span class="nc" id="L184">        addStartElementWithClass(pBuilder, Tag.TR, &quot;dsm-row-header&quot;);</span>
+
+        /* Build the headers */
+<span class="nc" id="L187">        addTextElementWithClass(pBuilder, Tag.TH, &quot;stats-desc&quot;, &quot;Statistic&quot;);</span>
+<span class="nc" id="L188">        addTextElementWithClass(pBuilder, Tag.TH, &quot;stats-name&quot;, &quot;Key&quot;);</span>
+<span class="nc" id="L189">        addTextElementWithClass(pBuilder, Tag.TH, &quot;stats-count&quot;, &quot;Value&quot;);</span>
+
+        /* Complete the row */
+<span class="nc" id="L192">        addEndElement(pBuilder, Tag.TR);</span>
+<span class="nc" id="L193">    }</span>
+
+    /**
+     * build a row for the stats table.
+     * @param pBuilder the builder
+     * @param pStat the statistic to report on
+     * @param pValue the value
+     * @param pRowNo the row number
+     */
+    private static void buildStatsTableRow(final StringBuilder pBuilder,
+                                           final ThemisStat pStat,
+                                           final Integer pValue,
+                                           final int pRowNo) {
+        /* Start the row */
+<span class="nc bnc" id="L207" title="All 2 branches missed.">        final String myClass = (pRowNo % 2 == 0) ? &quot;dsm-row-even&quot; : &quot;dsm-row-odd&quot;;</span>
+<span class="nc" id="L208">        addStartElementWithClass(pBuilder, Tag.TR, myClass);</span>
+
+        /* Build the cells */
+<span class="nc" id="L211">        addTextElementWithClass(pBuilder, Tag.TD, &quot;dsm-cell-name-left&quot;, pStat.getDesc());</span>
+<span class="nc" id="L212">        addTextElement(pBuilder, Tag.TD, pStat.toString());</span>
+<span class="nc" id="L213">        addTextElement(pBuilder, Tag.TD, Integer.toString(pValue));</span>
+
+        /* Complete the row */
+<span class="nc" id="L216">        addEndElement(pBuilder, Tag.TR);</span>
+<span class="nc" id="L217">    }</span>
+
+    /**
+     * Add text element.
+     * @param pBuilder the builder
+     * @param pElement the element
+     * @param pText the text
+     */
+    private static void addTextElement(final StringBuilder pBuilder,
+                                       final Tag pElement,
+                                       final String pText) {
+        /* Add the text element */
+<span class="nc" id="L229">        addStartElement(pBuilder, pElement);</span>
+<span class="nc" id="L230">        pBuilder.append(pText);</span>
+<span class="nc" id="L231">        addEndElement(pBuilder, pElement);</span>
+<span class="nc" id="L232">    }</span>
+
+    /**
+     * Add text element with Class.
+     * @param pBuilder the builder
+     * @param pElement the element
+     * @param pClass the class of the element
+     * @param pText the text
+     */
+    private static void addTextElementWithClass(final StringBuilder pBuilder,
+                                                final Tag pElement,
+                                                final String pClass,
+                                                final String pText) {
+        /* Add the text element */
+<span class="nc" id="L246">        addStartElementWithClass(pBuilder, pElement, pClass);</span>
+<span class="nc" id="L247">        pBuilder.append(pText);</span>
+<span class="nc" id="L248">        addEndElement(pBuilder, pElement);</span>
+<span class="nc" id="L249">    }</span>
+
+    /**
+     * Add start element with class.
+     * @param pBuilder the builder
+     * @param pElement the element
+     * @param pClass the class of the element
+     */
+    private static void addStartElementWithClass(final StringBuilder pBuilder,
+                                                 final Tag pElement,
+                                                 final String pClass) {
+        /* Start the element */
+<span class="nc" id="L261">        pBuilder.append(&quot;&lt;&quot;);</span>
+<span class="nc" id="L262">        pBuilder.append(pElement);</span>
+<span class="nc" id="L263">        pBuilder.append(&quot; class=\&quot;&quot;);</span>
+<span class="nc" id="L264">        pBuilder.append(pClass);</span>
+<span class="nc" id="L265">        pBuilder.append(&quot;\&quot;&gt;&quot;);</span>
+<span class="nc" id="L266">    }</span>
+
+    /**
+     * Add start element.
+     * @param pBuilder the builder
+     * @param pElement the element
+     */
+    private static void addStartElement(final StringBuilder pBuilder,
+                                        final Tag pElement) {
+        /* Start the element */
+<span class="nc" id="L276">        pBuilder.append(&quot;&lt;&quot;);</span>
+<span class="nc" id="L277">        pBuilder.append(pElement);</span>
+<span class="nc" id="L278">        pBuilder.append(&quot;&gt;&quot;);</span>
+<span class="nc" id="L279">    }</span>
+
+    /**
+     * Add end element.
+     * @param pBuilder the builder
+     * @param pElement the element
+     */
+    private static void addEndElement(final StringBuilder pBuilder,
+                                      final Tag pElement) {
+        /* Start the element */
+<span class="nc" id="L289">        pBuilder.append(&quot;&lt;/&quot;);</span>
+<span class="nc" id="L290">        pBuilder.append(pElement);</span>
+<span class="nc" id="L291">        pBuilder.append(&quot;&gt;&quot;);</span>
+<span class="nc" id="L292">    }</span>
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

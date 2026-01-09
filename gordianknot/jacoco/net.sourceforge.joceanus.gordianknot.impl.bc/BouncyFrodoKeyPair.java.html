@@ -1,0 +1,369 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BouncyFrodoKeyPair.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.gordianknot.impl.bc</a> &gt; <span class="el_source">BouncyFrodoKeyPair.java</span></div><h1>BouncyFrodoKeyPair.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * GordianKnot: Security Suite
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.gordianknot.impl.bc;
+
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
+import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
+import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianAgreementMessageASN1;
+import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreAnonymousAgreement;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
+import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
+import net.sourceforge.joceanus.gordianknot.impl.core.xagree.GordianXCoreAgreementFactory;
+import org.bouncycastle.asn1.ASN1Encoding;
+import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
+import org.bouncycastle.crypto.SecretWithEncapsulation;
+import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
+import org.bouncycastle.pqc.crypto.frodo.FrodoKEMExtractor;
+import org.bouncycastle.pqc.crypto.frodo.FrodoKEMGenerator;
+import org.bouncycastle.pqc.crypto.frodo.FrodoKeyGenerationParameters;
+import org.bouncycastle.pqc.crypto.frodo.FrodoKeyPairGenerator;
+import org.bouncycastle.pqc.crypto.frodo.FrodoParameters;
+import org.bouncycastle.pqc.crypto.frodo.FrodoPrivateKeyParameters;
+import org.bouncycastle.pqc.crypto.frodo.FrodoPublicKeyParameters;
+import org.bouncycastle.pqc.crypto.util.PrivateKeyFactory;
+import org.bouncycastle.pqc.crypto.util.PrivateKeyInfoFactory;
+import org.bouncycastle.pqc.crypto.util.PublicKeyFactory;
+import org.bouncycastle.pqc.crypto.util.SubjectPublicKeyInfoFactory;
+
+import javax.security.auth.DestroyFailedException;
+import java.io.IOException;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Arrays;
+
+/**
+ * Frodo KeyPair classes.
+ */
+public final class BouncyFrodoKeyPair {
+    /**
+     * Private constructor.
+     */
+    private BouncyFrodoKeyPair() {
+    }
+
+    /**
+     * Bouncy Frodo PublicKey.
+     */
+    public static class BouncyFrodoPublicKey
+            extends BouncyPublicKey&lt;FrodoPublicKeyParameters&gt; {
+        /**
+         * Constructor.
+         * @param pKeySpec the keySpec
+         * @param pPublicKey the public key
+         */
+        BouncyFrodoPublicKey(final GordianKeyPairSpec pKeySpec,
+                             final FrodoPublicKeyParameters pPublicKey) {
+<span class="fc" id="L78">            super(pKeySpec, pPublicKey);</span>
+<span class="fc" id="L79">        }</span>
+
+        @Override
+        protected boolean matchKey(final AsymmetricKeyParameter pThat) {
+            /* Access keys */
+<span class="fc" id="L84">            final FrodoPublicKeyParameters myThis = getPublicKey();</span>
+<span class="fc" id="L85">            final FrodoPublicKeyParameters myThat = (FrodoPublicKeyParameters) pThat;</span>
+
+            /* Compare keys */
+<span class="fc" id="L88">            return Arrays.equals(myThis.getEncoded(), myThat.getEncoded());</span>
+        }
+    }
+
+    /**
+     * Bouncy Frodo PrivateKey.
+     */
+    public static class BouncyFrodoPrivateKey
+            extends BouncyPrivateKey&lt;FrodoPrivateKeyParameters&gt; {
+        /**
+         * Constructor.
+         * @param pKeySpec the keySpec
+         * @param pPrivateKey the private key
+         */
+        BouncyFrodoPrivateKey(final GordianKeyPairSpec pKeySpec,
+                              final FrodoPrivateKeyParameters pPrivateKey) {
+<span class="fc" id="L104">            super(pKeySpec, pPrivateKey);</span>
+<span class="fc" id="L105">        }</span>
+
+
+        @Override
+        protected boolean matchKey(final AsymmetricKeyParameter pThat) {
+            /* Access keys */
+<span class="fc" id="L111">            final FrodoPrivateKeyParameters myThis = getPrivateKey();</span>
+<span class="fc" id="L112">            final FrodoPrivateKeyParameters myThat = (FrodoPrivateKeyParameters) pThat;</span>
+
+            /* Compare keys */
+<span class="fc" id="L115">            return Arrays.equals(myThis.getEncoded(), myThat.getEncoded());</span>
+        }
+    }
+
+    /**
+     * BouncyCastle Frodo KeyPair generator.
+     */
+    public static class BouncyFrodoKeyPairGenerator
+            extends BouncyKeyPairGenerator {
+        /**
+         * Generator.
+         */
+        private final FrodoKeyPairGenerator theGenerator;
+
+        /**
+         * Constructor.
+         * @param pFactory the Security Factory
+         * @param pKeySpec the keySpec
+         * @throws GordianException on error
+         */
+        BouncyFrodoKeyPairGenerator(final GordianBaseFactory pFactory,
+                                    final GordianKeyPairSpec pKeySpec) throws GordianException {
+            /* Initialise underlying class */
+<span class="fc" id="L138">            super(pFactory, pKeySpec);</span>
+
+            /* Create the generator */
+<span class="fc" id="L141">            theGenerator = new FrodoKeyPairGenerator();</span>
+
+            /* Determine the parameters */
+<span class="fc" id="L144">            final FrodoParameters myParms = pKeySpec.getFRODOKeySpec().getParameters();</span>
+
+            /* Initialise the generator */
+<span class="fc" id="L147">            final FrodoKeyGenerationParameters myParams = new FrodoKeyGenerationParameters(getRandom(), myParms);</span>
+<span class="fc" id="L148">            theGenerator.init(myParams);</span>
+<span class="fc" id="L149">        }</span>
+
+        @Override
+        public BouncyKeyPair generateKeyPair() {
+            /* Generate and return the keyPair */
+<span class="fc" id="L154">            final AsymmetricCipherKeyPair myPair = theGenerator.generateKeyPair();</span>
+<span class="fc" id="L155">            final BouncyFrodoPublicKey myPublic = new BouncyFrodoPublicKey(getKeySpec(), (FrodoPublicKeyParameters) myPair.getPublic());</span>
+<span class="fc" id="L156">            final BouncyFrodoPrivateKey myPrivate = new BouncyFrodoPrivateKey(getKeySpec(), (FrodoPrivateKeyParameters) myPair.getPrivate());</span>
+<span class="fc" id="L157">            return new BouncyKeyPair(myPublic, myPrivate);</span>
+        }
+
+        @Override
+        public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) throws GordianException {
+            /* Protect against exceptions */
+            try {
+                /* Check the keyPair type and keySpecs */
+<span class="fc" id="L165">                BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());</span>
+
+                /* build and return the encoding */
+<span class="fc" id="L168">                final BouncyFrodoPrivateKey myPrivateKey = (BouncyFrodoPrivateKey) getPrivateKey(pKeyPair);</span>
+<span class="fc" id="L169">                final FrodoPrivateKeyParameters myParms = myPrivateKey.getPrivateKey();</span>
+<span class="fc" id="L170">                final PrivateKeyInfo myInfo = PrivateKeyInfoFactory.createPrivateKeyInfo(myParms);</span>
+<span class="fc" id="L171">                return new PKCS8EncodedKeySpec(myInfo.getEncoded());</span>
+
+<span class="nc" id="L173">            } catch (IOException e) {</span>
+<span class="nc" id="L174">                throw new GordianCryptoException(ERROR_PARSE, e);</span>
+            }
+        }
+
+        @Override
+        public BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
+                                           final PKCS8EncodedKeySpec pPrivateKey) throws GordianException {
+            /* Protect against exceptions */
+            try {
+                /* Check the keySpecs */
+<span class="fc" id="L184">                checkKeySpec(pPrivateKey);</span>
+
+                /* derive keyPair */
+<span class="fc" id="L187">                final BouncyFrodoPublicKey myPublic = derivePublicKey(pPublicKey);</span>
+<span class="fc" id="L188">                final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());</span>
+<span class="fc" id="L189">                final FrodoPrivateKeyParameters myParms = (FrodoPrivateKeyParameters) PrivateKeyFactory.createKey(myInfo);</span>
+<span class="fc" id="L190">                final BouncyFrodoPrivateKey myPrivate = new BouncyFrodoPrivateKey(getKeySpec(), myParms);</span>
+<span class="fc" id="L191">                final BouncyKeyPair myPair = new BouncyKeyPair(myPublic, myPrivate);</span>
+
+                /* Check that we have a matching pair */
+<span class="fc" id="L194">                GordianKeyPairValidity.checkValidity(getFactory(), myPair);</span>
+
+                /* Return the derived keyPair */
+<span class="fc" id="L197">                return myPair;</span>
+
+<span class="nc" id="L199">            } catch (IOException e) {</span>
+<span class="nc" id="L200">                throw new GordianCryptoException(ERROR_PARSE, e);</span>
+            }
+        }
+
+        @Override
+        public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) throws GordianException {
+            /* Protect against exceptions */
+            try {
+                /* Check the keyPair type and keySpecs */
+<span class="fc" id="L209">                BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());</span>
+
+                /* build and return the encoding */
+<span class="fc" id="L212">                final BouncyFrodoPublicKey myPublicKey = (BouncyFrodoPublicKey) getPublicKey(pKeyPair);</span>
+<span class="fc" id="L213">                final FrodoPublicKeyParameters myParms = myPublicKey.getPublicKey();</span>
+<span class="fc" id="L214">                final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfoFactory.createSubjectPublicKeyInfo(myParms);</span>
+<span class="fc" id="L215">                final byte[] myBytes = myInfo.getEncoded(ASN1Encoding.DER);</span>
+<span class="fc" id="L216">                return new X509EncodedKeySpec(myBytes);</span>
+
+<span class="nc" id="L218">            } catch (IOException e) {</span>
+<span class="nc" id="L219">                throw new GordianCryptoException(ERROR_PARSE, e);</span>
+            }
+        }
+
+        @Override
+        public BouncyKeyPair derivePublicOnlyKeyPair(final X509EncodedKeySpec pEncodedKey) throws GordianException {
+<span class="fc" id="L225">            final BouncyFrodoPublicKey myPublic = derivePublicKey(pEncodedKey);</span>
+<span class="fc" id="L226">            return new BouncyKeyPair(myPublic);</span>
+        }
+
+        /**
+         * Derive public key from encoded.
+         * @param pEncodedKey the encoded key
+         * @return the public key
+         * @throws GordianException on error
+         */
+        private BouncyFrodoPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws GordianException {
+            /* Protect against exceptions */
+            try {
+                /* Check the keySpecs */
+<span class="fc" id="L239">                checkKeySpec(pEncodedKey);</span>
+
+                /* derive publicKey */
+<span class="fc" id="L242">                final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());</span>
+<span class="fc" id="L243">                final FrodoPublicKeyParameters myParms = (FrodoPublicKeyParameters) PublicKeyFactory.createKey(myInfo);</span>
+<span class="fc" id="L244">                return new BouncyFrodoPublicKey(getKeySpec(), myParms);</span>
+
+<span class="nc" id="L246">            } catch (IOException e) {</span>
+<span class="nc" id="L247">                throw new GordianCryptoException(ERROR_PARSE, e);</span>
+            }
+        }
+    }
+
+    /**
+     * Frodo Agreement.
+     */
+    public static class BouncyFrodoAgreement
+            extends GordianCoreAnonymousAgreement {
+        /**
+         * The generator.
+         */
+        private final FrodoKEMGenerator theGenerator;
+
+        /**
+         * Constructor.
+         * @param pFactory the security factory
+         * @param pSpec the agreementSpec
+         */
+        BouncyFrodoAgreement(final GordianBaseFactory pFactory,
+                             final GordianAgreementSpec pSpec) {
+            /* Initialise underlying class */
+<span class="fc" id="L270">            super(pFactory, pSpec);</span>
+
+            /* Create Agreement */
+<span class="fc" id="L273">            theGenerator = new FrodoKEMGenerator(getRandom());</span>
+<span class="fc" id="L274">        }</span>
+
+        @Override
+        public GordianAgreementMessageASN1 createClientHelloASN1(final GordianKeyPair pServer) throws GordianException {
+            /* Protect against exceptions */
+            try {
+                /* Check keyPair */
+<span class="fc" id="L281">                BouncyKeyPair.checkKeyPair(pServer);</span>
+<span class="fc" id="L282">                checkKeyPair(pServer);</span>
+
+                /* Create encapsulation */
+<span class="fc" id="L285">                final BouncyFrodoPublicKey myPublic = (BouncyFrodoPublicKey) getPublicKey(pServer);</span>
+<span class="fc" id="L286">                final SecretWithEncapsulation myResult = theGenerator.generateEncapsulated(myPublic.getPublicKey());</span>
+
+                /* Build the clientHello Message */
+<span class="fc" id="L289">                final GordianAgreementMessageASN1 myClientHello = buildClientHelloASN1(myResult.getEncapsulation());</span>
+
+                /* Store secret and create initVector */
+<span class="fc" id="L292">                storeSecret(myResult.getSecret());</span>
+<span class="fc" id="L293">                myResult.destroy();</span>
+
+                /* Return the message  */
+<span class="fc" id="L296">                return myClientHello;</span>
+<span class="nc" id="L297">            } catch (DestroyFailedException e) {</span>
+<span class="nc" id="L298">                throw new GordianIOException(&quot;Failed to destroy secret&quot;, e);</span>
+            }
+        }
+
+        @Override
+        public void acceptClientHelloASN1(final GordianKeyPair pServer,
+                                          final GordianAgreementMessageASN1 pClientHello) throws GordianException {
+            /* Check keyPair */
+<span class="fc" id="L306">            BouncyKeyPair.checkKeyPair(pServer);</span>
+<span class="fc" id="L307">            checkKeyPair(pServer);</span>
+
+            /* Initialise Key Encapsulation */
+<span class="fc" id="L310">            final BouncyFrodoPrivateKey myPrivate = (BouncyFrodoPrivateKey) getPrivateKey(pServer);</span>
+<span class="fc" id="L311">            final FrodoKEMExtractor myExtractor = new FrodoKEMExtractor(myPrivate.getPrivateKey());</span>
+
+            /* Parse clientHello message and store secret */
+<span class="fc" id="L314">            final byte[] myMessage = pClientHello.getEncapsulated();</span>
+<span class="fc" id="L315">            storeSecret(myExtractor.extractSecret(myMessage));</span>
+<span class="fc" id="L316">        }</span>
+    }
+
+    /**
+     * BIKE XAgreement Engine.
+     */
+    public static class BouncyFrodoXAgreementEngine
+            extends BouncyXAgreementBase {
+        /**
+         * Constructor.
+         * @param pFactory the security factory
+         * @param pSpec the agreementSpec
+         * @throws GordianException on error
+         */
+        BouncyFrodoXAgreementEngine(final GordianXCoreAgreementFactory pFactory,
+                                    final GordianAgreementSpec pSpec) throws GordianException {
+            /* Initialize underlying class */
+<span class="nc" id="L333">            super(pFactory, pSpec);</span>
+<span class="nc" id="L334">        }</span>
+
+        @Override
+        public void buildClientHello() throws GordianException {
+            /* Protect against exceptions */
+            try {
+                /* Create encapsulation */
+<span class="nc" id="L341">                final BouncyFrodoPublicKey myPublic = (BouncyFrodoPublicKey) getPublicKey(getServerKeyPair());</span>
+<span class="nc" id="L342">                final FrodoKEMGenerator myGenerator = new FrodoKEMGenerator(getRandom());</span>
+<span class="nc" id="L343">                final SecretWithEncapsulation myResult = myGenerator.generateEncapsulated(myPublic.getPublicKey());</span>
+
+                /* Store the encapsulation */
+<span class="nc" id="L346">                setEncapsulated(myResult.getEncapsulation());</span>
+
+                /* Store secret and create initVector */
+<span class="nc" id="L349">                storeSecret(myResult.getSecret());</span>
+<span class="nc" id="L350">                myResult.destroy();</span>
+
+<span class="nc" id="L352">            } catch (DestroyFailedException e) {</span>
+<span class="nc" id="L353">                throw new GordianIOException(&quot;Failed to destroy secret&quot;, e);</span>
+<span class="nc" id="L354">            }</span>
+<span class="nc" id="L355">        }</span>
+
+        @Override
+        public void processClientHello() throws GordianException {
+            /* Create encapsulation */
+<span class="nc" id="L360">            final BouncyFrodoPrivateKey myPrivate = (BouncyFrodoPrivateKey) getPrivateKey(getServerKeyPair());</span>
+<span class="nc" id="L361">            final FrodoKEMExtractor myExtractor = new FrodoKEMExtractor(myPrivate.getPrivateKey());</span>
+
+            /* Parse encapsulated message and store secret */
+<span class="nc" id="L364">            final byte[] myMessage = getEncapsulated();</span>
+<span class="nc" id="L365">            storeSecret(myExtractor.extractSecret(myMessage));</span>
+<span class="nc" id="L366">        }</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

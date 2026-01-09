@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianZuc128Mac.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.gordianknot.impl.ext.macs</a> &gt; <span class="el_source">GordianZuc128Mac.java</span></div><h1>GordianZuc128Mac.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * GordianKnot: Security Suite
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.gordianknot.impl.ext.macs;
+
+import net.sourceforge.joceanus.gordianknot.impl.ext.engines.GordianZuc128Engine;
+import org.bouncycastle.crypto.CipherParameters;
+import org.bouncycastle.crypto.Mac;
+
+/**
+ * Zuc128Mac implementation.
+ * Based on &lt;a href=&quot;http://www.qtc.jp/3GPP/Specs/eea3eia3specificationv16.pdf&quot;&gt;Zuc Specification&lt;/a&gt;
+ * Donated to BouncyCastle
+ */
+public class GordianZuc128Mac
+        implements Mac {
+    /**
+     * The Maximum Bit Mask.
+     */
+    private static final int TOPBIT = 0x80;
+
+    /**
+     * The Zuc128 Engine.
+     */
+    private final GordianZuc128Engine theEngine;
+
+    /**
+     * The calculated Mac in words.
+     */
+    private int theMac;
+
+    /**
+     * The active keyStream.
+     */
+    private final int[] theKeyStream;
+
+    /**
+     * The initialised state.
+     */
+    private GordianZuc128Engine theState;
+
+    /**
+     * The current word index.
+     */
+    private int theWordIndex;
+
+    /**
+     * The current byte index.
+     */
+    private int theByteIndex;
+
+    /**
+     * Constructor.
+     */
+<span class="fc" id="L68">    public GordianZuc128Mac() {</span>
+<span class="fc" id="L69">        theEngine = new GordianZuc128Engine();</span>
+<span class="fc" id="L70">        theKeyStream = new int[2];</span>
+<span class="fc" id="L71">    }</span>
+
+    /**
+     * Obtain Algorithm Name.
+     * @return the name
+     */
+    public String getAlgorithmName() {
+<span class="nc" id="L78">        return &quot;Zuc128Mac&quot;;</span>
+    }
+
+    /**
+     * Obtain Mac Size.
+     * @return the size in Bytes
+     */
+    public int getMacSize() {
+<span class="fc" id="L86">        return Integer.BYTES;</span>
+    }
+
+    /**
+     * Initialise the Mac.
+     * @param pParams the parameters
+     */
+    public void init(final CipherParameters pParams) {
+        /* Initialise the engine */
+<span class="fc" id="L95">        theEngine.init(true, pParams);</span>
+<span class="fc" id="L96">        theState = theEngine.copy();</span>
+<span class="fc" id="L97">        initKeyStream();</span>
+<span class="fc" id="L98">    }</span>
+
+    /**
+     * Initialise the keyStream.
+     */
+    private void initKeyStream() {
+        /* Initialise the Mac */
+<span class="fc" id="L105">        theMac = 0;</span>
+
+        /* Initialise the KeyStream */
+<span class="fc bfc" id="L108" title="All 2 branches covered.">        for (int i = 0; i &lt; theKeyStream.length - 1; i++) {</span>
+<span class="fc" id="L109">            theKeyStream[i] = theEngine.makeKeyStreamWord();</span>
+        }
+<span class="fc" id="L111">        theWordIndex = theKeyStream.length - 1;</span>
+<span class="fc" id="L112">        theByteIndex = Integer.BYTES - 1;</span>
+<span class="fc" id="L113">    }</span>
+
+    /**
+     * Update the mac with a single byte.
+     * @param in the byte to update with
+     */
+    public void update(final byte in) {
+        /* shift for next byte */
+<span class="fc" id="L121">        shift4NextByte();</span>
+
+        /* Loop through the bits */
+<span class="fc" id="L124">        final int bitBase = theByteIndex * Byte.SIZE;</span>
+<span class="fc bfc" id="L125" title="All 2 branches covered.">        for (int bitMask = TOPBIT, bitNo = 0; bitMask &gt; 0; bitMask &gt;&gt;= 1, bitNo++) {</span>
+            /* If the bit is set */
+<span class="fc bfc" id="L127" title="All 2 branches covered.">            if ((in &amp; bitMask) != 0) {</span>
+                /* update theMac */
+<span class="fc" id="L129">                updateMac(bitBase + bitNo);</span>
+            }
+        }
+<span class="fc" id="L132">    }</span>
+
+    /**
+     * Shift for next byte.
+     */
+    private void shift4NextByte() {
+        /* Adjust the byte index */
+<span class="fc" id="L139">        theByteIndex = (theByteIndex + 1) % Integer.BYTES;</span>
+
+        /* Adjust keyStream if required */
+<span class="fc bfc" id="L142" title="All 2 branches covered.">        if (theByteIndex == 0) {</span>
+<span class="fc" id="L143">            theKeyStream[theWordIndex] = theEngine.makeKeyStreamWord();</span>
+<span class="fc" id="L144">            theWordIndex = (theWordIndex + 1) % theKeyStream.length;</span>
+        }
+<span class="fc" id="L146">    }</span>
+
+    /**
+     * Update the Mac.
+     * @param bitNo the bit number
+     */
+    private void updateMac(final int bitNo) {
+        /* Update the Mac */
+<span class="fc" id="L154">        theMac ^= getKeyStreamWord(bitNo);</span>
+<span class="fc" id="L155">    }</span>
+
+    /**
+     * Obtain the keyStreamWord.
+     * @param bitNo the bitNumber
+     * @return the word
+     */
+    private int getKeyStreamWord(final int bitNo) {
+        /* Access the first word and return it if this is bit 0 */
+<span class="fc" id="L164">        final int myFirst = theKeyStream[theWordIndex];</span>
+<span class="fc bfc" id="L165" title="All 2 branches covered.">        if (bitNo == 0) {</span>
+<span class="fc" id="L166">            return myFirst;</span>
+        }
+
+        /* Access the second word */
+<span class="fc" id="L170">        final int mySecond = theKeyStream[(theWordIndex + 1) % theKeyStream.length];</span>
+<span class="fc" id="L171">        return (myFirst &lt;&lt; bitNo) | (mySecond &gt;&gt;&gt; (Integer.SIZE - bitNo));</span>
+    }
+
+    /**
+     * Update the mac.
+     * @param in the input buffer
+     * @param inOff the starting offset in the input buffer
+     * @param len the length of data to process
+     */
+    public void update(final byte[] in, final int inOff, final int len) {
+<span class="fc bfc" id="L181" title="All 2 branches covered.">        for (int byteNo = 0; byteNo &lt; len; byteNo++) {</span>
+<span class="fc" id="L182">            update(in[inOff + byteNo]);</span>
+        }
+<span class="fc" id="L184">    }</span>
+
+    /**
+     * Obtain the final word.
+     * @return the final word
+     */
+    private int getFinalWord() {
+<span class="fc bfc" id="L191" title="All 2 branches covered.">        if (theByteIndex != 0) {</span>
+<span class="fc" id="L192">            return theEngine.makeKeyStreamWord();</span>
+        }
+<span class="fc" id="L194">        theWordIndex = (theWordIndex + 1) % theKeyStream.length;</span>
+<span class="fc" id="L195">        return theKeyStream[theWordIndex];</span>
+    }
+
+    /**
+     * Finalize the mac.
+     * @param out the output buffer
+     * @param outOff the starting offset in the input buffer
+     * @return the size of the mac
+     */
+    public int doFinal(final byte[] out, final int outOff) {
+        /* Finish the Mac and output it */
+<span class="fc" id="L206">        shift4NextByte();</span>
+<span class="fc" id="L207">        theMac ^= getKeyStreamWord(theByteIndex * Byte.SIZE);</span>
+<span class="fc" id="L208">        theMac ^= getFinalWord();</span>
+<span class="fc" id="L209">        GordianZuc128Engine.encode32be(theMac, out, outOff);</span>
+
+        /* Reset the Mac */
+<span class="fc" id="L212">        reset();</span>
+<span class="fc" id="L213">        return getMacSize();</span>
+    }
+
+    @Override
+    public void reset() {
+<span class="fc" id="L218">        theEngine.reset(theState);</span>
+<span class="fc" id="L219">        initKeyStream();</span>
+<span class="fc" id="L220">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

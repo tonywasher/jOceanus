@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseLoanCategoryBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.data.builder</a> &gt; <span class="el_source">MoneyWiseLoanCategoryBuilder.java</span></div><h1>MoneyWiseLoanCategoryBuilder.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.data.builder;
+
+import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseLoanCategory;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseLoanCategoryClass;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseLoanCategoryType;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+
+/**
+ * LoanCategory Builder.
+ */
+public class MoneyWiseLoanCategoryBuilder {
+    /**
+     * DataSet.
+     */
+    private final MoneyWiseDataSet theDataSet;
+
+    /**
+     * The CategoryName.
+     */
+    private String theName;
+
+    /**
+     * The Parent.
+     */
+    private MoneyWiseLoanCategory theParent;
+
+    /**
+     * The CategoryType.
+     */
+    private MoneyWiseLoanCategoryType theType;
+
+    /**
+     * Constructor.
+     * @param pDataSet the dataSet
+     */
+<span class="fc" id="L54">    public MoneyWiseLoanCategoryBuilder(final MoneyWiseDataSet pDataSet) {</span>
+<span class="fc" id="L55">        theDataSet = pDataSet;</span>
+<span class="fc" id="L56">        theDataSet.getLoanCategories().ensureMap();</span>
+<span class="fc" id="L57">    }</span>
+
+    /**
+     * Set Name.
+     * @param pName the name of the category.
+     * @return the builder
+     */
+    public MoneyWiseLoanCategoryBuilder name(final String pName) {
+<span class="fc" id="L65">        final int myIndex = pName.lastIndexOf(':');</span>
+<span class="fc bfc" id="L66" title="All 2 branches covered.">        if (myIndex == -1) {</span>
+<span class="fc" id="L67">            theName = pName;</span>
+<span class="fc" id="L68">            theParent = null;</span>
+        } else {
+<span class="fc" id="L70">            theName = pName.substring(myIndex + 1);</span>
+<span class="fc" id="L71">            theParent = lookupCategory(pName.substring(0, myIndex));</span>
+        }
+<span class="fc" id="L73">        return this;</span>
+    }
+
+    /**
+     * Set the categoryType.
+     * @param pType the type of the category.
+     * @return the builder
+     */
+    public MoneyWiseLoanCategoryBuilder type(final MoneyWiseLoanCategoryType pType) {
+<span class="fc" id="L82">        theType = pType;</span>
+<span class="fc" id="L83">        return this;</span>
+    }
+
+    /**
+     * Set the categoryType.
+     * @param pType the type of the category.
+     * @return the builder
+     */
+    public MoneyWiseLoanCategoryBuilder type(final MoneyWiseLoanCategoryClass pType) {
+<span class="fc" id="L92">        return type(theDataSet.getLoanCategoryTypes().findItemByClass(pType));</span>
+    }
+
+    /**
+     * Obtain the loanCategory.
+     * @param pCategory the name of the category.
+     * @return the loanCategory
+     */
+    private MoneyWiseLoanCategory lookupCategory(final String pCategory) {
+<span class="fc" id="L101">        return theDataSet.getLoanCategories().findItemByName(pCategory);</span>
+    }
+
+    /**
+     * Build the loanCategory.
+     * @return the new Category
+     * @throws OceanusException on error
+     */
+    public MoneyWiseLoanCategory build() throws OceanusException {
+        /* Create the category */
+<span class="fc" id="L111">        final MoneyWiseLoanCategory myCategory = theDataSet.getLoanCategories().addNewItem();</span>
+<span class="fc" id="L112">        myCategory.setCategoryType(theType);</span>
+<span class="fc" id="L113">        myCategory.setParentCategory(theParent);</span>
+<span class="fc" id="L114">        myCategory.setSubCategoryName(theName);</span>
+
+        /* Reset the values */
+<span class="fc" id="L117">        reset();</span>
+
+        /* Check for errors */
+<span class="fc" id="L120">        myCategory.adjustMapForItem();</span>
+<span class="fc" id="L121">        myCategory.validate();</span>
+<span class="pc bpc" id="L122" title="1 of 2 branches missed.">        if (myCategory.hasErrors()) {</span>
+<span class="nc" id="L123">            myCategory.removeItem();</span>
+<span class="nc" id="L124">            throw new MoneyWiseDataException(myCategory, &quot;Failed validation&quot;);</span>
+        }
+
+        /* Return the category */
+<span class="fc" id="L128">        return myCategory;</span>
+    }
+    /**
+     * Reset the builder.
+     */
+    public void reset() {
+        /* Reset values */
+<span class="fc" id="L135">        theName = null;</span>
+<span class="fc" id="L136">        theParent = null;</span>
+<span class="fc" id="L137">        theType = null;</span>
+<span class="fc" id="L138">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianX931CipherDRBG.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.gordianknot.impl.core.random</a> &gt; <span class="el_source">GordianX931CipherDRBG.java</span></div><h1>GordianX931CipherDRBG.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * GordianKnot: Security Suite
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.gordianknot.impl.core.random;
+
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
+import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymCipher;
+import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymCipherSpec;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianByteArrayInteger;
+import org.bouncycastle.crypto.prng.EntropySource;
+
+/**
+ * Implementation of X931DRBG based on the BouncyCastle Code.
+ * &lt;p&gt;
+ * This implementation is modified so that it accepts any GordianCipher.
+ */
+public class GordianX931CipherDRBG
+        implements GordianDRBGenerator {
+    /**
+     * The X931 prefix.
+     */
+    private static final String X931_PREFIX = &quot;X931-&quot;;
+
+    /**
+     * The bit shift.
+     */
+    private static final int BIT_SHIFT = 3;
+
+    /**
+     * The power of 2 for RESEED calculation.
+     */
+    private static final int RESEED_POWER = 24;
+
+    /**
+     * Max # of bits before reSeed.
+     */
+    private static final long BLOCK128_RESEED_MAX = 1L &lt;&lt; (RESEED_POWER - 1);
+
+    /**
+     * The power of 2 for BITS calculation.
+     */
+    private static final int BITS_POWER = 19;
+
+    /**
+     * Max # of bits per request.
+     */
+    private static final int BLOCK128_MAX_BITS_REQUEST = 1 &lt;&lt; (BITS_POWER - 1);
+
+    /**
+     * The Cipher.
+     */
+    private final GordianSymCipher theCipher;
+
+    /**
+     * The Entropy Source.
+     */
+    private final EntropySource theEntropy;
+
+    /**
+     * The DateTime vector.
+     */
+    private final GordianByteArrayInteger theDT;
+
+    /**
+     * The ReSeed Counter.
+     */
+    private final GordianByteArrayInteger theReseedCounter;
+
+    /**
+     * The intermediate buffer.
+     */
+    private final byte[] theI;
+
+    /**
+     * The result buffer.
+     */
+    private final byte[] theR;
+
+    /**
+     * The entropy bytes.
+     */
+    private byte[] theV;
+
+    /**
+     * Constructor.
+     * @param pCipher source cipher to use for DRB stream.
+     * @param pEntropy source of entropy to use for seeding/reSeeding.
+     * @param pInitVector nonce to further distinguish this DRBG.
+     */
+    public GordianX931CipherDRBG(final GordianSymCipher pCipher,
+                                 final EntropySource pEntropy,
+<span class="fc" id="L105">                                 final byte[] pInitVector) {</span>
+        /* Store parameters */
+<span class="fc" id="L107">        theCipher = pCipher;</span>
+<span class="fc" id="L108">        theEntropy = pEntropy;</span>
+
+        /* Determine the bufferSize */
+<span class="fc" id="L111">        final int mySize = getBlockSize();</span>
+<span class="fc" id="L112">        final int myLen = mySize &gt;&gt; BIT_SHIFT;</span>
+
+        /* Create DT Buffer */
+<span class="fc" id="L115">        theDT = new GordianByteArrayInteger(myLen);</span>
+<span class="fc" id="L116">        final int myCopyLen = Math.min(myLen, pInitVector.length);</span>
+<span class="fc" id="L117">        System.arraycopy(pInitVector, 0, theDT.getBuffer(), 0, myCopyLen);</span>
+
+        /* Create intermediate buffers */
+<span class="fc" id="L120">        theI = new byte[myLen];</span>
+<span class="fc" id="L121">        theR = new byte[myLen];</span>
+
+        /* Initialise reSeed counter */
+<span class="fc" id="L124">        theReseedCounter = new GordianByteArrayInteger(Long.BYTES);</span>
+<span class="fc" id="L125">        theReseedCounter.iterate();</span>
+<span class="fc" id="L126">    }</span>
+
+    @Override
+    public int generate(final byte[] pOutput,
+                        final byte[] pXtraBytes,
+                        final boolean isPredictionResistant) {
+        /* Check valid # of bits */
+<span class="fc" id="L133">        final int myNumBits = pOutput.length &lt;&lt; BIT_SHIFT;</span>
+<span class="pc bpc" id="L134" title="1 of 2 branches missed.">        if (myNumBits &gt; BLOCK128_MAX_BITS_REQUEST) {</span>
+<span class="nc" id="L135">            throw new IllegalArgumentException(&quot;Number of bits per request limited to &quot;</span>
+                    + BLOCK128_MAX_BITS_REQUEST);
+        }
+
+        /* Check for reSeed required */
+<span class="pc bpc" id="L140" title="1 of 2 branches missed.">        if (theReseedCounter.compareLimit(BLOCK128_RESEED_MAX)) {</span>
+<span class="nc" id="L141">            return -1;</span>
+        }
+
+        /* If we are prediction resistant or have not allocated V */
+<span class="fc bfc" id="L145" title="All 4 branches covered.">        if (isPredictionResistant</span>
+                || theV == null) {
+            /* Initialise V from entropy */
+<span class="fc" id="L148">            initFromEntropy();</span>
+        }
+
+        /* Protect against exceptions */
+        try {
+            /* Generate the bits */
+<span class="fc" id="L154">            final byte[] myResult = cipherGen(myNumBits);</span>
+
+            /* Iterate the reSeed counter */
+<span class="fc" id="L157">            theReseedCounter.iterate();</span>
+
+            /* Return the bytes */
+<span class="fc" id="L160">            System.arraycopy(myResult, 0, pOutput, 0, pOutput.length);</span>
+<span class="nc" id="L161">        } catch (GordianException e) {</span>
+<span class="nc" id="L162">            throw new IllegalStateException(e);</span>
+<span class="fc" id="L163">        }</span>
+
+        /* Return the number of bits generated */
+<span class="fc" id="L166">        return myNumBits;</span>
+    }
+
+    /**
+     * Stretch a cipher output to required # of bits.
+     * @param pNumBits the number of output bits
+     * @return the stretched cipher output
+     * @throws GordianException on error
+     */
+    private byte[] cipherGen(final int pNumBits) throws GordianException {
+        /* Determine # of iterations */
+<span class="fc" id="L177">        final int mySize = getBlockSize() &gt;&gt; BIT_SHIFT;</span>
+<span class="fc" id="L178">        final int myLen = pNumBits &gt;&gt; BIT_SHIFT;</span>
+
+        /* Allocate counters */
+<span class="fc" id="L181">        final byte[] myOutput = new byte[myLen];</span>
+
+        /* while we need to generate more bytes */
+<span class="fc" id="L184">        int myBuilt = 0;</span>
+<span class="fc bfc" id="L185" title="All 2 branches covered.">        while (myBuilt &lt; myLen) {</span>
+            /* Generate a new block */
+<span class="fc" id="L187">            theCipher.finish(theDT.getBuffer(), 0, mySize, theI);</span>
+<span class="fc" id="L188">            processBytes(theR, theI, theV);</span>
+<span class="fc" id="L189">            processBytes(theV, theR, theI);</span>
+
+            /* Determine how many bytes of this hash should be used */
+<span class="fc" id="L192">            int myNeeded = myLen</span>
+                    - myBuilt;
+<span class="fc bfc" id="L194" title="All 2 branches covered.">            if (myNeeded &gt; mySize) {</span>
+<span class="fc" id="L195">                myNeeded = mySize;</span>
+            }
+
+            /* Copy bytes across */
+<span class="fc" id="L199">            System.arraycopy(theR, 0, myOutput, myBuilt, myNeeded);</span>
+<span class="fc" id="L200">            myBuilt += myNeeded;</span>
+
+            /* Iterate the dateTime */
+<span class="fc" id="L203">            theDT.iterate();</span>
+<span class="fc" id="L204">        }</span>
+
+        /* Return the result */
+<span class="fc" id="L207">        return myOutput;</span>
+    }
+
+    @Override
+    public void reseed(final byte[] pSeed) {
+<span class="nc" id="L212">        reseed();</span>
+<span class="nc" id="L213">    }</span>
+
+    /**
+     * ReSeed the RNG.
+     */
+    private void reseed() {
+        /* Initialise V from entropy */
+<span class="nc" id="L220">        initFromEntropy();</span>
+
+        /* re-initialise reSeed counter */
+<span class="nc" id="L223">        theReseedCounter.reset();</span>
+<span class="nc" id="L224">        theReseedCounter.iterate();</span>
+<span class="nc" id="L225">    }</span>
+
+    /**
+     * Initialise from entropy.
+     */
+    private void initFromEntropy() {
+        /* Initialise V from entropy */
+<span class="fc" id="L232">        theV = theEntropy.getEntropy();</span>
+<span class="pc bpc" id="L233" title="1 of 2 branches missed.">        if (theV.length != theI.length) {</span>
+<span class="nc" id="L234">            throw new IllegalStateException(&quot;Insufficient entropy returned&quot;);</span>
+        }
+<span class="fc" id="L236">    }</span>
+
+    /**
+     * Process bytes.
+     * @param pResult the result
+     * @param pFirst the first array
+     * @param pSecond the second array
+     * @throws GordianException on error
+     */
+    private void processBytes(final byte[] pResult,
+                              final byte[] pFirst,
+                              final byte[] pSecond) throws GordianException {
+        /* Combine the two inputs */
+<span class="fc bfc" id="L249" title="All 2 branches covered.">        for (int i = 0; i != pResult.length; i++) {</span>
+<span class="fc" id="L250">            pResult[i] = (byte) (pFirst[i] ^ pSecond[i]);</span>
+        }
+
+        /* Process the block via the cipher */
+<span class="fc" id="L254">        theCipher.finish(pResult, 0, pResult.length, pResult);</span>
+<span class="fc" id="L255">    }</span>
+
+    @Override
+    public int getBlockSize() {
+<span class="fc" id="L259">        final GordianSymCipherSpec mySpec = (GordianSymCipherSpec) theCipher.getCipherSpec();</span>
+<span class="fc" id="L260">        return mySpec.getBlockLength().getLength();</span>
+    }
+
+    @Override
+    public String getAlgorithm() {
+<span class="nc" id="L265">        return X931_PREFIX + theCipher.getCipherSpec().toString();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

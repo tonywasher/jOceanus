@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PrometheusFieldSetEvent.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Prometheus Core Application Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.prometheus.ui.fieldset</a> &gt; <span class="el_source">PrometheusFieldSetEvent.java</span></div><h1>PrometheusFieldSetEvent.java</h1><pre class="source lang-java linenums">/* *****************************************************************************
+ * Prometheus: Application Framework
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.prometheus.ui.fieldset;
+
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.prometheus.exc.PrometheusDataException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+
+/**
+ * FieldSetEvent.
+ */
+public class PrometheusFieldSetEvent {
+    /**
+     * The field.
+     */
+    private final MetisDataFieldId theFieldId;
+
+    /**
+     * The new value.
+     */
+    private final Object theValue;
+
+    /**
+     * Constructor.
+     * @param pFieldId the source fieldId
+     * @param pNewValue the new Value
+     */
+    public PrometheusFieldSetEvent(final MetisDataFieldId pFieldId,
+<span class="nc" id="L43">                                   final Object pNewValue) {</span>
+<span class="nc" id="L44">        theFieldId = pFieldId;</span>
+<span class="nc" id="L45">        theValue = pNewValue;</span>
+<span class="nc" id="L46">    }</span>
+
+    /**
+     * Obtain the source field.
+     * @return the field
+     */
+    public MetisDataFieldId getFieldId() {
+<span class="nc" id="L53">        return theFieldId;</span>
+    }
+
+    /**
+     * Obtain the value.
+     * @return the value
+     */
+    public Object getValue() {
+<span class="nc" id="L61">        return theValue;</span>
+    }
+
+    /**
+     * Obtain the value as specific type.
+     * @param &lt;T&gt; the value class
+     * @param pClass the required class
+     * @return the value
+     * @throws OceanusException on error
+     */
+    public &lt;T&gt; T getValue(final Class&lt;T&gt; pClass) throws OceanusException {
+        try {
+<span class="nc" id="L73">            return pClass.cast(theValue);</span>
+<span class="nc" id="L74">        } catch (ClassCastException e) {</span>
+<span class="nc" id="L75">            throw new PrometheusDataException(&quot;Invalid dataType&quot;, e);</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

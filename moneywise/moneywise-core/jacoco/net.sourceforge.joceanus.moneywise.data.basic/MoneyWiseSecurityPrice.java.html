@@ -1,0 +1,927 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseSecurityPrice.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.data.basic</a> &gt; <span class="el_source">MoneyWiseSecurityPrice.java</span></div><h1>MoneyWiseSecurityPrice.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.data.basic;
+
+import net.sourceforge.joceanus.metis.data.MetisDataDifference;
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataList;
+import net.sourceforge.joceanus.metis.data.MetisDataResource;
+import net.sourceforge.joceanus.metis.field.MetisFieldItem;
+import net.sourceforge.joceanus.metis.field.MetisFieldSet;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurity.MoneyWiseSecurityList;
+import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateFormatter;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataInstanceMap;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataMapItem;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
+import net.sourceforge.joceanus.prometheus.data.PrometheusEncryptedDataItem;
+import net.sourceforge.joceanus.prometheus.data.PrometheusEncryptedFieldSet;
+import net.sourceforge.joceanus.prometheus.data.PrometheusEncryptedPair;
+import net.sourceforge.joceanus.prometheus.data.PrometheusEncryptedValues;
+import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
+
+import java.util.ArrayList;
+import java.util.Currency;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+
+/**
+ * SecurityPrice data type.
+ * @author Tony Washer
+ */
+public class MoneyWiseSecurityPrice
+        extends PrometheusEncryptedDataItem {
+    /**
+     * Object name.
+     */
+<span class="fc" id="L60">    public static final String OBJECT_NAME = MoneyWiseBasicDataType.SECURITYPRICE.getItemName();</span>
+
+    /**
+     * List name.
+     */
+<span class="fc" id="L65">    public static final String LIST_NAME = MoneyWiseBasicDataType.SECURITYPRICE.getListName();</span>
+
+    /**
+     * Report fields.
+     */
+<span class="fc" id="L70">    private static final PrometheusEncryptedFieldSet&lt;MoneyWiseSecurityPrice&gt; FIELD_DEFS = PrometheusEncryptedFieldSet.newEncryptedFieldSet(MoneyWiseSecurityPrice.class);</span>
+
+    /*
+     * FieldIds.
+     */
+    static {
+<span class="fc" id="L76">        FIELD_DEFS.declareLinkField(MoneyWiseBasicDataType.SECURITY);</span>
+<span class="fc" id="L77">        FIELD_DEFS.declareDateField(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE);</span>
+<span class="fc" id="L78">        FIELD_DEFS.declareEncryptedPriceField(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_PRICE);</span>
+    }
+
+    /**
+     * Invalid currency error.
+     */
+<span class="fc" id="L84">    public static final String ERROR_CURRENCY = MoneyWiseBasicResource.MONEYWISEDATA_ERROR_CURRENCY.getValue();</span>
+
+    /**
+     * Copy Constructor.
+     * @param pList the list
+     * @param pPrice The Price
+     */
+    protected MoneyWiseSecurityPrice(final MoneyWiseSecurityPriceBaseList&lt;? extends MoneyWiseSecurityPrice&gt; pList,
+                                     final MoneyWiseSecurityPrice pPrice) {
+        /* Set standard values */
+<span class="fc" id="L94">        super(pList, pPrice);</span>
+<span class="fc" id="L95">    }</span>
+
+    /**
+     * Edit Constructor.
+     * @param pList the list
+     */
+    public MoneyWiseSecurityPrice(final MoneyWiseSecurityPriceBaseList&lt;? extends MoneyWiseSecurityPrice&gt; pList) {
+<span class="fc" id="L102">        super(pList, 0);</span>
+<span class="fc" id="L103">        setNextDataKeySet();</span>
+<span class="fc" id="L104">    }</span>
+
+    /**
+     * Values constructor.
+     * @param pList the List to add to
+     * @param pValues the values constructor
+     * @throws OceanusException on error
+     */
+    private MoneyWiseSecurityPrice(final MoneyWiseSecurityPriceList pList,
+                                   final PrometheusDataValues pValues) throws OceanusException {
+        /* Initialise the item */
+<span class="fc" id="L115">        super(pList, pValues);</span>
+
+        /* Access formatter */
+<span class="fc" id="L118">        final OceanusDataFormatter myFormatter = getDataSet().getDataFormatter();</span>
+
+        /* Protect against exceptions */
+        try {
+            /* Store the Date */
+<span class="fc" id="L123">            Object myValue = pValues.getValue(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE);</span>
+<span class="fc bfc" id="L124" title="All 2 branches covered.">            if (myValue instanceof OceanusDate d) {</span>
+<span class="fc" id="L125">                setValueDate(d);</span>
+<span class="pc bpc" id="L126" title="1 of 2 branches missed.">            } else if (myValue instanceof String s) {</span>
+<span class="fc" id="L127">                final OceanusDateFormatter myParser = myFormatter.getDateFormatter();</span>
+<span class="fc" id="L128">                setValueDate(myParser.parseDate(s));</span>
+            }
+
+            /* Store the Security */
+<span class="fc" id="L132">            myValue = pValues.getValue(MoneyWiseBasicDataType.SECURITY);</span>
+<span class="fc bfc" id="L133" title="All 2 branches covered.">            if (myValue instanceof Integer i) {</span>
+<span class="fc" id="L134">                setValueSecurity(i);</span>
+<span class="pc bpc" id="L135" title="1 of 2 branches missed.">            } else if (myValue instanceof String s) {</span>
+<span class="fc" id="L136">                setValueSecurity(s);</span>
+            }
+
+            /* Store the Price */
+<span class="fc" id="L140">            myValue = pValues.getValue(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_PRICE);</span>
+<span class="pc bpc" id="L141" title="1 of 2 branches missed.">            if (myValue instanceof OceanusPrice p) {</span>
+<span class="nc" id="L142">                setValuePrice(p);</span>
+<span class="fc bfc" id="L143" title="All 2 branches covered.">            } else if (myValue instanceof byte[] ba) {</span>
+<span class="fc" id="L144">                setValuePrice(ba);</span>
+<span class="pc bpc" id="L145" title="1 of 2 branches missed.">            } else if (myValue instanceof String myString) {</span>
+<span class="fc" id="L146">                setValuePrice(myString);</span>
+<span class="fc" id="L147">                setValuePrice(myFormatter.parseValue(myString, OceanusPrice.class));</span>
+            }
+
+            /* Catch Exceptions */
+<span class="nc" id="L151">        } catch (IllegalArgumentException</span>
+                 | OceanusException e) {
+            /* Pass on exception */
+<span class="nc" id="L154">            throw new MoneyWiseDataException(this, ERROR_CREATEITEM, e);</span>
+<span class="fc" id="L155">        }</span>
+<span class="fc" id="L156">    }</span>
+
+    @Override
+    public MetisFieldSetDef getDataFieldSet() {
+<span class="fc" id="L160">        return FIELD_DEFS;</span>
+    }
+
+    @Override
+    public boolean includeXmlField(final MetisDataFieldId pField) {
+        /* Determine whether fields should be included */
+<span class="fc bfc" id="L166" title="All 2 branches covered.">        if (MoneyWiseBasicDataType.SECURITY.equals(pField)) {</span>
+<span class="fc" id="L167">            return true;</span>
+        }
+<span class="fc bfc" id="L169" title="All 2 branches covered.">        if (MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE.equals(pField)) {</span>
+<span class="fc" id="L170">            return true;</span>
+        }
+<span class="fc bfc" id="L172" title="All 2 branches covered.">        if (MoneyWiseBasicResource.MONEYWISEDATA_FIELD_PRICE.equals(pField)) {</span>
+<span class="fc" id="L173">            return true;</span>
+        }
+
+        /* Pass call on */
+<span class="fc" id="L177">        return super.includeXmlField(pField);</span>
+    }
+
+    @Override
+    public String toString() {
+        /* Access Key Values */
+<span class="nc" id="L183">        final PrometheusEncryptedValues myValues = getValues();</span>
+<span class="nc" id="L184">        final Object mySecurity = myValues.getValue(MoneyWiseBasicDataType.SECURITY);</span>
+<span class="nc" id="L185">        final Object myDate = myValues.getValue(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE);</span>
+<span class="nc" id="L186">        final Object myPrice = myValues.getValue(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_PRICE, OceanusPrice.class);</span>
+
+        /* Access formatter */
+<span class="nc" id="L189">        final OceanusDataFormatter myFormatter = getDataSet().getDataFormatter();</span>
+
+        /* Create string builder */
+<span class="nc" id="L192">        final StringBuilder myBuilder = new StringBuilder();</span>
+<span class="nc" id="L193">        myBuilder.append(myFormatter.formatObject(mySecurity));</span>
+<span class="nc" id="L194">        myBuilder.append(&quot;: &quot;);</span>
+<span class="nc" id="L195">        myBuilder.append(myFormatter.formatObject(myPrice));</span>
+<span class="nc" id="L196">        myBuilder.append('@');</span>
+<span class="nc" id="L197">        myBuilder.append(myFormatter.formatObject(myDate));</span>
+
+        /* return it */
+<span class="nc" id="L200">        return myBuilder.toString();</span>
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L205">        return toString();</span>
+    }
+
+    /**
+     * Obtain Price.
+     * @return the price
+     */
+    public OceanusPrice getPrice() {
+<span class="fc" id="L213">        return getValues().getValue(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_PRICE, OceanusPrice.class);</span>
+    }
+
+    /**
+     * Obtain Encrypted Price.
+     * @return the Bytes
+     */
+    public byte[] getPriceBytes() {
+<span class="fc" id="L221">        return getValues().getEncryptedBytes(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_PRICE);</span>
+    }
+
+    /**
+     * Obtain Encrypted Price Field.
+     * @return the field
+     */
+    public PrometheusEncryptedPair getPriceField() {
+<span class="nc" id="L229">        return getValues().getEncryptedPair(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_PRICE);</span>
+    }
+
+    /**
+     * Obtain Date.
+     * @return the date
+     */
+    public OceanusDate getDate() {
+<span class="fc" id="L237">        return getValues().getValue(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE, OceanusDate.class);</span>
+    }
+
+    /**
+     * Obtain Security.
+     * @return the security
+     */
+    public MoneyWiseSecurity getSecurity() {
+<span class="fc" id="L245">        return getValues().getValue(MoneyWiseBasicDataType.SECURITY, MoneyWiseSecurity.class);</span>
+    }
+
+    /**
+     * Obtain SecurityId.
+     * @return the securityId
+     */
+    public Integer getSecurityId() {
+<span class="fc" id="L253">        final MoneyWiseSecurity mySecurity = getSecurity();</span>
+<span class="pc bpc" id="L254" title="1 of 2 branches missed.">        return mySecurity == null</span>
+<span class="nc" id="L255">                ? null</span>
+<span class="fc" id="L256">                : mySecurity.getIndexedId();</span>
+    }
+
+    /**
+     * Obtain SecurityName.
+     * @return the securityName
+     */
+    public String getSecurityName() {
+<span class="nc" id="L264">        final MoneyWiseSecurity mySecurity = getSecurity();</span>
+<span class="nc bnc" id="L265" title="All 2 branches missed.">        return mySecurity == null</span>
+<span class="nc" id="L266">                ? null</span>
+<span class="nc" id="L267">                : mySecurity.getName();</span>
+    }
+
+    /**
+     * Set the security.
+     * @param pValue the security
+     */
+    private void setValueSecurity(final MoneyWiseSecurity pValue) {
+<span class="fc" id="L275">        getValues().setUncheckedValue(MoneyWiseBasicDataType.SECURITY, pValue);</span>
+<span class="fc" id="L276">    }</span>
+
+    /**
+     * Set the security id.
+     * @param pId the security id
+     */
+    private void setValueSecurity(final Integer pId) {
+<span class="fc" id="L283">        getValues().setUncheckedValue(MoneyWiseBasicDataType.SECURITY, pId);</span>
+<span class="fc" id="L284">    }</span>
+
+    /**
+     * Set the security name.
+     * @param pName the security name
+     */
+    private void setValueSecurity(final String pName) {
+<span class="fc" id="L291">        getValues().setUncheckedValue(MoneyWiseBasicDataType.SECURITY, pName);</span>
+<span class="fc" id="L292">    }</span>
+
+    /**
+     * Set the price.
+     * @param pValue the price
+     * @throws OceanusException on error
+     */
+    private void setValuePrice(final OceanusPrice pValue) throws OceanusException {
+<span class="fc" id="L300">        setEncryptedValue(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_PRICE, pValue);</span>
+<span class="fc" id="L301">    }</span>
+
+    /**
+     * Set the encrypted price.
+     * @param pBytes the encrypted price
+     * @throws OceanusException on error
+     */
+    private void setValuePrice(final byte[] pBytes) throws OceanusException {
+<span class="fc" id="L309">        setEncryptedValue(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_PRICE, pBytes, OceanusPrice.class);</span>
+<span class="fc" id="L310">    }</span>
+
+    /**
+     * Set the price.
+     * @param pValue the price
+     */
+    private void setValuePrice(final String pValue) {
+<span class="fc" id="L317">        getValues().setUncheckedValue(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_PRICE, pValue);</span>
+<span class="fc" id="L318">    }</span>
+
+    /**
+     * Set the price.
+     * @param pValue the price
+     */
+    public void setValuePrice(final PrometheusEncryptedPair pValue) {
+<span class="nc" id="L325">        getValues().setUncheckedValue(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_PRICE, pValue);</span>
+<span class="nc" id="L326">    }</span>
+
+    /**
+     * Set the date.
+     * @param pValue the date
+     */
+    private void setValueDate(final OceanusDate pValue) {
+<span class="fc" id="L333">        getValues().setUncheckedValue(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE, pValue);</span>
+<span class="fc" id="L334">    }</span>
+
+    @Override
+    public MoneyWiseDataSet getDataSet() {
+<span class="fc" id="L338">        return (MoneyWiseDataSet) super.getDataSet();</span>
+    }
+
+    @Override
+    @SuppressWarnings(&quot;unchecked&quot;)
+    public MoneyWiseSecurityPriceBaseList&lt;? extends MoneyWiseSecurityPrice&gt; getList() {
+<span class="fc" id="L344">        return (MoneyWiseSecurityPriceBaseList&lt;? extends MoneyWiseSecurityPrice&gt;) super.getList();</span>
+    }
+
+    @Override
+    public MoneyWiseSecurityPrice getBase() {
+<span class="fc" id="L349">        return (MoneyWiseSecurityPrice) super.getBase();</span>
+    }
+
+    @Override
+    public int compareValues(final PrometheusDataItem pThat) {
+        /* Access as SecurityPrice */
+<span class="fc" id="L355">        final MoneyWiseSecurityPrice myThat = (MoneyWiseSecurityPrice) pThat;</span>
+
+        /* If header settings differ */
+<span class="pc bpc" id="L358" title="1 of 2 branches missed.">        if (isHeader() != pThat.isHeader()) {</span>
+<span class="nc bnc" id="L359" title="All 2 branches missed.">            return isHeader()</span>
+<span class="nc" id="L360">                    ? -1</span>
+<span class="nc" id="L361">                    : 1;</span>
+        }
+
+        /* If the date differs */
+<span class="fc" id="L365">        final int iDiff = MetisDataDifference.compareObject(getDate(), myThat.getDate());</span>
+<span class="fc bfc" id="L366" title="All 2 branches covered.">        if (iDiff != 0) {</span>
+            /* Sort in reverse date order !! */
+<span class="fc" id="L368">            return -iDiff;</span>
+        }
+
+        /* Compare the securities */
+<span class="fc" id="L372">        return getSecurity().compareTo(myThat.getSecurity());</span>
+    }
+
+    @Override
+    public void resolveDataSetLinks() throws OceanusException {
+        /* Update the Encryption details */
+<span class="fc" id="L378">        super.resolveDataSetLinks();</span>
+
+        /* Resolve data links */
+<span class="fc" id="L381">        final MoneyWiseDataSet myData = getDataSet();</span>
+<span class="fc" id="L382">        resolveDataLink(MoneyWiseBasicDataType.SECURITY, myData.getSecurities());</span>
+<span class="fc" id="L383">    }</span>
+
+    /**
+     * Resolve links in an editSet.
+     * @param pEditSet the edit Set
+     * @throws OceanusException on error
+     */
+    protected void resolveEditSetLinks(final PrometheusEditSet pEditSet) throws OceanusException {
+        /* Resolve parent within list */
+<span class="fc" id="L392">        final MoneyWiseSecurityList mySecurities = pEditSet.getDataList(MoneyWiseBasicDataType.SECURITY, MoneyWiseSecurityList.class);</span>
+<span class="fc" id="L393">        resolveDataLink(MoneyWiseBasicDataType.SECURITY, mySecurities);</span>
+<span class="fc" id="L394">    }</span>
+
+    /**
+     * Set the security.
+     * @param pValue the security
+     */
+    public void setSecurity(final MoneyWiseSecurity pValue) {
+<span class="fc" id="L401">        setValueSecurity(pValue);</span>
+<span class="fc" id="L402">    }</span>
+
+    /**
+     * Set a new price.
+     * @param pPrice the price
+     * @throws OceanusException on error
+     */
+    public void setPrice(final OceanusPrice pPrice) throws OceanusException {
+<span class="fc" id="L410">        setValuePrice(pPrice);</span>
+<span class="fc" id="L411">    }</span>
+
+    /**
+     * Set a new date.
+     * @param pDate the new date
+     */
+    public void setDate(final OceanusDate pDate) {
+<span class="fc" id="L418">        setValueDate(pDate);</span>
+<span class="fc" id="L419">    }</span>
+
+    @Override
+    public void touchUnderlyingItems() {
+        /* touch the underlying security */
+<span class="fc" id="L424">        getSecurity().touchItem(this);</span>
+<span class="fc" id="L425">    }</span>
+
+    @Override
+    public void touchOnUpdate() {
+        /* Touch security */
+<span class="nc" id="L430">        getSecurity().touchItem(this);</span>
+<span class="nc" id="L431">    }</span>
+
+    @Override
+    public boolean applyChanges(final PrometheusDataItem pPrice) {
+        /* Can only update from a SecurityPrice */
+<span class="nc bnc" id="L436" title="All 2 branches missed.">        if (!(pPrice instanceof MoneyWiseSecurityPrice)) {</span>
+<span class="nc" id="L437">            return false;</span>
+        }
+<span class="nc" id="L439">        final MoneyWiseSecurityPrice myPrice = (MoneyWiseSecurityPrice) pPrice;</span>
+
+        /* Store the current detail into history */
+<span class="nc" id="L442">        pushHistory();</span>
+
+        /* Update the price if required */
+<span class="nc bnc" id="L445" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getPrice(), myPrice.getPrice())) {</span>
+<span class="nc" id="L446">            setValuePrice(myPrice.getPriceField());</span>
+        }
+
+        /* Update the date if required */
+<span class="nc bnc" id="L450" title="All 2 branches missed.">        if (!MetisDataDifference.isEqual(getDate(), myPrice.getDate())) {</span>
+<span class="nc" id="L451">            setValueDate(myPrice.getDate());</span>
+        }
+
+        /* Check for changes */
+<span class="nc" id="L455">        return checkForHistory();</span>
+    }
+
+    @Override
+    public void adjustMapForItem() {
+<span class="fc" id="L460">        final MoneyWiseSecurityPriceBaseList&lt;? extends MoneyWiseSecurityPrice&gt; myList = getList();</span>
+<span class="fc" id="L461">        final MoneyWiseSecurityPriceDataMap myMap = myList.getDataMap();</span>
+<span class="fc" id="L462">        myMap.adjustForItem(this);</span>
+<span class="fc" id="L463">    }</span>
+
+    /**
+     * Price List.
+     * @param &lt;T&gt; the data type
+     */
+    public abstract static class MoneyWiseSecurityPriceBaseList&lt;T extends MoneyWiseSecurityPrice&gt;
+            extends PrometheusEncryptedList&lt;T&gt; {
+        /*
+         * Report fields.
+         */
+        static {
+<span class="fc" id="L475">            MetisFieldSet.newFieldSet(MoneyWiseSecurityPriceBaseList.class);</span>
+<span class="fc" id="L476">        }</span>
+
+        /**
+         * Construct an empty CORE Price list.
+         * @param pData the DataSet for the list
+         * @param pClass the class of the item
+         * @param pItemType the item type
+         */
+        protected MoneyWiseSecurityPriceBaseList(final MoneyWiseDataSet pData,
+                                                 final Class&lt;T&gt; pClass,
+                                                 final MoneyWiseBasicDataType pItemType) {
+            /* Call super-constructor */
+<span class="fc" id="L488">            super(pClass, pData, pItemType, PrometheusListStyle.CORE);</span>
+<span class="fc" id="L489">        }</span>
+
+        /**
+         * Constructor for a cloned List.
+         * @param pSource the source List
+         */
+        protected MoneyWiseSecurityPriceBaseList(final MoneyWiseSecurityPriceBaseList&lt;T&gt; pSource) {
+            /* Call super-constructor */
+<span class="fc" id="L497">            super(pSource);</span>
+<span class="fc" id="L498">        }</span>
+
+        @Override
+        public MoneyWiseSecurityPriceDataMap getDataMap() {
+<span class="fc" id="L502">            return (MoneyWiseSecurityPriceDataMap) super.getDataMap();</span>
+        }
+
+        @Override
+        protected MoneyWiseSecurityPriceDataMap allocateDataMap() {
+<span class="fc" id="L507">            return new MoneyWiseSecurityPriceDataMap();</span>
+        }
+    }
+
+    /**
+     * Price List.
+     */
+    public static class MoneyWiseSecurityPriceList
+            extends MoneyWiseSecurityPriceBaseList&lt;MoneyWiseSecurityPrice&gt; {
+        /**
+         * Report fields.
+         */
+<span class="fc" id="L519">        private static final MetisFieldSet&lt;MoneyWiseSecurityPriceList&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseSecurityPriceList.class);</span>
+
+        /**
+         * Construct an empty CORE price list.
+         * @param pData the DataSet for the list
+         */
+        protected MoneyWiseSecurityPriceList(final MoneyWiseDataSet pData) {
+<span class="fc" id="L526">            super(pData, MoneyWiseSecurityPrice.class, MoneyWiseBasicDataType.SECURITYPRICE);</span>
+<span class="fc" id="L527">        }</span>
+
+        /**
+         * Constructor for a cloned List.
+         * @param pSource the source List
+         */
+        private MoneyWiseSecurityPriceList(final MoneyWiseSecurityPriceList pSource) {
+<span class="fc" id="L534">            super(pSource);</span>
+<span class="fc" id="L535">        }</span>
+
+        @Override
+        public MetisFieldSet&lt;MoneyWiseSecurityPriceList&gt; getDataFieldSet() {
+<span class="nc" id="L539">            return FIELD_DEFS;</span>
+        }
+
+        @Override
+        public String listName() {
+<span class="fc" id="L544">            return LIST_NAME;</span>
+        }
+
+        @Override
+        public MetisFieldSetDef getItemFields() {
+<span class="fc" id="L549">            return MoneyWiseSecurityPrice.FIELD_DEFS;</span>
+        }
+
+        @Override
+        public MoneyWiseDataSet getDataSet() {
+<span class="fc" id="L554">            return (MoneyWiseDataSet) super.getDataSet();</span>
+        }
+
+        @Override
+        protected MoneyWiseSecurityPriceList getEmptyList(final PrometheusListStyle pStyle) {
+<span class="fc" id="L559">            final MoneyWiseSecurityPriceList myList = new MoneyWiseSecurityPriceList(this);</span>
+<span class="fc" id="L560">            myList.setStyle(pStyle);</span>
+<span class="fc" id="L561">            return myList;</span>
+        }
+
+        /**
+         * Construct an edit extract of a Rate list.
+         * @param pEditSet the editSet
+         * @return the edit list
+         * @throws OceanusException on error
+         */
+        public MoneyWiseSecurityPriceList deriveEditList(final PrometheusEditSet pEditSet) throws OceanusException {
+            /* Build an empty List */
+<span class="fc" id="L572">            final MoneyWiseSecurityPriceList myList = getEmptyList(PrometheusListStyle.EDIT);</span>
+<span class="fc" id="L573">            myList.ensureMap();</span>
+<span class="fc" id="L574">            pEditSet.setEditEntryList(MoneyWiseBasicDataType.SECURITYPRICE, myList);</span>
+
+            /* Loop through the list */
+<span class="fc" id="L577">            final Iterator&lt;MoneyWiseSecurityPrice&gt; myIterator = iterator();</span>
+<span class="fc bfc" id="L578" title="All 2 branches covered.">            while (myIterator.hasNext()) {</span>
+<span class="fc" id="L579">                final MoneyWiseSecurityPrice myCurr = myIterator.next();</span>
+
+                /* Copy the item */
+<span class="fc" id="L582">                final MoneyWiseSecurityPrice myItem = new MoneyWiseSecurityPrice(myList, myCurr);</span>
+<span class="fc" id="L583">                myItem.resolveEditSetLinks(pEditSet);</span>
+<span class="fc" id="L584">                myList.add(myItem);</span>
+
+                /* Adjust the map */
+<span class="fc" id="L587">                myItem.adjustMapForItem();</span>
+<span class="fc" id="L588">            }</span>
+
+            /* Return the List */
+<span class="fc" id="L591">            return myList;</span>
+        }
+
+        /**
+         * Add a new item to the core list.
+         * @param pPrice item
+         * @return the newly added item
+         */
+        @Override
+        public MoneyWiseSecurityPrice addCopyItem(final PrometheusDataItem pPrice) {
+<span class="pc bpc" id="L601" title="1 of 2 branches missed.">            if (pPrice instanceof MoneyWiseSecurityPrice p) {</span>
+<span class="fc" id="L602">                final MoneyWiseSecurityPrice myPrice = new MoneyWiseSecurityPrice(this, p);</span>
+<span class="fc" id="L603">                add(myPrice);</span>
+<span class="fc" id="L604">                return myPrice;</span>
+            } else {
+<span class="nc" id="L606">                throw new UnsupportedOperationException();</span>
+            }
+        }
+
+        /**
+         * Add a new item to the edit list.
+         * @return the newly added item
+         */
+        @Override
+        public MoneyWiseSecurityPrice addNewItem() {
+<span class="fc" id="L616">            final MoneyWiseSecurityPrice myPrice = new MoneyWiseSecurityPrice(this);</span>
+<span class="fc" id="L617">            add(myPrice);</span>
+<span class="fc" id="L618">            return myPrice;</span>
+        }
+
+        @Override
+        public MoneyWiseSecurityPrice addValuesItem(final PrometheusDataValues pValues) throws OceanusException {
+            /* Create the price */
+<span class="fc" id="L624">            final MoneyWiseSecurityPrice myPrice = new MoneyWiseSecurityPrice(this, pValues);</span>
+
+            /* Check that this PriceId has not been previously added */
+<span class="pc bpc" id="L627" title="1 of 2 branches missed.">            if (!isIdUnique(myPrice.getIndexedId())) {</span>
+<span class="nc" id="L628">                myPrice.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
+<span class="nc" id="L629">                throw new MoneyWiseDataException(myPrice, ERROR_VALIDATION);</span>
+            }
+
+            /* Add to the list */
+<span class="fc" id="L633">            add(myPrice);</span>
+
+            /* Return it */
+<span class="fc" id="L636">            return myPrice;</span>
+        }
+    }
+
+    /**
+     * The dataMap class.
+     */
+    public static class MoneyWiseSecurityPriceDataMap
+            implements PrometheusDataMapItem, MetisFieldItem {
+        /**
+         * Report fields.
+         */
+        @SuppressWarnings(&quot;rawtypes&quot;)
+<span class="fc" id="L649">        private static final MetisFieldSet&lt;MoneyWiseSecurityPriceDataMap&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseSecurityPriceDataMap.class);</span>
+
+        /*
+         * UnderlyingMap Field Id.
+         */
+        static {
+<span class="fc" id="L655">            FIELD_DEFS.declareLocalField(MoneyWiseBasicResource.MONEYWISEDATA_MAP_MAPOFMAPS, MoneyWiseSecurityPriceDataMap::getMapOfMaps);</span>
+<span class="fc" id="L656">            FIELD_DEFS.declareLocalField(MoneyWiseBasicResource.SECURITYPRICE_MAP_MAPOFPRICES, MoneyWiseSecurityPriceDataMap::getMapOfPrices);</span>
+<span class="fc" id="L657">        }</span>
+
+        /**
+         * Map of Maps.
+         */
+        private final Map&lt;MoneyWiseSecurity, Map&lt;OceanusDate, Integer&gt;&gt; theMapOfMaps;
+
+        /**
+         * Map of Prices.
+         */
+        private final Map&lt;MoneyWiseSecurity, MoneyWiseSecurityPriceList&gt; theMapOfPrices;
+
+        /**
+         * Constructor.
+         */
+<span class="fc" id="L672">        public MoneyWiseSecurityPriceDataMap() {</span>
+            /* Create the maps */
+<span class="fc" id="L674">            theMapOfMaps = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L675">            theMapOfPrices = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L676">        }</span>
+
+        @SuppressWarnings(&quot;rawtypes&quot;)
+        @Override
+        public MetisFieldSet&lt;MoneyWiseSecurityPriceDataMap&gt; getDataFieldSet() {
+<span class="nc" id="L681">            return FIELD_DEFS;</span>
+        }
+
+        @Override
+        public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L686">            return FIELD_DEFS.getName();</span>
+        }
+
+        /**
+         * Obtain mapOfMaps.
+         * @return the map
+         */
+        private Map&lt;MoneyWiseSecurity, Map&lt;OceanusDate, Integer&gt;&gt; getMapOfMaps() {
+<span class="nc" id="L694">            return theMapOfMaps;</span>
+        }
+
+        /**
+         * Obtain mapOfPrices.
+         * @return the map
+         */
+        private Map&lt;MoneyWiseSecurity, MoneyWiseSecurityPriceList&gt; getMapOfPrices() {
+<span class="nc" id="L702">            return theMapOfPrices;</span>
+        }
+
+        @Override
+        public void resetMap() {
+<span class="fc" id="L707">            theMapOfMaps.clear();</span>
+<span class="fc" id="L708">            theMapOfPrices.clear();</span>
+<span class="fc" id="L709">        }</span>
+
+        @Override
+        public void adjustForItem(final PrometheusDataItem pItem) {
+            /* Access the Security Id */
+<span class="fc" id="L714">            final MoneyWiseSecurityPrice myItem = (MoneyWiseSecurityPrice) pItem;</span>
+<span class="fc" id="L715">            final MoneyWiseSecurity mySecurity = myItem.getSecurity();</span>
+<span class="pc bpc" id="L716" title="1 of 2 branches missed.">            if (mySecurity == null) {</span>
+<span class="nc" id="L717">                return;</span>
+            }
+
+            /* Access the map */
+<span class="fc" id="L721">            final Map&lt;OceanusDate, Integer&gt; myMap = theMapOfMaps.computeIfAbsent(mySecurity, s -&gt; new HashMap&lt;&gt;());</span>
+
+            /* Adjust price count */
+<span class="fc" id="L724">            final OceanusDate myDate = myItem.getDate();</span>
+<span class="fc" id="L725">            final Integer myCount = myMap.get(myDate);</span>
+<span class="pc bpc" id="L726" title="1 of 2 branches missed.">            if (myCount == null) {</span>
+<span class="fc" id="L727">                myMap.put(myDate, PrometheusDataInstanceMap.ONE);</span>
+            } else {
+<span class="nc" id="L729">                myMap.put(myDate, myCount + 1);</span>
+            }
+
+            /* Access the list */
+<span class="fc" id="L733">            final MoneyWiseSecurityPriceList myList = theMapOfPrices.computeIfAbsent(mySecurity, MoneyWiseSecurityPriceList::new);</span>
+
+            /* Add element to the list */
+<span class="fc" id="L736">            myList.add(myItem);</span>
+<span class="fc" id="L737">        }</span>
+
+        /**
+         * Check validity of Price.
+         * @param pItem the price
+         * @return true/false
+         */
+        public boolean validPriceCount(final MoneyWiseSecurityPrice pItem) {
+            /* Access the Details */
+<span class="fc" id="L746">            final MoneyWiseSecurity mySecurity = pItem.getSecurity();</span>
+<span class="fc" id="L747">            final OceanusDate myDate = pItem.getDate();</span>
+
+            /* Access the map */
+<span class="fc" id="L750">            final Map&lt;OceanusDate, Integer&gt; myMap = theMapOfMaps.get(mySecurity);</span>
+<span class="pc bpc" id="L751" title="1 of 2 branches missed.">            if (myMap != null) {</span>
+<span class="fc" id="L752">                final Integer myResult = myMap.get(myDate);</span>
+<span class="fc" id="L753">                return PrometheusDataInstanceMap.ONE.equals(myResult);</span>
+            }
+<span class="nc" id="L755">            return false;</span>
+        }
+
+        /**
+         * Check availability of date for a security.
+         * @param pSecurity the security
+         * @param pDate the key to look up
+         * @return true/false
+         */
+        public boolean availableDate(final MoneyWiseSecurity pSecurity,
+                                     final OceanusDate pDate) {
+            /* Access the map */
+<span class="nc" id="L767">            final Map&lt;OceanusDate, Integer&gt; myMap = theMapOfMaps.get(pSecurity);</span>
+<span class="nc bnc" id="L768" title="All 2 branches missed.">            return myMap == null</span>
+<span class="nc bnc" id="L769" title="All 2 branches missed.">                    || myMap.get(pDate) == null;</span>
+        }
+
+        /**
+         * Obtain price for date.
+         * @param pSecurity the security
+         * @param pDate the date
+         * @return the latest price for the date.
+         */
+        public OceanusPrice getPriceForDate(final MoneyWiseAssetBase pSecurity,
+                                            final OceanusDate pDate) {
+            /* Access as security */
+<span class="nc" id="L781">            final MoneyWiseSecurity mySecurity = MoneyWiseSecurity.class.cast(pSecurity);</span>
+
+            /* Access list for security */
+<span class="nc" id="L784">            final MoneyWiseSecurityPriceList myList = theMapOfPrices.get(mySecurity);</span>
+<span class="nc bnc" id="L785" title="All 2 branches missed.">            if (myList != null) {</span>
+                /* Loop through the prices */
+<span class="nc" id="L787">                final Iterator&lt;MoneyWiseSecurityPrice&gt; myIterator = myList.iterator();</span>
+<span class="nc bnc" id="L788" title="All 2 branches missed.">                while (myIterator.hasNext()) {</span>
+<span class="nc" id="L789">                    final MoneyWiseSecurityPrice myCurr = myIterator.next();</span>
+
+                    /* Return this price if this is earlier or equal to the the date */
+<span class="nc bnc" id="L792" title="All 2 branches missed.">                    if (pDate.compareTo(myCurr.getDate()) &gt;= 0) {</span>
+<span class="nc" id="L793">                        return myCurr.getPrice();</span>
+                    }
+<span class="nc" id="L795">                }</span>
+            }
+
+            /* return single unit price */
+<span class="nc" id="L799">            final Currency myCurrency = mySecurity.getCurrency();</span>
+<span class="nc" id="L800">            return OceanusPrice.getWholeUnits(PrometheusDataInstanceMap.ONE, myCurrency);</span>
+        }
+
+        /**
+         * Obtain prices for range.
+         * @param pSecurity the security
+         * @param pRange the date range
+         * @return the two deep array of prices for the range.
+         */
+        public OceanusPrice[] getPricesForRange(final MoneyWiseSecurity pSecurity,
+                                                final OceanusDateRange pRange) {
+            /* Set price */
+<span class="nc" id="L812">            final Currency myCurrency = pSecurity.getCurrency();</span>
+<span class="nc" id="L813">            OceanusPrice myFirst = OceanusPrice.getWholeUnits(PrometheusDataInstanceMap.ONE, myCurrency);</span>
+<span class="nc" id="L814">            OceanusPrice myLatest = myFirst;</span>
+<span class="nc" id="L815">            final OceanusDate myStart = pRange.getStart();</span>
+
+            /* Access list for security */
+<span class="nc" id="L818">            final MoneyWiseSecurityPriceList myList = theMapOfPrices.get(pSecurity);</span>
+<span class="nc bnc" id="L819" title="All 2 branches missed.">            if (myList != null) {</span>
+                /* Loop through the prices */
+<span class="nc" id="L821">                final ListIterator&lt;MoneyWiseSecurityPrice&gt; myIterator = myList.listIterator(myList.size());</span>
+<span class="nc bnc" id="L822" title="All 2 branches missed.">                while (myIterator.hasPrevious()) {</span>
+<span class="nc" id="L823">                    final MoneyWiseSecurityPrice myCurr = myIterator.previous();</span>
+
+                    /* Check for the range of the date */
+<span class="nc" id="L826">                    final OceanusDate myDate = myCurr.getDate();</span>
+<span class="nc" id="L827">                    final int iComp = pRange.compareToDate(myDate);</span>
+
+                    /* If this is later than the range we are finished */
+<span class="nc bnc" id="L830" title="All 2 branches missed.">                    if (iComp &lt; 0) {</span>
+<span class="nc" id="L831">                        break;</span>
+                    }
+
+                    /* Record as best price */
+<span class="nc" id="L835">                    myLatest = myCurr.getPrice();</span>
+
+                    /* Record early price */
+<span class="nc bnc" id="L838" title="All 2 branches missed.">                    if (iComp &gt; 0</span>
+<span class="nc bnc" id="L839" title="All 2 branches missed.">                            || myDate.compareTo(myStart) == 0) {</span>
+<span class="nc" id="L840">                        myFirst = myLatest;</span>
+                    }
+<span class="nc" id="L842">                }</span>
+            }
+
+            /* Return the prices */
+<span class="nc" id="L846">            return new OceanusPrice[]</span>
+                    { myFirst, myLatest };
+        }
+
+        /**
+         * Obtain priceList cursor.
+         * @param pSecurity the security
+         * @return the latest price for the date.
+         */
+        public ListIterator&lt;MoneyWiseSecurityPrice&gt; priceIterator(final MoneyWiseSecurity pSecurity) {
+            /* Access list for currency */
+<span class="nc" id="L857">            final MoneyWiseSecurityPriceList myList = theMapOfPrices.get(pSecurity);</span>
+<span class="nc bnc" id="L858" title="All 2 branches missed.">            return myList != null</span>
+<span class="nc" id="L859">                    ? myList.listIterator(myList.size())</span>
+<span class="nc" id="L860">                    : null;</span>
+        }
+
+        /**
+         * Price List class.
+         */
+        private static final class MoneyWiseSecurityPriceList
+                implements MetisFieldItem, MetisDataList&lt;MoneyWiseSecurityPrice&gt; {
+            /**
+             * Report fields.
+             */
+<span class="fc" id="L871">            private static final MetisFieldSet&lt;MoneyWiseSecurityPriceList&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseSecurityPriceList.class);</span>
+
+            /*
+             * UnderlyingMap Field Id.
+             */
+            static {
+<span class="fc" id="L877">                FIELD_DEFS.declareLocalField(MetisDataResource.LIST_SIZE, MoneyWiseSecurityPriceList::size);</span>
+<span class="fc" id="L878">            }</span>
+
+            /**
+             * The list.
+             */
+            private final List&lt;MoneyWiseSecurityPrice&gt; theList;
+
+            /**
+             * The security.
+             */
+            private final MoneyWiseSecurity theSecurity;
+
+            /**
+             * Constructor.
+             * @param pSecurity the security
+             */
+<span class="fc" id="L894">            private MoneyWiseSecurityPriceList(final MoneyWiseSecurity pSecurity) {</span>
+<span class="fc" id="L895">                theSecurity = pSecurity;</span>
+<span class="fc" id="L896">                theList = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L897">            }</span>
+
+            @Override
+            public MetisFieldSet&lt;MoneyWiseSecurityPriceList&gt; getDataFieldSet() {
+<span class="nc" id="L901">                return FIELD_DEFS;</span>
+            }
+
+            @Override
+            public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L906">                return theSecurity.formatObject(pFormatter)</span>
+                        + &quot;(&quot;
+<span class="nc" id="L908">                        + size()</span>
+                        + &quot;)&quot;;
+            }
+
+            @Override
+            public String toString() {
+<span class="nc" id="L914">                return theSecurity.toString()</span>
+                        + &quot;(&quot;
+<span class="nc" id="L916">                        + size()</span>
+                        + &quot;)&quot;;
+            }
+
+            @Override
+            public List&lt;MoneyWiseSecurityPrice&gt; getUnderlyingList() {
+<span class="fc" id="L922">                return theList;</span>
+            }
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

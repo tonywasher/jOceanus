@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisXAnalysisReflectEnum.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.themis.xanalysis.solver.reflect</a> &gt; <span class="el_source">ThemisXAnalysisReflectEnum.java</span></div><h1>ThemisXAnalysisReflectEnum.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Themis: Java Project Framework
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.themis.xanalysis.solver.reflect;
+
+import com.github.javaparser.ast.NodeList;
+import com.github.javaparser.ast.body.EnumConstantDeclaration;
+import com.github.javaparser.ast.body.EnumDeclaration;
+import com.github.javaparser.ast.expr.SimpleName;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+
+import java.util.Optional;
+
+/**
+ * Resolved enum JavaParser representation.
+ */
+public class ThemisXAnalysisReflectEnum
+        extends EnumDeclaration {
+    /**
+     * The underlying class.
+     */
+    private final Class&lt;?&gt; theClass;
+
+    /**
+     * The fully qualified name.
+     */
+    private final String theFullName;
+
+    /**
+     * Constructor.
+     * @param pClazz the class definition.
+     * @throws OceanusException on error
+     */
+<span class="fc" id="L47">    ThemisXAnalysisReflectEnum(final Class&lt;?&gt; pClazz) throws OceanusException {</span>
+        /* Store the class */
+<span class="fc" id="L49">        theClass = pClazz;</span>
+
+        /* Store the fully qualified name */
+<span class="fc" id="L52">        theFullName = theClass.getCanonicalName();</span>
+
+        /* Set the name */
+<span class="fc" id="L55">        setName(new SimpleName(theClass.getSimpleName()));</span>
+
+        /* Set the modifiers */
+<span class="fc" id="L58">        setModifiers(ThemisXAnalysisReflectUtils.buildModifiers(theClass));</span>
+
+        /* Set implements lists */
+<span class="fc" id="L61">        setImplementedTypes(ThemisXAnalysisReflectUtils.buildImplements(theClass));</span>
+
+        /* Build the enum value list */
+<span class="fc" id="L64">        final NodeList&lt;EnumConstantDeclaration&gt; myEnums = new NodeList&lt;&gt;();</span>
+<span class="fc bfc" id="L65" title="All 2 branches covered.">        for (Enum&lt;?&gt; myValue : (Enum&lt;?&gt;[]) theClass.getEnumConstants()) {</span>
+<span class="fc" id="L66">            final EnumConstantDeclaration myEnum = new EnumConstantDeclaration(myValue.name());</span>
+<span class="fc" id="L67">            myEnums.add(myEnum);</span>
+        }
+<span class="fc" id="L69">        setEntries(myEnums);</span>
+
+        /* Set members */
+<span class="fc" id="L72">        setMembers(ThemisXAnalysisReflectMemberUtils.buildMembers(theClass));</span>
+<span class="fc" id="L73">    }</span>
+
+    @Override
+    public Optional&lt;String&gt; getFullyQualifiedName() {
+<span class="fc" id="L77">        return Optional.of(theFullName);</span>
+    }
+
+    @Override
+    public boolean isTopLevelType() {
+<span class="nc bnc" id="L82" title="All 2 branches missed.">        return !theClass.isMemberClass();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

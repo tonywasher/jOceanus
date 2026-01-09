@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BouncyKeyGenerator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.gordianknot.impl.bc</a> &gt; <span class="el_source">BouncyKeyGenerator.java</span></div><h1>BouncyKeyGenerator.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * GordianKnot: Security Suite
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.gordianknot.impl.bc;
+
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
+import net.sourceforge.joceanus.gordianknot.api.mac.GordianMac;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.key.GordianCoreKeyGenerator;
+import org.bouncycastle.crypto.CipherKeyGenerator;
+import org.bouncycastle.crypto.KeyGenerationParameters;
+
+import java.util.Random;
+
+/**
+ * Wrapper for BouncyCastle KeyGenerator.
+ * @param &lt;T&gt; the keyType
+ */
+public final class BouncyKeyGenerator&lt;T extends GordianKeySpec&gt;
+        extends GordianCoreKeyGenerator&lt;T&gt; {
+    /**
+     * The Key Generator.
+     */
+    private final CipherKeyGenerator theGenerator;
+
+    /**
+     * Constructor.
+     * @param pFactory the Security Factory
+     * @param pKeyType the keyType
+     * @param pGenerator the key generator
+     */
+    BouncyKeyGenerator(final GordianBaseFactory pFactory,
+                       final T pKeyType,
+                       final CipherKeyGenerator pGenerator) {
+        /* Initialise underlying class */
+<span class="fc" id="L50">        super(pFactory, pKeyType);</span>
+
+        /* Store parameters */
+<span class="fc" id="L53">        theGenerator = pGenerator;</span>
+
+        /* Initialise the generator */
+<span class="fc" id="L56">        final KeyGenerationParameters myParms = new KeyGenerationParameters(getRandom(), pKeyType.getKeyLength().getLength());</span>
+<span class="fc" id="L57">        theGenerator.init(myParms);</span>
+<span class="fc" id="L58">    }</span>
+
+    @Override
+    public BouncyKey&lt;T&gt; generateKey() {
+        /* Generate the new keyBytes */
+<span class="fc" id="L63">        final byte[] myKeyBytes = theGenerator.generateKey();</span>
+
+        /* Build the new key */
+<span class="fc" id="L66">        return buildKeyFromBytes(myKeyBytes);</span>
+    }
+
+    @Override
+    public BouncyKey&lt;T&gt; buildKeyFromBytes(final byte[] pBytes) {
+        /* Build the new key */
+<span class="fc" id="L72">        return new BouncyKey&lt;&gt;(getKeyType(), pBytes);</span>
+    }
+
+    @Override
+    public BouncyKey&lt;T&gt; generateKeyFromSecret(final byte[] pSecret,
+                                               final Random pSeededRandom) throws GordianException {
+<span class="fc" id="L78">        return (BouncyKey&lt;T&gt;) super.generateKeyFromSecret(pSecret, pSeededRandom);</span>
+    }
+
+    @Override
+    public void initMacKeyBytes(final GordianMac pMac,
+                                final byte[] pKeyBytes) throws GordianException {
+<span class="nc" id="L84">        pMac.initKeyBytes(pKeyBytes);</span>
+<span class="nc" id="L85">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,1124 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseQIFBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.quicken.file</a> &gt; <span class="el_source">MoneyWiseQIFBuilder.java</span></div><h1>MoneyWiseQIFBuilder.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.quicken.file;
+
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCash;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDeposit;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee.MoneyWisePayeeList;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePortfolio;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransCategory.MoneyWiseTransCategoryList;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransTag;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePayeeClass;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
+import net.sourceforge.joceanus.moneywise.quicken.definitions.MoneyWiseQIFType;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
+
+/**
+ * Builder class for QIF File.
+ */
+public class MoneyWiseQIFBuilder {
+    /**
+     * Quicken Transfer.
+     */
+    private static final String QIF_XFER = &quot;Transfer&quot;;
+
+    /**
+     * Quicken Transfer from.
+     */
+    private static final String QIF_XFERFROM = &quot; from &quot;;
+
+    /**
+     * Quicken Transfer to.
+     */
+    private static final String QIF_XFERTO = &quot; to &quot;;
+
+    /**
+     * The QIF File.
+     */
+    private final MoneyWiseQIFFile theFile;
+
+    /**
+     * The QIF File Type.
+     */
+    private final MoneyWiseQIFType theFileType;
+
+    /**
+     * The QIF Portfolio Builder.
+     */
+    private final MoneyWiseQIFPortfolioBuilder thePortBuilder;
+
+    /**
+     * The TaxMan payee.
+     */
+    private final MoneyWisePayee theTaxMan;
+
+    /**
+     * The TaxCredit category.
+     */
+    private final MoneyWiseTransCategory theTaxCategory;
+
+    /**
+     * The NatInsurance category.
+     */
+    private final MoneyWiseTransCategory theNatInsCategory;
+
+    /**
+     * The DeemedBenefit category.
+     */
+    private final MoneyWiseTransCategory theBenefitCategory;
+
+    /**
+     * The Withheld category.
+     */
+    private final MoneyWiseTransCategory theWithheldCategory;
+
+    /**
+     * The Opening category.
+     */
+    private final MoneyWiseTransCategory theOpeningCategory;
+
+    /**
+     * Constructor.
+     * @param pFile the QIF File
+     * @param pData the data
+     * @param pAnalysis the analysis
+     */
+    protected MoneyWiseQIFBuilder(final MoneyWiseQIFFile pFile,
+                                  final MoneyWiseDataSet pData,
+<span class="nc" id="L116">                                  final MoneyWiseAnalysis pAnalysis) {</span>
+        /* Store parameters */
+<span class="nc" id="L118">        theFile = pFile;</span>
+<span class="nc" id="L119">        theFileType = pFile.getFileType();</span>
+
+        /* Create portfolio builder */
+<span class="nc" id="L122">        thePortBuilder = new MoneyWiseQIFPortfolioBuilder(this, pData, pAnalysis);</span>
+
+        /* Store Tax account */
+<span class="nc" id="L125">        final MoneyWisePayeeList myPayees = pData.getPayees();</span>
+<span class="nc" id="L126">        theTaxMan = myPayees.getSingularClass(MoneyWisePayeeClass.TAXMAN);</span>
+
+        /* Store categories */
+<span class="nc" id="L129">        final MoneyWiseTransCategoryList myCategories = pData.getTransCategories();</span>
+<span class="nc" id="L130">        theTaxCategory = myCategories.getEventInfoCategory(MoneyWiseTransInfoClass.TAXCREDIT);</span>
+<span class="nc" id="L131">        theNatInsCategory = myCategories.getEventInfoCategory(MoneyWiseTransInfoClass.EMPLOYEENATINS);</span>
+<span class="nc" id="L132">        theBenefitCategory = myCategories.getEventInfoCategory(MoneyWiseTransInfoClass.DEEMEDBENEFIT);</span>
+<span class="nc" id="L133">        theWithheldCategory = myCategories.getEventInfoCategory(MoneyWiseTransInfoClass.WITHHELD);</span>
+<span class="nc" id="L134">        theOpeningCategory = myCategories.getSingularClass(MoneyWiseTransCategoryClass.OPENINGBALANCE);</span>
+<span class="nc" id="L135">    }</span>
+
+    /**
+     * Obtain the file.
+     * @return the file
+     */
+    protected MoneyWiseQIFFile getFile() {
+<span class="nc" id="L142">        return theFile;</span>
+    }
+
+    /**
+     * Obtain the tax category.
+     * @return the category
+     */
+    protected MoneyWiseQIFEventCategory getTaxCategory() {
+<span class="nc" id="L150">        return theFile.registerCategory(theTaxCategory);</span>
+    }
+
+    /**
+     * Obtain the tax payee.
+     * @return the payee
+     */
+    protected MoneyWiseQIFPayee getTaxMan() {
+<span class="nc" id="L158">        return theFile.registerPayee(theTaxMan);</span>
+    }
+
+    /**
+     * Process event.
+     * @param pTrans the transaction
+     */
+    protected void processEvent(final MoneyWiseTransaction pTrans) {
+        /* Access account and partner */
+<span class="nc" id="L167">        final MoneyWiseTransAsset myAccount = pTrans.getAccount();</span>
+<span class="nc" id="L168">        final MoneyWiseTransAsset myPartner = pTrans.getPartner();</span>
+<span class="nc" id="L169">        final boolean bFrom = pTrans.getDirection().isFrom();</span>
+
+        /* If this deals with a payee */
+<span class="nc bnc" id="L172" title="All 2 branches missed.">        if (myPartner instanceof MoneyWisePayee myPayee) {</span>
+            /* If this is expense */
+<span class="nc bnc" id="L174" title="All 2 branches missed.">            if (bFrom) {</span>
+                /* Process Debit Payee */
+<span class="nc" id="L176">                processDebitPayee(myPayee, myAccount, pTrans);</span>
+            } else {
+                /* Process Credit Payee */
+<span class="nc" id="L179">                processCreditPayee(myPayee, myAccount, pTrans);</span>
+            }
+
+<span class="nc bnc" id="L182" title="All 2 branches missed.">        } else if (bFrom) {</span>
+            /* else process Transfer Partner -&gt; Account */
+<span class="nc" id="L184">            processTransfer(myPartner, myAccount, pTrans);</span>
+        } else {
+            /* else process Transfer Account -&gt; Partner */
+<span class="nc" id="L187">            processTransfer(myAccount, myPartner, pTrans);</span>
+        }
+<span class="nc" id="L189">    }</span>
+
+    /**
+     * Process opening balance.
+     * @param pDeposit the deposit
+     * @param pStartDate the start date
+     * @param pBalance the opening balance
+     */
+    protected void processBalance(final MoneyWiseDeposit pDeposit,
+                                  final OceanusDate pStartDate,
+                                  final OceanusMoney pBalance) {
+        /* Access the Account details */
+<span class="nc" id="L201">        final MoneyWiseQIFAccountEvents myAccount = theFile.registerAccount(pDeposit);</span>
+
+        /* Create the event */
+<span class="nc" id="L204">        final MoneyWiseQIFEvent myEvent = new MoneyWiseQIFEvent(theFile, pStartDate);</span>
+<span class="nc" id="L205">        myEvent.recordAmount(pBalance);</span>
+
+        /* If we are using self-Opening balance */
+<span class="nc bnc" id="L208" title="All 2 branches missed.">        if (theFileType.selfOpeningBalance()) {</span>
+            /* Record self reference */
+<span class="nc" id="L210">            myEvent.recordAccount(myAccount.getAccount());</span>
+
+            /* else use an event */
+        } else {
+            /* Register category */
+<span class="nc" id="L215">            final MoneyWiseQIFEventCategory myCategory = theFile.registerCategory(theOpeningCategory);</span>
+<span class="nc" id="L216">            myEvent.recordCategory(myCategory);</span>
+        }
+
+        /* Add event to event list */
+<span class="nc" id="L220">        myAccount.addEvent(myEvent);</span>
+<span class="nc" id="L221">    }</span>
+
+    /**
+     * Process debit payee event.
+     * @param pPayee the payee
+     * @param pCredit the credit account
+     * @param pTrans the transaction
+     */
+    protected void processDebitPayee(final MoneyWisePayee pPayee,
+                                     final MoneyWiseTransAsset pCredit,
+                                     final MoneyWiseTransaction pTrans) {
+        /* If this is a cash recovery */
+<span class="nc bnc" id="L233" title="All 2 branches missed.">        if (pCredit instanceof MoneyWiseCash myCash</span>
+<span class="nc bnc" id="L234" title="All 2 branches missed.">                &amp;&amp; myCash.isAutoExpense()) {</span>
+            /* process as cash recovery */
+<span class="nc" id="L236">            processCashRecovery(pPayee, myCash, pTrans);</span>
+
+            /* If this is an income to a security */
+<span class="nc bnc" id="L239" title="All 2 branches missed.">        } else if (pCredit instanceof MoneyWiseSecurityHolding myHolding) {</span>
+            /* process as income to security */
+<span class="nc" id="L241">            thePortBuilder.processIncomeToSecurity(pPayee, myHolding, pTrans);</span>
+
+            /* If this is an income to a portfolio */
+<span class="nc bnc" id="L244" title="All 2 branches missed.">        } else if (pCredit instanceof MoneyWisePortfolio myPortfolio) {</span>
+            /* process as income to portfolio */
+<span class="nc" id="L246">            thePortBuilder.processIncomeToPortfolio(pPayee, myPortfolio, pTrans);</span>
+
+            /* else if we have additional detail */
+<span class="nc bnc" id="L249" title="All 2 branches missed.">        } else if (hasXtraDetail(pTrans)) {</span>
+            /* process as detailed income */
+<span class="nc" id="L251">            processDetailedIncome(pPayee, pCredit, pTrans);</span>
+
+        } else {
+            /* process as standard income */
+<span class="nc" id="L255">            processStandardIncome(pPayee, pCredit, pTrans);</span>
+        }
+<span class="nc" id="L257">    }</span>
+
+    /**
+     * Process credit payee event.
+     * @param pPayee the payee
+     * @param pDebit the debit account
+     * @param pTrans the transaction
+     */
+    protected void processCreditPayee(final MoneyWisePayee pPayee,
+                                      final MoneyWiseTransAsset pDebit,
+                                      final MoneyWiseTransaction pTrans) {
+        /* If this is a cash payment */
+<span class="nc bnc" id="L269" title="All 2 branches missed.">        if (pDebit instanceof MoneyWiseCash myCash</span>
+<span class="nc bnc" id="L270" title="All 2 branches missed.">                &amp;&amp; myCash.isAutoExpense()) {</span>
+            /* process as cash payment */
+<span class="nc" id="L272">            processCashPayment(pPayee, myCash, pTrans);</span>
+
+            /* If this is an expense from a security */
+<span class="nc bnc" id="L275" title="All 2 branches missed.">        } else if (pDebit instanceof MoneyWiseSecurityHolding myHolding) {</span>
+            /* process as expense from security */
+<span class="nc" id="L277">            thePortBuilder.processExpenseFromSecurity(pPayee, myHolding, pTrans);</span>
+
+            /* If this is an expense from a portfolio */
+<span class="nc bnc" id="L280" title="All 2 branches missed.">        } else if (pDebit instanceof MoneyWisePortfolio myPortfolio) {</span>
+            /* process as expense from portfolio */
+<span class="nc" id="L282">            thePortBuilder.processExpenseFromPortfolio(pPayee, myPortfolio, pTrans);</span>
+
+            /* else if we have additional detail */
+<span class="nc bnc" id="L285" title="All 2 branches missed.">        } else if (hasXtraDetail(pTrans)) {</span>
+            /* process as detailed income */
+<span class="nc" id="L287">            processDetailedExpense(pPayee, pDebit, pTrans);</span>
+
+        } else {
+            /* process as standard expense */
+<span class="nc" id="L291">            processStandardExpense(pPayee, pDebit, pTrans);</span>
+        }
+<span class="nc" id="L293">    }</span>
+
+    /**
+     * Process transfer event.
+     * @param pDebit the debit account
+     * @param pCredit the credit account
+     * @param pTrans the transaction
+     */
+    protected void processTransfer(final MoneyWiseTransAsset pDebit,
+                                   final MoneyWiseTransAsset pCredit,
+                                   final MoneyWiseTransaction pTrans) {
+        /* If this is a cash AutoExpense */
+<span class="nc bnc" id="L305" title="All 2 branches missed.">        if (pCredit instanceof MoneyWiseCash myCash</span>
+<span class="nc bnc" id="L306" title="All 2 branches missed.">                &amp;&amp; myCash.isAutoExpense()) {</span>
+            /* Process as standard expense */
+<span class="nc" id="L308">            processCashExpense(myCash, pDebit, pTrans);</span>
+
+            /* If this is a cash AutoReceipt */
+<span class="nc bnc" id="L311" title="All 2 branches missed.">        } else if (pDebit instanceof MoneyWiseCash myCash</span>
+<span class="nc bnc" id="L312" title="All 2 branches missed.">                &amp;&amp; myCash.isAutoExpense()) {</span>
+            /* Process as standard expense */
+<span class="nc" id="L314">            processCashReceipt(myCash, pCredit, pTrans);</span>
+
+            /* If this is a transfer from a security */
+<span class="nc bnc" id="L317" title="All 2 branches missed.">        } else if (pDebit instanceof MoneyWiseSecurityHolding myDebitHolding) {</span>
+            /* Handle transfer between securities */
+<span class="nc bnc" id="L319" title="All 2 branches missed.">            if (pCredit instanceof MoneyWiseSecurityHolding myCreditHolding) {</span>
+                /* process as transfer between securities */
+<span class="nc" id="L321">                thePortBuilder.processTransferBetweenSecurities(myDebitHolding, myCreditHolding, pTrans);</span>
+            } else {
+                /* process as transfer from security */
+<span class="nc" id="L324">                thePortBuilder.processTransferFromSecurity(myDebitHolding, pCredit, pTrans);</span>
+            }
+            /* If this is a transfer to a security */
+<span class="nc bnc" id="L327" title="All 2 branches missed.">        } else if (pCredit instanceof MoneyWiseSecurityHolding myCreditHolding) {</span>
+            /* process as transfer to security */
+<span class="nc" id="L329">            thePortBuilder.processTransferToSecurity(myCreditHolding, pDebit, pTrans);</span>
+
+            /* If this is a transfer from a portfolio */
+<span class="nc bnc" id="L332" title="All 2 branches missed.">        } else if (pDebit instanceof MoneyWisePortfolio myDebitPortfolio) {</span>
+            /* Handle transfer between securities */
+<span class="nc bnc" id="L334" title="All 2 branches missed.">            if (pCredit instanceof MoneyWisePortfolio myCreditPortfolio) {</span>
+                /* process as transfer between portfolios */
+<span class="nc" id="L336">                thePortBuilder.processTransferBetweenPortfolios(myDebitPortfolio, myCreditPortfolio, pTrans);</span>
+            } else {
+                /* process as transfer from portfolio */
+<span class="nc" id="L339">                thePortBuilder.processTransferFromPortfolio(myDebitPortfolio, pCredit, pTrans);</span>
+            }
+            /* If this is a transfer to a portfolio */
+<span class="nc bnc" id="L342" title="All 2 branches missed.">        } else if (pCredit instanceof MoneyWisePortfolio myCreditPortfolio) {</span>
+            /* process as transfer to portfolio */
+<span class="nc" id="L344">            thePortBuilder.processTransferToPortfolio(myCreditPortfolio, pDebit, pTrans);</span>
+
+        } else {
+            /* Access details */
+<span class="nc" id="L348">            final MoneyWiseTransCategoryClass myCat = Objects.requireNonNull(pTrans.getCategoryClass());</span>
+
+            /* Switch on category class */
+<span class="nc bnc" id="L351" title="All 5 branches missed.">            switch (myCat) {</span>
+                case CASHBACK:
+                    /* Process as cashBack payment */
+<span class="nc" id="L354">                    processCashBack(pDebit, pCredit, pTrans);</span>
+<span class="nc" id="L355">                    break;</span>
+                case INTEREST:
+                case LOYALTYBONUS:
+                    /* Process as interest payment */
+<span class="nc" id="L359">                    processInterest(pDebit, pCredit, pTrans);</span>
+<span class="nc" id="L360">                    break;</span>
+                case LOANINTERESTEARNED:
+                case RENTALINCOME:
+                case ROOMRENTALINCOME:
+                    /* Process as income from parent of the credit */
+<span class="nc" id="L365">                    processStandardIncome((MoneyWisePayee) pCredit.getParent(), pCredit, pTrans);</span>
+<span class="nc" id="L366">                    break;</span>
+                case WRITEOFF:
+                case LOANINTERESTCHARGED:
+                    /* Process as expense to parent of the credit (recursive) */
+<span class="nc" id="L370">                    processStandardExpense((MoneyWisePayee) pCredit.getParent(), pDebit, pTrans);</span>
+<span class="nc" id="L371">                    break;</span>
+                default:
+                    /* Process as standard transfer */
+<span class="nc" id="L374">                    processStandardTransfer(pDebit, pCredit, pTrans);</span>
+                    break;
+            }
+        }
+<span class="nc" id="L378">    }</span>
+
+    /**
+     * Does the transaction have extra detail.
+     * @param pTrans the transaction
+     * @return true/false
+     */
+    protected static boolean hasXtraDetail(final MoneyWiseTransaction pTrans) {
+<span class="nc bnc" id="L386" title="All 2 branches missed.">        if (pTrans.getTaxCredit() != null) {</span>
+<span class="nc" id="L387">            return true;</span>
+        }
+<span class="nc bnc" id="L389" title="All 2 branches missed.">        if (pTrans.getEmployeeNatIns() != null) {</span>
+<span class="nc" id="L390">            return true;</span>
+        }
+<span class="nc bnc" id="L392" title="All 2 branches missed.">        if (pTrans.getDeemedBenefit() != null) {</span>
+<span class="nc" id="L393">            return true;</span>
+        }
+<span class="nc bnc" id="L395" title="All 2 branches missed.">        return pTrans.getWithheld() != null;</span>
+    }
+
+    /**
+     * Process standard income.
+     * @param pPayee the payee
+     * @param pCredit the credit account
+     * @param pTrans the transaction
+     */
+    protected void processStandardIncome(final MoneyWisePayee pPayee,
+                                         final MoneyWiseTransAsset pCredit,
+                                         final MoneyWiseTransaction pTrans) {
+        /* Access the Payee details */
+<span class="nc" id="L408">        final MoneyWiseQIFPayee myPayee = theFile.registerPayee(pPayee);</span>
+
+        /* Access the Category details */
+<span class="nc" id="L411">        final MoneyWiseQIFEventCategory myCategory = theFile.registerCategory(pTrans.getCategory());</span>
+
+        /* Access the Account details */
+<span class="nc" id="L414">        final MoneyWiseQIFAccountEvents myAccount = theFile.registerAccount(pCredit);</span>
+
+        /* Obtain classes */
+<span class="nc" id="L417">        final List&lt;MoneyWiseQIFClass&gt; myList = getTransactionClasses(pTrans);</span>
+
+        /* Create a new event */
+<span class="nc" id="L420">        final MoneyWiseQIFEvent myEvent = new MoneyWiseQIFEvent(theFile, pTrans);</span>
+<span class="nc" id="L421">        myEvent.recordAmount(pTrans.getAmount());</span>
+<span class="nc" id="L422">        myEvent.recordPayee(myPayee);</span>
+<span class="nc" id="L423">        myEvent.recordCategory(myCategory, myList);</span>
+
+        /* Add event to event list */
+<span class="nc" id="L426">        myAccount.addEvent(myEvent);</span>
+<span class="nc" id="L427">    }</span>
+
+    /**
+     * Process detailed income.
+     * @param pPayee the payee
+     * @param pCredit the credit account
+     * @param pTrans the transaction
+     */
+    protected void processDetailedIncome(final MoneyWisePayee pPayee,
+                                         final MoneyWiseTransAsset pCredit,
+                                         final MoneyWiseTransaction pTrans) {
+        /* Access the Payee details */
+<span class="nc" id="L439">        final MoneyWiseQIFPayee myPayee = theFile.registerPayee(pPayee);</span>
+<span class="nc" id="L440">        final MoneyWiseQIFPayee myTaxPayee = theFile.registerPayee(theTaxMan);</span>
+
+        /* Access the Category details */
+<span class="nc" id="L443">        final MoneyWiseQIFEventCategory myCategory = theFile.registerCategory(pTrans.getCategory());</span>
+
+        /* Access the Account details */
+<span class="nc" id="L446">        final MoneyWiseQIFAccountEvents myAccount = theFile.registerAccount(pCredit);</span>
+
+        /* Obtain classes */
+<span class="nc" id="L449">        final List&lt;MoneyWiseQIFClass&gt; myList = getTransactionClasses(pTrans);</span>
+
+        /* Obtain basic amount */
+<span class="nc" id="L452">        OceanusMoney myAmount = pTrans.getAmount();</span>
+
+        /* Create a new event */
+<span class="nc" id="L455">        final MoneyWiseQIFEvent myEvent = new MoneyWiseQIFEvent(theFile, pTrans);</span>
+<span class="nc" id="L456">        myEvent.recordPayee(myPayee);</span>
+<span class="nc" id="L457">        myEvent.recordAmount(myAmount);</span>
+
+        /* Add Split event */
+<span class="nc" id="L460">        myAmount = new OceanusMoney(myAmount);</span>
+<span class="nc" id="L461">        myEvent.recordSplitRecord(myCategory, myList, myAmount, myPayee.getName());</span>
+
+        /* Handle Tax Credit */
+<span class="nc" id="L464">        OceanusMoney myTaxCredit = pTrans.getTaxCredit();</span>
+<span class="nc bnc" id="L465" title="All 2 branches missed.">        if (myTaxCredit != null) {</span>
+            /* Add to amount */
+<span class="nc" id="L467">            myAmount.addAmount(myTaxCredit);</span>
+<span class="nc" id="L468">            myTaxCredit = new OceanusMoney(myTaxCredit);</span>
+<span class="nc" id="L469">            myTaxCredit.negate();</span>
+
+            /* Access the Category details */
+<span class="nc" id="L472">            final MoneyWiseQIFEventCategory myTaxCategory = theFile.registerCategory(theTaxCategory);</span>
+
+            /* Add Split event */
+<span class="nc" id="L475">            myEvent.recordSplitRecord(myTaxCategory, myTaxCredit, myTaxPayee.getName());</span>
+        }
+
+        /* Handle National Insurance */
+<span class="nc" id="L479">        OceanusMoney myNatIns = pTrans.getEmployeeNatIns();</span>
+<span class="nc bnc" id="L480" title="All 2 branches missed.">        if (myNatIns != null) {</span>
+            /* Add to amount */
+<span class="nc" id="L482">            myAmount.addAmount(myNatIns);</span>
+<span class="nc" id="L483">            myNatIns = new OceanusMoney(myNatIns);</span>
+<span class="nc" id="L484">            myNatIns.negate();</span>
+
+            /* Access the Category details */
+<span class="nc" id="L487">            final MoneyWiseQIFEventCategory myInsCategory = theFile.registerCategory(theNatInsCategory);</span>
+
+            /* Add Split event */
+<span class="nc" id="L490">            myEvent.recordSplitRecord(myInsCategory, myNatIns, myTaxPayee.getName());</span>
+        }
+
+        /* Handle Deemed Benefit */
+<span class="nc" id="L494">        OceanusMoney myBenefit = pTrans.getDeemedBenefit();</span>
+<span class="nc bnc" id="L495" title="All 2 branches missed.">        if (myBenefit != null) {</span>
+            /* Access the Category details */
+<span class="nc" id="L497">            final MoneyWiseQIFEventCategory myBenCategory = theFile.registerCategory(theBenefitCategory);</span>
+
+            /* Add Split event */
+<span class="nc" id="L500">            myEvent.recordSplitRecord(myBenCategory, myBenefit, myPayee.getName());</span>
+
+            /* Add to amount */
+<span class="nc" id="L503">            myBenefit = new OceanusMoney(myBenefit);</span>
+<span class="nc" id="L504">            myBenefit.negate();</span>
+
+            /* Access the Category details */
+<span class="nc" id="L507">            final MoneyWiseQIFEventCategory myWithCategory = theFile.registerCategory(theBenefitCategory);</span>
+
+            /* Add Split event */
+<span class="nc" id="L510">            myEvent.recordSplitRecord(myWithCategory, myBenefit, myPayee.getName());</span>
+        }
+
+        /* Handle Withheld */
+<span class="nc" id="L514">        OceanusMoney myWithheld = pTrans.getWithheld();</span>
+<span class="nc bnc" id="L515" title="All 2 branches missed.">        if (myWithheld != null) {</span>
+            /* Add to amount */
+<span class="nc" id="L517">            myAmount.addAmount(myWithheld);</span>
+<span class="nc" id="L518">            myWithheld = new OceanusMoney(myWithheld);</span>
+<span class="nc" id="L519">            myWithheld.negate();</span>
+
+            /* Access the Category details */
+<span class="nc" id="L522">            final MoneyWiseQIFEventCategory myWithCategory = theFile.registerCategory(theWithheldCategory);</span>
+
+            /* Add Split event */
+<span class="nc" id="L525">            myEvent.recordSplitRecord(myWithCategory, myWithheld, myPayee.getName());</span>
+        }
+
+        /* Add event to event list */
+<span class="nc" id="L529">        myAccount.addEvent(myEvent);</span>
+<span class="nc" id="L530">    }</span>
+
+    /**
+     * Process standard expense.
+     * @param pPayee the payee
+     * @param pDebit the debit account
+     * @param pTrans the transaction
+     */
+    protected void processStandardExpense(final MoneyWisePayee pPayee,
+                                          final MoneyWiseTransAsset pDebit,
+                                          final MoneyWiseTransaction pTrans) {
+        /* Access the Payee details */
+<span class="nc" id="L542">        final MoneyWiseQIFPayee myPayee = theFile.registerPayee(pPayee);</span>
+
+        /* Access the Category details */
+<span class="nc" id="L545">        final MoneyWiseQIFEventCategory myCategory = theFile.registerCategory(pTrans.getCategory());</span>
+
+        /* Access the Account details */
+<span class="nc" id="L548">        final MoneyWiseQIFAccountEvents myAccount = theFile.registerAccount(pDebit);</span>
+
+        /* Obtain classes */
+<span class="nc" id="L551">        final List&lt;MoneyWiseQIFClass&gt; myList = getTransactionClasses(pTrans);</span>
+
+        /* Access the amount */
+<span class="nc" id="L554">        final OceanusMoney myAmount = new OceanusMoney(pTrans.getAmount());</span>
+<span class="nc" id="L555">        myAmount.negate();</span>
+
+        /* Create a new event */
+<span class="nc" id="L558">        final MoneyWiseQIFEvent myEvent = new MoneyWiseQIFEvent(theFile, pTrans);</span>
+<span class="nc" id="L559">        myEvent.recordAmount(myAmount);</span>
+<span class="nc" id="L560">        myEvent.recordPayee(myPayee);</span>
+<span class="nc" id="L561">        myEvent.recordCategory(myCategory, myList);</span>
+
+        /* Add event to event list */
+<span class="nc" id="L564">        myAccount.addEvent(myEvent);</span>
+<span class="nc" id="L565">    }</span>
+
+    /**
+     * Process detailed expense.
+     * @param pPayee the payee
+     * @param pDebit the debit account
+     * @param pTrans the expense
+     */
+    protected void processDetailedExpense(final MoneyWisePayee pPayee,
+                                          final MoneyWiseTransAsset pDebit,
+                                          final MoneyWiseTransaction pTrans) {
+        /* Access the Payee details */
+<span class="nc" id="L577">        final MoneyWiseQIFPayee myPayee = theFile.registerPayee(pPayee);</span>
+<span class="nc" id="L578">        final MoneyWiseQIFPayee myTaxPayee = theFile.registerPayee(theTaxMan);</span>
+
+        /* Access the Category details */
+<span class="nc" id="L581">        final MoneyWiseQIFEventCategory myCategory = theFile.registerCategory(pTrans.getCategory());</span>
+
+        /* Access the Account details */
+<span class="nc" id="L584">        final MoneyWiseQIFAccountEvents myAccount = theFile.registerAccount(pDebit);</span>
+
+        /* Obtain classes */
+<span class="nc" id="L587">        final List&lt;MoneyWiseQIFClass&gt; myList = getTransactionClasses(pTrans);</span>
+
+        /* Obtain basic amount */
+<span class="nc" id="L590">        OceanusMoney myAmount = new OceanusMoney(pTrans.getAmount());</span>
+<span class="nc" id="L591">        myAmount.negate();</span>
+
+        /* Create a new event */
+<span class="nc" id="L594">        final MoneyWiseQIFEvent myEvent = new MoneyWiseQIFEvent(theFile, pTrans);</span>
+<span class="nc" id="L595">        myEvent.recordPayee(myPayee);</span>
+<span class="nc" id="L596">        myEvent.recordAmount(myAmount);</span>
+
+        /* Add Split event */
+<span class="nc" id="L599">        myAmount = new OceanusMoney(myAmount);</span>
+<span class="nc" id="L600">        myEvent.recordSplitRecord(myCategory, myList, myAmount, myPayee.getName());</span>
+
+        /* Handle Tax Credit */
+<span class="nc" id="L603">        final OceanusMoney myTaxCredit = pTrans.getTaxCredit();</span>
+<span class="nc bnc" id="L604" title="All 2 branches missed.">        if (myTaxCredit != null) {</span>
+            /* Subtract from amount */
+<span class="nc" id="L606">            myAmount.subtractAmount(myTaxCredit);</span>
+
+            /* Access the Category details */
+<span class="nc" id="L609">            final MoneyWiseQIFEventCategory myTaxCategory = theFile.registerCategory(theTaxCategory);</span>
+
+            /* Add Split event */
+<span class="nc" id="L612">            myEvent.recordSplitRecord(myTaxCategory, myTaxCredit, myTaxPayee.getName());</span>
+        }
+
+        /* Handle National Insurance */
+<span class="nc" id="L616">        final OceanusMoney myNatIns = pTrans.getEmployeeNatIns();</span>
+<span class="nc bnc" id="L617" title="All 2 branches missed.">        if (myNatIns != null) {</span>
+            /* Subtract from amount */
+<span class="nc" id="L619">            myAmount.subtractAmount(myNatIns);</span>
+
+            /* Access the Category details */
+<span class="nc" id="L622">            final MoneyWiseQIFEventCategory myInsCategory = theFile.registerCategory(theNatInsCategory);</span>
+
+            /* Add Split event */
+<span class="nc" id="L625">            myEvent.recordSplitRecord(myInsCategory, myNatIns, myTaxPayee.getName());</span>
+        }
+
+        /* Handle Deemed Benefit */
+<span class="nc" id="L629">        final OceanusMoney myBenefit = pTrans.getDeemedBenefit();</span>
+<span class="nc bnc" id="L630" title="All 2 branches missed.">        if (myBenefit != null) {</span>
+            /* Subtract from amount */
+<span class="nc" id="L632">            myAmount.subtractAmount(myBenefit);</span>
+
+            /* Access the Category details */
+<span class="nc" id="L635">            final MoneyWiseQIFEventCategory myBenCategory = theFile.registerCategory(theBenefitCategory);</span>
+
+            /* Add Split event */
+<span class="nc" id="L638">            myEvent.recordSplitRecord(myBenCategory, myBenefit, myPayee.getName());</span>
+        }
+
+        /* Add event to event list */
+<span class="nc" id="L642">        myAccount.addEvent(myEvent);</span>
+<span class="nc" id="L643">    }</span>
+
+    /**
+     * Process standard transfer.
+     * @param pDebit the debit account
+     * @param pCredit the credit account
+     * @param pTrans the transaction
+     */
+    protected void processStandardTransfer(final MoneyWiseTransAsset pDebit,
+                                           final MoneyWiseTransAsset pCredit,
+                                           final MoneyWiseTransaction pTrans) {
+        /* Access details */
+<span class="nc" id="L655">        final OceanusMoney myAmount = pTrans.getAmount();</span>
+
+        /* Access the Account details */
+<span class="nc" id="L658">        final MoneyWiseQIFAccountEvents myDebitAccount = theFile.registerAccount(pDebit);</span>
+<span class="nc" id="L659">        final MoneyWiseQIFAccountEvents myCreditAccount = theFile.registerAccount(pCredit);</span>
+
+        /* Obtain classes */
+<span class="nc" id="L662">        final List&lt;MoneyWiseQIFClass&gt; myList = getTransactionClasses(pTrans);</span>
+
+        /* Create a new event */
+<span class="nc" id="L665">        MoneyWiseQIFEvent myEvent = new MoneyWiseQIFEvent(theFile, pTrans);</span>
+<span class="nc" id="L666">        myEvent.recordAmount(myAmount);</span>
+<span class="nc" id="L667">        myEvent.recordAccount(myDebitAccount.getAccount(), myList);</span>
+
+        /* Build payee description */
+<span class="nc" id="L670">        myEvent.recordPayee(buildXferFromPayee(pDebit));</span>
+
+        /* Add event to event list */
+<span class="nc" id="L673">        myCreditAccount.addEvent(myEvent);</span>
+
+        /* Build out amount */
+<span class="nc" id="L676">        final OceanusMoney myOutAmount = new OceanusMoney(myAmount);</span>
+<span class="nc" id="L677">        myOutAmount.negate();</span>
+
+        /* Create a new event */
+<span class="nc" id="L680">        myEvent = new MoneyWiseQIFEvent(theFile, pTrans);</span>
+<span class="nc" id="L681">        myEvent.recordAmount(myOutAmount);</span>
+<span class="nc" id="L682">        myEvent.recordAccount(myCreditAccount.getAccount(), myList);</span>
+
+        /* Build payee description */
+<span class="nc" id="L685">        myEvent.recordPayee(buildXferToPayee(pCredit));</span>
+
+        /* Add event to event list */
+<span class="nc" id="L688">        myDebitAccount.addEvent(myEvent);</span>
+<span class="nc" id="L689">    }</span>
+
+    /**
+     * Build xferFrom payee line.
+     * @param pPartner the Transfer Partner
+     * @return the line
+     */
+    protected String buildXferFromPayee(final MoneyWiseTransAsset pPartner) {
+        /* Determine mode */
+<span class="nc" id="L698">        final boolean useSimpleTransfer = theFileType.useSimpleTransfer();</span>
+
+        /* Build payee description */
+<span class="nc" id="L701">        final StringBuilder myBuilder = new StringBuilder();</span>
+<span class="nc" id="L702">        myBuilder.append(QIF_XFER);</span>
+<span class="nc bnc" id="L703" title="All 2 branches missed.">        if (!useSimpleTransfer) {</span>
+<span class="nc" id="L704">            myBuilder.append(QIF_XFERFROM);</span>
+<span class="nc" id="L705">            myBuilder.append(pPartner.getName());</span>
+        }
+
+        /* Return the payee */
+<span class="nc" id="L709">        return myBuilder.toString();</span>
+    }
+
+    /**
+     * Build xferFrom payee line.
+     * @param pPartner the Transfer Partner
+     * @return the line
+     */
+    protected String buildXferToPayee(final MoneyWiseTransAsset pPartner) {
+        /* Determine mode */
+<span class="nc" id="L719">        final boolean useSimpleTransfer = theFileType.useSimpleTransfer();</span>
+
+        /* Build payee description */
+<span class="nc" id="L722">        final StringBuilder myBuilder = new StringBuilder();</span>
+<span class="nc" id="L723">        myBuilder.append(QIF_XFER);</span>
+<span class="nc bnc" id="L724" title="All 2 branches missed.">        if (!useSimpleTransfer) {</span>
+<span class="nc" id="L725">            myBuilder.append(QIF_XFERTO);</span>
+<span class="nc" id="L726">            myBuilder.append(pPartner.getName());</span>
+        }
+
+        /* Return the payee */
+<span class="nc" id="L730">        return myBuilder.toString();</span>
+    }
+
+    /**
+     * Process interest.
+     * @param pDebit the debit account
+     * @param pCredit the credit account
+     * @param pTrans the transaction
+     */
+    protected void processInterest(final MoneyWiseTransAsset pDebit,
+                                   final MoneyWiseTransAsset pCredit,
+                                   final MoneyWiseTransaction pTrans) {
+        /* Access details */
+<span class="nc" id="L743">        OceanusMoney myAmount = pTrans.getAmount();</span>
+
+        /* Determine mode */
+<span class="nc" id="L746">        final boolean isRecursive = pDebit.equals(pCredit);</span>
+<span class="nc" id="L747">        final boolean hideBalancingTransfer = theFileType.hideBalancingSplitTransfer();</span>
+<span class="nc" id="L748">        final boolean hasXtraDetail = hasXtraDetail(pTrans);</span>
+
+        /* Access the Account details */
+<span class="nc" id="L751">        final MoneyWiseQIFAccountEvents myIntAccount = theFile.registerAccount(pDebit);</span>
+
+        /* Access the payee */
+<span class="nc" id="L754">        final MoneyWiseQIFPayee myPayee = theFile.registerPayee((MoneyWisePayee) pDebit.getParent());</span>
+
+        /* Access the category */
+<span class="nc" id="L757">        final MoneyWiseQIFEventCategory myCategory = theFile.registerCategory(pTrans.getCategory());</span>
+
+        /* Obtain classes */
+<span class="nc" id="L760">        final List&lt;MoneyWiseQIFClass&gt; myList = getTransactionClasses(pTrans);</span>
+
+        /* If this is a simple interest */
+<span class="nc bnc" id="L763" title="All 4 branches missed.">        if (isRecursive &amp;&amp; !hasXtraDetail) {</span>
+            /* Create a new event */
+<span class="nc" id="L765">            final MoneyWiseQIFEvent myEvent = new MoneyWiseQIFEvent(theFile, pTrans);</span>
+
+            /* Build simple event and add it */
+<span class="nc" id="L768">            myEvent.recordAmount(myAmount);</span>
+<span class="nc" id="L769">            myEvent.recordPayee(myPayee);</span>
+<span class="nc" id="L770">            myEvent.recordCategory(myCategory, myList);</span>
+
+            /* Add event to event list */
+<span class="nc" id="L773">            myIntAccount.addEvent(myEvent);</span>
+
+            /* Else we need splits */
+<span class="nc" id="L776">        } else {</span>
+            /* Create a new event */
+<span class="nc" id="L778">            final MoneyWiseQIFEvent myEvent = new MoneyWiseQIFEvent(theFile, pTrans);</span>
+
+            /* Record basic details */
+<span class="nc bnc" id="L781" title="All 2 branches missed.">            myEvent.recordAmount(isRecursive</span>
+<span class="nc" id="L782">                    ? myAmount</span>
+<span class="nc" id="L783">                    : new OceanusMoney());</span>
+<span class="nc" id="L784">            myEvent.recordPayee(myPayee);</span>
+
+            /* Add Split event */
+<span class="nc" id="L787">            myAmount = new OceanusMoney(myAmount);</span>
+<span class="nc" id="L788">            myEvent.recordSplitRecord(myCategory, myList, myAmount, myPayee.getName());</span>
+
+            /* Handle Tax Credit */
+<span class="nc" id="L791">            OceanusMoney myTaxCredit = pTrans.getTaxCredit();</span>
+<span class="nc bnc" id="L792" title="All 2 branches missed.">            if (myTaxCredit != null) {</span>
+                /* Access tax payee */
+<span class="nc" id="L794">                final MoneyWiseQIFPayee myTaxPayee = theFile.registerPayee(theTaxMan);</span>
+
+                /* Add to amount */
+<span class="nc" id="L797">                myAmount.addAmount(myTaxCredit);</span>
+<span class="nc" id="L798">                myTaxCredit = new OceanusMoney(myTaxCredit);</span>
+<span class="nc" id="L799">                myTaxCredit.negate();</span>
+
+                /* Access the Category details */
+<span class="nc" id="L802">                final MoneyWiseQIFEventCategory myTaxCategory = theFile.registerCategory(theTaxCategory);</span>
+
+                /* Add Split event */
+<span class="nc" id="L805">                myEvent.recordSplitRecord(myTaxCategory, myTaxCredit, myTaxPayee.getName());</span>
+            }
+
+            /* Handle Withheld */
+<span class="nc" id="L809">            OceanusMoney myWithheld = pTrans.getWithheld();</span>
+<span class="nc bnc" id="L810" title="All 2 branches missed.">            if (myWithheld != null) {</span>
+                /* Add to amount */
+<span class="nc" id="L812">                myAmount.addAmount(myWithheld);</span>
+<span class="nc" id="L813">                myWithheld = new OceanusMoney(myWithheld);</span>
+<span class="nc" id="L814">                myWithheld.negate();</span>
+
+                /* Access the Category details */
+<span class="nc" id="L817">                final MoneyWiseQIFEventCategory myWithCategory = theFile.registerCategory(theWithheldCategory);</span>
+
+                /* Add Split event */
+<span class="nc" id="L820">                myEvent.recordSplitRecord(myWithCategory, myWithheld, myPayee.getName());</span>
+            }
+
+            /* Handle Non-Recursion */
+<span class="nc bnc" id="L824" title="All 2 branches missed.">            if (!isRecursive) {</span>
+                /* Add to amount */
+<span class="nc" id="L826">                final OceanusMoney myOutAmount = new OceanusMoney(pTrans.getAmount());</span>
+<span class="nc" id="L827">                myOutAmount.negate();</span>
+
+                /* Access the Account details */
+<span class="nc" id="L830">                final MoneyWiseQIFAccountEvents myAccount = theFile.registerAccount(pCredit);</span>
+
+                /* Add Split event */
+<span class="nc" id="L833">                myEvent.recordSplitRecord(myAccount.getAccount(), myOutAmount, null);</span>
+            }
+
+            /* Add event to event list */
+<span class="nc" id="L837">            myIntAccount.addEvent(myEvent);</span>
+        }
+
+        /* If we need a balancing transfer */
+<span class="nc bnc" id="L841" title="All 4 branches missed.">        if (!isRecursive &amp;&amp; !hideBalancingTransfer) {</span>
+            /* Access the Account details */
+<span class="nc" id="L843">            final MoneyWiseQIFAccountEvents myAccount = theFile.registerAccount(pCredit);</span>
+
+            /* Create a new event */
+<span class="nc" id="L846">            final MoneyWiseQIFEvent myEvent = new MoneyWiseQIFEvent(theFile, pTrans);</span>
+
+            /* Build simple event and add it */
+<span class="nc" id="L849">            myEvent.recordAmount(pTrans.getAmount());</span>
+<span class="nc" id="L850">            myEvent.recordAccount(myIntAccount.getAccount(), myList);</span>
+
+            /* Build payee description */
+<span class="nc" id="L853">            myEvent.recordPayee(buildXferFromPayee(pDebit));</span>
+
+            /* Add event to event list */
+<span class="nc" id="L856">            myAccount.addEvent(myEvent);</span>
+        }
+<span class="nc" id="L858">    }</span>
+
+    /**
+     * Process cashBack.
+     * @param pDebit the debit account
+     * @param pCredit the credit account
+     * @param pTrans the transaction
+     */
+    protected void processCashBack(final MoneyWiseTransAsset pDebit,
+                                   final MoneyWiseTransAsset pCredit,
+                                   final MoneyWiseTransaction pTrans) {
+        /* Access details */
+<span class="nc" id="L870">        OceanusMoney myAmount = pTrans.getAmount();</span>
+
+        /* Determine mode */
+<span class="nc" id="L873">        final boolean isRecursive = pDebit.equals(pCredit);</span>
+<span class="nc" id="L874">        final boolean hideBalancingTransfer = theFileType.hideBalancingSplitTransfer();</span>
+
+        /* Access the Account details */
+<span class="nc" id="L877">        final MoneyWiseQIFAccountEvents myBaseAccount = theFile.registerAccount(pDebit);</span>
+
+        /* Access the payee */
+<span class="nc" id="L880">        final MoneyWiseQIFPayee myPayee = theFile.registerPayee((MoneyWisePayee) pDebit.getParent());</span>
+
+        /* Access the category */
+<span class="nc" id="L883">        final MoneyWiseQIFEventCategory myCategory = theFile.registerCategory(pTrans.getCategory());</span>
+
+        /* Obtain classes */
+<span class="nc" id="L886">        final List&lt;MoneyWiseQIFClass&gt; myList = getTransactionClasses(pTrans);</span>
+
+        /* If this is a simple cashBack */
+<span class="nc bnc" id="L889" title="All 2 branches missed.">        if (isRecursive) {</span>
+            /* Create a new event */
+<span class="nc" id="L891">            final MoneyWiseQIFEvent myEvent = new MoneyWiseQIFEvent(theFile, pTrans);</span>
+
+            /* Build simple event and add it */
+<span class="nc" id="L894">            myEvent.recordAmount(myAmount);</span>
+<span class="nc" id="L895">            myEvent.recordPayee(myPayee);</span>
+<span class="nc" id="L896">            myEvent.recordCategory(myCategory, myList);</span>
+
+            /* Add event to event list */
+<span class="nc" id="L899">            myBaseAccount.addEvent(myEvent);</span>
+
+            /* Else we need splits */
+<span class="nc" id="L902">        } else {</span>
+            /* Create a new event */
+<span class="nc" id="L904">            final MoneyWiseQIFEvent myEvent = new MoneyWiseQIFEvent(theFile, pTrans);</span>
+
+            /* Record basic details */
+<span class="nc" id="L907">            myEvent.recordAmount(new OceanusMoney());</span>
+<span class="nc" id="L908">            myEvent.recordPayee(myPayee);</span>
+
+            /* Add Split event */
+<span class="nc" id="L911">            myAmount = new OceanusMoney(myAmount);</span>
+<span class="nc" id="L912">            myEvent.recordSplitRecord(myCategory, myList, myAmount, myPayee.getName());</span>
+
+            /* Add to amount */
+<span class="nc" id="L915">            final OceanusMoney myOutAmount = new OceanusMoney(pTrans.getAmount());</span>
+<span class="nc" id="L916">            myOutAmount.negate();</span>
+
+            /* Access the Account details */
+<span class="nc" id="L919">            final MoneyWiseQIFAccountEvents myAccount = theFile.registerAccount(pCredit);</span>
+
+            /* Add Split event */
+<span class="nc" id="L922">            myEvent.recordSplitRecord(myAccount.getAccount(), myOutAmount, null);</span>
+
+            /* Add event to event list */
+<span class="nc" id="L925">            myBaseAccount.addEvent(myEvent);</span>
+        }
+
+        /* If we need a balancing transfer */
+<span class="nc bnc" id="L929" title="All 4 branches missed.">        if (!isRecursive &amp;&amp; !hideBalancingTransfer) {</span>
+            /* Access the Account details */
+<span class="nc" id="L931">            final MoneyWiseQIFAccountEvents myAccount = theFile.registerAccount(pCredit);</span>
+
+            /* Create a new event */
+<span class="nc" id="L934">            final MoneyWiseQIFEvent myEvent = new MoneyWiseQIFEvent(theFile, pTrans);</span>
+
+            /* Build simple event and add it */
+<span class="nc" id="L937">            myEvent.recordAmount(pTrans.getAmount());</span>
+<span class="nc" id="L938">            myEvent.recordAccount(myBaseAccount.getAccount(), myList);</span>
+
+            /* Build payee description */
+<span class="nc" id="L941">            myEvent.recordPayee(buildXferFromPayee(pDebit));</span>
+
+            /* Add event to event list */
+<span class="nc" id="L944">            myAccount.addEvent(myEvent);</span>
+        }
+<span class="nc" id="L946">    }</span>
+
+    /**
+     * Process cash recovery.
+     * @param pPayee the payee
+     * @param pCash the cash account
+     * @param pTrans the transaction
+     */
+    protected void processCashRecovery(final MoneyWisePayee pPayee,
+                                       final MoneyWiseCash pCash,
+                                       final MoneyWiseTransaction pTrans) {
+        /* Access the Payee details */
+<span class="nc" id="L958">        final MoneyWiseQIFPayee myPayee = theFile.registerPayee(pPayee);</span>
+
+        /* Access the Category details */
+<span class="nc" id="L961">        final MoneyWiseQIFEventCategory myCategory = theFile.registerCategory(pTrans.getCategory());</span>
+<span class="nc" id="L962">        final MoneyWiseQIFEventCategory myAutoCategory = theFile.registerCategory(pCash.getAutoExpense());</span>
+
+        /* Access the Account details */
+<span class="nc" id="L965">        final MoneyWiseQIFAccountEvents myAccount = theFile.registerAccount(pCash);</span>
+
+        /* Obtain classes */
+<span class="nc" id="L968">        final List&lt;MoneyWiseQIFClass&gt; myList = getTransactionClasses(pTrans);</span>
+
+        /* Access the amount */
+<span class="nc" id="L971">        final OceanusMoney myInAmount = pTrans.getAmount();</span>
+<span class="nc" id="L972">        final OceanusMoney myOutAmount = new OceanusMoney(myInAmount);</span>
+<span class="nc" id="L973">        myOutAmount.negate();</span>
+
+        /* Create a new event */
+<span class="nc" id="L976">        final MoneyWiseQIFEvent myEvent = new MoneyWiseQIFEvent(theFile, pTrans);</span>
+<span class="nc" id="L977">        myEvent.recordAmount(new OceanusMoney());</span>
+<span class="nc" id="L978">        myEvent.recordPayee(myPayee);</span>
+<span class="nc" id="L979">        myEvent.recordSplitRecord(myCategory, myList, myInAmount, myPayee.getName());</span>
+<span class="nc" id="L980">        myEvent.recordSplitRecord(myAutoCategory, myList, myOutAmount, pCash.getAutoPayee().getName());</span>
+
+        /* Add event to event list */
+<span class="nc" id="L983">        myAccount.addEvent(myEvent);</span>
+<span class="nc" id="L984">    }</span>
+
+    /**
+     * Process cash payment.
+     * @param pPayee the payee
+     * @param pCash the cash account
+     * @param pTrans the transaction
+     */
+    protected void processCashPayment(final MoneyWisePayee pPayee,
+                                      final MoneyWiseCash pCash,
+                                      final MoneyWiseTransaction pTrans) {
+        /* Access the Payee details */
+<span class="nc" id="L996">        final MoneyWiseQIFPayee myPayee = theFile.registerPayee(pPayee);</span>
+
+        /* Access the Category details */
+<span class="nc" id="L999">        final MoneyWiseQIFEventCategory myCategory = theFile.registerCategory(pTrans.getCategory());</span>
+<span class="nc" id="L1000">        final MoneyWiseQIFEventCategory myAutoCategory = theFile.registerCategory(pCash.getAutoExpense());</span>
+
+        /* Access the Account details */
+<span class="nc" id="L1003">        final MoneyWiseQIFAccountEvents myAccount = theFile.registerAccount(pCash);</span>
+
+        /* Obtain classes */
+<span class="nc" id="L1006">        final List&lt;MoneyWiseQIFClass&gt; myList = getTransactionClasses(pTrans);</span>
+
+        /* Access the amount */
+<span class="nc" id="L1009">        final OceanusMoney myInAmount = pTrans.getAmount();</span>
+<span class="nc" id="L1010">        final OceanusMoney myOutAmount = new OceanusMoney(myInAmount);</span>
+<span class="nc" id="L1011">        myOutAmount.negate();</span>
+
+        /* Create a new event */
+<span class="nc" id="L1014">        final MoneyWiseQIFEvent myEvent = new MoneyWiseQIFEvent(theFile, pTrans);</span>
+<span class="nc" id="L1015">        myEvent.recordAmount(new OceanusMoney());</span>
+<span class="nc" id="L1016">        myEvent.recordPayee(myPayee);</span>
+<span class="nc" id="L1017">        myEvent.recordSplitRecord(myAutoCategory, myList, myInAmount, pCash.getAutoPayee().getName());</span>
+<span class="nc" id="L1018">        myEvent.recordSplitRecord(myCategory, myList, myOutAmount, myPayee.getName());</span>
+
+        /* Add event to event list */
+<span class="nc" id="L1021">        myAccount.addEvent(myEvent);</span>
+<span class="nc" id="L1022">    }</span>
+
+    /**
+     * Process cash expense.
+     * @param pCash the cash account
+     * @param pDebit the debit account
+     * @param pTrans the transaction
+     */
+    protected void processCashExpense(final MoneyWiseCash pCash,
+                                      final MoneyWiseTransAsset pDebit,
+                                      final MoneyWiseTransaction pTrans) {
+        /* Access the Payee details */
+<span class="nc" id="L1034">        final MoneyWiseQIFPayee myPayee = theFile.registerPayee(pCash.getAutoPayee());</span>
+
+        /* Access the Category details */
+<span class="nc" id="L1037">        final MoneyWiseQIFEventCategory myCategory = theFile.registerCategory(pCash.getAutoExpense());</span>
+
+        /* Obtain classes */
+<span class="nc" id="L1040">        final List&lt;MoneyWiseQIFClass&gt; myList = getTransactionClasses(pTrans);</span>
+
+        /* Access the Account details */
+<span class="nc" id="L1043">        final MoneyWiseQIFAccountEvents myAccount = theFile.registerAccount(pDebit);</span>
+
+        /* Access the amount */
+<span class="nc" id="L1046">        final OceanusMoney myAmount = new OceanusMoney(pTrans.getAmount());</span>
+<span class="nc" id="L1047">        myAmount.negate();</span>
+
+        /* Create a new event */
+<span class="nc" id="L1050">        final MoneyWiseQIFEvent myEvent = new MoneyWiseQIFEvent(theFile, pTrans);</span>
+<span class="nc" id="L1051">        myEvent.recordAmount(myAmount);</span>
+<span class="nc" id="L1052">        myEvent.recordPayee(myPayee);</span>
+<span class="nc" id="L1053">        myEvent.recordCategory(myCategory, myList);</span>
+
+        /* Add event to event list */
+<span class="nc" id="L1056">        myAccount.addEvent(myEvent);</span>
+<span class="nc" id="L1057">    }</span>
+
+    /**
+     * Process cash receipt.
+     * @param pCash the cash account
+     * @param pCredit the credit account
+     * @param pTrans the transaction
+     */
+    protected void processCashReceipt(final MoneyWiseCash pCash,
+                                      final MoneyWiseTransAsset pCredit,
+                                      final MoneyWiseTransaction pTrans) {
+        /* Access the Payee details */
+<span class="nc" id="L1069">        final MoneyWiseQIFPayee myPayee = theFile.registerPayee(pCash.getAutoPayee());</span>
+
+        /* Access the Category details */
+<span class="nc" id="L1072">        final MoneyWiseQIFEventCategory myCategory = theFile.registerCategory(pCash.getAutoExpense());</span>
+
+        /* Access the Account details */
+<span class="nc" id="L1075">        final MoneyWiseQIFAccountEvents myAccount = theFile.registerAccount(pCredit);</span>
+
+        /* Obtain classes */
+<span class="nc" id="L1078">        final List&lt;MoneyWiseQIFClass&gt; myList = getTransactionClasses(pTrans);</span>
+
+        /* Create a new event */
+<span class="nc" id="L1081">        final MoneyWiseQIFEvent myEvent = new MoneyWiseQIFEvent(theFile, pTrans);</span>
+<span class="nc" id="L1082">        myEvent.recordAmount(pTrans.getAmount());</span>
+<span class="nc" id="L1083">        myEvent.recordPayee(myPayee);</span>
+<span class="nc" id="L1084">        myEvent.recordCategory(myCategory, myList);</span>
+
+        /* Add event to event list */
+<span class="nc" id="L1087">        myAccount.addEvent(myEvent);</span>
+<span class="nc" id="L1088">    }</span>
+
+    /**
+     * Obtain classes for transaction.
+     * @param pTrans the transaction
+     * @return the class list (or null)
+     */
+    protected List&lt;MoneyWiseQIFClass&gt; getTransactionClasses(final MoneyWiseTransaction pTrans) {
+        /* Create return value */
+<span class="nc" id="L1097">        List&lt;MoneyWiseQIFClass&gt; myList = null;</span>
+
+        /* Obtain the tags for the transaction */
+<span class="nc" id="L1100">        final List&lt;MoneyWiseTransTag&gt; myTags = pTrans.getTransactionTags();</span>
+
+        /* If we have tags */
+<span class="nc bnc" id="L1103" title="All 2 branches missed.">        if (myTags != null) {</span>
+            /* Allocate the list */
+<span class="nc" id="L1105">            myList = new ArrayList&lt;&gt;();</span>
+
+            /* Loop through the tags */
+<span class="nc" id="L1108">            final Iterator&lt;MoneyWiseTransTag&gt; myIterator = myTags.iterator();</span>
+<span class="nc bnc" id="L1109" title="All 2 branches missed.">            while (myIterator.hasNext()) {</span>
+<span class="nc" id="L1110">                final MoneyWiseTransTag myTag = myIterator.next();</span>
+
+                /* Access the transaction tag */
+<span class="nc" id="L1113">                final MoneyWiseQIFClass myClass = theFile.registerClass(myTag);</span>
+
+                /* Add to the list */
+<span class="nc" id="L1116">                myList.add(myClass);</span>
+<span class="nc" id="L1117">            }</span>
+        }
+
+        /* Return the list */
+<span class="nc" id="L1121">        return myList;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

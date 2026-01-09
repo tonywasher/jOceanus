@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianStreamManager.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.gordianknot.impl.core.stream</a> &gt; <span class="el_source">GordianStreamManager.java</span></div><h1>GordianStreamManager.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * GordianKnot: Security Suite
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.gordianknot.impl.core.stream;
+
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
+import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherParameters;
+import net.sourceforge.joceanus.gordianknot.api.cipher.GordianPadding;
+import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamCipher;
+import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamCipherSpecBuilder;
+import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec;
+import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymCipher;
+import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymCipherSpec;
+import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymCipherSpecBuilder;
+import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
+import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigest;
+import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
+import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
+import net.sourceforge.joceanus.gordianknot.api.key.GordianKeyGenerator;
+import net.sourceforge.joceanus.gordianknot.api.mac.GordianMac;
+import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacParameters;
+import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpec;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianIdManager;
+import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.digest.GordianCoreDigestFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySet;
+import net.sourceforge.joceanus.gordianknot.impl.core.mac.GordianCoreMacFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.stream.GordianStreamDefinition.GordianStreamType;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+/**
+ * Stream Factory.
+ */
+public final class GordianStreamManager {
+    /**
+     * The keySet.
+     */
+    private final GordianCoreKeySet theKeySet;
+
+    /**
+     * Constructor.
+     * @param pKeySet the keySet
+     */
+<span class="fc" id="L65">    public GordianStreamManager(final GordianCoreKeySet pKeySet) {</span>
+<span class="fc" id="L66">        theKeySet = pKeySet;</span>
+<span class="fc" id="L67">    }</span>
+
+    /**
+     * Analyse output stream.
+     * @param pStream the output stream
+     * @return the Stream definition list
+     * @throws GordianException on error
+     */
+    public List&lt;GordianStreamDefinition&gt; analyseStreams(final OutputStream pStream) throws GordianException {
+        /* Allocate the list */
+<span class="fc" id="L77">        final List&lt;GordianStreamDefinition&gt; myStreams = new ArrayList&lt;&gt;();</span>
+
+        /* Loop through the streams */
+<span class="fc" id="L80">        OutputStream myStream = pStream;</span>
+        for (;;) {
+            /* If this is a Digest Output Stream */
+<span class="fc bfc" id="L83" title="All 2 branches covered.">            if (myStream instanceof GordianDigestOutputStream myDigest) {</span>
+                /* Process stream */
+<span class="fc" id="L85">                myStreams.add(0, new GordianStreamDefinition(theKeySet, myDigest));</span>
+<span class="fc" id="L86">                myStream = myDigest.getNextStream();</span>
+
+                /* If this is a MAC Output Stream */
+<span class="fc bfc" id="L89" title="All 2 branches covered.">            } else if (myStream instanceof GordianMacOutputStream myMac) {</span>
+                /* Process stream */
+<span class="fc" id="L91">                myStreams.add(0, new GordianStreamDefinition(theKeySet, myMac));</span>
+<span class="fc" id="L92">                myStream = myMac.getNextStream();</span>
+
+                /* If this is a LZMA Output Stream */
+<span class="fc bfc" id="L95" title="All 2 branches covered.">            } else if (myStream instanceof GordianLZMAOutputStream myLZMA) {</span>
+                /* Process stream */
+<span class="fc" id="L97">                myStreams.add(0, new GordianStreamDefinition(GordianStreamType.LZMA));</span>
+<span class="fc" id="L98">                myStream = myLZMA.getNextStream();</span>
+
+                /* If this is a Encryption Output Stream */
+<span class="fc bfc" id="L101" title="All 2 branches covered.">            } else if (myStream instanceof GordianCipherOutputStream&lt;?&gt; myEnc) {</span>
+                /* Process stream */
+<span class="fc" id="L103">                myStreams.add(0, new GordianStreamDefinition(theKeySet, myEnc));</span>
+<span class="fc" id="L104">                myStream = myEnc.getNextStream();</span>
+
+                /* Else stop loop */
+            } else {
+                break;
+            }
+<span class="fc" id="L110">        }</span>
+
+        /* Return the list */
+<span class="fc" id="L113">        return myStreams;</span>
+    }
+
+    /**
+     * Build input stream.
+     * @param pStreamDefs the list of stream definitions
+     * @param pBaseStream the base input stream
+     * @return the new input stream
+     * @throws GordianException on error
+     */
+    public InputStream buildInputStream(final List&lt;GordianStreamDefinition&gt; pStreamDefs,
+                                        final InputStream pBaseStream) throws GordianException {
+        /* Loop through the stream definitions */
+<span class="fc" id="L126">        InputStream myCurrent = pBaseStream;</span>
+<span class="fc" id="L127">        GordianMacInputStream myMacStream = null;</span>
+<span class="fc bfc" id="L128" title="All 2 branches covered.">        for (GordianStreamDefinition myDef : pStreamDefs) {</span>
+            /* Build the stream */
+<span class="fc" id="L130">            myCurrent = myDef.buildInputStream(theKeySet, myCurrent, myMacStream);</span>
+<span class="fc bfc" id="L131" title="All 2 branches covered.">            if (myCurrent instanceof GordianMacInputStream myMac) {</span>
+<span class="fc" id="L132">                myMacStream = myMac;</span>
+            }
+<span class="fc" id="L134">        }</span>
+
+        /* Return the stream */
+<span class="fc" id="L137">        return myCurrent;</span>
+    }
+
+    /**
+     * Build output stream.
+     * @param pBaseStream the base output stream
+     * @param pCompress should we compress this file?
+     * @return the new output stream
+     * @throws GordianException on error
+     */
+    public OutputStream buildOutputStream(final OutputStream pBaseStream,
+                                          final boolean pCompress) throws GordianException {
+        /* Loop through the stream definitions */
+<span class="fc" id="L150">        OutputStream myCurrent = pBaseStream;</span>
+
+        /* Access factory and bump the random engine */
+<span class="fc" id="L153">        final GordianBaseFactory myFactory = theKeySet.getFactory();</span>
+<span class="fc" id="L154">        final GordianCoreCipherFactory myCiphers = (GordianCoreCipherFactory) myFactory.getCipherFactory();</span>
+<span class="fc" id="L155">        final GordianCoreMacFactory myMacs = (GordianCoreMacFactory) myFactory.getMacFactory();</span>
+<span class="fc" id="L156">        final GordianIdManager myIdMgr = myFactory.getIdManager();</span>
+
+        /* Create an initial MAC stream */
+<span class="fc" id="L159">        final GordianMacSpec myMacSpec = myIdMgr.generateRandomMacSpec(theKeySet.getKeySetSpec().getKeyLength(), true);</span>
+
+        /* Determine a random key */
+<span class="fc" id="L162">        final GordianKeyGenerator&lt;GordianMacSpec&gt; myGenerator = myMacs.getKeyGenerator(myMacSpec);</span>
+<span class="fc" id="L163">        final GordianKey&lt;GordianMacSpec&gt; myMacKey = myGenerator.generateKey();</span>
+
+        /* Create and initialise the MAC */
+<span class="fc" id="L166">        final GordianMac myMac = myMacs.createMac(myMacSpec);</span>
+<span class="fc" id="L167">        myMac.init(GordianMacParameters.keyWithRandomNonce(myMacKey));</span>
+<span class="fc" id="L168">        final GordianMacOutputStream myMacStream = new GordianMacOutputStream(myMac, myCurrent);</span>
+<span class="fc" id="L169">        myCurrent = myMacStream;</span>
+
+        /* Generate a list of encryption types */
+<span class="fc" id="L172">        final List&lt;GordianKey&lt;GordianSymKeySpec&gt;&gt; mySymKeys = generateRandomSymKeyList();</span>
+<span class="fc" id="L173">        boolean bFirst = true;</span>
+
+        /* For each encryption key */
+<span class="fc" id="L176">        final Iterator&lt;GordianKey&lt;GordianSymKeySpec&gt;&gt; myIterator = mySymKeys.iterator();</span>
+<span class="fc bfc" id="L177" title="All 2 branches covered.">        while (myIterator.hasNext()) {</span>
+<span class="fc" id="L178">            final GordianKey&lt;GordianSymKeySpec&gt; myKey = myIterator.next();</span>
+<span class="fc bfc" id="L179" title="All 2 branches covered.">            final boolean bLast = !myIterator.hasNext();</span>
+
+            /* Determine mode and padding */
+<span class="fc" id="L182">            GordianPadding myPadding = GordianPadding.NONE;</span>
+<span class="fc bfc" id="L183" title="All 4 branches covered.">            if (!bFirst</span>
+<span class="fc bfc" id="L184" title="All 2 branches covered.">                    &amp;&amp; (bLast || myKey.getKeyType().getBlockLength() != GordianLength.LEN_128)) {</span>
+<span class="fc" id="L185">                myPadding = GordianPadding.ISO7816D4;</span>
+            }
+<span class="fc bfc" id="L187" title="All 2 branches covered.">            final GordianSymCipherSpec mySymSpec = bFirst</span>
+<span class="fc" id="L188">                                                    ? GordianSymCipherSpecBuilder.sic(myKey.getKeyType())</span>
+<span class="fc" id="L189">                                                    : GordianSymCipherSpecBuilder.ecb(myKey.getKeyType(), myPadding);</span>
+
+            /* Build the cipher stream */
+<span class="fc" id="L192">            final GordianSymCipher mySymCipher = myCiphers.createSymKeyCipher(mySymSpec);</span>
+<span class="fc" id="L193">            mySymCipher.initForEncrypt(GordianCipherParameters.keyWithRandomNonce(myKey));</span>
+<span class="fc" id="L194">            myCurrent = new GordianCipherOutputStream&lt;&gt;(mySymCipher, myCurrent);</span>
+
+            /* Note that this is no longer the first */
+<span class="fc" id="L197">            bFirst = false;</span>
+<span class="fc" id="L198">        }</span>
+
+        /* Create the encryption stream for a stream key */
+<span class="fc" id="L201">        final GordianLength myKeyLen = theKeySet.getKeySetSpec().getKeyLength();</span>
+<span class="fc" id="L202">        final GordianStreamKeySpec myStreamKeySpec = myIdMgr.generateRandomStreamKeySpec(myKeyLen, true);</span>
+<span class="fc" id="L203">        final GordianKeyGenerator&lt;GordianStreamKeySpec&gt; myStreamGenerator = myCiphers.getKeyGenerator(myStreamKeySpec);</span>
+<span class="fc" id="L204">        final GordianKey&lt;GordianStreamKeySpec&gt; myStreamKey = myStreamGenerator.generateKey();</span>
+<span class="fc" id="L205">        final GordianStreamCipher myStreamCipher = myCiphers.createStreamKeyCipher(GordianStreamCipherSpecBuilder.stream(myStreamKey.getKeyType()));</span>
+<span class="fc" id="L206">        myStreamCipher.initForEncrypt(GordianCipherParameters.keyWithRandomNonce(myStreamKey));</span>
+<span class="fc" id="L207">        myCurrent = new GordianCipherOutputStream&lt;&gt;(myStreamCipher, myCurrent);</span>
+
+        /* If we are compressing */
+<span class="pc bpc" id="L210" title="1 of 2 branches missed.">        if (pCompress) {</span>
+            /* Attach an LZMA output stream onto the output */
+<span class="fc" id="L212">            myCurrent = new GordianLZMAOutputStream(myCurrent);</span>
+        }
+
+        /* Create a digest stream */
+<span class="fc" id="L216">        final GordianDigest myDigest = generateRandomDigest();</span>
+<span class="fc" id="L217">        myCurrent = new GordianDigestOutputStream(myDigest, myCurrent, myMacStream);</span>
+
+        /* Return the stream */
+<span class="fc" id="L220">        return myCurrent;</span>
+    }
+
+    /**
+     * generate random GordianDigest.
+     * @return the new Digest
+     * @throws GordianException on error
+     */
+    private GordianDigest generateRandomDigest() throws GordianException {
+        /* Access factory */
+<span class="fc" id="L230">        final GordianBaseFactory myFactory = theKeySet.getFactory();</span>
+<span class="fc" id="L231">        final GordianCoreDigestFactory myDigests = (GordianCoreDigestFactory) myFactory.getDigestFactory();</span>
+<span class="fc" id="L232">        final GordianIdManager myIdMgr = myFactory.getIdManager();</span>
+
+        /* Generate the random digest */
+<span class="fc" id="L235">        final GordianDigestSpec mySpec = myIdMgr.generateRandomDigestSpec(true);</span>
+<span class="fc" id="L236">        return myDigests.createDigest(mySpec);</span>
+    }
+
+    /**
+     * generate random SymKeyList.
+     * @return the list of keys
+     * @throws GordianException on error
+     */
+    public List&lt;GordianKey&lt;GordianSymKeySpec&gt;&gt; generateRandomSymKeyList() throws GordianException {
+        /* Access factory */
+<span class="fc" id="L246">        final GordianBaseFactory myFactory = theKeySet.getFactory();</span>
+<span class="fc" id="L247">        final GordianCoreCipherFactory myCiphers = (GordianCoreCipherFactory) myFactory.getCipherFactory();</span>
+<span class="fc" id="L248">        final GordianIdManager myIdMgr = myFactory.getIdManager();</span>
+
+        /* Determine a random set of keyType */
+<span class="fc" id="L251">        final int myCount = theKeySet.getKeySetSpec().getCipherSteps() - 1;</span>
+<span class="fc" id="L252">        final GordianLength myKeyLen = theKeySet.getKeySetSpec().getKeyLength();</span>
+<span class="fc" id="L253">        final GordianSymKeySpec[] mySpecs = myIdMgr.generateRandomKeySetSymKeySpecs(myKeyLen, myCount);</span>
+
+        /* Loop through the keys */
+<span class="fc" id="L256">        final List&lt;GordianKey&lt;GordianSymKeySpec&gt;&gt; myKeyList = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L257" title="All 2 branches covered.">        for (int i = 0; i &lt; myCount; i++) {</span>
+            /* Generate a random key */
+<span class="fc" id="L259">            final GordianKeyGenerator&lt;GordianSymKeySpec&gt; myGenerator = myCiphers.getKeyGenerator(mySpecs[0]);</span>
+<span class="fc" id="L260">            myKeyList.add(myGenerator.generateKey());</span>
+        }
+
+        /* Return the list */
+<span class="fc" id="L264">        return myKeyList;</span>
+    }
+
+    /**
+     * Close an inputStream on error exit.
+     * @param pStream the file to delete
+     */
+    public static void cleanUpInputStream(final InputStream pStream) {
+        try {
+<span class="nc" id="L273">            pStream.close();</span>
+<span class="nc" id="L274">        } catch (IOException e) {</span>
+            /* NoOp */
+<span class="nc" id="L276">        }</span>
+<span class="nc" id="L277">    }</span>
+
+    /**
+     * Close an outputStream on error exit.
+     * @param pStream the file to delete
+     */
+    public static void cleanUpOutputStream(final OutputStream pStream) {
+        try {
+<span class="nc" id="L285">            pStream.close();</span>
+<span class="nc" id="L286">        } catch (IOException e) {</span>
+            /* NoOp */
+<span class="nc" id="L288">        }</span>
+<span class="nc" id="L289">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

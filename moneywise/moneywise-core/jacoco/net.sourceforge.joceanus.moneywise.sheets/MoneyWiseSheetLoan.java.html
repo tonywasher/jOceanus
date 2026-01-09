@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseSheetLoan.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.sheets</a> &gt; <span class="el_source">MoneyWiseSheetLoan.java</span></div><h1>MoneyWiseSheetLoan.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.sheets;
+
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseLoan;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
+import net.sourceforge.joceanus.prometheus.sheets.PrometheusSheetEncrypted;
+
+/**
+ * SheetDataItem extension for Loan.
+ * @author Tony Washer
+ */
+public final class MoneyWiseSheetLoan
+        extends PrometheusSheetEncrypted&lt;MoneyWiseLoan&gt; {
+    /**
+     * NamedArea for Loans.
+     */
+<span class="fc" id="L37">    private static final String AREA_LOANS = MoneyWiseLoan.LIST_NAME;</span>
+
+    /**
+     * Name column.
+     */
+    private static final int COL_NAME = COL_KEYSETID + 1;
+
+    /**
+     * Category column.
+     */
+    private static final int COL_CATEGORY = COL_NAME + 1;
+
+    /**
+     * Parent column.
+     */
+    private static final int COL_PARENT = COL_CATEGORY + 1;
+
+    /**
+     * Description column.
+     */
+    private static final int COL_DESC = COL_PARENT + 1;
+
+    /**
+     * Currency column.
+     */
+    private static final int COL_CURRENCY = COL_DESC + 1;
+
+    /**
+     * Closed column.
+     */
+    private static final int COL_CLOSED = COL_CURRENCY + 1;
+
+    /**
+     * Constructor for loading a spreadsheet.
+     * @param pReader the spreadsheet reader
+     */
+    MoneyWiseSheetLoan(final MoneyWiseReader pReader) {
+        /* Call super constructor */
+<span class="fc" id="L75">        super(pReader, AREA_LOANS);</span>
+
+        /* Access the Loans list */
+<span class="fc" id="L78">        final MoneyWiseDataSet myData = (MoneyWiseDataSet) pReader.getData();</span>
+<span class="fc" id="L79">        setDataList(myData.getLoans());</span>
+<span class="fc" id="L80">    }</span>
+
+    /**
+     * Constructor for creating a spreadsheet.
+     * @param pWriter the spreadsheet writer
+     */
+    MoneyWiseSheetLoan(final MoneyWiseWriter pWriter) {
+        /* Call super constructor */
+<span class="fc" id="L88">        super(pWriter, AREA_LOANS);</span>
+
+        /* Access the Loans list */
+<span class="fc" id="L91">        final MoneyWiseDataSet myData = (MoneyWiseDataSet) pWriter.getData();</span>
+<span class="fc" id="L92">        setDataList(myData.getLoans());</span>
+<span class="fc" id="L93">    }</span>
+
+    @Override
+    protected PrometheusDataValues loadSecureValues() throws OceanusException {
+        /* Build data values */
+<span class="fc" id="L98">        final PrometheusDataValues myValues = getRowValues(MoneyWiseLoan.OBJECT_NAME);</span>
+<span class="fc" id="L99">        myValues.addValue(MoneyWiseBasicResource.CATEGORY_NAME, loadInteger(COL_CATEGORY));</span>
+<span class="fc" id="L100">        myValues.addValue(MoneyWiseBasicResource.ASSET_PARENT, loadInteger(COL_PARENT));</span>
+<span class="fc" id="L101">        myValues.addValue(MoneyWiseStaticDataType.CURRENCY, loadInteger(COL_CURRENCY));</span>
+<span class="fc" id="L102">        myValues.addValue(PrometheusDataResource.DATAITEM_FIELD_NAME, loadBytes(COL_NAME));</span>
+<span class="fc" id="L103">        myValues.addValue(PrometheusDataResource.DATAITEM_FIELD_DESC, loadBytes(COL_DESC));</span>
+<span class="fc" id="L104">        myValues.addValue(MoneyWiseBasicResource.ASSET_CLOSED, loadBoolean(COL_CLOSED));</span>
+
+        /* Return the values */
+<span class="fc" id="L107">        return myValues;</span>
+    }
+
+    @Override
+    protected void insertSecureItem(final MoneyWiseLoan pItem) throws OceanusException {
+        /* Set the fields */
+<span class="fc" id="L113">        super.insertSecureItem(pItem);</span>
+<span class="fc" id="L114">        writeInteger(COL_CATEGORY, pItem.getCategoryId());</span>
+<span class="fc" id="L115">        writeInteger(COL_PARENT, pItem.getParentId());</span>
+<span class="fc" id="L116">        writeInteger(COL_CURRENCY, pItem.getAssetCurrencyId());</span>
+<span class="fc" id="L117">        writeBytes(COL_NAME, pItem.getNameBytes());</span>
+<span class="fc" id="L118">        writeBytes(COL_DESC, pItem.getDescBytes());</span>
+<span class="fc" id="L119">        writeBoolean(COL_CLOSED, pItem.isClosed());</span>
+<span class="fc" id="L120">    }</span>
+
+    @Override
+    protected int getLastColumn() {
+        /* Return the last column */
+<span class="fc" id="L125">        return COL_CLOSED;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

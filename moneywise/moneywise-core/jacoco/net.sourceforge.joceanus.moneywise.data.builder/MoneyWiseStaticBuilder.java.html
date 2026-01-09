@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseStaticBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.data.builder</a> &gt; <span class="el_source">MoneyWiseStaticBuilder.java</span></div><h1>MoneyWiseStaticBuilder.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.data.builder;
+
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoClass;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoType;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoType.MoneyWiseAccountInfoTypeList;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCashCategoryClass;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCashCategoryType;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCashCategoryType.MoneyWiseCashCategoryTypeList;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency.MoneyWiseCurrencyList;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrencyClass;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseDepositCategoryClass;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseDepositCategoryType;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseDepositCategoryType.MoneyWiseDepositCategoryTypeList;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseLoanCategoryClass;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseLoanCategoryType;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseLoanCategoryType.MoneyWiseLoanCategoryTypeList;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePayeeClass;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePayeeType;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePayeeType.MoneyWisePayeeTypeList;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePortfolioClass;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePortfolioType;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePortfolioType.MoneyWisePortfolioTypeList;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseSecurityClass;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseSecurityType;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseSecurityType.MoneyWiseSecurityTypeList;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTaxBasis;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTaxBasis.MoneyWiseTaxBasisList;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryType;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryType.MoneyWiseTransCategoryTypeList;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoType;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoType.MoneyWiseTransInfoTypeList;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+
+import java.util.Currency;
+
+/**
+ * Static Builder.
+ */
+public class MoneyWiseStaticBuilder {
+    /**
+     * DataSet.
+     */
+    private final MoneyWiseDataSet theDataSet;
+
+    /**
+     * Constructor.
+     * @param pDataSet the dataSet
+     */
+<span class="fc" id="L71">    public MoneyWiseStaticBuilder(final MoneyWiseDataSet pDataSet) {</span>
+<span class="fc" id="L72">        theDataSet = pDataSet;</span>
+<span class="fc" id="L73">    }</span>
+
+    /**
+     * build basic Static.
+     * @throws OceanusException on error
+     * @return the builder
+     */
+    public MoneyWiseStaticBuilder buildBasic() throws OceanusException {
+<span class="nc" id="L81">        return buildBasic(OceanusMoney.getDefaultCurrency());</span>
+    }
+
+    /**
+     * build basic Static.
+     * @param pDefault the default currency
+     * @throws OceanusException on error
+     * @return the builder
+     */
+    public MoneyWiseStaticBuilder buildBasic(final MoneyWiseCurrencyClass pDefault) throws OceanusException {
+<span class="fc" id="L91">        return buildBasic(pDefault.getCurrency());</span>
+    }
+
+    /**
+     * build basic Static.
+     * @param pDefault the default currency
+     * @throws OceanusException on error
+     * @return the builder
+     */
+    public MoneyWiseStaticBuilder buildBasic(final Currency pDefault) throws OceanusException {
+        /* Create reporting currency */
+<span class="fc" id="L102">        buildReportingCurrency(pDefault);</span>
+
+        /* Build account types */
+<span class="fc" id="L105">        buildPayeeTypes();</span>
+<span class="fc" id="L106">        buildSecurityTypes();</span>
+<span class="fc" id="L107">        buildPortfolioTypes();</span>
+<span class="fc" id="L108">        buildDepositCategories();</span>
+<span class="fc" id="L109">        buildCashCategories();</span>
+<span class="fc" id="L110">        buildLoanCategories();</span>
+
+        /* Build additional detail */
+<span class="fc" id="L113">        buildAccountInfo();</span>
+<span class="fc" id="L114">        buildTransCategories();</span>
+<span class="fc" id="L115">        buildTransInfo();</span>
+<span class="fc" id="L116">        buildTaxBases();</span>
+<span class="fc" id="L117">        return this;</span>
+    }
+
+    /**
+     * build payeeTypes.
+     * @throws OceanusException on error
+     */
+    private void buildPayeeTypes() throws OceanusException {
+<span class="fc" id="L125">        final MoneyWisePayeeTypeList myTypes = theDataSet.getPayeeTypes();</span>
+<span class="fc" id="L126">        myTypes.ensureMap();</span>
+<span class="fc bfc" id="L127" title="All 2 branches covered.">        for (MoneyWisePayeeClass myClass : MoneyWisePayeeClass.values()) {</span>
+<span class="fc" id="L128">            final MoneyWisePayeeType myType = myTypes.addBasicItem(myClass.toString());</span>
+<span class="fc" id="L129">            myType.adjustMapForItem();</span>
+        }
+<span class="fc" id="L131">    }</span>
+
+    /**
+     * Obtain the payeeType.
+     * @param pType the class of the payeeType.
+     * @return the payeeType
+     */
+    public MoneyWisePayeeType lookupPayeeType(final MoneyWisePayeeClass pType) {
+<span class="nc" id="L139">        return theDataSet.getPayeeTypes().findItemByClass(pType);</span>
+    }
+
+    /**
+     * build securityTypes.
+     * @throws OceanusException on error
+     */
+    private void buildSecurityTypes() throws OceanusException {
+<span class="fc" id="L147">        final MoneyWiseSecurityTypeList myTypes = theDataSet.getSecurityTypes();</span>
+<span class="fc" id="L148">        myTypes.ensureMap();</span>
+<span class="fc bfc" id="L149" title="All 2 branches covered.">        for (MoneyWiseSecurityClass myClass : MoneyWiseSecurityClass.values()) {</span>
+<span class="fc" id="L150">            final MoneyWiseSecurityType myType = myTypes.addBasicItem(myClass.toString());</span>
+<span class="fc" id="L151">            myType.adjustMapForItem();</span>
+        }
+<span class="fc" id="L153">    }</span>
+
+    /**
+     * Obtain the securityType.
+     * @param pType the class of the security.
+     * @return the securityType
+     */
+    public MoneyWiseSecurityType lookupSecurityType(final MoneyWiseSecurityClass pType) {
+<span class="nc" id="L161">        return theDataSet.getSecurityTypes().findItemByClass(pType);</span>
+    }
+
+    /**
+     * build portfolioTypes.
+     * @throws OceanusException on error
+     */
+    private void buildPortfolioTypes() throws OceanusException {
+<span class="fc" id="L169">        final MoneyWisePortfolioTypeList myTypes = theDataSet.getPortfolioTypes();</span>
+<span class="fc" id="L170">        myTypes.ensureMap();</span>
+<span class="fc bfc" id="L171" title="All 2 branches covered.">        for (MoneyWisePortfolioClass myClass : MoneyWisePortfolioClass.values()) {</span>
+<span class="fc" id="L172">            final MoneyWisePortfolioType myType = myTypes.addBasicItem(myClass.toString());</span>
+<span class="fc" id="L173">            myType.adjustMapForItem();</span>
+        }
+<span class="fc" id="L175">    }</span>
+
+    /**
+     * Obtain the portfolioType.
+     * @param pType the class of the portfolioType.
+     * @return the portfolioType
+     */
+    public MoneyWisePortfolioType lookupPortfolioType(final MoneyWisePortfolioClass pType) {
+<span class="nc" id="L183">        return theDataSet.getPortfolioTypes().findItemByClass(pType);</span>
+    }
+
+    /**
+     * build depositCategories.
+     * @throws OceanusException on error
+     */
+    private void buildDepositCategories() throws OceanusException {
+<span class="fc" id="L191">        final MoneyWiseDepositCategoryTypeList myTypes = theDataSet.getDepositCategoryTypes();</span>
+<span class="fc" id="L192">        myTypes.ensureMap();</span>
+<span class="fc bfc" id="L193" title="All 2 branches covered.">        for (MoneyWiseDepositCategoryClass myClass : MoneyWiseDepositCategoryClass.values()) {</span>
+<span class="fc" id="L194">            final MoneyWiseDepositCategoryType myType = myTypes.addBasicItem(myClass.toString());</span>
+<span class="fc" id="L195">            myType.adjustMapForItem();</span>
+        }
+<span class="fc" id="L197">    }</span>
+
+    /**
+     * Obtain the depositCategoryType.
+     * @param pType the class of the categoryType.
+     * @return the depositCategoryType
+     */
+    public MoneyWiseDepositCategoryType lookupCategoryType(final MoneyWiseDepositCategoryClass pType) {
+<span class="nc" id="L205">        return theDataSet.getDepositCategoryTypes().findItemByClass(pType);</span>
+    }
+
+    /**
+     * build cashCategories.
+     * @throws OceanusException on error
+     */
+    private void buildCashCategories() throws OceanusException {
+<span class="fc" id="L213">        final MoneyWiseCashCategoryTypeList myTypes = theDataSet.getCashCategoryTypes();</span>
+<span class="fc" id="L214">        myTypes.ensureMap();</span>
+<span class="fc bfc" id="L215" title="All 2 branches covered.">        for (MoneyWiseCashCategoryClass myClass : MoneyWiseCashCategoryClass.values()) {</span>
+<span class="fc" id="L216">            final MoneyWiseCashCategoryType myType = myTypes.addBasicItem(myClass.toString());</span>
+<span class="fc" id="L217">            myType.adjustMapForItem();</span>
+        }
+<span class="fc" id="L219">    }</span>
+
+    /**
+     * Obtain the cashCategoryType.
+     * @param pType the class of the categoryType.
+     * @return the cashCategoryType
+     */
+    public MoneyWiseCashCategoryType lookupCategoryType(final MoneyWiseCashCategoryClass pType) {
+<span class="nc" id="L227">        return theDataSet.getCashCategoryTypes().findItemByClass(pType);</span>
+    }
+
+    /**
+     * build loanCategories.
+     * @throws OceanusException on error
+     */
+    private void buildLoanCategories() throws OceanusException {
+<span class="fc" id="L235">        final MoneyWiseLoanCategoryTypeList myTypes = theDataSet.getLoanCategoryTypes();</span>
+<span class="fc" id="L236">        myTypes.ensureMap();</span>
+<span class="fc bfc" id="L237" title="All 2 branches covered.">        for (MoneyWiseLoanCategoryClass myClass : MoneyWiseLoanCategoryClass.values()) {</span>
+<span class="fc" id="L238">            final MoneyWiseLoanCategoryType myType = myTypes.addBasicItem(myClass.toString());</span>
+<span class="fc" id="L239">            myType.adjustMapForItem();</span>
+        }
+<span class="fc" id="L241">    }</span>
+
+    /**
+     * Obtain the loanCategoryType.
+     * @param pType the class of the categoryType.
+     * @return the loanCategoryType
+     */
+    public MoneyWiseLoanCategoryType lookupCategoryType(final MoneyWiseLoanCategoryClass pType) {
+<span class="nc" id="L249">        return theDataSet.getLoanCategoryTypes().findItemByClass(pType);</span>
+    }
+
+    /**
+     * build taxBases.
+     * @throws OceanusException on error
+     */
+    private void buildTaxBases() throws OceanusException {
+<span class="fc" id="L257">        final MoneyWiseTaxBasisList myBases = theDataSet.getTaxBases();</span>
+<span class="fc" id="L258">        myBases.ensureMap();</span>
+<span class="fc bfc" id="L259" title="All 2 branches covered.">        for (MoneyWiseTaxClass myClass : MoneyWiseTaxClass.values()) {</span>
+<span class="fc" id="L260">            final MoneyWiseTaxBasis myBasis = myBases.addBasicItem(myClass.toString());</span>
+<span class="fc" id="L261">            myBasis.adjustMapForItem();</span>
+        }
+<span class="fc" id="L263">    }</span>
+
+    /**
+     * Obtain the taxBasis.
+     * @param pBasis the class of the taxBasis.
+     * @return the taxBasis
+     */
+    public MoneyWiseTaxBasis lookupTaxBasis(final MoneyWiseTaxClass pBasis) {
+<span class="nc" id="L271">        return theDataSet.getTaxBases().findItemByClass(pBasis);</span>
+    }
+
+    /**
+     * build transactionCategories.
+     * @throws OceanusException on error
+     */
+    private void buildTransCategories() throws OceanusException {
+<span class="fc" id="L279">        final MoneyWiseTransCategoryTypeList myTypes = theDataSet.getTransCategoryTypes();</span>
+<span class="fc" id="L280">        myTypes.ensureMap();</span>
+<span class="fc bfc" id="L281" title="All 2 branches covered.">        for (MoneyWiseTransCategoryClass myClass : MoneyWiseTransCategoryClass.values()) {</span>
+<span class="fc" id="L282">            final MoneyWiseTransCategoryType myType = myTypes.addBasicItem(myClass.toString());</span>
+<span class="fc" id="L283">            myType.adjustMapForItem();</span>
+        }
+<span class="fc" id="L285">    }</span>
+
+    /**
+     * Obtain the transCategoryType.
+     * @param pType the class of the categoryType.
+     * @return the transCategoryType
+     */
+    public MoneyWiseTransCategoryType lookupCategoryType(final MoneyWiseTransCategoryClass pType) {
+<span class="nc" id="L293">        return theDataSet.getTransCategoryTypes().findItemByClass(pType);</span>
+    }
+
+    /**
+     * build AccountInfo.
+     * @throws OceanusException on error
+     */
+    private void buildAccountInfo() throws OceanusException {
+<span class="fc" id="L301">        final MoneyWiseAccountInfoTypeList myInfo = theDataSet.getActInfoTypes();</span>
+<span class="fc" id="L302">        myInfo.ensureMap();</span>
+<span class="fc bfc" id="L303" title="All 2 branches covered.">        for (MoneyWiseAccountInfoClass myClass : MoneyWiseAccountInfoClass.values()) {</span>
+<span class="fc" id="L304">            final MoneyWiseAccountInfoType myType = myInfo.addBasicItem(myClass.toString());</span>
+<span class="fc" id="L305">            myType.adjustMapForItem();</span>
+        }
+<span class="fc" id="L307">    }</span>
+
+    /**
+     * Obtain the accountInfo.
+     * @param pInfo the class of the accountInfo.
+     * @return the accountInfo
+     */
+    public MoneyWiseAccountInfoType lookupAccountInfo(final MoneyWiseAccountInfoClass pInfo) {
+<span class="nc" id="L315">        return theDataSet.getActInfoTypes().findItemByClass(pInfo);</span>
+    }
+
+    /**
+     * build TransInfo.
+     * @throws OceanusException on error
+     */
+    private void buildTransInfo() throws OceanusException {
+<span class="fc" id="L323">        final MoneyWiseTransInfoTypeList myInfo = theDataSet.getTransInfoTypes();</span>
+<span class="fc" id="L324">        myInfo.ensureMap();</span>
+<span class="fc bfc" id="L325" title="All 2 branches covered.">        for (MoneyWiseTransInfoClass myClass : MoneyWiseTransInfoClass.values()) {</span>
+<span class="fc" id="L326">            final MoneyWiseTransInfoType myType = myInfo.addBasicItem(myClass.toString());</span>
+<span class="fc" id="L327">            myType.adjustMapForItem();</span>
+        }
+<span class="fc" id="L329">    }</span>
+
+    /**
+     * Obtain the transactionInfo.
+     * @param pInfo the class of the transInfo.
+     * @return the transInfo
+     */
+    public MoneyWiseTransInfoType lookupTransInfo(final MoneyWiseTransInfoClass pInfo) {
+<span class="nc" id="L337">        return theDataSet.getTransInfoTypes().findItemByClass(pInfo);</span>
+    }
+
+    /**
+     * add currency.
+     * @param pCurrency the currency class
+     * @return the new currency
+     * @throws OceanusException on error
+     */
+    public MoneyWiseCurrency buildCurrency(final MoneyWiseCurrencyClass pCurrency) throws OceanusException {
+<span class="fc" id="L347">        final MoneyWiseCurrencyList myList = theDataSet.getAccountCurrencies();</span>
+<span class="fc" id="L348">        final MoneyWiseCurrency myCurr = myList.addBasicItem(pCurrency.name());</span>
+<span class="fc" id="L349">        myCurr.adjustMapForItem();</span>
+<span class="fc" id="L350">        return myCurr;</span>
+    }
+
+    /**
+     * add currency.
+     * @param pCurrency the currency
+     * @return the new currency
+     * @throws OceanusException on error
+     */
+    public MoneyWiseCurrency buildReportingCurrency(final Currency pCurrency) throws OceanusException {
+<span class="fc" id="L360">        final MoneyWiseCurrencyList myList = theDataSet.getAccountCurrencies();</span>
+<span class="fc" id="L361">        myList.ensureMap();</span>
+<span class="fc" id="L362">        final MoneyWiseCurrency myCurr = myList.addBasicItem(pCurrency.getCurrencyCode());</span>
+<span class="fc" id="L363">        myCurr.setReporting(Boolean.TRUE);</span>
+<span class="fc" id="L364">        myCurr.adjustMapForItem();</span>
+<span class="fc" id="L365">        return myCurr;</span>
+    }
+
+    /**
+     * Obtain the currency.
+     * @param pCurr the class of the accountInfo.
+     * @return the currency
+     */
+    public MoneyWiseCurrency lookupCurrency(final MoneyWiseCurrencyClass pCurr) {
+<span class="nc" id="L374">        return theDataSet.getAccountCurrencies().findItemByClass(pCurr);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

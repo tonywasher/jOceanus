@@ -1,0 +1,76 @@
+/* Define tables */
+.defTable {
+    width: 90%;
+    margin: 0 auto;
+    text-align: center;
+    border-spacing: 1px;
+    border-collapse: collapse;
+    border-top: solid;
+    border-bottom: solid;
+}
+
+/* Define table headers */
+.defHdr {
+    text-align: center;
+    font-weight: bold;
+    font-size: 120%;
+}
+
+table.defTable th {
+  border: 1px solid white;
+}
+
+table.defTable td {
+  border: 1px solid white;
+}
+
+table.defTable tr.a {
+  background-color: lavender;
+}
+
+table.defTable tr.b {
+  background-color: whitesmoke;
+}
+
+details {
+  font:
+    16px "Open Sans",
+    Calibri,
+    sans-serif;
+}
+
+details > summary {
+  padding: 2px 6px;
+  width: 40%;
+  border: none;
+  box-shadow: 3px 3px 4px black;
+  cursor: pointer;
+}
+
+summary.mainDtl {
+  background-color: MediumAquamarine;
+}
+
+summary.subDtl {
+  background-color: LemonChiffon;
+  text-indent: 20px;
+}
+
+details > table {
+  border-radius: 0 0 10px 10px;
+  padding: 2px 6px;
+  margin: 0;
+  box-shadow: 3px 3px 4px black;
+}
+
+/* Define colour and alignment for data values */
+.dataValue {
+  text-align: right;
+  color: black;
+}
+
+/* Define colour and alignment for data values */
+.negValue {
+  text-align: right;
+  color: red;
+}

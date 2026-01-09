@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianSM2Elliptic.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.gordianknot.api.keypair</a> &gt; <span class="el_source">GordianSM2Elliptic.java</span></div><h1>GordianSM2Elliptic.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * GordianKnot: Security Suite
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.gordianknot.api.keypair;
+
+/**
+ * Named SM2 Elliptic Curves.
+ */
+<span class="fc" id="L22">public enum GordianSM2Elliptic implements GordianElliptic {</span>
+    /**
+     * sm2p256v1.
+     */
+<span class="fc" id="L26">    SM2P256V1(&quot;sm2p256v1&quot;, 256),</span>
+
+    /**
+     * wapip192v1.
+     */
+<span class="fc" id="L31">    WAPIP192V1(&quot;wapip192v1&quot;, 192);</span>
+
+    /**
+     * The curve name.
+     */
+    private final String theName;
+
+    /**
+     * The key size.
+     */
+    private final int theSize;
+
+    /**
+     * Constructor.
+     * @param pName the name of the curve
+     * @param pSize the bitSize of the curve
+     */
+    GordianSM2Elliptic(final String pName,
+<span class="fc" id="L49">                       final int pSize) {</span>
+<span class="fc" id="L50">        theName = pName;</span>
+<span class="fc" id="L51">        theSize = pSize;</span>
+<span class="fc" id="L52">    }</span>
+
+    @Override
+    public String getCurveName() {
+<span class="fc" id="L56">        return theName;</span>
+    }
+
+    @Override
+    public int getKeySize() {
+<span class="nc" id="L61">        return theSize;</span>
+    }
+
+    /**
+     * Obtain the curve for a Name.
+     * @param pName the name
+     * @return the curve
+     */
+    public static GordianSM2Elliptic getCurveForName(final String pName) {
+        /* Loop through the curves */
+<span class="pc bpc" id="L71" title="1 of 2 branches missed.">        for (GordianSM2Elliptic myCurve: values()) {</span>
+<span class="pc bpc" id="L72" title="1 of 2 branches missed.">            if (pName.equals(myCurve.getCurveName())) {</span>
+<span class="fc" id="L73">                return myCurve;</span>
+            }
+        }
+<span class="nc" id="L76">        return null;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="fc" id="L81">        return theName;</span>
+    }
+
+    @Override
+    public boolean hasCustomCurve() {
+<span class="pc bpc" id="L86" title="1 of 2 branches missed.">        return this == SM2P256V1;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

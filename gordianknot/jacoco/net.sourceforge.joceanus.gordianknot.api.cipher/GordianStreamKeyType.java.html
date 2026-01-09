@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianStreamKeyType.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.gordianknot.api.cipher</a> &gt; <span class="el_source">GordianStreamKeyType.java</span></div><h1>GordianStreamKeyType.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * GordianKnot: Security Suite
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.gordianknot.api.cipher;
+
+import net.sourceforge.joceanus.gordianknot.api.base.GordianBundleLoader.GordianBundleId;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
+import net.sourceforge.joceanus.gordianknot.api.key.GordianKeyLengths;
+
+/**
+ * Stream Key Type.
+ */
+<span class="fc" id="L26">public enum GordianStreamKeyType {</span>
+    /**
+     * Salsa20.
+     */
+<span class="fc" id="L30">    SALSA20,</span>
+
+    /**
+     * HC.
+     */
+<span class="fc" id="L35">    HC,</span>
+
+    /**
+     * ChaCha20.
+     */
+<span class="fc" id="L40">    CHACHA20,</span>
+
+    /**
+     * VMPC.
+     */
+<span class="fc" id="L45">    VMPC,</span>
+
+    /**
+     * ISAAC.
+     */
+<span class="fc" id="L50">    ISAAC,</span>
+
+    /**
+     * RC4.
+     */
+<span class="fc" id="L55">    RC4,</span>
+
+    /**
+     * Grain.
+     */
+<span class="fc" id="L60">    GRAIN,</span>
+
+    /**
+     * Sosemanuk.
+     */
+<span class="fc" id="L65">    SOSEMANUK,</span>
+
+    /**
+     * Rabbit.
+     */
+<span class="fc" id="L70">    RABBIT,</span>
+
+    /**
+     * Snow3G.
+     */
+<span class="fc" id="L75">    SNOW3G,</span>
+
+    /**
+     * Zuc.
+     */
+<span class="fc" id="L80">    ZUC,</span>
+
+    /**
+     * SkeinXof.
+     */
+<span class="fc" id="L85">    SKEINXOF,</span>
+
+    /**
+     * Blake2Xof.
+     */
+<span class="fc" id="L90">    BLAKE2XOF,</span>
+
+    /**
+     * Blake3Xof.
+     */
+<span class="fc" id="L95">    BLAKE3XOF,</span>
+
+    /**
+     * Ascon.
+     */
+<span class="fc" id="L100">    ASCON,</span>
+
+    /**
+     * Elephant.
+     */
+<span class="fc" id="L105">    ELEPHANT,</span>
+
+    /**
+     * ISAP.
+     */
+<span class="fc" id="L110">    ISAP,</span>
+
+    /**
+     * PhotonBeetle.
+     */
+<span class="fc" id="L115">    PHOTONBEETLE,</span>
+
+    /**
+     * Romulus.
+     */
+<span class="fc" id="L120">    ROMULUS,</span>
+
+    /**
+     * Sparkle.
+     */
+<span class="fc" id="L125">    SPARKLE,</span>
+
+    /**
+     * Xoodyak.
+     */
+<span class="fc" id="L130">    XOODYAK;</span>
+
+    /**
+     * The String name.
+     */
+    private String theName;
+
+    /**
+     * Does the keyType need a subKeyType?
+     * @return true/false.
+     */
+    public boolean needsSubKeyType() {
+<span class="fc bfc" id="L142" title="All 2 branches covered.">        switch (this) {</span>
+            case CHACHA20:
+            case SALSA20:
+            case VMPC:
+            case SKEINXOF:
+            case BLAKE2XOF:
+            case ELEPHANT:
+            case ISAP:
+            case ROMULUS:
+            case SPARKLE:
+<span class="fc" id="L152">                return true;</span>
+            default:
+<span class="fc" id="L154">                return false;</span>
+        }
+    }
+
+    @Override
+    public String toString() {
+        /* If we have not yet loaded the name */
+<span class="fc bfc" id="L161" title="All 2 branches covered.">        if (theName == null) {</span>
+            /* Load the name */
+<span class="fc" id="L163">            theName = bundleIdForStreamKeyType().getValue();</span>
+        }
+
+        /* return the name */
+<span class="fc" id="L167">        return theName;</span>
+    }
+
+    /**
+     * Is this KeyType valid for keyLength?
+     * @param pKeyLen the keyLength
+     * @return true/false
+     */
+    public boolean validForKeyLength(final GordianLength pKeyLen) {
+        /* Reject unsupported keyLengths */
+<span class="pc bpc" id="L177" title="1 of 2 branches missed.">        if (!GordianKeyLengths.isSupportedLength(pKeyLen)) {</span>
+<span class="nc" id="L178">            return false;</span>
+        }
+
+        /* Switch on keyType */
+<span class="fc bfc" id="L182" title="All 5 branches covered.">        switch (this) {</span>
+            case GRAIN:
+            case RABBIT:
+            case SNOW3G:
+            case ASCON:
+            case ELEPHANT:
+            case ISAP:
+            case PHOTONBEETLE:
+            case ROMULUS:
+            case XOODYAK:
+<span class="fc bfc" id="L192" title="All 2 branches covered.">                 return GordianLength.LEN_128 == pKeyLen;</span>
+            case HC:
+            case CHACHA20:
+            case SALSA20:
+            case SOSEMANUK:
+            case ZUC:
+<span class="fc bfc" id="L198" title="All 4 branches covered.">                return GordianLength.LEN_128 == pKeyLen</span>
+                        || GordianLength.LEN_256 == pKeyLen;
+            case BLAKE2XOF:
+<span class="fc bfc" id="L201" title="All 2 branches covered.">                return GordianLength.LEN_1024 != pKeyLen;</span>
+            case BLAKE3XOF:
+<span class="fc bfc" id="L203" title="All 2 branches covered.">                return GordianLength.LEN_256 == pKeyLen;</span>
+            default:
+<span class="fc" id="L205">                return true;</span>
+        }
+    }
+
+    /**
+     * Is this KeyType valid for largeData?
+     * @return true/false
+     */
+    public boolean supportsLargeData() {
+<span class="fc bfc" id="L214" title="All 2 branches covered.">        switch (this) {</span>
+            case SNOW3G:
+            case ZUC:
+<span class="fc" id="L217">                return false;</span>
+            default:
+<span class="fc" id="L219">                return true;</span>
+        }
+    }
+
+    /**
+     * Does the keyType need reInit after finish?
+     * @return true/false.
+     */
+    public boolean needsReInit() {
+<span class="pc bpc" id="L228" title="1 of 2 branches missed.">        switch (this) {</span>
+            case ASCON:
+            case ELEPHANT:
+            case ISAP:
+            case PHOTONBEETLE:
+            case SPARKLE:
+            case XOODYAK:
+<span class="nc" id="L235">                return true;</span>
+            default:
+<span class="fc" id="L237">                return false;</span>
+        }
+    }
+
+    /**
+     * Obtain the resource bundleId for this streamKeyType.
+     * @return the resource bundleId
+     */
+    private GordianBundleId bundleIdForStreamKeyType() {
+        /* Create the map and return it */
+<span class="pc bpc" id="L247" title="2 of 22 branches missed.">        switch (this) {</span>
+<span class="fc" id="L248">            case SALSA20: return GordianCipherResource.STREAMKEY_SALSA20;</span>
+<span class="fc" id="L249">            case HC: return GordianCipherResource.STREAMKEY_HC;</span>
+<span class="fc" id="L250">            case CHACHA20: return GordianCipherResource.STREAMKEY_CHACHA;</span>
+<span class="fc" id="L251">            case VMPC: return GordianCipherResource.STREAMKEY_VMPC;</span>
+<span class="fc" id="L252">            case ISAAC: return GordianCipherResource.STREAMKEY_ISAAC;</span>
+<span class="fc" id="L253">            case GRAIN: return GordianCipherResource.STREAMKEY_GRAIN;</span>
+<span class="fc" id="L254">            case RC4: return GordianCipherResource.STREAMKEY_RC4;</span>
+<span class="fc" id="L255">            case SOSEMANUK: return GordianCipherResource.STREAMKEY_SOSEMANUK;</span>
+<span class="fc" id="L256">            case RABBIT: return GordianCipherResource.STREAMKEY_RABBIT;</span>
+<span class="fc" id="L257">            case SNOW3G: return GordianCipherResource.STREAMKEY_SNOW3G;</span>
+<span class="fc" id="L258">            case ZUC: return GordianCipherResource.STREAMKEY_ZUC;</span>
+<span class="fc" id="L259">            case SKEINXOF: return GordianCipherResource.STREAMKEY_SKEIN;</span>
+<span class="nc" id="L260">            case BLAKE2XOF: return GordianCipherResource.STREAMKEY_BLAKE2;</span>
+<span class="fc" id="L261">            case BLAKE3XOF: return GordianCipherResource.STREAMKEY_BLAKE3;</span>
+<span class="fc" id="L262">            case ASCON: return GordianCipherResource.STREAMKEY_ASCON;</span>
+<span class="fc" id="L263">            case ELEPHANT: return GordianCipherResource.STREAMKEY_ELEPHANT;</span>
+<span class="fc" id="L264">            case ISAP: return GordianCipherResource.STREAMKEY_ISAP;</span>
+<span class="fc" id="L265">            case PHOTONBEETLE: return GordianCipherResource.STREAMKEY_PHOTONBEETLE;</span>
+<span class="fc" id="L266">            case ROMULUS: return GordianCipherResource.STREAMKEY_ROMULUS;</span>
+<span class="fc" id="L267">            case SPARKLE: return GordianCipherResource.STREAMKEY_SPARKLE;</span>
+<span class="fc" id="L268">            case XOODYAK: return GordianCipherResource.STREAMKEY_XOODYAK;</span>
+            default:
+<span class="nc" id="L270">                throw new IllegalArgumentException();</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

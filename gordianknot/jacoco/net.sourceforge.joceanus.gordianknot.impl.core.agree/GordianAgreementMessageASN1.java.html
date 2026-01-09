@@ -1,0 +1,587 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianAgreementMessageASN1.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.gordianknot.impl.core.agree</a> &gt; <span class="el_source">GordianAgreementMessageASN1.java</span></div><h1>GordianAgreementMessageASN1.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * GordianKnot: Security Suite
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.gordianknot.impl.core.agree;
+
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianASN1Util.GordianASN1Object;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
+import org.bouncycastle.asn1.ASN1EncodableVector;
+import org.bouncycastle.asn1.ASN1Integer;
+import org.bouncycastle.asn1.ASN1OctetString;
+import org.bouncycastle.asn1.ASN1Primitive;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.ASN1TaggedObject;
+import org.bouncycastle.asn1.BEROctetString;
+import org.bouncycastle.asn1.DERSequence;
+import org.bouncycastle.asn1.DERTaggedObject;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+
+import java.io.IOException;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.Objects;
+
+/**
+ * ASN1 Encoding of Agreement Messages.
+ * &lt;pre&gt;
+ * GordianAgreementMessageASN1 ::= SEQUENCE  {
+ *      Id Identification
+ *      Algs [1] Specifications
+ *      initVector [2] OCTET STRING OPTIONAL
+ *      encapsulated [3] OCTET STRING OPTIONAL
+ *      ephemeral [4] SubjectPublicKeyInfo OPTIONAL
+ *      confirmation [5] OCTET STRING OPTIONAL
+ *      signature [5] SignDetails OPTIONAL
+ * }
+ *
+ * Identification ::= SEQUENCE  {
+ *      messageType AlgorithmIdentifier
+ *      clientId INTEGER OPTIONAL
+ *      serverId INTEGER OPTIONAL
+ * }
+ *
+ * Specification ::= SEQUENCE  {
+ *      agreeId AlgorithmIdentifier
+ *      resultId AlgorithmIdentifier OPTIONAL
+ * }
+ *
+ * SignDetails ::= SEQUENCE  {
+ *      signId AlgorithmIdentifier
+ *      signature OCTET STRING
+ * }
+ * &lt;/pre&gt;
+ */
+public final class GordianAgreementMessageASN1
+        extends GordianASN1Object {
+    /**
+     * The algorithms tag.
+     */
+    private static final int TAG_ALGORITHMS = 1;
+
+    /**
+     * The intVector tag.
+     */
+    private static final int TAG_INITVECTOR = 2;
+
+    /**
+     * The encapsulated tag.
+     */
+    private static final int TAG_ENCAPSULATED = 3;
+
+    /**
+     * The ephemeral tag.
+     */
+    private static final int TAG_EPHEMERAL = 4;
+
+    /**
+     * The confirmation tag.
+     */
+    private static final int TAG_CONFIRMATION = 5;
+
+    /**
+     * The signature tag.
+     */
+    private static final int TAG_SIGNATURE = 6;
+
+    /**
+     * The MessageType.
+     */
+    private final GordianMessageType theMessageType;
+
+    /**
+     * The ClientId.
+     */
+    private final Integer theClientId;
+
+    /**
+     * The ServerId.
+     */
+    private final Integer theServerId;
+
+    /**
+     * The Agreement AlgorithmId.
+     */
+    private AlgorithmIdentifier theAgreementId;
+
+    /**
+     * The ResultId.
+     */
+    private AlgorithmIdentifier theResultId;
+
+     /**
+     * The InitVector.
+     */
+    private byte[] theInitVector;
+
+    /**
+     * The Encapsulated.
+     */
+    private byte[] theEncapsulated;
+
+    /**
+     * The Ephemeral.
+     */
+    private X509EncodedKeySpec theEphemeral;
+
+    /**
+     * The SignatureId.
+     */
+    private AlgorithmIdentifier theSignatureId;
+
+    /**
+     * The Signature.
+     */
+    private byte[] theSignature;
+
+    /**
+     * The Confirmation.
+     */
+    private byte[] theConfirmation;
+
+    /**
+     * Constructor.
+     * @param pType the messageType
+     * @param pClientId the clientId
+     * @param pServerId the serverId
+     */
+    private GordianAgreementMessageASN1(final GordianMessageType pType,
+                                        final Integer pClientId,
+<span class="fc" id="L166">                                        final Integer pServerId) {</span>
+<span class="fc" id="L167">        theMessageType = pType;</span>
+<span class="fc" id="L168">        theClientId = pClientId;</span>
+<span class="fc" id="L169">        theServerId = pServerId;</span>
+<span class="fc" id="L170">    }</span>
+
+    /**
+     * Constructor.
+     * @param pSequence the Sequence
+     * @throws GordianException on error
+     */
+<span class="fc" id="L177">    private GordianAgreementMessageASN1(final ASN1Sequence pSequence) throws GordianException {</span>
+        /* Protect against exceptions */
+        try {
+            /* Access the sequence */
+<span class="fc" id="L181">            final ASN1Sequence mySequence = ASN1Sequence.getInstance(pSequence);</span>
+<span class="fc" id="L182">            final Enumeration&lt;?&gt; en = mySequence.getObjects();</span>
+
+            /* Access message parts */
+<span class="fc" id="L185">            final ASN1Sequence myId = ASN1Sequence.getInstance(en.nextElement());</span>
+<span class="fc" id="L186">            final Enumeration&lt;?&gt; enIds = myId.getObjects();</span>
+<span class="fc" id="L187">            theMessageType = GordianMessageType.determineType(ASN1Integer.getInstance(enIds.nextElement()).intValueExact());</span>
+<span class="fc bfc" id="L188" title="All 4 branches covered.">            theClientId = enIds.hasMoreElements() &amp;&amp; theMessageType != GordianMessageType.CLIENTCONFIRM</span>
+<span class="fc" id="L189">                            ? ASN1Integer.getInstance(enIds.nextElement()).intValueExact()</span>
+<span class="fc" id="L190">                            : null;</span>
+<span class="fc bfc" id="L191" title="All 2 branches covered.">            theServerId = enIds.hasMoreElements()</span>
+<span class="fc" id="L192">                            ? ASN1Integer.getInstance(enIds.nextElement()).intValueExact()</span>
+<span class="fc" id="L193">                            : null;</span>
+
+            /* Loop through the optional elements */
+<span class="fc bfc" id="L196" title="All 2 branches covered.">            while (en.hasMoreElements()) {</span>
+<span class="fc" id="L197">                final ASN1TaggedObject myTagged = ASN1TaggedObject.getInstance(en.nextElement());</span>
+<span class="pc bpc" id="L198" title="1 of 7 branches missed.">                switch (myTagged.getTagNo()) {</span>
+                    case TAG_ALGORITHMS:
+<span class="fc" id="L200">                        final ASN1Sequence myAlgs = ASN1Sequence.getInstance(myTagged, false);</span>
+<span class="fc" id="L201">                        final Enumeration&lt;?&gt; enAlgs = myAlgs.getObjects();</span>
+<span class="fc" id="L202">                        theAgreementId = AlgorithmIdentifier.getInstance(enAlgs.nextElement());</span>
+<span class="fc bfc" id="L203" title="All 2 branches covered.">                        if (enAlgs.hasMoreElements()) {</span>
+<span class="fc" id="L204">                            theResultId = AlgorithmIdentifier.getInstance(enAlgs.nextElement());</span>
+                        }
+                        break;
+                    case TAG_INITVECTOR:
+<span class="fc" id="L208">                        theInitVector = ASN1OctetString.getInstance(myTagged, false).getOctets();</span>
+<span class="fc" id="L209">                        break;</span>
+                    case TAG_ENCAPSULATED:
+<span class="fc" id="L211">                        theEncapsulated = ASN1OctetString.getInstance(myTagged, false).getOctets();</span>
+<span class="fc" id="L212">                        break;</span>
+                    case TAG_EPHEMERAL:
+<span class="fc" id="L214">                        theEphemeral = new X509EncodedKeySpec(SubjectPublicKeyInfo.getInstance(myTagged, false).getEncoded());</span>
+<span class="fc" id="L215">                        break;</span>
+                    case TAG_CONFIRMATION:
+<span class="fc" id="L217">                        theConfirmation = ASN1OctetString.getInstance(myTagged, false).getOctets();</span>
+<span class="fc" id="L218">                        break;</span>
+                    case TAG_SIGNATURE:
+<span class="fc" id="L220">                        final ASN1Sequence mySign = ASN1Sequence.getInstance(myTagged, false);</span>
+<span class="fc" id="L221">                        final Enumeration&lt;?&gt; enSign = mySign.getObjects();</span>
+<span class="fc" id="L222">                        theSignatureId = AlgorithmIdentifier.getInstance(enSign.nextElement());</span>
+<span class="fc" id="L223">                        theSignature = ASN1OctetString.getInstance(enSign.nextElement()).getOctets();</span>
+<span class="fc" id="L224">                        break;</span>
+                    default:
+<span class="nc" id="L226">                        throw new GordianDataException(&quot;Unexpected tag&quot;);</span>
+                }
+<span class="fc" id="L228">            }</span>
+
+            /* handle exceptions */
+<span class="nc" id="L231">        } catch (IllegalArgumentException</span>
+                | IOException e) {
+<span class="nc" id="L233">            throw new GordianIOException(&quot;Unable to parse ASN1 sequence&quot;, e);</span>
+<span class="fc" id="L234">        }</span>
+<span class="fc" id="L235">    }</span>
+
+    /**
+     * Create a client hello.
+     * @param pClientId the clientId
+     * @return the clientHello
+     */
+    public static GordianAgreementMessageASN1 newClientHello(final Integer pClientId)  {
+<span class="fc" id="L243">        return new GordianAgreementMessageASN1(GordianMessageType.CLIENTHELLO, pClientId, null);</span>
+    }
+
+    /**
+     * Create a server hello.
+     * @param pClientId the clientId
+     * @param pServerId the serverId
+     * @return the serverHello
+     */
+    public static GordianAgreementMessageASN1 newServerHello(final Integer pClientId,
+                                                             final Integer pServerId)  {
+<span class="fc" id="L254">        return new GordianAgreementMessageASN1(GordianMessageType.SERVERHELLO, pClientId, pServerId);</span>
+    }
+    /**
+     * Create a client confirm.
+     * @param pServerId the serverId
+     * @return the clientConfirm
+     */
+    public static GordianAgreementMessageASN1 newClientConfirm(final Integer pServerId)  {
+<span class="fc" id="L262">        return new GordianAgreementMessageASN1(GordianMessageType.CLIENTCONFIRM, null, pServerId);</span>
+    }
+
+    /**
+     * Parse the ASN1 object.
+     * @param pObject the object to parse
+     * @return the parsed object
+     * @throws GordianException on error
+     */
+    public static GordianAgreementMessageASN1 getInstance(final Object pObject) throws GordianException {
+<span class="pc bpc" id="L272" title="1 of 2 branches missed.">        if (pObject instanceof GordianAgreementMessageASN1 myASN1) {</span>
+<span class="nc" id="L273">            return myASN1;</span>
+<span class="pc bpc" id="L274" title="1 of 2 branches missed.">        } else if (pObject != null) {</span>
+<span class="fc" id="L275">            return new GordianAgreementMessageASN1(ASN1Sequence.getInstance(pObject));</span>
+        }
+<span class="nc" id="L277">        throw new GordianDataException(&quot;Null sequence&quot;);</span>
+    }
+
+    /**
+     * Get the messageType.
+     * @return the messageType
+     */
+    GordianMessageType getMessageType() {
+<span class="nc" id="L285">        return theMessageType;</span>
+    }
+
+    /**
+     * Check the message type.
+     * @param pMessageType the message type
+     * @throws GordianException on error
+     */
+    public void checkMessageType(final GordianMessageType pMessageType) throws GordianException {
+<span class="pc bpc" id="L294" title="1 of 2 branches missed.">        if (!theMessageType.equals(pMessageType)) {</span>
+<span class="nc" id="L295">            throw new GordianDataException(&quot;Unexpected Message type: &quot; + pMessageType);</span>
+        }
+<span class="fc" id="L297">    }</span>
+
+    /**
+     * Get the clientId.
+     * @return the clientId
+     */
+    Integer getClientId() {
+<span class="fc" id="L304">        return theClientId;</span>
+    }
+
+    /**
+     * Get the clientId.
+     * @return the clientId
+     */
+    Integer getServerId() {
+<span class="fc" id="L312">        return theServerId;</span>
+    }
+
+    /**
+     * Get the agreement algorithmId.
+     * @return the agreement algorithmId (or null)
+     */
+    AlgorithmIdentifier getAgreementId() {
+<span class="fc" id="L320">        return theAgreementId;</span>
+    }
+
+    /**
+     * Set the agreement algorithmId.
+     * @param pAgreeId the agreementId
+     * @return this object
+     */
+    GordianAgreementMessageASN1 setAgreementId(final AlgorithmIdentifier pAgreeId) {
+<span class="fc" id="L329">        theAgreementId = pAgreeId;</span>
+<span class="fc" id="L330">        return this;</span>
+    }
+
+    /**
+     * Get the result algorithmId.
+     * @return the result algorithmId (or null)
+     */
+    AlgorithmIdentifier getResultId() {
+<span class="fc" id="L338">        return theResultId;</span>
+    }
+
+    /**
+     * Set the result algorithmId.
+     * @param pResultId the resultId
+     * @return this object
+     */
+    GordianAgreementMessageASN1 setResultId(final AlgorithmIdentifier pResultId) {
+<span class="fc" id="L347">        theResultId = pResultId;</span>
+<span class="fc" id="L348">        return this;</span>
+    }
+
+    /**
+     * Set the initVector.
+     * @return the initVector (or null)
+     */
+    byte[] getInitVector() {
+<span class="fc" id="L356">        return theInitVector;</span>
+    }
+
+    /**
+     * Set the initVector.
+     * @param pInitVector the initVector Tag
+     * @return this object
+     */
+    GordianAgreementMessageASN1 setInitVector(final byte[] pInitVector) {
+<span class="fc" id="L365">        theInitVector = pInitVector;</span>
+<span class="fc" id="L366">        return this;</span>
+    }
+
+    /**
+     * Get the encapsulated.
+     * @return the encapsulated (or null)
+     */
+    public byte[] getEncapsulated() {
+<span class="fc" id="L374">        return theEncapsulated;</span>
+    }
+
+    /**
+     * Set the encapsulated.
+     * @param pEncapsulated the encapsulated
+     * @return this object
+     */
+    GordianAgreementMessageASN1 setEncapsulated(final byte[] pEncapsulated) {
+<span class="fc" id="L383">        theEncapsulated = pEncapsulated;</span>
+<span class="fc" id="L384">        return this;</span>
+    }
+
+    /**
+     * Get the ephemeral.
+     * @return the ephemeral (or null)
+     */
+    public X509EncodedKeySpec getEphemeral() {
+<span class="fc" id="L392">        return theEphemeral;</span>
+    }
+
+    /**
+     * Set the ephemeral.
+     * @param pEphemeral the ephemeral
+     * @return this object
+     */
+    GordianAgreementMessageASN1 setEphemeral(final X509EncodedKeySpec pEphemeral) {
+<span class="fc" id="L401">        theEphemeral = pEphemeral;</span>
+<span class="fc" id="L402">        return this;</span>
+    }
+
+    /**
+     * Get the signature algorithmId.
+     * @return the signature algorithmId (or null)
+     */
+    AlgorithmIdentifier getSignatureId() {
+<span class="fc" id="L410">        return theSignatureId;</span>
+    }
+
+    /**
+     * Get the signature.
+     * @return the signature (or null)
+     */
+    byte[] getSignature() {
+<span class="fc" id="L418">        return theSignature;</span>
+    }
+
+    /**
+     * Set the signature and algorithmId.
+     * @param pSignatureId the signature algorithmId
+     * @param pSignature the signature
+     * @return this object
+     */
+    GordianAgreementMessageASN1 setSignature(final AlgorithmIdentifier pSignatureId,
+                                             final byte[] pSignature) {
+<span class="fc" id="L429">        theSignatureId = pSignatureId;</span>
+<span class="fc" id="L430">        theSignature = pSignature;</span>
+<span class="fc" id="L431">        return this;</span>
+    }
+
+    /**
+     * Get the confirmation.
+     * @return the confirmation Tag (or null)
+     */
+    byte[] getConfirmation() {
+<span class="fc" id="L439">        return theConfirmation;</span>
+    }
+
+    /**
+     * Set the confirmation.
+     * @param pConfirmation the confirmation Tag
+     * @return this object
+     */
+    GordianAgreementMessageASN1 setConfirmation(final byte[] pConfirmation) {
+<span class="fc" id="L448">        theConfirmation = pConfirmation;</span>
+<span class="fc" id="L449">        return this;</span>
+    }
+
+    @Override
+    public ASN1Primitive toASN1Primitive() {
+<span class="fc" id="L454">        final ASN1EncodableVector v = new ASN1EncodableVector();</span>
+<span class="fc" id="L455">        final ASN1EncodableVector vId = new ASN1EncodableVector();</span>
+<span class="fc" id="L456">        vId.add(new ASN1Integer(theMessageType.getId()));</span>
+<span class="fc bfc" id="L457" title="All 2 branches covered.">        if (theClientId != null) {</span>
+<span class="fc" id="L458">            vId.add(new ASN1Integer(theClientId));</span>
+        }
+<span class="fc bfc" id="L460" title="All 2 branches covered.">        if (theServerId != null) {</span>
+<span class="fc" id="L461">            vId.add(new ASN1Integer(theServerId));</span>
+        }
+<span class="fc" id="L463">        v.add(new DERSequence(vId));</span>
+
+<span class="pc bpc" id="L465" title="1 of 2 branches missed.">        if (theAgreementId != null) {</span>
+<span class="fc" id="L466">            final ASN1EncodableVector vAlg = new ASN1EncodableVector();</span>
+<span class="fc" id="L467">            vAlg.add(theAgreementId);</span>
+<span class="fc bfc" id="L468" title="All 2 branches covered.">            if (theResultId != null) {</span>
+<span class="fc" id="L469">                vAlg.add(theResultId);</span>
+            }
+<span class="fc" id="L471">            v.add(new DERTaggedObject(false, TAG_ALGORITHMS, new DERSequence(vAlg)));</span>
+        }
+<span class="fc bfc" id="L473" title="All 2 branches covered.">        if (theInitVector != null) {</span>
+<span class="fc" id="L474">            v.add(new DERTaggedObject(false, TAG_INITVECTOR, new BEROctetString(theInitVector)));</span>
+        }
+<span class="fc bfc" id="L476" title="All 2 branches covered.">        if (theEncapsulated != null) {</span>
+<span class="fc" id="L477">            v.add(new DERTaggedObject(false, TAG_ENCAPSULATED, new BEROctetString(theEncapsulated)));</span>
+        }
+<span class="fc bfc" id="L479" title="All 2 branches covered.">        if (theEphemeral != null) {</span>
+<span class="fc" id="L480">            v.add(new DERTaggedObject(false, TAG_EPHEMERAL, SubjectPublicKeyInfo.getInstance(theEphemeral.getEncoded())));</span>
+        }
+<span class="fc bfc" id="L482" title="All 2 branches covered.">        if (theConfirmation != null) {</span>
+<span class="fc" id="L483">            v.add(new DERTaggedObject(false, TAG_CONFIRMATION, new BEROctetString(theConfirmation)));</span>
+        }
+<span class="pc bpc" id="L485" title="1 of 4 branches missed.">        if (theSignatureId != null &amp;&amp; theSignature != null) {</span>
+<span class="fc" id="L486">            final ASN1EncodableVector vSign = new ASN1EncodableVector();</span>
+<span class="fc" id="L487">            vSign.add(theSignatureId);</span>
+<span class="fc" id="L488">            vSign.add(new BEROctetString(theSignature));</span>
+<span class="fc" id="L489">            v.add(new DERTaggedObject(false, TAG_SIGNATURE, new DERSequence(vSign)));</span>
+        }
+
+<span class="fc" id="L492">        return new DERSequence(v);</span>
+    }
+
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle trivial cases */
+<span class="nc bnc" id="L499" title="All 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L500">            return true;</span>
+        }
+<span class="nc bnc" id="L502" title="All 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L503">            return false;</span>
+        }
+
+        /* Check that the fields are equal */
+<span class="nc" id="L507">        return pThat instanceof GordianAgreementMessageASN1 myThat</span>
+<span class="nc bnc" id="L508" title="All 2 branches missed.">                &amp;&amp; Objects.equals(getMessageType(), myThat.getMessageType())</span>
+<span class="nc bnc" id="L509" title="All 2 branches missed.">                &amp;&amp; Objects.equals(getClientId(), myThat.getClientId())</span>
+<span class="nc bnc" id="L510" title="All 2 branches missed.">                &amp;&amp; Objects.equals(getServerId(), myThat.getServerId())</span>
+<span class="nc bnc" id="L511" title="All 2 branches missed.">                &amp;&amp; Objects.equals(getAgreementId(), myThat.getAgreementId())</span>
+<span class="nc bnc" id="L512" title="All 2 branches missed.">                &amp;&amp; Objects.equals(getResultId(), myThat.getResultId())</span>
+<span class="nc bnc" id="L513" title="All 2 branches missed.">                &amp;&amp; Objects.equals(getSignatureId(), myThat.getSignatureId())</span>
+<span class="nc bnc" id="L514" title="All 2 branches missed.">                &amp;&amp; Objects.equals(getEphemeral(), myThat.getEphemeral())</span>
+<span class="nc bnc" id="L515" title="All 2 branches missed.">                &amp;&amp; Arrays.equals(getSignature(), myThat.getSignature())</span>
+<span class="nc bnc" id="L516" title="All 2 branches missed.">                &amp;&amp; Arrays.equals(getEncapsulated(), myThat.getEncapsulated())</span>
+<span class="nc bnc" id="L517" title="All 2 branches missed.">                &amp;&amp; Arrays.equals(getConfirmation(), myThat.getConfirmation())</span>
+<span class="nc bnc" id="L518" title="All 4 branches missed.">                &amp;&amp; Arrays.equals(getInitVector(), myThat.getInitVector());</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="nc" id="L523">        return Objects.hash(getMessageType(), getClientId(), getServerId(),</span>
+<span class="nc" id="L524">                             getAgreementId(), getResultId(), getSignatureId(), getEphemeral())</span>
+<span class="nc" id="L525">                ^ Arrays.hashCode(getSignature())</span>
+<span class="nc" id="L526">                ^ Arrays.hashCode(getEncapsulated())</span>
+<span class="nc" id="L527">                ^ Arrays.hashCode(getConfirmation())</span>
+<span class="nc" id="L528">                ^ Arrays.hashCode(getInitVector());</span>
+    }
+
+    /**
+     * The messageType.
+     */
+<span class="fc" id="L534">    public enum GordianMessageType {</span>
+        /**
+         * ClientHello.
+         */
+<span class="fc" id="L538">        CLIENTHELLO(1),</span>
+
+        /**
+         * ServerHello.
+         */
+<span class="fc" id="L543">        SERVERHELLO(2),</span>
+
+        /**
+         * ClientConfirm.
+         */
+<span class="fc" id="L548">        CLIENTCONFIRM(3);</span>
+
+        /**
+         * The messageId.
+         */
+        private final int theId;
+
+        /**
+         * Constructor.
+         * @param pId the id
+         */
+<span class="fc" id="L559">        GordianMessageType(final int pId) {</span>
+<span class="fc" id="L560">            theId = pId;</span>
+<span class="fc" id="L561">        }</span>
+
+        /**
+         * Obtain id for messageType.
+         * @return the id
+         */
+        int getId() {
+<span class="fc" id="L568">            return theId;</span>
+        }
+
+        /**
+         * Determine the MessageType from the id.
+         * @param pId the id
+         * @return the messageType
+         * @throws GordianException on error
+         */
+        private static GordianMessageType determineType(final int pId) throws GordianException {
+<span class="pc bpc" id="L578" title="1 of 2 branches missed.">            for (GordianMessageType myType : values()) {</span>
+<span class="fc bfc" id="L579" title="All 2 branches covered.">                if (pId == myType.getId()) {</span>
+<span class="fc" id="L580">                    return myType;</span>
+                }
+            }
+<span class="nc" id="L583">            throw new GordianDataException(&quot;Unexpected messageType: &quot; + pId);</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseViewResource.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.views</a> &gt; <span class="el_source">MoneyWiseViewResource.java</span></div><h1>MoneyWiseViewResource.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.views;
+
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisDataResource;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
+
+import java.util.ResourceBundle;
+
+/**
+ * Resource IDs for MoneyWise View Fields.
+ */
+<span class="nc" id="L29">public enum MoneyWiseViewResource</span>
+        implements OceanusBundleId, MetisDataFieldId {
+    /**
+     * View Name.
+     */
+<span class="nc" id="L34">    VIEW_NAME(&quot;View.Name&quot;),</span>
+
+    /**
+     * AnalysisView Name.
+     */
+<span class="nc" id="L39">    ANALYSISVIEW_NAME(&quot;AnalysisView.Name&quot;),</span>
+
+    /**
+     * AnalysisView Base.
+     */
+<span class="nc" id="L44">    ANALYSISVIEW_BASE(&quot;AnalysisView.Base&quot;),</span>
+
+    /**
+     * AnalysisView UpdateSet.
+     */
+<span class="nc" id="L49">    ANALYSISVIEW_UPDATESET(&quot;AnalysisView.UpdateSet&quot;),</span>
+
+    /**
+     * SpotPrice Name.
+     */
+<span class="nc" id="L54">    SPOTPRICE_NAME(&quot;SpotPrice.Name&quot;),</span>
+
+    /**
+     * SpotRate Name.
+     */
+<span class="nc" id="L59">    SPOTRATE_NAME(&quot;SpotRate.Name&quot;),</span>
+
+    /**
+     * SpotEvent NextDate.
+     */
+<span class="nc" id="L64">    SPOTEVENT_NEXTDATE(&quot;SpotEvent.NextDate&quot;),</span>
+
+    /**
+     * SpotEvent PrevDate.
+     */
+<span class="nc" id="L69">    SPOTEVENT_PREVDATE(&quot;SpotEvent.PrevDate&quot;),</span>
+
+    /**
+     * SpotPrice PrevPrice.
+     */
+<span class="nc" id="L74">    SPOTPRICE_PREVPRICE(&quot;SpotPrice.PrevPrice&quot;),</span>
+
+    /**
+     * SpotRate PrevRate.
+     */
+<span class="nc" id="L79">    SPOTRATE_PREVRATE(&quot;SpotRate.PrevRate&quot;),</span>
+
+    /**
+     * ViewPrice Name.
+     */
+<span class="nc" id="L84">    VIEWPRICE_NAME(&quot;ViewPrice.Name&quot;),</span>
+
+    /**
+     * ViewPrice List.
+     */
+<span class="nc" id="L89">    VIEWPRICE_LIST(&quot;ViewPrice.List&quot;),</span>
+
+    /**
+     * ViewPrice DilutedPrice.
+     */
+<span class="nc" id="L94">    VIEWPRICE_DILUTEDPRICE(&quot;ViewPrice.DilutedPrice&quot;),</span>
+
+    /**
+     * Filter Name.
+     */
+<span class="nc" id="L99">    FILTER_NAME(&quot;Filter.Name&quot;),</span>
+
+    /**
+     * Filter Bucket.
+     */
+<span class="nc" id="L104">    FILTER_BUCKET(&quot;Filter.Bucket&quot;),</span>
+
+    /**
+     * Filter Attribute.
+     */
+<span class="nc" id="L109">    FILTER_ATTR(&quot;Filter.Attr&quot;);</span>
+
+    /**
+     * The Resource Loader.
+     */
+<span class="nc" id="L114">    private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getLoader(MoneyWiseAnalysisDataResource.class.getCanonicalName(),</span>
+            ResourceBundle::getBundle);
+
+    /**
+     * The Id.
+     */
+    private final String theKeyName;
+
+    /**
+     * The Value.
+     */
+    private String theValue;
+
+    /**
+     * Constructor.
+     * @param pKeyName the key name
+     */
+<span class="nc" id="L131">    MoneyWiseViewResource(final String pKeyName) {</span>
+<span class="nc" id="L132">        theKeyName = pKeyName;</span>
+<span class="nc" id="L133">    }</span>
+
+    @Override
+    public String getKeyName() {
+<span class="nc" id="L137">        return theKeyName;</span>
+    }
+
+    @Override
+    public String getNameSpace() {
+<span class="nc" id="L142">        return &quot;MoneyWise.view&quot;;</span>
+    }
+
+    @Override
+    public String getValue() {
+        /* If we have not initialised the value */
+<span class="nc bnc" id="L148" title="All 2 branches missed.">        if (theValue == null) {</span>
+            /* Derive the value */
+<span class="nc" id="L150">            theValue = LOADER.getValue(this);</span>
+        }
+
+        /* return the value */
+<span class="nc" id="L154">        return theValue;</span>
+    }
+
+    @Override
+    public String getId() {
+<span class="nc" id="L159">        return getValue();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

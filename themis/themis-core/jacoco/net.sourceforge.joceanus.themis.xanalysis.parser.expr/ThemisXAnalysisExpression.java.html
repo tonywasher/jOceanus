@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisXAnalysisExpression.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.themis.xanalysis.parser.expr</a> &gt; <span class="el_source">ThemisXAnalysisExpression.java</span></div><h1>ThemisXAnalysisExpression.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Themis: Java Project Framework
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.themis.xanalysis.parser.expr;
+
+import com.github.javaparser.ast.expr.Expression;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisId;
+import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisParserDef;
+
+import java.util.function.Predicate;
+
+/**
+ * Analysis ExpressionType.
+ */
+<span class="fc" id="L29">public enum ThemisXAnalysisExpression</span>
+        implements ThemisXAnalysisId {
+    /**
+     * ArrayAccess.
+     */
+<span class="fc" id="L34">    ARRAYACCESS(Expression::isArrayAccessExpr),</span>
+
+    /**
+     * ArrayCreation.
+     */
+<span class="fc" id="L39">    ARRAYCREATION(Expression::isArrayCreationExpr),</span>
+
+    /**
+     * ArrayInitializer.
+     */
+<span class="fc" id="L44">    ARRAYINIT(Expression::isArrayInitializerExpr),</span>
+
+    /**
+     * Assign.
+     */
+<span class="fc" id="L49">    ASSIGN(Expression::isAssignExpr),</span>
+
+    /**
+     * Binary.
+     */
+<span class="fc" id="L54">    BINARY(Expression::isBinaryExpr),</span>
+
+    /**
+     * Boolean.
+     */
+<span class="fc" id="L59">    BOOLEAN(Expression::isBooleanLiteralExpr),</span>
+
+    /**
+     * Cast.
+     */
+<span class="fc" id="L64">    CAST(Expression::isCastExpr),</span>
+
+    /**
+     * CharLiteral.
+     */
+<span class="fc" id="L69">    CHAR(Expression::isCharLiteralExpr),</span>
+
+    /**
+     * Class.
+     */
+<span class="fc" id="L74">    CLASS(Expression::isClassExpr),</span>
+
+    /**
+     * Conditional.
+     */
+<span class="fc" id="L79">    CONDITIONAL(Expression::isConditionalExpr),</span>
+
+    /**
+     * DoubleLiteral.
+     */
+<span class="fc" id="L84">    DOUBLE(Expression::isDoubleLiteralExpr),</span>
+
+    /**
+     * Enclosed.
+     */
+<span class="fc" id="L89">    ENCLOSED(Expression::isEnclosedExpr),</span>
+
+    /**
+     * FieldAccess.
+     */
+<span class="fc" id="L94">    FIELDACCESS(Expression::isFieldAccessExpr),</span>
+
+    /**
+     * Void.
+     */
+<span class="fc" id="L99">    INSTANCEOF(Expression::isInstanceOfExpr),</span>
+
+    /**
+     * IntegerLiteral.
+     */
+<span class="fc" id="L104">    INTEGER(Expression::isIntegerLiteralExpr),</span>
+
+    /**
+     * Lambda.
+     */
+<span class="fc" id="L109">    LAMBDA(Expression::isLambdaExpr),</span>
+
+    /**
+     * Long.
+     */
+<span class="fc" id="L114">    LONG(Expression::isLongLiteralExpr),</span>
+
+    /**
+     * MarkerAnnotation.
+     */
+<span class="fc" id="L119">    MARKER(Expression::isMarkerAnnotationExpr),</span>
+
+    /**
+     * MethodCall.
+     */
+<span class="fc" id="L124">    METHODCALL(Expression::isMethodCallExpr),</span>
+
+    /**
+     * MethodReference.
+     */
+<span class="fc" id="L129">    METHODREFERENCE(Expression::isMethodReferenceExpr),</span>
+
+    /**
+     * Name.
+     */
+<span class="fc" id="L134">    NAME(Expression::isNameExpr),</span>
+
+    /**
+     * NormalAnnotation.
+     */
+<span class="fc" id="L139">    NORMAL(Expression::isNormalAnnotationExpr),</span>
+
+    /**
+     * Null.
+     */
+<span class="fc" id="L144">    NULL(Expression::isNullLiteralExpr),</span>
+
+    /**
+     * ObjectCreation.
+     */
+<span class="fc" id="L149">    OBJECTCREATE(Expression::isObjectCreationExpr),</span>
+
+    /**
+     * RecordPattern.
+     */
+<span class="fc" id="L154">    RECORDPATTERN(Expression::isRecordPatternExpr),</span>
+
+    /**
+     * SingleMemberAnnotation.
+     */
+<span class="fc" id="L159">    SINGLEMEMBER(Expression::isSingleMemberAnnotationExpr),</span>
+
+    /**
+     * StringLiteral.
+     */
+<span class="fc" id="L164">    STRING(Expression::isStringLiteralExpr),</span>
+
+    /**
+     * Super.
+     */
+<span class="fc" id="L169">    SUPER(Expression::isSuperExpr),</span>
+
+    /**
+     * Switch.
+     */
+<span class="fc" id="L174">    SWITCH(Expression::isSwitchExpr),</span>
+
+    /**
+     * TextBlock.
+     */
+<span class="fc" id="L179">    TEXTBLOCK(Expression::isTextBlockLiteralExpr),</span>
+
+    /**
+     * This.
+     */
+<span class="fc" id="L184">    THIS(Expression::isThisExpr),</span>
+
+    /**
+     * Type.
+     */
+<span class="fc" id="L189">    TYPE(Expression::isTypeExpr),</span>
+
+    /**
+     * TypePattern.
+     */
+<span class="fc" id="L194">    TYPEPATTERN(Expression::isTypePatternExpr),</span>
+
+    /**
+     * Unary.
+     */
+<span class="fc" id="L199">    UNARY(Expression::isUnaryExpr),</span>
+
+    /**
+     * Variable.
+     */
+<span class="fc" id="L204">    VARIABLE(Expression::isVariableDeclarationExpr);</span>
+
+    /**
+     * The test.
+     */
+    private final Predicate&lt;Expression&gt; theTester;
+
+    /**
+     * Constructor.
+     * @param pTester the test method
+     */
+<span class="fc" id="L215">    ThemisXAnalysisExpression(final Predicate&lt;Expression&gt; pTester) {</span>
+<span class="fc" id="L216">        theTester = pTester;</span>
+<span class="fc" id="L217">    }</span>
+
+    /**
+     * Determine type of expression.
+     * @param pParser the parser
+     * @param pExpr the expression
+     * @return the exprType
+     * @throws OceanusException on error
+     */
+    public static ThemisXAnalysisExpression determineExpression(final ThemisXAnalysisParserDef pParser,
+                                                                final Expression pExpr) throws OceanusException {
+        /* Loop testing each expr type */
+<span class="pc bpc" id="L229" title="1 of 2 branches missed.">        for (ThemisXAnalysisExpression myExpr : values()) {</span>
+<span class="fc bfc" id="L230" title="All 2 branches covered.">            if (myExpr.theTester.test(pExpr)) {</span>
+<span class="fc" id="L231">                return myExpr;</span>
+            }
+        }
+
+        /* Unrecognised exprType */
+<span class="nc" id="L236">        throw pParser.buildException(&quot;Unexpected Expression&quot;, pExpr);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

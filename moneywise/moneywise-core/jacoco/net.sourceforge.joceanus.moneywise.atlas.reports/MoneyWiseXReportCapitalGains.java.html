@@ -1,0 +1,875 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseXReportCapitalGains.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.atlas.reports</a> &gt; <span class="el_source">MoneyWiseXReportCapitalGains.java</span></div><h1>MoneyWiseXReportCapitalGains.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.atlas.reports;
+
+import net.sourceforge.joceanus.metis.report.MetisReportBase;
+import net.sourceforge.joceanus.metis.report.MetisReportHTMLBuilder;
+import net.sourceforge.joceanus.metis.report.MetisReportHTMLBuilder.MetisHTMLTable;
+import net.sourceforge.joceanus.metis.report.MetisReportManager;
+import net.sourceforge.joceanus.metis.report.MetisReportReferenceManager.DelayedTable;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEvent;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEventType;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisSecurityBucket;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisSecurityAttr;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisSecurityValues;
+import net.sourceforge.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction;
+import net.sourceforge.joceanus.moneywise.tax.MoneyWiseCashType;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import java.util.List;
+
+/**
+ * CapitalGains report builder.
+ */
+public class MoneyWiseXReportCapitalGains
+        extends MetisReportBase&lt;MoneyWiseXAnalysis, MoneyWiseXAnalysisFilter&lt;?, ?&gt;&gt; {
+    /**
+     * The Title text.
+     */
+<span class="nc" id="L56">    private static final String TEXT_TITLE = MoneyWiseXReportResource.CAPITALGAINS_TITLE.getValue();</span>
+
+    /**
+     * HTML builder.
+     */
+    private final MetisReportHTMLBuilder theBuilder;
+
+    /**
+     * The Formatter.
+     */
+    private final OceanusDataFormatter theFormatter;
+
+    /**
+     * The string builder.
+     */
+    private final StringBuilder theStringBuilder;
+
+    /**
+     * The source SecurityBucket.
+     */
+    private MoneyWiseXAnalysisSecurityBucket theSecurity;
+
+    /**
+     * The transactions.
+     */
+    private List&lt;MoneyWiseXAnalysisEvent&gt; theEvents;
+
+    /**
+     * The EndDate.
+     */
+    private OceanusDate theEndDate;
+
+    /**
+     * The table.
+     */
+    private MetisHTMLTable theTable;
+
+    /**
+     * The attribute table.
+     */
+    private MetisHTMLTable theAttrTable;
+
+    /**
+     * Constructor.
+     * @param pManager the Report Manager
+     */
+<span class="nc" id="L102">    MoneyWiseXReportCapitalGains(final MetisReportManager&lt;MoneyWiseXAnalysisFilter&lt;?, ?&gt;&gt; pManager) {</span>
+        /* Access underlying utilities */
+<span class="nc" id="L104">        theBuilder = pManager.getBuilder();</span>
+<span class="nc" id="L105">        theFormatter = theBuilder.getDataFormatter();</span>
+<span class="nc" id="L106">        theStringBuilder = new StringBuilder();</span>
+<span class="nc" id="L107">    }</span>
+
+    /**
+     * Set the security bucket.
+     * @param pSecurity the security bucket
+     */
+    protected void setSecurity(final MoneyWiseXAnalysisSecurityBucket pSecurity) {
+<span class="nc" id="L114">        theSecurity = pSecurity;</span>
+<span class="nc" id="L115">    }</span>
+
+    @Override
+    public Document createReport(final MoneyWiseXAnalysis pAnalysis) {
+        /* Access the events and the date */
+        //theEvents = pAnalysis.getEditSet().getDataList(MoneyWiseBasicDataType.TRANSACTION, MoneyWiseTransactionList.class);
+<span class="nc" id="L121">        theEndDate = pAnalysis.getDateRange().getEnd();</span>
+
+        /* Start the report */
+<span class="nc" id="L124">        final Element myBody = theBuilder.startReport();</span>
+<span class="nc" id="L125">        theBuilder.makeTitle(myBody, TEXT_TITLE, theFormatter.formatObject(theEndDate));</span>
+<span class="nc" id="L126">        theBuilder.makeSubTitle(myBody, theSecurity.getDecoratedName());</span>
+
+        /* Initialise the table */
+<span class="nc" id="L129">        theTable = theBuilder.startTable(myBody);</span>
+<span class="nc" id="L130">        theBuilder.startHdrRow(theTable);</span>
+<span class="nc" id="L131">        theBuilder.makeTitleCell(theTable, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE.getValue());</span>
+<span class="nc" id="L132">        theBuilder.makeTitleCell(theTable, MoneyWiseBasicDataType.TRANSACTION.getItemName());</span>
+
+        /* Format the history */
+<span class="nc" id="L135">        formatHistory();</span>
+
+        /* Return the document */
+<span class="nc" id="L138">        return theBuilder.getDocument();</span>
+    }
+
+    /**
+     * format the cost history.
+     */
+    private void formatHistory() {
+        /* Loop through the transactions */
+<span class="nc bnc" id="L146" title="All 2 branches missed.">        for (MoneyWiseXAnalysisEvent myEvent : theEvents) {</span>
+            /* Ignore non-transactions */
+<span class="nc bnc" id="L148" title="All 2 branches missed.">            if (myEvent.getEventType() != MoneyWiseXAnalysisEventType.TRANSACTION) {</span>
+<span class="nc" id="L149">                continue;</span>
+            }
+
+            /* Check for End of report */
+<span class="nc bnc" id="L153" title="All 2 branches missed.">            if (theEndDate != null</span>
+<span class="nc bnc" id="L154" title="All 2 branches missed.">                    &amp;&amp; theEndDate.compareTo(myEvent.getDate()) &lt; 0) {</span>
+<span class="nc" id="L155">                break;</span>
+            }
+
+            /* If the transaction relates to the security */
+<span class="nc" id="L159">            final MoneyWiseXAnalysisSecurityValues myValues = theSecurity.getValuesForEvent(myEvent);</span>
+<span class="nc bnc" id="L160" title="All 2 branches missed.">            if (myValues != null) {</span>
+                /* Format the transaction */
+<span class="nc" id="L162">                formatTransaction(myEvent, myValues);</span>
+
+                /* If we have an attribute table */
+<span class="nc bnc" id="L165" title="All 2 branches missed.">                if (theAttrTable != null) {</span>
+                    /* Embed the table correctly and reset the indicator */
+<span class="nc" id="L167">                    theBuilder.embedTable(theAttrTable);</span>
+<span class="nc" id="L168">                    theAttrTable = null;</span>
+                }
+            }
+<span class="nc" id="L171">        }</span>
+<span class="nc" id="L172">    }</span>
+
+    /**
+     * Format the details.
+     * @param pEvent the event
+     * @param pValues the values for the transaction
+     */
+    private void formatTransaction(final MoneyWiseXAnalysisEvent pEvent,
+                                   final MoneyWiseXAnalysisSecurityValues pValues) {
+        /* Switch on the class */
+<span class="nc" id="L182">        final MoneyWiseTransaction myTrans = pEvent.getTransaction();</span>
+<span class="nc bnc" id="L183" title="All 7 branches missed.">        switch (myTrans.getCategoryClass()) {</span>
+            case TRANSFER:
+            case STOCKRIGHTSISSUE:
+            case INHERITED:
+<span class="nc" id="L187">                formatTransfer(pEvent, pValues);</span>
+<span class="nc" id="L188">                break;</span>
+            case SECURITYREPLACE:
+            case STOCKTAKEOVER:
+<span class="nc" id="L191">                formatStockTakeOver(pEvent, pValues);</span>
+<span class="nc" id="L192">                break;</span>
+            case STOCKDEMERGER:
+<span class="nc" id="L194">                formatStockDeMerger(pEvent, pValues);</span>
+<span class="nc" id="L195">                break;</span>
+            case STOCKSPLIT:
+            case UNITSADJUST:
+<span class="nc" id="L198">                formatUnitsAdjust(pEvent, pValues);</span>
+<span class="nc" id="L199">                break;</span>
+            case DIVIDEND:
+<span class="nc" id="L201">                formatDividend(pEvent, pValues);</span>
+<span class="nc" id="L202">                break;</span>
+            case PORTFOLIOXFER:
+<span class="nc" id="L204">                formatPortfolioXfer(pEvent, pValues);</span>
+<span class="nc" id="L205">                break;</span>
+            default:
+                break;
+        }
+<span class="nc" id="L209">    }</span>
+
+    /**
+     * Format basic details of a transaction.
+     * @param pEvent the event
+     */
+    private void formatBasicTransaction(final MoneyWiseXAnalysisEvent pEvent) {
+        /* Create the transaction row */
+<span class="nc" id="L217">        final MoneyWiseTransaction myTrans = pEvent.getTransaction();</span>
+<span class="nc" id="L218">        theBuilder.startRow(theTable);</span>
+<span class="nc" id="L219">        theBuilder.makeValueCell(theTable, myTrans.getDate());</span>
+<span class="nc" id="L220">        theBuilder.makeValueCell(theTable, myTrans);</span>
+<span class="nc" id="L221">    }</span>
+
+    /**
+     * Check whether this is a debit transaction for the security.
+     * @param pEvent the event
+     * @return true/false
+     */
+    private boolean isDebit(final MoneyWiseXAnalysisEvent pEvent) {
+<span class="nc" id="L229">        final MoneyWiseTransaction myTrans = pEvent.getTransaction();</span>
+<span class="nc bnc" id="L230" title="All 2 branches missed.">        final MoneyWiseTransAsset myDebit = myTrans.getDirection().isTo()</span>
+<span class="nc" id="L231">                ? myTrans.getAccount()</span>
+<span class="nc" id="L232">                : myTrans.getPartner();</span>
+<span class="nc" id="L233">        return myDebit.equals(theSecurity.getSecurityHolding());</span>
+    }
+
+    /**
+     * Check whether this is a credit transaction for the security.
+     * @param pEvent the event
+     * @return true/false
+     */
+    private boolean isCredit(final MoneyWiseXAnalysisEvent pEvent) {
+<span class="nc" id="L242">        final MoneyWiseTransaction myTrans = pEvent.getTransaction();</span>
+<span class="nc bnc" id="L243" title="All 2 branches missed.">        final MoneyWiseTransAsset myCredit = myTrans.getDirection().isFrom()</span>
+<span class="nc" id="L244">                ? myTrans.getAccount()</span>
+<span class="nc" id="L245">                : myTrans.getPartner();</span>
+<span class="nc" id="L246">        return myCredit.equals(theSecurity.getSecurityHolding());</span>
+    }
+
+    /**
+     * Ensure the attribute table.
+     */
+    private void ensureAttrTable() {
+        /* If we do not have a current attribute table */
+<span class="nc bnc" id="L254" title="All 2 branches missed.">        if (theAttrTable == null) {</span>
+            /* Create a new table */
+<span class="nc" id="L256">            theAttrTable = theBuilder.createEmbeddedTable(theTable);</span>
+        }
+<span class="nc" id="L258">    }</span>
+
+    /**
+     * Format a value.
+     * @param pAttr the attribute
+     * @param pValue the value
+     */
+    private void formatValue(final MoneyWiseXAnalysisSecurityAttr pAttr,
+                             final Object pValue) {
+        /* Ensure that we have an attribute table */
+<span class="nc" id="L268">        ensureAttrTable();</span>
+
+        /* Format the attribute */
+<span class="nc" id="L271">        theBuilder.startRow(theAttrTable);</span>
+<span class="nc" id="L272">        theBuilder.makeValueCell(theAttrTable, pAttr);</span>
+<span class="nc" id="L273">        theBuilder.makeStretchedValueCell(theAttrTable, pValue);</span>
+<span class="nc" id="L274">    }</span>
+
+    /**
+     * Format a division.
+     * @param pAttr the attribute
+     * @param pValue the value
+     * @param pNumerator the numerator
+     * @param pDivisor the divisor
+     */
+    private void formatDivision(final MoneyWiseXAnalysisSecurityAttr pAttr,
+                                final Object pValue,
+                                final OceanusDecimal pNumerator,
+                                final OceanusDecimal pDivisor) {
+        /* Ensure that we have an attribute table */
+<span class="nc" id="L288">        ensureAttrTable();</span>
+
+        /* Format the attribute */
+<span class="nc" id="L291">        theBuilder.startRow(theAttrTable);</span>
+<span class="nc" id="L292">        theBuilder.makeValueCell(theAttrTable, pAttr);</span>
+<span class="nc" id="L293">        theBuilder.makeValueCell(theAttrTable, formatDivision(pNumerator, pDivisor));</span>
+<span class="nc" id="L294">        theBuilder.makeValueCell(theAttrTable, pValue);</span>
+<span class="nc" id="L295">    }</span>
+
+    /**
+     * Format a division.
+     * @param pNumerator the numerator
+     * @param pDivisor the divisor
+     * @return the formatted division
+     */
+    private String formatDivision(final OceanusDecimal pNumerator,
+                                  final OceanusDecimal pDivisor) {
+<span class="nc" id="L305">        return formatCombination(pNumerator, pDivisor, '/');</span>
+    }
+
+    /**
+     * Format a valuation.
+     * @param pAttr the attribute
+     * @param pValue the value
+     * @param pUnits the units
+     * @param pPrice the price
+     * @param pXchangeRate the exchange rate
+     */
+    private void formatValuation(final MoneyWiseXAnalysisSecurityAttr pAttr,
+                                 final Object pValue,
+                                 final OceanusUnits pUnits,
+                                 final OceanusPrice pPrice,
+                                 final OceanusRatio pXchangeRate) {
+        /* Ensure that we have an attribute table */
+<span class="nc" id="L322">        ensureAttrTable();</span>
+
+        /* Format the attribute */
+<span class="nc" id="L325">        theBuilder.startRow(theAttrTable);</span>
+<span class="nc" id="L326">        theBuilder.makeValueCell(theAttrTable, pAttr);</span>
+<span class="nc" id="L327">        theBuilder.makeValueCell(theAttrTable, formatValuation(pUnits, pPrice, pXchangeRate));</span>
+<span class="nc" id="L328">        theBuilder.makeValueCell(theAttrTable, pValue);</span>
+<span class="nc" id="L329">    }</span>
+
+    /**
+     * Format a valuation.
+     * @param pUnits the units
+     * @param pPrice the price
+     * @param pXchangeRate the exchange rate
+     * @return the formatted valuation
+     */
+    private String formatValuation(final OceanusUnits pUnits,
+                                   final OceanusPrice pPrice,
+                                   final OceanusRatio pXchangeRate) {
+<span class="nc" id="L341">        theStringBuilder.setLength(0);</span>
+<span class="nc" id="L342">        theStringBuilder.append(theFormatter.formatObject(pUnits));</span>
+<span class="nc" id="L343">        theStringBuilder.append('@');</span>
+<span class="nc" id="L344">        theStringBuilder.append(theFormatter.formatObject(pPrice));</span>
+<span class="nc bnc" id="L345" title="All 2 branches missed.">        if (pXchangeRate != null) {</span>
+<span class="nc" id="L346">            theStringBuilder.append('/');</span>
+<span class="nc" id="L347">            theStringBuilder.append(theFormatter.formatObject(pXchangeRate));</span>
+        }
+<span class="nc" id="L349">        return theStringBuilder.toString();</span>
+    }
+
+    /**
+     * Format a multiplication.
+     * @param pAttr the attribute
+     * @param pValue the value
+     * @param pFirst the first item
+     * @param pSecond the second item
+     */
+    private void formatMultiplication(final MoneyWiseXAnalysisSecurityAttr pAttr,
+                                      final Object pValue,
+                                      final OceanusDecimal pFirst,
+                                      final OceanusDecimal pSecond) {
+        /* Ensure that we have an attribute table */
+<span class="nc" id="L364">        ensureAttrTable();</span>
+
+        /* Format the attribute */
+<span class="nc" id="L367">        theBuilder.startRow(theAttrTable);</span>
+<span class="nc" id="L368">        theBuilder.makeValueCell(theAttrTable, pAttr);</span>
+<span class="nc" id="L369">        theBuilder.makeValueCell(theAttrTable, formatMultiplication(pFirst, pSecond));</span>
+<span class="nc" id="L370">        theBuilder.makeValueCell(theAttrTable, pValue);</span>
+<span class="nc" id="L371">    }</span>
+
+    /**
+     * Format a multiplication.
+     * @param pFirst the first item
+     * @param pSecond the second item
+     * @return the formatted multiplication
+     */
+    private String formatMultiplication(final OceanusDecimal pFirst,
+                                        final OceanusDecimal pSecond) {
+<span class="nc" id="L381">        return formatCombination(pFirst, pSecond, '*');</span>
+    }
+
+    /**
+     * Format an addition.
+     * @param pAttr the attribute
+     * @param pValue the value
+     * @param pFirst the first item
+     * @param pSecond the second item
+     */
+    private void formatAddition(final MoneyWiseXAnalysisSecurityAttr pAttr,
+                                final Object pValue,
+                                final OceanusDecimal pFirst,
+                                final OceanusDecimal pSecond) {
+        /* Ensure that we have an attribute table */
+<span class="nc" id="L396">        ensureAttrTable();</span>
+
+        /* Format the attribute */
+<span class="nc" id="L399">        theBuilder.startRow(theAttrTable);</span>
+<span class="nc" id="L400">        theBuilder.makeValueCell(theAttrTable, pAttr);</span>
+<span class="nc" id="L401">        theBuilder.makeValueCell(theAttrTable, formatAddition(pFirst, pSecond));</span>
+<span class="nc" id="L402">        theBuilder.makeValueCell(theAttrTable, pValue);</span>
+<span class="nc" id="L403">    }</span>
+
+    /**
+     * Format an addition.
+     * @param pFirst the first item
+     * @param pSecond the second item
+     * @return the formatted addition
+     */
+    private String formatAddition(final OceanusDecimal pFirst,
+                                  final OceanusDecimal pSecond) {
+<span class="nc" id="L413">        return formatCombination(pFirst, pSecond, '+');</span>
+    }
+
+    /**
+     * Format a subtraction.
+     * @param pAttr the attribute
+     * @param pValue the value
+     * @param pFirst the first item
+     * @param pSecond the second item
+     */
+    private void formatSubtraction(final MoneyWiseXAnalysisSecurityAttr pAttr,
+                                   final Object pValue,
+                                   final OceanusDecimal pFirst,
+                                   final OceanusDecimal pSecond) {
+        /* Ensure that we have an attribute table */
+<span class="nc" id="L428">        ensureAttrTable();</span>
+
+        /* Format the attribute */
+<span class="nc" id="L431">        theBuilder.startRow(theAttrTable);</span>
+<span class="nc" id="L432">        theBuilder.makeValueCell(theAttrTable, pAttr);</span>
+<span class="nc" id="L433">        theBuilder.makeValueCell(theAttrTable, formatSubtraction(pFirst, pSecond));</span>
+<span class="nc" id="L434">        theBuilder.makeValueCell(theAttrTable, pValue);</span>
+<span class="nc" id="L435">    }</span>
+
+    /**
+     * Format a subtraction.
+     * @param pFirst the first item
+     * @param pSecond the second item
+     * @return the formatted subtraction
+     */
+    private String formatSubtraction(final OceanusDecimal pFirst,
+                                     final OceanusDecimal pSecond) {
+<span class="nc" id="L445">        return formatCombination(pFirst, pSecond, '-');</span>
+    }
+
+    /**
+     * Format a combination.
+     * @param pFirst the first item
+     * @param pSecond the second item
+     * @param pSymbol the symbol
+     * @return the formatted combination
+     */
+    private String formatCombination(final OceanusDecimal pFirst,
+                                     final OceanusDecimal pSecond,
+                                     final char pSymbol) {
+<span class="nc" id="L458">        theStringBuilder.setLength(0);</span>
+<span class="nc" id="L459">        theStringBuilder.append(theFormatter.formatObject(pFirst));</span>
+<span class="nc" id="L460">        theStringBuilder.append(pSymbol);</span>
+<span class="nc" id="L461">        theStringBuilder.append(theFormatter.formatObject(pSecond));</span>
+<span class="nc" id="L462">        return theStringBuilder.toString();</span>
+    }
+
+    /**
+     * Format a Transfer.
+     * @param pEvent the event
+     * @param pValues the values for the transaction
+     */
+    private void formatTransfer(final MoneyWiseXAnalysisEvent pEvent,
+                                final MoneyWiseXAnalysisSecurityValues pValues) {
+        /* Format the basic transaction */
+<span class="nc" id="L473">        formatBasicTransaction(pEvent);</span>
+
+        /* Split workings for transfer in/out */
+<span class="nc bnc" id="L476" title="All 2 branches missed.">        if (isDebit(pEvent)) {</span>
+<span class="nc" id="L477">            formatTransferOut(pEvent, pValues);</span>
+        } else {
+<span class="nc" id="L479">            formatTransferIn(pEvent, pValues);</span>
+        }
+<span class="nc" id="L481">    }</span>
+
+    /**
+     * Format a Dividend.
+     * @param pEvent the event
+     * @param pValues the values for the transaction
+     */
+    private void formatDividend(final MoneyWiseXAnalysisEvent pEvent,
+                                final MoneyWiseXAnalysisSecurityValues pValues) {
+        /* If this is a dividend re-investment */
+<span class="nc bnc" id="L491" title="All 2 branches missed.">        if (isCredit(pEvent)) {</span>
+            /* Format the basic transaction */
+<span class="nc" id="L493">            formatBasicTransaction(pEvent);</span>
+
+            /* Deal as investment */
+<span class="nc" id="L496">            formatTransferIn(pEvent, pValues);</span>
+        }
+<span class="nc" id="L498">    }</span>
+
+    /**
+     * Format transfer money in.
+     * @param pEvent the event
+     * @param pValues the values for the transaction
+     */
+    private void formatTransferIn(final MoneyWiseXAnalysisEvent pEvent,
+                                  final MoneyWiseXAnalysisSecurityValues pValues) {
+
+        /* Access interesting values */
+<span class="nc" id="L509">        final MoneyWiseTransaction myTrans = pEvent.getTransaction();</span>
+<span class="nc" id="L510">        final OceanusUnits myUnits = pValues.getUnitsValue(MoneyWiseXAnalysisSecurityAttr.UNITS);</span>
+<span class="nc" id="L511">        OceanusUnits myDeltaUnits = myTrans.getAccountDeltaUnits();</span>
+<span class="nc bnc" id="L512" title="All 2 branches missed.">        if (myDeltaUnits == null) {</span>
+<span class="nc" id="L513">            myDeltaUnits = myTrans.getPartnerDeltaUnits();</span>
+        }
+<span class="nc" id="L515">        final OceanusMoney myCost = pValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.RESIDUALCOST);</span>
+<span class="nc" id="L516">        final OceanusMoney myAmount = theSecurity.getMoneyDeltaForEvent(pEvent, MoneyWiseXAnalysisSecurityAttr.RESIDUALCOST);</span>
+<span class="nc" id="L517">        final OceanusPrice myPrice = pValues.getPriceValue(MoneyWiseXAnalysisSecurityAttr.PRICE);</span>
+<span class="nc" id="L518">        final OceanusRatio myXchangeRate = pValues.getRatioValue(MoneyWiseXAnalysisSecurityAttr.EXCHANGERATE);</span>
+
+        /* Obtain the original units/cost */
+<span class="nc" id="L521">        final MoneyWiseXAnalysisSecurityValues myPreviousValues = theSecurity.getPreviousValuesForEvent(pEvent);</span>
+<span class="nc" id="L522">        final OceanusUnits myOriginalUnits = myPreviousValues.getUnitsValue(MoneyWiseXAnalysisSecurityAttr.UNITS);</span>
+<span class="nc" id="L523">        final OceanusMoney myOriginalCost = myPreviousValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.RESIDUALCOST);</span>
+
+        /* If this is an inheritance */
+        //if (myTrans.isCategoryClass(MoneyWiseTransCategoryClass.INHERITED)) {
+        //    formatValuation(MoneyWiseXAnalysisSecurityAttr.INVESTED, myAmount, myDeltaUnits, myPrice, myXchangeRate);
+        //} else {
+        //    formatValue(MoneyWiseXAnalysisSecurityAttr.INVESTED, myAmount);
+        //}
+
+        /* Record the details */
+<span class="nc bnc" id="L533" title="All 2 branches missed.">        if (myDeltaUnits != null) {</span>
+<span class="nc" id="L534">            formatAddition(MoneyWiseXAnalysisSecurityAttr.UNITS, myUnits, myOriginalUnits, myDeltaUnits);</span>
+        }
+<span class="nc" id="L536">        formatAddition(MoneyWiseXAnalysisSecurityAttr.RESIDUALCOST, myCost, myOriginalCost, myAmount);</span>
+<span class="nc" id="L537">    }</span>
+
+    /**
+     * Format transfer money out.
+     * @param pEvent the event
+     * @param pValues the values for the transaction
+     */
+    private void formatTransferOut(final MoneyWiseXAnalysisEvent pEvent,
+                                   final MoneyWiseXAnalysisSecurityValues pValues) {
+        /* Access interesting values */
+<span class="nc" id="L547">        final OceanusMoney myGain = pValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.CAPITALGAIN);</span>
+<span class="nc" id="L548">        final OceanusMoney myAllowedCost = pValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.ALLOWEDCOST);</span>
+<span class="nc" id="L549">        final OceanusRatio myCostDilution = pValues.getRatioValue(MoneyWiseXAnalysisSecurityAttr.COSTDILUTION);</span>
+<span class="nc" id="L550">        final OceanusMoney myTotalGains = pValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.REALISEDGAINS);</span>
+<span class="nc" id="L551">        final OceanusMoney myCost = pValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.RESIDUALCOST);</span>
+<span class="nc" id="L552">        final OceanusUnits myUnits = pValues.getUnitsValue(MoneyWiseXAnalysisSecurityAttr.UNITS);</span>
+<span class="nc" id="L553">        final OceanusMoney myCash = pValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.RETURNEDCASH);</span>
+<span class="nc" id="L554">        final OceanusMoney myConsideration = pValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.CONSIDERATION);</span>
+<span class="nc" id="L555">        final MoneyWiseCashType myCashType = pValues.getEnumValue(MoneyWiseXAnalysisSecurityAttr.CASHTYPE, MoneyWiseCashType.class);</span>
+
+        /* Obtain the original values */
+<span class="nc" id="L558">        final MoneyWiseXAnalysisSecurityValues myPreviousValues = theSecurity.getPreviousValuesForEvent(pEvent);</span>
+<span class="nc" id="L559">        final OceanusMoney myOriginalCost = myPreviousValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.RESIDUALCOST);</span>
+<span class="nc" id="L560">        final OceanusUnits myOriginalUnits = myPreviousValues.getUnitsValue(MoneyWiseXAnalysisSecurityAttr.UNITS);</span>
+
+        /* Obtain the delta in units/money */
+<span class="nc" id="L563">        OceanusUnits myDeltaUnits = theSecurity.getUnitsDeltaForEvent(pEvent, MoneyWiseXAnalysisSecurityAttr.UNITS);</span>
+<span class="nc" id="L564">        final OceanusMoney myAmount = new OceanusMoney(myCash);</span>
+<span class="nc" id="L565">        myAmount.negate();</span>
+
+        /* Report the returned cash */
+<span class="nc" id="L568">        formatValue(MoneyWiseXAnalysisSecurityAttr.RETURNEDCASH, myCash);</span>
+<span class="nc bnc" id="L569" title="All 2 branches missed.">        if (myCashType != null) {</span>
+<span class="nc" id="L570">            formatValue(MoneyWiseXAnalysisSecurityAttr.CASHTYPE, myCashType);</span>
+        }
+
+        /* If we have changed the number of units */
+<span class="nc bnc" id="L574" title="All 2 branches missed.">        if (myDeltaUnits.isNonZero()) {</span>
+            /* Obtain the various values */
+<span class="nc" id="L576">            myDeltaUnits = new OceanusUnits(myDeltaUnits);</span>
+<span class="nc" id="L577">            myDeltaUnits.negate();</span>
+
+            /* Format the units */
+<span class="nc" id="L580">            formatSubtraction(MoneyWiseXAnalysisSecurityAttr.UNITS, myUnits, myOriginalUnits, myDeltaUnits);</span>
+
+            /* Format the dilution */
+<span class="nc" id="L583">            formatDivision(MoneyWiseXAnalysisSecurityAttr.COSTDILUTION, myCostDilution, myUnits, myOriginalUnits);</span>
+
+            /* Else we need to format the cost dilution */
+<span class="nc bnc" id="L586" title="All 2 branches missed.">        } else if (myConsideration != null) {</span>
+            /* Format the valuation */
+<span class="nc" id="L588">            final OceanusMoney myValuation = pValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.VALUATION);</span>
+<span class="nc" id="L589">            final OceanusPrice myPrice = pValues.getPriceValue(MoneyWiseXAnalysisSecurityAttr.PRICE);</span>
+<span class="nc" id="L590">            final OceanusRatio myXchangeRate = pValues.getRatioValue(MoneyWiseXAnalysisSecurityAttr.EXCHANGERATE);</span>
+<span class="nc" id="L591">            formatValuation(MoneyWiseXAnalysisSecurityAttr.VALUATION, myValuation, myUnits, myPrice, myXchangeRate);</span>
+<span class="nc" id="L592">            formatAddition(MoneyWiseXAnalysisSecurityAttr.CONSIDERATION, myConsideration, myCash, myValuation);</span>
+
+            /* Format the dilution */
+<span class="nc" id="L595">            formatDivision(MoneyWiseXAnalysisSecurityAttr.COSTDILUTION, myCostDilution, myValuation, myConsideration);</span>
+        }
+
+        /* Record the details */
+<span class="nc bnc" id="L599" title="All 2 branches missed.">        if (myCostDilution != null) {</span>
+<span class="nc" id="L600">            formatMultiplication(MoneyWiseXAnalysisSecurityAttr.RESIDUALCOST, myCost, myOriginalCost, myCostDilution);</span>
+<span class="nc" id="L601">            formatSubtraction(MoneyWiseXAnalysisSecurityAttr.ALLOWEDCOST, myAllowedCost, myOriginalCost, myCost);</span>
+        } else {
+<span class="nc" id="L603">            formatValue(MoneyWiseXAnalysisSecurityAttr.ALLOWEDCOST, myAllowedCost);</span>
+<span class="nc" id="L604">            formatSubtraction(MoneyWiseXAnalysisSecurityAttr.RESIDUALCOST, myCost, myOriginalCost, myAllowedCost);</span>
+        }
+
+        /* Record the gains allocation */
+<span class="nc bnc" id="L608" title="All 2 branches missed.">        if (myGain != null) {</span>
+<span class="nc" id="L609">            formatSubtraction(MoneyWiseXAnalysisSecurityAttr.CAPITALGAIN, myGain, myCash, myAllowedCost);</span>
+<span class="nc" id="L610">            formatValue(MoneyWiseXAnalysisSecurityAttr.REALISEDGAINS, myTotalGains);</span>
+        }
+<span class="nc" id="L612">    }</span>
+
+    /**
+     * Format a Units Adjustment.
+     * @param pEvent the event
+     * @param pValues the values for the transaction
+     */
+    private void formatUnitsAdjust(final MoneyWiseXAnalysisEvent pEvent,
+                                   final MoneyWiseXAnalysisSecurityValues pValues) {
+        /* Format the basic transaction */
+<span class="nc" id="L622">        final MoneyWiseTransaction myTrans = pEvent.getTransaction();</span>
+<span class="nc" id="L623">        formatBasicTransaction(pEvent);</span>
+
+        /* Access interesting values */
+<span class="nc" id="L626">        final OceanusUnits myUnits = pValues.getUnitsValue(MoneyWiseXAnalysisSecurityAttr.UNITS);</span>
+<span class="nc" id="L627">        OceanusUnits myDeltaUnits = myTrans.getAccountDeltaUnits();</span>
+
+        /* Obtain the original units */
+<span class="nc" id="L630">        final MoneyWiseXAnalysisSecurityValues myPreviousValues = theSecurity.getPreviousValuesForEvent(pEvent);</span>
+<span class="nc" id="L631">        final OceanusUnits myOriginalUnits = myPreviousValues.getUnitsValue(MoneyWiseXAnalysisSecurityAttr.UNITS);</span>
+
+        /* Record the details */
+<span class="nc bnc" id="L634" title="All 2 branches missed.">        if (myDeltaUnits.isPositive()) {</span>
+<span class="nc" id="L635">            formatAddition(MoneyWiseXAnalysisSecurityAttr.UNITS, myUnits, myOriginalUnits, myDeltaUnits);</span>
+        } else {
+<span class="nc" id="L637">            myDeltaUnits = new OceanusUnits(myDeltaUnits);</span>
+<span class="nc" id="L638">            myDeltaUnits.negate();</span>
+<span class="nc" id="L639">            formatSubtraction(MoneyWiseXAnalysisSecurityAttr.UNITS, myUnits, myOriginalUnits, myDeltaUnits);</span>
+        }
+<span class="nc" id="L641">    }</span>
+
+    /**
+     * Format a Stock DeMerger.
+     * @param pEvent the event
+     * @param pValues the values for the transaction
+     */
+    private void formatStockDeMerger(final MoneyWiseXAnalysisEvent pEvent,
+                                     final MoneyWiseXAnalysisSecurityValues pValues) {
+        /* Format the basic transaction */
+<span class="nc" id="L651">        formatBasicTransaction(pEvent);</span>
+
+        /* Split workings for credit and debit */
+<span class="nc bnc" id="L654" title="All 2 branches missed.">        if (isDebit(pEvent)) {</span>
+<span class="nc" id="L655">            formatDebitStockDeMerger(pEvent, pValues);</span>
+        } else {
+<span class="nc" id="L657">            formatCreditStockDeMerger(pEvent, pValues);</span>
+        }
+<span class="nc" id="L659">    }</span>
+
+    /**
+     * Format debit side of a Stock DeMerger.
+     * @param pEvent the event
+     * @param pValues the values for the transaction
+     */
+    private void formatDebitStockDeMerger(final MoneyWiseXAnalysisEvent pEvent,
+                                          final MoneyWiseXAnalysisSecurityValues pValues) {
+        /* Access interesting values */
+<span class="nc" id="L669">        final OceanusRatio myCostDilution = pValues.getRatioValue(MoneyWiseXAnalysisSecurityAttr.COSTDILUTION);</span>
+<span class="nc" id="L670">        final OceanusMoney myResidualCost = pValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.RESIDUALCOST);</span>
+<span class="nc" id="L671">        final OceanusMoney myXferredCost = pValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.XFERREDCOST);</span>
+<span class="nc" id="L672">        OceanusUnits myDeltaUnits = theSecurity.getUnitsDeltaForEvent(pEvent, MoneyWiseXAnalysisSecurityAttr.UNITS);</span>
+
+        /* Check whether the units have changed */
+<span class="nc" id="L675">        final boolean isDeltaUnits = myDeltaUnits.isNonZero();</span>
+
+        /* Obtain the original cost */
+<span class="nc" id="L678">        final MoneyWiseXAnalysisSecurityValues myPreviousValues = theSecurity.getPreviousValuesForEvent(pEvent);</span>
+<span class="nc" id="L679">        final OceanusMoney myOriginalCost = myPreviousValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.RESIDUALCOST);</span>
+
+        /* If we have changed the number of units */
+<span class="nc bnc" id="L682" title="All 2 branches missed.">        if (isDeltaUnits) {</span>
+            /* Obtain the various values */
+<span class="nc" id="L684">            final OceanusUnits myOriginalUnits = myPreviousValues.getUnitsValue(MoneyWiseXAnalysisSecurityAttr.UNITS);</span>
+<span class="nc" id="L685">            final OceanusUnits myUnits = pValues.getUnitsValue(MoneyWiseXAnalysisSecurityAttr.UNITS);</span>
+<span class="nc" id="L686">            myDeltaUnits = new OceanusUnits(myDeltaUnits);</span>
+<span class="nc" id="L687">            myDeltaUnits.negate();</span>
+
+            /* Format the units/dilution */
+<span class="nc" id="L690">            formatSubtraction(MoneyWiseXAnalysisSecurityAttr.UNITS, myUnits, myOriginalUnits, myDeltaUnits);</span>
+<span class="nc" id="L691">            formatDivision(MoneyWiseXAnalysisSecurityAttr.COSTDILUTION, myCostDilution, myUnits, myOriginalUnits);</span>
+
+            /* else just report the dilution */
+<span class="nc" id="L694">        } else {</span>
+<span class="nc" id="L695">            formatValue(MoneyWiseXAnalysisSecurityAttr.COSTDILUTION, myCostDilution);</span>
+        }
+
+        /* Record the details */
+<span class="nc" id="L699">        formatMultiplication(MoneyWiseXAnalysisSecurityAttr.RESIDUALCOST, myResidualCost, myOriginalCost, myCostDilution);</span>
+<span class="nc" id="L700">        formatSubtraction(MoneyWiseXAnalysisSecurityAttr.XFERREDCOST, myXferredCost, myOriginalCost, myResidualCost);</span>
+<span class="nc" id="L701">    }</span>
+
+    /**
+     * Format credit side of a Stock DeMerger.
+     * @param pEvent the event
+     * @param pValues the values for the transaction
+     */
+    private void formatCreditStockDeMerger(final MoneyWiseXAnalysisEvent pEvent,
+                                           final MoneyWiseXAnalysisSecurityValues pValues) {
+        /* Access interesting values */
+<span class="nc" id="L711">        final OceanusMoney myResidualCost = pValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.RESIDUALCOST);</span>
+<span class="nc" id="L712">        final OceanusMoney myXferredCost = pValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.XFERREDCOST);</span>
+<span class="nc" id="L713">        final OceanusMoney myValueXfer = pValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.XFERREDVALUE);</span>
+<span class="nc" id="L714">        final OceanusUnits myUnits = theSecurity.getUnitsDeltaForEvent(pEvent, MoneyWiseXAnalysisSecurityAttr.UNITS);</span>
+<span class="nc" id="L715">        final OceanusPrice myPrice = pValues.getPriceValue(MoneyWiseXAnalysisSecurityAttr.PRICE);</span>
+<span class="nc" id="L716">        final OceanusRatio myXchangeRate = pValues.getRatioValue(MoneyWiseXAnalysisSecurityAttr.EXCHANGERATE);</span>
+
+        /* Record the details */
+<span class="nc" id="L719">        formatValuation(MoneyWiseXAnalysisSecurityAttr.XFERREDVALUE, myValueXfer, myUnits, myPrice, myXchangeRate);</span>
+<span class="nc" id="L720">        formatValue(MoneyWiseXAnalysisSecurityAttr.XFERREDCOST, myXferredCost);</span>
+<span class="nc" id="L721">        formatValue(MoneyWiseXAnalysisSecurityAttr.RESIDUALCOST, myResidualCost);</span>
+<span class="nc" id="L722">    }</span>
+
+    /**
+     * Format a Stock TakeOver.
+     * @param pEvent the event
+     * @param pValues the values for the transaction
+     */
+    private void formatStockTakeOver(final MoneyWiseXAnalysisEvent pEvent,
+                                     final MoneyWiseXAnalysisSecurityValues pValues) {
+        /* Format the basic transaction */
+<span class="nc" id="L732">        formatBasicTransaction(pEvent);</span>
+
+        /* Split out Stock and Cash TakeOver */
+<span class="nc" id="L735">        final OceanusMoney myCash = pValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.RETURNEDCASH);</span>
+<span class="nc bnc" id="L736" title="All 2 branches missed.">        if (myCash != null) {</span>
+<span class="nc" id="L737">            formatStockAndCashTakeOver(pEvent, pValues, myCash);</span>
+
+            /* Split workings for credit and debit */
+<span class="nc bnc" id="L740" title="All 2 branches missed.">        } else if (isDebit(pEvent)) {</span>
+            /* Record the transfer of cost for simple replacement takeOver */
+<span class="nc" id="L742">            final OceanusMoney myCostXfer = pValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.XFERREDCOST);</span>
+<span class="nc" id="L743">            formatValue(MoneyWiseXAnalysisSecurityAttr.XFERREDCOST, myCostXfer);</span>
+<span class="nc" id="L744">        } else {</span>
+<span class="nc" id="L745">            formatCreditStockTakeOver(pEvent, pValues);</span>
+        }
+<span class="nc" id="L747">    }</span>
+
+    /**
+     * Format a StockAndCash TakeOver.
+     * @param pEvent the event
+     * @param pValues the values for the transaction
+     * @param pCash the cash consideration
+     */
+    private void formatStockAndCashTakeOver(final MoneyWiseXAnalysisEvent pEvent,
+                                            final MoneyWiseXAnalysisSecurityValues pValues,
+                                            final OceanusMoney pCash) {
+        /* Split workings for credit and debit */
+<span class="nc bnc" id="L759" title="All 2 branches missed.">        if (isDebit(pEvent)) {</span>
+<span class="nc" id="L760">            formatDebitStockAndCashTakeOver(pEvent, pValues, pCash);</span>
+        } else {
+<span class="nc" id="L762">            formatCreditStockTakeOver(pEvent, pValues);</span>
+        }
+<span class="nc" id="L764">    }</span>
+
+    /**
+     * Format debit side of a StockAndCash TakeOver.
+     * @param pEvent the event
+     * @param pValues the values for the transaction
+     * @param pCash the cash consideration
+     */
+    private void formatDebitStockAndCashTakeOver(final MoneyWiseXAnalysisEvent pEvent,
+                                                 final MoneyWiseXAnalysisSecurityValues pValues,
+                                                 final OceanusMoney pCash) {
+        /* Access interesting values */
+<span class="nc" id="L776">        final OceanusMoney myStock = pValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.XFERREDVALUE);</span>
+<span class="nc" id="L777">        final OceanusMoney myConsideration = pValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.CONSIDERATION);</span>
+<span class="nc" id="L778">        final OceanusMoney myCostXfer = pValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.XFERREDCOST);</span>
+<span class="nc" id="L779">        final OceanusRatio myCostDilution = pValues.getRatioValue(MoneyWiseXAnalysisSecurityAttr.COSTDILUTION);</span>
+<span class="nc" id="L780">        final OceanusMoney myAllowedCost = pValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.ALLOWEDCOST);</span>
+<span class="nc" id="L781">        final OceanusMoney myGain = pValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.CAPITALGAIN);</span>
+<span class="nc" id="L782">        final OceanusMoney myTotalGains = pValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.REALISEDGAINS);</span>
+<span class="nc" id="L783">        final MoneyWiseCashType myCashType = pValues.getEnumValue(MoneyWiseXAnalysisSecurityAttr.CASHTYPE, MoneyWiseCashType.class);</span>
+
+        /* Record the calculation of total consideration */
+<span class="nc" id="L786">        formatValue(MoneyWiseXAnalysisSecurityAttr.RETURNEDCASH, pCash);</span>
+<span class="nc" id="L787">        formatValue(MoneyWiseXAnalysisSecurityAttr.CASHTYPE, myCashType);</span>
+<span class="nc" id="L788">        formatValue(MoneyWiseXAnalysisSecurityAttr.XFERREDVALUE, myStock);</span>
+<span class="nc" id="L789">        formatAddition(MoneyWiseXAnalysisSecurityAttr.CONSIDERATION, myConsideration, pCash, myStock);</span>
+
+        /* Obtain the original cost */
+<span class="nc" id="L792">        final MoneyWiseXAnalysisSecurityValues myPreviousValues = theSecurity.getPreviousValuesForEvent(pEvent);</span>
+<span class="nc" id="L793">        final OceanusMoney myOriginalCost = myPreviousValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.RESIDUALCOST);</span>
+
+        /* Format the cost dilution */
+<span class="nc bnc" id="L796" title="All 2 branches missed.">        if (myCostDilution != null) {</span>
+<span class="nc" id="L797">            formatDivision(MoneyWiseXAnalysisSecurityAttr.COSTDILUTION, myCostDilution, pCash, myConsideration);</span>
+<span class="nc" id="L798">            formatMultiplication(MoneyWiseXAnalysisSecurityAttr.ALLOWEDCOST, myAllowedCost, myOriginalCost, myCostDilution);</span>
+        } else {
+<span class="nc" id="L800">            formatValue(MoneyWiseXAnalysisSecurityAttr.ALLOWEDCOST, myAllowedCost);</span>
+        }
+<span class="nc" id="L802">        formatSubtraction(MoneyWiseXAnalysisSecurityAttr.XFERREDCOST, myCostXfer, myOriginalCost, myAllowedCost);</span>
+
+        /* Record the gains allocation */
+<span class="nc bnc" id="L805" title="All 2 branches missed.">        if (myGain != null) {</span>
+<span class="nc" id="L806">            formatSubtraction(MoneyWiseXAnalysisSecurityAttr.CAPITALGAIN, myGain, pCash, myAllowedCost);</span>
+<span class="nc" id="L807">            formatValue(MoneyWiseXAnalysisSecurityAttr.REALISEDGAINS, myTotalGains);</span>
+        }
+<span class="nc" id="L809">    }</span>
+
+    /**
+     * Format credit side of a StockAndCash TakeOver.
+     * @param pEvent the event
+     * @param pValues the values for the transaction
+     */
+    private void formatCreditStockTakeOver(final MoneyWiseXAnalysisEvent pEvent,
+                                           final MoneyWiseXAnalysisSecurityValues pValues) {
+        /* Access interesting values */
+<span class="nc" id="L819">        final OceanusPrice myPrice = pValues.getPriceValue(MoneyWiseXAnalysisSecurityAttr.PRICE);</span>
+<span class="nc" id="L820">        final OceanusUnits myUnits = theSecurity.getUnitsDeltaForEvent(pEvent, MoneyWiseXAnalysisSecurityAttr.UNITS);</span>
+<span class="nc" id="L821">        final OceanusMoney myValueXfer = pValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.XFERREDVALUE);</span>
+<span class="nc" id="L822">        final OceanusMoney myCostXfer = pValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.XFERREDCOST);</span>
+<span class="nc" id="L823">        final OceanusMoney myResidualCost = pValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.RESIDUALCOST);</span>
+<span class="nc" id="L824">        final OceanusRatio myXchangeRate = pValues.getRatioValue(MoneyWiseXAnalysisSecurityAttr.EXCHANGERATE);</span>
+
+        /* Detail the new units and cost */
+<span class="nc" id="L827">        final MoneyWiseXAnalysisSecurityValues myPreviousValues = theSecurity.getPreviousValuesForEvent(pEvent);</span>
+<span class="nc" id="L828">        final OceanusUnits myNewUnits = pValues.getUnitsValue(MoneyWiseXAnalysisSecurityAttr.UNITS);</span>
+<span class="nc" id="L829">        final OceanusUnits myOriginalUnits = myPreviousValues.getUnitsValue(MoneyWiseXAnalysisSecurityAttr.UNITS);</span>
+<span class="nc" id="L830">        formatAddition(MoneyWiseXAnalysisSecurityAttr.UNITS, myNewUnits, myOriginalUnits, myUnits);</span>
+
+        /* Record the transfer of value and cost */
+<span class="nc" id="L833">        formatValuation(MoneyWiseXAnalysisSecurityAttr.XFERREDVALUE, myValueXfer, myUnits, myPrice, myXchangeRate);</span>
+<span class="nc" id="L834">        formatValue(MoneyWiseXAnalysisSecurityAttr.XFERREDCOST, myCostXfer);</span>
+<span class="nc" id="L835">        formatValue(MoneyWiseXAnalysisSecurityAttr.RESIDUALCOST, myResidualCost);</span>
+<span class="nc" id="L836">    }</span>
+
+    /**
+     * Format a Portfolio Xfer.
+     * @param pEvent the event
+     * @param pValues the values for the transaction
+     */
+    private void formatPortfolioXfer(final MoneyWiseXAnalysisEvent pEvent,
+                                     final MoneyWiseXAnalysisSecurityValues pValues) {
+        /* Format the basic transaction */
+<span class="nc" id="L846">        formatBasicTransaction(pEvent);</span>
+
+        /* Determine the direction of transfer */
+<span class="nc" id="L849">        final OceanusMoney myCostXfer = pValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.XFERREDCOST);</span>
+<span class="nc" id="L850">        formatValue(MoneyWiseXAnalysisSecurityAttr.XFERREDCOST, myCostXfer);</span>
+
+<span class="nc" id="L852">        final OceanusUnits myUnits = theSecurity.getUnitsDeltaForEvent(pEvent, MoneyWiseXAnalysisSecurityAttr.UNITS);</span>
+<span class="nc bnc" id="L853" title="All 2 branches missed.">        if (myUnits.isPositive()) {</span>
+            /* Detail the new units and cost */
+<span class="nc" id="L855">            final MoneyWiseXAnalysisSecurityValues myPreviousValues = theSecurity.getPreviousValuesForEvent(pEvent);</span>
+<span class="nc" id="L856">            final OceanusUnits myNewUnits = pValues.getUnitsValue(MoneyWiseXAnalysisSecurityAttr.UNITS);</span>
+<span class="nc" id="L857">            final OceanusUnits myOriginalUnits = myPreviousValues.getUnitsValue(MoneyWiseXAnalysisSecurityAttr.UNITS);</span>
+<span class="nc" id="L858">            formatAddition(MoneyWiseXAnalysisSecurityAttr.UNITS, myNewUnits, myOriginalUnits, myUnits);</span>
+<span class="nc" id="L859">            final OceanusMoney myCost = pValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.RESIDUALCOST);</span>
+<span class="nc" id="L860">            final OceanusMoney myOriginalCost = myPreviousValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.RESIDUALCOST);</span>
+<span class="nc" id="L861">            formatAddition(MoneyWiseXAnalysisSecurityAttr.RESIDUALCOST, myCost, myOriginalCost, myCostXfer);</span>
+        }
+<span class="nc" id="L863">    }</span>
+
+    @Override
+    public MoneyWiseXAnalysisFilter&lt;?, ?&gt; processFilter(final Object pSource) {
+<span class="nc" id="L867">        return null;</span>
+    }
+
+    @Override
+    public MetisHTMLTable createDelayedTable(final DelayedTable pTable) {
+<span class="nc" id="L872">        return null;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

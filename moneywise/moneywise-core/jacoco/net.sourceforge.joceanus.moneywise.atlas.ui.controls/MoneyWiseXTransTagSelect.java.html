@@ -1,0 +1,367 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseXTransTagSelect.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.atlas.ui.controls</a> &gt; <span class="el_source">MoneyWiseXTransTagSelect.java</span></div><h1>MoneyWiseXTransTagSelect.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.atlas.ui.controls;
+
+import net.sourceforge.joceanus.metis.data.MetisDataDifference;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTransTagBucket;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTransTagBucket.MoneyWiseXAnalysisTransTagBucketList;
+import net.sourceforge.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter;
+import net.sourceforge.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter.MoneyWiseXAnalysisTagFilter;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
+import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIConstant;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
+import net.sourceforge.joceanus.tethys.api.button.TethysUIScrollButtonManager;
+import net.sourceforge.joceanus.tethys.api.control.TethysUILabel;
+import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollItem;
+import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollMenu;
+import net.sourceforge.joceanus.tethys.api.pane.TethysUIBoxPaneManager;
+
+import java.util.Iterator;
+
+/**
+ * TransactionTag Selection.
+ */
+public class MoneyWiseXTransTagSelect
+        implements MoneyWiseXAnalysisFilterSelection, OceanusEventProvider&lt;PrometheusDataEvent&gt; {
+    /**
+     * Text for TransactionTag Label.
+     */
+<span class="nc" id="L51">    private static final String NLS_TAG = MoneyWiseBasicDataType.TRANSTAG.getItemName();</span>
+
+    /**
+     * The Event Manager.
+     */
+    private final OceanusEventManager&lt;PrometheusDataEvent&gt; theEventManager;
+
+    /**
+     * The panel.
+     */
+    private final TethysUIBoxPaneManager thePanel;
+
+    /**
+     * The tag button.
+     */
+    private final TethysUIScrollButtonManager&lt;MoneyWiseXAnalysisTransTagBucket&gt; theTagButton;
+
+    /**
+     * Tag menu.
+     */
+    private final TethysUIScrollMenu&lt;MoneyWiseXAnalysisTransTagBucket&gt; theTagMenu;
+
+    /**
+     * The active transaction tag list.
+     */
+    private MoneyWiseXAnalysisTransTagBucketList theTags;
+
+    /**
+     * The state.
+     */
+    private MoneyWiseTagState theState;
+
+    /**
+     * The savePoint.
+     */
+    private MoneyWiseTagState theSavePoint;
+
+    /**
+     * Constructor.
+     * @param pFactory the GUI factory
+     */
+<span class="nc" id="L92">    protected MoneyWiseXTransTagSelect(final TethysUIFactory&lt;?&gt; pFactory) {</span>
+        /* Create the tags button */
+<span class="nc" id="L94">        theTagButton = pFactory.buttonFactory().newScrollButton(MoneyWiseXAnalysisTransTagBucket.class);</span>
+
+        /* Create Event Manager */
+<span class="nc" id="L97">        theEventManager = new OceanusEventManager&lt;&gt;();</span>
+
+        /* Create the label */
+<span class="nc" id="L100">        final TethysUILabel myTagLabel = pFactory.controlFactory().newLabel(NLS_TAG + TethysUIConstant.STR_COLON);</span>
+
+        /* Define the layout */
+<span class="nc" id="L103">        thePanel = pFactory.paneFactory().newHBoxPane();</span>
+<span class="nc" id="L104">        thePanel.addSpacer();</span>
+<span class="nc" id="L105">        thePanel.addNode(myTagLabel);</span>
+<span class="nc" id="L106">        thePanel.addNode(theTagButton);</span>
+
+        /* Create initial state */
+<span class="nc" id="L109">        theState = new MoneyWiseTagState();</span>
+<span class="nc" id="L110">        theState.applyState();</span>
+
+        /* Create the listener */
+<span class="nc" id="L113">        final OceanusEventRegistrar&lt;TethysUIEvent&gt; myRegistrar = theTagButton.getEventRegistrar();</span>
+<span class="nc" id="L114">        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -&gt; handleNewTag());</span>
+<span class="nc" id="L115">        theTagButton.setMenuConfigurator(e -&gt; buildTagMenu());</span>
+<span class="nc" id="L116">        theTagMenu = theTagButton.getMenu();</span>
+<span class="nc" id="L117">    }</span>
+
+    @Override
+    public TethysUIComponent getUnderlying() {
+<span class="nc" id="L121">        return thePanel;</span>
+    }
+
+    @Override
+    public OceanusEventRegistrar&lt;PrometheusDataEvent&gt; getEventRegistrar() {
+<span class="nc" id="L126">        return theEventManager.getEventRegistrar();</span>
+    }
+
+    @Override
+    public MoneyWiseXAnalysisTagFilter getFilter() {
+<span class="nc" id="L131">        return theState.getFilter();</span>
+    }
+
+    @Override
+    public boolean isAvailable() {
+<span class="nc bnc" id="L136" title="All 2 branches missed.">        return theTags != null</span>
+<span class="nc bnc" id="L137" title="All 2 branches missed.">                &amp;&amp; !theTags.isEmpty();</span>
+    }
+
+    /**
+     * Create SavePoint.
+     */
+    protected void createSavePoint() {
+        /* Create the savePoint */
+<span class="nc" id="L145">        theSavePoint = new MoneyWiseTagState(theState);</span>
+<span class="nc" id="L146">    }</span>
+
+    /**
+     * Restore SavePoint.
+     */
+    protected void restoreSavePoint() {
+        /* Restore the savePoint */
+<span class="nc" id="L153">        theState = new MoneyWiseTagState(theSavePoint);</span>
+
+        /* Apply the state */
+<span class="nc" id="L156">        theState.applyState();</span>
+<span class="nc" id="L157">    }</span>
+
+    @Override
+    public void setEnabled(final boolean bEnabled) {
+        /* Determine whether there are any Accounts to select */
+<span class="nc bnc" id="L162" title="All 4 branches missed.">        final boolean csAvailable = bEnabled &amp;&amp; isAvailable();</span>
+
+        /* Pass call on to buttons */
+<span class="nc" id="L165">        theTagButton.setEnabled(csAvailable);</span>
+<span class="nc" id="L166">    }</span>
+
+    @Override
+    public void setVisible(final boolean pVisible) {
+<span class="nc" id="L170">        thePanel.setVisible(pVisible);</span>
+<span class="nc" id="L171">    }</span>
+
+    /**
+     * Set analysis.
+     * @param pAnalysis the analysis.
+     */
+    public void setAnalysis(final MoneyWiseXAnalysis pAnalysis) {
+        /* Access buckets */
+<span class="nc" id="L179">        theTags = pAnalysis.getTransactionTags();</span>
+
+        /* Obtain the current tag */
+<span class="nc" id="L182">        MoneyWiseXAnalysisTransTagBucket myTag = theState.getTag();</span>
+
+        /* Switch to versions from the analysis */
+<span class="nc bnc" id="L185" title="All 2 branches missed.">        myTag = myTag != null</span>
+<span class="nc" id="L186">                ? theTags.getMatchingTag(myTag.getTransTag())</span>
+<span class="nc" id="L187">                : theTags.getDefaultTag();</span>
+
+        /* Set the tag */
+<span class="nc" id="L190">        theState.setTheTag(myTag);</span>
+<span class="nc" id="L191">        theState.setDateRange(pAnalysis.getDateRange());</span>
+<span class="nc" id="L192">        theState.applyState();</span>
+<span class="nc" id="L193">    }</span>
+
+    @Override
+    public void setFilter(final MoneyWiseXAnalysisFilter&lt;?, ?&gt; pFilter) {
+        /* If this is the correct filter type */
+<span class="nc bnc" id="L198" title="All 2 branches missed.">        if (pFilter instanceof MoneyWiseXAnalysisTagFilter myFilter) {</span>
+            /* Obtain the tag */
+<span class="nc" id="L200">            MoneyWiseXAnalysisTransTagBucket myTag = myFilter.getBucket();</span>
+
+            /* Obtain equivalent bucket */
+<span class="nc" id="L203">            myTag = theTags.getMatchingTag(myTag.getTransTag());</span>
+
+            /* Set the tag */
+<span class="nc" id="L206">            theState.setTheTag(myTag);</span>
+<span class="nc" id="L207">            theState.setDateRange(myFilter.getDateRange());</span>
+<span class="nc" id="L208">            theState.applyState();</span>
+        }
+<span class="nc" id="L210">    }</span>
+
+    /**
+     * Build Tag menu.
+     */
+    private void buildTagMenu() {
+        /* Reset the popUp menu */
+<span class="nc" id="L217">        theTagMenu.removeAllItems();</span>
+
+        /* Record active item */
+<span class="nc" id="L220">        final MoneyWiseXAnalysisTransTagBucket myCurrent = theState.getTag();</span>
+<span class="nc" id="L221">        TethysUIScrollItem&lt;MoneyWiseXAnalysisTransTagBucket&gt; myActive = null;</span>
+
+        /* Loop through the available tag values */
+<span class="nc" id="L224">        final Iterator&lt;MoneyWiseXAnalysisTransTagBucket&gt; myIterator = theTags.iterator();</span>
+<span class="nc bnc" id="L225" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L226">            final MoneyWiseXAnalysisTransTagBucket myTag = myIterator.next();</span>
+
+            /* Create a new MenuItem and add it to the popUp */
+<span class="nc" id="L229">            final TethysUIScrollItem&lt;MoneyWiseXAnalysisTransTagBucket&gt; myItem = theTagMenu.addItem(myTag);</span>
+
+            /* If this is the active category */
+<span class="nc bnc" id="L232" title="All 2 branches missed.">            if (myTag.equals(myCurrent)) {</span>
+                /* Record it */
+<span class="nc" id="L234">                myActive = myItem;</span>
+            }
+<span class="nc" id="L236">        }</span>
+
+        /* Ensure active item is visible */
+<span class="nc bnc" id="L239" title="All 2 branches missed.">        if (myActive != null) {</span>
+<span class="nc" id="L240">            myActive.scrollToItem();</span>
+        }
+<span class="nc" id="L242">    }</span>
+
+    /**
+     * Handle new Tag.
+     */
+    private void handleNewTag() {
+        /* Select the new tag */
+<span class="nc bnc" id="L249" title="All 2 branches missed.">        if (theState.setTag(theTagButton.getValue())) {</span>
+<span class="nc" id="L250">            theState.applyState();</span>
+<span class="nc" id="L251">            theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);</span>
+        }
+<span class="nc" id="L253">    }</span>
+
+    /**
+     * SavePoint values.
+     */
+    private final class MoneyWiseTagState {
+        /**
+         * The active Tag.
+         */
+        private MoneyWiseXAnalysisTransTagBucket theTransTag;
+
+        /**
+         * The dateRange.
+         */
+        private OceanusDateRange theDateRange;
+
+        /**
+         * The active filter.
+         */
+        private MoneyWiseXAnalysisTagFilter theFilter;
+
+        /**
+         * Constructor.
+         */
+<span class="nc" id="L277">        private MoneyWiseTagState() {</span>
+<span class="nc" id="L278">        }</span>
+
+        /**
+         * Constructor.
+         * @param pState state to copy from
+         */
+<span class="nc" id="L284">        private MoneyWiseTagState(final MoneyWiseTagState pState) {</span>
+            /* Initialise state */
+<span class="nc" id="L286">            theTransTag = pState.getTag();</span>
+<span class="nc" id="L287">            theDateRange = pState.getDateRange();</span>
+<span class="nc" id="L288">            theFilter = pState.getFilter();</span>
+<span class="nc" id="L289">        }</span>
+
+        /**
+         * Obtain the TransactionTag.
+         * @return the Tag
+         */
+        private MoneyWiseXAnalysisTransTagBucket getTag() {
+<span class="nc" id="L296">            return theTransTag;</span>
+        }
+
+        /**
+         * Obtain the dateRange.
+         * @return the dateRange
+         */
+        private OceanusDateRange getDateRange() {
+<span class="nc" id="L304">            return theDateRange;</span>
+        }
+
+        /**
+         * Obtain the Filter.
+         * @return the Filter
+         */
+        private MoneyWiseXAnalysisTagFilter getFilter() {
+<span class="nc" id="L312">            return theFilter;</span>
+        }
+
+        /**
+         * Set new Tag.
+         * @param pTag the Transaction Tag
+         * @return true/false did a change occur
+         */
+        private boolean setTag(final MoneyWiseXAnalysisTransTagBucket pTag) {
+            /* Adjust the selected tag */
+<span class="nc bnc" id="L322" title="All 2 branches missed.">            if (!MetisDataDifference.isEqual(pTag, theTransTag)) {</span>
+                /* Store the tag */
+<span class="nc" id="L324">                setTheTag(pTag);</span>
+<span class="nc" id="L325">                return true;</span>
+            }
+<span class="nc" id="L327">            return false;</span>
+        }
+
+        /**
+         * Set the Tag.
+         * @param pTag the Tag
+         */
+        private void setTheTag(final MoneyWiseXAnalysisTransTagBucket pTag) {
+            /* Store the tag */
+<span class="nc" id="L336">            theTransTag = pTag;</span>
+<span class="nc bnc" id="L337" title="All 2 branches missed.">            if (theTransTag != null) {</span>
+<span class="nc" id="L338">                theFilter = new MoneyWiseXAnalysisTagFilter(theTransTag);</span>
+<span class="nc" id="L339">                theFilter.setDateRange(theDateRange);</span>
+            } else {
+<span class="nc" id="L341">                theFilter = null;</span>
+            }
+<span class="nc" id="L343">        }</span>
+
+        /**
+         * Set the dateRange.
+         * @param pRange the dateRange
+         */
+        private void setDateRange(final OceanusDateRange pRange) {
+            /* Store the dateRange */
+<span class="nc" id="L351">            theDateRange = pRange;</span>
+<span class="nc bnc" id="L352" title="All 2 branches missed.">            if (theFilter != null) {</span>
+<span class="nc" id="L353">                theFilter.setDateRange(theDateRange);</span>
+            }
+<span class="nc" id="L355">        }</span>
+
+        /**
+         * Apply the State.
+         */
+        private void applyState() {
+            /* Adjust the lock-down */
+<span class="nc" id="L362">            setEnabled(true);</span>
+<span class="nc" id="L363">            theTagButton.setValue(theTransTag);</span>
+<span class="nc" id="L364">        }</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

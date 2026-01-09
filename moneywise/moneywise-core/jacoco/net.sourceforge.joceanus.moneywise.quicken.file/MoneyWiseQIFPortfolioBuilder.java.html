@@ -1,0 +1,1554 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseQIFPortfolioBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.quicken.file</a> &gt; <span class="el_source">MoneyWiseQIFPortfolioBuilder.java</span></div><h1>MoneyWiseQIFPortfolioBuilder.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.quicken.file;
+
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisAccountAttr;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisPortfolioBucket;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisPortfolioBucket.MoneyWiseAnalysisPortfolioBucketList;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisPortfolioCashBucket;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisSecurityAttr;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisSecurityBucket;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisSecurityValues;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDeposit;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePortfolio;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurity;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice.MoneyWiseSecurityPriceDataMap;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
+import net.sourceforge.joceanus.moneywise.quicken.definitions.MoneyWiseQActionType;
+import net.sourceforge.joceanus.moneywise.quicken.definitions.MoneyWiseQIFType;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
+
+import java.util.Iterator;
+import java.util.List;
+
+/**
+ * Portfolio Builder class for QIF File.
+ */
+public class MoneyWiseQIFPortfolioBuilder {
+    /**
+     * Logger.
+     */
+<span class="nc" id="L58">    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(MoneyWiseQIFPortfolioBuilder.class);</span>
+
+    /**
+     * The QIF File.
+     */
+    private final MoneyWiseQIFFile theFile;
+
+    /**
+     * The QIF File Type.
+     */
+    private final MoneyWiseQIFType theFileType;
+
+    /**
+     * The Builder.
+     */
+    private final MoneyWiseQIFBuilder theBuilder;
+
+    /**
+     * The Data.
+     */
+    private final MoneyWiseDataSet theData;
+
+    /**
+     * The Analysis.
+     */
+    private final MoneyWiseAnalysis theAnalysis;
+
+    /**
+     * Constructor.
+     * @param pBuilder the builder
+     * @param pData the data
+     * @param pAnalysis the analysis
+     */
+    protected MoneyWiseQIFPortfolioBuilder(final MoneyWiseQIFBuilder pBuilder,
+                                           final MoneyWiseDataSet pData,
+<span class="nc" id="L93">                                           final MoneyWiseAnalysis pAnalysis) {</span>
+        /* Store parameters */
+<span class="nc" id="L95">        theBuilder = pBuilder;</span>
+<span class="nc" id="L96">        theFile = theBuilder.getFile();</span>
+<span class="nc" id="L97">        theFileType = theFile.getFileType();</span>
+<span class="nc" id="L98">        theData = pData;</span>
+<span class="nc" id="L99">        theAnalysis = pAnalysis;</span>
+<span class="nc" id="L100">    }</span>
+
+    /**
+     * Obtain latest price for a security.
+     * @param pSecurity the security
+     * @param pDate the date
+     * @return the price
+     */
+    private OceanusPrice getPriceForDate(final MoneyWiseSecurity pSecurity,
+                                         final OceanusDate pDate) {
+        /* Add the price */
+<span class="nc" id="L111">        final MoneyWiseSecurityPriceDataMap myPriceMap = theData.getSecurityPriceDataMap();</span>
+<span class="nc" id="L112">        return myPriceMap.getPriceForDate(pSecurity, pDate);</span>
+    }
+
+    /**
+     * Obtain resulting units for a security holding event.
+     * @param pHolding the security holding
+     * @param pTrans the transaction
+     * @return the units
+     */
+    private OceanusUnits getUnitsForHoldingEvent(final MoneyWiseSecurityHolding pHolding,
+                                                 final MoneyWiseTransaction pTrans) {
+        /* Access the relevant bucket */
+<span class="nc" id="L124">        final MoneyWiseAnalysisPortfolioBucketList myPortfolios = theAnalysis.getPortfolios();</span>
+<span class="nc" id="L125">        final MoneyWiseAnalysisSecurityBucket myBucket = myPortfolios.getBucket(pHolding);</span>
+
+        /* Access the resulting values */
+<span class="nc" id="L128">        final MoneyWiseAnalysisSecurityValues myValues = myBucket.getValuesForTransaction(pTrans);</span>
+<span class="nc" id="L129">        return myValues.getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);</span>
+    }
+
+    /**
+     * Obtain base units for a security holding event.
+     * @param pHolding the security holding
+     * @param pTrans the transaction
+     * @return the units
+     */
+    protected OceanusUnits getBaseUnitsForHolding(final MoneyWiseSecurityHolding pHolding,
+                                                  final MoneyWiseTransaction pTrans) {
+        /* Access the relevant bucket */
+<span class="nc" id="L141">        final MoneyWiseAnalysisPortfolioBucketList myPortfolios = theAnalysis.getPortfolios();</span>
+<span class="nc" id="L142">        final MoneyWiseAnalysisSecurityBucket myBucket = myPortfolios.getBucket(pHolding);</span>
+
+        /* Access the base values */
+<span class="nc" id="L145">        final MoneyWiseAnalysisSecurityValues myValues = myBucket.getValuesForTransaction(pTrans);</span>
+<span class="nc bnc" id="L146" title="All 2 branches missed.">        if (myValues != null) {</span>
+<span class="nc" id="L147">            OceanusUnits myUnits = myValues.getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);</span>
+<span class="nc" id="L148">            myUnits = new OceanusUnits(myUnits);</span>
+
+            /* Determine the delta in units */
+<span class="nc" id="L151">            final OceanusUnits myDelta = myBucket.getUnitsDeltaForTransaction(pTrans, MoneyWiseAnalysisSecurityAttr.UNITS);</span>
+<span class="nc bnc" id="L152" title="All 2 branches missed.">            if (myDelta != null) {</span>
+<span class="nc" id="L153">                myUnits.subtractUnits(myDelta);</span>
+            }
+<span class="nc" id="L155">            return myUnits;</span>
+        } else {
+<span class="nc" id="L157">            return OceanusUnits.getWholeUnits(0);</span>
+        }
+    }
+
+    /**
+     * Obtain delta cost for a security holding.
+     * @param pHolding the security holding
+     * @param pTrans the transaction
+     * @return the delta cost
+     */
+    private OceanusMoney getDeltaCostForHolding(final MoneyWiseSecurityHolding pHolding,
+                                                final MoneyWiseTransaction pTrans) {
+        /* Access the relevant bucket */
+<span class="nc" id="L170">        final MoneyWiseAnalysisPortfolioBucketList myPortfolios = theAnalysis.getPortfolios();</span>
+<span class="nc" id="L171">        final MoneyWiseAnalysisSecurityBucket myBucket = myPortfolios.getBucket(pHolding);</span>
+
+        /* Obtain the cost delta for the transaction */
+<span class="nc" id="L174">        return myBucket.getMoneyDeltaForTransaction(pTrans, MoneyWiseAnalysisSecurityAttr.RESIDUALCOST);</span>
+    }
+
+    /**
+     * Obtain portfolio cash value.
+     * @param pPortfolio the portfolio
+     * @param pTrans the transaction
+     * @return the cash value (or null if none)
+     */
+    private OceanusMoney getPortfolioCashValue(final MoneyWisePortfolio pPortfolio,
+                                               final MoneyWiseTransaction pTrans) {
+        /* Access the relevant bucket */
+<span class="nc" id="L186">        final MoneyWiseAnalysisPortfolioBucketList myPortfolios = theAnalysis.getPortfolios();</span>
+<span class="nc" id="L187">        final MoneyWiseAnalysisPortfolioCashBucket myBucket = myPortfolios.getCashBucket(pPortfolio);</span>
+
+        /* Obtain the value delta for the transaction */
+<span class="nc" id="L190">        OceanusMoney myValue = myBucket.getMoneyDeltaForTransaction(pTrans, MoneyWiseAnalysisAccountAttr.VALUATION);</span>
+<span class="nc bnc" id="L191" title="All 2 branches missed.">        if (myValue != null) {</span>
+<span class="nc" id="L192">            myValue = new OceanusMoney(myValue);</span>
+<span class="nc" id="L193">            myValue.negate();</span>
+        }
+<span class="nc" id="L195">        return myValue;</span>
+    }
+
+    /**
+     * Process income to a security.
+     * @param pPayee the payee
+     * @param pHolding the security holding
+     * @param pTrans the transaction
+     */
+    protected void processIncomeToSecurity(final MoneyWisePayee pPayee,
+                                           final MoneyWiseSecurityHolding pHolding,
+                                           final MoneyWiseTransaction pTrans) {
+        /* Access Portfolio Account */
+<span class="nc" id="L208">        final MoneyWisePortfolio myPort = pHolding.getPortfolio();</span>
+<span class="nc" id="L209">        final MoneyWiseSecurity mySecurity = pHolding.getSecurity();</span>
+<span class="nc" id="L210">        final MoneyWiseQIFAccountEvents myPortfolio = theFile.registerAccount(myPort);</span>
+
+        /* Determine style */
+<span class="nc" id="L213">        final boolean useHoldingAccount = theFileType.useInvestmentHolding4Category();</span>
+
+        /* Access Transaction details */
+<span class="nc" id="L216">        final MoneyWiseQIFPayee myQPayee = theFile.registerPayee(pPayee);</span>
+<span class="nc" id="L217">        final MoneyWiseQIFSecurity myQSecurity = theFile.registerSecurity(mySecurity);</span>
+<span class="nc" id="L218">        final MoneyWiseQIFEventCategory myQCategory = theFile.registerCategory(pTrans.getCategory());</span>
+
+        /* Obtain classes */
+<span class="nc" id="L221">        final List&lt;MoneyWiseQIFClass&gt; myList = theBuilder.getTransactionClasses(pTrans);</span>
+
+        /* Access details */
+<span class="nc" id="L224">        final OceanusMoney myAmount = pTrans.getAmount();</span>
+<span class="nc" id="L225">        final OceanusUnits myUnits = pTrans.getAccountDeltaUnits();</span>
+<span class="nc" id="L226">        final OceanusPrice myPrice = getPriceForDate(mySecurity, pTrans.getDate());</span>
+
+        /* If we are using a holding account */
+<span class="nc bnc" id="L229" title="All 2 branches missed.">        if (useHoldingAccount) {</span>
+            /* Access Holding Account */
+<span class="nc" id="L231">            final MoneyWiseQIFAccountEvents myHolding = theFile.registerHoldingAccount(myPort);</span>
+
+            /* Create output amount */
+<span class="nc" id="L234">            final OceanusMoney myOutAmount = new OceanusMoney(myAmount);</span>
+<span class="nc" id="L235">            myOutAmount.negate();</span>
+
+            /* Create an event */
+<span class="nc" id="L238">            final MoneyWiseQIFEvent myEvent = new MoneyWiseQIFEvent(theFile, pTrans);</span>
+<span class="nc" id="L239">            myEvent.recordAmount(new OceanusMoney());</span>
+<span class="nc" id="L240">            myEvent.recordPayee(myQPayee);</span>
+
+            /* record the splits */
+<span class="nc" id="L243">            myEvent.recordSplitRecord(myQCategory, myList, myAmount, myQPayee.getName());</span>
+<span class="nc" id="L244">            myEvent.recordSplitRecord(myPortfolio.getAccount(), myOutAmount, myPort.getName());</span>
+
+            /* Add to event list */
+<span class="nc" id="L247">            myHolding.addEvent(myEvent);</span>
+
+            /* else we can do this properly */
+<span class="nc" id="L250">        } else {</span>
+            /* Create a miscellaneous cash event */
+<span class="nc" id="L252">            final MoneyWiseQIFPortfolioEvent myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.CASH);</span>
+<span class="nc" id="L253">            myEvent.recordAmount(myAmount);</span>
+<span class="nc" id="L254">            myEvent.recordPayee(myQPayee);</span>
+<span class="nc" id="L255">            myEvent.recordCategory(myQCategory, myList);</span>
+
+            /* Add to event list */
+<span class="nc" id="L258">            myPortfolio.addEvent(myEvent);</span>
+        }
+
+        /* Create a buy shares event */
+<span class="nc" id="L262">        final MoneyWiseQIFPortfolioEvent myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.BUY);</span>
+<span class="nc" id="L263">        myEvent.recordAmount(myAmount);</span>
+<span class="nc" id="L264">        myEvent.recordSecurity(myQSecurity);</span>
+<span class="nc" id="L265">        myEvent.recordQuantity(myUnits);</span>
+<span class="nc" id="L266">        myEvent.recordPrice(myPrice);</span>
+
+        /* Add to event list */
+<span class="nc" id="L269">        myPortfolio.addEvent(myEvent);</span>
+<span class="nc" id="L270">    }</span>
+
+    /**
+     * Process expense from a security.
+     * @param pPayee the payee
+     * @param pHolding the security holding
+     * @param pTrans the transaction
+     */
+    protected void processExpenseFromSecurity(final MoneyWisePayee pPayee,
+                                              final MoneyWiseSecurityHolding pHolding,
+                                              final MoneyWiseTransaction pTrans) {
+        /* Access Portfolio Account */
+<span class="nc" id="L282">        final MoneyWisePortfolio myPort = pHolding.getPortfolio();</span>
+<span class="nc" id="L283">        final MoneyWiseSecurity mySecurity = pHolding.getSecurity();</span>
+<span class="nc" id="L284">        final MoneyWiseQIFAccountEvents myPortfolio = theFile.registerAccount(myPort);</span>
+
+        /* Determine style */
+<span class="nc" id="L287">        final boolean useHoldingAccount = theFileType.useInvestmentHolding4Category();</span>
+
+        /* Access Transaction details */
+<span class="nc" id="L290">        final MoneyWiseQIFPayee myQPayee = theFile.registerPayee(pPayee);</span>
+<span class="nc" id="L291">        final MoneyWiseQIFSecurity myQSecurity = theFile.registerSecurity(mySecurity);</span>
+<span class="nc" id="L292">        final MoneyWiseQIFEventCategory myQCategory = theFile.registerCategory(pTrans.getCategory());</span>
+
+        /* Obtain classes */
+<span class="nc" id="L295">        final List&lt;MoneyWiseQIFClass&gt; myList = theBuilder.getTransactionClasses(pTrans);</span>
+
+        /* Access details */
+<span class="nc" id="L298">        final OceanusMoney myAmount = pTrans.getAmount();</span>
+<span class="nc" id="L299">        OceanusUnits myUnits = pTrans.getAccountDeltaUnits();</span>
+<span class="nc" id="L300">        myUnits = new OceanusUnits(myUnits);</span>
+<span class="nc" id="L301">        myUnits.negate();</span>
+<span class="nc" id="L302">        final OceanusPrice myPrice = getPriceForDate(mySecurity, pTrans.getDate());</span>
+
+        /* Create a sell shares event */
+<span class="nc" id="L305">        MoneyWiseQIFPortfolioEvent myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.SELL);</span>
+<span class="nc" id="L306">        myEvent.recordAmount(myAmount);</span>
+<span class="nc" id="L307">        myEvent.recordSecurity(myQSecurity);</span>
+<span class="nc" id="L308">        myEvent.recordQuantity(myUnits);</span>
+<span class="nc" id="L309">        myEvent.recordPrice(myPrice);</span>
+
+        /* Add to event list */
+<span class="nc" id="L312">        myPortfolio.addEvent(myEvent);</span>
+
+        /* Create output amount */
+<span class="nc" id="L315">        final OceanusMoney myOutAmount = new OceanusMoney(myAmount);</span>
+<span class="nc" id="L316">        myOutAmount.negate();</span>
+
+        /* If we are using a holding account */
+<span class="nc bnc" id="L319" title="All 2 branches missed.">        if (useHoldingAccount) {</span>
+            /* Access Holding Account */
+<span class="nc" id="L321">            final MoneyWiseQIFAccountEvents myHolding = theFile.registerHoldingAccount(myPort);</span>
+
+            /* Create an event */
+<span class="nc" id="L324">            final MoneyWiseQIFEvent myHoldEvent = new MoneyWiseQIFEvent(theFile, pTrans);</span>
+<span class="nc" id="L325">            myHoldEvent.recordAmount(new OceanusMoney());</span>
+<span class="nc" id="L326">            myHoldEvent.recordPayee(myQPayee);</span>
+
+            /* record the splits */
+<span class="nc" id="L329">            myHoldEvent.recordSplitRecord(myPortfolio.getAccount(), myAmount, myPort.getName());</span>
+<span class="nc" id="L330">            myHoldEvent.recordSplitRecord(myQCategory, myList, myOutAmount, myQPayee.getName());</span>
+
+            /* Add to event list */
+<span class="nc" id="L333">            myHolding.addEvent(myEvent);</span>
+
+            /* else we can do this properly */
+<span class="nc" id="L336">        } else {</span>
+            /* Create a miscellaneous cash event */
+<span class="nc" id="L338">            myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.CASH);</span>
+<span class="nc" id="L339">            myEvent.recordAmount(myOutAmount);</span>
+<span class="nc" id="L340">            myEvent.recordPayee(myQPayee);</span>
+<span class="nc" id="L341">            myEvent.recordCategory(myQCategory, myList);</span>
+
+            /* Add to event list */
+<span class="nc" id="L344">            myPortfolio.addEvent(myEvent);</span>
+        }
+<span class="nc" id="L346">    }</span>
+
+    /**
+     * Process transfer to a security.
+     * &lt;p&gt;
+     * Note that the source cannot be a Security, since that case is handled by
+     * {@link #processTransferFromSecurity}
+     * @param pHolding the security holding
+     * @param pDebit the debit account
+     * @param pTrans the transaction
+     */
+    protected void processTransferToSecurity(final MoneyWiseSecurityHolding pHolding,
+                                             final MoneyWiseTransAsset pDebit,
+                                             final MoneyWiseTransaction pTrans) {
+        /* Handle Loyalty bonus separately */
+<span class="nc bnc" id="L361" title="All 2 branches missed.">        if (MoneyWiseTransCategoryClass.LOYALTYBONUS.equals(pTrans.getCategoryClass())) {</span>
+<span class="nc" id="L362">            processIncomeToSecurity((MoneyWisePayee) pDebit.getParent(), pHolding, pTrans);</span>
+<span class="nc" id="L363">            return;</span>
+        }
+
+        /* Access Portfolio Account */
+<span class="nc" id="L367">        final MoneyWisePortfolio myPort = pHolding.getPortfolio();</span>
+<span class="nc" id="L368">        final MoneyWiseSecurity mySecurity = pHolding.getSecurity();</span>
+<span class="nc" id="L369">        final MoneyWiseQIFAccountEvents myPortfolio = theFile.registerAccount(myPort);</span>
+
+        /* Access Transaction details */
+<span class="nc" id="L372">        final MoneyWiseQIFAccountEvents mySource = theFile.registerAccount(pDebit);</span>
+<span class="nc" id="L373">        final MoneyWiseQIFSecurity myQSecurity = theFile.registerSecurity(mySecurity);</span>
+
+        /* Determine various flags */
+<span class="nc" id="L376">        final boolean canTradeZeroShares = theFileType.canTradeZeroShares();</span>
+<span class="nc" id="L377">        boolean canXferLinked = theFileType.canXferPortfolio();</span>
+<span class="nc" id="L378">        boolean hideBalancingSplitXfer = theFileType.hideBalancingSplitTransfer();</span>
+<span class="nc" id="L379">        hideBalancingSplitXfer &amp;= canXferLinked;</span>
+
+        /* Check for transfer from portfolio */
+<span class="nc bnc" id="L382" title="All 2 branches missed.">        if (pDebit.equals(myPort)) {</span>
+            /* Make sure we don't try to link account */
+<span class="nc" id="L384">            canXferLinked = false;</span>
+<span class="nc" id="L385">            hideBalancingSplitXfer = true;</span>
+        }
+
+        /* Obtain classes */
+<span class="nc" id="L389">        final List&lt;MoneyWiseQIFClass&gt; myList = theBuilder.getTransactionClasses(pTrans);</span>
+
+        /* Access details */
+<span class="nc" id="L392">        final OceanusMoney myAmount = pTrans.getAmount();</span>
+<span class="nc" id="L393">        OceanusUnits myUnits = pTrans.getAccountDeltaUnits();</span>
+<span class="nc bnc" id="L394" title="All 2 branches missed.">        if (myUnits == null) {</span>
+<span class="nc" id="L395">            myUnits = pTrans.getPartnerDeltaUnits();</span>
+        }
+<span class="nc" id="L397">        final OceanusPrice myPrice = getPriceForDate(mySecurity, pTrans.getDate());</span>
+
+        /* Handle zero units */
+<span class="nc" id="L400">        boolean autoCorrectZeroUnits = false;</span>
+<span class="nc bnc" id="L401" title="All 2 branches missed.">        if (myUnits == null) {</span>
+<span class="nc bnc" id="L402" title="All 2 branches missed.">            if (!canTradeZeroShares) {</span>
+<span class="nc" id="L403">                myUnits = OceanusUnits.getWholeUnits(1);</span>
+<span class="nc" id="L404">                autoCorrectZeroUnits = true;</span>
+            } else {
+<span class="nc" id="L406">                myUnits = new OceanusUnits();</span>
+            }
+        }
+
+        /* Create a buy shares event for the new shares */
+<span class="nc bnc" id="L411" title="All 2 branches missed.">        MoneyWiseQIFPortfolioEvent myPortEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, canXferLinked</span>
+<span class="nc" id="L412">                ? MoneyWiseQActionType.BUYX</span>
+<span class="nc" id="L413">                : MoneyWiseQActionType.BUY);</span>
+<span class="nc" id="L414">        myPortEvent.recordAmount(myAmount);</span>
+<span class="nc" id="L415">        myPortEvent.recordSecurity(myQSecurity);</span>
+<span class="nc" id="L416">        myPortEvent.recordQuantity(myUnits);</span>
+<span class="nc" id="L417">        myPortEvent.recordPrice(myPrice);</span>
+<span class="nc bnc" id="L418" title="All 2 branches missed.">        if (canXferLinked) {</span>
+<span class="nc" id="L419">            myPortEvent.recordXfer(mySource.getAccount(), myList, myAmount);</span>
+        }
+
+        /* Add to event list */
+<span class="nc" id="L423">        myPortfolio.addEvent(myPortEvent);</span>
+
+        /* If we need to autoCorrect */
+<span class="nc bnc" id="L426" title="All 2 branches missed.">        if (autoCorrectZeroUnits) {</span>
+            /* Create a ShrsOut event to balance */
+<span class="nc" id="L428">            myPortEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.SHRSOUT);</span>
+<span class="nc" id="L429">            myPortEvent.recordSecurity(myQSecurity);</span>
+<span class="nc" id="L430">            myPortEvent.recordQuantity(myUnits);</span>
+
+            /* Add to event list */
+<span class="nc" id="L433">            myPortfolio.addEvent(myPortEvent);</span>
+        }
+
+        /* If we are not hiding the balancing transfer */
+<span class="nc bnc" id="L437" title="All 2 branches missed.">        if (!hideBalancingSplitXfer) {</span>
+            /* Build output amount */
+<span class="nc" id="L439">            final OceanusMoney myOutAmount = new OceanusMoney(myAmount);</span>
+<span class="nc" id="L440">            myOutAmount.negate();</span>
+
+            /* Build the source transfer */
+<span class="nc" id="L443">            final MoneyWiseQIFEvent myEvent = new MoneyWiseQIFEvent(theFile, pTrans);</span>
+<span class="nc" id="L444">            myEvent.recordAccount(myPortfolio.getAccount(), myList);</span>
+<span class="nc" id="L445">            myEvent.recordAmount(myOutAmount);</span>
+
+            /* Build payee description */
+<span class="nc" id="L448">            myEvent.recordPayee(theBuilder.buildXferToPayee(myPort));</span>
+
+            /* Add event to event list */
+<span class="nc" id="L451">            mySource.addEvent(myEvent);</span>
+        }
+<span class="nc" id="L453">    }</span>
+
+    /**
+     * Process transfer between securities.
+     * @param pSource the source security holding
+     * @param pTarget the target security holding
+     * @param pTrans the transaction
+     */
+    protected void processTransferBetweenSecurities(final MoneyWiseSecurityHolding pSource,
+                                                    final MoneyWiseSecurityHolding pTarget,
+                                                    final MoneyWiseTransaction pTrans) {
+        /* Switch on transaction type */
+<span class="nc bnc" id="L465" title="All 7 branches missed.">        switch (pTrans.getCategoryClass()) {</span>
+            case STOCKSPLIT:
+<span class="nc bnc" id="L467" title="All 2 branches missed.">                if (theFileType.useStockSplit()) {</span>
+<span class="nc" id="L468">                    processStockSplit(pSource, pTrans);</span>
+                } else {
+<span class="nc" id="L470">                    processSecurityAdjust(pSource, pTrans);</span>
+                }
+<span class="nc" id="L472">                break;</span>
+            case UNITSADJUST:
+<span class="nc" id="L474">                processSecurityAdjust(pSource, pTrans);</span>
+<span class="nc" id="L475">                break;</span>
+            case DIVIDEND:
+<span class="nc" id="L477">                processReinvestDividend(pSource, pTrans);</span>
+<span class="nc" id="L478">                break;</span>
+            case STOCKDEMERGER:
+<span class="nc" id="L480">                processStockDeMerger(pSource, pTarget, pTrans);</span>
+<span class="nc" id="L481">                break;</span>
+            case STOCKTAKEOVER:
+            case SECURITYREPLACE:
+<span class="nc" id="L484">                processStockTakeOver(pSource, pTarget, pTrans);</span>
+<span class="nc" id="L485">                break;</span>
+            case TRANSFER:
+<span class="nc" id="L487">                processSecurityExchange(pSource, pTarget, pTrans);</span>
+<span class="nc" id="L488">                break;</span>
+            default:
+<span class="nc" id="L490">                LOGGER.error(&quot;Unsupported TransferBetweenSecurities Category: &lt;%s&gt;&quot;, pTrans.getCategoryClass());</span>
+                break;
+        }
+<span class="nc" id="L493">    }</span>
+
+    /**
+     * Process transfer from a security.
+     * @param pHolding the security holding
+     * @param pCredit the credit account
+     * @param pTrans the transaction
+     */
+    protected void processTransferFromSecurity(final MoneyWiseSecurityHolding pHolding,
+                                               final MoneyWiseTransAsset pCredit,
+                                               final MoneyWiseTransaction pTrans) {
+        /* Switch on transaction type */
+<span class="nc bnc" id="L505" title="All 3 branches missed.">        switch (pTrans.getCategoryClass()) {</span>
+            case DIVIDEND:
+<span class="nc" id="L507">                processStockDividend(pHolding, pCredit, pTrans);</span>
+<span class="nc" id="L508">                break;</span>
+            case PORTFOLIOXFER:
+<span class="nc" id="L510">                processPortfolioXferForHolding(pHolding, (MoneyWisePortfolio) pCredit, pTrans);</span>
+<span class="nc" id="L511">                break;</span>
+            case TRANSFER:
+            case STOCKRIGHTSISSUE:
+            default:
+<span class="nc" id="L515">                processTransferOut(pHolding, pCredit, pTrans);</span>
+                break;
+        }
+<span class="nc" id="L518">    }</span>
+
+    /**
+     * Process Stock Split.
+     * @param pHolding the security holding
+     * @param pTrans the transaction
+     */
+    private void processStockSplit(final MoneyWiseSecurityHolding pHolding,
+                                   final MoneyWiseTransaction pTrans) {
+        /* Access Portfolio Account */
+<span class="nc" id="L528">        final MoneyWisePortfolio myPortfolio = pHolding.getPortfolio();</span>
+<span class="nc" id="L529">        final MoneyWiseSecurity mySecurity = pHolding.getSecurity();</span>
+<span class="nc" id="L530">        final MoneyWiseQIFAccountEvents myQPortfolio = theFile.registerAccount(myPortfolio);</span>
+
+        /* Access Transaction details */
+<span class="nc" id="L533">        final MoneyWiseQIFSecurity myQSecurity = theFile.registerSecurity(mySecurity);</span>
+
+        /* Obtain number of units after this event */
+<span class="nc" id="L536">        final OceanusUnits myTotalUnits = getUnitsForHoldingEvent(pHolding, pTrans);</span>
+
+        /* Access the delta units */
+<span class="nc" id="L539">        final OceanusUnits myDeltaUnits = pTrans.getAccountDeltaUnits();</span>
+
+        /* Obtain number of units before event */
+<span class="nc" id="L542">        final OceanusUnits myBaseUnits = new OceanusUnits(myTotalUnits);</span>
+<span class="nc" id="L543">        myBaseUnits.subtractUnits(myDeltaUnits);</span>
+
+        /* Obtain split ratio */
+<span class="nc" id="L546">        final OceanusRatio mySplit = new OceanusRatio(myTotalUnits, myBaseUnits);</span>
+<span class="nc" id="L547">        mySplit.multiply(OceanusDecimal.RADIX_TEN);</span>
+
+        /* Create a stock split event */
+<span class="nc" id="L550">        final MoneyWiseQIFPortfolioEvent myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.STKSPLIT);</span>
+<span class="nc" id="L551">        myEvent.recordSecurity(myQSecurity);</span>
+<span class="nc" id="L552">        myEvent.recordQuantity(mySplit);</span>
+
+        /* Add to event list */
+<span class="nc" id="L555">        myQPortfolio.addEvent(myEvent);</span>
+<span class="nc" id="L556">    }</span>
+
+    /**
+     * Process stock adjustment.
+     * @param pHolding the security holding
+     * @param pTrans the transaction
+     */
+    private void processSecurityAdjust(final MoneyWiseSecurityHolding pHolding,
+                                       final MoneyWiseTransaction pTrans) {
+        /* Access Portfolio Account */
+<span class="nc" id="L566">        final MoneyWisePortfolio myPortfolio = pHolding.getPortfolio();</span>
+<span class="nc" id="L567">        final MoneyWiseSecurity mySecurity = pHolding.getSecurity();</span>
+<span class="nc" id="L568">        final MoneyWiseQIFAccountEvents myQPortfolio = theFile.registerAccount(myPortfolio);</span>
+
+        /* Access Transaction details */
+<span class="nc" id="L571">        final MoneyWiseQIFSecurity myQSecurity = theFile.registerSecurity(mySecurity);</span>
+
+        /* Access the delta units */
+<span class="nc" id="L574">        OceanusUnits myUnits = pTrans.getAccountDeltaUnits();</span>
+<span class="nc" id="L575">        final boolean isCredit = myUnits.isPositive();</span>
+<span class="nc bnc" id="L576" title="All 2 branches missed.">        if (!isCredit) {</span>
+<span class="nc" id="L577">            myUnits = new OceanusUnits(myUnits);</span>
+<span class="nc" id="L578">            myUnits.negate();</span>
+        }
+
+        /* Create a share movement event */
+<span class="nc bnc" id="L582" title="All 2 branches missed.">        final MoneyWiseQIFPortfolioEvent myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, isCredit</span>
+<span class="nc" id="L583">                ? MoneyWiseQActionType.SHRSIN</span>
+<span class="nc" id="L584">                : MoneyWiseQActionType.SHRSOUT);</span>
+<span class="nc" id="L585">        myEvent.recordSecurity(myQSecurity);</span>
+<span class="nc" id="L586">        myEvent.recordQuantity(myUnits);</span>
+
+        /* Add to event list */
+<span class="nc" id="L589">        myQPortfolio.addEvent(myEvent);</span>
+<span class="nc" id="L590">    }</span>
+
+    /**
+     * Process stock dividend.
+     * @param pHolding the security holding
+     * @param pCredit the credit account
+     * @param pTrans the transaction
+     */
+    private void processStockDividend(final MoneyWiseSecurityHolding pHolding,
+                                      final MoneyWiseTransAsset pCredit,
+                                      final MoneyWiseTransaction pTrans) {
+        /* Access Portfolio Account */
+<span class="nc" id="L602">        final MoneyWisePortfolio myPortfolio = pHolding.getPortfolio();</span>
+<span class="nc" id="L603">        final MoneyWiseSecurity mySecurity = pHolding.getSecurity();</span>
+<span class="nc" id="L604">        final MoneyWiseQIFAccountEvents myQPortfolio = theFile.registerAccount(myPortfolio);</span>
+
+        /* Obtain flags */
+<span class="nc" id="L607">        boolean canXferLinked = theFileType.canXferPortfolio();</span>
+<span class="nc" id="L608">        final boolean isPortfolio = pCredit.equals(myPortfolio);</span>
+
+        /* Access Transaction details */
+<span class="nc" id="L611">        final MoneyWiseQIFSecurity myQSecurity = theFile.registerSecurity(mySecurity);</span>
+<span class="nc" id="L612">        final MoneyWiseQIFAccountEvents myTarget = theFile.registerAccount(pCredit);</span>
+<span class="nc" id="L613">        OceanusMoney myAmount = pTrans.getAmount();</span>
+<span class="nc" id="L614">        final OceanusMoney myTaxCredit = pTrans.getTaxCredit();</span>
+<span class="nc" id="L615">        final OceanusMoney myFullAmount = new OceanusMoney(myAmount);</span>
+<span class="nc bnc" id="L616" title="All 2 branches missed.">        if (myTaxCredit != null) {</span>
+<span class="nc" id="L617">            myFullAmount.addAmount(myTaxCredit);</span>
+        }
+
+        /* Obtain classes */
+<span class="nc" id="L621">        final List&lt;MoneyWiseQIFClass&gt; myList = theBuilder.getTransactionClasses(pTrans);</span>
+
+        /* Determine whether we should XferLinked */
+<span class="nc bnc" id="L624" title="All 4 branches missed.">        boolean doXferLinked = canXferLinked &amp;&amp; myTaxCredit == null;</span>
+
+        /* Check for dividend held in portfolio */
+<span class="nc bnc" id="L627" title="All 2 branches missed.">        if (isPortfolio) {</span>
+            /* Make sure we don't try to link account */
+<span class="nc" id="L629">            doXferLinked = false;</span>
+<span class="nc" id="L630">            canXferLinked = false;</span>
+        }
+
+        /* Create a dividend event */
+<span class="nc bnc" id="L634" title="All 2 branches missed.">        MoneyWiseQIFPortfolioEvent myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, doXferLinked</span>
+<span class="nc" id="L635">                ? MoneyWiseQActionType.DIVX</span>
+<span class="nc" id="L636">                : MoneyWiseQActionType.DIV);</span>
+<span class="nc" id="L637">        myEvent.recordSecurity(myQSecurity);</span>
+<span class="nc" id="L638">        myEvent.recordAmount(myFullAmount);</span>
+<span class="nc bnc" id="L639" title="All 2 branches missed.">        if (doXferLinked) {</span>
+<span class="nc" id="L640">            myEvent.recordPayee(theBuilder.buildXferFromPayee(myPortfolio));</span>
+<span class="nc" id="L641">            myEvent.recordXfer(myTarget.getAccount(), myList, myAmount);</span>
+        }
+
+        /* Add to event list */
+<span class="nc" id="L645">        myQPortfolio.addEvent(myEvent);</span>
+
+        /* If we can use XOut records */
+<span class="nc bnc" id="L648" title="All 4 branches missed.">        if (!doXferLinked &amp;&amp; canXferLinked) {</span>
+            /* Create a transfer out event */
+<span class="nc" id="L650">            myAmount = pTrans.getAmount();</span>
+<span class="nc" id="L651">            myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.XOUT);</span>
+<span class="nc" id="L652">            myEvent.recordAmount(myAmount);</span>
+<span class="nc" id="L653">            myEvent.recordPayee(theBuilder.buildXferFromPayee(myPortfolio));</span>
+<span class="nc" id="L654">            myEvent.recordXfer(myTarget.getAccount(), myList, myAmount);</span>
+
+            /* Add to event list */
+<span class="nc" id="L657">            myQPortfolio.addEvent(myEvent);</span>
+        }
+
+        /* Don't do if receiving dividend in portfolio */
+<span class="nc bnc" id="L661" title="All 2 branches missed.">        if (!isPortfolio) {</span>
+            /* If the receiving account is a portfolio */
+<span class="nc bnc" id="L663" title="All 2 branches missed.">            if (pCredit instanceof MoneyWisePortfolio) {</span>
+                /* Create the receiving transfer event */
+<span class="nc" id="L665">                final MoneyWiseQIFPortfolioEvent myXferEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.XIN);</span>
+<span class="nc" id="L666">                myXferEvent.recordAmount(myAmount);</span>
+<span class="nc" id="L667">                myXferEvent.recordPayee(theBuilder.buildXferFromPayee(myPortfolio));</span>
+<span class="nc" id="L668">                myXferEvent.recordXfer(myQPortfolio.getAccount(), myList, myAmount);</span>
+
+                /* Add to event list */
+<span class="nc" id="L671">                myTarget.addEvent(myXferEvent);</span>
+
+                /* else standard account */
+<span class="nc" id="L674">            } else {</span>
+                /* Create the receiving transfer event */
+<span class="nc" id="L676">                final MoneyWiseQIFEvent myXferEvent = new MoneyWiseQIFEvent(theFile, pTrans);</span>
+<span class="nc" id="L677">                myXferEvent.recordAmount(myAmount);</span>
+<span class="nc" id="L678">                myXferEvent.recordPayee(theBuilder.buildXferFromPayee(myPortfolio));</span>
+<span class="nc" id="L679">                myXferEvent.recordAccount(myQPortfolio.getAccount(), myList);</span>
+
+                /* Add to event list */
+<span class="nc" id="L682">                myTarget.addEvent(myXferEvent);</span>
+            }
+        }
+
+        /* If we have a Tax Credit */
+<span class="nc bnc" id="L687" title="All 2 branches missed.">        if (myTaxCredit != null) {</span>
+            /* Determine flags */
+<span class="nc" id="L689">            final boolean useHoldingAccount = theFileType.useInvestmentHolding4Category();</span>
+
+            /* Access category */
+<span class="nc" id="L692">            final MoneyWiseQIFEventCategory myTaxCategory = theBuilder.getTaxCategory();</span>
+<span class="nc" id="L693">            final MoneyWiseQIFPayee myTaxPayee = theBuilder.getTaxMan();</span>
+
+            /* Create output amount */
+<span class="nc" id="L696">            final OceanusMoney myOutAmount = new OceanusMoney(myTaxCredit);</span>
+<span class="nc" id="L697">            myOutAmount.negate();</span>
+
+            /* If we are using a holding account */
+<span class="nc bnc" id="L700" title="All 2 branches missed.">            if (useHoldingAccount) {</span>
+                /* Access Holding Account */
+<span class="nc" id="L702">                final MoneyWiseQIFAccountEvents myHolding = theFile.registerHoldingAccount(myPortfolio);</span>
+
+                /* Create an event */
+<span class="nc" id="L705">                final MoneyWiseQIFEvent myHoldEvent = new MoneyWiseQIFEvent(theFile, pTrans);</span>
+<span class="nc" id="L706">                myHoldEvent.recordAmount(new OceanusMoney());</span>
+<span class="nc" id="L707">                myHoldEvent.recordPayee(myTaxPayee);</span>
+
+                /* record the splits */
+<span class="nc" id="L710">                myHoldEvent.recordSplitRecord(myQPortfolio.getAccount(), myTaxCredit, myPortfolio.getName());</span>
+<span class="nc" id="L711">                myHoldEvent.recordSplitRecord(myTaxCategory, myOutAmount, myTaxPayee.getName());</span>
+
+                /* Add to event list */
+<span class="nc" id="L714">                myHolding.addEvent(myHoldEvent);</span>
+
+                /* else we can do this properly */
+<span class="nc" id="L717">            } else {</span>
+                /* Create a tax credit event */
+<span class="nc" id="L719">                myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.CASH);</span>
+<span class="nc" id="L720">                myEvent.recordAmount(myOutAmount);</span>
+<span class="nc" id="L721">                myEvent.recordPayee(myTaxPayee);</span>
+<span class="nc" id="L722">                myEvent.recordCategory(myTaxCategory);</span>
+
+                /* Add to event list */
+<span class="nc" id="L725">                myQPortfolio.addEvent(myEvent);</span>
+            }
+        }
+<span class="nc" id="L728">    }</span>
+
+    /**
+     * Process reinvested dividend.
+     * @param pHolding the security holding
+     * @param pTrans the transaction
+     */
+    private void processReinvestDividend(final MoneyWiseSecurityHolding pHolding,
+                                         final MoneyWiseTransaction pTrans) {
+        /* Access Portfolio Account */
+<span class="nc" id="L738">        final MoneyWisePortfolio myPortfolio = pHolding.getPortfolio();</span>
+<span class="nc" id="L739">        final MoneyWiseSecurity mySecurity = pHolding.getSecurity();</span>
+<span class="nc" id="L740">        final MoneyWiseQIFAccountEvents myQPortfolio = theFile.registerAccount(myPortfolio);</span>
+
+        /* Determine various flags */
+<span class="nc" id="L743">        final boolean canTradeZeroShares = theFileType.canTradeZeroShares();</span>
+
+        /* Access Transaction details */
+<span class="nc" id="L746">        final MoneyWiseQIFSecurity myQSecurity = theFile.registerSecurity(mySecurity);</span>
+<span class="nc" id="L747">        OceanusMoney myAmount = pTrans.getAmount();</span>
+<span class="nc" id="L748">        OceanusUnits myUnits = pTrans.getAccountDeltaUnits();</span>
+<span class="nc" id="L749">        final OceanusMoney myTaxCredit = pTrans.getTaxCredit();</span>
+<span class="nc" id="L750">        myAmount = new OceanusMoney(myAmount);</span>
+<span class="nc bnc" id="L751" title="All 2 branches missed.">        if (myTaxCredit != null) {</span>
+<span class="nc" id="L752">            myAmount.addAmount(myTaxCredit);</span>
+        }
+
+        /* Handle zero units */
+<span class="nc" id="L756">        boolean autoCorrectZeroUnits = false;</span>
+<span class="nc bnc" id="L757" title="All 2 branches missed.">        if (myUnits == null) {</span>
+<span class="nc bnc" id="L758" title="All 2 branches missed.">            if (!canTradeZeroShares) {</span>
+<span class="nc" id="L759">                myUnits = OceanusUnits.getWholeUnits(1);</span>
+<span class="nc" id="L760">                autoCorrectZeroUnits = true;</span>
+            } else {
+<span class="nc" id="L762">                myUnits = new OceanusUnits();</span>
+            }
+        }
+
+        /* Create a re-invest dividend event */
+<span class="nc" id="L767">        MoneyWiseQIFPortfolioEvent myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.REINVDIV);</span>
+<span class="nc" id="L768">        myEvent.recordSecurity(myQSecurity);</span>
+<span class="nc" id="L769">        myEvent.recordAmount(myAmount);</span>
+<span class="nc" id="L770">        myEvent.recordQuantity(myUnits);</span>
+
+        /* Add to event list */
+<span class="nc" id="L773">        myQPortfolio.addEvent(myEvent);</span>
+
+        /* If we need to autoCorrect */
+<span class="nc bnc" id="L776" title="All 2 branches missed.">        if (autoCorrectZeroUnits) {</span>
+            /* Create a ShrsOut event to balance */
+<span class="nc" id="L778">            myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.SHRSOUT);</span>
+<span class="nc" id="L779">            myEvent.recordSecurity(myQSecurity);</span>
+<span class="nc" id="L780">            myEvent.recordQuantity(myUnits);</span>
+
+            /* Add to event list */
+<span class="nc" id="L783">            myQPortfolio.addEvent(myEvent);</span>
+        }
+
+        /* If we have a Tax Credit */
+<span class="nc bnc" id="L787" title="All 2 branches missed.">        if (myTaxCredit != null) {</span>
+            /* Determine flags */
+<span class="nc" id="L789">            final boolean useHoldingAccount = theFileType.useInvestmentHolding4Category();</span>
+<span class="nc" id="L790">            final boolean useMiscIncX = theFileType.useMiscIncX4TaxCredit();</span>
+
+            /* Access category */
+<span class="nc" id="L793">            final MoneyWiseQIFEventCategory myTaxCategory = theBuilder.getTaxCategory();</span>
+<span class="nc" id="L794">            final MoneyWiseQIFPayee myTaxPayee = theBuilder.getTaxMan();</span>
+
+            /* Create a tax credit event */
+<span class="nc bnc" id="L797" title="All 2 branches missed.">            myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, useMiscIncX</span>
+<span class="nc" id="L798">                    ? MoneyWiseQActionType.MISCINCX</span>
+<span class="nc" id="L799">                    : MoneyWiseQActionType.MISCINC);</span>
+<span class="nc" id="L800">            myEvent.recordSecurity(myQSecurity);</span>
+<span class="nc" id="L801">            myEvent.recordAmount(myTaxCredit);</span>
+<span class="nc bnc" id="L802" title="All 2 branches missed.">            if (useMiscIncX) {</span>
+<span class="nc" id="L803">                myEvent.recordPayee(myTaxPayee);</span>
+<span class="nc" id="L804">                myEvent.recordCategory(myTaxCategory);</span>
+            }
+
+            /* Add to event list */
+<span class="nc" id="L808">            myQPortfolio.addEvent(myEvent);</span>
+
+            /* If we need further elements */
+<span class="nc bnc" id="L811" title="All 2 branches missed.">            if (!useMiscIncX) {</span>
+                /* Create output amount */
+<span class="nc" id="L813">                final OceanusMoney myOutAmount = new OceanusMoney(myTaxCredit);</span>
+<span class="nc" id="L814">                myOutAmount.negate();</span>
+
+                /* If we are using a holding account */
+<span class="nc bnc" id="L817" title="All 2 branches missed.">                if (useHoldingAccount) {</span>
+                    /* Access Holding Account */
+<span class="nc" id="L819">                    final MoneyWiseQIFAccountEvents myHolding = theFile.registerHoldingAccount(myPortfolio);</span>
+
+                    /* Create an event */
+<span class="nc" id="L822">                    final MoneyWiseQIFEvent myHoldEvent = new MoneyWiseQIFEvent(theFile, pTrans);</span>
+<span class="nc" id="L823">                    myHoldEvent.recordAmount(new OceanusMoney());</span>
+<span class="nc" id="L824">                    myHoldEvent.recordPayee(myTaxPayee);</span>
+
+                    /* record the splits */
+<span class="nc" id="L827">                    myHoldEvent.recordSplitRecord(myQPortfolio.getAccount(), myTaxCredit, myPortfolio.getName());</span>
+<span class="nc" id="L828">                    myHoldEvent.recordSplitRecord(myTaxCategory, myOutAmount, myTaxPayee.getName());</span>
+
+                    /* Add to event list */
+<span class="nc" id="L831">                    myHolding.addEvent(myHoldEvent);</span>
+
+                    /* else we can do this properly */
+<span class="nc" id="L834">                } else {</span>
+                    /* Create a tax credit event */
+<span class="nc" id="L836">                    myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.CASH);</span>
+<span class="nc" id="L837">                    myEvent.recordAmount(myOutAmount);</span>
+<span class="nc" id="L838">                    myEvent.recordPayee(myTaxPayee);</span>
+<span class="nc" id="L839">                    myEvent.recordCategory(myTaxCategory);</span>
+
+                    /* Add to event list */
+<span class="nc" id="L842">                    myQPortfolio.addEvent(myEvent);</span>
+                }
+            }
+        }
+<span class="nc" id="L846">    }</span>
+
+    /**
+     * Process stock deMerger.
+     * @param pHolding the security holding
+     * @param pCredit the credit account
+     * @param pTrans the transaction
+     */
+    private void processStockDeMerger(final MoneyWiseSecurityHolding pHolding,
+                                      final MoneyWiseSecurityHolding pCredit,
+                                      final MoneyWiseTransaction pTrans) {
+        /* Access Portfolio Account */
+<span class="nc" id="L858">        final MoneyWisePortfolio myPortfolio = pHolding.getPortfolio();</span>
+<span class="nc" id="L859">        final MoneyWiseSecurity mySecurity = pHolding.getSecurity();</span>
+<span class="nc" id="L860">        final MoneyWiseSecurity myCredit = pCredit.getSecurity();</span>
+<span class="nc" id="L861">        final MoneyWiseQIFAccountEvents myQPortfolio = theFile.registerAccount(myPortfolio);</span>
+
+        /* Determine whether we can return capital */
+<span class="nc" id="L864">        final boolean canReturnCapital = theFileType.canReturnCapital();</span>
+<span class="nc" id="L865">        final boolean canTradeZeroShares = theFileType.canTradeZeroShares();</span>
+
+        /* Access Transaction details */
+<span class="nc" id="L868">        final MoneyWiseQIFSecurity myDebitSecurity = theFile.registerSecurity(mySecurity);</span>
+<span class="nc" id="L869">        final MoneyWiseQIFSecurity myCreditSecurity = theFile.registerSecurity(myCredit);</span>
+
+        /* Access details */
+<span class="nc" id="L872">        final OceanusDate myDate = pTrans.getDate();</span>
+<span class="nc" id="L873">        OceanusUnits myUnits = pTrans.getAccountDeltaUnits();</span>
+<span class="nc bnc" id="L874" title="All 2 branches missed.">        if (myUnits != null) {</span>
+<span class="nc" id="L875">            myUnits = new OceanusUnits(myUnits);</span>
+<span class="nc" id="L876">            myUnits.negate();</span>
+        }
+<span class="nc" id="L878">        final OceanusPrice myDebitPrice = getPriceForDate(mySecurity, myDate);</span>
+<span class="nc" id="L879">        final OceanusPrice myCreditPrice = getPriceForDate(myCredit, myDate);</span>
+
+        /* Obtain the delta cost (i.e. value transferred) */
+<span class="nc" id="L882">        OceanusMoney myValue = getDeltaCostForHolding(pHolding, pTrans);</span>
+<span class="nc" id="L883">        myValue = new OceanusMoney(myValue);</span>
+<span class="nc" id="L884">        myValue.negate();</span>
+
+        /* Determine whether we use return capital */
+<span class="nc bnc" id="L887" title="All 4 branches missed.">        final boolean doReturnCapital = canReturnCapital &amp;&amp; myUnits == null;</span>
+
+        /* Handle zero units */
+<span class="nc" id="L890">        boolean autoCorrectZeroUnits = false;</span>
+<span class="nc bnc" id="L891" title="All 4 branches missed.">        if (!canReturnCapital &amp;&amp; myUnits == null) {</span>
+<span class="nc bnc" id="L892" title="All 2 branches missed.">            if (!canTradeZeroShares) {</span>
+<span class="nc" id="L893">                myUnits = OceanusUnits.getWholeUnits(1);</span>
+<span class="nc" id="L894">                autoCorrectZeroUnits = true;</span>
+            } else {
+<span class="nc" id="L896">                myUnits = new OceanusUnits();</span>
+            }
+        }
+
+        /* Create a sellShares/returnCapital event for the share reduction */
+<span class="nc bnc" id="L901" title="All 2 branches missed.">        MoneyWiseQIFPortfolioEvent myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, doReturnCapital</span>
+<span class="nc" id="L902">                ? MoneyWiseQActionType.RTRNCAP</span>
+<span class="nc" id="L903">                : MoneyWiseQActionType.SELL);</span>
+<span class="nc" id="L904">        myEvent.recordAmount(myValue);</span>
+<span class="nc" id="L905">        myEvent.recordSecurity(myDebitSecurity);</span>
+<span class="nc" id="L906">        myEvent.recordPrice(myDebitPrice);</span>
+<span class="nc bnc" id="L907" title="All 2 branches missed.">        if (!doReturnCapital) {</span>
+<span class="nc" id="L908">            myEvent.recordQuantity(myUnits);</span>
+        }
+
+        /* Add to event list */
+<span class="nc" id="L912">        myQPortfolio.addEvent(myEvent);</span>
+
+        /* If we need to autoCorrect */
+<span class="nc bnc" id="L915" title="All 2 branches missed.">        if (autoCorrectZeroUnits) {</span>
+            /* Create a ShrsIn event to balance */
+<span class="nc" id="L917">            myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.SHRSIN);</span>
+<span class="nc" id="L918">            myEvent.recordSecurity(myDebitSecurity);</span>
+<span class="nc" id="L919">            myEvent.recordQuantity(myUnits);</span>
+
+            /* Add to event list */
+<span class="nc" id="L922">            myQPortfolio.addEvent(myEvent);</span>
+        }
+
+        /* Create a buy shares event for the new shares */
+<span class="nc" id="L926">        myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.BUY);</span>
+<span class="nc" id="L927">        myEvent.recordAmount(myValue);</span>
+<span class="nc" id="L928">        myEvent.recordSecurity(myCreditSecurity);</span>
+<span class="nc" id="L929">        myEvent.recordQuantity(pTrans.getPartnerDeltaUnits());</span>
+<span class="nc" id="L930">        myEvent.recordPrice(myCreditPrice);</span>
+
+        /* Add to event list */
+<span class="nc" id="L933">        myQPortfolio.addEvent(myEvent);</span>
+<span class="nc" id="L934">    }</span>
+
+    /**
+     * Process security Exchange/TakeOver.
+     * @param pSource the source security
+     * @param pTarget the target security
+     * @param pTrans the transaction
+     */
+    private void processStockTakeOver(final MoneyWiseSecurityHolding pSource,
+                                      final MoneyWiseSecurityHolding pTarget,
+                                      final MoneyWiseTransaction pTrans) {
+        /* Access Portfolio Account */
+<span class="nc" id="L946">        final MoneyWisePortfolio myPortfolio = pSource.getPortfolio();</span>
+<span class="nc" id="L947">        final MoneyWiseSecurity mySource = pSource.getSecurity();</span>
+<span class="nc" id="L948">        final MoneyWiseSecurity myTarget = pTarget.getSecurity();</span>
+<span class="nc" id="L949">        final MoneyWiseQIFAccountEvents myQPortfolio = theFile.registerAccount(myPortfolio);</span>
+
+        /* Access Transaction details */
+<span class="nc" id="L952">        final MoneyWiseQIFSecurity myDebitSecurity = theFile.registerSecurity(mySource);</span>
+<span class="nc" id="L953">        final MoneyWiseQIFSecurity myCreditSecurity = theFile.registerSecurity(myTarget);</span>
+
+        /* Access details */
+<span class="nc" id="L956">        final OceanusDate myDate = pTrans.getDate();</span>
+<span class="nc" id="L957">        final OceanusUnits myUnits = pTrans.getPartnerDeltaUnits();</span>
+<span class="nc" id="L958">        final OceanusPrice myDebitPrice = getPriceForDate(mySource, myDate);</span>
+<span class="nc" id="L959">        final OceanusPrice myCreditPrice = getPriceForDate(myTarget, myDate);</span>
+<span class="nc" id="L960">        final MoneyWiseDeposit myThirdParty = (MoneyWiseDeposit) pTrans.getReturnedCashAccount();</span>
+<span class="nc" id="L961">        final OceanusMoney myAmount = pTrans.getReturnedCash();</span>
+
+        /* Obtain the number of units that we are selling */
+<span class="nc" id="L964">        final OceanusUnits myBaseUnits = getBaseUnitsForHolding(pSource, pTrans);</span>
+
+        /* Obtain the delta cost (i.e. value transferred) */
+<span class="nc" id="L967">        final OceanusMoney myStockCost = getDeltaCostForHolding(pSource, pTrans);</span>
+
+        /* Determine the total sale value */
+<span class="nc" id="L970">        final OceanusMoney mySaleValue = new OceanusMoney(myStockCost);</span>
+<span class="nc" id="L971">        mySaleValue.addAmount(myAmount);</span>
+
+        /* Create a sellShares event for the share reduction */
+<span class="nc" id="L974">        MoneyWiseQIFPortfolioEvent myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.SELL);</span>
+<span class="nc" id="L975">        myEvent.recordAmount(mySaleValue);</span>
+<span class="nc" id="L976">        myEvent.recordSecurity(myDebitSecurity);</span>
+<span class="nc" id="L977">        myEvent.recordPrice(myDebitPrice);</span>
+<span class="nc" id="L978">        myEvent.recordQuantity(myBaseUnits);</span>
+
+        /* Add to event list */
+<span class="nc" id="L981">        myQPortfolio.addEvent(myEvent);</span>
+
+        /* Create a buy shares event for the new shares */
+<span class="nc" id="L984">        myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.BUY);</span>
+<span class="nc" id="L985">        myEvent.recordAmount(myStockCost);</span>
+<span class="nc" id="L986">        myEvent.recordSecurity(myCreditSecurity);</span>
+<span class="nc" id="L987">        myEvent.recordQuantity(myUnits);</span>
+<span class="nc" id="L988">        myEvent.recordPrice(myCreditPrice);</span>
+
+        /* Add to event list */
+<span class="nc" id="L991">        myQPortfolio.addEvent(myEvent);</span>
+
+        /* If we have a ThirdParty Account */
+<span class="nc bnc" id="L994" title="All 2 branches missed.">        if (myThirdParty != null) {</span>
+            /* determine flags */
+<span class="nc" id="L996">            final boolean canXferDirect = theFileType.canXferPortfolio();</span>
+
+            /* Access Target account */
+<span class="nc" id="L999">            final MoneyWiseQIFAccountEvents myQTarget = theFile.registerAccount(myThirdParty);</span>
+
+            /* If we can transfer direct */
+<span class="nc bnc" id="L1002" title="All 2 branches missed.">            if (canXferDirect) {</span>
+                /* Create a transfer out event for the cash payment */
+<span class="nc" id="L1004">                myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.XOUT);</span>
+<span class="nc" id="L1005">                myEvent.recordAmount(myAmount);</span>
+<span class="nc" id="L1006">                myEvent.recordXfer(myQTarget.getAccount(), myAmount);</span>
+
+                /* Add to event list */
+<span class="nc" id="L1009">                myQPortfolio.addEvent(myEvent);</span>
+            } else {
+                /* Build the target transfer */
+<span class="nc" id="L1012">                final MoneyWiseQIFEvent myXferEvent = new MoneyWiseQIFEvent(theFile, pTrans);</span>
+<span class="nc" id="L1013">                myXferEvent.recordAccount(myQPortfolio.getAccount());</span>
+<span class="nc" id="L1014">                myXferEvent.recordAmount(myAmount);</span>
+
+                /* Build payee description */
+<span class="nc" id="L1017">                myEvent.recordPayee(theBuilder.buildXferFromPayee(myPortfolio));</span>
+
+                /* Add event to event list */
+<span class="nc" id="L1020">                myQTarget.addEvent(myEvent);</span>
+            }
+        }
+<span class="nc" id="L1023">    }</span>
+
+    /**
+     * Process standard transfer out from a security.
+     * @param pHolding the security holding
+     * @param pCredit the credit account
+     * @param pTrans the transaction
+     */
+    private void processTransferOut(final MoneyWiseSecurityHolding pHolding,
+                                    final MoneyWiseTransAsset pCredit,
+                                    final MoneyWiseTransaction pTrans) {
+        /* Access Portfolio Account */
+<span class="nc" id="L1035">        final MoneyWisePortfolio myPortfolio = pHolding.getPortfolio();</span>
+<span class="nc" id="L1036">        final MoneyWiseSecurity mySecurity = pHolding.getSecurity();</span>
+<span class="nc" id="L1037">        final MoneyWiseQIFAccountEvents myQPortfolio = theFile.registerAccount(myPortfolio);</span>
+
+        /* Access Transaction details */
+<span class="nc" id="L1040">        final MoneyWiseQIFAccountEvents myTarget = theFile.registerAccount(pCredit);</span>
+<span class="nc" id="L1041">        final MoneyWiseQIFSecurity myQSecurity = theFile.registerSecurity(mySecurity);</span>
+
+        /* Determine various flags */
+<span class="nc" id="L1044">        final boolean canReturnCapital = theFileType.canReturnCapital();</span>
+<span class="nc" id="L1045">        final boolean canTradeZeroShares = theFileType.canTradeZeroShares();</span>
+<span class="nc" id="L1046">        boolean canXferLinked = theFileType.canXferPortfolio();</span>
+<span class="nc" id="L1047">        boolean hideBalancingSplitXfer = theFileType.hideBalancingSplitTransfer();</span>
+<span class="nc" id="L1048">        hideBalancingSplitXfer &amp;= canXferLinked;</span>
+
+        /* Check for transfer to portfolio */
+<span class="nc bnc" id="L1051" title="All 2 branches missed.">        if (pCredit.equals(myPortfolio)) {</span>
+            /* Make sure we don't try to link account */
+<span class="nc" id="L1053">            canXferLinked = false;</span>
+<span class="nc" id="L1054">            hideBalancingSplitXfer = true;</span>
+        }
+
+        /* Obtain classes */
+<span class="nc" id="L1058">        final List&lt;MoneyWiseQIFClass&gt; myList = theBuilder.getTransactionClasses(pTrans);</span>
+
+        /* Access details */
+<span class="nc" id="L1061">        final OceanusMoney myAmount = pTrans.getAmount();</span>
+<span class="nc" id="L1062">        OceanusUnits myUnits = pTrans.getAccountDeltaUnits();</span>
+<span class="nc bnc" id="L1063" title="All 2 branches missed.">        if (myUnits == null) {</span>
+<span class="nc" id="L1064">            myUnits = pTrans.getPartnerDeltaUnits();</span>
+        }
+<span class="nc bnc" id="L1066" title="All 2 branches missed.">        if (myUnits != null) {</span>
+<span class="nc" id="L1067">            myUnits = new OceanusUnits(myUnits);</span>
+<span class="nc" id="L1068">            myUnits.negate();</span>
+        }
+<span class="nc" id="L1070">        final OceanusPrice myPrice = getPriceForDate(mySecurity, pTrans.getDate());</span>
+
+        /* Determine whether we use return capital */
+<span class="nc bnc" id="L1073" title="All 4 branches missed.">        final boolean doReturnCapital = canReturnCapital &amp;&amp; myUnits == null;</span>
+
+        /* Handle zero units */
+<span class="nc" id="L1076">        boolean autoCorrectZeroUnits = false;</span>
+<span class="nc bnc" id="L1077" title="All 4 branches missed.">        if (!canReturnCapital &amp;&amp; myUnits == null) {</span>
+<span class="nc bnc" id="L1078" title="All 2 branches missed.">            if (!canTradeZeroShares) {</span>
+<span class="nc" id="L1079">                myUnits = OceanusUnits.getWholeUnits(1);</span>
+<span class="nc" id="L1080">                autoCorrectZeroUnits = true;</span>
+            } else {
+<span class="nc" id="L1082">                myUnits = new OceanusUnits();</span>
+            }
+        }
+
+        /* Create a sellShares/returnCapital event */
+<span class="nc bnc" id="L1087" title="All 2 branches missed.">        MoneyWiseQIFPortfolioEvent myPortEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, doReturnCapital</span>
+<span class="nc bnc" id="L1088" title="All 2 branches missed.">                ? canXferLinked</span>
+<span class="nc" id="L1089">                ? MoneyWiseQActionType.RTRNCAPX</span>
+<span class="nc" id="L1090">                : MoneyWiseQActionType.RTRNCAP</span>
+<span class="nc bnc" id="L1091" title="All 2 branches missed.">                : canXferLinked</span>
+<span class="nc" id="L1092">                ? MoneyWiseQActionType.SELLX</span>
+<span class="nc" id="L1093">                : MoneyWiseQActionType.SELL);</span>
+<span class="nc" id="L1094">        myPortEvent.recordAmount(myAmount);</span>
+<span class="nc" id="L1095">        myPortEvent.recordSecurity(myQSecurity);</span>
+<span class="nc bnc" id="L1096" title="All 2 branches missed.">        if (!doReturnCapital) {</span>
+<span class="nc" id="L1097">            myPortEvent.recordQuantity(myUnits);</span>
+        }
+<span class="nc" id="L1099">        myPortEvent.recordPrice(myPrice);</span>
+<span class="nc bnc" id="L1100" title="All 2 branches missed.">        if (canXferLinked) {</span>
+<span class="nc" id="L1101">            myPortEvent.recordXfer(myTarget.getAccount(), myList, myAmount);</span>
+        }
+
+        /* Add to event list */
+<span class="nc" id="L1105">        myQPortfolio.addEvent(myPortEvent);</span>
+
+        /* If we need to autoCorrect */
+<span class="nc bnc" id="L1108" title="All 2 branches missed.">        if (autoCorrectZeroUnits) {</span>
+            /* Create a ShrsIn event to balance */
+<span class="nc" id="L1110">            myPortEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.SHRSIN);</span>
+<span class="nc" id="L1111">            myPortEvent.recordSecurity(myQSecurity);</span>
+<span class="nc" id="L1112">            myPortEvent.recordQuantity(myUnits);</span>
+
+            /* Add to event list */
+<span class="nc" id="L1115">            myQPortfolio.addEvent(myPortEvent);</span>
+        }
+
+        /* If we are not hiding the balancing transfer */
+<span class="nc bnc" id="L1119" title="All 2 branches missed.">        if (!hideBalancingSplitXfer) {</span>
+            /* Build the source transfer */
+<span class="nc" id="L1121">            final MoneyWiseQIFEvent myEvent = new MoneyWiseQIFEvent(theFile, pTrans);</span>
+<span class="nc" id="L1122">            myEvent.recordAccount(myQPortfolio.getAccount(), myList);</span>
+<span class="nc" id="L1123">            myEvent.recordAmount(myAmount);</span>
+
+            /* Build payee description */
+<span class="nc" id="L1126">            myEvent.recordPayee(theBuilder.buildXferFromPayee(myPortfolio));</span>
+
+            /* Add event to event list */
+<span class="nc" id="L1129">            myTarget.addEvent(myEvent);</span>
+        }
+<span class="nc" id="L1131">    }</span>
+
+    /**
+     * Process exchange between securities.
+     * @param pSource the source security holding
+     * @param pTarget the target security holding
+     * @param pTrans the transaction
+     */
+    private void processSecurityExchange(final MoneyWiseSecurityHolding pSource,
+                                         final MoneyWiseSecurityHolding pTarget,
+                                         final MoneyWiseTransaction pTrans) {
+        /* Access Portfolio Account */
+<span class="nc" id="L1143">        final MoneyWisePortfolio myPortfolio = pSource.getPortfolio();</span>
+<span class="nc" id="L1144">        final MoneyWiseSecurity mySource = pSource.getSecurity();</span>
+<span class="nc" id="L1145">        final MoneyWiseSecurity myTarget = pTarget.getSecurity();</span>
+<span class="nc" id="L1146">        final MoneyWiseQIFAccountEvents myQPortfolio = theFile.registerAccount(myPortfolio);</span>
+
+        /* Access Transaction details */
+<span class="nc" id="L1149">        final MoneyWiseQIFSecurity myQSource = theFile.registerSecurity(mySource);</span>
+<span class="nc" id="L1150">        final MoneyWiseQIFSecurity myQTarget = theFile.registerSecurity(myTarget);</span>
+
+        /* Access details */
+<span class="nc" id="L1153">        final OceanusDate myDate = pTrans.getDate();</span>
+<span class="nc" id="L1154">        final OceanusMoney myAmount = pTrans.getAmount();</span>
+<span class="nc" id="L1155">        OceanusUnits mySourceUnits = pTrans.getAccountDeltaUnits();</span>
+<span class="nc" id="L1156">        mySourceUnits = new OceanusUnits(mySourceUnits);</span>
+<span class="nc" id="L1157">        mySourceUnits.negate();</span>
+<span class="nc" id="L1158">        final OceanusUnits myTargetUnits = pTrans.getPartnerDeltaUnits();</span>
+<span class="nc" id="L1159">        final OceanusPrice mySourcePrice = getPriceForDate(mySource, myDate);</span>
+<span class="nc" id="L1160">        final OceanusPrice myTargetPrice = getPriceForDate(myTarget, myDate);</span>
+
+        /* Create a sellShares/returnCapital event */
+<span class="nc" id="L1163">        MoneyWiseQIFPortfolioEvent myPortEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.SELL);</span>
+<span class="nc" id="L1164">        myPortEvent.recordAmount(myAmount);</span>
+<span class="nc" id="L1165">        myPortEvent.recordSecurity(myQSource);</span>
+<span class="nc" id="L1166">        myPortEvent.recordQuantity(mySourceUnits);</span>
+<span class="nc" id="L1167">        myPortEvent.recordPrice(mySourcePrice);</span>
+
+        /* Add to event list */
+<span class="nc" id="L1170">        myQPortfolio.addEvent(myPortEvent);</span>
+
+        /* Create a buyShares event */
+<span class="nc" id="L1173">        myPortEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.BUY);</span>
+<span class="nc" id="L1174">        myPortEvent.recordAmount(myAmount);</span>
+<span class="nc" id="L1175">        myPortEvent.recordSecurity(myQTarget);</span>
+<span class="nc" id="L1176">        myPortEvent.recordQuantity(myTargetUnits);</span>
+<span class="nc" id="L1177">        myPortEvent.recordPrice(myTargetPrice);</span>
+
+        /* Add to event list */
+<span class="nc" id="L1180">        myQPortfolio.addEvent(myPortEvent);</span>
+<span class="nc" id="L1181">    }</span>
+
+    /**
+     * Process transfer between portfolios.
+     * @param pSource the source portfolio
+     * @param pTarget the target portfolio
+     * @param pTrans the transaction
+     */
+    protected void processTransferBetweenPortfolios(final MoneyWisePortfolio pSource,
+                                                    final MoneyWisePortfolio pTarget,
+                                                    final MoneyWiseTransaction pTrans) {
+        /* Switch on transaction type */
+<span class="nc bnc" id="L1193" title="All 4 branches missed.">        switch (pTrans.getCategoryClass()) {</span>
+            case INTEREST:
+            case LOYALTYBONUS:
+<span class="nc" id="L1196">                processIncomeToPortfolio(pSource.getParent(), pTarget, pTrans);</span>
+<span class="nc" id="L1197">                break;</span>
+            case PORTFOLIOXFER:
+<span class="nc" id="L1199">                processPortfolioXferBetweenPortfolios(pSource, pTarget, pTrans);</span>
+<span class="nc" id="L1200">                break;</span>
+            case TRANSFER:
+<span class="nc" id="L1202">                processCashTransferBetweenPortfolios(pSource, pTarget, pTrans);</span>
+<span class="nc" id="L1203">                break;</span>
+            default:
+<span class="nc" id="L1205">                LOGGER.error(&quot;Unsupported TransferBetweenPortfolios Category: &lt;%s&gt;&quot;, pTrans.getCategoryClass());</span>
+                break;
+        }
+<span class="nc" id="L1208">    }</span>
+
+    /**
+     * Process PortfolioXfer between portfolios.
+     * @param pSource the source portfolio
+     * @param pTarget the target portfolio
+     * @param pTrans the transaction
+     */
+    protected void processPortfolioXferBetweenPortfolios(final MoneyWisePortfolio pSource,
+                                                         final MoneyWisePortfolio pTarget,
+                                                         final MoneyWiseTransaction pTrans) {
+        /* If there is cash to transfer */
+<span class="nc" id="L1220">        final OceanusMoney myAmount = getPortfolioCashValue(pSource, pTrans);</span>
+<span class="nc bnc" id="L1221" title="All 2 branches missed.">        if (myAmount != null) {</span>
+            /* Access details */
+<span class="nc" id="L1223">            final MoneyWiseQIFAccountEvents mySource = theFile.registerAccount(pSource);</span>
+<span class="nc" id="L1224">            final MoneyWiseQIFAccountEvents myTarget = theFile.registerAccount(pTarget);</span>
+
+            /* Obtain classes */
+<span class="nc" id="L1227">            final List&lt;MoneyWiseQIFClass&gt; myList = theBuilder.getTransactionClasses(pTrans);</span>
+
+            /* Create an XOut event */
+<span class="nc" id="L1230">            MoneyWiseQIFPortfolioEvent myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.XOUT);</span>
+<span class="nc" id="L1231">            myEvent.recordAmount(myAmount);</span>
+<span class="nc" id="L1232">            myEvent.recordPayee(theBuilder.buildXferToPayee(pTarget));</span>
+<span class="nc" id="L1233">            myEvent.recordXfer(myTarget.getAccount(), myList, myAmount);</span>
+
+            /* Add to event list */
+<span class="nc" id="L1236">            mySource.addEvent(myEvent);</span>
+
+            /* Create an XIn event */
+<span class="nc" id="L1239">            myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.XIN);</span>
+<span class="nc" id="L1240">            myEvent.recordAmount(myAmount);</span>
+<span class="nc" id="L1241">            myEvent.recordPayee(theBuilder.buildXferFromPayee(pSource));</span>
+<span class="nc" id="L1242">            myEvent.recordXfer(mySource.getAccount(), myList, myAmount);</span>
+
+            /* Add to event list */
+<span class="nc" id="L1245">            myTarget.addEvent(myEvent);</span>
+        }
+
+        /* Access the relevant bucket */
+<span class="nc" id="L1249">        final MoneyWiseAnalysisPortfolioBucketList myPortfolios = theAnalysis.getPortfolios();</span>
+<span class="nc" id="L1250">        final MoneyWiseAnalysisPortfolioBucket myBucket = myPortfolios.getBucket(pSource);</span>
+
+        /* Loop through the securities */
+<span class="nc" id="L1253">        final Iterator&lt;MoneyWiseAnalysisSecurityBucket&gt; myIterator = myBucket.securityIterator();</span>
+<span class="nc bnc" id="L1254" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L1255">            final MoneyWiseAnalysisSecurityBucket mySecurity = myIterator.next();</span>
+
+            /* Process transfer for this bucket */
+<span class="nc" id="L1258">            processPortfolioXferForHolding(mySecurity.getSecurityHolding(), pTarget, pTrans);</span>
+<span class="nc" id="L1259">        }</span>
+<span class="nc" id="L1260">    }</span>
+
+    /**
+     * Process PortfolioXfer for Holding.
+     * @param pSource the source holding
+     * @param pTarget the target portfolio
+     * @param pTrans the transaction
+     */
+    protected void processPortfolioXferForHolding(final MoneyWiseSecurityHolding pSource,
+                                                  final MoneyWisePortfolio pTarget,
+                                                  final MoneyWiseTransaction pTrans) {
+        /* Determine if this holding was transferred */
+<span class="nc" id="L1272">        final OceanusUnits myUnits = getBaseUnitsForHolding(pSource, pTrans);</span>
+<span class="nc bnc" id="L1273" title="All 2 branches missed.">        if (myUnits.isNonZero()) {</span>
+            /* Access details */
+<span class="nc" id="L1275">            final MoneyWisePortfolio mySourcePortfolio = pSource.getPortfolio();</span>
+<span class="nc" id="L1276">            final MoneyWiseSecurity mySecurity = pSource.getSecurity();</span>
+<span class="nc" id="L1277">            final MoneyWiseQIFAccountEvents mySource = theFile.registerAccount(mySourcePortfolio);</span>
+<span class="nc" id="L1278">            final MoneyWiseQIFAccountEvents myTarget = theFile.registerAccount(pTarget);</span>
+<span class="nc" id="L1279">            final MoneyWiseQIFSecurity myQSecurity = theFile.registerSecurity(mySecurity);</span>
+<span class="nc" id="L1280">            OceanusMoney myCost = getDeltaCostForHolding(pSource, pTrans);</span>
+
+            /* If there is an associated cost */
+<span class="nc bnc" id="L1283" title="All 2 branches missed.">            if (myCost != null) {</span>
+                /* Convert cost to positive */
+<span class="nc" id="L1285">                myCost = new OceanusMoney(myCost);</span>
+<span class="nc" id="L1286">                myCost.negate();</span>
+
+                /* Obtain price for the date */
+<span class="nc" id="L1289">                final OceanusPrice myPrice = getPriceForDate(mySecurity, pTrans.getDate());</span>
+
+                /* Obtain classes */
+<span class="nc" id="L1292">                final List&lt;MoneyWiseQIFClass&gt; myList = theBuilder.getTransactionClasses(pTrans);</span>
+
+                /* Create a sell shares event */
+<span class="nc" id="L1295">                MoneyWiseQIFPortfolioEvent myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.SELL);</span>
+<span class="nc" id="L1296">                myEvent.recordAmount(myCost);</span>
+<span class="nc" id="L1297">                myEvent.recordSecurity(myQSecurity);</span>
+<span class="nc" id="L1298">                myEvent.recordQuantity(myUnits);</span>
+<span class="nc" id="L1299">                myEvent.recordPrice(myPrice);</span>
+
+                /* Add to event list */
+<span class="nc" id="L1302">                mySource.addEvent(myEvent);</span>
+
+                /* Create an XOut event */
+<span class="nc" id="L1305">                myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.XOUT);</span>
+<span class="nc" id="L1306">                myEvent.recordAmount(myCost);</span>
+<span class="nc" id="L1307">                myEvent.recordPayee(theBuilder.buildXferToPayee(pTarget));</span>
+<span class="nc" id="L1308">                myEvent.recordXfer(myTarget.getAccount(), myList, myCost);</span>
+
+                /* Add to event list */
+<span class="nc" id="L1311">                mySource.addEvent(myEvent);</span>
+
+                /* Create an XIn event */
+<span class="nc" id="L1314">                myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.XIN);</span>
+<span class="nc" id="L1315">                myEvent.recordAmount(myCost);</span>
+<span class="nc" id="L1316">                myEvent.recordPayee(theBuilder.buildXferFromPayee(pSource));</span>
+<span class="nc" id="L1317">                myEvent.recordXfer(mySource.getAccount(), myList, myCost);</span>
+
+                /* Add to event list */
+<span class="nc" id="L1320">                myTarget.addEvent(myEvent);</span>
+
+                /* Create a buy shares event */
+<span class="nc" id="L1323">                myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.BUY);</span>
+<span class="nc" id="L1324">                myEvent.recordAmount(myCost);</span>
+<span class="nc" id="L1325">                myEvent.recordSecurity(myQSecurity);</span>
+<span class="nc" id="L1326">                myEvent.recordQuantity(myUnits);</span>
+<span class="nc" id="L1327">                myEvent.recordPrice(myPrice);</span>
+
+                /* Add to event list */
+<span class="nc" id="L1330">                myTarget.addEvent(myEvent);</span>
+
+                /* else just simple transfer of shares */
+<span class="nc" id="L1333">            } else {</span>
+                /* Create an SharesOut event */
+<span class="nc" id="L1335">                MoneyWiseQIFPortfolioEvent myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.SHRSOUT);</span>
+<span class="nc" id="L1336">                myEvent.recordSecurity(myQSecurity);</span>
+<span class="nc" id="L1337">                myEvent.recordQuantity(myUnits);</span>
+
+                /* Add to event list */
+<span class="nc" id="L1340">                mySource.addEvent(myEvent);</span>
+
+                /* Create an SharesIn event */
+<span class="nc" id="L1343">                myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.SHRSIN);</span>
+<span class="nc" id="L1344">                myEvent.recordSecurity(myQSecurity);</span>
+<span class="nc" id="L1345">                myEvent.recordQuantity(myUnits);</span>
+
+                /* Add to event list */
+<span class="nc" id="L1348">                myTarget.addEvent(myEvent);</span>
+            }
+        }
+<span class="nc" id="L1351">    }</span>
+
+    /**
+     * Process Cash Transfer between portfolios.
+     * @param pSource the source portfolio
+     * @param pTarget the target portfolio
+     * @param pTrans the transaction
+     */
+    protected void processCashTransferBetweenPortfolios(final MoneyWisePortfolio pSource,
+                                                        final MoneyWisePortfolio pTarget,
+                                                        final MoneyWiseTransaction pTrans) {
+        /* Access details */
+<span class="nc" id="L1363">        final MoneyWiseQIFAccountEvents mySource = theFile.registerAccount(pSource);</span>
+<span class="nc" id="L1364">        final MoneyWiseQIFAccountEvents myTarget = theFile.registerAccount(pTarget);</span>
+<span class="nc" id="L1365">        final OceanusMoney myAmount = pTrans.getAmount();</span>
+
+        /* Obtain classes */
+<span class="nc" id="L1368">        final List&lt;MoneyWiseQIFClass&gt; myList = theBuilder.getTransactionClasses(pTrans);</span>
+
+        /* Create an XOut event */
+<span class="nc" id="L1371">        MoneyWiseQIFPortfolioEvent myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.XOUT);</span>
+<span class="nc" id="L1372">        myEvent.recordAmount(myAmount);</span>
+<span class="nc" id="L1373">        myEvent.recordPayee(theBuilder.buildXferToPayee(pTarget));</span>
+<span class="nc" id="L1374">        myEvent.recordXfer(myTarget.getAccount(), myList, myAmount);</span>
+
+        /* Add to event list */
+<span class="nc" id="L1377">        mySource.addEvent(myEvent);</span>
+
+        /* Create an XIn event */
+<span class="nc" id="L1380">        myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.XIN);</span>
+<span class="nc" id="L1381">        myEvent.recordAmount(myAmount);</span>
+<span class="nc" id="L1382">        myEvent.recordPayee(theBuilder.buildXferFromPayee(pSource));</span>
+<span class="nc" id="L1383">        myEvent.recordXfer(mySource.getAccount(), myList, myAmount);</span>
+
+        /* Add to event list */
+<span class="nc" id="L1386">        myTarget.addEvent(myEvent);</span>
+<span class="nc" id="L1387">    }</span>
+
+    /**
+     * Process transfer to a portfolio.
+     * @param pPortfolio the portfolio
+     * @param pDebit the source account
+     * @param pTrans the transaction
+     */
+    protected void processTransferToPortfolio(final MoneyWisePortfolio pPortfolio,
+                                              final MoneyWiseTransAsset pDebit,
+                                              final MoneyWiseTransaction pTrans) {
+        /* Switch on transaction type */
+<span class="nc bnc" id="L1399" title="All 2 branches missed.">        switch (pTrans.getCategoryClass()) {</span>
+            case TRANSFER:
+<span class="nc" id="L1401">                processCashTransferToPortfolio(pPortfolio, pDebit, pTrans);</span>
+<span class="nc" id="L1402">                break;</span>
+            default:
+<span class="nc" id="L1404">                LOGGER.error(&quot;Unsupported TransferToPortfolio Category: &lt;%s&gt;&quot;, pTrans.getCategoryClass());</span>
+                break;
+        }
+<span class="nc" id="L1407">    }</span>
+
+    /**
+     * Process Cash Transfer to portfolio.
+     * @param pPortfolio the target portfolio
+     * @param pSource the source account
+     * @param pTrans the transaction
+     */
+    protected void processCashTransferToPortfolio(final MoneyWisePortfolio pPortfolio,
+                                                  final MoneyWiseTransAsset pSource,
+                                                  final MoneyWiseTransaction pTrans) {
+        /* Access details */
+<span class="nc" id="L1419">        final MoneyWiseQIFAccountEvents myPortfolio = theFile.registerAccount(pPortfolio);</span>
+<span class="nc" id="L1420">        final MoneyWiseQIFAccountEvents mySource = theFile.registerAccount(pSource);</span>
+<span class="nc" id="L1421">        OceanusMoney myAmount = pTrans.getAmount();</span>
+
+        /* Obtain classes */
+<span class="nc" id="L1424">        final List&lt;MoneyWiseQIFClass&gt; myList = theBuilder.getTransactionClasses(pTrans);</span>
+
+        /* Create an XIn event */
+<span class="nc" id="L1427">        final MoneyWiseQIFPortfolioEvent myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.XIN);</span>
+<span class="nc" id="L1428">        myEvent.recordAmount(myAmount);</span>
+<span class="nc" id="L1429">        myEvent.recordPayee(theBuilder.buildXferToPayee(pSource));</span>
+<span class="nc" id="L1430">        myEvent.recordXfer(mySource.getAccount(), myList, myAmount);</span>
+
+        /* Add to event list */
+<span class="nc" id="L1433">        myPortfolio.addEvent(myEvent);</span>
+
+        /* Create the sending transfer event */
+<span class="nc" id="L1436">        final MoneyWiseQIFEvent myXferEvent = new MoneyWiseQIFEvent(theFile, pTrans);</span>
+<span class="nc" id="L1437">        myAmount = new OceanusMoney(myAmount);</span>
+<span class="nc" id="L1438">        myAmount.negate();</span>
+<span class="nc" id="L1439">        myXferEvent.recordAmount(myAmount);</span>
+<span class="nc" id="L1440">        myXferEvent.recordPayee(theBuilder.buildXferFromPayee(pPortfolio));</span>
+<span class="nc" id="L1441">        myXferEvent.recordAccount(myPortfolio.getAccount(), myList);</span>
+
+        /* Add to event list */
+<span class="nc" id="L1444">        mySource.addEvent(myXferEvent);</span>
+<span class="nc" id="L1445">    }</span>
+
+    /**
+     * Process transfer from a portfolio.
+     * @param pPortfolio the portfolio
+     * @param pCredit the target account
+     * @param pTrans the transaction
+     */
+    protected void processTransferFromPortfolio(final MoneyWisePortfolio pPortfolio,
+                                                final MoneyWiseTransAsset pCredit,
+                                                final MoneyWiseTransaction pTrans) {
+        /* Switch on transaction type */
+<span class="nc bnc" id="L1457" title="All 2 branches missed.">        switch (pTrans.getCategoryClass()) {</span>
+            case TRANSFER:
+<span class="nc" id="L1459">                processCashTransferFromPortfolio(pPortfolio, pCredit, pTrans);</span>
+<span class="nc" id="L1460">                break;</span>
+            default:
+<span class="nc" id="L1462">                LOGGER.error(&quot;Unsupported TransferFromPortfolio Category: &lt;%s&gt;&quot;, pTrans.getCategoryClass());</span>
+                break;
+        }
+<span class="nc" id="L1465">    }</span>
+
+    /**
+     * Process Cash Transfer from portfolio.
+     * @param pPortfolio the source portfolio
+     * @param pTarget the target account
+     * @param pTrans the transaction
+     */
+    protected void processCashTransferFromPortfolio(final MoneyWisePortfolio pPortfolio,
+                                                    final MoneyWiseTransAsset pTarget,
+                                                    final MoneyWiseTransaction pTrans) {
+        /* Access details */
+<span class="nc" id="L1477">        final MoneyWiseQIFAccountEvents myPortfolio = theFile.registerAccount(pPortfolio);</span>
+<span class="nc" id="L1478">        final MoneyWiseQIFAccountEvents myTarget = theFile.registerAccount(pTarget);</span>
+<span class="nc" id="L1479">        final OceanusMoney myAmount = pTrans.getAmount();</span>
+
+        /* Obtain classes */
+<span class="nc" id="L1482">        final List&lt;MoneyWiseQIFClass&gt; myList = theBuilder.getTransactionClasses(pTrans);</span>
+
+        /* Create an XOut event */
+<span class="nc" id="L1485">        final MoneyWiseQIFPortfolioEvent myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.XOUT);</span>
+<span class="nc" id="L1486">        myEvent.recordAmount(myAmount);</span>
+<span class="nc" id="L1487">        myEvent.recordPayee(theBuilder.buildXferToPayee(pTarget));</span>
+<span class="nc" id="L1488">        myEvent.recordXfer(myTarget.getAccount(), myList, myAmount);</span>
+
+        /* Add to event list */
+<span class="nc" id="L1491">        myPortfolio.addEvent(myEvent);</span>
+
+        /* Create the receiving transfer event */
+<span class="nc" id="L1494">        final MoneyWiseQIFEvent myXferEvent = new MoneyWiseQIFEvent(theFile, pTrans);</span>
+<span class="nc" id="L1495">        myXferEvent.recordAmount(myAmount);</span>
+<span class="nc" id="L1496">        myXferEvent.recordPayee(theBuilder.buildXferFromPayee(pPortfolio));</span>
+<span class="nc" id="L1497">        myXferEvent.recordAccount(myPortfolio.getAccount(), myList);</span>
+
+        /* Add to event list */
+<span class="nc" id="L1500">        myTarget.addEvent(myXferEvent);</span>
+<span class="nc" id="L1501">    }</span>
+
+    /**
+     * Process expense from a portfolio.
+     * @param pCredit the target payee
+     * @param pPortfolio the portfolio
+     * @param pTrans the transaction
+     */
+    protected void processExpenseFromPortfolio(final MoneyWisePayee pCredit,
+                                               final MoneyWisePortfolio pPortfolio,
+                                               final MoneyWiseTransaction pTrans) {
+        /* Access Details */
+<span class="nc" id="L1513">        final MoneyWiseQIFAccountEvents myPortfolio = theFile.registerAccount(pPortfolio);</span>
+<span class="nc" id="L1514">        final MoneyWiseQIFPayee myPayee = theFile.registerPayee(pCredit);</span>
+<span class="nc" id="L1515">        final MoneyWiseQIFEventCategory myCategory = theFile.registerCategory(pTrans.getCategory());</span>
+<span class="nc" id="L1516">        final OceanusMoney myAmount = new OceanusMoney(pTrans.getAmount());</span>
+<span class="nc" id="L1517">        myAmount.negate();</span>
+
+        /* Create an expense event */
+<span class="nc" id="L1520">        final MoneyWiseQIFPortfolioEvent myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.CASH);</span>
+<span class="nc" id="L1521">        myEvent.recordAmount(myAmount);</span>
+<span class="nc" id="L1522">        myEvent.recordPayee(myPayee);</span>
+<span class="nc" id="L1523">        myEvent.recordCategory(myCategory);</span>
+
+        /* Add to event list */
+<span class="nc" id="L1526">        myPortfolio.addEvent(myEvent);</span>
+<span class="nc" id="L1527">    }</span>
+
+    /**
+     * Process income to a portfolio.
+     * @param pDebit the source payee
+     * @param pPortfolio the portfolio
+     * @param pTrans the transaction
+     */
+    protected void processIncomeToPortfolio(final MoneyWisePayee pDebit,
+                                            final MoneyWisePortfolio pPortfolio,
+                                            final MoneyWiseTransaction pTrans) {
+        /* Access Details */
+<span class="nc" id="L1539">        final MoneyWiseQIFAccountEvents myPortfolio = theFile.registerAccount(pPortfolio);</span>
+<span class="nc" id="L1540">        final MoneyWiseQIFPayee myPayee = theFile.registerPayee(pDebit);</span>
+<span class="nc" id="L1541">        final MoneyWiseQIFEventCategory myCategory = theFile.registerCategory(pTrans.getCategory());</span>
+<span class="nc" id="L1542">        final OceanusMoney myAmount = pTrans.getAmount();</span>
+
+        /* Create an income event */
+<span class="nc" id="L1545">        final MoneyWiseQIFPortfolioEvent myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.CASH);</span>
+<span class="nc" id="L1546">        myEvent.recordAmount(myAmount);</span>
+<span class="nc" id="L1547">        myEvent.recordPayee(myPayee);</span>
+<span class="nc" id="L1548">        myEvent.recordCategory(myCategory);</span>
+
+        /* Add to event list */
+<span class="nc" id="L1551">        myPortfolio.addEvent(myEvent);</span>
+<span class="nc" id="L1552">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

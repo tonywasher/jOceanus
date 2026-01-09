@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWisePortfolioType.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.data.statics</a> &gt; <span class="el_source">MoneyWisePortfolioType.java</span></div><h1>MoneyWisePortfolioType.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.data.statics;
+
+import net.sourceforge.joceanus.metis.data.MetisDataResource;
+import net.sourceforge.joceanus.metis.field.MetisFieldSet;
+import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
+import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataClass;
+import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataItem;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+
+/**
+ * PortfolioType data type.
+ */
+public class MoneyWisePortfolioType
+        extends PrometheusStaticDataItem
+        implements MoneyWiseAssetCategory {
+    /**
+     * Object name.
+     */
+<span class="fc" id="L38">    public static final String OBJECT_NAME = MoneyWiseStaticDataType.PORTFOLIOTYPE.getItemName();</span>
+
+    /**
+     * List name.
+     */
+<span class="fc" id="L43">    public static final String LIST_NAME = MoneyWiseStaticDataType.PORTFOLIOTYPE.getListName();</span>
+
+    /**
+     * Report fields.
+     */
+<span class="fc" id="L48">    private static final MetisFieldSet&lt;MoneyWisePortfolioType&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWisePortfolioType.class);</span>
+
+    /**
+     * Copy Constructor.
+     * @param pList The list to associate the PortfolioType with
+     * @param pPortType The PortfolioType to copy
+     */
+    protected MoneyWisePortfolioType(final MoneyWisePortfolioTypeList pList,
+                                     final MoneyWisePortfolioType pPortType) {
+<span class="fc" id="L57">        super(pList, pPortType);</span>
+<span class="fc" id="L58">    }</span>
+
+    /**
+     * Basic constructor.
+     * @param pList The list to associate the PortfolioType with
+     * @param pName Name of PortfolioType
+     * @throws OceanusException on error
+     */
+    private MoneyWisePortfolioType(final MoneyWisePortfolioTypeList pList,
+                                   final String pName) throws OceanusException {
+<span class="fc" id="L68">        super(pList, pName);</span>
+<span class="fc" id="L69">    }</span>
+
+    /**
+     * Basic constructor.
+     * @param pList The list to associate the PortfolioType with
+     * @param pClass Class of PortfolioType
+     * @throws OceanusException on error
+     */
+    private MoneyWisePortfolioType(final MoneyWisePortfolioTypeList pList,
+                                   final MoneyWisePortfolioClass pClass) throws OceanusException {
+<span class="nc" id="L79">        super(pList, pClass);</span>
+<span class="nc" id="L80">    }</span>
+
+    /**
+     * Values constructor.
+     * @param pList The list to associate the item with
+     * @param pValues the values
+     * @throws OceanusException on error
+     */
+    private MoneyWisePortfolioType(final MoneyWisePortfolioTypeList pList,
+                                   final PrometheusDataValues pValues) throws OceanusException {
+<span class="fc" id="L90">        super(pList, pValues);</span>
+<span class="fc" id="L91">    }</span>
+
+    @Override
+    public MetisFieldSetDef getDataFieldSet() {
+<span class="fc" id="L95">        return FIELD_DEFS;</span>
+    }
+
+    /**
+     * Return the SecurityTypeClass of the SecurityType.
+     * @return the class
+     */
+    public MoneyWisePortfolioClass getPortfolioClass() {
+<span class="fc" id="L103">        return (MoneyWisePortfolioClass) super.getStaticClass();</span>
+    }
+
+    @Override
+    public MoneyWisePortfolioType getBase() {
+<span class="fc" id="L108">        return (MoneyWisePortfolioType) super.getBase();</span>
+    }
+
+    @Override
+    public MoneyWisePortfolioTypeList getList() {
+<span class="fc" id="L113">        return (MoneyWisePortfolioTypeList) super.getList();</span>
+    }
+
+    /**
+     * Represents a list of {@link MoneyWisePortfolioType} objects.
+     */
+    public static class MoneyWisePortfolioTypeList
+            extends PrometheusStaticList&lt;MoneyWisePortfolioType&gt; {
+        /**
+         * Report fields.
+         */
+<span class="fc" id="L124">        private static final MetisFieldSet&lt;MoneyWisePortfolioTypeList&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWisePortfolioTypeList.class);</span>
+
+        /**
+         * Construct an empty CORE portfolioType list.
+         * @param pData the DataSet for the list
+         */
+        public MoneyWisePortfolioTypeList(final PrometheusDataSet pData) {
+<span class="fc" id="L131">            super(MoneyWisePortfolioType.class, pData, MoneyWiseStaticDataType.PORTFOLIOTYPE, PrometheusListStyle.CORE);</span>
+<span class="fc" id="L132">        }</span>
+
+        /**
+         * Constructor for a cloned List.
+         * @param pSource the source List
+         */
+        private MoneyWisePortfolioTypeList(final MoneyWisePortfolioTypeList pSource) {
+<span class="fc" id="L139">            super(pSource);</span>
+<span class="fc" id="L140">        }</span>
+
+        @Override
+        public MetisFieldSet&lt;MoneyWisePortfolioTypeList&gt; getDataFieldSet() {
+<span class="nc" id="L144">            return FIELD_DEFS;</span>
+        }
+
+        @Override
+        public String listName() {
+<span class="fc" id="L149">            return LIST_NAME;</span>
+        }
+
+        @Override
+        public MetisFieldSetDef getItemFields() {
+<span class="fc" id="L154">            return MoneyWisePortfolioType.FIELD_DEFS;</span>
+        }
+
+        @Override
+        protected Class&lt;MoneyWisePortfolioClass&gt; getEnumClass() {
+<span class="fc" id="L159">            return MoneyWisePortfolioClass.class;</span>
+        }
+
+        @Override
+        protected MoneyWisePortfolioTypeList getEmptyList(final PrometheusListStyle pStyle) {
+<span class="fc" id="L164">            final MoneyWisePortfolioTypeList myList = new MoneyWisePortfolioTypeList(this);</span>
+<span class="fc" id="L165">            myList.setStyle(pStyle);</span>
+<span class="fc" id="L166">            return myList;</span>
+        }
+
+        @Override
+        public MoneyWisePortfolioType addCopyItem(final PrometheusDataItem pItem) {
+            /* Can only clone a PortfolioType */
+<span class="pc bpc" id="L172" title="1 of 2 branches missed.">            if (!(pItem instanceof MoneyWisePortfolioType)) {</span>
+<span class="nc" id="L173">                throw new UnsupportedOperationException();</span>
+            }
+
+<span class="fc" id="L176">            final MoneyWisePortfolioType myType = new MoneyWisePortfolioType(this, (MoneyWisePortfolioType) pItem);</span>
+<span class="fc" id="L177">            add(myType);</span>
+<span class="fc" id="L178">            return myType;</span>
+        }
+
+        @Override
+        public MoneyWisePortfolioType addNewItem() {
+<span class="nc" id="L183">            throw new UnsupportedOperationException();</span>
+        }
+
+        /**
+         * Obtain the type of the item.
+         * @return the type of the item
+         */
+        public String itemType() {
+<span class="nc" id="L191">            return LIST_NAME;</span>
+        }
+
+        /**
+         * Add a PortfolioType to the list.
+         * @param pPortType the Name of the portfolio type
+         * @return the new type
+         * @throws OceanusException on error
+         */
+        public MoneyWisePortfolioType addBasicItem(final String pPortType) throws OceanusException {
+            /* Create a new Portfolio Type */
+<span class="fc" id="L202">            final MoneyWisePortfolioType myPortType = new MoneyWisePortfolioType(this, pPortType);</span>
+
+            /* Check that this PortTypeId has not been previously added */
+<span class="pc bpc" id="L205" title="1 of 2 branches missed.">            if (!isIdUnique(myPortType.getIndexedId())) {</span>
+<span class="nc" id="L206">                myPortType.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
+<span class="nc" id="L207">                throw new MoneyWiseDataException(myPortType, ERROR_VALIDATION);</span>
+            }
+
+            /* Add the PortfolioType to the list */
+<span class="fc" id="L211">            add(myPortType);</span>
+<span class="fc" id="L212">            return myPortType;</span>
+        }
+
+        @Override
+        public MoneyWisePortfolioType addValuesItem(final PrometheusDataValues pValues) throws OceanusException {
+            /* Create the type */
+<span class="fc" id="L218">            final MoneyWisePortfolioType myType = new MoneyWisePortfolioType(this, pValues);</span>
+
+            /* Check that this TypeId has not been previously added */
+<span class="pc bpc" id="L221" title="1 of 2 branches missed.">            if (!isIdUnique(myType.getIndexedId())) {</span>
+<span class="nc" id="L222">                myType.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
+<span class="nc" id="L223">                throw new MoneyWiseDataException(myType, ERROR_VALIDATION);</span>
+            }
+
+            /* Add to the list */
+<span class="fc" id="L227">            add(myType);</span>
+
+            /* Return it */
+<span class="fc" id="L230">            return myType;</span>
+        }
+
+        @Override
+        protected MoneyWisePortfolioType newItem(final PrometheusStaticDataClass pClass) throws OceanusException {
+            /* Create the type */
+<span class="nc" id="L236">            final MoneyWisePortfolioType myType = new MoneyWisePortfolioType(this, (MoneyWisePortfolioClass) pClass);</span>
+
+            /* Check that this TypeId has not been previously added */
+<span class="nc bnc" id="L239" title="All 2 branches missed.">            if (!isIdUnique(myType.getIndexedId())) {</span>
+<span class="nc" id="L240">                myType.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
+<span class="nc" id="L241">                throw new MoneyWiseDataException(myType, ERROR_VALIDATION);</span>
+            }
+
+            /* Add to the list */
+<span class="nc" id="L245">            add(myType);</span>
+
+            /* Return it */
+<span class="nc" id="L248">            return myType;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

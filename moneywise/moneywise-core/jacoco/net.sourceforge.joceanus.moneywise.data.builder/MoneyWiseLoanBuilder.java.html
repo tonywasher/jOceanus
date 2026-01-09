@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseLoanBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.data.builder</a> &gt; <span class="el_source">MoneyWiseLoanBuilder.java</span></div><h1>MoneyWiseLoanBuilder.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.data.builder;
+
+import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseLoan;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseLoanCategory;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrencyClass;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+
+/**
+ * Loan Builder.
+ */
+public class MoneyWiseLoanBuilder {
+    /**
+     * DataSet.
+     */
+    private final MoneyWiseDataSet theDataSet;
+
+    /**
+     * The LoanName.
+     */
+    private String theName;
+
+    /**
+     * The Parent.
+     */
+    private MoneyWisePayee theParent;
+
+    /**
+     * The Loan Category.
+     */
+    private MoneyWiseLoanCategory theCategory;
+
+    /**
+     * The Currency.
+     */
+    private MoneyWiseCurrency theCurrency;
+
+    /**
+     * The Opening Balance.
+     */
+    private OceanusMoney theOpeningBalance;
+
+    /**
+     * Constructor.
+     * @param pDataSet the dataSet
+     */
+<span class="fc" id="L67">    public MoneyWiseLoanBuilder(final MoneyWiseDataSet pDataSet) {</span>
+<span class="fc" id="L68">        theDataSet = pDataSet;</span>
+<span class="fc" id="L69">        theDataSet.getLoans().ensureMap();</span>
+<span class="fc" id="L70">        reportingCurrency();</span>
+<span class="fc" id="L71">    }</span>
+
+    /**
+     * Set Name.
+     * @param pName the name of the loan.
+     * @return the builder
+     */
+    public MoneyWiseLoanBuilder name(final String pName) {
+<span class="fc" id="L79">        theName = pName;</span>
+<span class="fc" id="L80">        return this;</span>
+    }
+
+    /**
+     * Set Parent.
+     * @param pParent the parent.
+     * @return the builder
+     */
+    public MoneyWiseLoanBuilder parent(final MoneyWisePayee pParent) {
+<span class="fc" id="L89">        theParent = pParent;</span>
+<span class="fc" id="L90">        return this;</span>
+    }
+
+    /**
+     * Set Parent.
+     * @param pParent the parent.
+     * @return the builder
+     */
+    public MoneyWiseLoanBuilder parent(final String pParent) {
+<span class="fc" id="L99">        return parent(theDataSet.getPayees().findItemByName(pParent));</span>
+    }
+
+    /**
+     * Set the loanCategory.
+     * @param pCategory the category of the loan.
+     * @return the builder
+     */
+    public MoneyWiseLoanBuilder category(final MoneyWiseLoanCategory pCategory) {
+<span class="fc" id="L108">        theCategory = pCategory;</span>
+<span class="fc" id="L109">        return this;</span>
+    }
+
+    /**
+     * Set the loanCategory.
+     * @param pCategory the category of the loan.
+     * @return the builder
+     */
+    public MoneyWiseLoanBuilder category(final String pCategory) {
+<span class="fc" id="L118">        return category(theDataSet.getLoanCategories().findItemByName(pCategory));</span>
+    }
+
+    /**
+     * Set the currency.
+     * @param pCurrency the currency of the loan.
+     * @return the builder
+     */
+    public MoneyWiseLoanBuilder currency(final MoneyWiseCurrency pCurrency) {
+<span class="fc" id="L127">        theCurrency = pCurrency;</span>
+<span class="fc" id="L128">        return this;</span>
+    }
+
+    /**
+     * Set the currency.
+     * @param pCurrency the currency of the cash.
+     * @return the builder
+     */
+    public MoneyWiseLoanBuilder currency(final MoneyWiseCurrencyClass pCurrency) {
+<span class="nc" id="L137">        return currency(theDataSet.getAccountCurrencies().findItemByClass(pCurrency));</span>
+    }
+
+    /**
+     * Set the reporting currency.
+     */
+    private void reportingCurrency() {
+<span class="fc" id="L144">        currency(lookupReportingCurrency());</span>
+<span class="fc" id="L145">    }</span>
+
+    /**
+     * Obtain the reporting currency.
+     * @return the currency
+     */
+    private MoneyWiseCurrency lookupReportingCurrency() {
+<span class="fc" id="L152">        return theDataSet.getReportingCurrency();</span>
+    }
+
+    /**
+     * Set the openingBalance.
+     * @param pOpening the opening Balance
+     * @return the builder
+     */
+    public MoneyWiseLoanBuilder openingBalance(final OceanusMoney pOpening) {
+<span class="fc" id="L161">        theOpeningBalance = pOpening;</span>
+<span class="fc" id="L162">        return this;</span>
+    }
+
+    /**
+     * Set the openingBalance.
+     * @param pOpening the opening Balance
+     * @return the builder
+     */
+    public MoneyWiseLoanBuilder openingBalance(final String pOpening) {
+<span class="fc" id="L171">        return openingBalance(new OceanusMoney(pOpening, theCurrency.getCurrency()));</span>
+    }
+
+    /**
+     * Build the loan.
+     * @return the new Loan
+     * @throws OceanusException on error
+     */
+    public MoneyWiseLoan build() throws OceanusException {
+        /* Create the loan */
+<span class="fc" id="L181">        final MoneyWiseLoan myLoan = theDataSet.getLoans().addNewItem();</span>
+<span class="fc" id="L182">        myLoan.setName(theName);</span>
+<span class="fc" id="L183">        myLoan.setParent(theParent);</span>
+<span class="fc" id="L184">        myLoan.setCategory(theCategory);</span>
+<span class="fc" id="L185">        myLoan.setAssetCurrency(theCurrency);</span>
+<span class="fc" id="L186">        myLoan.setOpeningBalance(theOpeningBalance);</span>
+<span class="fc" id="L187">        myLoan.setClosed(Boolean.FALSE);</span>
+
+        /* Reset the values */
+<span class="fc" id="L190">        reset();</span>
+
+        /* Check for errors */
+<span class="fc" id="L193">        myLoan.adjustMapForItem();</span>
+<span class="fc" id="L194">        myLoan.validate();</span>
+<span class="pc bpc" id="L195" title="1 of 2 branches missed.">        if (myLoan.hasErrors()) {</span>
+<span class="nc" id="L196">            myLoan.removeItem();</span>
+<span class="nc" id="L197">            throw new MoneyWiseDataException(myLoan, &quot;Failed validation&quot;);</span>
+        }
+
+        /* Return the loan */
+<span class="fc" id="L201">        return myLoan;</span>
+    }
+
+    /**
+     * Reset the builder.
+     */
+    public void reset() {
+        /* Reset values */
+<span class="fc" id="L209">        theName = null;</span>
+<span class="fc" id="L210">        theCategory = null;</span>
+<span class="fc" id="L211">        theParent = null;</span>
+<span class="fc" id="L212">        theOpeningBalance = null;</span>
+<span class="fc" id="L213">        reportingCurrency();</span>
+<span class="fc" id="L214">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

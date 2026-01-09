@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseXReportResource.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.atlas.reports</a> &gt; <span class="el_source">MoneyWiseXReportResource.java</span></div><h1>MoneyWiseXReportResource.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.atlas.reports;
+
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisBucketResource;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
+
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.ResourceBundle;
+
+/**
+ * Resource IDs for jMoneyWise Report Fields.
+ */
+<span class="nc" id="L30">public enum MoneyWiseXReportResource implements OceanusBundleId {</span>
+    /**
+     * NetWorth ReportType.
+     */
+<span class="nc" id="L34">    TYPE_NETWORTH(&quot;Type.NetWorth&quot;),</span>
+
+    /**
+     * BalanceSheet ReportType.
+     */
+<span class="nc" id="L39">    TYPE_BALANCESHEET(&quot;Type.BalanceSheet&quot;),</span>
+
+    /**
+     * CashFlow ReportType.
+     */
+<span class="nc" id="L44">    TYPE_CASHFLOW(&quot;Type.CashFlow&quot;),</span>
+
+    /**
+     * IncomeExpense ReportType.
+     */
+<span class="nc" id="L49">    TYPE_INCEXP(&quot;Type.IncExp&quot;),</span>
+
+    /**
+     * Portfolio ReportType.
+     */
+<span class="nc" id="L54">    TYPE_PORTFOLIO(&quot;Type.Portfolio&quot;),</span>
+
+    /**
+     * MarketGrowth ReportType.
+     */
+<span class="nc" id="L59">    TYPE_MARKET(&quot;Type.Market&quot;),</span>
+
+    /**
+     * TaxBasis ReportType.
+     */
+<span class="nc" id="L64">    TYPE_TAXBASIS(&quot;Type.TaxBasis&quot;),</span>
+
+    /**
+     * TaxCalc ReportType.
+     */
+<span class="nc" id="L69">    TYPE_TAXCALC(&quot;Type.TaxCalc&quot;),</span>
+
+    /**
+     * AssetGains ReportType.
+     */
+<span class="nc" id="L74">    TYPE_ASSETGAINS(&quot;Type.AssetGains&quot;),</span>
+
+    /**
+     * CapitalGains ReportType.
+     */
+<span class="nc" id="L79">    TYPE_CAPITALGAINS(&quot;Type.CapitalGains&quot;),</span>
+
+    /**
+     * NetWorth Title.
+     */
+<span class="nc" id="L84">    NETWORTH_TITLE(&quot;NetWorth.Title&quot;),</span>
+
+    /**
+     * NetWorth Asset.
+     */
+<span class="nc" id="L89">    NETWORTH_ASSET(&quot;NetWorth.Asset&quot;),</span>
+
+    /**
+     * BalanceSheet Title.
+     */
+<span class="nc" id="L94">    BALANCESHEET_TITLE(&quot;BalanceSheet.Title&quot;),</span>
+
+    /**
+     * CashFlow Title.
+     */
+<span class="nc" id="L99">    CASHFLOW_TITLE(&quot;CashFlow.Title&quot;),</span>
+
+    /**
+     * Income/Expense Title.
+     */
+<span class="nc" id="L104">    INCEXP_TITLE(&quot;IncExp.Title&quot;),</span>
+
+    /**
+     * Portfolio Title.
+     */
+<span class="nc" id="L109">    PORTFOLIO_TITLE(&quot;Portfolio.Title&quot;),</span>
+
+    /**
+     * MarketGrowth Title.
+     */
+<span class="nc" id="L114">    MARKETGROWTH_TITLE(&quot;MarketGrowth.Title&quot;),</span>
+
+    /**
+     * MarketGrowth BaseValue.
+     */
+<span class="nc" id="L119">    MARKETGROWTH_BASE(&quot;MarketGrowth.Base&quot;),</span>
+
+    /**
+     * AssetGains Title.
+     */
+<span class="nc" id="L124">    ASSETGAINS_TITLE(&quot;AssetGains.Title&quot;),</span>
+
+    /**
+     * CapitalGains Title.
+     */
+<span class="nc" id="L129">    CAPITALGAINS_TITLE(&quot;CapitalGains.Title&quot;),</span>
+
+    /**
+     * TaxBasis Title.
+     */
+<span class="nc" id="L134">    TAXBASIS_TITLE(&quot;TaxBasis.Title&quot;),</span>
+
+    /**
+     * TaxCalc Title.
+     */
+<span class="nc" id="L139">    TAXCALC_TITLE(&quot;TaxCalc.Title&quot;);</span>
+
+    /**
+     * The Report Map.
+     */
+<span class="nc" id="L144">    private static final Map&lt;MoneyWiseXReportType, OceanusBundleId&gt; REPORT_MAP = buildReportMap();</span>
+
+    /**
+     * The Resource Loader.
+     */
+<span class="nc" id="L149">    private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getLoader(MoneyWiseXAnalysisBucketResource.class.getCanonicalName(),</span>
+            ResourceBundle::getBundle);
+
+    /**
+     * The Id.
+     */
+    private final String theKeyName;
+
+    /**
+     * The Value.
+     */
+    private String theValue;
+
+    /**
+     * Constructor.
+     * @param pKeyName the key name
+     */
+<span class="nc" id="L166">    MoneyWiseXReportResource(final String pKeyName) {</span>
+<span class="nc" id="L167">        theKeyName = pKeyName;</span>
+<span class="nc" id="L168">    }</span>
+
+    @Override
+    public String getKeyName() {
+<span class="nc" id="L172">        return theKeyName;</span>
+    }
+
+    @Override
+    public String getNameSpace() {
+<span class="nc" id="L177">        return &quot;MoneyWise.report&quot;;</span>
+    }
+
+    @Override
+    public String getValue() {
+        /* If we have not initialised the value */
+<span class="nc bnc" id="L183" title="All 2 branches missed.">        if (theValue == null) {</span>
+            /* Derive the value */
+<span class="nc" id="L185">            theValue = LOADER.getValue(this);</span>
+        }
+
+        /* return the value */
+<span class="nc" id="L189">        return theValue;</span>
+    }
+
+    /**
+     * Build report map.
+     * @return the map
+     */
+    private static Map&lt;MoneyWiseXReportType, OceanusBundleId&gt; buildReportMap() {
+        /* Create the map and return it */
+<span class="nc" id="L198">        final Map&lt;MoneyWiseXReportType, OceanusBundleId&gt; myMap = new EnumMap&lt;&gt;(MoneyWiseXReportType.class);</span>
+<span class="nc" id="L199">        myMap.put(MoneyWiseXReportType.NETWORTH, TYPE_NETWORTH);</span>
+<span class="nc" id="L200">        myMap.put(MoneyWiseXReportType.BALANCESHEET, TYPE_BALANCESHEET);</span>
+<span class="nc" id="L201">        myMap.put(MoneyWiseXReportType.CASHFLOW, TYPE_CASHFLOW);</span>
+<span class="nc" id="L202">        myMap.put(MoneyWiseXReportType.INCOMEEXPENSE, TYPE_INCEXP);</span>
+<span class="nc" id="L203">        myMap.put(MoneyWiseXReportType.PORTFOLIO, TYPE_PORTFOLIO);</span>
+<span class="nc" id="L204">        myMap.put(MoneyWiseXReportType.MARKETGROWTH, TYPE_MARKET);</span>
+<span class="nc" id="L205">        myMap.put(MoneyWiseXReportType.TAXBASIS, TYPE_TAXBASIS);</span>
+<span class="nc" id="L206">        myMap.put(MoneyWiseXReportType.TAXCALC, TYPE_TAXCALC);</span>
+<span class="nc" id="L207">        myMap.put(MoneyWiseXReportType.ASSETGAINS, TYPE_ASSETGAINS);</span>
+<span class="nc" id="L208">        myMap.put(MoneyWiseXReportType.CAPITALGAINS, TYPE_CAPITALGAINS);</span>
+<span class="nc" id="L209">        return myMap;</span>
+    }
+
+    /**
+     * Obtain key for report type.
+     * @param pValue the Value
+     * @return the resource key
+     */
+    static OceanusBundleId getKeyForReportType(final MoneyWiseXReportType pValue) {
+<span class="nc" id="L218">        return OceanusBundleLoader.getKeyForEnum(REPORT_MAP, pValue);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

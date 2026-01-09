@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JcaDigest.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.gordianknot.impl.jca</a> &gt; <span class="el_source">JcaDigest.java</span></div><h1>JcaDigest.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * GordianKnot: Security Suite
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.gordianknot.impl.jca;
+
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
+import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
+import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSubSpec.GordianDigestState;
+import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestType;
+import net.sourceforge.joceanus.gordianknot.impl.core.digest.GordianCoreDigest;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
+
+import java.security.DigestException;
+import java.security.MessageDigest;
+
+/**
+ * Jca Digest.
+ */
+public final class JcaDigest
+        extends GordianCoreDigest {
+    /**
+     * The MessageDigest.
+     */
+    private final MessageDigest theDigest;
+
+    /**
+     * Constructor.
+     * @param pDigestSpec the digestSpec
+     * @param pDigest the digest
+     */
+    JcaDigest(final GordianDigestSpec pDigestSpec,
+              final MessageDigest pDigest) {
+<span class="fc" id="L48">        super(pDigestSpec);</span>
+<span class="fc" id="L49">        theDigest = pDigest;</span>
+<span class="fc" id="L50">    }</span>
+
+    @Override
+    public int getDigestSize() {
+<span class="fc" id="L54">        return theDigest.getDigestLength();</span>
+    }
+
+    @Override
+    public void doUpdate(final byte[] pBytes,
+                         final int pOffset,
+                         final int pLength) {
+<span class="fc" id="L61">        theDigest.update(pBytes, pOffset, pLength);</span>
+<span class="fc" id="L62">    }</span>
+
+    @Override
+    public void update(final byte pByte) {
+<span class="fc" id="L66">        theDigest.update(pByte);</span>
+<span class="fc" id="L67">    }</span>
+
+    @Override
+    public void reset() {
+<span class="nc" id="L71">        theDigest.reset();</span>
+<span class="nc" id="L72">    }</span>
+
+    @Override
+    public byte[] finish() {
+<span class="fc" id="L76">        return theDigest.digest();</span>
+    }
+
+    @Override
+    public byte[] finish(final byte[] pBytes) {
+<span class="fc" id="L81">        return theDigest.digest(pBytes);</span>
+    }
+
+    @Override
+    public int doFinish(final byte[] pBuffer,
+                        final int pOffset) throws GordianException {
+        try {
+<span class="fc" id="L88">            return theDigest.digest(pBuffer, pOffset, getDigestSize());</span>
+<span class="nc" id="L89">        } catch (DigestException e) {</span>
+<span class="nc" id="L90">            throw new GordianCryptoException(&quot;Failed to calculate Digest&quot;, e);</span>
+        }
+    }
+
+    /**
+     * Obtain the sha2 signature algorithm.
+     * @param pDigestSpec the digestSpec
+     * @return the algorithm
+     * @throws GordianException on error
+     */
+    static String getSignAlgorithm(final GordianDigestSpec pDigestSpec) throws GordianException {
+        /* If this is a sha2 extended algorithm */
+<span class="fc bfc" id="L102" title="All 2 branches covered.">        if (GordianDigestType.SHA2.equals(pDigestSpec.getDigestType())</span>
+<span class="fc bfc" id="L103" title="All 2 branches covered.">                &amp;&amp; pDigestSpec.isSha2Hybrid()) {</span>
+<span class="fc bfc" id="L104" title="All 2 branches covered.">            return GordianLength.LEN_256.equals(pDigestSpec.getDigestLength())</span>
+<span class="fc" id="L105">                   ? &quot;SHA512(256)&quot;</span>
+<span class="fc" id="L106">                   : &quot;SHA512(224)&quot;;</span>
+        }
+
+        /* Access digest details */
+<span class="fc" id="L110">        return getAlgorithm(pDigestSpec);</span>
+    }
+
+    /**
+     * Create the sha2 hMac algorithm.
+     * @param pDigestSpec the digestSpec
+     * @return the algorithm
+     * @throws GordianException on error
+     */
+    static String getHMacAlgorithm(final GordianDigestSpec pDigestSpec) throws GordianException {
+        /* If this is a sha2 extended algorithm */
+<span class="fc bfc" id="L121" title="All 2 branches covered.">        if (GordianDigestType.SHA2.equals(pDigestSpec.getDigestType())</span>
+<span class="fc bfc" id="L122" title="All 2 branches covered.">                &amp;&amp; pDigestSpec.isSha2Hybrid()) {</span>
+<span class="fc bfc" id="L123" title="All 2 branches covered.">            return GordianLength.LEN_256.equals(pDigestSpec.getDigestLength())</span>
+<span class="fc" id="L124">                   ? &quot;SHA512/256&quot;</span>
+<span class="fc" id="L125">                   : &quot;SHA512/224&quot;;</span>
+        }
+
+        /* Access digest details */
+<span class="fc" id="L129">        return getAlgorithm(pDigestSpec);</span>
+    }
+
+    /**
+     * Obtain the full algorithm name.
+     * @param pDigestSpec the digestSpec
+     * @return the name
+     * @throws GordianException on error
+     */
+    static String getFullAlgorithm(final GordianDigestSpec pDigestSpec) throws GordianException {
+        /* Access standard name */
+<span class="fc" id="L140">        final String myAlgorithm = getAlgorithm(pDigestSpec);</span>
+
+<span class="fc bfc" id="L142" title="All 2 branches covered.">        switch (pDigestSpec.getDigestType()) {</span>
+            case SHAKE:
+            case BLAKE3:
+<span class="fc" id="L145">                return myAlgorithm + &quot;-&quot; + pDigestSpec.getDigestLength();</span>
+            default:
+<span class="fc" id="L147">                return myAlgorithm;</span>
+        }
+    }
+
+    /**
+     * Obtain the algorithm name.
+     * @param pDigestSpec the digestSpec
+     * @return the name
+     * @throws GordianException on error
+     */
+    static String getAlgorithm(final GordianDigestSpec pDigestSpec) throws GordianException {
+        /* Access digest details */
+<span class="fc" id="L159">        final GordianDigestType myType = pDigestSpec.getDigestType();</span>
+<span class="fc" id="L160">        final GordianLength myLen = pDigestSpec.getDigestLength();</span>
+
+        /* Switch on digestType */
+<span class="pc bpc" id="L163" title="1 of 13 branches missed.">        switch (myType) {</span>
+            case SHA2:
+<span class="fc" id="L165">                return getSHA2Algorithm(pDigestSpec);</span>
+            case STREEBOG:
+<span class="fc" id="L167">                return getStreebogAlgorithm(myLen);</span>
+            case RIPEMD:
+<span class="fc" id="L169">                return getRIPEMDAlgorithm(myLen);</span>
+            case SKEIN:
+<span class="fc" id="L171">                return getSkeinAlgorithm(pDigestSpec);</span>
+            case SHA3:
+<span class="fc" id="L173">                return getSHA3Algorithm(myLen);</span>
+            case BLAKE2:
+<span class="fc" id="L175">                return getBlake2Algorithm(pDigestSpec);</span>
+            case KUPYNA:
+<span class="fc" id="L177">                return getKupynaAlgorithm(myLen);</span>
+            case SHAKE:
+<span class="fc" id="L179">                return getSHAKEAlgorithm(pDigestSpec.getDigestState());</span>
+            case HARAKA:
+<span class="fc" id="L181">                return pDigestSpec.toString();</span>
+            case GOST:
+<span class="fc" id="L183">                return &quot;GOST3411&quot;;</span>
+            case WHIRLPOOL:
+            case TIGER:
+            case SHA1:
+            case MD5:
+            case MD4:
+            case MD2:
+            case SM3:
+<span class="fc" id="L191">                return myType.name();</span>
+            case BLAKE3:
+<span class="fc" id="L193">                return pDigestSpec.toString();</span>
+            default:
+<span class="nc" id="L195">                throw new GordianDataException(&quot;Invalid DigestSpec :- &quot; + pDigestSpec);</span>
+        }
+    }
+
+    /**
+     * Determine the RIPEMD algorithm.
+     * @param pLength the digest length
+     * @return the name
+     */
+    private static String getRIPEMDAlgorithm(final GordianLength pLength) {
+<span class="fc bfc" id="L205" title="All 4 branches covered.">        switch (pLength) {</span>
+            case LEN_128:
+<span class="fc" id="L207">                return &quot;RIPEMD128&quot;;</span>
+            case LEN_160:
+<span class="fc" id="L209">                return &quot;RIPEMD160&quot;;</span>
+            case LEN_256:
+<span class="fc" id="L211">                return &quot;RIPEMD256&quot;;</span>
+            case LEN_320:
+            default:
+<span class="fc" id="L214">                return &quot;RIPEMD320&quot;;</span>
+        }
+    }
+
+    /**
+     * Determine the Blake2 algorithm.
+     * @param pSpec the digestSpec
+     * @return the name
+     */
+    private static String getBlake2Algorithm(final GordianDigestSpec pSpec) {
+<span class="fc" id="L224">        return pSpec.toString();</span>
+    }
+
+    /**
+     * Determine the Kupyna algorithm.
+     * @param pLength the digest length
+     * @return the name
+     */
+    private static String getKupynaAlgorithm(final GordianLength pLength) {
+<span class="fc bfc" id="L233" title="All 3 branches covered.">        switch (pLength) {</span>
+            case LEN_256:
+<span class="fc" id="L235">                return &quot;DSTU7564-256&quot;;</span>
+            case LEN_384:
+<span class="fc" id="L237">                return &quot;DSTU7564-384&quot;;</span>
+            case LEN_512:
+            default:
+<span class="fc" id="L240">                return &quot;DSTU7564-512&quot;;</span>
+        }
+    }
+
+    /**
+     * Determine the SHA2 algorithm.
+     * @param pSpec the digestSpec
+     * @return the name
+     */
+    private static String getSHA2Algorithm(final GordianDigestSpec pSpec) {
+        /* Access lengths */
+<span class="fc" id="L251">        final GordianDigestState myState = pSpec.getDigestState();</span>
+<span class="fc" id="L252">        final GordianLength myLen = pSpec.getDigestLength();</span>
+
+        /* Switch on length */
+<span class="fc bfc" id="L255" title="All 4 branches covered.">        switch (myLen) {</span>
+            case LEN_224:
+<span class="fc bfc" id="L257" title="All 2 branches covered.">                return GordianDigestState.STATE256.equals(myState)</span>
+<span class="fc" id="L258">                       ? &quot;SHA224&quot;</span>
+<span class="fc" id="L259">                       : &quot;SHA-512/224&quot;;</span>
+            case LEN_256:
+<span class="fc bfc" id="L261" title="All 2 branches covered.">                return GordianDigestState.STATE256.equals(myState)</span>
+<span class="fc" id="L262">                       ? &quot;SHA256&quot;</span>
+<span class="fc" id="L263">                       : &quot;SHA-512/256&quot;;</span>
+            case LEN_384:
+<span class="fc" id="L265">                return &quot;SHA384&quot;;</span>
+            case LEN_512:
+            default:
+<span class="fc" id="L268">                return &quot;SHA512&quot;;</span>
+        }
+    }
+
+    /**
+     * Determine the SHA3 algorithm.
+     * @param pLength the digest length
+     * @return the name
+     */
+    private static String getSHA3Algorithm(final GordianLength pLength) {
+<span class="fc bfc" id="L278" title="All 4 branches covered.">        switch (pLength) {</span>
+            case LEN_224:
+<span class="fc" id="L280">                return &quot;SHA3-224&quot;;</span>
+            case LEN_256:
+<span class="fc" id="L282">                return &quot;SHA3-256&quot;;</span>
+            case LEN_384:
+<span class="fc" id="L284">                return &quot;SHA3-384&quot;;</span>
+            case LEN_512:
+            default:
+<span class="fc" id="L287">                return &quot;SHA3-512&quot;;</span>
+        }
+    }
+
+    /**
+     * Determine the SHAKE algorithm.
+     * @param pState the stateLength
+     * @return the name
+     */
+    private static String getSHAKEAlgorithm(final GordianDigestState pState) {
+        /* Determine SHAKE digest */
+<span class="fc" id="L298">        return &quot;SHAKE&quot; + pState;</span>
+    }
+
+    /**
+     * Determine the Skein algorithm.
+     * @param pSpec the digestSpec
+     * @return the name
+     */
+    private static String getSkeinAlgorithm(final GordianDigestSpec pSpec) {
+<span class="fc" id="L307">        return &quot;Skein-&quot;</span>
+<span class="fc" id="L308">                + pSpec.getDigestState()</span>
+                + '-'
+<span class="fc" id="L310">                + pSpec.getDigestLength();</span>
+    }
+
+    /**
+     * Determine the Streebog algorithm.
+     * @param pLength the digest length
+     * @return the name
+     */
+    private static String getStreebogAlgorithm(final GordianLength pLength) {
+<span class="fc" id="L319">        return &quot;GOST3411-2012-&quot; + pLength;</span>
+    }
+
+    /**
+     * Determine whether the algorithm is supported.
+     * @param pDigestType the digest type
+     * @return true/false
+     */
+    static boolean isHMacSupported(final GordianDigestType pDigestType) {
+<span class="fc bfc" id="L328" title="All 2 branches covered.">        switch (pDigestType) {</span>
+            case BLAKE2:
+            case BLAKE3:
+            case KUPYNA:
+            case SHAKE:
+<span class="fc" id="L333">                return false;</span>
+            default:
+<span class="fc" id="L335">                return true;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

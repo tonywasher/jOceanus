@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PrometheusValidateInfoSet.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Prometheus Core Application Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.prometheus.validate</a> &gt; <span class="el_source">PrometheusValidateInfoSet.java</span></div><h1>PrometheusValidateInfoSet.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Prometheus: Application Framework
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.prometheus.validate;
+
+import net.sourceforge.joceanus.metis.field.MetisFieldRequired;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoClass;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoItem;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoSet;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
+import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
+
+import java.util.Iterator;
+
+/**
+ * Validate InfoSet.
+ * @param &lt;T&gt; the infoItem type
+ */
+public abstract class PrometheusValidateInfoSet&lt;T extends PrometheusDataInfoItem&gt; {
+    /**
+     * The editSet.
+     */
+    private PrometheusEditSet theEditSet;
+
+    /**
+     * The infoSet.
+     */
+    private PrometheusDataInfoSet&lt;T&gt; theInfoSet;
+
+    /**
+     * The owner.
+     */
+    private PrometheusDataItem theOwner;
+
+    /**
+     * Constructor.
+     */
+<span class="nc" id="L52">    protected PrometheusValidateInfoSet() {</span>
+<span class="nc" id="L53">    }</span>
+
+    /**
+     * Obtain the owner.
+     * @return the owner
+     */
+    public PrometheusEditSet getEditSet() {
+<span class="nc" id="L60">        return theEditSet;</span>
+    }
+
+    /**
+     * Obtain the infoSet.
+     * @return the infoSet
+     */
+    public PrometheusDataInfoSet&lt;T&gt; getInfoSet() {
+<span class="nc" id="L68">        return theInfoSet;</span>
+    }
+
+    /**
+     * Obtain the owner.
+     * @return the owner
+     */
+    public PrometheusDataItem getOwner() {
+<span class="nc" id="L76">        return theOwner;</span>
+    }
+
+    /**
+     * Store EditSet details.
+     * @param pEditSet the editSet
+     */
+    public void storeEditSet(final PrometheusEditSet pEditSet) {
+<span class="nc" id="L84">        theEditSet = pEditSet;</span>
+<span class="nc" id="L85">    }</span>
+
+    /**
+     * Store InfoSet details.
+     * @param pInfoSet the infoSet
+     */
+    public void storeInfoSet(final PrometheusDataInfoSet&lt;T&gt; pInfoSet) {
+        /* Store the infoSet details */
+<span class="nc" id="L93">        theInfoSet = pInfoSet;</span>
+<span class="nc" id="L94">        theOwner = pInfoSet.getOwner();</span>
+<span class="nc" id="L95">    }</span>
+
+    /**
+     * Validate the infoSet.
+     * @param pInfoSet the infoSet
+     */
+    public void validate(final PrometheusDataInfoSet&lt;T&gt; pInfoSet) {
+        /* Store the infoSet */
+<span class="nc" id="L103">        storeInfoSet(pInfoSet);</span>
+
+        /* Loop through the classes */
+<span class="nc" id="L106">        final Iterator&lt;PrometheusDataInfoClass&gt; myIterator = theInfoSet.classIterator();</span>
+<span class="nc bnc" id="L107" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L108">            final PrometheusDataInfoClass myClass = myIterator.next();</span>
+
+            /* Access info for class */
+<span class="nc bnc" id="L111" title="All 2 branches missed.">            final T myInfo = myClass.isLinkSet()</span>
+<span class="nc" id="L112">                    ? null</span>
+<span class="nc" id="L113">                    : theInfoSet.getInfo(myClass);</span>
+
+            /* If basic checks are passed */
+<span class="nc bnc" id="L116" title="All 2 branches missed.">            if (checkClass(myInfo, myClass)) {</span>
+                /* validate the class */
+<span class="nc" id="L118">                validateClass(myInfo, myClass);</span>
+            }
+<span class="nc" id="L120">        }</span>
+<span class="nc" id="L121">    }</span>
+
+    /**
+     * Perform basic class validation.
+     * @param pInfo the info (or null)
+     * @param pClass the infoClass
+     * @return continue checks true/false
+     */
+    private boolean checkClass(final T pInfo,
+                               final PrometheusDataInfoClass pClass) {
+        /* Check whether info exists */
+<span class="nc bnc" id="L132" title="All 2 branches missed.">        final boolean isExisting = pInfo != null</span>
+<span class="nc bnc" id="L133" title="All 2 branches missed.">                &amp;&amp; !pInfo.isDeleted();</span>
+
+        /* Determine requirements for class */
+<span class="nc" id="L136">        final MetisFieldRequired myState = isClassRequired(pClass);</span>
+
+        /* If the field is missing */
+<span class="nc bnc" id="L139" title="All 2 branches missed.">        if (!isExisting) {</span>
+            /* Handle required field missing */
+<span class="nc bnc" id="L141" title="All 2 branches missed.">            if (myState == MetisFieldRequired.MUSTEXIST) {</span>
+<span class="nc" id="L142">                theOwner.addError(PrometheusDataItem.ERROR_MISSING, theInfoSet.getFieldForClass(pClass));</span>
+            }
+<span class="nc" id="L144">            return false;</span>
+        }
+
+        /* If field is not allowed */
+<span class="nc bnc" id="L148" title="All 2 branches missed.">        if (myState == MetisFieldRequired.NOTALLOWED) {</span>
+<span class="nc" id="L149">            theOwner.addError(PrometheusDataItem.ERROR_EXIST, theInfoSet.getFieldForClass(pClass));</span>
+<span class="nc" id="L150">            return false;</span>
+        }
+
+        /* Continue checks */
+<span class="nc" id="L154">        return true;</span>
+    }
+
+    /**
+     * Determine if an infoSet class is required.
+     * @param pClass the infoSet class
+     * @return the status
+     */
+    public abstract MetisFieldRequired isClassRequired(PrometheusDataInfoClass pClass);
+
+    /**
+     * Validate the class.
+     * @param pInfo the info
+     * @param pClass the infoClass
+     */
+    public abstract void validateClass(T pInfo,
+                                       PrometheusDataInfoClass pClass);
+
+    /**
+     * autoCorrect values after change.
+     * @param pInfoSet the infoSet
+     * @throws OceanusException on error
+     */
+    public void autoCorrect(final PrometheusDataInfoSet&lt;T&gt; pInfoSet) throws OceanusException {
+        /* Store the infoSet */
+<span class="nc" id="L179">        storeInfoSet(pInfoSet);</span>
+
+        /* Loop through the classes */
+<span class="nc" id="L182">        final Iterator&lt;PrometheusDataInfoClass&gt; myIterator = theInfoSet.classIterator();</span>
+<span class="nc bnc" id="L183" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L184">            final PrometheusDataInfoClass myClass = myIterator.next();</span>
+
+            /* Access value and requirement */
+<span class="nc" id="L187">            final MetisFieldRequired myState = isClassRequired(myClass);</span>
+<span class="nc" id="L188">            final boolean isExisting = pInfoSet.isExisting(myClass);</span>
+
+            /* Switch on required state */
+<span class="nc bnc" id="L191" title="All 3 branches missed.">            switch (myState) {</span>
+                case MUSTEXIST:
+<span class="nc bnc" id="L193" title="All 2 branches missed.">                    if (isExisting) {</span>
+<span class="nc" id="L194">                        autoCorrect(myClass);</span>
+                    } else {
+<span class="nc" id="L196">                        setDefault(myClass);</span>
+                    }
+<span class="nc" id="L198">                    break;</span>
+                case NOTALLOWED:
+<span class="nc bnc" id="L200" title="All 2 branches missed.">                    if (isExisting) {</span>
+<span class="nc" id="L201">                        theInfoSet.setValue(myClass, null);</span>
+                    }
+                    break;
+                case CANEXIST:
+                default:
+<span class="nc bnc" id="L206" title="All 2 branches missed.">                    if (isExisting) {</span>
+<span class="nc" id="L207">                        autoCorrect(myClass);</span>
+                    }
+                    break;
+            }
+<span class="nc" id="L211">        }</span>
+<span class="nc" id="L212">    }</span>
+
+    /**
+     * Set default value for a class.
+     * @param pClass the class to autoCorrect
+     * @throws OceanusException on error
+     */
+    protected void setDefault(final PrometheusDataInfoClass pClass) throws OceanusException {
+<span class="nc" id="L220">        throw new IllegalArgumentException();</span>
+    }
+
+    /**
+     * AutoCorrect an existing value (if necessary).
+     * @param pClass the class to autoCorrect
+     * @throws OceanusException on error
+     */
+    protected void autoCorrect(final PrometheusDataInfoClass pClass) throws OceanusException {
+        /* NoOp */
+<span class="nc" id="L230">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

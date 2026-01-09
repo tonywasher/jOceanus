@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseTableSelect.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.ui.base</a> &gt; <span class="el_source">MoneyWiseTableSelect.java</span></div><h1>MoneyWiseTableSelect.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.ui.base;
+
+import java.util.Iterator;
+import java.util.function.Predicate;
+
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
+import net.sourceforge.joceanus.tethys.api.table.TethysUITableManager;
+
+/**
+ * Table Selection control.
+ * @param &lt;T&gt; the item type
+ */
+public class MoneyWiseTableSelect&lt;T extends PrometheusDataItem&gt; {
+    /**
+     * The table.
+     */
+    private final TethysUITableManager&lt;?, T&gt; theTable;
+
+    /**
+     * The filter.
+     */
+    private final Predicate&lt;T&gt; theFilter;
+
+    /**
+     * The item panel.
+     */
+    private MoneyWiseItemPanel&lt;T&gt; theItemPanel;
+
+    /**
+     * The most recent selection.
+     */
+    private T theSelected;
+
+    /**
+     * Are we refreshing?
+     */
+    private boolean isRefreshing;
+
+    /**
+     * Constructor.
+     * @param pTable the table
+     * @param pFilter the filter
+     */
+    MoneyWiseTableSelect(final TethysUITableManager&lt;?, T&gt; pTable,
+<span class="nc" id="L61">                         final Predicate&lt;T&gt; pFilter) {</span>
+<span class="nc" id="L62">        theTable = pTable;</span>
+<span class="nc" id="L63">        theFilter = pFilter;</span>
+<span class="nc" id="L64">    }</span>
+
+    /**
+     * Declare item panel.
+     * @param pPanel the item panel
+     */
+    void declareItemPanel(final MoneyWiseItemPanel&lt;T&gt; pPanel) {
+<span class="nc" id="L71">        theItemPanel = pPanel;</span>
+<span class="nc" id="L72">    }</span>
+
+    /**
+     * Record the selected item.
+     * @param pItem the selected item
+     */
+    public void recordSelection(final T pItem) {
+        /* Only handle if we are not refreshing */
+<span class="nc bnc" id="L80" title="All 4 branches missed.">        if (!isRefreshing &amp;&amp; pItem != null) {</span>
+            /* Record the selection */
+<span class="nc" id="L82">            theSelected = pItem;</span>
+
+            /* Notify the item panel */
+<span class="nc bnc" id="L85" title="All 2 branches missed.">            if (theItemPanel != null) {</span>
+<span class="nc" id="L86">                theItemPanel.setItem(pItem);</span>
+            }
+
+            /* Scroll it into view */
+<span class="nc" id="L90">            theTable.scrollSelectedToView();</span>
+        }
+<span class="nc" id="L92">    }</span>
+
+    /**
+     * Restore the selected item.
+     */
+    public void restoreSelected() {
+        /* Determine the item to select */
+<span class="nc" id="L99">        T myItem = theSelected;</span>
+
+        /* If we have a selected item */
+<span class="nc bnc" id="L102" title="All 2 branches missed.">        if (myItem != null) {</span>
+            /* Check whether the selected item was a new item that has now been discarded */
+<span class="nc bnc" id="L104" title="All 2 branches missed.">            final boolean isDiscarded = myItem.getOriginalValues().getVersion() &gt; myItem.getList().getVersion();</span>
+
+            /* Check whether the item is now filtered out */
+<span class="nc bnc" id="L107" title="All 4 branches missed.">            final boolean isFiltered = theFilter != null &amp;&amp; !theFilter.test(myItem);</span>
+
+            /* If it is no longer visible */
+<span class="nc bnc" id="L110" title="All 4 branches missed.">            if (isDiscarded || isFiltered) {</span>
+                /* locate the nearest item */
+<span class="nc" id="L112">                myItem = findNearest();</span>
+            }
+
+            /* Else nothing selected */
+<span class="nc" id="L116">        } else {</span>
+            /* Find the first item */
+<span class="nc" id="L118">            myItem = findFirst();</span>
+        }
+
+        /* Select the item */
+<span class="nc" id="L122">        theTable.selectRow(myItem);</span>
+<span class="nc" id="L123">    }</span>
+
+    /**
+     * Update Table data.
+     */
+    public void updateTableData() {
+        /* Update the table and restore the selected item */
+<span class="nc" id="L130">        isRefreshing = true;</span>
+<span class="nc" id="L131">        theTable.fireTableDataChanged();</span>
+<span class="nc" id="L132">        isRefreshing = false;</span>
+
+        /* Restore the actual selection */
+<span class="nc" id="L135">        restoreSelected();</span>
+<span class="nc" id="L136">    }</span>
+
+    /**
+     * Find the first visible item.
+     * @return the first item
+     */
+    private T findFirst() {
+        /* Access the view iterator */
+<span class="nc" id="L144">        final Iterator&lt;T&gt; myIterator = theTable.viewIterator();</span>
+<span class="nc bnc" id="L145" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L146">            final T myItem = myIterator.next();</span>
+
+            /* Return first non-header */
+<span class="nc bnc" id="L149" title="All 2 branches missed.">            if (!myItem.isHeader()) {</span>
+<span class="nc" id="L150">                return myItem;</span>
+            }
+<span class="nc" id="L152">        }</span>
+
+        /* None found */
+<span class="nc" id="L155">        return null;</span>
+    }
+
+    /**
+     * Find the nearest visible item.
+     * @return the nearest item
+     */
+    private T findNearest() {
+        /* The most recent item */
+<span class="nc" id="L164">        T myBest = null;</span>
+
+        /* Access the view iterator */
+<span class="nc" id="L167">        final Iterator&lt;T&gt; myIterator = theTable.viewIterator();</span>
+<span class="nc bnc" id="L168" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L169">            final T myItem = myIterator.next();</span>
+
+            /* Ignore header */
+<span class="nc bnc" id="L172" title="All 2 branches missed.">            if (myItem.isHeader()) {</span>
+<span class="nc" id="L173">                continue;</span>
+            }
+
+            /* If we have zoomed past the selected item */
+<span class="nc bnc" id="L177" title="All 2 branches missed.">            if (myItem.compareTo(theSelected) &gt; 0) {</span>
+<span class="nc bnc" id="L178" title="All 2 branches missed.">                return myBest == null ? myItem : myBest;</span>
+            }
+
+            /* Note the nearest item */
+<span class="nc" id="L182">            myBest = myItem;</span>
+<span class="nc" id="L183">        }</span>
+
+        /* Return the best item */
+<span class="nc" id="L186">        return myBest;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,490 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OceanusNewDecimal.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Oceanus Java Core Utilities</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.oceanus.decimal</a> &gt; <span class="el_source">OceanusNewDecimal.java</span></div><h1>OceanusNewDecimal.java</h1><pre class="source lang-java linenums">/**
+ * Provides classes to represent decimal numbers with fixed numbers of decimal digits
+ * {@link #theScale} as Long integers. The decimal value is multiplied by 10 to the power of the
+ * number of decimals for the number ({@link #theFactor}). The integral part of the number can be
+ * expressed as (Value / Factor) and the fractional part as (Value % Factor). Arithmetic is then
+ * performed as whole number arithmetic on these values, with due care taken on multiplication and
+ * division to express the result to the correct number of decimals without losing any part of the
+ * answer to overflow.
+ */
+package net.sourceforge.joceanus.oceanus.decimal;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
+/**
+ * Decimal class performing integer arithmetic on large decimals.
+ */
+public class OceanusNewDecimal {
+    /**
+     * The Decimal radix.
+     */
+    private static final int RADIX_TEN = 10;
+
+    /**
+     * The Maximum # of Decimals.
+     */
+    public static final int MAX_DECIMALS = 9;
+
+    /**
+     * The Integer boost.
+     */
+    private static final long INTEGER_BOOST = 0x100000000L;
+
+    /**
+     * The Integer mask.
+     */
+    private static final long INTEGER_MASK = 0xFFFFFFFFL;
+
+    /**
+     * Powers of Ten.
+     */
+<span class="nc" id="L42">    private static final int[] POWERS_OF_TEN = getPowersOfTen(MAX_DECIMALS);</span>
+
+    /**
+     * The number of decimal digits.
+     */
+    private final int theScale;
+
+    /**
+     * The Decimal factor, used for rounding fractional parts.
+     */
+    private final int theFactor;
+
+    /**
+     * sign.
+     */
+    private int theSign;
+
+    /**
+     * Positive Integral part.
+     */
+    private long theIntegral;
+
+    /**
+     * Positive Fractional part.
+     */
+    private int theFractional;
+
+    /**
+     * Constructor.
+     * @param pScale the number of decimal digits
+     */
+    public OceanusNewDecimal(final int pScale) {
+<span class="nc" id="L74">        this(0, 0, 0, pScale);</span>
+<span class="nc" id="L75">    }</span>
+
+    /**
+     * Constructor.
+     * @param pSource the source BigDecimal
+     */
+<span class="nc" id="L81">    public OceanusNewDecimal(final BigDecimal pSource) {</span>
+        /* Store sign and scale */
+<span class="nc" id="L83">        theSign = pSource.signum();</span>
+<span class="nc" id="L84">        theScale = pSource.scale();</span>
+<span class="nc" id="L85">        checkValidScale(theScale);</span>
+<span class="nc" id="L86">        theFactor = getFactor(theScale);</span>
+
+        /* Extract the integral and fractional parts */
+<span class="nc" id="L89">        theIntegral = pSource.longValue();</span>
+<span class="nc" id="L90">        theIntegral *= theSign;</span>
+<span class="nc" id="L91">        long myFractional = pSource.movePointRight(theScale).longValue() * theSign;</span>
+<span class="nc" id="L92">        myFractional %= theFactor;</span>
+<span class="nc" id="L93">        theFractional = (int) myFractional;</span>
+<span class="nc" id="L94">    }</span>
+
+    /**
+     * Constructor.
+     * @param pIntegral the integral part of the decimal.
+     * @param pFractional the fractional part of the decimal
+     * @param pSign the sign of the decimal
+     * @param pScale the number of decimal digits
+     */
+    public OceanusNewDecimal(final long pIntegral,
+                             final int pFractional,
+                             final int pSign,
+<span class="nc" id="L106">                             final int pScale) {</span>
+        /* Check that scale if valid */
+<span class="nc" id="L108">        checkValidScale(pScale);</span>
+
+        /* Store details */
+<span class="nc" id="L111">        theIntegral = pIntegral;</span>
+<span class="nc" id="L112">        theFractional = pFractional;</span>
+<span class="nc" id="L113">        theSign = pSign;</span>
+<span class="nc" id="L114">        theScale = pScale;</span>
+<span class="nc" id="L115">        theFactor = getFactor(theScale);</span>
+<span class="nc" id="L116">    }</span>
+
+    /**
+     * Check that the scale is valid.
+     * @param pScale the scale
+     */
+    private static void checkValidScale(final int pScale) {
+<span class="nc bnc" id="L123" title="All 4 branches missed.">        if (pScale &lt; 0 || pScale &gt; MAX_DECIMALS) {</span>
+<span class="nc" id="L124">            throw new IllegalArgumentException(&quot;Invalid scale - &quot; + pScale);</span>
+        }
+<span class="nc" id="L126">    }</span>
+
+    /**
+     * Obtain the integral part of the decimal.
+     * @return the integral part of the decimal
+     */
+    public long integralValue() {
+<span class="nc" id="L133">        return theIntegral * theSign;</span>
+    }
+
+    /**
+     * Obtain the sign of the decimal.
+     * @return -1, 0, or 1 as the value of this Decimal is negative, zero, or positive
+     */
+    public int signum() {
+<span class="nc" id="L141">        return theSign;</span>
+    }
+
+    /**
+     * Obtain the fractional part of the decimal.
+     * @return the fractional part of the decimal
+     */
+    public int fractionalValue() {
+<span class="nc" id="L149">        return theFractional * theSign;</span>
+    }
+
+    /**
+     * Obtain the scale of the decimal.
+     * @return the scale of the decimal
+     */
+    public int scale() {
+<span class="nc" id="L157">        return theScale;</span>
+    }
+
+    /**
+     * Add a decimal to value.
+     * @param pDecimal the decimal to add to this value
+     */
+    public void add(final OceanusNewDecimal pDecimal) {
+        /* Access the integral/fractional part of the second decimal at the same scale */
+<span class="nc" id="L166">        long myIntegral = pDecimal.theIntegral;</span>
+<span class="nc" id="L167">        long myFractional = adjustDecimals(pDecimal.theFractional, theScale - pDecimal.theScale);</span>
+<span class="nc bnc" id="L168" title="All 2 branches missed.">        if (myFractional &gt;= theFactor) {</span>
+<span class="nc" id="L169">            myFractional %= theFactor;</span>
+<span class="nc" id="L170">            myIntegral++;</span>
+        }
+<span class="nc" id="L172">        add(myIntegral, (int) myFractional);</span>
+<span class="nc" id="L173">    }</span>
+
+    /**
+     * Subtract a decimal from value.
+     * @param pDecimal the decimal to subtract from this value
+     */
+    public void subtract(final OceanusNewDecimal pDecimal) {
+        /* Access the integral/fractional part of the second decimal at the same scale */
+<span class="nc" id="L181">        long myIntegral = pDecimal.theIntegral;</span>
+<span class="nc" id="L182">        long myFractional = adjustDecimals(pDecimal.theFractional, theScale - pDecimal.theScale);</span>
+<span class="nc bnc" id="L183" title="All 2 branches missed.">        if (myFractional &gt;= theFactor) {</span>
+<span class="nc" id="L184">            myFractional %= theFactor;</span>
+<span class="nc" id="L185">            myIntegral++;</span>
+        }
+<span class="nc" id="L187">        add(-myIntegral, (int) -myFractional);</span>
+<span class="nc" id="L188">    }</span>
+
+    /**
+     * Add a decimal to this value.
+     * @param pIntegral the integral part of the decimal.
+     * @param pFractional the fractional part of the decimal
+     */
+    private void add(final long pIntegral,
+                     final int pFractional) {
+         /* Add the fractional and non-fractional parts of the sum */
+<span class="nc" id="L198">        theFractional = pFractional + fractionalValue();</span>
+<span class="nc" id="L199">        theIntegral = pIntegral + integralValue();</span>
+
+        /* If we have a positive integral # */
+<span class="nc bnc" id="L202" title="All 2 branches missed.">        if (theIntegral &gt; 0) {</span>
+            /* Handle fractional too small */
+<span class="nc bnc" id="L204" title="All 2 branches missed.">            if (theFractional &lt; 0) {</span>
+<span class="nc" id="L205">                theFractional += theFactor;</span>
+<span class="nc" id="L206">                theIntegral--;</span>
+
+                /* Handle fractional too large */
+<span class="nc bnc" id="L209" title="All 2 branches missed.">            } else if (theFractional &gt;= theFactor) {</span>
+<span class="nc" id="L210">                theFractional -= theFactor;</span>
+<span class="nc" id="L211">                theIntegral++;</span>
+            }
+
+            /* Set sign */
+<span class="nc" id="L215">            theSign = 1;</span>
+
+            /* If we have a negative integral # */
+<span class="nc bnc" id="L218" title="All 2 branches missed.">        } else if (theIntegral &lt; 0) {</span>
+            /* Handle fractional too large */
+<span class="nc bnc" id="L220" title="All 2 branches missed.">            if (theFractional &gt; 0) {</span>
+<span class="nc" id="L221">                theFractional -= theFactor;</span>
+<span class="nc" id="L222">                theIntegral++;</span>
+
+                /* Handle fractional too small */
+<span class="nc bnc" id="L225" title="All 2 branches missed.">            } else if (theFractional &lt;= -theFactor) {</span>
+<span class="nc" id="L226">                theFractional += theFactor;</span>
+<span class="nc" id="L227">                theIntegral--;</span>
+            }
+
+            /* Set sign */
+<span class="nc" id="L231">            theSign = -1;</span>
+<span class="nc" id="L232">            theFractional = -theFractional;</span>
+<span class="nc" id="L233">            theIntegral = -theIntegral;</span>
+
+            /* else we have a zero integral */
+        } else {
+            /* Handle fractional too large */
+<span class="nc bnc" id="L238" title="All 2 branches missed.">            if (theFractional &gt;= theFactor) {</span>
+<span class="nc" id="L239">                theFractional -= theFactor;</span>
+<span class="nc" id="L240">                theIntegral = 1;</span>
+<span class="nc" id="L241">                theSign = 1;</span>
+
+                /* Handle Fractional too small */
+<span class="nc bnc" id="L244" title="All 2 branches missed.">            } else if (theFractional &lt;= -theFactor) {</span>
+<span class="nc" id="L245">                theFractional += theFactor;</span>
+<span class="nc" id="L246">                theSign = -1;</span>
+<span class="nc" id="L247">                theIntegral = 1;</span>
+<span class="nc" id="L248">                theFractional = -theFractional;</span>
+
+                /* Handle positive fractional */
+<span class="nc bnc" id="L251" title="All 2 branches missed.">            } else if (theFractional &gt; 0) {</span>
+<span class="nc" id="L252">                theSign = 1;</span>
+
+                /* Handle negative fractional */
+<span class="nc bnc" id="L255" title="All 2 branches missed.">            } else if (theFractional &lt; 0) {</span>
+<span class="nc" id="L256">                theSign = -1;</span>
+<span class="nc" id="L257">                theFractional = -theFractional;</span>
+
+                /* Handle zero fractional */
+            } else {
+<span class="nc" id="L261">                theSign = 0;</span>
+            }
+        }
+<span class="nc" id="L264">    }</span>
+
+    /**
+     * Multiply by another decimal
+     * &lt;p&gt;
+     * This function splits the values into three separate integers and then performs long arithmetic to
+     * prevent loss of precision. The value is represented as (x,y,z,s) where the decimal may be written as
+     * x*2&lt;sup&gt;32&lt;/sup&gt; + y + z*10&lt;sup&gt;-s&lt;/sup&gt; and x,y,z,s are all integers.
+     * &lt;p&gt;
+     * The product of (x&lt;sub&gt;1&lt;/sub&gt;, y&lt;sub&gt;1&lt;/sub&gt;, z&lt;sub&gt;1&lt;/sub&gt;, s) by
+     * (x&lt;sub&gt;2&lt;/sub&gt;, y&lt;sub&gt;2&lt;/sub&gt;, z&lt;sub&gt;2&lt;/sub&gt;, t)
+     * is therefore x&lt;sub&gt;1&lt;/sub&gt;*x&lt;sub&gt;2&lt;/sub&gt;*2&lt;sup&gt;64&lt;/sup&gt; (discardable)
+     * + (x&lt;sub&gt;1&lt;/sub&gt;*y&lt;sub&gt;2&lt;/sub&gt; + x&lt;sub&gt;2&lt;/sub&gt;*y&lt;sub&gt;1&lt;/sub&gt;)*2&lt;sup&gt;32&lt;/sup&gt;
+     * + x&lt;sub&gt;2&lt;/sub&gt;*y&lt;sub&gt;2&lt;/sub&gt;
+     * + x&lt;sub&gt;1&lt;/sub&gt;*z&lt;sub&gt;2&lt;/sub&gt;*2&lt;sup&gt;32&lt;/sup&gt;*10&lt;sup&gt;-t&lt;/sup&gt;
+     * + x&lt;sub&gt;2&lt;/sub&gt;*z&lt;sub&gt;1&lt;/sub&gt;*2&lt;sup&gt;32&lt;/sup&gt;*10&lt;sup&gt;-s&lt;/sup&gt;
+     * + y&lt;sub&gt;1&lt;/sub&gt;*z&lt;sub&gt;2&lt;/sub&gt;*10&lt;sup&gt;-t&lt;/sup&gt;
+     * + y&lt;sub&gt;2&lt;/sub&gt;*z&lt;sub&gt;1&lt;/sub&gt;*10&lt;sup&gt;-s&lt;/sup&gt;
+     * + z&lt;sub&gt;1&lt;/sub&gt;*z&lt;sub&gt;2&lt;/sub&gt;*10&lt;sup&gt;-s-t&lt;/sup&gt;
+     *
+     * @param pMultiplicand the decimal to multiply by
+     */
+    public void multiply(final OceanusNewDecimal pMultiplicand) {
+        /* Access the parts of this value */
+<span class="nc" id="L288">        final long myX1 = theIntegral &gt;&gt;&gt; Integer.SIZE;</span>
+<span class="nc" id="L289">        final long myY1 = theIntegral &amp; INTEGER_MASK;</span>
+<span class="nc" id="L290">        final long myZ1 = theFractional;</span>
+<span class="nc" id="L291">        final int myS = theScale;</span>
+<span class="nc" id="L292">        final int mySFactor = theFactor;</span>
+
+        /* Access the parts of the multiplicand */
+<span class="nc" id="L295">        final long myX2 = pMultiplicand.theIntegral &gt;&gt;&gt; Integer.SIZE;</span>
+<span class="nc" id="L296">        final long myY2 = pMultiplicand.theIntegral &amp; INTEGER_MASK;</span>
+<span class="nc" id="L297">        final long myZ2 = pMultiplicand.theFractional;</span>
+<span class="nc" id="L298">        final int myT = pMultiplicand.theScale;</span>
+<span class="nc" id="L299">        final int myTFactor = pMultiplicand.theFactor;</span>
+<span class="nc" id="L300">        final long mySTFactor = mySFactor * (long) myTFactor;</span>
+
+        /* Calculate integral products */
+<span class="nc" id="L303">        long myIntegral = ((myX1 * myY2) + (myY1 * myX2)) &lt;&lt; Integer.SIZE;</span>
+<span class="nc" id="L304">        myIntegral += myY2 * myX2;</span>
+
+        /* Calculate product of X2 and Z1 and multiply by 2^32 */
+<span class="nc" id="L307">        long myProduct = myX2 * myZ1;</span>
+<span class="nc" id="L308">        long myIntPart = myProduct / mySFactor;</span>
+<span class="nc" id="L309">        long myFracPart = myProduct % mySFactor;</span>
+<span class="nc" id="L310">        myIntegral += myIntPart &lt;&lt; Integer.SIZE;</span>
+<span class="nc" id="L311">        myFracPart *= INTEGER_BOOST;</span>
+<span class="nc" id="L312">        myIntegral += myFracPart / mySFactor;</span>
+<span class="nc" id="L313">        long myFractional = adjustDecimals(myFracPart % mySFactor, myT);</span>
+
+        /* Calculate products of Y2 and Z1 */
+<span class="nc" id="L316">        myProduct = myY2 * myZ1;</span>
+<span class="nc" id="L317">        myIntegral += myProduct / mySFactor;</span>
+<span class="nc" id="L318">        myFractional += adjustDecimals(myProduct % mySFactor, myT);</span>
+
+        /* Calculate product of X1 and Z2 and multiply by 2^32 */
+<span class="nc" id="L321">        myProduct = myX1 * myZ2;</span>
+<span class="nc" id="L322">        myIntPart = myProduct / myTFactor;</span>
+<span class="nc" id="L323">        myFracPart = myProduct % myTFactor;</span>
+<span class="nc" id="L324">        myIntegral += myIntPart &lt;&lt; Integer.SIZE;</span>
+<span class="nc" id="L325">        myFracPart *= INTEGER_BOOST;</span>
+<span class="nc" id="L326">        myIntegral += myFracPart / myTFactor;</span>
+<span class="nc" id="L327">        myFractional += adjustDecimals(myFracPart % myTFactor, myS);</span>
+
+        /* Calculate products of Y1 and Z2 */
+<span class="nc" id="L330">        myProduct = myY1 * myZ2;</span>
+<span class="nc" id="L331">        myIntegral += myProduct / myTFactor;</span>
+<span class="nc" id="L332">        myFractional += adjustDecimals(myProduct % myTFactor, myS);</span>
+
+        /* Calculate products of Z1 and Z2 */
+<span class="nc" id="L335">        myFractional += myZ1 * myZ2;</span>
+
+        /* Handle wrap of fractional */
+<span class="nc" id="L338">        myIntegral += myFracPart / mySTFactor;</span>
+<span class="nc" id="L339">        myFractional %= mySTFactor;</span>
+
+        /* Adjust decimals */
+<span class="nc" id="L342">        myFractional = adjustDecimals(myFractional, -myT);</span>
+<span class="nc bnc" id="L343" title="All 2 branches missed.">        if (myFractional &gt;= mySFactor) {</span>
+<span class="nc" id="L344">            myFractional %= mySFactor;</span>
+<span class="nc" id="L345">            myIntegral++;</span>
+        }
+
+        /* Store the result */
+<span class="nc" id="L349">        theIntegral = myIntegral;</span>
+<span class="nc" id="L350">        theFractional = (int) myFractional;</span>
+<span class="nc" id="L351">        theSign *= pMultiplicand.theSign;</span>
+<span class="nc" id="L352">    }</span>
+
+    /**
+     * Divide by another decimal.
+     * &lt;p&gt;
+     * This function uses BigDecimal to perform the calculation
+     * @param pDivisor the decimal to divide by
+     */
+    public void divide(final OceanusNewDecimal pDivisor) {
+        /* Calculate the result */
+<span class="nc" id="L362">        final BigDecimal myNumerator = toBigDecimal();</span>
+<span class="nc" id="L363">        final BigDecimal myDenominator = pDivisor.toBigDecimal();</span>
+<span class="nc" id="L364">        final BigDecimal myResult = myNumerator.divide(myDenominator, theScale, RoundingMode.HALF_UP);</span>
+
+        /* Extract the integral and fractional parts */
+<span class="nc" id="L367">        theSign = myResult.signum();</span>
+<span class="nc" id="L368">        theIntegral = myResult.longValue();</span>
+<span class="nc" id="L369">        theIntegral *= theSign;</span>
+<span class="nc" id="L370">        long myFractional = myResult.movePointRight(theScale).longValue() * theSign;</span>
+<span class="nc" id="L371">        myFractional %= theFactor;</span>
+<span class="nc" id="L372">        theFractional = (int) myFractional;</span>
+<span class="nc" id="L373">    }</span>
+
+    /**
+     * Convert to BigDecimal.
+     * @return the BigDecimal equivalent
+     */
+    public BigDecimal toBigDecimal() {
+<span class="nc" id="L380">        final BigDecimal myIntegral = new BigDecimal(theIntegral);</span>
+<span class="nc" id="L381">        final BigDecimal myFractional = new BigDecimal(theFractional).movePointLeft(theScale);</span>
+<span class="nc" id="L382">        final BigDecimal myResult = myIntegral.add(myFractional);</span>
+<span class="nc bnc" id="L383" title="All 2 branches missed.">        return theSign == -1 ? myResult.negate() : myResult;</span>
+    }
+
+    @Override
+    public String toString() {
+        /* Format the string */
+<span class="nc" id="L389">        final StringBuilder myString = new StringBuilder(100);</span>
+<span class="nc bnc" id="L390" title="All 2 branches missed.">        if (theSign == -1) {</span>
+<span class="nc" id="L391">            myString.append('-');</span>
+        }
+<span class="nc" id="L393">        myString.append(theIntegral);</span>
+<span class="nc bnc" id="L394" title="All 2 branches missed.">        if (theScale &gt; 0) {</span>
+<span class="nc" id="L395">            final int myLen = myString.length();</span>
+<span class="nc" id="L396">            myString.append(theFractional + theFactor);</span>
+<span class="nc" id="L397">            myString.setCharAt(myLen, '.');</span>
+        }
+
+        /* Return the string */
+<span class="nc" id="L401">        return myString.toString();</span>
+    }
+
+    /**
+     * Build powers of ten.
+     * @param pMax maximum power of ten
+     * @return array of powers of ten
+     */
+    private static int[] getPowersOfTen(final int pMax) {
+        /* Allocate the array */
+<span class="nc" id="L411">        final int[] myArray = new int[pMax + 1];</span>
+
+        /* Initialise array */
+<span class="nc" id="L414">        int myValue = 1;</span>
+<span class="nc" id="L415">        myArray[0] = myValue;</span>
+
+        /* Loop through array */
+<span class="nc bnc" id="L418" title="All 2 branches missed.">        for (int i = 1; i &lt; pMax + 1; i++) {</span>
+            /* Adjust value and record it */
+<span class="nc" id="L420">            myValue *= RADIX_TEN;</span>
+<span class="nc" id="L421">            myArray[i] = myValue;</span>
+        }
+
+        /* Return the array */
+<span class="nc" id="L425">        return myArray;</span>
+    }
+
+    /**
+     * Obtain factor.
+     * @param pDecimals the number of decimals
+     * @return the decimal part of the number
+     */
+    private static int getFactor(final int pDecimals) {
+<span class="nc" id="L434">        return POWERS_OF_TEN[pDecimals];</span>
+    }
+
+    /**
+     * Adjust a value to a different number of decimals.
+     * &lt;p&gt;
+     * If the adjustment is to reduce the number of decimals, the most significant digit of the
+     * discarded digits is examined to determine whether to round up. If the number of decimals is
+     * to be increased, zeros are simply added to the end.
+     * @param pValue the value to adjust
+     * @param iAdjust the adjustment (positive if # of decimals are to increase, negative if they
+     * are to decrease)
+     * @return the adjusted value
+     */
+    private static long adjustDecimals(final long pValue,
+                                       final int iAdjust) {
+        /* Take a copy of the value */
+<span class="nc" id="L451">        long myValue = pValue;</span>
+
+        /* If we need to reduce decimals */
+<span class="nc bnc" id="L454" title="All 2 branches missed.">        if (iAdjust &lt; 0) {</span>
+            /* If we have more than one decimal to remove */
+<span class="nc bnc" id="L456" title="All 2 branches missed.">            if (iAdjust + 1 &lt; 0) {</span>
+                /* Calculate division factor (minus one) */
+<span class="nc" id="L458">                final long myFactor = getFactor(-(iAdjust + 1));</span>
+
+                /* Reduce to 10 times required value */
+<span class="nc" id="L461">                myValue /= myFactor;</span>
+            }
+
+            /* Access last digit */
+<span class="nc" id="L465">            long myDigit = myValue</span>
+                    % RADIX_TEN;
+
+            /* Handle negative values */
+<span class="nc" id="L469">            int myAdjust = 1;</span>
+<span class="nc bnc" id="L470" title="All 2 branches missed.">            if (myDigit &lt; 0) {</span>
+<span class="nc" id="L471">                myAdjust = -1;</span>
+<span class="nc" id="L472">                myDigit = -myDigit;</span>
+            }
+
+            /* Reduce final decimal and round up if required */
+<span class="nc" id="L476">            myValue /= RADIX_TEN;</span>
+<span class="nc bnc" id="L477" title="All 2 branches missed.">            if (myDigit &gt;= (RADIX_TEN &gt;&gt; 1)) {</span>
+<span class="nc" id="L478">                myValue += myAdjust;</span>
+            }
+
+            /* else if we need to expand fractional product */
+<span class="nc bnc" id="L482" title="All 2 branches missed.">        } else if (iAdjust &gt; 0) {</span>
+<span class="nc" id="L483">            myValue *= getFactor(iAdjust);</span>
+        }
+
+        /* Return the adjusted value */
+<span class="nc" id="L487">        return myValue;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

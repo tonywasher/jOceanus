@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisXAnalysisModParser.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.themis.xanalysis.parser.mod</a> &gt; <span class="el_source">ThemisXAnalysisModParser.java</span></div><h1>ThemisXAnalysisModParser.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Themis: Java Project Framework
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.themis.xanalysis.parser.mod;
+
+import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.modules.ModuleDeclaration;
+import com.github.javaparser.ast.modules.ModuleExportsDirective;
+import com.github.javaparser.ast.modules.ModuleOpensDirective;
+import com.github.javaparser.ast.modules.ModuleProvidesDirective;
+import com.github.javaparser.ast.modules.ModuleRequiresDirective;
+import com.github.javaparser.ast.modules.ModuleUsesDirective;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisModuleInstance;
+import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisParserDef;
+
+/**
+ * Analysis Module Parser.
+ */
+public final class ThemisXAnalysisModParser {
+    /**
+     * Private Constructor.
+     */
+    private ThemisXAnalysisModParser() {
+    }
+
+    /**
+     * Parse a module.
+     * @param pParser the parser
+     * @param pMod the module
+     * @return the parsed module
+     * @throws OceanusException on error
+     */
+    public static ThemisXAnalysisModuleInstance parseModule(final ThemisXAnalysisParserDef pParser,
+                                                            final Node pMod) throws OceanusException {
+        /* Handle null Module */
+<span class="pc bpc" id="L50" title="1 of 2 branches missed.">        if (pMod == null) {</span>
+<span class="nc" id="L51">            return null;</span>
+        }
+
+        /* Create appropriate node */
+<span class="pc bpc" id="L55" title="1 of 7 branches missed.">        switch (ThemisXAnalysisMod.determineModule(pParser, pMod)) {</span>
+<span class="fc" id="L56">            case EXPORTS:   return new ThemisXAnalysisModExports(pParser, (ModuleExportsDirective) pMod);</span>
+<span class="fc" id="L57">            case MODULE:    return new ThemisXAnalysisModModule(pParser, (ModuleDeclaration) pMod);</span>
+<span class="fc" id="L58">            case OPENS:     return new ThemisXAnalysisModOpens(pParser, (ModuleOpensDirective) pMod);</span>
+<span class="fc" id="L59">            case PROVIDES:  return new ThemisXAnalysisModProvides(pParser, (ModuleProvidesDirective) pMod);</span>
+<span class="fc" id="L60">            case REQUIRES:  return new ThemisXAnalysisModRequires(pParser, (ModuleRequiresDirective) pMod);</span>
+<span class="fc" id="L61">            case USES:      return new ThemisXAnalysisModUses(pParser, (ModuleUsesDirective) pMod);</span>
+<span class="nc" id="L62">            default:        throw pParser.buildException(&quot;Unsupported Module Type&quot;, pMod);</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

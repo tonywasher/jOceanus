@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisAnalysisPrimitive.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.themis.lethe.analysis</a> &gt; <span class="el_source">ThemisAnalysisPrimitive.java</span></div><h1>ThemisAnalysisPrimitive.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Themis: Java Project Framework
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.themis.lethe.analysis;
+
+import net.sourceforge.joceanus.themis.lethe.analysis.ThemisAnalysisDataMap.ThemisAnalysisDataType;
+
+/**
+ * Primitive.
+ */
+<span class="nc" id="L24">public enum ThemisAnalysisPrimitive</span>
+        implements ThemisAnalysisDataType {
+    /**
+     * byte.
+     */
+<span class="nc" id="L29">    BYTE(&quot;byte&quot;, &quot;Byte&quot;),</span>
+
+    /**
+     * Char.
+     */
+<span class="nc" id="L34">    CHAR(&quot;char&quot;, &quot;Character&quot;),</span>
+
+    /**
+     * Short.
+     */
+<span class="nc" id="L39">    SHORT(&quot;short&quot;, &quot;Short&quot;),</span>
+
+    /**
+     * Int.
+     */
+<span class="nc" id="L44">    INT(&quot;int&quot;, &quot;Integer&quot;),</span>
+
+    /**
+     * Long.
+     */
+<span class="nc" id="L49">    LONG(&quot;long&quot;, &quot;Long&quot;),</span>
+
+    /**
+     * Boolean.
+     */
+<span class="nc" id="L54">    BOOLEAN(&quot;boolean&quot;, &quot;Boolean&quot;),</span>
+
+    /**
+     * Float.
+     */
+<span class="nc" id="L59">    FLOAT(&quot;float&quot;, &quot;Float&quot;),</span>
+
+    /**
+     * Double.
+     */
+<span class="nc" id="L64">    DOUBLE(&quot;double&quot;, &quot;Double&quot;),</span>
+
+    /**
+     * Void.
+     */
+<span class="nc" id="L69">    VOID(&quot;void&quot;, &quot;Void&quot;);</span>
+
+    /**
+     * The primitive.
+     */
+    private final String thePrimitive;
+
+    /**
+     * The boxed.
+     */
+    private final String theBoxed;
+
+    /**
+     * Constructor.
+     * @param pPrimitive the primitive
+     * @param pBoxed the boxed
+     */
+    ThemisAnalysisPrimitive(final String pPrimitive,
+<span class="nc" id="L87">                            final String pBoxed) {</span>
+<span class="nc" id="L88">        thePrimitive = pPrimitive;</span>
+<span class="nc" id="L89">        theBoxed = pBoxed;</span>
+<span class="nc" id="L90">    }</span>
+
+    /**
+     * Obtain the primitive.
+     * @return the primitive
+     */
+    String getPrimitive() {
+<span class="nc" id="L97">        return thePrimitive;</span>
+    }
+
+    /**
+     * Obtain the boxed.
+     * @return the boxed
+     */
+    String getBoxed() {
+<span class="nc" id="L105">        return theBoxed;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L110">        return getPrimitive();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

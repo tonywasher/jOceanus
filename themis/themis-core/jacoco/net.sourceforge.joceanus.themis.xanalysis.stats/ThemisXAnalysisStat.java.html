@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisXAnalysisStat.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.themis.xanalysis.stats</a> &gt; <span class="el_source">ThemisXAnalysisStat.java</span></div><h1>ThemisXAnalysisStat.java</h1><pre class="source lang-java linenums">/* *****************************************************************************
+ * Themis: Java Project Framework
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.themis.xanalysis.stats;
+
+/**
+ * Statistics.
+ */
+<span class="fc" id="L22">public enum ThemisXAnalysisStat {</span>
+    /**
+     * PLOC.
+     */
+<span class="fc" id="L26">    PLOC(&quot;Physical Lines Of Code&quot;),</span>
+
+    /**
+     * LLOC.
+     */
+<span class="fc" id="L31">    LLOC(&quot;Logical Lines Of Code&quot;),</span>
+
+    /**
+     * BLOC.
+     */
+<span class="fc" id="L36">    BLOC(&quot;Blank Lines of Code&quot;),</span>
+
+    /**
+     * CLOC.
+     */
+<span class="fc" id="L41">    CLOC(&quot;Comment Lines of Code&quot;),</span>
+
+    /**
+     * NCLS.
+     */
+<span class="fc" id="L46">    NCLS(&quot;Number of Classes/Enums/Records&quot;),</span>
+
+    /**
+     * NINT.
+     */
+<span class="fc" id="L51">    NINT(&quot;Number of Interfaces/Abstract Classes&quot;),</span>
+
+    /**
+     * NMTHD.
+     */
+<span class="fc" id="L56">    NMTHD(&quot;Number of Methods&quot;),</span>
+
+    /**
+     * NATTR.
+     */
+<span class="fc" id="L61">    NATTR(&quot;Number of Attributes/Fields&quot;),</span>
+
+    /**
+     * NSTMT.
+     */
+<span class="fc" id="L66">    NSTMT(&quot;Number of Statements&quot;),</span>
+
+    /**
+     * NPARM.
+     */
+<span class="fc" id="L71">    NPARM(&quot;Number of Parameters&quot;),</span>
+
+    /**
+     * IOVARS.
+     */
+<span class="fc" id="L76">    IOVARS(&quot;Number of Input/Output Parameters&quot;),</span>
+
+    /**
+     * TLOC.
+     */
+<span class="fc" id="L81">    TPLOC(&quot;Total Physical Lines Of Code&quot;),</span>
+
+    /**
+     * TLLOC.
+     */
+<span class="fc" id="L86">    TLLOC(&quot;Total Logical Lines Of Code&quot;),</span>
+
+    /**
+     * TBLOC.
+     */
+<span class="fc" id="L91">    TBLOC(&quot;Total Blank Lines of Code&quot;),</span>
+
+    /**
+     * TCLOC.
+     */
+<span class="fc" id="L96">    TCLOC(&quot;Total Comment Lines of Code&quot;),</span>
+
+    /**
+     * TNFLS.
+     */
+<span class="fc" id="L101">    TNFLS(&quot;Total Number of Files&quot;),</span>
+
+    /**
+     * TNPKG.
+     */
+<span class="fc" id="L106">    TNPKG(&quot;Total Number of Packages&quot;),</span>
+
+    /**
+     * TNCLS.
+     */
+<span class="fc" id="L111">    TNCLS(&quot;Total Number of Classes/Enums/Records&quot;),</span>
+
+    /**
+     * TNINT.
+     */
+<span class="fc" id="L116">    TNINT(&quot;Total Number of Interfaces/Abstract Classes&quot;),</span>
+
+    /**
+     * TNMTHD.
+     */
+<span class="fc" id="L121">    TNMTHD(&quot;Total Number of Methods&quot;),</span>
+
+    /**
+     * TNATTR.
+     */
+<span class="fc" id="L126">    TNATTR(&quot;Total Number of Attributes&quot;),</span>
+
+    /**
+     * TNSTMT.
+     */
+<span class="fc" id="L131">    TNSTMT(&quot;Total Number of Statements&quot;);</span>
+
+    /**
+     * The description.
+     */
+    private final String theDesc;
+
+    /**
+     * Constructor.
+     * @param pDesc the description
+     */
+<span class="fc" id="L142">    ThemisXAnalysisStat(final String pDesc) {</span>
+<span class="fc" id="L143">        theDesc = pDesc;</span>
+<span class="fc" id="L144">    }</span>
+
+    /**
+     * Obtain the description.
+     * @return the description
+     */
+    public String getDesc() {
+<span class="nc" id="L151">        return theDesc;</span>
+    }
+
+    /**
+     * Check that stat is supported.
+     * @param pName the name of the stat
+     * @return the supported stat (or null)
+     */
+    public static ThemisXAnalysisStat determineStat(final String pName) {
+<span class="nc bnc" id="L160" title="All 2 branches missed.">        for (ThemisXAnalysisStat myStat : values()) {</span>
+<span class="nc bnc" id="L161" title="All 2 branches missed.">            if (pName.equals(myStat.name())) {</span>
+<span class="nc" id="L162">                return myStat;</span>
+            }
+        }
+<span class="nc" id="L165">        return null;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseXAnalysisInterfaces.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets</a> &gt; <span class="el_source">MoneyWiseXAnalysisInterfaces.java</span></div><h1>MoneyWiseXAnalysisInterfaces.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets;
+
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEvent;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDeposit;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurity;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
+
+/**
+ * Analysis Interfaces.
+ */
+<span class="nc" id="L31">public abstract class MoneyWiseXAnalysisInterfaces {</span>
+    /**
+     * Standard register-able bucket.
+     */
+    public interface MoneyWiseXAnalysisBucketRegister {
+        /**
+         * Obtain the bucket Id.
+         * @return the id
+         */
+        Long getBucketId();
+
+        /**
+         * Register the event.
+         * @param pEvent the event
+         */
+        void registerEvent(MoneyWiseXAnalysisEvent pEvent);
+    }
+
+    /**
+     * Standard foreign bucket.
+     */
+    public interface MoneyWiseXAnalysisBucketForeign
+            extends MoneyWiseXAnalysisBucketRegister {
+        /**
+         * Record exchangeRate.
+         */
+        void recordExchangeRate();
+
+        /**
+         * Adjust the valuation.
+         */
+        void adjustValuation();
+
+        /**
+         * Obtain the delta valuation.
+         * @return the delta
+         */
+        OceanusMoney getDeltaValuation();
+
+        /**
+         * Obtain currency for bucket.
+         * @return the currency
+         */
+        MoneyWiseCurrency getCurrency();
+    }
+
+    /**
+     * Standard security bucket.
+     */
+    public interface MoneyWiseXAnalysisBucketPriced
+            extends MoneyWiseXAnalysisBucketForeign {
+        /**
+         * Record securityPrice.
+         */
+        void recordSecurityPrice();
+
+        /**
+         * Value asset.
+         */
+        void valueAsset();
+
+        /**
+         * Calculate unrealisedGains.
+         */
+        void calculateUnrealisedGains();
+
+        /**
+         * Is this bucket a StockOption?
+         * @return true/false
+         */
+        boolean isStockOption();
+
+        /**
+         * Obtain security for bucket.
+         * @return the security
+         */
+        MoneyWiseSecurity getSecurity();
+    }
+
+    /**
+     * Analysis Cursor.
+     */
+    public interface MoneyWiseXAnalysisCursor {
+        /**
+         * Obtain the current price for a security.
+         *
+         * @param pSecurity the security
+         * @return the price
+         */
+        OceanusPrice getCurrentPrice(MoneyWiseSecurity pSecurity);
+
+        /**
+         * Obtain the current rate for a currency.
+         *
+         * @param pCurrency the currency
+         * @return the rate
+         */
+        OceanusRatio getCurrentXchgRate(MoneyWiseCurrency pCurrency);
+
+        /**
+         * Obtain the depositRate for a deposit.
+         *
+         * @param pDeposit the deposit
+         * @return the rate
+         */
+        OceanusRate getCurrentDepositRate(MoneyWiseDeposit pDeposit);
+
+        /**
+         * Register a securityBucket for price updates.
+         *
+         * @param pBucket the bucket
+         */
+        void registerForPriceUpdates(MoneyWiseXAnalysisBucketPriced pBucket);
+
+        /**
+         * Register an account/securityBucket for xchgRate updates.
+         *
+         * @param pBucket the bucket
+         */
+        void registerForXchgRateUpdates(MoneyWiseXAnalysisBucketForeign pBucket);
+
+        /**
+         * Register a buckets interest in the current event.
+         *
+         * @param pBucket the bucket
+         */
+        void registerBucketInterest(MoneyWiseXAnalysisBucketRegister pBucket);
+
+        /**
+         * Register interested buckets for an event.
+         *
+         * @param pEvent the event
+         */
+        void registerInterestedBucketsForEvent(MoneyWiseXAnalysisEvent pEvent);
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

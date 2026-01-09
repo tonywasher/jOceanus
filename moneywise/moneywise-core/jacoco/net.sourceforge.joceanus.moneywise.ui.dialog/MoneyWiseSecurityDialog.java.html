@@ -1,0 +1,608 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseSecurityDialog.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.ui.dialog</a> &gt; <span class="el_source">MoneyWiseSecurityDialog.java</span></div><h1>MoneyWiseSecurityDialog.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.ui.dialog;
+
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.metis.field.MetisFieldRequired;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee.MoneyWisePayeeList;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseRegion;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseRegion.MoneyWiseRegionList;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurity;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurity.MoneyWiseSecurityList;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoClass;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAssetCategory;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency.MoneyWiseCurrencyList;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseSecurityClass;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseSecurityType;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseSecurityType.MoneyWiseSecurityTypeList;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
+import net.sourceforge.joceanus.moneywise.data.validate.MoneyWiseValidateSecurity;
+import net.sourceforge.joceanus.moneywise.ui.MoneyWiseIcon;
+import net.sourceforge.joceanus.moneywise.ui.MoneyWiseUIResource;
+import net.sourceforge.joceanus.moneywise.ui.base.MoneyWiseAssetTable;
+import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
+import net.sourceforge.joceanus.prometheus.ui.fieldset.PrometheusFieldSet;
+import net.sourceforge.joceanus.prometheus.ui.fieldset.PrometheusFieldSetEvent;
+import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
+import net.sourceforge.joceanus.tethys.api.control.TethysUIControl.TethysUIIconMapSet;
+import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.tethys.api.field.TethysUIDataEditField.TethysUICharArrayTextAreaField;
+import net.sourceforge.joceanus.tethys.api.field.TethysUIDataEditField.TethysUIIconButtonField;
+import net.sourceforge.joceanus.tethys.api.field.TethysUIDataEditField.TethysUIPriceEditField;
+import net.sourceforge.joceanus.tethys.api.field.TethysUIDataEditField.TethysUIScrollButtonField;
+import net.sourceforge.joceanus.tethys.api.field.TethysUIDataEditField.TethysUIStringEditField;
+import net.sourceforge.joceanus.tethys.api.field.TethysUIFieldFactory;
+import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollItem;
+import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollMenu;
+
+import java.util.Iterator;
+import java.util.Map;
+
+/**
+ * Panel to display/edit/create a Security.
+ */
+public class MoneyWiseSecurityDialog
+        extends MoneyWiseAssetDialog&lt;MoneyWiseSecurity&gt; {
+    /**
+     * Prices Tab Title.
+     */
+<span class="nc" id="L70">    private static final String TAB_PRICES = MoneyWiseUIResource.SECURITYPANEL_TAB_PRICES.getValue();</span>
+
+    /**
+     * The fieldSet.
+     */
+    private final PrometheusFieldSet&lt;MoneyWiseSecurity&gt; theFieldSet;
+
+    /**
+     * SecurityPrice Table.
+     */
+    private final MoneyWiseSecurityPriceTable thePrices;
+
+    /**
+     * The Closed State.
+     */
+<span class="nc" id="L85">    private Boolean theClosedState = Boolean.FALSE;</span>
+
+    /**
+     * Constructor.
+     * @param pFactory the GUI factory
+     * @param pView the data view
+     * @param pEditSet the edit set
+     * @param pOwner the owning table
+     */
+    public MoneyWiseSecurityDialog(final TethysUIFactory&lt;?&gt; pFactory,
+                                   final MoneyWiseView pView,
+                                   final PrometheusEditSet pEditSet,
+                                   final MoneyWiseAssetTable&lt;MoneyWiseSecurity&gt; pOwner) {
+        /* Initialise the panel */
+<span class="nc" id="L99">        super(pFactory, pEditSet, pOwner);</span>
+
+        /* Access the fieldSet */
+<span class="nc" id="L102">        theFieldSet = getFieldSet();</span>
+<span class="nc" id="L103">        theFieldSet.setReporter(pOwner::showValidateError);</span>
+
+        /* Build the main panel */
+<span class="nc" id="L106">        buildMainPanel(pFactory);</span>
+
+        /* Build the details panel */
+<span class="nc" id="L109">        buildDetailsPanel(pFactory);</span>
+
+        /* Build the notes panel */
+<span class="nc" id="L112">        buildNotesPanel(pFactory);</span>
+
+        /* Create the SecurityPrices table */
+<span class="nc" id="L115">        thePrices = new MoneyWiseSecurityPriceTable(pView, getEditSet(), pOwner.getErrorPanel());</span>
+<span class="nc" id="L116">        theFieldSet.newTable(TAB_PRICES, thePrices);</span>
+
+        /* Create the listener */
+<span class="nc" id="L119">        thePrices.getEventRegistrar().addEventListener(e -&gt; {</span>
+<span class="nc" id="L120">            updateActions();</span>
+<span class="nc" id="L121">            fireStateChanged();</span>
+<span class="nc" id="L122">        });</span>
+<span class="nc" id="L123">    }</span>
+
+    /**
+     * Build Main subPanel.
+     * @param pFactory the GUI factory
+     */
+    private void buildMainPanel(final TethysUIFactory&lt;?&gt; pFactory) {
+        /* Create the text fields */
+<span class="nc" id="L131">        final TethysUIFieldFactory myFields = pFactory.fieldFactory();</span>
+<span class="nc" id="L132">        final TethysUIStringEditField myName = myFields.newStringField();</span>
+<span class="nc" id="L133">        final TethysUIStringEditField myDesc = myFields.newStringField();</span>
+
+        /* Create the buttons */
+<span class="nc" id="L136">        final TethysUIScrollButtonField&lt;MoneyWiseAssetCategory&gt; myTypeButton = myFields.newScrollField(MoneyWiseAssetCategory.class);</span>
+<span class="nc" id="L137">        final TethysUIScrollButtonField&lt;MoneyWisePayee&gt; myParentButton = myFields.newScrollField(MoneyWisePayee.class);</span>
+<span class="nc" id="L138">        final TethysUIScrollButtonField&lt;MoneyWiseCurrency&gt; myCurrencyButton = myFields.newScrollField(MoneyWiseCurrency.class);</span>
+<span class="nc" id="L139">        final TethysUIIconButtonField&lt;Boolean&gt; myClosedButton = myFields.newIconField(Boolean.class);</span>
+
+        /* Assign the fields to the panel */
+<span class="nc" id="L142">        theFieldSet.addField(PrometheusDataResource.DATAITEM_FIELD_NAME, myName, MoneyWiseSecurity::getName);</span>
+<span class="nc" id="L143">        theFieldSet.addField(PrometheusDataResource.DATAITEM_FIELD_DESC, myDesc, MoneyWiseSecurity::getDesc);</span>
+<span class="nc" id="L144">        theFieldSet.addField(MoneyWiseBasicResource.CATEGORY_NAME, myTypeButton, MoneyWiseSecurity::getCategory);</span>
+<span class="nc" id="L145">        theFieldSet.addField(MoneyWiseBasicResource.ASSET_PARENT, myParentButton, MoneyWiseSecurity::getParent);</span>
+<span class="nc" id="L146">        theFieldSet.addField(MoneyWiseStaticDataType.CURRENCY, myCurrencyButton, MoneyWiseSecurity::getAssetCurrency);</span>
+<span class="nc" id="L147">        theFieldSet.addField(MoneyWiseBasicResource.ASSET_CLOSED, myClosedButton, MoneyWiseSecurity::isClosed);</span>
+
+        /* Configure the menuBuilders */
+<span class="nc" id="L150">        myTypeButton.setMenuConfigurator(c -&gt; buildSecTypeMenu(c, getItem()));</span>
+<span class="nc" id="L151">        myParentButton.setMenuConfigurator(c -&gt; buildParentMenu(c, getItem()));</span>
+<span class="nc" id="L152">        myCurrencyButton.setMenuConfigurator(c -&gt; buildCurrencyMenu(c, getItem()));</span>
+<span class="nc" id="L153">        final Map&lt;Boolean, TethysUIIconMapSet&lt;Boolean&gt;&gt; myMapSets = MoneyWiseIcon.configureLockedIconButton(pFactory);</span>
+<span class="nc" id="L154">        myClosedButton.setIconMapSet(() -&gt; myMapSets.get(theClosedState));</span>
+
+        /* Configure validation checks */
+<span class="nc" id="L157">        myName.setValidator(this::isValidName);</span>
+<span class="nc" id="L158">        myDesc.setValidator(this::isValidDesc);</span>
+<span class="nc" id="L159">    }</span>
+
+    /**
+     * Build details subPanel.
+     * @param pFactory the GUI factory
+     */
+    private void buildDetailsPanel(final TethysUIFactory&lt;?&gt; pFactory) {
+        /* Create a new panel */
+<span class="nc" id="L167">        theFieldSet.newPanel(TAB_DETAILS);</span>
+
+        /* Allocate fields */
+<span class="nc" id="L170">        final TethysUIFieldFactory myFields = pFactory.fieldFactory();</span>
+<span class="nc" id="L171">        final TethysUIStringEditField mySymbol = myFields.newStringField();</span>
+<span class="nc" id="L172">        final TethysUIPriceEditField myPrice = myFields.newPriceField();</span>
+
+        /* Create the buttons */
+<span class="nc" id="L175">        final TethysUIScrollButtonField&lt;MoneyWiseRegion&gt; myRegionButton = myFields.newScrollField(MoneyWiseRegion.class);</span>
+<span class="nc" id="L176">        final TethysUIScrollButtonField&lt;MoneyWiseSecurity&gt; myStockButton = myFields.newScrollField(MoneyWiseSecurity.class);</span>
+
+        /* Assign the fields to the panel */
+<span class="nc" id="L179">        theFieldSet.addField(MoneyWiseAccountInfoClass.SYMBOL, mySymbol, MoneyWiseSecurity::getSymbol);</span>
+<span class="nc" id="L180">        theFieldSet.addField(MoneyWiseAccountInfoClass.REGION, myRegionButton, MoneyWiseSecurity::getRegion);</span>
+<span class="nc" id="L181">        theFieldSet.addField(MoneyWiseAccountInfoClass.UNDERLYINGSTOCK, myStockButton, MoneyWiseSecurity::getUnderlyingStock);</span>
+<span class="nc" id="L182">        theFieldSet.addField(MoneyWiseAccountInfoClass.OPTIONPRICE, myPrice, MoneyWiseSecurity::getOptionPrice);</span>
+
+        /* Configure the menuBuilders */
+<span class="nc" id="L185">        myRegionButton.setMenuConfigurator(c -&gt; buildRegionMenu(c, getItem()));</span>
+<span class="nc" id="L186">        myStockButton.setMenuConfigurator(c -&gt; buildStockMenu(c, getItem()));</span>
+<span class="nc" id="L187">        myPrice.setDeemedCurrency(() -&gt; getItem().getCurrency());</span>
+
+        /* Configure validation checks */
+<span class="nc" id="L190">        mySymbol.setValidator(this::isValidSymbol);</span>
+<span class="nc" id="L191">    }</span>
+
+    /**
+     * Build Notes subPanel.
+     * @param pFactory the GUI factory
+     */
+    private void buildNotesPanel(final TethysUIFactory&lt;?&gt; pFactory) {
+        /* Allocate fields */
+<span class="nc" id="L199">        final TethysUIFieldFactory myFields = pFactory.fieldFactory();</span>
+<span class="nc" id="L200">        final TethysUICharArrayTextAreaField myNotes = myFields.newCharArrayAreaField();</span>
+
+        /* Assign the fields to the panel */
+<span class="nc" id="L203">        theFieldSet.newTextArea(TAB_NOTES, MoneyWiseAccountInfoClass.NOTES, myNotes, MoneyWiseSecurity::getNotes);</span>
+
+        /* Configure validation checks */
+<span class="nc" id="L206">        myNotes.setValidator(this::isValidNotes);</span>
+<span class="nc" id="L207">    }</span>
+
+    @Override
+    public void refreshData() {
+        /* If we have an item */
+<span class="nc" id="L212">        final MoneyWiseSecurity myItem = getItem();</span>
+<span class="nc bnc" id="L213" title="All 2 branches missed.">        if (myItem != null) {</span>
+<span class="nc" id="L214">            final MoneyWiseSecurityList mySecurities = getDataList(MoneyWiseBasicDataType.SECURITY, MoneyWiseSecurityList.class);</span>
+<span class="nc" id="L215">            setItem(mySecurities.findItemById(myItem.getIndexedId()));</span>
+        }
+
+        /* Refresh the prices */
+<span class="nc" id="L219">        thePrices.refreshData();</span>
+
+        /* Make sure that the item is not editable */
+<span class="nc" id="L222">        setEditable(false);</span>
+<span class="nc" id="L223">    }</span>
+
+    @Override
+    protected void adjustFields(final boolean isEditable) {
+        /* Access the item */
+<span class="nc" id="L228">        final MoneyWiseSecurity mySecurity = getItem();</span>
+<span class="nc" id="L229">        final boolean bIsClosed = mySecurity.isClosed();</span>
+<span class="nc" id="L230">        final boolean bIsActive = mySecurity.isActive();</span>
+<span class="nc" id="L231">        final boolean bIsRelevant = mySecurity.isRelevant();</span>
+
+        /* Determine whether the closed button should be visible */
+<span class="nc bnc" id="L234" title="All 6 branches missed.">        final boolean bShowClosed = bIsClosed || (bIsActive &amp;&amp; !bIsRelevant);</span>
+<span class="nc" id="L235">        theFieldSet.setFieldVisible(MoneyWiseBasicResource.ASSET_CLOSED, bShowClosed);</span>
+
+        /* Determine the state of the closed button */
+<span class="nc bnc" id="L238" title="All 2 branches missed.">        final boolean bEditClosed = bIsClosed</span>
+<span class="nc bnc" id="L239" title="All 2 branches missed.">                ? !mySecurity.getParent().isClosed()</span>
+<span class="nc bnc" id="L240" title="All 2 branches missed.">                : !bIsRelevant;</span>
+<span class="nc bnc" id="L241" title="All 4 branches missed.">        theFieldSet.setFieldEditable(MoneyWiseBasicResource.ASSET_CLOSED, isEditable &amp;&amp; bEditClosed);</span>
+<span class="nc" id="L242">        theClosedState = bEditClosed;</span>
+
+        /* Determine whether the description field should be visible */
+<span class="nc bnc" id="L245" title="All 4 branches missed.">        final boolean bShowDesc = isEditable || mySecurity.getDesc() != null;</span>
+<span class="nc" id="L246">        theFieldSet.setFieldVisible(PrometheusDataResource.DATAITEM_FIELD_DESC, bShowDesc);</span>
+
+        /* Determine whether the account details should be visible */
+<span class="nc bnc" id="L249" title="All 4 branches missed.">        final boolean bShowNotes = isEditable || mySecurity.getNotes() != null;</span>
+<span class="nc" id="L250">        theFieldSet.setFieldVisible(MoneyWiseAccountInfoClass.NOTES, bShowNotes);</span>
+
+        /* Determine whether the symbol field should be visible */
+<span class="nc bnc" id="L253" title="All 4 branches missed.">        boolean bEditField = isEditable &amp;&amp; isEditableField(mySecurity, MoneyWiseAccountInfoClass.SYMBOL);</span>
+<span class="nc bnc" id="L254" title="All 4 branches missed.">        boolean bShowField = bEditField || mySecurity.getSymbol() != null;</span>
+<span class="nc" id="L255">        theFieldSet.setFieldVisible(MoneyWiseAccountInfoClass.SYMBOL, bShowField);</span>
+<span class="nc" id="L256">        theFieldSet.setFieldEditable(MoneyWiseAccountInfoClass.SYMBOL, bEditField);</span>
+
+        /* Determine whether the region field should be visible */
+<span class="nc bnc" id="L259" title="All 4 branches missed.">        bEditField = isEditable &amp;&amp; isEditableField(mySecurity, MoneyWiseAccountInfoClass.REGION);</span>
+<span class="nc bnc" id="L260" title="All 4 branches missed.">        bShowField = bEditField || mySecurity.getRegion() != null;</span>
+<span class="nc" id="L261">        theFieldSet.setFieldVisible(MoneyWiseAccountInfoClass.REGION, bShowField);</span>
+<span class="nc" id="L262">        theFieldSet.setFieldEditable(MoneyWiseAccountInfoClass.REGION, bEditField);</span>
+
+        /* Determine whether the stock field should be visible */
+<span class="nc bnc" id="L265" title="All 4 branches missed.">        bEditField = isEditable &amp;&amp; isEditableField(mySecurity, MoneyWiseAccountInfoClass.UNDERLYINGSTOCK);</span>
+<span class="nc bnc" id="L266" title="All 4 branches missed.">        bShowField = bEditField || mySecurity.getRegion() != null;</span>
+<span class="nc" id="L267">        theFieldSet.setFieldVisible(MoneyWiseAccountInfoClass.UNDERLYINGSTOCK, bShowField);</span>
+<span class="nc" id="L268">        theFieldSet.setFieldEditable(MoneyWiseAccountInfoClass.UNDERLYINGSTOCK, bEditField);</span>
+
+        /* Determine whether the price field should be visible */
+<span class="nc bnc" id="L271" title="All 4 branches missed.">        bEditField = isEditable &amp;&amp; isEditableField(mySecurity, MoneyWiseAccountInfoClass.OPTIONPRICE);</span>
+<span class="nc bnc" id="L272" title="All 4 branches missed.">        bShowField = bEditField || mySecurity.getRegion() != null;</span>
+<span class="nc" id="L273">        theFieldSet.setFieldVisible(MoneyWiseAccountInfoClass.OPTIONPRICE, bShowField);</span>
+<span class="nc" id="L274">        theFieldSet.setFieldEditable(MoneyWiseAccountInfoClass.OPTIONPRICE, bEditField);</span>
+
+        /* Security type and currency cannot be changed if the item is active */
+<span class="nc bnc" id="L277" title="All 4 branches missed.">        theFieldSet.setFieldEditable(MoneyWiseBasicResource.CATEGORY_NAME, isEditable &amp;&amp; !bIsActive);</span>
+<span class="nc bnc" id="L278" title="All 4 branches missed.">        theFieldSet.setFieldEditable(MoneyWiseStaticDataType.CURRENCY, isEditable &amp;&amp; !bIsActive);</span>
+
+        /* Set editable value for parent */
+<span class="nc bnc" id="L281" title="All 4 branches missed.">        theFieldSet.setFieldEditable(MoneyWiseBasicResource.ASSET_PARENT, isEditable &amp;&amp; !bIsClosed);</span>
+<span class="nc" id="L282">    }</span>
+
+    /**
+     * Is the field editable?
+     * @param pSecurity the security
+     * @param pField the field class
+     * @return true/false
+     */
+    public static boolean isEditableField(final MoneyWiseSecurity pSecurity,
+                                          final MoneyWiseAccountInfoClass pField) {
+        /* Check whether the field is available */
+<span class="nc" id="L293">        final MoneyWiseValidateSecurity myValidator = (MoneyWiseValidateSecurity) pSecurity.getList().getValidator();</span>
+<span class="nc" id="L294">        final MetisFieldRequired isRequired = myValidator.isClassRequired(pField);</span>
+<span class="nc bnc" id="L295" title="All 2 branches missed.">        return !isRequired.equals(MetisFieldRequired.NOTALLOWED);</span>
+    }
+
+    @Override
+    protected void updateField(final PrometheusFieldSetEvent pUpdate) throws OceanusException {
+        /* Access the field */
+<span class="nc" id="L301">        final MetisDataFieldId myField = pUpdate.getFieldId();</span>
+<span class="nc" id="L302">        final MoneyWiseSecurity mySecurity = getItem();</span>
+
+        /* Process updates */
+<span class="nc bnc" id="L305" title="All 2 branches missed.">        if (PrometheusDataResource.DATAITEM_FIELD_NAME.equals(myField)) {</span>
+            /* Update the Name */
+<span class="nc" id="L307">            mySecurity.setName(pUpdate.getValue(String.class));</span>
+<span class="nc bnc" id="L308" title="All 2 branches missed.">        } else if (PrometheusDataResource.DATAITEM_FIELD_DESC.equals(myField)) {</span>
+            /* Update the Description */
+<span class="nc" id="L310">            mySecurity.setDescription(pUpdate.getValue(String.class));</span>
+<span class="nc bnc" id="L311" title="All 2 branches missed.">        } else if (MoneyWiseBasicResource.CATEGORY_NAME.equals(myField)) {</span>
+            /* Update the Security Type */
+<span class="nc" id="L313">            mySecurity.setCategory(pUpdate.getValue(MoneyWiseSecurityType.class));</span>
+<span class="nc" id="L314">            mySecurity.autoCorrect();</span>
+<span class="nc bnc" id="L315" title="All 2 branches missed.">        } else if (MoneyWiseBasicResource.ASSET_PARENT.equals(myField)) {</span>
+            /* Update the Parent */
+<span class="nc" id="L317">            mySecurity.setParent(pUpdate.getValue(MoneyWisePayee.class));</span>
+<span class="nc bnc" id="L318" title="All 2 branches missed.">        } else if (MoneyWiseStaticDataType.CURRENCY.equals(myField)) {</span>
+            /* Update the Currency */
+<span class="nc" id="L320">            mySecurity.setAssetCurrency(pUpdate.getValue(MoneyWiseCurrency.class));</span>
+<span class="nc bnc" id="L321" title="All 2 branches missed.">        } else if (MoneyWiseBasicResource.ASSET_CLOSED.equals(myField)) {</span>
+            /* Update the Closed indication */
+<span class="nc" id="L323">            mySecurity.setClosed(pUpdate.getValue(Boolean.class));</span>
+<span class="nc bnc" id="L324" title="All 2 branches missed.">        } else if (MoneyWiseAccountInfoClass.SYMBOL.equals(myField)) {</span>
+            /* Update the Symbol */
+<span class="nc" id="L326">            mySecurity.setSymbol(pUpdate.getValue(String.class));</span>
+<span class="nc bnc" id="L327" title="All 2 branches missed.">        } else if (MoneyWiseAccountInfoClass.REGION.equals(myField)) {</span>
+            /* Update the Region */
+<span class="nc" id="L329">            mySecurity.setRegion(pUpdate.getValue(MoneyWiseRegion.class));</span>
+<span class="nc bnc" id="L330" title="All 2 branches missed.">        } else if (MoneyWiseAccountInfoClass.UNDERLYINGSTOCK.equals(myField)) {</span>
+            /* Update the Underlying Stock */
+<span class="nc" id="L332">            mySecurity.setUnderlyingStock(pUpdate.getValue(MoneyWiseSecurity.class));</span>
+<span class="nc bnc" id="L333" title="All 2 branches missed.">        } else if (MoneyWiseAccountInfoClass.OPTIONPRICE.equals(myField)) {</span>
+            /* Update the OptionPrice */
+<span class="nc" id="L335">            mySecurity.setOptionPrice(pUpdate.getValue(OceanusPrice.class));</span>
+<span class="nc bnc" id="L336" title="All 2 branches missed.">        } else if (MoneyWiseAccountInfoClass.NOTES.equals(myField)) {</span>
+            /* Update the Notes */
+<span class="nc" id="L338">            mySecurity.setNotes(pUpdate.getValue(char[].class));</span>
+        }
+<span class="nc" id="L340">    }</span>
+
+    @Override
+    protected void declareGoToItems(final boolean pUpdates) {
+<span class="nc" id="L344">        final MoneyWiseSecurity myItem = getItem();</span>
+<span class="nc" id="L345">        final MoneyWisePayee myParent = myItem.getParent();</span>
+<span class="nc bnc" id="L346" title="All 2 branches missed.">        if (!pUpdates) {</span>
+<span class="nc" id="L347">            final MoneyWiseSecurityType myType = myItem.getCategory();</span>
+<span class="nc" id="L348">            final MoneyWiseCurrency myCurrency = myItem.getAssetCurrency();</span>
+<span class="nc" id="L349">            final MoneyWiseRegion myRegion = myItem.getRegion();</span>
+<span class="nc" id="L350">            declareGoToItem(myType);</span>
+<span class="nc" id="L351">            declareGoToItem(myRegion);</span>
+<span class="nc" id="L352">            declareGoToItem(myCurrency);</span>
+        }
+<span class="nc" id="L354">        declareGoToItem(myParent);</span>
+<span class="nc" id="L355">    }</span>
+
+    /**
+     * Add a new price for a new security.
+     * @param pSecurity the security
+     * @throws OceanusException on error
+     */
+    public void addNewPrice(final MoneyWiseSecurity pSecurity) throws OceanusException {
+        /* Create the new price */
+<span class="nc" id="L364">        thePrices.addNewPrice(pSecurity);</span>
+<span class="nc" id="L365">    }</span>
+
+    @Override
+    public void setEditable(final boolean isEditable) {
+        /* Update the prices */
+<span class="nc" id="L370">        thePrices.setEditable(isEditable);</span>
+
+        /* Pass call onwards */
+<span class="nc" id="L373">        super.setEditable(isEditable);</span>
+<span class="nc" id="L374">    }</span>
+
+    @Override
+    protected void refreshAfterUpdate() {
+        /* Pass call onwards */
+<span class="nc" id="L379">        super.refreshAfterUpdate();</span>
+
+        /* Refresh the prices */
+<span class="nc" id="L382">        thePrices.refreshAfterUpdate();</span>
+<span class="nc" id="L383">    }</span>
+
+    /**
+     * Build the securityType menu for an item.
+     * @param pMenu the menu
+     * @param pSecurity the security to build for
+     */
+    public void buildSecTypeMenu(final TethysUIScrollMenu&lt;MoneyWiseAssetCategory&gt; pMenu,
+                                 final MoneyWiseSecurity pSecurity) {
+        /* Clear the menu */
+<span class="nc" id="L393">        pMenu.removeAllItems();</span>
+
+        /* Record active item */
+<span class="nc" id="L396">        final MoneyWiseSecurityType myCurr = pSecurity.getCategory();</span>
+<span class="nc" id="L397">        TethysUIScrollItem&lt;MoneyWiseAssetCategory&gt; myActive = null;</span>
+
+        /* Access SecurityTypes */
+<span class="nc" id="L400">        final MoneyWiseSecurityTypeList myTypes = getDataList(MoneyWiseStaticDataType.SECURITYTYPE, MoneyWiseSecurityTypeList.class);</span>
+
+        /* Loop through the SecurityTypes */
+<span class="nc" id="L403">        final Iterator&lt;MoneyWiseSecurityType&gt; myIterator = myTypes.iterator();</span>
+<span class="nc bnc" id="L404" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L405">            final MoneyWiseSecurityType myType = myIterator.next();</span>
+
+            /* Ignore deleted or disabled */
+<span class="nc bnc" id="L408" title="All 4 branches missed.">            final boolean bIgnore = myType.isDeleted() || !myType.getEnabled();</span>
+<span class="nc bnc" id="L409" title="All 2 branches missed.">            if (bIgnore) {</span>
+<span class="nc" id="L410">                continue;</span>
+            }
+
+            /* Create a new action for the secType */
+<span class="nc" id="L414">            final TethysUIScrollItem&lt;MoneyWiseAssetCategory&gt; myItem = pMenu.addItem(myType);</span>
+
+            /* If this is the active secType */
+<span class="nc bnc" id="L417" title="All 2 branches missed.">            if (myType.equals(myCurr)) {</span>
+                /* Record it */
+<span class="nc" id="L419">                myActive = myItem;</span>
+            }
+<span class="nc" id="L421">        }</span>
+
+        /* Ensure active item is visible */
+<span class="nc bnc" id="L424" title="All 2 branches missed.">        if (myActive != null) {</span>
+<span class="nc" id="L425">            myActive.scrollToItem();</span>
+        }
+<span class="nc" id="L427">    }</span>
+
+    /**
+     * Build the parent menu for an item.
+     * @param pMenu the menu
+     * @param pSecurity the security to build for
+     */
+    public void buildParentMenu(final TethysUIScrollMenu&lt;MoneyWisePayee&gt; pMenu,
+                                final MoneyWiseSecurity pSecurity) {
+        /* Clear the menu */
+<span class="nc" id="L437">        pMenu.removeAllItems();</span>
+
+        /* Record active item */
+<span class="nc" id="L440">        final MoneyWiseSecurityClass myType = pSecurity.getCategoryClass();</span>
+<span class="nc" id="L441">        final MoneyWisePayee myCurr = pSecurity.getParent();</span>
+<span class="nc" id="L442">        TethysUIScrollItem&lt;MoneyWisePayee&gt; myActive = null;</span>
+
+        /* Access Payees */
+<span class="nc" id="L445">        final MoneyWisePayeeList myPayees = getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class);</span>
+
+        /* Loop through the Payees */
+<span class="nc" id="L448">        final Iterator&lt;MoneyWisePayee&gt; myIterator = myPayees.iterator();</span>
+<span class="nc bnc" id="L449" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L450">            final MoneyWisePayee myPayee = myIterator.next();</span>
+
+            /* Ignore deleted or non-owner */
+<span class="nc bnc" id="L453" title="All 4 branches missed.">            boolean bIgnore = myPayee.isDeleted() || !myPayee.getCategoryClass().canParentSecurity(myType);</span>
+<span class="nc" id="L454">            bIgnore |= myPayee.isClosed();</span>
+<span class="nc bnc" id="L455" title="All 2 branches missed.">            if (bIgnore) {</span>
+<span class="nc" id="L456">                continue;</span>
+            }
+
+            /* Create a new action for the payee */
+<span class="nc" id="L460">            final TethysUIScrollItem&lt;MoneyWisePayee&gt; myItem = pMenu.addItem(myPayee);</span>
+
+            /* If this is the active parent */
+<span class="nc bnc" id="L463" title="All 2 branches missed.">            if (myPayee.equals(myCurr)) {</span>
+                /* Record it */
+<span class="nc" id="L465">                myActive = myItem;</span>
+            }
+<span class="nc" id="L467">        }</span>
+
+        /* Ensure active item is visible */
+<span class="nc bnc" id="L470" title="All 2 branches missed.">        if (myActive != null) {</span>
+<span class="nc" id="L471">            myActive.scrollToItem();</span>
+        }
+<span class="nc" id="L473">    }</span>
+
+    /**
+     * Build the region menu for an item.
+     * @param pMenu the menu
+     * @param pSecurity the security to build for
+     */
+    public void buildRegionMenu(final TethysUIScrollMenu&lt;MoneyWiseRegion&gt; pMenu,
+                                final MoneyWiseSecurity pSecurity) {
+        /* Clear the menu */
+<span class="nc" id="L483">        pMenu.removeAllItems();</span>
+
+        /* Record active item */
+<span class="nc" id="L486">        final MoneyWiseRegion myCurr = pSecurity.getRegion();</span>
+<span class="nc" id="L487">        TethysUIScrollItem&lt;MoneyWiseRegion&gt; myActive = null;</span>
+
+        /* Access regions */
+<span class="nc" id="L490">        final MoneyWiseRegionList myRegions = getDataList(MoneyWiseBasicDataType.REGION, MoneyWiseRegionList.class);</span>
+
+        /* Loop through the Regions */
+<span class="nc" id="L493">        final Iterator&lt;MoneyWiseRegion&gt; myIterator = myRegions.iterator();</span>
+<span class="nc bnc" id="L494" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L495">            final MoneyWiseRegion myRegion = myIterator.next();</span>
+
+            /* Ignore deleted */
+<span class="nc" id="L498">            final boolean bIgnore = myRegion.isDeleted();</span>
+<span class="nc bnc" id="L499" title="All 2 branches missed.">            if (bIgnore) {</span>
+<span class="nc" id="L500">                continue;</span>
+            }
+
+            /* Create a new action for the region */
+<span class="nc" id="L504">            final TethysUIScrollItem&lt;MoneyWiseRegion&gt; myItem = pMenu.addItem(myRegion);</span>
+
+            /* If this is the active region */
+<span class="nc bnc" id="L507" title="All 2 branches missed.">            if (myRegion.equals(myCurr)) {</span>
+                /* Record it */
+<span class="nc" id="L509">                myActive = myItem;</span>
+            }
+<span class="nc" id="L511">        }</span>
+
+        /* Ensure active item is visible */
+<span class="nc bnc" id="L514" title="All 2 branches missed.">        if (myActive != null) {</span>
+<span class="nc" id="L515">            myActive.scrollToItem();</span>
+        }
+<span class="nc" id="L517">    }</span>
+
+    /**
+     * Build the stock menu for an item.
+     * @param pMenu the menu
+     * @param pSecurity the security to build for
+     */
+    public void buildStockMenu(final TethysUIScrollMenu&lt;MoneyWiseSecurity&gt; pMenu,
+                               final MoneyWiseSecurity pSecurity) {
+        /* Clear the menu */
+<span class="nc" id="L527">        pMenu.removeAllItems();</span>
+
+        /* Record active item */
+<span class="nc" id="L530">        final MoneyWiseSecurity myCurr = pSecurity.getUnderlyingStock();</span>
+<span class="nc" id="L531">        TethysUIScrollItem&lt;MoneyWiseSecurity&gt; myActive = null;</span>
+
+        /* Access securities */
+<span class="nc" id="L534">        final MoneyWiseSecurityList mySecurities = getDataList(MoneyWiseBasicDataType.SECURITY, MoneyWiseSecurityList.class);</span>
+
+        /* Loop through the Securities */
+<span class="nc" id="L537">        final Iterator&lt;MoneyWiseSecurity&gt; myIterator = mySecurities.iterator();</span>
+<span class="nc bnc" id="L538" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L539">            final MoneyWiseSecurity mySecurity = myIterator.next();</span>
+
+            /* Ignore deleted and non share */
+<span class="nc" id="L542">            boolean bIgnore = mySecurity.isDeleted();</span>
+<span class="nc bnc" id="L543" title="All 2 branches missed.">            bIgnore |= !mySecurity.getCategoryClass().isShares();</span>
+<span class="nc bnc" id="L544" title="All 2 branches missed.">            if (bIgnore) {</span>
+<span class="nc" id="L545">                continue;</span>
+            }
+
+            /* Create a new action for the region */
+<span class="nc" id="L549">            final TethysUIScrollItem&lt;MoneyWiseSecurity&gt; myItem = pMenu.addItem(mySecurity);</span>
+
+            /* If this is the active stock */
+<span class="nc bnc" id="L552" title="All 2 branches missed.">            if (mySecurity.equals(myCurr)) {</span>
+                /* Record it */
+<span class="nc" id="L554">                myActive = myItem;</span>
+            }
+<span class="nc" id="L556">        }</span>
+
+        /* Ensure active item is visible */
+<span class="nc bnc" id="L559" title="All 2 branches missed.">        if (myActive != null) {</span>
+<span class="nc" id="L560">            myActive.scrollToItem();</span>
+        }
+<span class="nc" id="L562">    }</span>
+
+    /**
+     * Build the currency menu for an item.
+     * @param pMenu the menu
+     * @param pSecurity the security to build for
+     */
+    public void buildCurrencyMenu(final TethysUIScrollMenu&lt;MoneyWiseCurrency&gt; pMenu,
+                                  final MoneyWiseSecurity pSecurity) {
+        /* Clear the menu */
+<span class="nc" id="L572">        pMenu.removeAllItems();</span>
+
+        /* Record active item */
+<span class="nc" id="L575">        final MoneyWiseCurrency myCurr = pSecurity.getAssetCurrency();</span>
+<span class="nc" id="L576">        TethysUIScrollItem&lt;MoneyWiseCurrency&gt; myActive = null;</span>
+
+        /* Access Currencies */
+<span class="nc" id="L579">        final MoneyWiseCurrencyList myCurrencies = getDataList(MoneyWiseStaticDataType.CURRENCY, MoneyWiseCurrencyList.class);</span>
+
+        /* Loop through the AccountCurrencies */
+<span class="nc" id="L582">        final Iterator&lt;MoneyWiseCurrency&gt; myIterator = myCurrencies.iterator();</span>
+<span class="nc bnc" id="L583" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L584">            final MoneyWiseCurrency myCurrency = myIterator.next();</span>
+
+            /* Ignore deleted or disabled */
+<span class="nc bnc" id="L587" title="All 4 branches missed.">            final boolean bIgnore = myCurrency.isDeleted() || !myCurrency.getEnabled();</span>
+<span class="nc bnc" id="L588" title="All 2 branches missed.">            if (bIgnore) {</span>
+<span class="nc" id="L589">                continue;</span>
+            }
+
+            /* Create a new action for the currency */
+<span class="nc" id="L593">            final TethysUIScrollItem&lt;MoneyWiseCurrency&gt; myItem = pMenu.addItem(myCurrency);</span>
+
+            /* If this is the active currency */
+<span class="nc bnc" id="L596" title="All 2 branches missed.">            if (myCurrency.equals(myCurr)) {</span>
+                /* Record it */
+<span class="nc" id="L598">                myActive = myItem;</span>
+            }
+<span class="nc" id="L600">        }</span>
+
+        /* Ensure active item is visible */
+<span class="nc bnc" id="L603" title="All 2 branches missed.">        if (myActive != null) {</span>
+<span class="nc" id="L604">            myActive.scrollToItem();</span>
+        }
+<span class="nc" id="L606">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

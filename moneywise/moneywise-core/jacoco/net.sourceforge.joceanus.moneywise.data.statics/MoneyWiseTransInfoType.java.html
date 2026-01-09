@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseTransInfoType.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.data.statics</a> &gt; <span class="el_source">MoneyWiseTransInfoType.java</span></div><h1>MoneyWiseTransInfoType.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.data.statics;
+
+import net.sourceforge.joceanus.metis.data.MetisDataResource;
+import net.sourceforge.joceanus.metis.data.MetisDataType;
+import net.sourceforge.joceanus.metis.field.MetisFieldSet;
+import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
+import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataClass;
+import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataItem;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+
+/**
+ * TransactionInfoType data type.
+ * @author Tony Washer
+ */
+public class MoneyWiseTransInfoType
+        extends PrometheusStaticDataItem {
+    /**
+     * Object name.
+     */
+<span class="fc" id="L39">    public static final String OBJECT_NAME = MoneyWiseStaticDataType.TRANSINFOTYPE.getItemName();</span>
+
+    /**
+     * List name.
+     */
+<span class="fc" id="L44">    public static final String LIST_NAME = MoneyWiseStaticDataType.TRANSINFOTYPE.getListName();</span>
+
+    /**
+     * Report fields.
+     */
+<span class="fc" id="L49">    private static final MetisFieldSet&lt;MoneyWiseTransInfoType&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseTransInfoType.class);</span>
+
+    /**
+     * Data length.
+     */
+    protected static final int DATA_LEN = 20;
+
+    /**
+     * Comment length.
+     */
+    protected static final int COMMENT_LEN = 50;
+
+    /**
+     * Copy Constructor.
+     * @param pList The list to associate the InfoType with
+     * @param pType The InfoType to copy
+     */
+    protected MoneyWiseTransInfoType(final MoneyWiseTransInfoTypeList pList,
+                                     final MoneyWiseTransInfoType pType) {
+<span class="fc" id="L68">        super(pList, pType);</span>
+<span class="fc" id="L69">    }</span>
+
+    /**
+     * Basic Constructor.
+     * @param pList The list to associate the EventInfoType with
+     * @param pName Name of InfoType
+     * @throws OceanusException on error
+     */
+    private MoneyWiseTransInfoType(final MoneyWiseTransInfoTypeList pList,
+                                   final String pName) throws OceanusException {
+<span class="fc" id="L79">        super(pList, pName);</span>
+<span class="fc" id="L80">    }</span>
+
+    /**
+     * Basic Constructor.
+     * @param pList The list to associate the Info Type with
+     * @param pClass Class of Info Type
+     * @throws OceanusException on error
+     */
+    private MoneyWiseTransInfoType(final MoneyWiseTransInfoTypeList pList,
+                                   final MoneyWiseTransInfoClass pClass) throws OceanusException {
+<span class="nc" id="L90">        super(pList, pClass);</span>
+<span class="nc" id="L91">    }</span>
+
+    /**
+     * Values constructor.
+     * @param pList The list to associate the item with
+     * @param pValues the values
+     * @throws OceanusException on error
+     */
+    private MoneyWiseTransInfoType(final MoneyWiseTransInfoTypeList pList,
+                                   final PrometheusDataValues pValues) throws OceanusException {
+<span class="fc" id="L101">        super(pList, pValues);</span>
+<span class="fc" id="L102">    }</span>
+
+    @Override
+    public MetisFieldSetDef getDataFieldSet() {
+<span class="fc" id="L106">        return FIELD_DEFS;</span>
+    }
+
+    /**
+     * Return the Info class of the InfoType.
+     * @return the class
+     */
+    public MoneyWiseTransInfoClass getInfoClass() {
+<span class="fc" id="L114">        return (MoneyWiseTransInfoClass) super.getStaticClass();</span>
+    }
+
+    /**
+     * Return the Data Type of the EventInfoType.
+     * @return the data type
+     */
+    public MetisDataType getDataType() {
+<span class="nc" id="L122">        return getInfoClass().getDataType();</span>
+    }
+
+    /**
+     * is this a Link?
+     * @return true/false
+     */
+    public boolean isLink() {
+<span class="fc" id="L130">        return getInfoClass().isLink();</span>
+    }
+
+    @Override
+    public MoneyWiseTransInfoType getBase() {
+<span class="fc" id="L135">        return (MoneyWiseTransInfoType) super.getBase();</span>
+    }
+
+    @Override
+    public MoneyWiseTransInfoTypeList getList() {
+<span class="fc" id="L140">        return (MoneyWiseTransInfoTypeList) super.getList();</span>
+    }
+
+    /**
+     * Represents a list of {@link MoneyWiseTransInfoType} objects.
+     */
+    public static class MoneyWiseTransInfoTypeList
+            extends PrometheusStaticList&lt;MoneyWiseTransInfoType&gt; {
+        /**
+         * Report fields.
+         */
+<span class="fc" id="L151">        private static final MetisFieldSet&lt;MoneyWiseTransInfoTypeList&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseTransInfoTypeList.class);</span>
+
+        /**
+         * Construct an empty CORE Info list.
+         * @param pData the DataSet for the list
+         */
+        public MoneyWiseTransInfoTypeList(final PrometheusDataSet pData) {
+<span class="fc" id="L158">            super(MoneyWiseTransInfoType.class, pData, MoneyWiseStaticDataType.TRANSINFOTYPE, PrometheusListStyle.CORE);</span>
+<span class="fc" id="L159">        }</span>
+
+        /**
+         * Constructor for a cloned List.
+         * @param pSource the source List
+         */
+        private MoneyWiseTransInfoTypeList(final MoneyWiseTransInfoTypeList pSource) {
+<span class="fc" id="L166">            super(pSource);</span>
+<span class="fc" id="L167">        }</span>
+
+        @Override
+        public MetisFieldSet&lt;MoneyWiseTransInfoTypeList&gt; getDataFieldSet() {
+<span class="nc" id="L171">            return FIELD_DEFS;</span>
+        }
+
+        @Override
+        public String listName() {
+<span class="fc" id="L176">            return LIST_NAME;</span>
+        }
+
+        @Override
+        public MetisFieldSetDef getItemFields() {
+<span class="fc" id="L181">            return MoneyWiseTransInfoType.FIELD_DEFS;</span>
+        }
+
+        @Override
+        protected Class&lt;MoneyWiseTransInfoClass&gt; getEnumClass() {
+<span class="fc" id="L186">            return MoneyWiseTransInfoClass.class;</span>
+        }
+
+        @Override
+        protected MoneyWiseTransInfoTypeList getEmptyList(final PrometheusListStyle pStyle) {
+<span class="fc" id="L191">            final MoneyWiseTransInfoTypeList myList = new MoneyWiseTransInfoTypeList(this);</span>
+<span class="fc" id="L192">            myList.setStyle(pStyle);</span>
+<span class="fc" id="L193">            return myList;</span>
+        }
+
+        @Override
+        public MoneyWiseTransInfoType addCopyItem(final PrometheusDataItem pItem) {
+            /* Can only clone a TransactionInfoType */
+<span class="pc bpc" id="L199" title="1 of 2 branches missed.">            if (!(pItem instanceof MoneyWiseTransInfoType)) {</span>
+<span class="nc" id="L200">                throw new UnsupportedOperationException();</span>
+            }
+
+<span class="fc" id="L203">            final MoneyWiseTransInfoType myType = new MoneyWiseTransInfoType(this, (MoneyWiseTransInfoType) pItem);</span>
+<span class="fc" id="L204">            add(myType);</span>
+<span class="fc" id="L205">            return myType;</span>
+        }
+
+        @Override
+        public MoneyWiseTransInfoType addNewItem() {
+<span class="nc" id="L210">            throw new UnsupportedOperationException();</span>
+        }
+
+        /**
+         * Obtain the type of the item.
+         * @return the type of the item
+         */
+        public String itemType() {
+<span class="nc" id="L218">            return LIST_NAME;</span>
+        }
+
+        /**
+         * Add an InfoType.
+         * @param pType the Name of the InfoType
+         * @return the new type
+         * @throws OceanusException on error
+         */
+        public MoneyWiseTransInfoType addBasicItem(final String pType) throws OceanusException {
+            /* Create a new InfoType */
+<span class="fc" id="L229">            final MoneyWiseTransInfoType myType = new MoneyWiseTransInfoType(this, pType);</span>
+
+            /* Check that this InfoId has not been previously added */
+<span class="pc bpc" id="L232" title="1 of 2 branches missed.">            if (!isIdUnique(myType.getIndexedId())) {</span>
+<span class="nc" id="L233">                myType.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
+<span class="nc" id="L234">                throw new MoneyWiseDataException(myType, ERROR_VALIDATION);</span>
+            }
+
+            /* Add the Type to the list */
+<span class="fc" id="L238">            add(myType);</span>
+<span class="fc" id="L239">            return myType;</span>
+        }
+
+        @Override
+        public MoneyWiseTransInfoType addValuesItem(final PrometheusDataValues pValues) throws OceanusException {
+            /* Create the type */
+<span class="fc" id="L245">            final MoneyWiseTransInfoType myType = new MoneyWiseTransInfoType(this, pValues);</span>
+
+            /* Check that this TypeId has not been previously added */
+<span class="pc bpc" id="L248" title="1 of 2 branches missed.">            if (!isIdUnique(myType.getIndexedId())) {</span>
+<span class="nc" id="L249">                myType.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
+<span class="nc" id="L250">                throw new MoneyWiseDataException(myType, ERROR_VALIDATION);</span>
+            }
+
+            /* Add to the list */
+<span class="fc" id="L254">            add(myType);</span>
+
+            /* Return it */
+<span class="fc" id="L257">            return myType;</span>
+        }
+
+        @Override
+        protected MoneyWiseTransInfoType newItem(final PrometheusStaticDataClass pClass) throws OceanusException {
+            /* Create the type */
+<span class="nc" id="L263">            final MoneyWiseTransInfoType myType = new MoneyWiseTransInfoType(this, (MoneyWiseTransInfoClass) pClass);</span>
+
+            /* Check that this TypeId has not been previously added */
+<span class="nc bnc" id="L266" title="All 2 branches missed.">            if (!isIdUnique(myType.getIndexedId())) {</span>
+<span class="nc" id="L267">                myType.addError(ERROR_DUPLICATE, MetisDataResource.DATA_ID);</span>
+<span class="nc" id="L268">                throw new MoneyWiseDataException(myType, ERROR_VALIDATION);</span>
+            }
+
+            /* Add to the list */
+<span class="nc" id="L272">            add(myType);</span>
+
+            /* Return it */
+<span class="nc" id="L275">            return myType;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

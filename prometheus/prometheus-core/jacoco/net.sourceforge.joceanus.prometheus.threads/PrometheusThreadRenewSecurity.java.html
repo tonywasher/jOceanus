@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PrometheusThreadRenewSecurity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Prometheus Core Application Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.prometheus.threads</a> &gt; <span class="el_source">PrometheusThreadRenewSecurity.java</span></div><h1>PrometheusThreadRenewSecurity.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Prometheus: Application Framework
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.prometheus.threads;
+
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
+import net.sourceforge.joceanus.prometheus.views.PrometheusDataControl;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.tethys.api.thread.TethysUIThread;
+import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadManager;
+
+/**
+ * Thread to renew security in the data set. A new ControlKey will be created using the same
+ * password as the existing security, together with a new set of encryption DataKeys. All encrypted
+ * fields in the data set will then be re-encrypted with the new ControlKey, and finally the
+ * ControlData will be updated to use the new controlKey. Data will be left in the Updated state
+ * ready for committing the change to the database.
+ */
+public class PrometheusThreadRenewSecurity
+        implements TethysUIThread&lt;PrometheusDataSet&gt; {
+    /**
+     * Data Control.
+     */
+    private final PrometheusDataControl theControl;
+
+    /**
+     * Constructor (Event Thread).
+     * @param pControl data control
+     */
+<span class="nc" id="L43">    public PrometheusThreadRenewSecurity(final PrometheusDataControl pControl) {</span>
+<span class="nc" id="L44">        theControl = pControl;</span>
+<span class="nc" id="L45">    }</span>
+
+    @Override
+    public String getTaskName() {
+<span class="nc" id="L49">        return PrometheusThreadId.RENEWSECURITY.toString();</span>
+    }
+
+    @Override
+    public PrometheusDataSet performTask(final TethysUIThreadManager pManager) throws OceanusException {
+        /* Initialise the status window */
+<span class="nc" id="L55">        pManager.initTask(getTaskName());</span>
+
+        /* Access Data */
+<span class="nc" id="L58">        PrometheusDataSet myData = theControl.getData();</span>
+<span class="nc" id="L59">        myData = myData.deriveCloneSet();</span>
+
+        /* ReNew Security */
+<span class="nc" id="L62">        myData.renewSecurity(pManager);</span>
+
+        /* State that we have completed */
+<span class="nc" id="L65">        pManager.setCompletion();</span>
+
+        /* Return null */
+<span class="nc" id="L68">        return myData;</span>
+    }
+
+    @Override
+    public void processResult(final PrometheusDataSet pResult) {
+<span class="nc" id="L73">        theControl.setData(pResult);</span>
+<span class="nc" id="L74">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

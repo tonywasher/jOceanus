@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseQIFEventCategory.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.quicken.file</a> &gt; <span class="el_source">MoneyWiseQIFEventCategory.java</span></div><h1>MoneyWiseQIFEventCategory.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.quicken.file;
+
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
+import net.sourceforge.joceanus.moneywise.quicken.definitions.MoneyWiseQCategoryLineType;
+import net.sourceforge.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFStringLine;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+
+import java.util.List;
+
+/**
+ * Class representing a QIF Category record.
+ */
+public class MoneyWiseQIFEventCategory
+        extends MoneyWiseQIFRecord&lt;MoneyWiseQCategoryLineType&gt;
+        implements Comparable&lt;MoneyWiseQIFEventCategory&gt; {
+    /**
+     * Item type.
+     */
+    protected static final String QIF_ITEM = &quot;Cat&quot;;
+
+    /**
+     * The Category Name.
+     */
+    private final String theName;
+
+    /**
+     * The Category Description.
+     */
+    private final String theDesc;
+
+    /**
+     * The Category Type.
+     */
+    private final boolean isIncome;
+
+    /**
+     * Constructor.
+     * @param pFile the QIF File
+     * @param pCategory the Event Category
+     */
+    public MoneyWiseQIFEventCategory(final MoneyWiseQIFFile pFile,
+                                     final MoneyWiseTransCategory pCategory) {
+        /* Call super-constructor */
+<span class="nc" id="L61">        super(pFile, MoneyWiseQCategoryLineType.class);</span>
+
+        /* Store data */
+<span class="nc" id="L64">        theName = pCategory.getName();</span>
+<span class="nc" id="L65">        theDesc = pCategory.getDesc();</span>
+
+        /* Determine whether this is an income category */
+<span class="nc" id="L68">        final MoneyWiseTransCategoryClass myClass = pCategory.getCategoryTypeClass();</span>
+<span class="nc" id="L69">        isIncome = myClass.isIncome();</span>
+
+        /* Build lines */
+<span class="nc" id="L72">        addLine(new MoneyWiseQIFCategoryNameLine(theName));</span>
+<span class="nc bnc" id="L73" title="All 2 branches missed.">        if (theDesc != null) {</span>
+<span class="nc" id="L74">            addLine(new MoneyWiseQIFCategoryDescLine(theDesc));</span>
+        }
+<span class="nc bnc" id="L76" title="All 2 branches missed.">        if (isIncome) {</span>
+<span class="nc" id="L77">            addLine(new MoneyWiseQIFCategoryIncomeLine());</span>
+        } else {
+<span class="nc" id="L79">            addLine(new MoneyWiseQIFCategoryExpenseLine());</span>
+        }
+<span class="nc" id="L81">    }</span>
+
+    /**
+     * Constructor.
+     * @param pFile the QIF File
+     * @param pLines the data lines
+     */
+    protected MoneyWiseQIFEventCategory(final MoneyWiseQIFFile pFile,
+                                        final List&lt;String&gt; pLines) {
+        /* Call super-constructor */
+<span class="nc" id="L91">        super(pFile, MoneyWiseQCategoryLineType.class);</span>
+
+        /* Determine details */
+<span class="nc" id="L94">        String myName = null;</span>
+<span class="nc" id="L95">        String myDesc = null;</span>
+<span class="nc" id="L96">        boolean bIsIncome = false;</span>
+
+        /* Loop through the lines */
+<span class="nc bnc" id="L99" title="All 2 branches missed.">        for (String myLine : pLines) {</span>
+            /* Determine the category */
+<span class="nc" id="L101">            final MoneyWiseQCategoryLineType myType = MoneyWiseQCategoryLineType.parseLine(myLine);</span>
+<span class="nc bnc" id="L102" title="All 2 branches missed.">            if (myType != null) {</span>
+                /* Access data */
+<span class="nc" id="L104">                final String myData = myLine.substring(myType.getSymbol().length());</span>
+
+                /* Switch on line type */
+<span class="nc bnc" id="L107" title="All 5 branches missed.">                switch (myType) {</span>
+                    case NAME:
+<span class="nc" id="L109">                        addLine(new MoneyWiseQIFCategoryNameLine(myData));</span>
+<span class="nc" id="L110">                        myName = myData;</span>
+<span class="nc" id="L111">                        break;</span>
+                    case DESCRIPTION:
+<span class="nc" id="L113">                        addLine(new MoneyWiseQIFCategoryDescLine(myData));</span>
+<span class="nc" id="L114">                        myDesc = myData;</span>
+<span class="nc" id="L115">                        break;</span>
+                    case INCOME:
+<span class="nc" id="L117">                        addLine(new MoneyWiseQIFCategoryIncomeLine());</span>
+<span class="nc" id="L118">                        bIsIncome = true;</span>
+<span class="nc" id="L119">                        break;</span>
+                    case EXPENSE:
+<span class="nc" id="L121">                        addLine(new MoneyWiseQIFCategoryExpenseLine());</span>
+<span class="nc" id="L122">                        bIsIncome = false;</span>
+<span class="nc" id="L123">                        break;</span>
+                    case TAX:
+                    default:
+                        break;
+                }
+            }
+<span class="nc" id="L129">        }</span>
+
+        /* Build details */
+<span class="nc" id="L132">        theName = myName;</span>
+<span class="nc" id="L133">        theDesc = myDesc;</span>
+<span class="nc" id="L134">        isIncome = bIsIncome;</span>
+<span class="nc" id="L135">    }</span>
+
+    @Override
+    public String toString() {
+<span class="nc" id="L139">        return getName();</span>
+    }
+
+    /**
+     * Obtain the Name.
+     * @return the Name
+     */
+    public String getName() {
+<span class="nc" id="L147">        return theName;</span>
+    }
+
+    /**
+     * Obtain the Description.
+     * @return the description
+     */
+    public String getDesc() {
+<span class="nc" id="L155">        return theDesc;</span>
+    }
+
+    /**
+     * Is the Category an income category.
+     * @return true/false
+     */
+    public boolean isIncome() {
+<span class="nc" id="L163">        return isIncome;</span>
+    }
+
+    /**
+     * Is the Category an expense category.
+     * @return true/false
+     */
+    public boolean isExpense() {
+<span class="nc bnc" id="L171" title="All 2 branches missed.">        return !isIncome;</span>
+    }
+
+    @Override
+    public int compareTo(final MoneyWiseQIFEventCategory pThat) {
+<span class="nc" id="L176">        return theName.compareTo(pThat.getName());</span>
+    }
+
+    /**
+     * The Category Name line.
+     */
+    public static class MoneyWiseQIFCategoryNameLine
+            extends MoneyWiseQIFStringLine&lt;MoneyWiseQCategoryLineType&gt; {
+        /**
+         * Constructor.
+         * @param pName the Name
+         */
+        protected MoneyWiseQIFCategoryNameLine(final String pName) {
+            /* Call super-constructor */
+<span class="nc" id="L190">            super(pName);</span>
+<span class="nc" id="L191">        }</span>
+
+        @Override
+        public MoneyWiseQCategoryLineType getLineType() {
+<span class="nc" id="L195">            return MoneyWiseQCategoryLineType.NAME;</span>
+        }
+
+        /**
+         * Obtain name.
+         * @return the name
+         */
+        public String getName() {
+<span class="nc" id="L203">            return getValue();</span>
+        }
+    }
+
+    /**
+     * The Category Description line.
+     */
+    public static class MoneyWiseQIFCategoryDescLine
+            extends MoneyWiseQIFStringLine&lt;MoneyWiseQCategoryLineType&gt; {
+        /**
+         * Constructor.
+         * @param pDesc the Description
+         */
+        protected MoneyWiseQIFCategoryDescLine(final String pDesc) {
+            /* Call super-constructor */
+<span class="nc" id="L218">            super(pDesc);</span>
+<span class="nc" id="L219">        }</span>
+
+        @Override
+        public MoneyWiseQCategoryLineType getLineType() {
+<span class="nc" id="L223">            return MoneyWiseQCategoryLineType.DESCRIPTION;</span>
+        }
+
+        /**
+         * Obtain description.
+         * @return the description
+         */
+        public String getDescription() {
+<span class="nc" id="L231">            return getValue();</span>
+        }
+    }
+
+    /**
+     * The Category Income line.
+     */
+    public static class MoneyWiseQIFCategoryIncomeLine
+            extends MoneyWiseQIFLine&lt;MoneyWiseQCategoryLineType&gt; {
+        /**
+         * Constructor.
+         */
+<span class="nc" id="L243">        protected MoneyWiseQIFCategoryIncomeLine() {</span>
+<span class="nc" id="L244">        }</span>
+
+        @Override
+        public MoneyWiseQCategoryLineType getLineType() {
+<span class="nc" id="L248">            return MoneyWiseQCategoryLineType.INCOME;</span>
+        }
+
+        @Override
+        public String toString() {
+<span class="nc" id="L253">            return getLineType().getSymbol();</span>
+        }
+
+        @Override
+        protected void formatData(final OceanusDataFormatter pFormatter,
+                                  final StringBuilder pBuilder) {
+            /* No data */
+<span class="nc" id="L260">        }</span>
+    }
+
+    /**
+     * The Category Expense line.
+     */
+    public static class MoneyWiseQIFCategoryExpenseLine
+            extends MoneyWiseQIFLine&lt;MoneyWiseQCategoryLineType&gt; {
+        /**
+         * Constructor.
+         */
+<span class="nc" id="L271">        protected MoneyWiseQIFCategoryExpenseLine() {</span>
+<span class="nc" id="L272">        }</span>
+
+        @Override
+        public MoneyWiseQCategoryLineType getLineType() {
+<span class="nc" id="L276">            return MoneyWiseQCategoryLineType.EXPENSE;</span>
+        }
+
+        @Override
+        public String toString() {
+<span class="nc" id="L281">            return getLineType().getSymbol();</span>
+        }
+
+        @Override
+        protected void formatData(final OceanusDataFormatter pFormatter,
+                                  final StringBuilder pBuilder) {
+            /* No data */
+<span class="nc" id="L288">        }</span>
+    }
+
+    /**
+     * The Category Tax line.
+     */
+    public static class MoneyWiseQIFCategoryTaxLine
+            extends MoneyWiseQIFLine&lt;MoneyWiseQCategoryLineType&gt; {
+        /**
+         * Constructor.
+         */
+<span class="nc" id="L299">        protected MoneyWiseQIFCategoryTaxLine() {</span>
+<span class="nc" id="L300">        }</span>
+
+        @Override
+        public MoneyWiseQCategoryLineType getLineType() {
+<span class="nc" id="L304">            return MoneyWiseQCategoryLineType.TAX;</span>
+        }
+
+        @Override
+        public String toString() {
+<span class="nc" id="L309">            return getLineType().getSymbol();</span>
+        }
+
+        @Override
+        protected void formatData(final OceanusDataFormatter pFormatter,
+                                  final StringBuilder pBuilder) {
+            /* No data */
+<span class="nc" id="L316">        }</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

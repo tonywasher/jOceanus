@@ -1,0 +1,531 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseDepositAnalysisSelect.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.lethe.ui.controls</a> &gt; <span class="el_source">MoneyWiseDepositAnalysisSelect.java</span></div><h1>MoneyWiseDepositAnalysisSelect.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.lethe.ui.controls;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
+import net.sourceforge.joceanus.metis.data.MetisDataDifference;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisDepositBucket;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisDepositBucket.MoneyWiseAnalysisDepositBucketList;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisDepositCategoryBucket;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisDepositCategoryBucket.MoneyWiseAnalysisDepositCategoryBucketList;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDepositCategory;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseDepositCategoryClass;
+import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter;
+import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisDepositFilter;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
+import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIConstant;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
+import net.sourceforge.joceanus.tethys.api.button.TethysUIButtonFactory;
+import net.sourceforge.joceanus.tethys.api.button.TethysUIScrollButtonManager;
+import net.sourceforge.joceanus.tethys.api.control.TethysUIControlFactory;
+import net.sourceforge.joceanus.tethys.api.control.TethysUILabel;
+import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollItem;
+import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollMenu;
+import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollSubMenu;
+import net.sourceforge.joceanus.tethys.api.pane.TethysUIBoxPaneManager;
+
+/**
+ * Deposit Analysis Selection.
+ */
+public class MoneyWiseDepositAnalysisSelect
+        implements MoneyWiseAnalysisFilterSelection, OceanusEventProvider&lt;PrometheusDataEvent&gt; {
+    /**
+     * Text for Category Label.
+     */
+<span class="nc" id="L60">    private static final String NLS_CATEGORY = MoneyWiseBasicDataType.DEPOSITCATEGORY.getItemName();</span>
+
+    /**
+     * Text for Deposit Label.
+     */
+<span class="nc" id="L65">    private static final String NLS_DEPOSIT = MoneyWiseBasicDataType.DEPOSIT.getItemName();</span>
+
+    /**
+     * The Event Manager.
+     */
+    private final OceanusEventManager&lt;PrometheusDataEvent&gt; theEventManager;
+
+    /**
+     * The panel.
+     */
+    private final TethysUIBoxPaneManager thePanel;
+
+    /**
+     * The deposit button.
+     */
+    private final TethysUIScrollButtonManager&lt;MoneyWiseAnalysisDepositBucket&gt; theDepositButton;
+
+    /**
+     * The category button.
+     */
+    private final TethysUIScrollButtonManager&lt;MoneyWiseDepositCategory&gt; theCatButton;
+
+    /**
+     * Category menu.
+     */
+    private final TethysUIScrollMenu&lt;MoneyWiseDepositCategory&gt; theCategoryMenu;
+
+    /**
+     * Deposit menu.
+     */
+    private final TethysUIScrollMenu&lt;MoneyWiseAnalysisDepositBucket&gt; theDepositMenu;
+
+    /**
+     * The active category bucket list.
+     */
+    private MoneyWiseAnalysisDepositCategoryBucketList theCategories;
+
+    /**
+     * The active deposit bucket list.
+     */
+    private MoneyWiseAnalysisDepositBucketList theDeposits;
+
+    /**
+     * The state.
+     */
+    private MoneyWiseDepositState theState;
+
+    /**
+     * The savePoint.
+     */
+    private MoneyWiseDepositState theSavePoint;
+
+    /**
+     * Constructor.
+     * @param pFactory the GUI factory
+     */
+<span class="nc" id="L121">    protected MoneyWiseDepositAnalysisSelect(final TethysUIFactory&lt;?&gt; pFactory) {</span>
+        /* Create the deposit button */
+<span class="nc" id="L123">        final TethysUIButtonFactory&lt;?&gt; myButtons = pFactory.buttonFactory();</span>
+<span class="nc" id="L124">        theDepositButton = myButtons.newScrollButton(MoneyWiseAnalysisDepositBucket.class);</span>
+
+        /* Create the category button */
+<span class="nc" id="L127">        theCatButton = myButtons.newScrollButton(MoneyWiseDepositCategory.class);</span>
+
+        /* Create Event Manager */
+<span class="nc" id="L130">        theEventManager = new OceanusEventManager&lt;&gt;();</span>
+
+        /* Create the labels */
+<span class="nc" id="L133">        final TethysUIControlFactory myControls = pFactory.controlFactory();</span>
+<span class="nc" id="L134">        final TethysUILabel myCatLabel = myControls.newLabel(NLS_CATEGORY + TethysUIConstant.STR_COLON);</span>
+<span class="nc" id="L135">        final TethysUILabel myDepLabel = myControls.newLabel(NLS_DEPOSIT + TethysUIConstant.STR_COLON);</span>
+
+        /* Define the layout */
+<span class="nc" id="L138">        thePanel = pFactory.paneFactory().newHBoxPane();</span>
+<span class="nc" id="L139">        thePanel.addSpacer();</span>
+<span class="nc" id="L140">        thePanel.addNode(myCatLabel);</span>
+<span class="nc" id="L141">        thePanel.addNode(theCatButton);</span>
+<span class="nc" id="L142">        thePanel.addStrut();</span>
+<span class="nc" id="L143">        thePanel.addNode(myDepLabel);</span>
+<span class="nc" id="L144">        thePanel.addNode(theDepositButton);</span>
+
+        /* Create initial state */
+<span class="nc" id="L147">        theState = new MoneyWiseDepositState();</span>
+<span class="nc" id="L148">        theState.applyState();</span>
+
+        /* Access the menus */
+<span class="nc" id="L151">        theCategoryMenu = theCatButton.getMenu();</span>
+<span class="nc" id="L152">        theDepositMenu = theDepositButton.getMenu();</span>
+
+        /* Create the listeners */
+<span class="nc" id="L155">        OceanusEventRegistrar&lt;TethysUIEvent&gt; myRegistrar = theCatButton.getEventRegistrar();</span>
+<span class="nc" id="L156">        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -&gt; handleNewCategory());</span>
+<span class="nc" id="L157">        theCatButton.setMenuConfigurator(e -&gt; buildCategoryMenu());</span>
+<span class="nc" id="L158">        myRegistrar = theDepositButton.getEventRegistrar();</span>
+<span class="nc" id="L159">        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -&gt; handleNewDeposit());</span>
+<span class="nc" id="L160">        theDepositButton.setMenuConfigurator(e -&gt; buildDepositMenu());</span>
+<span class="nc" id="L161">    }</span>
+
+    @Override
+    public TethysUIComponent getUnderlying() {
+<span class="nc" id="L165">        return thePanel;</span>
+    }
+
+    @Override
+    public OceanusEventRegistrar&lt;PrometheusDataEvent&gt; getEventRegistrar() {
+<span class="nc" id="L170">        return theEventManager.getEventRegistrar();</span>
+    }
+
+    @Override
+    public MoneyWiseAnalysisDepositFilter getFilter() {
+<span class="nc" id="L175">        return theState.getFilter();</span>
+    }
+
+    @Override
+    public boolean isAvailable() {
+<span class="nc bnc" id="L180" title="All 2 branches missed.">        return theDeposits != null</span>
+<span class="nc bnc" id="L181" title="All 2 branches missed.">                &amp;&amp; !theDeposits.isEmpty();</span>
+    }
+
+    /**
+     * Create SavePoint.
+     */
+    protected void createSavePoint() {
+        /* Create the savePoint */
+<span class="nc" id="L189">        theSavePoint = new MoneyWiseDepositState(theState);</span>
+<span class="nc" id="L190">    }</span>
+
+    /**
+     * Restore SavePoint.
+     */
+    protected void restoreSavePoint() {
+        /* Restore the savePoint */
+<span class="nc" id="L197">        theState = new MoneyWiseDepositState(theSavePoint);</span>
+
+        /* Apply the state */
+<span class="nc" id="L200">        theState.applyState();</span>
+<span class="nc" id="L201">    }</span>
+
+    @Override
+    public void setEnabled(final boolean bEnabled) {
+        /* Determine whether there are any Deposits to select */
+<span class="nc bnc" id="L206" title="All 4 branches missed.">        final boolean dpAvailable = bEnabled &amp;&amp; isAvailable();</span>
+
+        /* Pass call on to buttons */
+<span class="nc" id="L209">        theDepositButton.setEnabled(dpAvailable);</span>
+<span class="nc" id="L210">        theCatButton.setEnabled(dpAvailable);</span>
+<span class="nc" id="L211">    }</span>
+
+    /**
+     * Set analysis.
+     * @param pAnalysis the analysis.
+     */
+    public void setAnalysis(final MoneyWiseAnalysis pAnalysis) {
+        /* Access buckets */
+<span class="nc" id="L219">        theCategories = pAnalysis.getDepositCategories();</span>
+<span class="nc" id="L220">        theDeposits = pAnalysis.getDeposits();</span>
+
+        /* Obtain the current deposit */
+<span class="nc" id="L223">        MoneyWiseAnalysisDepositBucket myDeposit = theState.getDeposit();</span>
+
+        /* Switch to versions from the analysis */
+<span class="nc bnc" id="L226" title="All 2 branches missed.">        myDeposit = myDeposit != null</span>
+<span class="nc" id="L227">                ? theDeposits.getMatchingDeposit(myDeposit.getAccount())</span>
+<span class="nc" id="L228">                : theDeposits.getDefaultDeposit();</span>
+
+        /* Set the deposit */
+<span class="nc" id="L231">        theState.setTheDeposit(myDeposit);</span>
+<span class="nc" id="L232">        theState.setDateRange(pAnalysis.getDateRange());</span>
+<span class="nc" id="L233">        theState.applyState();</span>
+<span class="nc" id="L234">    }</span>
+
+    @Override
+    public void setFilter(final MoneyWiseAnalysisFilter&lt;?, ?&gt; pFilter) {
+        /* If this is the correct filter type */
+<span class="nc bnc" id="L239" title="All 2 branches missed.">        if (pFilter instanceof MoneyWiseAnalysisDepositFilter) {</span>
+            /* Access filter */
+<span class="nc" id="L241">            final MoneyWiseAnalysisDepositFilter myFilter = (MoneyWiseAnalysisDepositFilter) pFilter;</span>
+
+            /* Obtain the filter bucket */
+<span class="nc" id="L244">            MoneyWiseAnalysisDepositBucket myDeposit = myFilter.getBucket();</span>
+
+            /* Obtain equivalent bucket */
+<span class="nc" id="L247">            myDeposit = theDeposits.getMatchingDeposit(myDeposit.getAccount());</span>
+
+            /* Set the deposit */
+<span class="nc" id="L250">            theState.setTheDeposit(myDeposit);</span>
+<span class="nc" id="L251">            theState.setDateRange(myFilter.getDateRange());</span>
+<span class="nc" id="L252">            theState.applyState();</span>
+        }
+<span class="nc" id="L254">    }</span>
+
+    /**
+     * Obtain the default Deposit for the category.
+     * @param pCategory the category
+     * @return the bucket
+     */
+    protected MoneyWiseAnalysisDepositBucket getDefaultDeposit(final MoneyWiseDepositCategory pCategory) {
+<span class="nc" id="L262">        return theDeposits.getDefaultDeposit(pCategory);</span>
+    }
+
+    /**
+     * Handle new Category.
+     */
+    private void handleNewCategory() {
+        /* Select the new category */
+<span class="nc bnc" id="L270" title="All 2 branches missed.">        if (theState.setCategory(theCatButton.getValue())) {</span>
+<span class="nc" id="L271">            theState.applyState();</span>
+<span class="nc" id="L272">            theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);</span>
+        }
+<span class="nc" id="L274">    }</span>
+
+    /**
+     * Handle new Deposit.
+     */
+    private void handleNewDeposit() {
+        /* Select the new deposit */
+<span class="nc bnc" id="L281" title="All 2 branches missed.">        if (theState.setDeposit(theDepositButton.getValue())) {</span>
+<span class="nc" id="L282">            theState.applyState();</span>
+<span class="nc" id="L283">            theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);</span>
+        }
+<span class="nc" id="L285">    }</span>
+
+    /**
+     * Build Category menu.
+     */
+    private void buildCategoryMenu() {
+        /* Reset the popUp menu */
+<span class="nc" id="L292">        theCategoryMenu.removeAllItems();</span>
+
+        /* Create a simple map for top-level categories */
+<span class="nc" id="L295">        final Map&lt;String, TethysUIScrollSubMenu&lt;MoneyWiseDepositCategory&gt;&gt; myMap = new HashMap&lt;&gt;();</span>
+
+        /* Record active item */
+<span class="nc" id="L298">        final MoneyWiseDepositCategory myCurrent = theState.getCategory();</span>
+<span class="nc" id="L299">        TethysUIScrollItem&lt;MoneyWiseDepositCategory&gt; myActive = null;</span>
+
+        /* Re-Loop through the available category values */
+<span class="nc" id="L302">        final Iterator&lt;MoneyWiseAnalysisDepositCategoryBucket&gt; myIterator = theCategories.iterator();</span>
+<span class="nc bnc" id="L303" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L304">            final MoneyWiseAnalysisDepositCategoryBucket myBucket = myIterator.next();</span>
+
+            /* Only process low-level items */
+<span class="nc bnc" id="L307" title="All 2 branches missed.">            if (myBucket.getAccountCategory().isCategoryClass(MoneyWiseDepositCategoryClass.PARENT)) {</span>
+<span class="nc" id="L308">                continue;</span>
+            }
+
+            /* Determine menu to add to */
+<span class="nc" id="L312">            final MoneyWiseDepositCategory myParent = myBucket.getAccountCategory().getParentCategory();</span>
+<span class="nc" id="L313">            final String myParentName = myParent.getName();</span>
+<span class="nc" id="L314">            final TethysUIScrollSubMenu&lt;MoneyWiseDepositCategory&gt; myMenu = myMap.computeIfAbsent(myParentName, theCategoryMenu::addSubMenu);</span>
+
+            /* Create a new JMenuItem and add it to the popUp */
+<span class="nc" id="L317">            final MoneyWiseDepositCategory myCategory = myBucket.getAccountCategory();</span>
+<span class="nc" id="L318">            final TethysUIScrollItem&lt;MoneyWiseDepositCategory&gt; myItem = myMenu.getSubMenu().addItem(myCategory, myCategory.getSubCategory());</span>
+
+            /* If this is the active category */
+<span class="nc bnc" id="L321" title="All 2 branches missed.">            if (myCategory.equals(myCurrent)) {</span>
+                /* Record it */
+<span class="nc" id="L323">                myActive = myItem;</span>
+            }
+<span class="nc" id="L325">        }</span>
+
+        /* Ensure active item is visible */
+<span class="nc bnc" id="L328" title="All 2 branches missed.">        if (myActive != null) {</span>
+<span class="nc" id="L329">            myActive.scrollToItem();</span>
+        }
+<span class="nc" id="L331">    }</span>
+
+    /**
+     * Build Deposit menu.
+     */
+    private void buildDepositMenu() {
+        /* Reset the popUp menu */
+<span class="nc" id="L338">        theDepositMenu.removeAllItems();</span>
+
+        /* Access current category */
+<span class="nc" id="L341">        final MoneyWiseDepositCategory myCategory = theState.getCategory();</span>
+<span class="nc" id="L342">        final MoneyWiseAnalysisDepositBucket myDeposit = theState.getDeposit();</span>
+
+        /* Record active item */
+<span class="nc" id="L345">        TethysUIScrollItem&lt;MoneyWiseAnalysisDepositBucket&gt; myActive = null;</span>
+
+        /* Loop through the available account values */
+<span class="nc" id="L348">        final Iterator&lt;MoneyWiseAnalysisDepositBucket&gt; myIterator = theDeposits.iterator();</span>
+<span class="nc bnc" id="L349" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L350">            final MoneyWiseAnalysisDepositBucket myBucket = myIterator.next();</span>
+
+            /* Ignore if not the correct category */
+<span class="nc bnc" id="L353" title="All 2 branches missed.">            if (!MetisDataDifference.isEqual(myCategory, myBucket.getCategory())) {</span>
+<span class="nc" id="L354">                continue;</span>
+            }
+
+            /* Create a new JMenuItem and add it to the popUp */
+<span class="nc" id="L358">            final TethysUIScrollItem&lt;MoneyWiseAnalysisDepositBucket&gt; myItem = theDepositMenu.addItem(myBucket);</span>
+
+            /* If this is the active deposit */
+<span class="nc bnc" id="L361" title="All 2 branches missed.">            if (myBucket.equals(myDeposit)) {</span>
+                /* Record it */
+<span class="nc" id="L363">                myActive = myItem;</span>
+            }
+<span class="nc" id="L365">        }</span>
+
+        /* Ensure active item is visible */
+<span class="nc bnc" id="L368" title="All 2 branches missed.">        if (myActive != null) {</span>
+<span class="nc" id="L369">            myActive.scrollToItem();</span>
+        }
+<span class="nc" id="L371">    }</span>
+
+    /**
+     * SavePoint values.
+     */
+    private final class MoneyWiseDepositState {
+        /**
+         * The active Category.
+         */
+        private MoneyWiseDepositCategory theCategory;
+
+        /**
+         * The active DepositBucket.
+         */
+        private MoneyWiseAnalysisDepositBucket theDeposit;
+
+        /**
+         * The dateRange.
+         */
+        private OceanusDateRange theDateRange;
+
+        /**
+         * The active Filter.
+         */
+        private MoneyWiseAnalysisDepositFilter theFilter;
+
+        /**
+         * Constructor.
+         */
+<span class="nc" id="L400">        private MoneyWiseDepositState() {</span>
+<span class="nc" id="L401">        }</span>
+
+        /**
+         * Constructor.
+         * @param pState state to copy from
+         */
+<span class="nc" id="L407">        private MoneyWiseDepositState(final MoneyWiseDepositState pState) {</span>
+            /* Initialise state */
+<span class="nc" id="L409">            theDeposit = pState.getDeposit();</span>
+<span class="nc" id="L410">            theCategory = pState.getCategory();</span>
+<span class="nc" id="L411">            theDateRange = pState.getDateRange();</span>
+<span class="nc" id="L412">            theFilter = pState.getFilter();</span>
+<span class="nc" id="L413">        }</span>
+
+        /**
+         * Obtain the Deposit Bucket.
+         * @return the Deposit
+         */
+        private MoneyWiseAnalysisDepositBucket getDeposit() {
+<span class="nc" id="L420">            return theDeposit;</span>
+        }
+
+        /**
+         * Obtain the Category.
+         * @return the category
+         */
+        private MoneyWiseDepositCategory getCategory() {
+<span class="nc" id="L428">            return theCategory;</span>
+        }
+
+        /**
+         * Obtain the dateRange.
+         * @return the dateRange
+         */
+        private OceanusDateRange getDateRange() {
+<span class="nc" id="L436">            return theDateRange;</span>
+        }
+
+        /**
+         * Obtain the Filter.
+         * @return the filter
+         */
+        private MoneyWiseAnalysisDepositFilter getFilter() {
+<span class="nc" id="L444">            return theFilter;</span>
+        }
+
+        /**
+         * Set new Deposit.
+         * @param pDeposit the Deposit
+         * @return true/false did a change occur
+         */
+        private boolean setDeposit(final MoneyWiseAnalysisDepositBucket pDeposit) {
+            /* Adjust the selected deposit */
+<span class="nc bnc" id="L454" title="All 2 branches missed.">            if (!MetisDataDifference.isEqual(pDeposit, theDeposit)) {</span>
+                /* Store the deposit */
+<span class="nc" id="L456">                setTheDeposit(pDeposit);</span>
+<span class="nc" id="L457">                return true;</span>
+            }
+<span class="nc" id="L459">            return false;</span>
+        }
+
+        /**
+         * Set the Deposit.
+         * @param pDeposit the Deposit
+         */
+        private void setTheDeposit(final MoneyWiseAnalysisDepositBucket pDeposit) {
+            /* Access category for account */
+<span class="nc bnc" id="L468" title="All 2 branches missed.">            final MoneyWiseDepositCategory myCategory = pDeposit == null</span>
+<span class="nc" id="L469">                    ? null</span>
+<span class="nc" id="L470">                    : pDeposit.getCategory();</span>
+<span class="nc" id="L471">            setTheDeposit(myCategory, pDeposit);</span>
+<span class="nc" id="L472">        }</span>
+
+        /**
+         * Set the Deposit.
+         * @param pCategory the category
+         * @param pDeposit the Deposit
+         */
+        private void setTheDeposit(final MoneyWiseDepositCategory pCategory,
+                                   final MoneyWiseAnalysisDepositBucket pDeposit) {
+            /* Store the deposit */
+<span class="nc" id="L482">            theDeposit = pDeposit;</span>
+<span class="nc" id="L483">            theCategory = pCategory;</span>
+
+            /* Access filter */
+<span class="nc bnc" id="L486" title="All 2 branches missed.">            if (theDeposit != null) {</span>
+<span class="nc" id="L487">                theFilter = new MoneyWiseAnalysisDepositFilter(theDeposit);</span>
+<span class="nc" id="L488">                theFilter.setDateRange(theDateRange);</span>
+            } else {
+<span class="nc" id="L490">                theFilter = null;</span>
+            }
+<span class="nc" id="L492">        }</span>
+
+        /**
+         * Set new Category.
+         * @param pCategory the Category
+         * @return true/false did a change occur
+         */
+        private boolean setCategory(final MoneyWiseDepositCategory pCategory) {
+            /* Adjust the selected category */
+<span class="nc bnc" id="L501" title="All 2 branches missed.">            if (!MetisDataDifference.isEqual(pCategory, theCategory)) {</span>
+<span class="nc" id="L502">                setTheDeposit(pCategory, getDefaultDeposit(pCategory));</span>
+<span class="nc" id="L503">                return true;</span>
+            }
+<span class="nc" id="L505">            return false;</span>
+        }
+
+        /**
+         * Set the dateRange.
+         * @param pRange the dateRange
+         */
+        private void setDateRange(final OceanusDateRange pRange) {
+            /* Store the dateRange */
+<span class="nc" id="L514">            theDateRange = pRange;</span>
+<span class="nc bnc" id="L515" title="All 2 branches missed.">            if (theFilter != null) {</span>
+<span class="nc" id="L516">                theFilter.setDateRange(theDateRange);</span>
+            }
+<span class="nc" id="L518">        }</span>
+
+        /**
+         * Apply the State.
+         */
+        private void applyState() {
+            /* Adjust the lock-down */
+<span class="nc" id="L525">            setEnabled(true);</span>
+<span class="nc" id="L526">            theDepositButton.setValue(theDeposit);</span>
+<span class="nc" id="L527">            theCatButton.setValue(theCategory);</span>
+<span class="nc" id="L528">        }</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

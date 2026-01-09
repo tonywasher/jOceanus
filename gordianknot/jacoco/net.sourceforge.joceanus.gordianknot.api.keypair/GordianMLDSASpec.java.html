@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianMLDSASpec.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.gordianknot.api.keypair</a> &gt; <span class="el_source">GordianMLDSASpec.java</span></div><h1>GordianMLDSASpec.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * GordianKnot: Security Suite
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.gordianknot.api.keypair;
+
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
+import org.bouncycastle.jcajce.spec.MLDSAParameterSpec;
+import org.bouncycastle.pqc.crypto.mldsa.MLDSAParameters;
+
+/**
+ * MLDSA KeySpec.
+ */
+<span class="fc" id="L27">public enum GordianMLDSASpec {</span>
+    /**
+     * mldsa44.
+     */
+<span class="fc" id="L31">    MLDSA44,</span>
+
+    /**
+     * mldsa65.
+     */
+<span class="fc" id="L36">    MLDSA65,</span>
+
+    /**
+     * mldsa87.
+     */
+<span class="fc" id="L41">    MLDSA87,</span>
+
+    /**
+     * mldsa44sha2.
+     */
+<span class="fc" id="L46">    MLDSA44SHA,</span>
+
+    /**
+     * mldsa65sha2.
+     */
+<span class="fc" id="L51">    MLDSA65SHA,</span>
+
+    /**
+     * mldsa87sha2.
+     */
+<span class="fc" id="L56">    MLDSA87SHA;</span>
+
+    /**
+     * Is this a hash signer?
+     * @return true/false
+     */
+    public boolean isHash() {
+<span class="pc bpc" id="L63" title="1 of 2 branches missed.">        switch (this) {</span>
+            case MLDSA44SHA:
+            case MLDSA65SHA:
+            case MLDSA87SHA:
+<span class="nc" id="L67">                return true;</span>
+            case MLDSA44:
+            case MLDSA65:
+            case MLDSA87:
+            default:
+<span class="fc" id="L72">                return false;</span>
+        }
+    }
+
+    /**
+     * Obtain MLDSA Parameters.
+     * @return the parameters.
+     */
+    public MLDSAParameters getParameters() {
+<span class="pc bpc" id="L81" title="6 of 7 branches missed.">        switch (this) {</span>
+<span class="fc" id="L82">            case MLDSA44:    return MLDSAParameters.ml_dsa_44;</span>
+<span class="nc" id="L83">            case MLDSA65:    return MLDSAParameters.ml_dsa_65;</span>
+<span class="nc" id="L84">            case MLDSA87:    return MLDSAParameters.ml_dsa_87;</span>
+<span class="nc" id="L85">            case MLDSA44SHA: return MLDSAParameters.ml_dsa_44_with_sha512;</span>
+<span class="nc" id="L86">            case MLDSA65SHA: return MLDSAParameters.ml_dsa_65_with_sha512;</span>
+<span class="nc" id="L87">            case MLDSA87SHA: return MLDSAParameters.ml_dsa_87_with_sha512;</span>
+<span class="nc" id="L88">            default: throw new IllegalArgumentException();</span>
+        }
+    }
+
+    /**
+     * Obtain MLDSA ParameterSpec.
+     * @return the parameters.
+     */
+    public MLDSAParameterSpec getParameterSpec() {
+<span class="pc bpc" id="L97" title="6 of 7 branches missed.">        switch (this) {</span>
+<span class="fc" id="L98">            case MLDSA44:    return MLDSAParameterSpec.ml_dsa_44;</span>
+<span class="nc" id="L99">            case MLDSA65:    return MLDSAParameterSpec.ml_dsa_65;</span>
+<span class="nc" id="L100">            case MLDSA87:    return MLDSAParameterSpec.ml_dsa_87;</span>
+<span class="nc" id="L101">            case MLDSA44SHA: return MLDSAParameterSpec.ml_dsa_44_with_sha512;</span>
+<span class="nc" id="L102">            case MLDSA65SHA: return MLDSAParameterSpec.ml_dsa_65_with_sha512;</span>
+<span class="nc" id="L103">            case MLDSA87SHA: return MLDSAParameterSpec.ml_dsa_87_with_sha512;</span>
+<span class="nc" id="L104">            default: throw new IllegalArgumentException();</span>
+        }
+    }
+
+    /**
+     * Obtain MLDSA algorithm Identifier.
+     * @return the identifier.
+     */
+    public ASN1ObjectIdentifier getIdentifier() {
+<span class="pc bpc" id="L113" title="1 of 7 branches missed.">        switch (this) {</span>
+<span class="fc" id="L114">            case MLDSA44:    return NISTObjectIdentifiers.id_ml_dsa_44;</span>
+<span class="fc" id="L115">            case MLDSA65:    return NISTObjectIdentifiers.id_ml_dsa_65;</span>
+<span class="fc" id="L116">            case MLDSA87:    return NISTObjectIdentifiers.id_ml_dsa_87;</span>
+<span class="fc" id="L117">            case MLDSA44SHA: return NISTObjectIdentifiers.id_hash_ml_dsa_44_with_sha512;</span>
+<span class="fc" id="L118">            case MLDSA65SHA: return NISTObjectIdentifiers.id_hash_ml_dsa_65_with_sha512;</span>
+<span class="fc" id="L119">            case MLDSA87SHA: return NISTObjectIdentifiers.id_hash_ml_dsa_87_with_sha512;</span>
+<span class="nc" id="L120">            default: throw new IllegalArgumentException();</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -1,0 +1,394 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseSpotExchangeRate.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.views</a> &gt; <span class="el_source">MoneyWiseSpotExchangeRate.java</span></div><h1>MoneyWiseSpotExchangeRate.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.views;
+
+import net.sourceforge.joceanus.metis.data.MetisDataEditState;
+import net.sourceforge.joceanus.metis.data.MetisDataState;
+import net.sourceforge.joceanus.metis.field.MetisFieldSet;
+import net.sourceforge.joceanus.metis.field.MetisFieldVersionValues;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseExchangeRate;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency.MoneyWiseCurrencyList;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
+
+import java.util.Iterator;
+import java.util.ListIterator;
+
+/**
+ * Extension of ExchangeRate to cater for spot rates.
+ */
+public final class MoneyWiseSpotExchangeRate
+        extends MoneyWiseExchangeRate {
+    /**
+     * Object name.
+     */
+<span class="nc" id="L46">    public static final String OBJECT_NAME = MoneyWiseSpotExchangeRate.class.getSimpleName();</span>
+
+    /**
+     * List name.
+     */
+<span class="nc" id="L51">    public static final String LIST_NAME = OBJECT_NAME + &quot;s&quot;;</span>
+
+    /**
+     * Report fields.
+     */
+    @SuppressWarnings(&quot;rawtypes&quot;)
+<span class="nc" id="L57">    private static final MetisFieldSet&lt;MoneyWiseSpotExchangeRate&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseSpotExchangeRate.class);</span>
+
+    /*
+     * The fields.
+     */
+    static {
+<span class="nc" id="L63">        FIELD_DEFS.declareLocalField(MoneyWiseViewResource.SPOTEVENT_PREVDATE, MoneyWiseSpotExchangeRate::getPrevDate);</span>
+<span class="nc" id="L64">        FIELD_DEFS.declareLocalField(MoneyWiseViewResource.SPOTRATE_PREVRATE, MoneyWiseSpotExchangeRate::getPrevRate);</span>
+<span class="nc" id="L65">    }</span>
+
+    /**
+     * the previous date.
+     */
+    private OceanusDate thePrevDate;
+
+    /**
+     * the previous rate.
+     */
+    private OceanusRatio thePrevRate;
+
+    /**
+     * Constructor for a new SpotRate where no rate data exists.
+     * @param pList the Spot Rate List
+     * @param pCurrency the currency
+     */
+    private MoneyWiseSpotExchangeRate(final MoneyWiseSpotExchangeList pList,
+                                      final MoneyWiseCurrency pCurrency) {
+<span class="nc" id="L84">        super(pList);</span>
+
+        /* Store base values */
+<span class="nc" id="L87">        setDate(pList.theDate);</span>
+<span class="nc" id="L88">        setFromCurrency(pList.getCurrency());</span>
+<span class="nc" id="L89">        setToCurrency(pCurrency);</span>
+<span class="nc" id="L90">    }</span>
+
+    @Override
+    public MetisFieldSetDef getDataFieldSet() {
+<span class="nc" id="L94">        return FIELD_DEFS;</span>
+    }
+
+    /**
+     * Obtain previous rate.
+     * @return the rate.
+     */
+    public OceanusRatio getPrevRate() {
+<span class="nc" id="L102">        return thePrevRate;</span>
+    }
+
+    /**
+     * Obtain previous date.
+     * @return the date.
+     */
+    public OceanusDate getPrevDate() {
+<span class="nc" id="L110">        return thePrevDate;</span>
+    }
+
+    /**
+     * Validate the line.
+     */
+    @Override
+    public void validate() {
+<span class="nc" id="L118">        setValidEdit();</span>
+<span class="nc" id="L119">    }</span>
+
+    /* Is this row locked */
+    @Override
+    public boolean isLocked() {
+<span class="nc" id="L124">        return isDeleted();</span>
+    }
+
+    /**
+     * Note that this item has been validated.
+     */
+    @Override
+    public void setValidEdit() {
+<span class="nc bnc" id="L132" title="All 2 branches missed.">        setEditState(hasHistory()</span>
+<span class="nc" id="L133">                ? MetisDataEditState.VALID</span>
+<span class="nc" id="L134">                : MetisDataEditState.CLEAN);</span>
+<span class="nc" id="L135">    }</span>
+
+    @Override
+    public OceanusRatio getExchangeRate() {
+        /* Switch on state */
+<span class="nc bnc" id="L140" title="All 2 branches missed.">        switch (getState()) {</span>
+            case NEW:
+            case CHANGED:
+            case RECOVERED:
+            case CLEAN:
+<span class="nc" id="L145">                return super.getExchangeRate();</span>
+            default:
+<span class="nc" id="L147">                return null;</span>
+        }
+    }
+
+    @Override
+    public MetisDataState getState() {
+<span class="nc" id="L153">        final MetisFieldVersionValues myCurr = getValues();</span>
+<span class="nc" id="L154">        final MetisFieldVersionValues myBase = getOriginalValues();</span>
+
+        /* If we have no changes we are CLEAN */
+<span class="nc bnc" id="L157" title="All 2 branches missed.">        if (myCurr.getVersion() == 0) {</span>
+<span class="nc" id="L158">            return MetisDataState.CLEAN;</span>
+        }
+
+        /* If the original rate is Null */
+<span class="nc bnc" id="L162" title="All 2 branches missed.">        if (myBase.getValue(MoneyWiseBasicResource.XCHGRATE_RATE) == null) {</span>
+            /* Return status */
+<span class="nc bnc" id="L164" title="All 2 branches missed.">            return myCurr.getValue(MoneyWiseBasicResource.XCHGRATE_RATE) == null</span>
+<span class="nc" id="L165">                    ? MetisDataState.DELNEW</span>
+<span class="nc" id="L166">                    : MetisDataState.NEW;</span>
+        }
+
+        /* If we are deleted return so */
+<span class="nc bnc" id="L170" title="All 2 branches missed.">        return myCurr.getValue(MoneyWiseBasicResource.XCHGRATE_RATE) == null</span>
+<span class="nc" id="L171">                ? MetisDataState.DELETED</span>
+<span class="nc" id="L172">                : MetisDataState.CHANGED;</span>
+    }
+
+    /**
+     * The Spot Rates List class.
+     */
+    public static class MoneyWiseSpotExchangeList
+            extends MoneyWiseExchangeRateBaseList&lt;MoneyWiseSpotExchangeRate&gt; {
+        /**
+         * Report fields.
+         */
+        @SuppressWarnings(&quot;rawtypes&quot;)
+<span class="nc" id="L184">        private static final MetisFieldSet&lt;MoneyWiseSpotExchangeList&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseSpotExchangeList.class);</span>
+
+        /*
+         * The currency field Id.
+         */
+        static {
+<span class="nc" id="L190">            FIELD_DEFS.declareLocalField(MoneyWiseStaticDataType.CURRENCY, MoneyWiseSpotExchangeList::getCurrency);</span>
+<span class="nc" id="L191">            FIELD_DEFS.declareLocalField(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE, MoneyWiseSpotExchangeList::getDate);</span>
+<span class="nc" id="L192">            FIELD_DEFS.declareLocalField(MoneyWiseViewResource.SPOTEVENT_NEXTDATE, MoneyWiseSpotExchangeList::getNext);</span>
+<span class="nc" id="L193">            FIELD_DEFS.declareLocalField(MoneyWiseViewResource.SPOTEVENT_PREVDATE, MoneyWiseSpotExchangeList::getPrev);</span>
+<span class="nc" id="L194">        }</span>
+
+        /**
+         * The date.
+         */
+        private final OceanusDate theDate;
+
+        /**
+         * The view.
+         */
+        private final MoneyWiseView theView;
+
+        /**
+         * The currency.
+         */
+        private final MoneyWiseCurrency theCurrency;
+
+        /**
+         * The next date.
+         */
+        private OceanusDate theNext;
+
+        /**
+         * The previous date.
+         */
+        private OceanusDate thePrev;
+
+        /**
+         * Constructor.
+         * @param pView the view
+         * @param pDate the date
+         */
+        public MoneyWiseSpotExchangeList(final MoneyWiseView pView,
+                                         final OceanusDate pDate) {
+            /* Build initial list */
+<span class="nc" id="L229">            super(pView.getData(), MoneyWiseSpotExchangeRate.class, MoneyWiseBasicDataType.SECURITYPRICE);</span>
+<span class="nc" id="L230">            setStyle(PrometheusListStyle.EDIT);</span>
+<span class="nc" id="L231">            ensureMap();</span>
+
+            /* Store parameters */
+<span class="nc" id="L234">            theDate = pDate;</span>
+<span class="nc" id="L235">            theView = pView;</span>
+
+            /* Obtain the portfolio bucket */
+<span class="nc" id="L238">            final MoneyWiseDataSet myData = theView.getData();</span>
+<span class="nc" id="L239">            theCurrency = myData.getReportingCurrency();</span>
+<span class="nc" id="L240">            final MoneyWiseCurrencyList myCurrencies = myData.getAccountCurrencies();</span>
+
+            /* Loop through the Currencies */
+<span class="nc" id="L243">            final OceanusDate myDate = new OceanusDate(theDate);</span>
+<span class="nc" id="L244">            final Iterator&lt;MoneyWiseCurrency&gt; myCurIterator = myCurrencies.iterator();</span>
+<span class="nc bnc" id="L245" title="All 2 branches missed.">            while (myCurIterator.hasNext()) {</span>
+<span class="nc" id="L246">                final MoneyWiseCurrency myCurrency = myCurIterator.next();</span>
+
+                /* Ignore deleted/disabled and default currency */
+<span class="nc bnc" id="L249" title="All 4 branches missed.">                boolean bIgnore = myCurrency.isDeleted() || myCurrency.isDisabled();</span>
+<span class="nc" id="L250">                bIgnore |= myCurrency.equals(theCurrency);</span>
+<span class="nc bnc" id="L251" title="All 2 branches missed.">                if (bIgnore) {</span>
+<span class="nc" id="L252">                    continue;</span>
+                }
+
+                /* Create a SpotRate entry */
+<span class="nc" id="L256">                final MoneyWiseSpotExchangeRate mySpot = new MoneyWiseSpotExchangeRate(this, myCurrency);</span>
+<span class="nc" id="L257">                mySpot.setIndexedId(myCurrency.getIndexedId());</span>
+<span class="nc" id="L258">                mySpot.setDate(myDate);</span>
+<span class="nc" id="L259">                add(mySpot);</span>
+<span class="nc" id="L260">            }</span>
+
+            /* Set the base for this list */
+<span class="nc" id="L263">            final MoneyWiseExchangeRateList myRates = myData.getExchangeRates();</span>
+<span class="nc" id="L264">            setBase(myRates);</span>
+
+            /* Loop through the rates */
+<span class="nc" id="L267">            final ListIterator&lt;MoneyWiseExchangeRate&gt; myIterator = myRates.listIterator(myRates.size());</span>
+<span class="nc bnc" id="L268" title="All 2 branches missed.">            while (myIterator.hasPrevious()) {</span>
+<span class="nc" id="L269">                final MoneyWiseExchangeRate myRate = myIterator.previous();</span>
+
+                /* Ignore deleted rates */
+<span class="nc bnc" id="L272" title="All 2 branches missed.">                if (myRate.isDeleted()) {</span>
+<span class="nc" id="L273">                    continue;</span>
+                }
+
+                /* Test the Date */
+<span class="nc" id="L277">                final int iDiff = theDate.compareTo(myRate.getDate());</span>
+
+                /* If we are past the date */
+<span class="nc bnc" id="L280" title="All 2 branches missed.">                if (iDiff &lt; 0) {</span>
+                    /* Record the next date and break the loop */
+<span class="nc" id="L282">                    theNext = myRate.getDate();</span>
+<span class="nc" id="L283">                    break;</span>
+                }
+
+                /* Access the Spot Rate and ignore if not relevant */
+<span class="nc" id="L287">                final MoneyWiseCurrency myCurrency = myRate.getToCurrency();</span>
+<span class="nc" id="L288">                final MoneyWiseSpotExchangeRate mySpot = findItemById(myCurrency.getIndexedId());</span>
+<span class="nc bnc" id="L289" title="All 2 branches missed.">                if (mySpot == null) {</span>
+<span class="nc" id="L290">                    continue;</span>
+                }
+
+                /* If we are exactly the date */
+<span class="nc bnc" id="L294" title="All 2 branches missed.">                if (iDiff == 0) {</span>
+                    /* Set rate */
+<span class="nc" id="L296">                    mySpot.setValueExchangeRate(myRate.getExchangeRate());</span>
+
+                    /* Link to base and re-establish state */
+<span class="nc" id="L299">                    mySpot.setBase(myRate);</span>
+
+                    /* else we are a previous date */
+                } else {
+                    /* Set previous date and value */
+<span class="nc" id="L304">                    mySpot.thePrevDate = myRate.getDate();</span>
+<span class="nc" id="L305">                    mySpot.thePrevRate = myRate.getExchangeRate();</span>
+
+                    /* Record the latest previous date */
+<span class="nc" id="L308">                    thePrev = myRate.getDate();</span>
+                }
+<span class="nc" id="L310">            }</span>
+<span class="nc" id="L311">        }</span>
+
+        @SuppressWarnings(&quot;rawtypes&quot;)
+        @Override
+        public MetisFieldSet&lt;MoneyWiseSpotExchangeList&gt; getDataFieldSet() {
+<span class="nc" id="L316">            return FIELD_DEFS;</span>
+        }
+
+        @Override
+        public String listName() {
+<span class="nc" id="L321">            return MoneyWiseSpotExchangeList.class.getSimpleName();</span>
+        }
+
+        @Override
+        public MetisFieldSetDef getItemFields() {
+<span class="nc" id="L326">            return MoneyWiseSpotExchangeRate.FIELD_DEFS;</span>
+        }
+
+        @Override
+        protected MoneyWiseSpotExchangeList getEmptyList(final PrometheusListStyle pStyle) {
+<span class="nc" id="L331">            throw new UnsupportedOperationException();</span>
+        }
+
+        @Override
+        public MoneyWiseDataSet getDataSet() {
+<span class="nc" id="L336">            return (MoneyWiseDataSet) super.getDataSet();</span>
+        }
+
+        /**
+         * Obtain the currency.
+         * @return the currency
+         */
+        private MoneyWiseCurrency getCurrency() {
+<span class="nc" id="L344">            return theCurrency;</span>
+        }
+
+        /**
+         * Obtain the date.
+         * @return the date
+         */
+        private OceanusDate getDate() {
+<span class="nc" id="L352">            return theDate;</span>
+        }
+
+        /**
+         * Obtain the next date.
+         * @return the date
+         */
+        public OceanusDate getNext() {
+<span class="nc" id="L360">            return theNext;</span>
+        }
+
+        /**
+         * Obtain the previous date.
+         * @return the date
+         */
+        public OceanusDate getPrev() {
+<span class="nc" id="L368">            return thePrev;</span>
+        }
+
+        /* Is this list locked */
+        @Override
+        public boolean isLocked() {
+<span class="nc" id="L374">            return false;</span>
+        }
+
+        /* Disable Add a new item */
+        @Override
+        public MoneyWiseSpotExchangeRate addCopyItem(final PrometheusDataItem pElement) {
+<span class="nc" id="L380">            throw new UnsupportedOperationException();</span>
+        }
+
+        @Override
+        public MoneyWiseSpotExchangeRate addNewItem() {
+<span class="nc" id="L385">            throw new UnsupportedOperationException();</span>
+        }
+
+        @Override
+        public MoneyWiseSpotExchangeRate addValuesItem(final PrometheusDataValues pValues) {
+<span class="nc" id="L390">            throw new UnsupportedOperationException();</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

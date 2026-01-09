@@ -1,0 +1,474 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseXTaxBasisAnalysisSelect.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.atlas.ui.controls</a> &gt; <span class="el_source">MoneyWiseXTaxBasisAnalysisSelect.java</span></div><h1>MoneyWiseXTaxBasisAnalysisSelect.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.atlas.ui.controls;
+
+import net.sourceforge.joceanus.metis.data.MetisDataDifference;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisBucketResource;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTaxBasisAccountBucket;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTaxBasisBucket;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTaxBasisBucket.MoneyWiseXAnalysisTaxBasisBucketList;
+import net.sourceforge.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter;
+import net.sourceforge.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter.MoneyWiseXAnalysisTaxBasisFilter;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
+import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIConstant;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
+import net.sourceforge.joceanus.tethys.api.button.TethysUIButtonFactory;
+import net.sourceforge.joceanus.tethys.api.button.TethysUIScrollButtonManager;
+import net.sourceforge.joceanus.tethys.api.control.TethysUIControlFactory;
+import net.sourceforge.joceanus.tethys.api.control.TethysUILabel;
+import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollItem;
+import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollMenu;
+import net.sourceforge.joceanus.tethys.api.pane.TethysUIBoxPaneManager;
+
+import java.util.Iterator;
+
+/**
+ * TaxBasisAnalysis Selection.
+ */
+public class MoneyWiseXTaxBasisAnalysisSelect
+        implements MoneyWiseXAnalysisFilterSelection, OceanusEventProvider&lt;PrometheusDataEvent&gt; {
+    /**
+     * Text for TaxBasis Label.
+     */
+<span class="nc" id="L55">    private static final String NLS_BASIS = MoneyWiseStaticDataType.TAXBASIS.getItemName();</span>
+
+    /**
+     * Text for Account Label.
+     */
+<span class="nc" id="L60">    private static final String NLS_ACCOUNT = MoneyWiseXAnalysisBucketResource.BUCKET_ACCOUNT.getValue();</span>
+
+    /**
+     * Text for All Item.
+     */
+    private static final String NLS_ALL = &quot;All&quot;;
+
+    /**
+     * The Event Manager.
+     */
+    private final OceanusEventManager&lt;PrometheusDataEvent&gt; theEventManager;
+
+    /**
+     * The panel.
+     */
+    private final TethysUIBoxPaneManager thePanel;
+
+    /**
+     * The basis button.
+     */
+    private final TethysUIScrollButtonManager&lt;MoneyWiseXAnalysisTaxBasisBucket&gt; theBasisButton;
+
+    /**
+     * The account button.
+     */
+    private final TethysUIScrollButtonManager&lt;MoneyWiseXAnalysisTaxBasisAccountBucket&gt; theAccountButton;
+
+    /**
+     * Tax menu.
+     */
+    private final TethysUIScrollMenu&lt;MoneyWiseXAnalysisTaxBasisBucket&gt; theTaxMenu;
+
+    /**
+     * Account menu.
+     */
+    private final TethysUIScrollMenu&lt;MoneyWiseXAnalysisTaxBasisAccountBucket&gt; theAccountMenu;
+
+    /**
+     * The active tax basis bucket list.
+     */
+    private MoneyWiseXAnalysisTaxBasisBucketList theTaxBases;
+
+    /**
+     * The state.
+     */
+    private MoneyWiseTaxBasisState theState;
+
+    /**
+     * The savePoint.
+     */
+    private MoneyWiseTaxBasisState theSavePoint;
+
+    /**
+     * Constructor.
+     * @param pFactory the GUI factory
+     */
+<span class="nc" id="L116">    protected MoneyWiseXTaxBasisAnalysisSelect(final TethysUIFactory&lt;?&gt; pFactory) {</span>
+        /* Create the buttons */
+<span class="nc" id="L118">        final TethysUIButtonFactory&lt;?&gt; myButtons = pFactory.buttonFactory();</span>
+<span class="nc" id="L119">        theBasisButton = myButtons.newScrollButton(MoneyWiseXAnalysisTaxBasisBucket.class);</span>
+<span class="nc" id="L120">        theAccountButton = myButtons.newScrollButton(MoneyWiseXAnalysisTaxBasisAccountBucket.class);</span>
+
+        /* Create Event Manager */
+<span class="nc" id="L123">        theEventManager = new OceanusEventManager&lt;&gt;();</span>
+
+        /* Create the labels */
+<span class="nc" id="L126">        final TethysUIControlFactory myControls = pFactory.controlFactory();</span>
+<span class="nc" id="L127">        final TethysUILabel myBasisLabel = myControls.newLabel(NLS_BASIS + TethysUIConstant.STR_COLON);</span>
+<span class="nc" id="L128">        final TethysUILabel myAccountLabel = myControls.newLabel(NLS_ACCOUNT + TethysUIConstant.STR_COLON);</span>
+
+        /* Define the layout */
+<span class="nc" id="L131">        thePanel = pFactory.paneFactory().newHBoxPane();</span>
+<span class="nc" id="L132">        thePanel.addSpacer();</span>
+<span class="nc" id="L133">        thePanel.addNode(myBasisLabel);</span>
+<span class="nc" id="L134">        thePanel.addNode(theBasisButton);</span>
+<span class="nc" id="L135">        thePanel.addStrut();</span>
+<span class="nc" id="L136">        thePanel.addNode(myAccountLabel);</span>
+<span class="nc" id="L137">        thePanel.addNode(theAccountButton);</span>
+
+        /* Create initial state */
+<span class="nc" id="L140">        theState = new MoneyWiseTaxBasisState();</span>
+<span class="nc" id="L141">        theState.applyState();</span>
+
+        /* Access the menus */
+<span class="nc" id="L144">        theTaxMenu = theBasisButton.getMenu();</span>
+<span class="nc" id="L145">        theAccountMenu = theAccountButton.getMenu();</span>
+
+        /* Create the listener */
+<span class="nc" id="L148">        OceanusEventRegistrar&lt;TethysUIEvent&gt; myRegistrar = theBasisButton.getEventRegistrar();</span>
+<span class="nc" id="L149">        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -&gt; handleNewBasis());</span>
+<span class="nc" id="L150">        theBasisButton.setMenuConfigurator(e -&gt; buildBasisMenu());</span>
+<span class="nc" id="L151">        myRegistrar = theAccountButton.getEventRegistrar();</span>
+<span class="nc" id="L152">        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -&gt; handleNewAccount());</span>
+<span class="nc" id="L153">        theAccountButton.setMenuConfigurator(e -&gt; buildAccountMenu());</span>
+<span class="nc" id="L154">    }</span>
+
+    @Override
+    public TethysUIComponent getUnderlying() {
+<span class="nc" id="L158">        return thePanel;</span>
+    }
+
+    @Override
+    public OceanusEventRegistrar&lt;PrometheusDataEvent&gt; getEventRegistrar() {
+<span class="nc" id="L163">        return theEventManager.getEventRegistrar();</span>
+    }
+
+    @Override
+    public MoneyWiseXAnalysisTaxBasisFilter getFilter() {
+<span class="nc" id="L168">        return theState.getFilter();</span>
+    }
+
+    @Override
+    public boolean isAvailable() {
+<span class="nc bnc" id="L173" title="All 2 branches missed.">        return theTaxBases != null</span>
+<span class="nc bnc" id="L174" title="All 2 branches missed.">                &amp;&amp; !theTaxBases.isEmpty();</span>
+    }
+
+    /**
+     * Create SavePoint.
+     */
+    public void createSavePoint() {
+        /* Create the savePoint */
+<span class="nc" id="L182">        theSavePoint = new MoneyWiseTaxBasisState(theState);</span>
+<span class="nc" id="L183">    }</span>
+
+    /**
+     * Restore SavePoint.
+     */
+    public void restoreSavePoint() {
+        /* Restore the savePoint */
+<span class="nc" id="L190">        theState = new MoneyWiseTaxBasisState(theSavePoint);</span>
+
+        /* Apply the state */
+<span class="nc" id="L193">        theState.applyState();</span>
+<span class="nc" id="L194">    }</span>
+
+    @Override
+    public void setEnabled(final boolean bEnabled) {
+        /* Pass call on to basis button */
+<span class="nc bnc" id="L199" title="All 4 branches missed.">        theBasisButton.setEnabled(bEnabled &amp;&amp; isAvailable());</span>
+<span class="nc" id="L200">    }</span>
+
+    @Override
+    public void setVisible(final boolean pVisible) {
+<span class="nc" id="L204">        thePanel.setVisible(pVisible);</span>
+<span class="nc" id="L205">    }</span>
+
+    /**
+     * Set analysis.
+     * @param pAnalysis the analysis.
+     */
+    public void setAnalysis(final MoneyWiseXAnalysis pAnalysis) {
+        /* Access buckets */
+<span class="nc" id="L213">        theTaxBases = pAnalysis.getTaxBasis();</span>
+
+        /* Obtain the current basis */
+<span class="nc" id="L216">        MoneyWiseXAnalysisTaxBasisBucket myBasis = theState.getTaxBasis();</span>
+
+        /* Switch to versions from the analysis */
+<span class="nc bnc" id="L219" title="All 2 branches missed.">        myBasis = myBasis != null</span>
+<span class="nc" id="L220">                ? theTaxBases.getMatchingBasis(myBasis)</span>
+<span class="nc" id="L221">                : theTaxBases.getDefaultBasis();</span>
+
+        /* Set the basis */
+<span class="nc" id="L224">        theState.setTheTaxBasis(myBasis);</span>
+<span class="nc" id="L225">        theState.setDateRange(pAnalysis.getDateRange());</span>
+<span class="nc" id="L226">        theState.applyState();</span>
+<span class="nc" id="L227">    }</span>
+
+    @Override
+    public void setFilter(final MoneyWiseXAnalysisFilter&lt;?, ?&gt; pFilter) {
+        /* If this is the correct filter type */
+<span class="nc bnc" id="L232" title="All 2 branches missed.">        if (pFilter instanceof MoneyWiseXAnalysisTaxBasisFilter myFilter) {</span>
+            /* Obtain the filter bucket */
+<span class="nc" id="L234">            MoneyWiseXAnalysisTaxBasisBucket myTaxBasis = myFilter.getBucket();</span>
+
+            /* Obtain equivalent bucket */
+<span class="nc" id="L237">            myTaxBasis = theTaxBases.getMatchingBasis(myTaxBasis);</span>
+
+            /* Set the taxBasis */
+<span class="nc" id="L240">            theState.setTheTaxBasis(myTaxBasis);</span>
+<span class="nc" id="L241">            theState.setDateRange(myFilter.getDateRange());</span>
+<span class="nc" id="L242">            theState.applyState();</span>
+        }
+<span class="nc" id="L244">    }</span>
+
+    /**
+     * Handle new Basis.
+     */
+    private void handleNewBasis() {
+        /* Select the new taxBasis */
+<span class="nc bnc" id="L251" title="All 2 branches missed.">        if (theState.setTaxBasis(theBasisButton.getValue())) {</span>
+<span class="nc" id="L252">            theState.applyState();</span>
+<span class="nc" id="L253">            theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);</span>
+        }
+<span class="nc" id="L255">    }</span>
+
+    /**
+     * Handle new Account.
+     */
+    private void handleNewAccount() {
+        /* Select the new account */
+<span class="nc bnc" id="L262" title="All 2 branches missed.">        if (theState.setTaxBasis(theAccountButton.getValue())) {</span>
+<span class="nc" id="L263">            theState.applyState();</span>
+<span class="nc" id="L264">            theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);</span>
+        }
+<span class="nc" id="L266">    }</span>
+
+    /**
+     * Build Basis menu.
+     */
+    private void buildBasisMenu() {
+        /* Reset the popUp menu */
+<span class="nc" id="L273">        theTaxMenu.removeAllItems();</span>
+
+        /* Record active item */
+<span class="nc" id="L276">        TethysUIScrollItem&lt;MoneyWiseXAnalysisTaxBasisBucket&gt; myActive = null;</span>
+<span class="nc" id="L277">        final MoneyWiseXAnalysisTaxBasisBucket myCurr = theState.getTaxBasis();</span>
+
+        /* Loop through the available basis values */
+<span class="nc" id="L280">        final Iterator&lt;MoneyWiseXAnalysisTaxBasisBucket&gt; myIterator = theTaxBases.iterator();</span>
+<span class="nc bnc" id="L281" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L282">            final MoneyWiseXAnalysisTaxBasisBucket myBucket = myIterator.next();</span>
+
+            /* Create a new MenuItem and add it to the popUp */
+<span class="nc" id="L285">            final TethysUIScrollItem&lt;MoneyWiseXAnalysisTaxBasisBucket&gt; myItem = theTaxMenu.addItem(myBucket);</span>
+
+            /* If this is the active bucket */
+<span class="nc bnc" id="L288" title="All 2 branches missed.">            if (myBucket.equals(myCurr)) {</span>
+                /* Record it */
+<span class="nc" id="L290">                myActive = myItem;</span>
+            }
+<span class="nc" id="L292">        }</span>
+
+        /* Ensure active item is visible */
+<span class="nc bnc" id="L295" title="All 2 branches missed.">        if (myActive != null) {</span>
+<span class="nc" id="L296">            myActive.scrollToItem();</span>
+        }
+<span class="nc" id="L298">    }</span>
+
+    /**
+     * Build Account menu.
+     */
+    private void buildAccountMenu() {
+        /* Reset the popUp menu */
+<span class="nc" id="L305">        theAccountMenu.removeAllItems();</span>
+
+        /* Record active item */
+<span class="nc" id="L308">        final MoneyWiseXAnalysisTaxBasisBucket myBasis = theState.getTaxBasis();</span>
+<span class="nc" id="L309">        final MoneyWiseXAnalysisTaxBasisAccountBucket myCurr = theState.getAccount();</span>
+
+        /* Add the all item menu */
+<span class="nc" id="L312">        TethysUIScrollItem&lt;MoneyWiseXAnalysisTaxBasisAccountBucket&gt; myActive = theAccountMenu.addItem(null, NLS_ALL);</span>
+
+        /* Loop through the available account values */
+<span class="nc" id="L315">        final Iterator&lt;MoneyWiseXAnalysisTaxBasisAccountBucket&gt; myIterator = myBasis.accountIterator();</span>
+<span class="nc bnc" id="L316" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L317">            final MoneyWiseXAnalysisTaxBasisAccountBucket myBucket = myIterator.next();</span>
+
+            /* Create a new MenuItem and add it to the popUp */
+<span class="nc" id="L320">            final TethysUIScrollItem&lt;MoneyWiseXAnalysisTaxBasisAccountBucket&gt; myItem = theAccountMenu.addItem(myBucket, myBucket.getSimpleName());</span>
+
+            /* If this is the active bucket */
+<span class="nc bnc" id="L323" title="All 2 branches missed.">            if (myBucket.equals(myCurr)) {</span>
+                /* Record it */
+<span class="nc" id="L325">                myActive = myItem;</span>
+            }
+<span class="nc" id="L327">        }</span>
+
+        /* Ensure active item is visible */
+<span class="nc bnc" id="L330" title="All 2 branches missed.">        if (myActive != null) {</span>
+<span class="nc" id="L331">            myActive.scrollToItem();</span>
+        }
+<span class="nc" id="L333">    }</span>
+
+    /**
+     * SavePoint values.
+     */
+    private final class MoneyWiseTaxBasisState {
+        /**
+         * The active TaxBasisBucket.
+         */
+        private MoneyWiseXAnalysisTaxBasisBucket theBasis;
+
+        /**
+         * The account TaxBasisBucket.
+         */
+        private MoneyWiseXAnalysisTaxBasisAccountBucket theAccount;
+
+        /**
+         * The dateRange.
+         */
+        private OceanusDateRange theDateRange;
+
+        /**
+         * The active filter.
+         */
+        private MoneyWiseXAnalysisTaxBasisFilter theFilter;
+
+        /**
+         * Constructor.
+         */
+<span class="nc" id="L362">        private MoneyWiseTaxBasisState() {</span>
+<span class="nc" id="L363">        }</span>
+
+        /**
+         * Constructor.
+         * @param pState state to copy from
+         */
+<span class="nc" id="L369">        private MoneyWiseTaxBasisState(final MoneyWiseTaxBasisState pState) {</span>
+            /* Initialise state */
+<span class="nc" id="L371">            theBasis = pState.getTaxBasis();</span>
+<span class="nc" id="L372">            theAccount = pState.getAccount();</span>
+<span class="nc" id="L373">            theDateRange = pState.getDateRange();</span>
+<span class="nc" id="L374">            theFilter = pState.getFilter();</span>
+<span class="nc" id="L375">        }</span>
+
+        /**
+         * Obtain the TaxBasis Bucket.
+         * @return the Basis
+         */
+        private MoneyWiseXAnalysisTaxBasisBucket getTaxBasis() {
+<span class="nc" id="L382">            return theBasis;</span>
+        }
+
+        /**
+         * Obtain the Account Bucket.
+         * @return the Account
+         */
+        private MoneyWiseXAnalysisTaxBasisAccountBucket getAccount() {
+<span class="nc" id="L390">            return theAccount;</span>
+        }
+
+        /**
+         * Obtain the dateRange.
+         * @return the dateRange
+         */
+        private OceanusDateRange getDateRange() {
+<span class="nc" id="L398">            return theDateRange;</span>
+        }
+
+        /**
+         * Obtain the Filter.
+         * @return the Filter
+         */
+        private MoneyWiseXAnalysisTaxBasisFilter getFilter() {
+<span class="nc" id="L406">            return theFilter;</span>
+        }
+
+        /**
+         * Set new TaxBasis.
+         * @param pTaxBasis the TaxBasis
+         * @return true/false did a change occur
+         */
+        private boolean setTaxBasis(final MoneyWiseXAnalysisTaxBasisBucket pTaxBasis) {
+            /* Adjust the selected taxBasis */
+<span class="nc bnc" id="L416" title="All 2 branches missed.">            if (!MetisDataDifference.isEqual(pTaxBasis, theBasis)) {</span>
+<span class="nc" id="L417">                setTheTaxBasis(pTaxBasis);</span>
+<span class="nc" id="L418">                return true;</span>
+            }
+<span class="nc" id="L420">            return false;</span>
+        }
+
+        /**
+         * Set the TaxBasis.
+         * @param pTaxBasis the TaxBasis
+         */
+        private void setTheTaxBasis(final MoneyWiseXAnalysisTaxBasisBucket pTaxBasis) {
+            /* Adjust the selected taxBasis */
+<span class="nc bnc" id="L429" title="All 2 branches missed.">            if (pTaxBasis instanceof MoneyWiseXAnalysisTaxBasisAccountBucket myBucket) {</span>
+<span class="nc" id="L430">                theAccount = myBucket;</span>
+<span class="nc" id="L431">                theBasis = theAccount.getParent();</span>
+<span class="nc" id="L432">                theFilter = new MoneyWiseXAnalysisTaxBasisFilter(theAccount);</span>
+<span class="nc" id="L433">                theFilter.setDateRange(theDateRange);</span>
+            } else {
+<span class="nc" id="L435">                theAccount = null;</span>
+<span class="nc" id="L436">                theBasis = pTaxBasis;</span>
+<span class="nc bnc" id="L437" title="All 2 branches missed.">                if (theBasis != null) {</span>
+<span class="nc" id="L438">                    theFilter = new MoneyWiseXAnalysisTaxBasisFilter(theBasis);</span>
+<span class="nc" id="L439">                    theFilter.setDateRange(theDateRange);</span>
+                } else {
+<span class="nc" id="L441">                    theFilter = null;</span>
+                }
+            }
+<span class="nc" id="L444">        }</span>
+
+        /**
+         * Set the dateRange.
+         * @param pRange the dateRange
+         */
+        private void setDateRange(final OceanusDateRange pRange) {
+            /* Store the dateRange */
+<span class="nc" id="L452">            theDateRange = pRange;</span>
+<span class="nc bnc" id="L453" title="All 2 branches missed.">            if (theFilter != null) {</span>
+<span class="nc" id="L454">                theFilter.setDateRange(theDateRange);</span>
+            }
+<span class="nc" id="L456">        }</span>
+
+        /**
+         * Apply the State.
+         */
+        private void applyState() {
+            /* Adjust the lock-down */
+<span class="nc" id="L463">            setEnabled(true);</span>
+<span class="nc" id="L464">            theBasisButton.setValue(theBasis);</span>
+<span class="nc bnc" id="L465" title="All 2 branches missed.">            if (theAccount == null) {</span>
+<span class="nc" id="L466">                theAccountButton.setValue(null, NLS_ALL);</span>
+            } else {
+<span class="nc" id="L468">                theAccountButton.setValue(theAccount, theAccount.getSimpleName());</span>
+            }
+<span class="nc bnc" id="L470" title="All 4 branches missed.">            theAccountButton.setEnabled((theBasis != null) &amp;&amp; theBasis.hasAccounts());</span>
+<span class="nc" id="L471">        }</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

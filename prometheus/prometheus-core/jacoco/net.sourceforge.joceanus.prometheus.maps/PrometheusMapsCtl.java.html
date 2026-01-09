@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PrometheusMapsCtl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Prometheus Core Application Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.prometheus.maps</a> &gt; <span class="el_source">PrometheusMapsCtl.java</span></div><h1>PrometheusMapsCtl.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Prometheus: Application Framework
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.prometheus.maps;
+
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.metis.data.MetisDataType;
+import net.sourceforge.joceanus.metis.field.MetisFieldItem;
+import net.sourceforge.joceanus.metis.field.MetisFieldSet;
+import net.sourceforge.joceanus.metis.list.MetisListKey;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoClass;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoItem;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataList;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
+import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
+
+import java.util.Iterator;
+import java.util.List;
+import java.util.function.Function;
+
+/**
+ * Maps control.
+ */
+public class PrometheusMapsCtl
+        implements MetisFieldItem {
+    /**
+     * Report fields.
+     */
+<span class="nc" id="L44">    private static final MetisFieldSet&lt;PrometheusMapsCtl&gt; FIELD_DEFS = MetisFieldSet.newFieldSet(PrometheusMapsCtl.class);</span>
+
+    /*
+     * Declare Fields.
+     */
+    static {
+<span class="nc" id="L50">        FIELD_DEFS.declareLocalField(PrometheusMapsResource.MAPS_TOUCHMAP, PrometheusMapsCtl::getTouchMap);</span>
+<span class="nc" id="L51">        FIELD_DEFS.declareLocalField(PrometheusMapsResource.MAPS_INSTANCEMAP, PrometheusMapsCtl::getInstanceMap);</span>
+<span class="nc" id="L52">    }</span>
+
+    /**
+     * The touchMap.
+     */
+    private PrometheusMapsTouchCtl theTouch;
+
+    /**
+     * The instanceMap.
+     */
+    private PrometheusMapsInstanceCtl theInstance;
+
+    /**
+     * The deconstruct lambda.
+     */
+    private Function&lt;Object, List&lt;PrometheusDataItem&gt;&gt; theDeconstruct;
+
+    /**
+     * Constructor.
+     * @param pDeconstruct the deconstruct processor
+     */
+<span class="nc" id="L73">    public PrometheusMapsCtl(final Function&lt;Object, List&lt;PrometheusDataItem&gt;&gt; pDeconstruct) {</span>
+        /* Create maps */
+<span class="nc" id="L75">        theTouch = new PrometheusMapsTouchCtl();</span>
+<span class="nc" id="L76">        theInstance = new PrometheusMapsInstanceCtl();</span>
+<span class="nc" id="L77">        theDeconstruct = pDeconstruct;</span>
+<span class="nc" id="L78">    }</span>
+
+    @Override
+    public MetisFieldSetDef getDataFieldSet() {
+<span class="nc" id="L82">        return FIELD_DEFS;</span>
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L87">        return PrometheusMapsInstanceCtl.class.getSimpleName();</span>
+    }
+
+    /**
+     * Obtain the touch map.
+     * @return the touch map
+     */
+    private PrometheusMapsTouchCtl getTouchMap() {
+<span class="nc" id="L95">        return theTouch;</span>
+    }
+
+    /**
+     * Obtain the instance map.
+     * @return the instance map
+     */
+    private PrometheusMapsInstanceCtl getInstanceMap() {
+<span class="nc" id="L103">        return theInstance;</span>
+    }
+
+    /**
+     * Declare fieldId map.
+     * @param pListKey the listKey
+     * @param pFieldId the fieldId
+     */
+    public void declareFieldIdMap(final MetisListKey pListKey,
+                                  final MetisDataFieldId pFieldId) {
+<span class="nc" id="L113">        theInstance.declareFieldIdMap(pListKey, pFieldId);</span>
+<span class="nc" id="L114">    }</span>
+
+    /**
+     * Declare fieldId map.
+     * @param pListKey the listKey
+     * @param pFieldId the fieldId
+     * @param pFilter the filter
+     */
+    public void declareFieldIdMap(final MetisListKey pListKey,
+                                  final MetisDataFieldId pFieldId,
+                                  final Function&lt;PrometheusDataItem, Boolean&gt; pFilter) {
+<span class="nc" id="L125">        theInstance.declareFieldIdMap(pListKey, pFieldId, pFilter);</span>
+<span class="nc" id="L126">    }</span>
+
+    /**
+     * Declare shared fieldId map.
+     * @param pListKey the listKey
+     * @param pFieldId the fieldId
+     * @param pSharedKey the shared listKey
+     */
+    public void declareFieldIdMap(final MetisListKey pListKey,
+                                  final MetisDataFieldId pFieldId,
+                                  final MetisListKey pSharedKey) {
+<span class="nc" id="L137">        theInstance.declareFieldIdMap(pListKey, pFieldId, pSharedKey);</span>
+<span class="nc" id="L138">    }</span>
+
+    /**
+     * Declare dateId map.
+     * @param pListKey the listKey
+     * @param pOwnerId the ownerId
+     * @param pDateId the dateId
+     */
+    public void declareDateIdMap(final MetisListKey pListKey,
+                                 final MetisDataFieldId pOwnerId,
+                                 final MetisDataFieldId pDateId) {
+<span class="nc" id="L149">        theInstance.declareDateIdMap(pListKey, pOwnerId, pDateId, false);</span>
+<span class="nc" id="L150">    }</span>
+
+    /**
+     * Declare dateId map.
+     * @param pListKey the listKey
+     * @param pOwnerId the ownerId
+     * @param pDateId the dateId
+     * @param pAllowNull do we allow null value?
+     */
+    public void declareDateIdMap(final MetisListKey pListKey,
+                                 final MetisDataFieldId pOwnerId,
+                                 final MetisDataFieldId pDateId,
+                                 final boolean pAllowNull) {
+<span class="nc" id="L163">        theInstance.declareDateIdMap(pListKey, pOwnerId, pDateId, pAllowNull);</span>
+<span class="nc" id="L164">    }</span>
+
+    /**
+     * Reset the maps.
+     */
+    public void resetMaps() {
+<span class="nc" id="L170">        theTouch.resetMap();</span>
+<span class="nc" id="L171">        theInstance.resetMaps();</span>
+<span class="nc" id="L172">    }</span>
+
+    /**
+     * Adjust for DataSet.
+     * @param pDataSet the dataSet
+     */
+    public void adjustForDataSet(final PrometheusDataSet pDataSet) {
+<span class="nc" id="L179">        final Iterator&lt;MetisListKey&gt; myIterator = pDataSet.keyIterator();</span>
+<span class="nc bnc" id="L180" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L181">            final MetisListKey myKey = myIterator.next();</span>
+<span class="nc" id="L182">            final PrometheusDataList&lt;?&gt; myList = pDataSet.getDataList(myKey, PrometheusDataList.class);</span>
+
+<span class="nc" id="L184">            adjustForDataList(myList);</span>
+<span class="nc" id="L185">        }</span>
+<span class="nc" id="L186">    }</span>
+
+    /**
+     * Adjust for EditSet.
+     * @param pEditSet the editSet
+     */
+    public void adjustForEditSet(final PrometheusEditSet pEditSet) {
+<span class="nc" id="L193">        final PrometheusDataSet myDataSet = pEditSet.getDataSet();</span>
+<span class="nc" id="L194">        final Iterator&lt;MetisListKey&gt; myIterator = myDataSet.keyIterator();</span>
+<span class="nc bnc" id="L195" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L196">            final MetisListKey myKey = myIterator.next();</span>
+<span class="nc" id="L197">            final PrometheusDataList&lt;?&gt; myList = pEditSet.getDataList(myKey, PrometheusDataList.class);</span>
+
+<span class="nc" id="L199">            adjustForDataList(myList);</span>
+<span class="nc" id="L200">        }</span>
+<span class="nc" id="L201">    }</span>
+
+    /**
+     * Adjust for DataList.
+     * @param pDataList the dataList
+     */
+    void adjustForDataList(final PrometheusDataList&lt;?&gt; pDataList) {
+<span class="nc" id="L208">        final Iterator&lt;?&gt; myIterator = pDataList.iterator();</span>
+<span class="nc bnc" id="L209" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L210">            final PrometheusDataItem myItem = (PrometheusDataItem) myIterator.next();</span>
+<span class="nc bnc" id="L211" title="All 2 branches missed.">            if (!myItem.isDeleted()) {</span>
+<span class="nc" id="L212">                adjustForDataItem(myItem);</span>
+            }
+<span class="nc" id="L214">        }</span>
+<span class="nc" id="L215">    }</span>
+
+    /**
+     * Adjust for DataItem.
+     * @param pItem the dataItem
+     */
+    void adjustForDataItem(final PrometheusDataItem pItem) {
+        /* Add item to instance maps */
+<span class="nc" id="L223">        theInstance.addItemToMaps(pItem);</span>
+
+        /* If the item is an InfoItem */
+<span class="nc bnc" id="L226" title="All 2 branches missed.">        if (pItem instanceof PrometheusDataInfoItem myItem) {</span>
+<span class="nc" id="L227">            adjustForDataInfoItemTouches(myItem);</span>
+        } else {
+<span class="nc" id="L229">            adjustForStandardItemTouches(pItem);</span>
+        }
+<span class="nc" id="L231">    }</span>
+
+    /**
+     * Adjust for DataItem.
+     * @param pItem the dataItem
+     */
+    void adjustForStandardItemTouches(final PrometheusDataItem pItem) {
+        /* Loop through the item fields */
+<span class="nc" id="L239">        final MetisFieldSetDef myFieldSet = pItem.getDataFieldSet();</span>
+<span class="nc" id="L240">        final Iterator&lt;MetisFieldDef&gt; myIterator = myFieldSet.fieldIterator();</span>
+<span class="nc bnc" id="L241" title="All 2 branches missed.">        while (myIterator.hasNext()) {</span>
+<span class="nc" id="L242">            final MetisFieldDef myField = myIterator.next();</span>
+
+            /* If this is a link */
+<span class="nc bnc" id="L245" title="All 2 branches missed.">            if (MetisDataType.LINK.equals(myField.getDataType())) {</span>
+<span class="nc" id="L246">                final Object myTouched = myField.getFieldValue(pItem);</span>
+<span class="nc bnc" id="L247" title="All 2 branches missed.">                if (myTouched != null) {</span>
+<span class="nc bnc" id="L248" title="All 2 branches missed.">                    if (myTouched instanceof PrometheusDataItem myItem) {</span>
+<span class="nc" id="L249">                        theTouch.recordTouch(myItem, pItem);</span>
+                    } else {
+<span class="nc" id="L251">                        final List&lt;PrometheusDataItem&gt; myList = theDeconstruct.apply(myTouched);</span>
+<span class="nc bnc" id="L252" title="All 2 branches missed.">                        for (PrometheusDataItem myItem : myList) {</span>
+<span class="nc" id="L253">                            theTouch.recordTouch(myItem, pItem);</span>
+<span class="nc" id="L254">                        }</span>
+                    }
+                }
+            }
+<span class="nc" id="L258">        }</span>
+<span class="nc" id="L259">    }</span>
+
+    /**
+     * Adjust for DataInfoItem.
+     * @param pInfo the dataInfoItem
+     */
+    void adjustForDataInfoItemTouches(final PrometheusDataInfoItem pInfo) {
+<span class="nc" id="L266">        final PrometheusDataInfoClass myClass = pInfo.getInfoClass();</span>
+<span class="nc bnc" id="L267" title="All 2 branches missed.">        if (myClass.isLink()) {</span>
+<span class="nc" id="L268">            theTouch.recordTouch(pInfo.getLink(PrometheusDataItem.class), pInfo.getOwner());</span>
+        }
+<span class="nc" id="L270">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

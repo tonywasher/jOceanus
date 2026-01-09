@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianValidator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.gordianknot.impl.core.base</a> &gt; <span class="el_source">GordianValidator.java</span></div><h1>GordianValidator.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * GordianKnot: Security Suite
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.gordianknot.impl.core.base;
+
+import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
+import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeyType;
+import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
+import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeyType;
+import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestType;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Predicate;
+
+/**
+ * Validator classes.
+ */
+<span class="fc" id="L32">public class GordianValidator {</span>
+    /**
+     * Obtain predicate for supported hMac digestTypes.
+     * @return the predicate
+     */
+    public Predicate&lt;GordianDigestType&gt; supportedHMacDigestTypes() {
+<span class="fc" id="L38">        return this::validHMacDigestType;</span>
+    }
+
+    /**
+     * Check HMacDigestType.
+     * @param pDigestType the digestType
+     * @return true/false
+     */
+    protected boolean validHMacDigestType(final GordianDigestType pDigestType) {
+<span class="pc bpc" id="L47" title="1 of 4 branches missed.">        return validDigestType(pDigestType) &amp;&amp; pDigestType.supportsLargeData();</span>
+    }
+
+    /**
+     * Check DigestType.
+     * @param pDigestType the digestType
+     * @return true/false
+     */
+    public boolean validDigestType(final GordianDigestType pDigestType) {
+<span class="fc" id="L56">        return true;</span>
+    }
+
+    /**
+     * Determine whether the digestType is valid for PasswordLock.
+     * @return the predicate
+     */
+    public Predicate&lt;GordianDigestType&gt; supportedLockDigestTypes() {
+<span class="fc" id="L64">        return supportedHMacDigestTypes().and(isCombinedHashDigest());</span>
+    }
+
+    /**
+     * Determine whether the digestType is valid for KeyGenLock.
+     * @return the predicate
+     */
+    public Predicate&lt;GordianDigestType&gt; supportedKeyGenDigestTypes() {
+<span class="fc" id="L72">        return supportedHMacDigestTypes().and(isExternalHashDigest());</span>
+    }
+
+    /**
+     * Determine whether the digestType is valid for agreement.
+     * @return the predicate
+     */
+    public Predicate&lt;GordianDigestType&gt; supportedAgreementDigestTypes() {
+<span class="nc" id="L80">        return supportedHMacDigestTypes();</span>
+    }
+
+    /**
+     * Determine whether the digestType is an external hash.
+     * @return the predicate
+     */
+    private Predicate&lt;GordianDigestType&gt; isCombinedHashDigest() {
+<span class="fc bfc" id="L88" title="All 2 branches covered.">        return s -&gt; s.getDefaultLength().getLength() &gt;= GordianLength.LEN_256.getLength()</span>
+<span class="fc bfc" id="L89" title="All 2 branches covered.">                &amp;&amp; s.supportsLargeData();</span>
+    }
+
+    /**
+     * Determine whether the digestType is an external hash.
+     * @return the predicate
+     */
+    public Predicate&lt;GordianDigestType&gt; isExternalHashDigest() {
+<span class="fc" id="L97">        return s -&gt; s.isLengthValid(GordianLength.LEN_512);</span>
+    }
+
+    /**
+     * Obtain a list of external digestTypes.
+     * @return the list of supported digestTypes.
+     */
+    public List&lt;GordianDigestType&gt; listAllExternalDigestTypes() {
+<span class="fc" id="L105">        return Arrays.stream(GordianDigestType.values())</span>
+<span class="fc" id="L106">                .filter(supportedExternalDigestTypes())</span>
+<span class="fc" id="L107">                .toList();</span>
+    }
+
+    /**
+     * Obtain predicate for supported external digests.
+     * @return the predicate
+     */
+    public Predicate&lt;GordianDigestType&gt; supportedExternalDigestTypes() {
+<span class="fc" id="L115">        return supportedHMacDigestTypes().and(isExternalHashDigest());</span>
+    }
+
+    /**
+     * Obtain predicate for supported keySet symKeySpecs.
+     * @param pKeyLen the keyLength
+     * @return the predicate
+     */
+    public Predicate&lt;GordianSymKeySpec&gt; supportedKeySetSymKeySpecs(final GordianLength pKeyLen) {
+<span class="pc bpc" id="L124" title="1 of 2 branches missed.">        return s -&gt; supportedKeySetSymKeyTypes(pKeyLen).test(s.getSymKeyType())</span>
+<span class="pc bpc" id="L125" title="1 of 2 branches missed.">                &amp;&amp; s.getBlockLength() == GordianLength.LEN_128;</span>
+    }
+
+    /**
+     * Obtain predicate for keySet SymKeyTypes.
+     * @param pKeyLen the keyLength
+     * @return the predicate
+     */
+    public Predicate&lt;GordianSymKeyType&gt; supportedKeySetSymKeyTypes(final GordianLength pKeyLen) {
+<span class="fc" id="L134">        return t -&gt; validKeySetSymKeyType(t, pKeyLen);</span>
+    }
+
+    /**
+     * check valid keySet symKeyType.
+     * @param pKeyType the symKeyType
+     * @param pKeyLen the keyLength
+     * @return true/false
+     */
+    private boolean validKeySetSymKeyType(final GordianSymKeyType pKeyType,
+                                          final GordianLength pKeyLen) {
+<span class="fc bfc" id="L145" title="All 2 branches covered.">        return validSymKeyType(pKeyType)</span>
+<span class="fc bfc" id="L146" title="All 2 branches covered.">                &amp;&amp; validStdBlockSymKeyTypeForKeyLength(pKeyType, pKeyLen);</span>
+    }
+
+    /**
+     * Check standard block symKeyType.
+     * @param pKeyType the symKeyType
+     * @param pKeyLen the keyLength
+     * @return true/false
+     */
+    public static boolean validStdBlockSymKeyTypeForKeyLength(final GordianSymKeyType pKeyType,
+                                                              final GordianLength pKeyLen) {
+<span class="fc bfc" id="L157" title="All 2 branches covered.">        return validSymKeyTypeForKeyLength(pKeyType, pKeyLen)</span>
+<span class="fc bfc" id="L158" title="All 2 branches covered.">                &amp;&amp; pKeyType.getDefaultBlockLength().equals(GordianLength.LEN_128);</span>
+    }
+
+    /**
+     * Check SymKeyType.
+     * @param pKeyType the symKeyType
+     * @param pKeyLen the keyLength
+     * @return true/false
+     */
+    public static boolean validSymKeyTypeForKeyLength(final GordianSymKeyType pKeyType,
+                                                      final GordianLength pKeyLen) {
+<span class="fc" id="L169">        return pKeyType.validForKeyLength(pKeyLen);</span>
+    }
+
+    /**
+     * Check SymKeyType.
+     * @param pKeyType the symKeyType
+     * @return true/false
+     */
+    public boolean validSymKeyType(final GordianSymKeyType pKeyType) {
+<span class="pc bpc" id="L178" title="1 of 2 branches missed.">        return pKeyType != null;</span>
+    }
+
+    /**
+     * Check StreamKeyType.
+     * @param pKeyType the streamKeyType
+     * @return true/false
+     */
+    public boolean validStreamKeyType(final GordianStreamKeyType pKeyType) {
+<span class="pc bpc" id="L187" title="1 of 2 branches missed.">        return pKeyType != null;</span>
+    }
+
+    /**
+     * Is Xof supported?
+     * @return true/false
+     */
+    public boolean isXofSupported() {
+<span class="fc" id="L195">        return true;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

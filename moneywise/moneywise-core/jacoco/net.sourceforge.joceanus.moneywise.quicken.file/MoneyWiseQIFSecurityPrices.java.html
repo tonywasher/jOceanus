@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseQIFSecurityPrices.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.quicken.file</a> &gt; <span class="el_source">MoneyWiseQIFSecurityPrices.java</span></div><h1>MoneyWiseQIFSecurityPrices.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.quicken.file;
+
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurity;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+/**
+ * Security Price List.
+ * @author Tony Washer
+ */
+public class MoneyWiseQIFSecurityPrices
+        implements Comparable&lt;MoneyWiseQIFSecurityPrices&gt; {
+    /**
+     * The QIF File.
+     */
+    private final MoneyWiseQIFFile theFile;
+
+    /**
+     * The Security.
+     */
+    private final MoneyWiseQIFSecurity theSecurity;
+
+    /**
+     * The Price List.
+     */
+    private final List&lt;MoneyWiseQIFPrice&gt; thePrices;
+
+    /**
+     * Constructor.
+     * @param pFile the QIF File
+     * @param pSecurity the security.
+     */
+    protected MoneyWiseQIFSecurityPrices(final MoneyWiseQIFFile pFile,
+                                         final MoneyWiseSecurity pSecurity) {
+<span class="nc" id="L55">        this(pFile, new MoneyWiseQIFSecurity(pFile, pSecurity));</span>
+<span class="nc" id="L56">    }</span>
+
+    /**
+     * Constructor.
+     * @param pFile the QIF File
+     * @param pSecurity the security.
+     */
+    protected MoneyWiseQIFSecurityPrices(final MoneyWiseQIFFile pFile,
+<span class="nc" id="L64">                                         final MoneyWiseQIFSecurity pSecurity) {</span>
+        /* Store parameters */
+<span class="nc" id="L66">        theFile = pFile;</span>
+<span class="nc" id="L67">        theSecurity = pSecurity;</span>
+
+        /* Create the list */
+<span class="nc" id="L70">        thePrices = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L71">    }</span>
+
+    /**
+     * Obtain the security.
+     * @return the security
+     */
+    public MoneyWiseQIFSecurity getSecurity() {
+<span class="nc" id="L78">        return theSecurity;</span>
+    }
+
+    /**
+     * Obtain the prices.
+     * @return the prices
+     */
+    public List&lt;MoneyWiseQIFPrice&gt; getPrices() {
+<span class="nc" id="L86">        return thePrices;</span>
+    }
+
+    /**
+     * Add price.
+     * @param pPrice the price to add
+     */
+    protected void addPrice(final MoneyWiseSecurityPrice pPrice) {
+        /* Allocate price */
+<span class="nc" id="L95">        final MoneyWiseQIFPrice myPrice = new MoneyWiseQIFPrice(theFile, theSecurity, pPrice);</span>
+
+        /* Add to the list */
+<span class="nc" id="L98">        thePrices.add(myPrice);</span>
+<span class="nc" id="L99">    }</span>
+
+    /**
+     * Add price.
+     * @param pPrice the price to add
+     */
+    protected void addPrice(final MoneyWiseQIFPrice pPrice) {
+        /* Add to the list */
+<span class="nc" id="L107">        thePrices.add(pPrice);</span>
+<span class="nc" id="L108">    }</span>
+
+    /**
+     * Sort the prices.
+     */
+    protected void sortPrices() {
+<span class="nc" id="L114">        Collections.sort(thePrices);</span>
+<span class="nc" id="L115">    }</span>
+
+    /**
+     * Format prices.
+     * @param pFormatter the formatter
+     * @param pBuilder the string builder
+     */
+    protected void formatPrices(final OceanusDataFormatter pFormatter,
+                                final StringBuilder pBuilder) {
+        /* Loop through the prices */
+<span class="nc bnc" id="L125" title="All 2 branches missed.">        for (MoneyWiseQIFPrice myPrice : thePrices) {</span>
+            /* Format Item Type header */
+<span class="nc" id="L127">            MoneyWiseQIFRecord.formatItemType(MoneyWiseQIFPrice.QIF_ITEM, pBuilder);</span>
+
+            /* Format the record */
+<span class="nc" id="L130">            myPrice.formatRecord(pFormatter, pBuilder);</span>
+<span class="nc" id="L131">        }</span>
+<span class="nc" id="L132">    }</span>
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle trivial cases */
+<span class="nc bnc" id="L137" title="All 2 branches missed.">        if (this == pThat) {</span>
+<span class="nc" id="L138">            return true;</span>
+        }
+<span class="nc bnc" id="L140" title="All 2 branches missed.">        if (pThat == null) {</span>
+<span class="nc" id="L141">            return false;</span>
+        }
+
+        /* Check class */
+<span class="nc bnc" id="L145" title="All 2 branches missed.">        if (!getClass().equals(pThat.getClass())) {</span>
+<span class="nc" id="L146">            return false;</span>
+        }
+
+        /* Cast correctly */
+<span class="nc" id="L150">        final MoneyWiseQIFSecurityPrices myPrices = (MoneyWiseQIFSecurityPrices) pThat;</span>
+
+        /* Check security */
+<span class="nc bnc" id="L153" title="All 2 branches missed.">        if (!theSecurity.equals(myPrices.getSecurity())) {</span>
+<span class="nc" id="L154">            return false;</span>
+        }
+
+        /* Check prices */
+<span class="nc" id="L158">        return thePrices.equals(myPrices.getPrices());</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="nc" id="L163">        final int myResult = MoneyWiseQIFFile.HASH_BASE * theSecurity.hashCode();</span>
+<span class="nc" id="L164">        return myResult + thePrices.hashCode();</span>
+    }
+
+    @Override
+    public int compareTo(final MoneyWiseQIFSecurityPrices pThat) {
+<span class="nc" id="L169">        return theSecurity.compareTo(pThat.getSecurity());</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

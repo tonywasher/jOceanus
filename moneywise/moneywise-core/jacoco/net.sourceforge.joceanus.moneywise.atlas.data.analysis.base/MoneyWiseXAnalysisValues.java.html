@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoneyWiseXAnalysisValues.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MoneyWise Personal Finance - Core</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.moneywise.atlas.data.analysis.base</a> &gt; <span class="el_source">MoneyWiseXAnalysisValues.java</span></div><h1>MoneyWiseXAnalysisValues.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * MoneyWise: Finance Application
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.atlas.data.analysis.base;
+
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataMap;
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataObjectFormat;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+
+import java.util.EnumMap;
+import java.util.Map;
+
+/**
+ * Values for a bucket.
+ * @param &lt;T&gt; the values class
+ * @param &lt;E&gt; the enum class
+ */
+public abstract class MoneyWiseXAnalysisValues&lt;T extends MoneyWiseXAnalysisValues&lt;T, E&gt;, E extends Enum&lt;E&gt; &amp; MoneyWiseXAnalysisAttribute&gt;
+        implements MetisDataObjectFormat, MetisDataMap&lt;E, Object&gt; {
+    /**
+     * Map.
+     */
+    private final Map&lt;E, Object&gt; theMap;
+
+    /**
+     * Enum class.
+     */
+    private final Class&lt;E&gt; theClass;
+
+    /**
+     * Constructor.
+     * @param pClass the Enum class
+     */
+<span class="fc" id="L54">    protected MoneyWiseXAnalysisValues(final Class&lt;E&gt; pClass) {</span>
+<span class="fc" id="L55">        theMap = new EnumMap&lt;&gt;(pClass);</span>
+<span class="fc" id="L56">        theClass = pClass;</span>
+<span class="fc" id="L57">    }</span>
+
+    /**
+     * Constructor.
+     * @param pSource the source values
+     */
+<span class="fc" id="L63">    protected MoneyWiseXAnalysisValues(final T pSource) {</span>
+<span class="fc" id="L64">        theMap = new EnumMap&lt;&gt;(pSource.getUnderlyingMap());</span>
+<span class="fc" id="L65">        theClass = pSource.getEnumClass();</span>
+<span class="fc" id="L66">    }</span>
+
+    /**
+     * Reset nonPreserved items.
+     */
+    void resetNonPreserved() {
+        /* Loop through the constants */
+<span class="fc bfc" id="L73" title="All 2 branches covered.">        for (E myKey : theClass.getEnumConstants()) {</span>
+            /* If we are copying all or the attribute is preserved */
+<span class="fc bfc" id="L75" title="All 2 branches covered.">            if (!myKey.isPreserved()) {</span>
+                /* Remove values that are not preserved */
+<span class="fc" id="L77">                theMap.remove(myKey);</span>
+            }
+        }
+<span class="fc" id="L80">    }</span>
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+<span class="nc" id="L84">        return getClass().getSimpleName();</span>
+    }
+
+    /**
+     * Obtain EnumClass.
+     * @return the class.
+     */
+    protected Class&lt;E&gt; getEnumClass() {
+<span class="fc" id="L92">        return theClass;</span>
+    }
+
+    /**
+     * Obtain new snapShot.
+     * @return the snapShot.
+     */
+    protected abstract T newSnapShot();
+
+    @Override
+    public Map&lt;E, Object&gt; getUnderlyingMap() {
+<span class="fc" id="L103">        return theMap;</span>
+    }
+
+    /**
+     * Adjust to base values.
+     * @param pBaseValues the base values.
+     */
+    public void adjustToBaseValues(final T pBaseValues) {
+<span class="fc" id="L111">    }</span>
+
+    /**
+     * Obtain delta value.
+     * @param pPrevious the previous values.
+     * @param pAttr the attribute
+     * @return the delta
+     */
+    protected OceanusDecimal getDeltaValue(final T pPrevious,
+                                           final E pAttr) {
+<span class="nc bnc" id="L121" title="All 3 branches missed.">        switch (pAttr.getDataType()) {</span>
+            case MONEY:
+<span class="nc" id="L123">                return getDeltaMoneyValue(pPrevious, pAttr);</span>
+            case UNITS:
+<span class="nc" id="L125">                return getDeltaUnitsValue(pPrevious, pAttr);</span>
+            default:
+<span class="nc" id="L127">                return null;</span>
+        }
+    }
+
+    /**
+     * Obtain delta money value.
+     * @param pPrevious the previous values.
+     * @param pAttr the attribute
+     * @return the delta
+     */
+    protected OceanusMoney getDeltaMoneyValue(final T pPrevious,
+                                              final E pAttr) {
+        /* Access current and previous values */
+<span class="nc" id="L140">        OceanusMoney myCurr = getMoneyValue(pAttr);</span>
+<span class="nc bnc" id="L141" title="All 2 branches missed.">        if (pPrevious != null) {</span>
+<span class="nc" id="L142">            final OceanusMoney myPrev = pPrevious.getMoneyValue(pAttr);</span>
+
+            /* Calculate delta */
+<span class="nc" id="L145">            myCurr = new OceanusMoney(myCurr);</span>
+<span class="nc" id="L146">            myCurr.subtractAmount(myPrev);</span>
+        }
+<span class="nc" id="L148">        return myCurr;</span>
+    }
+
+    /**
+     * Obtain delta units value.
+     * @param pPrevious the previous values.
+     * @param pAttr the attribute
+     * @return the delta
+     */
+    protected OceanusUnits getDeltaUnitsValue(final T pPrevious,
+                                              final E pAttr) {
+        /* Access current and previous values */
+<span class="nc" id="L160">        OceanusUnits myCurr = getUnitsValue(pAttr);</span>
+<span class="nc bnc" id="L161" title="All 2 branches missed.">        if (pPrevious != null) {</span>
+<span class="nc" id="L162">            final OceanusUnits myPrev = pPrevious.getUnitsValue(pAttr);</span>
+
+            /* Calculate delta */
+<span class="nc" id="L165">            myCurr = new OceanusUnits(myCurr);</span>
+<span class="nc" id="L166">            myCurr.subtractUnits(myPrev);</span>
+        }
+<span class="nc" id="L168">        return myCurr;</span>
+    }
+
+    /**
+     * Adjust money value relative to base.
+     * @param pBase the base values.
+     * @param pAttr the attribute to reBase.
+     */
+    protected void adjustMoneyToBase(final T pBase,
+                                     final E pAttr) {
+        /* Adjust spend values */
+<span class="nc" id="L179">        OceanusMoney myValue = getMoneyValue(pAttr);</span>
+<span class="nc" id="L180">        myValue = new OceanusMoney(myValue);</span>
+<span class="nc" id="L181">        final OceanusMoney myBaseValue = pBase.getMoneyValue(pAttr);</span>
+<span class="nc" id="L182">        myValue.subtractAmount(myBaseValue);</span>
+<span class="nc" id="L183">        theMap.put(pAttr, myValue);</span>
+<span class="nc" id="L184">    }</span>
+
+    /**
+     * Reset base values.
+     */
+    public void resetBaseValues() {
+<span class="fc" id="L190">    }</span>
+
+    /**
+     * Set Value.
+     * @param pAttr the attribute
+     * @param pValue the value of the attribute
+     */
+    public void setValue(final E pAttr,
+                         final Object pValue) {
+        /* Set the value into the map */
+<span class="fc" id="L200">        theMap.put(pAttr, pValue);</span>
+<span class="fc" id="L201">    }</span>
+
+    /**
+     * Obtain an attribute value.
+     * @param &lt;X&gt; the data type
+     * @param pAttr the attribute
+     * @param pClass the class of the attribute
+     * @return the value of the attribute or null
+     */
+    private &lt;X&gt; X getValue(final E pAttr,
+                           final Class&lt;X&gt; pClass) {
+        /* Obtain the value */
+<span class="fc" id="L213">        return pClass.cast(getValue(pAttr));</span>
+    }
+
+    /**
+     * Obtain an attribute value.
+     * @param pAttr the attribute
+     * @return the value of the attribute or null
+     */
+    public Object getValue(final E pAttr) {
+        /* Obtain the attribute value */
+<span class="fc" id="L223">        return theMap.get(pAttr);</span>
+    }
+
+    /**
+     * Obtain a decimal attribute value.
+     * @param pAttr the attribute
+     * @return the value of the attribute or null
+     */
+    public OceanusDecimal getDecimalValue(final E pAttr) {
+        /* Obtain the attribute value */
+<span class="fc" id="L233">        return getValue(pAttr, OceanusDecimal.class);</span>
+    }
+
+    /**
+     * Obtain a units attribute value.
+     * @param pAttr the attribute
+     * @return the value of the attribute or null
+     */
+    public OceanusUnits getUnitsValue(final E pAttr) {
+        /* Obtain the attribute value */
+<span class="fc" id="L243">        return getValue(pAttr, OceanusUnits.class);</span>
+    }
+
+    /**
+     * Obtain a price attribute value.
+     * @param pAttr the attribute
+     * @return the value of the attribute or null
+     */
+    public OceanusPrice getPriceValue(final E pAttr) {
+        /* Obtain the attribute value */
+<span class="fc" id="L253">        return getValue(pAttr, OceanusPrice.class);</span>
+    }
+
+    /**
+     * Obtain a money attribute value.
+     * @param pAttr the attribute
+     * @return the value of the attribute or null
+     */
+    public OceanusMoney getMoneyValue(final E pAttr) {
+        /* Obtain the attribute value */
+<span class="fc" id="L263">        return getValue(pAttr, OceanusMoney.class);</span>
+    }
+
+    /**
+     * Obtain a rate attribute value.
+     * @param pAttr the attribute
+     * @return the value of the attribute or null
+     */
+    public OceanusRate getRateValue(final E pAttr) {
+        /* Obtain the attribute value */
+<span class="nc" id="L273">        return getValue(pAttr, OceanusRate.class);</span>
+    }
+
+    /**
+     * Obtain a ratio attribute value.
+     * @param pAttr the attribute
+     * @return the value of the attribute or null
+     */
+    public OceanusRatio getRatioValue(final E pAttr) {
+        /* Obtain the attribute value */
+<span class="fc" id="L283">        return getValue(pAttr, OceanusRatio.class);</span>
+    }
+
+    /**
+     * Obtain a date attribute value.
+     * @param pAttr the attribute
+     * @return the value of the attribute or null
+     */
+    public OceanusDate getDateValue(final E pAttr) {
+        /* Obtain the attribute value */
+<span class="nc" id="L293">        return getValue(pAttr, OceanusDate.class);</span>
+    }
+
+    /**
+     * Obtain an integer attribute value.
+     * @param pAttr the attribute
+     * @return the value of the attribute or null
+     */
+    public Integer getIntegerValue(final E pAttr) {
+        /* Obtain the attribute */
+<span class="nc" id="L303">        return getValue(pAttr, Integer.class);</span>
+    }
+
+    /**
+     * Obtain an enum attribute value.
+     * @param &lt;V&gt; the enum type
+     * @param pAttr the attribute
+     * @param pClass the Class of the enum
+     * @return the value of the attribute or null
+     */
+    public &lt;V extends Enum&lt;V&gt;&gt; V getEnumValue(final E pAttr,
+                                              final Class&lt;V&gt; pClass) {
+        /* Obtain the attribute */
+<span class="nc" id="L316">        return getValue(pAttr, pClass);</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L321">        final StringBuilder myBuilder = new StringBuilder();</span>
+<span class="nc bnc" id="L322" title="All 2 branches missed.">        for (Map.Entry&lt;E, Object&gt; myEntry : theMap.entrySet()) {</span>
+<span class="nc" id="L323">            final Object myValue = myEntry.getValue();</span>
+<span class="nc bnc" id="L324" title="All 4 branches missed.">            if (!(myValue instanceof OceanusDecimal myDec) || myDec.isNonZero()) {</span>
+<span class="nc bnc" id="L325" title="All 2 branches missed.">                if (!myBuilder.isEmpty()) {</span>
+<span class="nc" id="L326">                    myBuilder.append(&quot;, &quot;);</span>
+                }
+<span class="nc" id="L328">                myBuilder.append(myEntry.getKey());</span>
+<span class="nc" id="L329">                myBuilder.append(&quot;=&quot;);</span>
+<span class="nc" id="L330">                myBuilder.append(myEntry.getValue());</span>
+            }
+<span class="nc" id="L332">        }</span>
+<span class="nc" id="L333">        return myBuilder.toString();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

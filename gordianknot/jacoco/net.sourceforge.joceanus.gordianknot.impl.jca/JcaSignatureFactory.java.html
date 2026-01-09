@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JcaSignatureFactory.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.gordianknot.impl.jca</a> &gt; <span class="el_source">JcaSignatureFactory.java</span></div><h1>JcaSignatureFactory.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * GordianKnot: Security Suite
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.gordianknot.impl.jca;
+
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
+import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
+import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSubSpec.GordianDigestState;
+import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignature;
+import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
+import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureType;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseData;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import net.sourceforge.joceanus.gordianknot.impl.core.sign.GordianCompositeSigner;
+import net.sourceforge.joceanus.gordianknot.impl.core.sign.GordianCoreSignatureFactory;
+import net.sourceforge.joceanus.gordianknot.impl.jca.JcaSignature.JcaDSASignature;
+import net.sourceforge.joceanus.gordianknot.impl.jca.JcaSignature.JcaEdDSASignature;
+import net.sourceforge.joceanus.gordianknot.impl.jca.JcaSignature.JcaFalconSignature;
+import net.sourceforge.joceanus.gordianknot.impl.jca.JcaSignature.JcaGOSTSignature;
+import net.sourceforge.joceanus.gordianknot.impl.jca.JcaSignature.JcaLMSSignature;
+import net.sourceforge.joceanus.gordianknot.impl.jca.JcaSignature.JcaMLDSASignature;
+import net.sourceforge.joceanus.gordianknot.impl.jca.JcaSignature.JcaMayoSignature;
+import net.sourceforge.joceanus.gordianknot.impl.jca.JcaSignature.JcaPicnicSignature;
+import net.sourceforge.joceanus.gordianknot.impl.jca.JcaSignature.JcaRSASignature;
+import net.sourceforge.joceanus.gordianknot.impl.jca.JcaSignature.JcaSLHDSASignature;
+import net.sourceforge.joceanus.gordianknot.impl.jca.JcaSignature.JcaSnovaSignature;
+import net.sourceforge.joceanus.gordianknot.impl.jca.JcaSignature.JcaXMSSSignature;
+
+/**
+ * Jca Signature Factory.
+ */
+public class JcaSignatureFactory
+        extends GordianCoreSignatureFactory {
+    /**
+     * Constructor.
+     *
+     * @param pFactory the factory
+     */
+    JcaSignatureFactory(final GordianBaseFactory pFactory) {
+        /* Initialise underlying class */
+<span class="fc" id="L55">        super(pFactory);</span>
+<span class="fc" id="L56">    }</span>
+
+    @Override
+    public GordianSignature createSigner(final GordianSignatureSpec pSignatureSpec) throws GordianException {
+        /* Check validity of Signature */
+<span class="fc" id="L61">        checkSignatureSpec(pSignatureSpec);</span>
+
+        /* Create the signer */
+<span class="fc" id="L64">        return getJcaSigner(pSignatureSpec);</span>
+    }
+
+    /**
+     * Create the Jca Signer.
+     * @param pSignatureSpec the signatureSpec
+     * @return the Signer
+     * @throws GordianException on error
+     */
+    private GordianSignature getJcaSigner(final GordianSignatureSpec pSignatureSpec) throws GordianException {
+<span class="pc bpc" id="L74" title="1 of 14 branches missed.">        switch (pSignatureSpec.getKeyPairType()) {</span>
+            case RSA:
+<span class="fc" id="L76">                return new JcaRSASignature(getFactory(), pSignatureSpec);</span>
+            case EC:
+            case SM2:
+            case DSA:
+<span class="fc" id="L80">                return new JcaDSASignature(getFactory(), pSignatureSpec);</span>
+            case EDDSA:
+<span class="fc" id="L82">                return new JcaEdDSASignature(getFactory(), pSignatureSpec);</span>
+            case GOST2012:
+            case DSTU4145:
+<span class="fc" id="L85">                return new JcaGOSTSignature(getFactory(), pSignatureSpec);</span>
+            case XMSS:
+<span class="fc" id="L87">                return new JcaXMSSSignature(getFactory(), pSignatureSpec);</span>
+            case SLHDSA:
+<span class="fc" id="L89">                return new JcaSLHDSASignature(getFactory(), pSignatureSpec);</span>
+            case MLDSA:
+<span class="fc" id="L91">                return new JcaMLDSASignature(getFactory(), pSignatureSpec);</span>
+            case FALCON:
+<span class="fc" id="L93">                return new JcaFalconSignature(getFactory(), pSignatureSpec);</span>
+            case MAYO:
+<span class="fc" id="L95">                return new JcaMayoSignature(getFactory(), pSignatureSpec);</span>
+            case SNOVA:
+<span class="fc" id="L97">                return new JcaSnovaSignature(getFactory(), pSignatureSpec);</span>
+            case PICNIC:
+<span class="fc" id="L99">                return new JcaPicnicSignature(getFactory(), pSignatureSpec);</span>
+            case LMS:
+<span class="fc" id="L101">                return new JcaLMSSignature(getFactory(), pSignatureSpec);</span>
+            case COMPOSITE:
+<span class="fc" id="L103">                return new GordianCompositeSigner(getFactory(), pSignatureSpec);</span>
+            default:
+<span class="nc" id="L105">                throw new GordianDataException(GordianBaseData.getInvalidText(pSignatureSpec.getKeyPairType()));</span>
+        }
+    }
+
+    @Override
+    protected boolean validSignatureSpec(final GordianSignatureSpec pSpec) {
+        /* validate the signatureSpec */
+<span class="fc bfc" id="L112" title="All 2 branches covered.">        if (!super.validSignatureSpec(pSpec)) {</span>
+<span class="fc" id="L113">            return false;</span>
+        }
+
+        /* Switch on KeyType */
+<span class="pc bpc" id="L117" title="1 of 6 branches missed.">        switch (pSpec.getKeyPairType()) {</span>
+            case RSA:
+<span class="fc" id="L119">                return validRSASignature(pSpec);</span>
+            case EC:
+<span class="fc" id="L121">                return validECSignature(pSpec);</span>
+            case DSTU4145:
+            case GOST2012:
+            case SM2:
+<span class="fc" id="L125">                return true;</span>
+            case DSA:
+<span class="fc" id="L127">                return validDSASignature(pSpec);</span>
+            case XMSS:
+            case SLHDSA:
+            case MLDSA:
+            case FALCON:
+            case MAYO:
+            case SNOVA:
+            case PICNIC:
+            case EDDSA:
+            case LMS:
+            case COMPOSITE:
+<span class="fc" id="L138">                return true;</span>
+            case DH:
+            case XDH:
+            default:
+<span class="nc" id="L142">                return false;</span>
+        }
+    }
+
+    /**
+     * Check RSASignature.
+     * @param pSpec the signatureSpec
+     * @return true/false
+     */
+    private static boolean validRSASignature(final GordianSignatureSpec pSpec) {
+        /* Switch on DigestType */
+<span class="fc" id="L153">        final GordianDigestSpec myDigest = pSpec.getDigestSpec();</span>
+<span class="fc bfc" id="L154" title="All 6 branches covered.">        switch (myDigest.getDigestType()) {</span>
+            case SHA1:
+            case SHA2:
+<span class="fc" id="L157">                return true;</span>
+            case SHA3:
+<span class="fc bfc" id="L159" title="All 2 branches covered.">                return pSpec.getSignatureType().isPSS()</span>
+<span class="fc bfc" id="L160" title="All 2 branches covered.">                       || GordianSignatureType.PREHASH.equals(pSpec.getSignatureType());</span>
+            case SHAKE:
+<span class="fc" id="L162">                return validRSASHAKESignature(pSpec);</span>
+            case WHIRLPOOL:
+<span class="fc bfc" id="L164" title="All 2 branches covered.">                return !pSpec.getSignatureType().isPSS();</span>
+            case RIPEMD:
+            case MD2:
+            case MD4:
+            case MD5:
+<span class="fc" id="L169">                return GordianSignatureType.PREHASH.equals(pSpec.getSignatureType());</span>
+            default:
+<span class="fc" id="L171">                return false;</span>
+        }
+    }
+
+    /**
+     * Check RSASHAKESignature.
+     * @param pSpec the signatureSpec
+     * @return true/false
+     */
+    private static boolean validRSASHAKESignature(final GordianSignatureSpec pSpec) {
+        /* Must be pure SHAKE */
+<span class="fc" id="L182">        final GordianDigestSpec myDigest = pSpec.getDigestSpec();</span>
+<span class="fc bfc" id="L183" title="All 2 branches covered.">        if (!pSpec.getSignatureType().isPSS()) {</span>
+<span class="fc" id="L184">            return false;</span>
+        }
+
+        /* Switch on SignatureType */
+<span class="fc bfc" id="L188" title="All 3 branches covered.">        switch (pSpec.getSignatureType()) {</span>
+            case PSS128:
+<span class="fc" id="L190">                return GordianDigestState.STATE128.equals(myDigest.getDigestState());</span>
+            case PSS256:
+<span class="fc" id="L192">                return GordianDigestState.STATE256.equals(myDigest.getDigestState());</span>
+            default:
+<span class="fc" id="L194">                return false;</span>
+        }
+    }
+
+    /**
+     * Check ECSignature.
+     * @param pSpec the digestSpec
+     * @return true/false
+     */
+    private static boolean validECSignature(final GordianSignatureSpec pSpec) {
+        /* Switch on DigestType */
+<span class="fc" id="L205">        final GordianDigestSpec myDigest = pSpec.getDigestSpec();</span>
+<span class="fc bfc" id="L206" title="All 4 branches covered.">        switch (myDigest.getDigestType()) {</span>
+            case SHA2:
+<span class="fc bfc" id="L208" title="All 2 branches covered.">                return !myDigest.isSha2Hybrid();</span>
+            case SHA3:
+<span class="fc bfc" id="L210" title="All 2 branches covered.">                return !GordianSignatureType.NR.equals(pSpec.getSignatureType());</span>
+            case SHAKE:
+<span class="fc" id="L212">                return GordianSignatureType.DSA.equals(pSpec.getSignatureType());</span>
+            default:
+<span class="fc" id="L214">                return false;</span>
+        }
+    }
+
+    /**
+     * Check ECSignature.
+     * @param pSpec the digestSpec
+     * @return true/false
+     */
+    private static boolean validDSASignature(final GordianSignatureSpec pSpec) {
+        /* Switch on DigestType */
+<span class="fc" id="L225">        final GordianDigestSpec myDigest = pSpec.getDigestSpec();</span>
+<span class="fc bfc" id="L226" title="All 3 branches covered.">        switch (myDigest.getDigestType()) {</span>
+            case SHA2:
+<span class="fc bfc" id="L228" title="All 2 branches covered.">                return !myDigest.isSha2Hybrid();</span>
+            case SHA1:
+            case SHA3:
+<span class="fc" id="L231">                return true;</span>
+            default:
+<span class="fc" id="L233">                return false;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

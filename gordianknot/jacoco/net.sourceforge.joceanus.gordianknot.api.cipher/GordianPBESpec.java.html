@@ -1,0 +1,407 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GordianPBESpec.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GordianKnot Security Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.gordianknot.api.cipher</a> &gt; <span class="el_source">GordianPBESpec.java</span></div><h1>GordianPBESpec.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * GordianKnot: Security Suite
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.gordianknot.api.cipher;
+
+import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
+
+import java.util.Objects;
+
+/**
+ * PBE Specification.
+ */
+public abstract class GordianPBESpec {
+    /**
+     * The Separator.
+     */
+    private static final String SEP = &quot;-&quot;;
+
+    /**
+     * The PBEType.
+     */
+    private final GordianPBEType theType;
+
+    /**
+     * is the Spec valid?
+     */
+    private boolean isValid;
+
+    /**
+     * Constructor.
+     * @param pPBEType the PBEType.
+     */
+<span class="fc" id="L46">    GordianPBESpec(final GordianPBEType pPBEType) {</span>
+<span class="fc" id="L47">        theType = pPBEType;</span>
+<span class="fc" id="L48">    }</span>
+
+    /**
+     * Obtain the PBEType.
+     * @return the PBEType
+     */
+    public GordianPBEType getPBEType() {
+<span class="fc" id="L55">        return theType;</span>
+    }
+
+    /**
+     * Is the Spec valid?
+     * @return true/false
+     */
+    public boolean isValid() {
+<span class="fc" id="L63">        return isValid;</span>
+    }
+
+    /**
+     * Set as valid.
+     */
+    void setValid() {
+<span class="fc" id="L70">        isValid = true;</span>
+<span class="fc" id="L71">    }</span>
+
+    /**
+     * DigestAndCountSpec.
+     */
+    public static class GordianPBEDigestAndCountSpec
+            extends GordianPBESpec {
+        /**
+         * The DigestSpec.
+         */
+        private final GordianDigestSpec theDigestSpec;
+
+        /**
+         * The count.
+         */
+        private final int theCount;
+
+        /**
+         * Constructor.
+         * @param pPBEType the PBEType.
+         * @param pDigestSpec the digestSpec.
+         * @param pCount the iteration count
+         */
+        GordianPBEDigestAndCountSpec(final GordianPBEType pPBEType,
+                                     final GordianDigestSpec pDigestSpec,
+                                     final int pCount) {
+            /* Init underlying class and store params */
+<span class="fc" id="L98">            super(pPBEType);</span>
+<span class="fc" id="L99">            theDigestSpec = pDigestSpec;</span>
+<span class="fc" id="L100">            theCount = pCount;</span>
+
+            /* Check validity */
+<span class="fc" id="L103">            checkValidity();</span>
+<span class="fc" id="L104">        }</span>
+
+        /**
+         * Obtain the digestSpec.
+         * @return the digestSpec
+         */
+        public GordianDigestSpec getDigestSpec() {
+<span class="fc" id="L111">            return theDigestSpec;</span>
+        }
+
+        /**
+         * Obtain the iteration count.
+         * @return the count
+         */
+        public int getIterationCount() {
+<span class="fc" id="L119">            return theCount;</span>
+        }
+
+        /**
+         * Check validity.
+         */
+        private void checkValidity() {
+            /* Check PBEType */
+<span class="fc bfc" id="L127" title="All 2 branches covered.">            if (getPBEType() != GordianPBEType.PBKDF2</span>
+<span class="pc bpc" id="L128" title="1 of 2 branches missed.">                &amp;&amp; getPBEType() != GordianPBEType.PKCS12) {</span>
+<span class="nc" id="L129">                return;</span>
+            }
+
+            /* Check DigestSpec and Count &gt; 0 */
+<span class="pc bpc" id="L133" title="1 of 2 branches missed.">            if (theDigestSpec != null</span>
+<span class="pc bpc" id="L134" title="2 of 4 branches missed.">                    &amp;&amp; theDigestSpec.isValid()</span>
+                    &amp;&amp; theCount &gt; 0) {
+<span class="fc" id="L136">                setValid();</span>
+            }
+<span class="fc" id="L138">        }</span>
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle trivial cases */
+<span class="nc bnc" id="L143" title="All 2 branches missed.">            if (this == pThat) {</span>
+<span class="nc" id="L144">                return true;</span>
+            }
+<span class="nc bnc" id="L146" title="All 2 branches missed.">            if (pThat == null) {</span>
+<span class="nc" id="L147">                return false;</span>
+            }
+
+            /* Check count, digestSpec and PBEType */
+<span class="nc" id="L151">            return pThat instanceof GordianPBEDigestAndCountSpec myThat</span>
+<span class="nc bnc" id="L152" title="All 2 branches missed.">                    &amp;&amp; theCount == myThat.getIterationCount()</span>
+<span class="nc bnc" id="L153" title="All 2 branches missed.">                    &amp;&amp; theDigestSpec.equals(myThat.getDigestSpec())</span>
+<span class="nc bnc" id="L154" title="All 4 branches missed.">                    &amp;&amp; getPBEType() == myThat.getPBEType();</span>
+        }
+
+        @Override
+        public int hashCode() {
+<span class="nc" id="L159">            return Objects.hash(theDigestSpec, theCount, getPBEType());</span>
+        }
+
+        @Override
+        public String toString() {
+<span class="fc" id="L164">            return getPBEType().toString() + SEP + theDigestSpec.toString() + SEP + theCount;</span>
+        }
+    }
+
+    /**
+     * SCryptSpec.
+     */
+    public static class GordianPBESCryptSpec
+            extends GordianPBESpec {
+        /**
+         * Max Small Block Cost.
+         */
+        private static final int MAX_SMALL_COST = 0xFFFF;
+
+        /**
+         * Parallel limit.
+         */
+        private static final int PARALLEL_LIMIT = 128;
+
+        /**
+         * The BlockSize.
+         */
+        private final int theBlockSize;
+
+        /**
+         * The cost.
+         */
+        private final int theCost;
+
+        /**
+         * The Parallelism.
+         */
+        private final int theParallel;
+
+        /**
+         * Constructor.
+         * @param pCost the cost
+         * @param pBlockSize the blockSize
+         * @param pParallel the parallelism
+         */
+        GordianPBESCryptSpec(final int pCost,
+                             final int pBlockSize,
+                             final int pParallel) {
+            /* Init underlying class and store params */
+<span class="fc" id="L208">            super(GordianPBEType.SCRYPT);</span>
+<span class="fc" id="L209">            theCost = pCost;</span>
+<span class="fc" id="L210">            theBlockSize = pBlockSize;</span>
+<span class="fc" id="L211">            theParallel = pParallel;</span>
+
+            /* Check validity */
+<span class="fc" id="L214">            checkValidity();</span>
+<span class="fc" id="L215">        }</span>
+
+        /**
+         * Obtain the blockSize.
+         * @return the blockSize
+         */
+        public int getBlockSize() {
+<span class="fc" id="L222">            return theBlockSize;</span>
+        }
+
+        /**
+         * Obtain the cost.
+         * @return the cost
+         */
+        public int getCost() {
+<span class="fc" id="L230">            return theCost;</span>
+        }
+
+        /**
+         * Obtain the parallelism.
+         * @return the parallelism
+         */
+        public int getParallel() {
+<span class="fc" id="L238">            return theParallel;</span>
+        }
+
+        /**
+         * Check validity.
+         */
+        private void checkValidity() {
+            /* Check BlockSize is &gt; 0 */
+<span class="pc bpc" id="L246" title="1 of 2 branches missed.">            if (theBlockSize &lt;= 0) {</span>
+<span class="nc" id="L247">                return;</span>
+            }
+
+            /* Check Cost is &gt; 1 and power of two */
+<span class="pc bpc" id="L251" title="2 of 4 branches missed.">            if (theCost &lt;= 1</span>
+                || (theCost &amp; (theCost - 1)) != 0) {
+<span class="nc" id="L253">                return;</span>
+            }
+
+            /* Check Cost restriction for BlockSize of 1 */
+<span class="pc bpc" id="L257" title="2 of 4 branches missed.">            if (theBlockSize == 1</span>
+                    &amp;&amp; theCost &gt; MAX_SMALL_COST) {
+<span class="nc" id="L259">                return;</span>
+            }
+
+            /* Check Parallel restriction */
+<span class="fc" id="L263">            final int maxParallel = Integer.MAX_VALUE / (PARALLEL_LIMIT * theBlockSize * Byte.SIZE);</span>
+<span class="pc bpc" id="L264" title="2 of 4 branches missed.">            if (theParallel &gt;= 1</span>
+                    &amp;&amp; theParallel &lt;= maxParallel) {
+<span class="fc" id="L266">                setValid();</span>
+            }
+<span class="fc" id="L268">        }</span>
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle trivial cases */
+<span class="nc bnc" id="L273" title="All 2 branches missed.">            if (this == pThat) {</span>
+<span class="nc" id="L274">                return true;</span>
+            }
+<span class="nc bnc" id="L276" title="All 2 branches missed.">            if (pThat == null) {</span>
+<span class="nc" id="L277">                return false;</span>
+            }
+
+            /* Check cost, blockSize and parallel */
+<span class="nc" id="L281">            return pThat instanceof GordianPBESCryptSpec myThat</span>
+<span class="nc bnc" id="L282" title="All 2 branches missed.">                    &amp;&amp; theCost == myThat.getCost()</span>
+<span class="nc bnc" id="L283" title="All 2 branches missed.">                    &amp;&amp; theBlockSize == myThat.getBlockSize()</span>
+<span class="nc bnc" id="L284" title="All 2 branches missed.">                    &amp;&amp; theParallel == myThat.getParallel()</span>
+<span class="nc bnc" id="L285" title="All 4 branches missed.">                    &amp;&amp; getPBEType() == myThat.getPBEType();</span>
+        }
+
+        @Override
+        public int hashCode() {
+<span class="nc" id="L290">            return Objects.hash(theBlockSize, theCost, theParallel, getPBEType());</span>
+        }
+
+        @Override
+        public String toString() {
+<span class="fc" id="L295">            return getPBEType().toString() + SEP + theBlockSize + SEP + theCost + SEP + theParallel;</span>
+        }
+    }
+
+    /**
+     * Argon2Spec.
+     */
+    public static class GordianPBEArgon2Spec
+            extends GordianPBESpec {
+        /**
+         * The Memory.
+         */
+        private final int theMemory;
+
+        /**
+         * The lanes.
+         */
+        private final int theLanes;
+
+        /**
+         * The Iterations.
+         */
+        private final int theIterations;
+
+        /**
+         * Constructor.
+         * @param pLanes the Lanes
+         * @param pMemory the Memory
+         * @param pIterations the iterations
+         */
+        GordianPBEArgon2Spec(final int pLanes,
+                             final int pMemory,
+                             final int pIterations) {
+            /* Init underlying class and store params */
+<span class="fc" id="L329">            super(GordianPBEType.ARGON2);</span>
+<span class="fc" id="L330">            theLanes = pLanes;</span>
+<span class="fc" id="L331">            theMemory = pMemory;</span>
+<span class="fc" id="L332">            theIterations = pIterations;</span>
+
+            /* Check validity */
+<span class="fc" id="L335">            checkValidity();</span>
+<span class="fc" id="L336">        }</span>
+
+        /**
+         * Obtain the lanes.
+         * @return the lanes
+         */
+        public int getLanes() {
+<span class="fc" id="L343">            return theLanes;</span>
+        }
+
+        /**
+         * Obtain the memory.
+         * @return the memory
+         */
+        public int getMemory() {
+<span class="fc" id="L351">            return theMemory;</span>
+        }
+
+        /**
+         * Obtain the iteration count.
+         * @return the count
+         */
+        public int getIterationCount() {
+<span class="fc" id="L359">            return theIterations;</span>
+        }
+
+        /**
+         * Check validity.
+         */
+        private void checkValidity() {
+            /* Check Iterations and Lanes are &gt; 0 */
+<span class="pc bpc" id="L367" title="2 of 4 branches missed.">            if (theIterations &lt;= 0</span>
+                || theLanes &lt;= 0) {
+<span class="nc" id="L369">                return;</span>
+            }
+
+            /* Check Memory is &gt;= 2 * lanes */
+<span class="pc bpc" id="L373" title="1 of 2 branches missed.">            if (theMemory &gt;= theLanes &lt;&lt; 1) {</span>
+<span class="fc" id="L374">                setValid();</span>
+            }
+<span class="fc" id="L376">        }</span>
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle trivial cases */
+<span class="nc bnc" id="L381" title="All 2 branches missed.">            if (this == pThat) {</span>
+<span class="nc" id="L382">                return true;</span>
+            }
+<span class="nc bnc" id="L384" title="All 2 branches missed.">            if (pThat == null) {</span>
+<span class="nc" id="L385">                return false;</span>
+            }
+
+            /* Check lanes, memory and iterations */
+<span class="nc" id="L389">            return pThat instanceof GordianPBEArgon2Spec myThat</span>
+<span class="nc bnc" id="L390" title="All 2 branches missed.">                    &amp;&amp; theLanes == myThat.getLanes()</span>
+<span class="nc bnc" id="L391" title="All 2 branches missed.">                    &amp;&amp; theMemory == myThat.getMemory()</span>
+<span class="nc bnc" id="L392" title="All 2 branches missed.">                    &amp;&amp; theIterations == myThat.getIterationCount()</span>
+<span class="nc bnc" id="L393" title="All 4 branches missed.">                    &amp;&amp; getPBEType() == myThat.getPBEType();</span>
+        }
+
+        @Override
+        public int hashCode() {
+<span class="nc" id="L398">            return Objects.hash(theLanes, theMemory, theIterations, getPBEType());</span>
+        }
+
+        @Override
+        public String toString() {
+<span class="fc" id="L403">            return getPBEType().toString() + SEP + theLanes + SEP + theMemory + SEP + theIterations;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

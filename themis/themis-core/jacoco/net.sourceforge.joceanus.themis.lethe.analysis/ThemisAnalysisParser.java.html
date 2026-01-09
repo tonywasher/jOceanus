@@ -1,0 +1,817 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThemisAnalysisParser.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Themis Core Project Framework</a> &gt; <a href="index.source.html" class="el_package">net.sourceforge.joceanus.themis.lethe.analysis</a> &gt; <span class="el_source">ThemisAnalysisParser.java</span></div><h1>ThemisAnalysisParser.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Themis: Java Project Framework
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.themis.lethe.analysis;
+
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.themis.lethe.analysis.ThemisAnalysisDataMap.ThemisAnalysisDataType;
+import net.sourceforge.joceanus.themis.lethe.analysis.ThemisAnalysisEmbedded.ThemisAnalysisEmbedType;
+import net.sourceforge.joceanus.themis.lethe.analysis.ThemisAnalysisGeneric.ThemisAnalysisGenericBase;
+import net.sourceforge.joceanus.themis.lethe.analysis.ThemisAnalysisScanner.ThemisAnalysisSource;
+import net.sourceforge.joceanus.themis.exc.ThemisDataException;
+
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * Parser.
+ */
+public class ThemisAnalysisParser
+    implements ThemisAnalysisSource {
+    /**
+     * The keyWordMap.
+     */
+<span class="nc" id="L41">    static final Map&lt;String, Object&gt; KEYWORDS = createKeyWordMap();</span>
+
+    /**
+     * The parent container.
+     */
+    private final ThemisAnalysisContainer theParent;
+
+    /**
+     * The list of source lines.
+     */
+    private final Deque&lt;ThemisAnalysisElement&gt; theLines;
+
+    /**
+     * The list of output contents lines.
+     */
+    private final Deque&lt;ThemisAnalysisElement&gt; theContents;
+
+    /**
+     * The dataMap.
+     */
+    private final ThemisAnalysisDataMap theDataMap;
+
+    /**
+     * Temporary parser?
+     */
+    private final boolean isTemporary;
+
+    /**
+     * Constructor.
+     * @param pLines the source lines.
+     * @param pContents the processed contents
+     * @param pContainer the container
+     */
+    ThemisAnalysisParser(final Deque&lt;ThemisAnalysisElement&gt; pLines,
+                         final Deque&lt;ThemisAnalysisElement&gt; pContents,
+<span class="nc" id="L76">                         final ThemisAnalysisContainer pContainer) {</span>
+        /* Store parameters */
+<span class="nc" id="L78">        theLines = pLines;</span>
+<span class="nc" id="L79">        theContents = pContents;</span>
+<span class="nc" id="L80">        theParent = pContainer;</span>
+
+        /* Create the dataTypeMap */
+<span class="nc" id="L83">        theDataMap = pContainer.getDataMap();</span>
+<span class="nc" id="L84">        isTemporary = false;</span>
+<span class="nc" id="L85">    }</span>
+
+    /**
+     * Constructor.
+     * @param pParser the source parser.
+     * @param pProcessed the processed output
+     */
+    ThemisAnalysisParser(final ThemisAnalysisParser pParser,
+                         final Deque&lt;ThemisAnalysisElement&gt; pProcessed) {
+<span class="nc" id="L94">        this(pParser.theLines, pProcessed, pParser.getParent());</span>
+<span class="nc" id="L95">    }</span>
+
+    /**
+     * Temporary parser constructor.
+     * @param pParser the base parser.
+     */
+<span class="nc" id="L101">    ThemisAnalysisParser(final ThemisAnalysisParser pParser) {</span>
+        /* Store parameters */
+<span class="nc" id="L103">        theLines = pParser.theLines;</span>
+<span class="nc" id="L104">        theContents = pParser.theContents;</span>
+<span class="nc" id="L105">        theParent = pParser.theParent;</span>
+
+        /* Create the dataTypeMap */
+<span class="nc" id="L108">        theDataMap = new ThemisAnalysisDataMap(pParser.getDataMap());</span>
+<span class="nc" id="L109">        isTemporary = true;</span>
+<span class="nc" id="L110">    }</span>
+
+    @Override
+    public boolean hasLines() {
+<span class="nc bnc" id="L114" title="All 2 branches missed.">        return !theLines.isEmpty();</span>
+    }
+
+    /**
+     * Is this a temporary parser?
+     * @return true/false
+     */
+    boolean isTemporary() {
+<span class="nc" id="L122">        return isTemporary;</span>
+    }
+
+    /**
+     * Obtain the parent container.
+     * @return the parent
+     */
+    ThemisAnalysisContainer getParent() {
+<span class="nc" id="L130">        return theParent;</span>
+    }
+
+    /**
+     * Obtain the dataTypes map.
+     * @return the dataTypesMap
+     */
+    ThemisAnalysisDataMap getDataMap() {
+<span class="nc" id="L138">        return theDataMap;</span>
+    }
+
+    @Override
+    public ThemisAnalysisElement popNextLine() throws OceanusException {
+        /* Check that there is a line to pop */
+<span class="nc bnc" id="L144" title="All 2 branches missed.">        if (theLines.isEmpty()) {</span>
+<span class="nc" id="L145">            throw new ThemisDataException(&quot;No more lines&quot;);</span>
+        }
+
+        /* Access the first line and remove from the list */
+<span class="nc" id="L149">        return theLines.removeFirst();</span>
+    }
+
+    /**
+     * Peek next line from list.
+     * @return the next line
+     * @throws OceanusException on error
+     */
+    ThemisAnalysisElement peekNextLine() throws OceanusException {
+        /* Check that there is a line to pop */
+<span class="nc bnc" id="L159" title="All 2 branches missed.">        if (theLines.isEmpty()) {</span>
+<span class="nc" id="L160">            throw new ThemisDataException(&quot;No more lines&quot;);</span>
+        }
+
+        /* Return the first line in the list */
+<span class="nc" id="L164">        return theLines.getFirst();</span>
+    }
+
+    @Override
+    public void pushLine(final ThemisAnalysisElement pLine) {
+        /* Insert the line at the front of the stack */
+<span class="nc" id="L170">        theLines.offerFirst(pLine);</span>
+<span class="nc" id="L171">    }</span>
+
+    /**
+     * Process a potential comment/blank line.
+     * @param pLine the line
+     * @return have we processed the line?
+     * @throws OceanusException on error
+     */
+    boolean processCommentsAndBlanks(final ThemisAnalysisLine pLine) throws OceanusException {
+        /* If this is a starting comment */
+<span class="nc bnc" id="L181" title="All 2 branches missed.">        if (ThemisAnalysisComment.isStartComment(pLine)) {</span>
+            /* Process the comment lines */
+<span class="nc" id="L183">            final ThemisAnalysisComment myComment = new ThemisAnalysisComment(this, pLine);</span>
+<span class="nc" id="L184">            theContents.add(myComment);</span>
+<span class="nc" id="L185">            return true;</span>
+        }
+
+        /* Strip Trailing comments and modifiers */
+<span class="nc" id="L189">        pLine.stripTrailingComments();</span>
+<span class="nc" id="L190">        pLine.stripModifiers();</span>
+
+        /* If this is a blank line */
+<span class="nc bnc" id="L193" title="All 2 branches missed.">        if (ThemisAnalysisBlank.isBlank(pLine)) {</span>
+            /* Process the blank lines */
+<span class="nc" id="L195">            final ThemisAnalysisBlank myBlank = new ThemisAnalysisBlank(this, pLine);</span>
+<span class="nc" id="L196">            theContents.add(myBlank);</span>
+<span class="nc" id="L197">            return true;</span>
+        }
+
+        /* If this is an annotation line */
+<span class="nc bnc" id="L201" title="All 2 branches missed.">        if (ThemisAnalysisAnnotation.isAnnotation(pLine)) {</span>
+            /* Process the annotation lines */
+<span class="nc" id="L203">            final ThemisAnalysisAnnotation myAnnotation = new ThemisAnalysisAnnotation(this, pLine);</span>
+<span class="nc" id="L204">            theContents.add(myAnnotation);</span>
+<span class="nc" id="L205">            return true;</span>
+        }
+
+        /* Not processed */
+<span class="nc" id="L209">        return false;</span>
+    }
+
+    /**
+     * Process a potential import line.
+     * @param pLine the line
+     * @return have we processed the line?
+     * @throws OceanusException on error
+     */
+    boolean processImports(final ThemisAnalysisLine pLine) throws OceanusException {
+        /* If this is an import line */
+<span class="nc bnc" id="L220" title="All 2 branches missed.">        if (ThemisAnalysisImports.isImport(pLine)) {</span>
+            /* Process the import lines */
+<span class="nc" id="L222">            final ThemisAnalysisImports myImports = new ThemisAnalysisImports(this, pLine);</span>
+<span class="nc" id="L223">            theContents.add(myImports);</span>
+<span class="nc" id="L224">            return true;</span>
+        }
+
+        /* Not processed */
+<span class="nc" id="L228">        return false;</span>
+    }
+
+    /**
+     * Process a class/enum/interface line.
+     * @param pLine the line
+     * @return have we processed the line?
+     * @throws OceanusException on error
+     */
+    boolean processClass(final ThemisAnalysisLine pLine) throws OceanusException {
+        /* Access class type */
+<span class="nc" id="L239">        final String myToken = pLine.peekNextToken();</span>
+<span class="nc" id="L240">        final Object myType = KEYWORDS.get(myToken);</span>
+
+        /* If we have a keyWord */
+<span class="nc bnc" id="L243" title="All 2 branches missed.">        if (myType instanceof ThemisAnalysisKeyWord myKeyWord) {</span>
+            /* If this is a class */
+<span class="nc bnc" id="L245" title="All 4 branches missed.">            switch (myKeyWord) {</span>
+                case CLASS:
+                    /* Create the class */
+<span class="nc" id="L248">                    pLine.stripStartSequence(myToken);</span>
+<span class="nc" id="L249">                    theContents.add(new ThemisAnalysisClass(this, pLine));</span>
+<span class="nc" id="L250">                    return true;</span>
+
+                /* If this is an interface/annotation */
+                case INTERFACE:
+                case ANNOTATION:
+                    /* Create the interface */
+<span class="nc" id="L256">                    pLine.stripStartSequence(myToken);</span>
+<span class="nc" id="L257">                    theContents.add(new ThemisAnalysisInterface(this, myType.equals(ThemisAnalysisKeyWord.ANNOTATION), pLine));</span>
+<span class="nc" id="L258">                    return true;</span>
+
+                /* If this is an enum */
+                case ENUM:
+                    /* Create the enum */
+<span class="nc" id="L263">                    pLine.stripStartSequence(myToken);</span>
+<span class="nc" id="L264">                    theContents.add(new ThemisAnalysisEnum(this, pLine));</span>
+<span class="nc" id="L265">                    return true;</span>
+
+                default:
+                    break;
+            }
+        }
+
+        /* Not processed */
+<span class="nc" id="L273">        return false;</span>
+    }
+
+    /**
+     * Process language constructs.
+     * @param pLine the line
+     * @return have we processed the line?
+     * @throws OceanusException on error
+     */
+    boolean processLanguage(final ThemisAnalysisLine pLine) throws OceanusException {
+        /* Access class type */
+<span class="nc" id="L284">        final String myToken = pLine.peekNextToken();</span>
+<span class="nc" id="L285">        final Object myType = KEYWORDS.get(myToken);</span>
+
+        /* If we have a keyWord */
+<span class="nc bnc" id="L288" title="All 2 branches missed.">        if (myType instanceof ThemisAnalysisKeyWord myKeyWord) {</span>
+            /* Switch on the type */
+<span class="nc bnc" id="L290" title="All 7 branches missed.">            switch (myKeyWord) {</span>
+                /* If this is a while */
+                case WHILE:
+                    /* Create the while */
+<span class="nc" id="L294">                    pLine.stripStartSequence(myToken);</span>
+<span class="nc" id="L295">                    theContents.add(new ThemisAnalysisWhile(this, pLine));</span>
+<span class="nc" id="L296">                    return true;</span>
+
+                /* If this is a doWhile */
+                case DO:
+                    /* Create the while */
+<span class="nc" id="L301">                    pLine.stripStartSequence(myToken);</span>
+<span class="nc" id="L302">                    theContents.add(new ThemisAnalysisDoWhile(this));</span>
+<span class="nc" id="L303">                    return true;</span>
+
+                /* If this is a switch */
+                case SWITCH:
+                    /* Create the switch */
+<span class="nc" id="L308">                    pLine.stripStartSequence(myToken);</span>
+<span class="nc" id="L309">                    theContents.add(new ThemisAnalysisSwitch(this, pLine));</span>
+<span class="nc" id="L310">                    return true;</span>
+
+                /* If this is a for */
+                case FOR:
+                    /* Create the for */
+<span class="nc" id="L315">                    pLine.stripStartSequence(myToken);</span>
+<span class="nc" id="L316">                    theContents.add(new ThemisAnalysisFor(this, pLine));</span>
+<span class="nc" id="L317">                    return true;</span>
+
+                /* If this is an if */
+                case IF:
+                    /* Create the if */
+<span class="nc" id="L322">                    pLine.stripStartSequence(myToken);</span>
+<span class="nc" id="L323">                    theContents.add(new ThemisAnalysisIf(this, pLine));</span>
+<span class="nc" id="L324">                    return true;</span>
+
+                /* If this is a try */
+                case TRY:
+                    /* Create the try */
+<span class="nc" id="L329">                    pLine.stripStartSequence(myToken);</span>
+<span class="nc" id="L330">                    theContents.add(new ThemisAnalysisTry(this, pLine));</span>
+<span class="nc" id="L331">                    return true;</span>
+
+                default:
+                    break;
+            }
+        }
+
+        /* Not processed */
+<span class="nc" id="L339">        return false;</span>
+    }
+
+    /**
+     * Process blocks.
+     * @param pLine the line
+     * @return have we processed the line?
+     * @throws OceanusException on error
+     */
+    boolean processBlocks(final ThemisAnalysisLine pLine) throws OceanusException {
+        /* handle a standard block */
+<span class="nc bnc" id="L350" title="All 2 branches missed.">        if (ThemisAnalysisBlock.checkBlock(pLine)) {</span>
+<span class="nc" id="L351">            theContents.add(new ThemisAnalysisBlock(this, pLine));</span>
+<span class="nc" id="L352">            return true;</span>
+        }
+
+        /* check for an embedded lambda/Anonymous class/ArrayInit */
+<span class="nc" id="L356">        final ThemisAnalysisEmbedType myEmbed = ThemisAnalysisEmbedded.checkForEmbedded(pLine);</span>
+<span class="nc bnc" id="L357" title="All 3 branches missed.">        switch (myEmbed) {</span>
+            case LAMBDA:
+            case ANON:
+            case ARRAY:
+                /* Process an embedded lambda/anon/init */
+<span class="nc" id="L362">                theContents.add(new ThemisAnalysisEmbedded(this, myEmbed, pLine));</span>
+<span class="nc" id="L363">                return true;</span>
+            case METHOD:
+                /* Process an embedded methodBody */
+<span class="nc" id="L366">                theContents.add(new ThemisAnalysisMethodBody(this, pLine));</span>
+<span class="nc" id="L367">                return true;</span>
+            default:
+                break;
+        }
+
+        /* Not processed */
+<span class="nc" id="L373">        return false;</span>
+    }
+
+    /**
+     * Process a case/default line.
+     * @param pOwner the owning switch
+     * @param pLine the line
+     * @return have we processed the line?
+     * @throws OceanusException on error
+     */
+    boolean processCase(final ThemisAnalysisContainer pOwner,
+                        final ThemisAnalysisLine pLine) throws OceanusException {
+        /* Access case type */
+<span class="nc" id="L386">        final Object myCase = parseCase(pLine);</span>
+
+        /* If we have a case */
+<span class="nc bnc" id="L389" title="All 2 branches missed.">        if (myCase != null) {</span>
+<span class="nc" id="L390">            theContents.add(new ThemisAnalysisCase(this, pOwner, myCase));</span>
+<span class="nc" id="L391">            return true;</span>
+        }
+
+        /* Not processed */
+<span class="nc" id="L395">        return false;</span>
+    }
+
+    /**
+     * Process a case/default line.
+     * @param pLine the line
+     * @return have we processed the line?
+     */
+    static Object parseCase(final ThemisAnalysisLine pLine) {
+        /* Handle default clause */
+<span class="nc bnc" id="L405" title="All 2 branches missed.">        if (pLine.getProperties().hasModifier(ThemisAnalysisModifier.DEFAULT)) {</span>
+<span class="nc" id="L406">            return ThemisAnalysisKeyWord.DEFAULT;</span>
+        }
+
+        /* Access case type */
+<span class="nc" id="L410">        final String myToken = pLine.peekNextToken();</span>
+<span class="nc" id="L411">        final Object myType = KEYWORDS.get(myToken);</span>
+
+        /* If we have a keyWord */
+<span class="nc bnc" id="L414" title="All 2 branches missed.">        if (myType instanceof ThemisAnalysisKeyWord myKeyWord) {</span>
+            /* If this is a case/default */
+<span class="nc bnc" id="L416" title="All 3 branches missed.">            switch (myKeyWord) {</span>
+                case CASE:
+<span class="nc" id="L418">                    pLine.stripStartSequence(myToken);</span>
+<span class="nc" id="L419">                    return pLine.stripNextToken();</span>
+
+                case DEFAULT:
+<span class="nc" id="L422">                    pLine.stripStartSequence(myToken);</span>
+<span class="nc" id="L423">                    return myKeyWord;</span>
+
+                default:
+<span class="nc" id="L426">                    return null;</span>
+
+            }
+        }
+
+        /* Not processed */
+<span class="nc" id="L432">        return null;</span>
+    }
+
+    /**
+     * Process extra constructs.
+     * @param pOwner the owning construct
+     * @param pKeyWord the keyWord
+     * @return have we processed the line?
+     * @throws OceanusException on error
+     */
+    ThemisAnalysisElement processExtra(final ThemisAnalysisContainer pOwner,
+                                       final ThemisAnalysisKeyWord pKeyWord) throws OceanusException {
+        /* Just return if there are no more lines */
+<span class="nc bnc" id="L445" title="All 2 branches missed.">        if (!hasLines()) {</span>
+<span class="nc" id="L446">            return null;</span>
+        }
+
+        /* Access keyWord */
+<span class="nc" id="L450">        final ThemisAnalysisLine myLine = (ThemisAnalysisLine) popNextLine();</span>
+<span class="nc" id="L451">        final String myToken = myLine.peekNextToken();</span>
+<span class="nc" id="L452">        final Object myType = KEYWORDS.get(myToken);</span>
+
+        /* If we have a keyWord */
+<span class="nc bnc" id="L455" title="All 2 branches missed.">        if (pKeyWord.equals(myType)) {</span>
+            /* Switch on the type */
+<span class="nc bnc" id="L457" title="All 4 branches missed.">            switch ((ThemisAnalysisKeyWord) myType) {</span>
+                /* If this is an else */
+                case ELSE:
+                    /* Create the else */
+<span class="nc" id="L461">                    myLine.stripStartSequence(myToken);</span>
+<span class="nc" id="L462">                    return new ThemisAnalysisElse(this, pOwner, myLine);</span>
+
+                /* If this is a catch */
+                case CATCH:
+                    /* Create the switch */
+<span class="nc" id="L467">                    myLine.stripStartSequence(myToken);</span>
+<span class="nc" id="L468">                    return new ThemisAnalysisCatch(this, pOwner, myLine);</span>
+
+                /* If this is a finally */
+                case FINALLY:
+                    /* Create the finally */
+<span class="nc" id="L473">                    myLine.stripStartSequence(myToken);</span>
+<span class="nc" id="L474">                    return new ThemisAnalysisFinally(this, pOwner, myLine);</span>
+
+                default:
+                    break;
+            }
+        }
+
+        /* Not processed */
+<span class="nc" id="L482">        pushLine(myLine);</span>
+<span class="nc" id="L483">        return null;</span>
+    }
+
+    /**
+     * Process embedded block construct.
+     * @param pEmbedded the embedded block
+     * @return the field/statement
+     * @throws OceanusException on error
+     */
+    ThemisAnalysisElement processEmbedded(final ThemisAnalysisEmbedded pEmbedded) throws OceanusException {
+        /* Look for a reference */
+<span class="nc" id="L494">        final ThemisAnalysisLine myLine = pEmbedded.getHeader();</span>
+<span class="nc" id="L495">        final ThemisAnalysisReference myReference = parsePotentialDataType(myLine);</span>
+
+        /* If we have a reference */
+<span class="nc bnc" id="L498" title="All 2 branches missed.">        if (myReference != null) {</span>
+            /* Create as field */
+<span class="nc" id="L500">            final String myName = myLine.stripNextToken();</span>
+<span class="nc" id="L501">            return new ThemisAnalysisField(this, myName, myReference, pEmbedded);</span>
+        }
+
+        /* Just convert to statement */
+<span class="nc" id="L505">        final ThemisAnalysisKeyWord myKeyWord = determineStatementKeyWord(myLine);</span>
+<span class="nc" id="L506">        return new ThemisAnalysisStatement(myKeyWord, pEmbedded);</span>
+    }
+
+    /**
+     * Process methodBody construct.
+     * @param pMethod the methodBody
+     * @return the method
+     * @throws OceanusException on error
+     */
+    ThemisAnalysisElement processMethodBody(final ThemisAnalysisMethodBody pMethod) throws OceanusException {
+        /* Look for a reference */
+<span class="nc" id="L517">        final ThemisAnalysisLine myLine = pMethod.getHeader();</span>
+<span class="nc" id="L518">        final ThemisAnalysisReference myReference = parsePotentialDataType(myLine);</span>
+
+        /* Access the name of the method */
+<span class="nc" id="L521">        final String myName = myLine.stripNextToken();</span>
+<span class="nc" id="L522">        final boolean isMethod = myLine.startsWithChar(ThemisAnalysisChar.PARENTHESIS_OPEN);</span>
+
+        /* We must have a reference and be a method */
+<span class="nc bnc" id="L525" title="All 4 branches missed.">        if (myReference == null || !isMethod) {</span>
+<span class="nc" id="L526">            throw new ThemisDataException(&quot;Invalid Method Body&quot;);</span>
+        }
+
+        /* Create as field */
+<span class="nc" id="L530">        return new ThemisAnalysisMethod(this, myName, myReference, pMethod);</span>
+    }
+
+    /**
+     * Process field and method constructs.
+     * @param pLine the line
+     * @return the field/method or null
+     * @throws OceanusException on error
+     */
+    ThemisAnalysisElement processFieldsAndMethods(final ThemisAnalysisLine pLine) throws OceanusException {
+        /* Look for a reference */
+<span class="nc" id="L541">        final ThemisAnalysisReference myReference = parsePotentialDataType(pLine);</span>
+<span class="nc bnc" id="L542" title="All 2 branches missed.">        if (myReference != null) {</span>
+            /* Access the name of the field or method */
+<span class="nc" id="L544">            final String myName = pLine.stripNextToken();</span>
+<span class="nc" id="L545">            final boolean isMethod = pLine.startsWithChar(ThemisAnalysisChar.PARENTHESIS_OPEN);</span>
+<span class="nc bnc" id="L546" title="All 2 branches missed.">            if (!isMethod) {</span>
+<span class="nc" id="L547">                myReference.resolveGeneric(this);</span>
+<span class="nc" id="L548">                return new ThemisAnalysisField(this, myName, myReference, pLine);</span>
+            } else {
+<span class="nc" id="L550">                return new ThemisAnalysisMethod(this, myName, myReference, pLine);</span>
+            }
+        }
+
+        /* Not processed */
+<span class="nc" id="L555">        return null;</span>
+    }
+
+    /**
+     * Process a statement.
+     * @param pLine the line
+     * @return the statement
+     * @throws OceanusException on error
+     */
+    ThemisAnalysisElement processStatement(final ThemisAnalysisLine pLine) throws OceanusException {
+        /* Determine keyWord (if any)  */
+<span class="nc" id="L566">        final ThemisAnalysisKeyWord myKeyWord = determineStatementKeyWord(pLine);</span>
+<span class="nc" id="L567">        return new ThemisAnalysisStatement(this, myKeyWord, pLine);</span>
+    }
+
+    /**
+     * Process a statement.
+     * @param pLine the line
+     * @return the statement
+     */
+    private static ThemisAnalysisKeyWord determineStatementKeyWord(final ThemisAnalysisLine pLine) {
+        /* Look for a control keyWord */
+<span class="nc" id="L577">        final String myToken = pLine.peekNextToken();</span>
+<span class="nc" id="L578">        final Object myType = KEYWORDS.get(myToken);</span>
+
+        /* If we have a keyWord */
+<span class="nc bnc" id="L581" title="All 2 branches missed.">        if (myType instanceof ThemisAnalysisKeyWord myKeyWord) {</span>
+            /* Switch on the type */
+<span class="nc bnc" id="L583" title="All 2 branches missed.">            switch (myKeyWord) {</span>
+                case RETURN:
+                case THROW:
+                case BREAK:
+                case CONTINUE:
+                case YIELD:
+<span class="nc" id="L589">                    pLine.stripNextToken();</span>
+<span class="nc" id="L590">                    return myKeyWord;</span>
+                default:
+                    break;
+            }
+        }
+
+        /* No keyWord */
+<span class="nc" id="L597">        return null;</span>
+    }
+
+    /**
+     * Parse a possible dataType.
+     * @param pLine the line
+     * @return the dataType or null
+     * @throws OceanusException on error
+     */
+    private ThemisAnalysisReference parsePotentialDataType(final ThemisAnalysisLine pLine) throws OceanusException {
+        /* Not a dataType if we start with a keyWord */
+<span class="nc" id="L608">        final String myToken = pLine.peekNextToken();</span>
+<span class="nc bnc" id="L609" title="All 2 branches missed.">        if (KEYWORDS.get(myToken) != null) {</span>
+<span class="nc" id="L610">            return null;</span>
+        }
+
+        /* Determine whether this is a method call or declaration */
+<span class="nc" id="L614">        final boolean isMethod = pLine.startsWithSequence(myToken + ThemisAnalysisChar.PARENTHESIS_OPEN);</span>
+
+        /* Look for a valid, existing dataType */
+<span class="nc" id="L617">        ThemisAnalysisDataType myType = theDataMap.lookUpDataType(myToken, isMethod);</span>
+<span class="nc bnc" id="L618" title="All 2 branches missed.">        if (myType == null) {</span>
+            /* If the line has generic definitions */
+<span class="nc" id="L620">            final ThemisAnalysisProperties myProps = pLine.getProperties();</span>
+<span class="nc bnc" id="L621" title="All 2 branches missed.">            if (myProps.hasGeneric()) {</span>
+                /* Create a temporary parser and resolve against the generics */
+<span class="nc" id="L623">                final ThemisAnalysisParser myTempParser = new ThemisAnalysisParser(this);</span>
+<span class="nc" id="L624">                myProps.resolveGeneric(myTempParser);</span>
+<span class="nc" id="L625">                myType = myTempParser.getDataMap().lookUpTheDataType(myToken);</span>
+            }
+
+            /* Return null if we haven't resolved it */
+<span class="nc bnc" id="L629" title="All 2 branches missed.">            if (myType == null) {</span>
+<span class="nc" id="L630">                return null;</span>
+            }
+        }
+<span class="nc" id="L633">        pLine.stripStartSequence(myToken);</span>
+
+        /* Return the reference */
+<span class="nc" id="L636">        return buildReference(theDataMap, pLine, myType);</span>
+    }
+
+    /**
+     * Parse a dataType.
+     * @param pDataMap the dataMap
+     * @param pLine the line
+     * @return the dataType or null
+     * @throws OceanusException on error
+     */
+    static ThemisAnalysisReference parseDataType(final ThemisAnalysisDataMap pDataMap,
+                                                 final ThemisAnalysisLine pLine) throws OceanusException {
+        /* Cannot be started by a keyWord */
+<span class="nc" id="L649">        String myToken = pLine.peekNextToken();</span>
+<span class="nc bnc" id="L650" title="All 2 branches missed.">        if (KEYWORDS.get(myToken) != null) {</span>
+<span class="nc" id="L651">            throw new ThemisDataException(&quot;DataType required but keyWord found&quot;);</span>
+        }
+
+        /* If the token ends with the VARARGS indication */
+<span class="nc bnc" id="L655" title="All 2 branches missed.">        if (myToken.endsWith(ThemisAnalysisArray.VARARGS)) {</span>
+            /* Strip the varArgs indication */
+<span class="nc" id="L657">            myToken = myToken.substring(0, myToken.length() - ThemisAnalysisArray.VARARGS.length());</span>
+        }
+
+        /* Look for a valid dataType */
+<span class="nc" id="L661">        ThemisAnalysisDataType myType = pDataMap.lookUpDataType(myToken, false);</span>
+<span class="nc bnc" id="L662" title="All 2 branches missed.">        if (myType == null) {</span>
+            /* Declare the unrecognised dataType */
+<span class="nc" id="L664">            myType = pDataMap.declareUnknown(myToken);</span>
+        }
+<span class="nc" id="L666">        pLine.stripStartSequence(myToken);</span>
+
+        /* Return the reference */
+<span class="nc" id="L669">        return buildReference(pDataMap, pLine, myType);</span>
+    }
+
+    /**
+     * Create the reference.
+     * @param pDataMap the dataMap
+     * @param pLine the line
+     * @param pType the dataType
+     * @return the dataType or null
+     * @throws OceanusException on error
+     */
+    private static ThemisAnalysisReference buildReference(final ThemisAnalysisDataMap pDataMap,
+                                                          final ThemisAnalysisLine pLine,
+                                                          final ThemisAnalysisDataType pType) throws OceanusException {
+        /* Access any generic/array detail */
+<span class="nc bnc" id="L684" title="All 2 branches missed.">        final ThemisAnalysisGeneric myGeneric = ThemisAnalysisGeneric.isGeneric(pLine)</span>
+<span class="nc" id="L685">                                                ? new ThemisAnalysisGenericBase(pLine)</span>
+<span class="nc" id="L686">                                                : null;</span>
+<span class="nc bnc" id="L687" title="All 2 branches missed.">        final ThemisAnalysisArray myArray = ThemisAnalysisArray.isArray(pLine)</span>
+<span class="nc" id="L688">                                            ? new ThemisAnalysisArray(pLine)</span>
+<span class="nc" id="L689">                                            : null;</span>
+
+        /* Return the reference */
+<span class="nc" id="L692">        final ThemisAnalysisReference myRef = new ThemisAnalysisReference(pType, myGeneric, myArray);</span>
+<span class="nc" id="L693">        pDataMap.declareReference(myRef);</span>
+<span class="nc" id="L694">        return myRef;</span>
+    }
+
+    /**
+     * process the lines.
+     * @throws OceanusException on error
+     */
+    void processLines() throws OceanusException {
+        /* Loop through the lines */
+<span class="nc bnc" id="L703" title="All 2 branches missed.">        while (hasLines()) {</span>
+            /* Access next line */
+<span class="nc" id="L705">            final ThemisAnalysisLine myLine = (ThemisAnalysisLine) popNextLine();</span>
+
+            /* Process comments/blanks/languageConstructs */
+<span class="nc bnc" id="L708" title="All 2 branches missed.">            final boolean processed = processCommentsAndBlanks(myLine)</span>
+<span class="nc bnc" id="L709" title="All 2 branches missed.">                    || processClass(myLine)</span>
+<span class="nc bnc" id="L710" title="All 2 branches missed.">                    || processLanguage(myLine)</span>
+<span class="nc bnc" id="L711" title="All 2 branches missed.">                    || processBlocks(myLine);</span>
+
+            /* If we haven't processed yet */
+<span class="nc bnc" id="L714" title="All 2 branches missed.">            if (!processed) {</span>
+                /* Just add the line to contents at present */
+<span class="nc" id="L716">                theContents.add(myLine);</span>
+            }
+<span class="nc" id="L718">        }</span>
+<span class="nc" id="L719">    }</span>
+
+    /**
+     * Create the keyWordMap.
+     * @return the new map
+     */
+    private static Map&lt;String, Object&gt; createKeyWordMap() {
+        /* create the map */
+<span class="nc" id="L727">        final Map&lt;String, Object&gt; myMap = new HashMap&lt;&gt;();</span>
+
+        /* Add the modifiers */
+<span class="nc bnc" id="L730" title="All 2 branches missed.">        for (ThemisAnalysisModifier myModifier : ThemisAnalysisModifier.values()) {</span>
+<span class="nc" id="L731">            myMap.put(myModifier.toString(), myModifier);</span>
+        }
+
+        /* Add the keyWords */
+<span class="nc bnc" id="L735" title="All 2 branches missed.">        for (ThemisAnalysisKeyWord myKeyWord : ThemisAnalysisKeyWord.values()) {</span>
+<span class="nc" id="L736">            myMap.put(myKeyWord.toString(), myKeyWord);</span>
+        }
+
+        /* return the map */
+<span class="nc" id="L740">        return myMap;</span>
+    }
+
+    /**
+     * Parse ancestors.
+     * @param pHeaders the headers
+     * @return the list of ancestors
+     * @throws OceanusException on error
+     */
+    List&lt;ThemisAnalysisReference&gt; parseAncestors(final Deque&lt;ThemisAnalysisElement&gt; pHeaders) throws OceanusException {
+        /* Create the list */
+<span class="nc" id="L751">        final List&lt;ThemisAnalysisReference&gt; myAncestors = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L752">        final ThemisAnalysisLine myHeader = new ThemisAnalysisLine(pHeaders);</span>
+
+        /* Loop through the line */
+        for (;;) {
+            /* Strip leading comma */
+<span class="nc bnc" id="L757" title="All 2 branches missed.">            if (myHeader.startsWithChar(ThemisAnalysisChar.COMMA)) {</span>
+<span class="nc" id="L758">                myHeader.stripStartChar(ThemisAnalysisChar.COMMA);</span>
+            }
+
+            /* Access first token */
+<span class="nc" id="L762">            final String myToken = myHeader.peekNextToken();</span>
+<span class="nc bnc" id="L763" title="All 2 branches missed.">            if (myToken.length() == 0) {</span>
+<span class="nc" id="L764">                return myAncestors;</span>
+            }
+
+            /* Ignore keywords */
+<span class="nc bnc" id="L768" title="All 2 branches missed.">            if (KEYWORDS.get(myToken) != null) {</span>
+                /* Strip the token from the line */
+<span class="nc" id="L770">                myHeader.stripNextToken();</span>
+            } else {
+                /* Process the ancestor */
+<span class="nc" id="L773">                final ThemisAnalysisReference myReference = parseDataType(theDataMap, myHeader);</span>
+<span class="nc" id="L774">                myReference.resolveGeneric(this);</span>
+<span class="nc" id="L775">                myAncestors.add(myReference);</span>
+            }
+<span class="nc" id="L777">        }</span>
+    }
+
+    /**
+     * Parse parameters.
+     * @param pParams the parameters
+     * @return the parameter map
+     * @throws OceanusException on error
+     */
+    Map&lt;String, ThemisAnalysisReference&gt; parseParameters(final ThemisAnalysisLine pParams) throws OceanusException {
+        /* Create the list */
+<span class="nc" id="L788">        final Map&lt;String, ThemisAnalysisReference&gt; myParams = new LinkedHashMap&lt;&gt;();</span>
+
+        /* Loop through the line */
+        for (;;) {
+            /* Strip leading comma */
+<span class="nc bnc" id="L793" title="All 2 branches missed.">            if (pParams.startsWithChar(ThemisAnalysisChar.COMMA)) {</span>
+<span class="nc" id="L794">                pParams.stripStartChar(ThemisAnalysisChar.COMMA);</span>
+            }
+
+            /* Access first token */
+<span class="nc" id="L798">            final String myToken = pParams.peekNextToken();</span>
+<span class="nc bnc" id="L799" title="All 2 branches missed.">            if (myToken.length() == 0) {</span>
+<span class="nc" id="L800">                return myParams;</span>
+            }
+
+            /* Ignore keywords */
+<span class="nc bnc" id="L804" title="All 2 branches missed.">            if (KEYWORDS.get(myToken) != null) {</span>
+                /* Strip the token from the line */
+<span class="nc" id="L806">                pParams.stripNextToken();</span>
+            } else {
+                /* Process the parameter */
+<span class="nc" id="L809">                final ThemisAnalysisReference myReference = parseDataType(theDataMap, pParams);</span>
+<span class="nc" id="L810">                myReference.resolveGeneric(this);</span>
+<span class="nc" id="L811">                final String myVar = pParams.stripNextToken();</span>
+<span class="nc" id="L812">                myParams.put(myVar, myReference);</span>
+            }
+<span class="nc" id="L814">        }</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
