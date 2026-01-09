@@ -6,7 +6,7 @@
   <packaging>pom</packaging>
   <name>Java Oceanus package</name>
   <description>Parent project for jOceanus</description>
-  <url>http://joceanus.sourceforge.net/staging/</url>
+  <url>https://tonywasher.github.io/jOceanus/</url>
   <inceptionYear>2012</inceptionYear>
   <licenses>
     <license>
@@ -37,20 +37,18 @@
     <module>oceanus</module>
   </modules>
   <scm>
-    <connection>scm:git:git://sourceforge.net/p/joceanus/git</connection>
-    <developerConnection>scm:git:ssh:sourceforge.net/p/joceanus/git</developerConnection>
-    <url>http://sourceforge.net/p/joceanus/git/ci/${scmMain}/tree/</url>
+    <connection>scm:git:https://github.com/tonywasher/jOceanus.git</connection>
+    <developerConnection>scm:git:https://github.com/tonywasher/jOceanus.git</developerConnection>
+    <url>https://github.com/tonywasher/jOceanus</url>
   </scm>
   <issueManagement>
-    <system>Sourceforge</system>
-    <url>https://sourceforge.net/p/joceanus/tickets/</url>
+    <system>GitHub</system>
+    <url>https://github.com/tonywasher/jOceanus/issues/</url>
   </issueManagement>
-
   <distributionManagement>
     <site>
-      <id>jOceanus.website</id>
-      <name>JOceanus Website</name>
-      <url>scp://shell.sourceforge.net/home/project-web/joceanus/htdocs/</url>
+      <id>github</id>
+      <url>scm:git:https://github.com/tonywasher/jOceanus.git</url>
     </site>
   </distributionManagement>
   <properties>
@@ -87,7 +85,6 @@
     <JSoupVersion>1.22.1</JSoupVersion>
     <JFreeChartVersion>1.5.6</JFreeChartVersion>
     <JavaParserVersion>3.27.1</JavaParserVersion>
-    <Log4jVersion>2.25.3</Log4jVersion>
     <ZipSDKVersion>9.20</ZipSDKVersion>
     <JavaVersion>21</JavaVersion>
     <JavaFXVersion>21.0.9</JavaFXVersion>
