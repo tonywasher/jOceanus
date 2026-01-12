@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * GordianKnot: Security Suite
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,7 +13,7 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.gordianknot.impl.core.xagree;
 
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
@@ -22,6 +22,7 @@ import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementType;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianKDFType;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.cert.GordianCertificate;
+import net.sourceforge.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
 import net.sourceforge.joceanus.gordianknot.api.cert.GordianKeyPairUse;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianEdwardsElliptic;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
@@ -33,8 +34,10 @@ import net.sourceforge.joceanus.gordianknot.api.xagree.GordianXAgreement;
 import net.sourceforge.joceanus.gordianknot.api.xagree.GordianXAgreementParams;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.cert.GordianMiniCertificate;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
+import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
 import java.util.ArrayList;
@@ -94,6 +97,13 @@ public abstract class GordianXCoreAgreementFactory
     }
 
     @Override
+    public GordianCertificate newMiniCertificate(final X500Name pSubject,
+                                                 final GordianKeyPair pKeyPair,
+                                                 final GordianKeyPairUsage pUsage) throws GordianException {
+        return new GordianMiniCertificate(theFactory, pSubject, pKeyPair, pUsage);
+    }
+
+    @Override
     public GordianXAgreement createAgreement(final GordianXAgreementParams pParams) throws GordianException {
         /* Check validity of Agreement */
         final GordianAgreementSpec mySpec = pParams.getAgreementSpec();
@@ -131,12 +141,13 @@ public abstract class GordianXCoreAgreementFactory
             case CLIENTCONFIRM:
                 return parseClientConfirm(myASN1);
             default:
-                throw new GordianDataException("Unexpected MessageType: " +  myASN1.getMessageType());
+                throw new GordianDataException("Unexpected MessageType: " + myASN1.getMessageType());
         }
     }
 
     /**
      * Parse a clientHello message.
+     *
      * @param pClientHello the message
      * @return the agreement
      * @throws GordianException error
@@ -167,6 +178,7 @@ public abstract class GordianXCoreAgreementFactory
 
     /**
      * Parse a serverHello message.
+     *
      * @param pServerHello the message
      * @return the agreement
      * @throws GordianException error
@@ -185,6 +197,7 @@ public abstract class GordianXCoreAgreementFactory
 
     /**
      * Parse a clientConfirm message.
+     *
      * @param pClientConfirm the message
      * @return the agreement
      * @throws GordianException error
@@ -203,6 +216,7 @@ public abstract class GordianXCoreAgreementFactory
 
     /**
      * Create engine.
+     *
      * @param pSpec the agreement Spec
      * @return the engine
      * @throws GordianException on error
@@ -371,6 +385,7 @@ public abstract class GordianXCoreAgreementFactory
 
     /**
      * Obtain the agreement algorithm Ids.
+     *
      * @return the agreement Algorithm Ids
      */
     private GordianXCoreAgreementAlgId getAlgorithmIds() {
@@ -396,6 +411,7 @@ public abstract class GordianXCoreAgreementFactory
 
     /**
      * Obtain a list of all possible agreements for the keyPairSpec.
+     *
      * @param pKeyPairSpec the keyPairSpec
      * @return the list
      */
@@ -473,7 +489,8 @@ public abstract class GordianXCoreAgreementFactory
 
     /**
      * Create list of KDF variants.
-     * @param pKeyPairSpec the keyPairSpec
+     *
+     * @param pKeyPairSpec   the keyPairSpec
      * @param pAgreementType the agreementType
      * @return the list
      */
@@ -490,9 +507,10 @@ public abstract class GordianXCoreAgreementFactory
 
     /**
      * Create list of KDF variants.
-     * @param pKeyPairSpec the keyPairSpec
+     *
+     * @param pKeyPairSpec   the keyPairSpec
      * @param pAgreementType the agreementType
-     * @param pConfirm with key confirmation
+     * @param pConfirm       with key confirmation
      * @return the list
      */
     public static List<GordianAgreementSpec> listAllKDFs(final GordianKeyPairSpec pKeyPairSpec,

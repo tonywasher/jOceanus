@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * GordianKnot: Security Suite
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,30 +13,31 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.gordianknot.impl.core.keystore;
 
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementFactory;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAnonymousAgreement;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
+import net.sourceforge.joceanus.gordianknot.api.cert.GordianCertificate;
+import net.sourceforge.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptor;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorFactory;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianAsyncFactory;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
-import net.sourceforge.joceanus.gordianknot.api.cert.GordianCertificate;
-import net.sourceforge.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
 import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry;
 import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignParams;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignature;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.cert.GordianCertUtils;
 import net.sourceforge.joceanus.gordianknot.impl.core.cert.GordianCoreCertificate;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
@@ -92,6 +93,7 @@ public class GordianCRMParser {
 
     /**
      * Constructor.
+     *
      * @param pGateway the gateway
      * @param pBuilder the builder
      */
@@ -104,6 +106,7 @@ public class GordianCRMParser {
 
     /**
      * Does a certificate request require encryption?
+     *
      * @param pCertReq the certificate request
      * @return true/false
      */
@@ -118,11 +121,12 @@ public class GordianCRMParser {
         final POPOPrivKey myPOP = POPOPrivKey.getInstance(myProof.getObject());
         final int myProofType = myPOP.getType();
         return myProofType == POPOPrivKey.subsequentMessage
-                 && ASN1Integer.getInstance(myPOP.getValue()).intValueExact() == SubsequentMessage.encrCert.intValueExact();
+                && ASN1Integer.getInstance(myPOP.getValue()).intValueExact() == SubsequentMessage.encrCert.intValueExact();
     }
 
     /**
      * process a certificate request.
+     *
      * @param pRequest the request
      * @return the signed certificate chain
      * @throws GordianException on error
@@ -135,7 +139,7 @@ public class GordianCRMParser {
         final CertTemplate myTemplate = myCertReq.getCertTemplate();
         final X500Name mySubject = myTemplate.getSubject();
         final SubjectPublicKeyInfo myPublic = myTemplate.getPublicKey();
-        final GordianKeyPairUsage myUsage = GordianCoreCertificate.determineUsage(myTemplate.getExtensions());
+        final GordianKeyPairUsage myUsage = GordianCertUtils.determineUsage(myTemplate.getExtensions());
 
         /* Check the PKMacValue */
         checkPKMACValue(mySubject, myAttrs, myPublic);
@@ -152,8 +156,9 @@ public class GordianCRMParser {
 
     /**
      * process a certificate response.
+     *
      * @param pResponse the certificate response
-     * @param pKeyPair the keyPair
+     * @param pKeyPair  the keyPair
      */
     public void processCertificateResponse(final GordianCertResponseASN1 pResponse,
                                            final GordianKeyStorePair pKeyPair) throws GordianException {
@@ -196,7 +201,8 @@ public class GordianCRMParser {
 
     /**
      * Derive the privateKey.
-     * @param pProof the proof of possession
+     *
+     * @param pProof   the proof of possession
      * @param pSubject the subject name
      * @return the PKCS8Encoded privateKey
      * @throws GordianException on error
@@ -235,6 +241,7 @@ public class GordianCRMParser {
 
     /**
      * Derive the keySet via a keyPairSet issuer.
+     *
      * @param pRecInfo the recipient info
      * @return the keySet
      * @throws GordianException on error
@@ -263,9 +270,10 @@ public class GordianCRMParser {
 
     /**
      * Derive and check the keyPair.
-     * @param pProof the proof of possession
-     * @param pCertReq the certificate request
-     * @param pSubject the subject name
+     *
+     * @param pProof     the proof of possession
+     * @param pCertReq   the certificate request
+     * @param pSubject   the subject name
      * @param pPublicKey the publicKey
      * @return the keyPair
      * @throws GordianException on error
@@ -287,8 +295,9 @@ public class GordianCRMParser {
 
     /**
      * Derive a signed keyPair.
-     * @param pProof the proof of possession
-     * @param pCertReq the certificate request
+     *
+     * @param pProof     the proof of possession
+     * @param pCertReq   the certificate request
      * @param pPublicKey the publicKey
      * @return the keyPair
      * @throws GordianException on error
@@ -329,8 +338,9 @@ public class GordianCRMParser {
 
     /**
      * Derive an encrypted keyPair.
-     * @param pProof the proof of possession
-     * @param pSubject the subject name
+     *
+     * @param pProof     the proof of possession
+     * @param pSubject   the subject name
      * @param pPublicKey the publicKey
      * @return the keyPair
      * @throws GordianException on error
@@ -373,6 +383,7 @@ public class GordianCRMParser {
 
     /**
      * Check PrivateKey.
+     *
      * @param pKeyPair the keyPair
      * @throws GordianException on error
      */
@@ -401,6 +412,7 @@ public class GordianCRMParser {
 
     /**
      * Check Encryption PrivateKey.
+     *
      * @param pKeyPair the keyPair
      * @throws GordianException on error
      */
@@ -435,6 +447,7 @@ public class GordianCRMParser {
 
     /**
      * Check Agreement PrivateKey.
+     *
      * @param pKeyPair the keyPair
      * @throws GordianException on error
      */
@@ -462,8 +475,9 @@ public class GordianCRMParser {
 
     /**
      * Check PKMacValue.
-     * @param pSubject the subject name
-     * @param pAttrs the attributes
+     *
+     * @param pSubject   the subject name
+     * @param pAttrs     the attributes
      * @param pPublicKey the public key
      * @throws GordianException on error
      */

@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * GordianKnot: Security Suite
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,7 +13,7 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.gordianknot.impl.core.base;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
@@ -48,6 +48,7 @@ public class GordianRandomSource {
 
     /**
      * Constructor.
+     *
      * @throws GordianException on error
      */
     public GordianRandomSource() throws GordianException {
@@ -56,6 +57,7 @@ public class GordianRandomSource {
 
     /**
      * Obtain the random.
+     *
      * @return the random
      */
     public SecureRandom getRandom() {
@@ -64,6 +66,7 @@ public class GordianRandomSource {
 
     /**
      * Set the random.
+     *
      * @param pRandom the random
      */
     public void setRandom(final SecureRandom pRandom) {
@@ -76,6 +79,7 @@ public class GordianRandomSource {
 
     /**
      * Access the strong Secure Random.
+     *
      * @return the secure random
      * @throws GordianException on error
      */
@@ -96,8 +100,8 @@ public class GordianRandomSource {
                     /* Handle differently for Windows and *nix */
                     final boolean isWindows = System.getProperty("os.name").startsWith("Windows");
                     myStrong = isWindows
-                                   ? SecureRandom.getInstanceStrong()
-                                   : SecureRandom.getInstance("NativePRNGNonBlocking");
+                            ? SecureRandom.getInstanceStrong()
+                            : SecureRandom.getInstance("NativePRNGNonBlocking");
 
                     /* Seed the Entropy */
                     myStrong.setSeed(createPersonalisation(null));
@@ -113,6 +117,7 @@ public class GordianRandomSource {
 
     /**
      * Create a personalisation Vector.
+     *
      * @return initVector.
      */
     public byte[] defaultPersonalisation() {
@@ -126,12 +131,13 @@ public class GordianRandomSource {
 
     /**
      * Create a personalisation Vector.
+     *
      * @param pSeed the seed (or null)
      * @return initVector.
      */
     private static byte[] createPersonalisation(final byte[] pSeed) {
         /* Create the source arrays */
-        final byte[] myThread = GordianDataConverter.longToByteArray(Thread.currentThread().getId());
+        final byte[] myThread = GordianDataConverter.longToByteArray(Thread.currentThread().threadId());
         final byte[] myTime = GordianDataConverter.longToByteArray(System.currentTimeMillis());
         final byte[] myNanos = GordianDataConverter.longToByteArray(System.nanoTime());
 

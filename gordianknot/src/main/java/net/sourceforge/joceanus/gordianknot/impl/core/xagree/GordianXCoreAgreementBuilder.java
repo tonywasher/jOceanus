@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * GordianKnot: Security Suite
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,7 +13,7 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.gordianknot.impl.core.xagree;
 
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
@@ -21,8 +21,8 @@ import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementType;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.cert.GordianCertificate;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacFactory;
@@ -38,7 +38,6 @@ import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.sign.GordianCoreSignatureFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.xagree.GordianXCoreAgreementCalculator.GordianXDerivationId;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
-import org.bouncycastle.asn1.x509.Certificate;
 import org.bouncycastle.util.Arrays;
 
 import java.security.SecureRandom;
@@ -85,8 +84,9 @@ public class GordianXCoreAgreementBuilder {
 
     /**
      * Constructor.
+     *
      * @param pSupplier the supplier
-     * @param pSpec the agreement spec
+     * @param pSpec     the agreement spec
      * @throws GordianException on error
      */
     GordianXCoreAgreementBuilder(final GordianXCoreAgreementSupplier pSupplier,
@@ -107,6 +107,7 @@ public class GordianXCoreAgreementBuilder {
 
     /**
      * Obtain the supplier.
+     *
      * @return the supplier
      */
     public GordianXCoreAgreementSupplier getSupplier() {
@@ -115,6 +116,7 @@ public class GordianXCoreAgreementBuilder {
 
     /**
      * Obtain the state.
+     *
      * @return the state
      */
     public GordianXCoreAgreementState getState() {
@@ -123,6 +125,7 @@ public class GordianXCoreAgreementBuilder {
 
     /**
      * Obtain the random.
+     *
      * @return the random
      */
     public SecureRandom getRandom() {
@@ -131,6 +134,7 @@ public class GordianXCoreAgreementBuilder {
 
     /**
      * Set the status.
+     *
      * @param pStatus the status
      */
     void setStatus(final GordianXAgreementStatus pStatus) {
@@ -139,6 +143,7 @@ public class GordianXCoreAgreementBuilder {
 
     /**
      * Set the resultType.
+     *
      * @param pResultType the resultType
      * @throws GordianException on error
      */
@@ -148,6 +153,7 @@ public class GordianXCoreAgreementBuilder {
 
     /**
      * Store secret.
+     *
      * @param pSecret the secret
      * @throws GordianException on error
      */
@@ -166,6 +172,7 @@ public class GordianXCoreAgreementBuilder {
 
     /**
      * Process the secret.
+     *
      * @param pSecret the secret
      * @throws GordianException on error
      */
@@ -184,6 +191,7 @@ public class GordianXCoreAgreementBuilder {
 
     /**
      * Set the result as an error.
+     *
      * @param pError the error
      */
     void setError(final String pError) {
@@ -194,6 +202,7 @@ public class GordianXCoreAgreementBuilder {
 
     /**
      * Is there an errorState?.
+     *
      * @return true/false
      */
     public boolean isError() {
@@ -202,6 +211,7 @@ public class GordianXCoreAgreementBuilder {
 
     /**
      * Set the clientCertificate.
+     *
      * @param pCert the Certificate
      */
     void setClientCertificate(final GordianCertificate pCert) {
@@ -210,6 +220,7 @@ public class GordianXCoreAgreementBuilder {
 
     /**
      * Set the serverCertificate.
+     *
      * @param pCert the Certificate
      */
     void setServerCertificate(final GordianCertificate pCert) {
@@ -218,6 +229,7 @@ public class GordianXCoreAgreementBuilder {
 
     /**
      * Set the signerCertificate.
+     *
      * @param pCert the Certificate
      * @return the Builder
      */
@@ -228,6 +240,7 @@ public class GordianXCoreAgreementBuilder {
 
     /**
      * Set the signSpec.
+     *
      * @param pSpec the signSpec
      * @return the Builder
      */
@@ -270,6 +283,7 @@ public class GordianXCoreAgreementBuilder {
 
     /**
      * Create a new client ephemeral.
+     *
      * @throws GordianException on error
      */
     public void newClientEphemeral() throws GordianException {
@@ -281,6 +295,7 @@ public class GordianXCoreAgreementBuilder {
 
     /**
      * Set the client ephemeral.
+     *
      * @param pEphemeral the keyPair
      * @throws GordianException on error
      */
@@ -292,6 +307,7 @@ public class GordianXCoreAgreementBuilder {
 
     /**
      * Create a new client ephemeral.
+     *
      * @throws GordianException on error
      */
     public void newServerEphemeral() throws GordianException {
@@ -299,7 +315,7 @@ public class GordianXCoreAgreementBuilder {
         theState.getServer()
                 .setEphemeralKeyPair(myPair)
                 .setEphemeralKeySpec(theKeyPairGenerator.getX509Encoding(myPair));
-     }
+    }
 
     /**
      * Copy ephemeral keyPairs to main keyPairs.
@@ -311,6 +327,7 @@ public class GordianXCoreAgreementBuilder {
 
     /**
      * Set the encapsulated message.
+     *
      * @param pEncapsulated the message
      */
     public void setEncapsulated(final byte[] pEncapsulated) {
@@ -319,6 +336,7 @@ public class GordianXCoreAgreementBuilder {
 
     /**
      * Set the client confirm.
+     *
      * @param pConfirm the clientConfirm
      * @throws GordianException on error
      */
@@ -337,6 +355,7 @@ public class GordianXCoreAgreementBuilder {
 
     /**
      * Set the client confirm.
+     *
      * @param pConfirm the clientConfirm
      * @throws GordianException on error
      */
@@ -355,6 +374,7 @@ public class GordianXCoreAgreementBuilder {
 
     /**
      * Build the clientHello.
+     *
      * @return the clientHello message
      * @throws GordianException on error
      */
@@ -373,10 +393,8 @@ public class GordianXCoreAgreementBuilder {
                 .setEncapsulated(theState.getEncapsulated());
 
         /* Store certificates */
-        final GordianCoreCertificate myClientCert = (GordianCoreCertificate) myClient.getCertificate();
-        final GordianCoreCertificate myServerCert = (GordianCoreCertificate) myServer.getCertificate();
-        myMsg.setClientCertificate(myClientCert == null ? null : myClientCert.getCertificate())
-                .setServerCertificate(myServerCert == null ? null : myServerCert.getCertificate());
+        myMsg.setClientCertificate(myClient.getCertificate())
+                .setServerCertificate(myServer.getCertificate());
 
         /* Return the message */
         return myMsg;
@@ -384,6 +402,7 @@ public class GordianXCoreAgreementBuilder {
 
     /**
      * Build the serverHello.
+     *
      * @return the serverHello message
      * @throws GordianException on error
      */
@@ -425,7 +444,7 @@ public class GordianXCoreAgreementBuilder {
             mySigner.update(myClient.getInitVector());
             mySigner.update(myServer.getEphemeralKeySpec().getEncoded());
             mySigner.update(myServer.getInitVector());
-            myMsg.setSignerCertificate(mySignerCert.getCertificate())
+            myMsg.setSignerCertificate(mySignerCert)
                     .setSignature(myAlgId, mySigner.sign());
         }
 
@@ -435,6 +454,7 @@ public class GordianXCoreAgreementBuilder {
 
     /**
      * Build the clientConfirm.
+     *
      * @return the clientConfirm
      * @throws GordianException on error
      */
@@ -461,6 +481,7 @@ public class GordianXCoreAgreementBuilder {
 
     /**
      * Parse the clientHello.
+     *
      * @param pClientHello the message
      * @throws GordianException on error
      */
@@ -483,14 +504,13 @@ public class GordianXCoreAgreementBuilder {
         }
 
         /* Store certificates */
-        final Certificate myClientCert = pClientHello.getClientCertificate();
-        myClient.setCertificate(myClientCert == null ? null : new GordianCoreCertificate(theFactory, myClientCert));
-        final Certificate myServerCert = pClientHello.getServerCertificate();
-        myServer.setCertificate(myServerCert == null ? null : new GordianCoreCertificate(theFactory, myServerCert));
+        myClient.setCertificate(pClientHello.getClientCertificate(theFactory));
+        myServer.setCertificate(pClientHello.getServerCertificate(theFactory));
     }
 
     /**
      * Parse the serverHello.
+     *
      * @param pServerHello the message
      * @throws GordianException on error
      */
@@ -517,14 +537,13 @@ public class GordianXCoreAgreementBuilder {
         }
 
         /* Store signing details */
-        final Certificate mySignerCert = pServerHello.getSignerCertificate();
+        final GordianCertificate mySignerCert = pServerHello.getSignerCertificate(theFactory);
         if (mySignerCert != null) {
             /* Access details */
             final GordianCoreSignatureFactory mySigns = (GordianCoreSignatureFactory) theFactory.getAsyncFactory().getSignatureFactory();
             final GordianSignatureSpec mySignSpec = mySigns.getSpecForIdentifier(pServerHello.getSignatureId());
-            final GordianCoreCertificate myCert = new GordianCoreCertificate(theFactory, mySignerCert);
-            final GordianKeyPair mySignerPair = myCert.getKeyPair();
-            theState.setSignerCertificate(myCert)
+            final GordianKeyPair mySignerPair = mySignerCert.getKeyPair();
+            theState.setSignerCertificate(mySignerCert)
                     .setSignSpec(mySignSpec);
             final GordianSignature mySigner = mySigns.createSigner(mySignSpec);
 
@@ -542,6 +561,7 @@ public class GordianXCoreAgreementBuilder {
 
     /**
      * Parse the clientConfirm.
+     *
      * @param pClientConfirm the clientConfirm
      * @throws GordianException on error
      */
@@ -562,6 +582,7 @@ public class GordianXCoreAgreementBuilder {
 
     /**
      * Calculate the confirmation tags.
+     *
      * @param pSecret the secret
      * @throws GordianException on error
      */

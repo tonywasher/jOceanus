@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * GordianKnot: Security Suite
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,12 +13,13 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.gordianknot.api.cert;
 
-import java.util.Date;
-
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
+
+import java.util.Date;
 
 /**
  * Certificate API.
@@ -47,6 +48,7 @@ public interface GordianCertificate {
 
     /**
      * Obtain the encoded representation of the certificate.
+     *
      * @return the encoded representation
      */
     byte[] getEncoded();
@@ -70,6 +72,7 @@ public interface GordianCertificate {
 
     /**
      * Is this certificate self-signed?
+     *
      * @return true/false
      */
     boolean isSelfSigned();
@@ -80,4 +83,13 @@ public interface GordianCertificate {
      * @return the usage
      */
     GordianKeyPairUsage getUsage();
+
+    /**
+     * Validate the certificate.
+     *
+     * @param pSigner the signer of the certificate
+     * @return valid? true/false
+     * @throws GordianException on error
+     */
+    boolean validateCertificate(GordianCertificate pSigner) throws GordianException;
 }

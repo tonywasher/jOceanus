@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * GordianKnot: Security Suite
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,21 +13,21 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.gordianknot.impl.core.cert;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
-import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigest;
-import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestFactory;
-import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.gordianknot.api.cert.GordianCertificate;
 import net.sourceforge.joceanus.gordianknot.api.cert.GordianCertificateId;
 import net.sourceforge.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
 import net.sourceforge.joceanus.gordianknot.api.cert.GordianKeyPairUse;
+import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigest;
+import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestFactory;
+import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignParams;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignature;
@@ -47,12 +47,8 @@ import org.bouncycastle.asn1.DERBitString;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
-import org.bouncycastle.asn1.x509.BasicConstraints;
 import org.bouncycastle.asn1.x509.Certificate;
-import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.Extensions;
-import org.bouncycastle.asn1.x509.ExtensionsGenerator;
-import org.bouncycastle.asn1.x509.KeyUsage;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.asn1.x509.TBSCertificate;
 import org.bouncycastle.asn1.x509.Time;
@@ -70,7 +66,7 @@ import java.util.Objects;
  * Certificate implementation.
  */
 public class GordianCoreCertificate
-    implements GordianCertificate {
+        implements GordianCertificate {
     /**
      * The Factory.
      */
@@ -202,7 +198,7 @@ public class GordianCoreCertificate
 
         /* Check that the signer is allowed to sign certificates */
         final GordianKeyPair mySignerPair = pSigner.getKeyPair();
-        final GordianCoreCertificate mySignerCert = (GordianCoreCertificate) pSigner.getCertificateChain().get(0);
+        final GordianCoreCertificate mySignerCert = (GordianCoreCertificate) pSigner.getCertificateChain().getFirst();
         if (!mySignerCert.getUsage().hasUse(GordianKeyPairUse.CERTIFICATE)
                 || !mySignerCert.isValidNow()
                 || isPublicOnly(mySignerPair)) {
@@ -237,8 +233,8 @@ public class GordianCoreCertificate
     /**
      * Parse a certificate.
      *
-     * @param pFactory    the factory
-     * @param pSequence   the DER representation of the certificate
+     * @param pFactory  the factory
+     * @param pSequence the DER representation of the certificate
      * @throws GordianException on error
      */
     public GordianCoreCertificate(final GordianBaseFactory pFactory,
@@ -276,7 +272,7 @@ public class GordianCoreCertificate
 
             /* Access the extensions */
             final Extensions myExtensions = theTbsCertificate.getExtensions();
-            theKeyUsage = determineUsage(myExtensions);
+            theKeyUsage = GordianCertUtils.determineUsage(myExtensions);
             theCAStatus = GordianCAStatus.determineStatus(myExtensions);
 
             /* Determine whether we are self-signed */
@@ -297,6 +293,7 @@ public class GordianCoreCertificate
 
     /**
      * Obtain the factory.
+     *
      * @return the factory
      */
     protected GordianBaseFactory getFactory() {
@@ -305,6 +302,7 @@ public class GordianCoreCertificate
 
     /**
      * Build the issuer Id for a certificate.
+     *
      * @return get the issuer id
      */
     private GordianCoreCertificateId buildSubjectId() {
@@ -313,7 +311,8 @@ public class GordianCoreCertificate
 
     /**
      * Build the issuer Id for a certificate.
-      * @return get the issuer id
+     *
+     * @return get the issuer id
      */
     private GordianCoreCertificateId buildIssuerId() {
         return new GordianCoreCertificateId(getIssuerName(), DERBitString.convert(getIssuerId()));
@@ -328,6 +327,7 @@ public class GordianCoreCertificate
 
     /**
      * Obtain the certificate.
+     *
      * @return the certificate
      */
     public Certificate getCertificate() {
@@ -336,7 +336,7 @@ public class GordianCoreCertificate
 
     @Override
     public byte[] getEncoded() {
-        return Arrays.copyOf(theEncoded, theEncoded.length);
+        return theEncoded.clone();
     }
 
     @Override
@@ -383,8 +383,8 @@ public class GordianCoreCertificate
      */
     ASN1BitString getIssuerId() {
         return isSelfSigned
-               ? getSubjectId()
-               : theTbsCertificate.getIssuerUniqueId();
+                ? getSubjectId()
+                : theTbsCertificate.getIssuerUniqueId();
     }
 
     @Override
@@ -404,6 +404,7 @@ public class GordianCoreCertificate
 
     /**
      * Obtain the serial#.
+     *
      * @return the serial number.
      */
     public BigInteger getSerialNo() {
@@ -412,6 +413,7 @@ public class GordianCoreCertificate
 
     /**
      * Obtain the signatureSpec.
+     *
      * @return the signatureSpec
      */
     protected GordianSignatureSpec getSignatureSpec() {
@@ -420,6 +422,7 @@ public class GordianCoreCertificate
 
     /**
      * Is the keyPair publicOnly?
+     *
      * @param pKeyPair the keyPair
      * @return true/false
      */
@@ -429,6 +432,7 @@ public class GordianCoreCertificate
 
     /**
      * get public only version of key.
+     *
      * @param pKeyPair the key
      * @return the publicOnly version
      */
@@ -462,18 +466,19 @@ public class GordianCoreCertificate
     /**
      * Determine the algorithmId for the signatureSpec.
      *
-     * @param pSpec the signatureSpec
+     * @param pSpec   the signatureSpec
      * @param pSigner the signer
      * @return the algorithmId
      */
     AlgorithmIdentifier determineAlgIdForSignatureSpec(final GordianSignatureSpec pSpec,
                                                        final GordianKeyPair pSigner) {
         final GordianCoreSignatureFactory mySigns = (GordianCoreSignatureFactory) getFactory().getAsyncFactory().getSignatureFactory();
-        return mySigns.getIdentifierForSpecAndKeyPair(getSignatureSpec(), pSigner);
+        return mySigns.getIdentifierForSpecAndKeyPair(pSpec, pSigner);
     }
 
     /**
      * Validate that the keyPair public Key matches.
+     *
      * @param pKeyPair the key pair
      * @return matches true/false
      */
@@ -485,6 +490,7 @@ public class GordianCoreCertificate
 
     /**
      * parse encodedKey.
+     *
      * @return the parsed key
      * @throws GordianException on error
      */
@@ -499,6 +505,7 @@ public class GordianCoreCertificate
 
     /**
      * Obtain the encoded publicKey.
+     *
      * @return the encoded bytes
      * @throws GordianException on error
      */
@@ -535,90 +542,22 @@ public class GordianCoreCertificate
         return mySigns.createSigner(getSignatureSpec());
     }
 
-    /**
-     * Determine usage.
-     *
-     * @param pExtensions the extensions.
-     * @return the usage
-     */
-    public static GordianKeyPairUsage determineUsage(final Extensions pExtensions) {
-        /* Access details */
-        final KeyUsage myUsage = KeyUsage.fromExtensions(pExtensions);
-        final BasicConstraints myConstraint = BasicConstraints.fromExtensions(pExtensions);
-        final GordianKeyPairUsage myResult = new GordianKeyPairUsage();
-
-        /* Check for CERTIFICATE */
-        final boolean isCA = myConstraint != null && myConstraint.isCA();
-        if (isCA && checkUsage(myUsage, KeyUsage.keyCertSign)) {
-            myResult.addUse(GordianKeyPairUse.CERTIFICATE);
-        }
-
-        /* Check for signer. */
-        if (checkUsage(myUsage, KeyUsage.digitalSignature)) {
-            myResult.addUse(GordianKeyPairUse.SIGNATURE);
-        }
-
-        /* Check for nonRepudiation. */
-        if (checkUsage(myUsage, KeyUsage.nonRepudiation)) {
-            myResult.addUse(GordianKeyPairUse.NONREPUDIATION);
-        }
-
-        /* Check for keyAgreement. */
-        if (checkUsage(myUsage, KeyUsage.keyAgreement)) {
-            myResult.addUse(GordianKeyPairUse.AGREEMENT);
-        }
-
-        /* Check for keyEncryption. */
-        if (checkUsage(myUsage, KeyUsage.keyEncipherment)) {
-            myResult.addUse(GordianKeyPairUse.KEYENCRYPT);
-        }
-
-        /* Check for dataEncryption. */
-        if (checkUsage(myUsage, KeyUsage.dataEncipherment)) {
-            myResult.addUse(GordianKeyPairUse.DATAENCRYPT);
-        }
-
-        /* Check for encipherOnly. */
-        if (checkUsage(myUsage, KeyUsage.encipherOnly)) {
-            myResult.addUse(GordianKeyPairUse.ENCRYPTONLY);
-        }
-
-        /* Check for decipherOnly. */
-        if (checkUsage(myUsage, KeyUsage.decipherOnly)) {
-            myResult.addUse(GordianKeyPairUse.DECRYPTONLY);
-        }
-
-        /* Return the result */
-        return myResult;
-    }
-
-    /**
-     * Check for usage.
-     * @param pUsage the usage control
-     * @param pRequired  the required usage
-     * @return true/false
-     */
-    private static boolean checkUsage(final KeyUsage pUsage,
-                                      final int pRequired) {
-        return pUsage == null || pUsage.hasUsages(pRequired);
-    }
-
-    /**
-     * Validate a certificate.
-     *
-     * @param pSigner the signer of the certiicate
-     * @return valid? true/false
-     * @throws GordianException on error
-     */
-    public boolean validateCertificate(final GordianCoreCertificate pSigner) throws GordianException {
+    @Override
+    public boolean validateCertificate(final GordianCertificate pSigner) throws GordianException {
         /* Check that the certificate is not self-signed */
         if (isSelfSigned) {
             throw new GordianDataException("Root certificate used as intermediary");
         }
 
+        /* Reject attempt to validate using a miniCertificate */
+        if (pSigner instanceof GordianMiniCertificate) {
+            throw new GordianDataException("MiniCertificate is not valid to describe signer");
+        }
+
         /* Check that the signing certificate is correct */
-        final X500Name mySignerName = pSigner.getSubjectName();
-        final DERBitString mySignerId = DERBitString.convert(pSigner.getSubjectId());
+        final GordianCoreCertificate mySigner = (GordianCoreCertificate) pSigner;
+        final X500Name mySignerName = mySigner.getSubjectName();
+        final DERBitString mySignerId = DERBitString.convert(mySigner.getSubjectId());
         if (!mySignerName.equals(getIssuerName())
                 || !Objects.equals(mySignerId, getIssuerId())) {
             throw new GordianDataException("Incorrect signer certificate");
@@ -632,7 +571,7 @@ public class GordianCoreCertificate
 
         /* Check that the signature is valid */
         return validateSignature(pSigner.getKeyPair());
-     }
+    }
 
     /**
      * Validate a root certificate.
@@ -663,7 +602,8 @@ public class GordianCoreCertificate
 
     /**
      * Create a certificate.
-     * @param pSigner the signing certificate
+     *
+     * @param pSigner  the signing certificate
      * @param pSubject the name of the certificate
      * @return the theCertificate
      * @throws GordianException on error
@@ -672,15 +612,14 @@ public class GordianCoreCertificate
                                             final X500Name pSubject) throws GordianException {
         /* Create the name of the certificate */
         final X500Name myIssuer = pSigner == null
-                                  ? pSubject
-                                  : pSigner.getSubjectName();
+                ? pSubject
+                : pSigner.getSubjectName();
 
         /* Using the current timestamp as the certificate serial number */
-        final long myNow = System.currentTimeMillis();
-        final BigInteger mySerialNo = BigInteger.valueOf(myNow);
+        final BigInteger mySerialNo = GordianCertUtils.newSerialNo();
 
         /* Create the startDate and endDate for the certificate */
-        final Date myStart = new Date(myNow);
+        final Date myStart = new Date(System.currentTimeMillis());
         final Calendar myCalendar = Calendar.getInstance();
         myCalendar.setTime(myStart);
         myCalendar.add(Calendar.YEAR, 1);
@@ -705,38 +644,10 @@ public class GordianCoreCertificate
         }
 
         /* Create extensions for the certificate */
-        myCertBuilder.setExtensions(createExtensions());
+        myCertBuilder.setExtensions(GordianCertUtils.createExtensions(theCAStatus, theKeyUsage));
 
         /* Generate the TBS Certificate */
         return myCertBuilder.generateTBSCertificate();
-    }
-
-    /**
-     * Create extensions for tbsCertificate.
-     *
-     * @return the extensions
-     * @throws GordianException on error
-     */
-    private Extensions createExtensions() throws GordianException {
-        /* Create extensions for the certificate */
-        final ExtensionsGenerator myExtGenerator = new ExtensionsGenerator();
-        createKeyUseExtensions(myExtGenerator);
-        theCAStatus.createExtensions(myExtGenerator);
-        return myExtGenerator.generate();
-    }
-
-    /**
-     * Create extensions.
-     * @param pGenerator the extensions generator
-     * @throws GordianException on error
-     */
-    private void createKeyUseExtensions(final ExtensionsGenerator pGenerator) throws GordianException {
-        /* Protect against exceptions */
-        try {
-            pGenerator.addExtension(Extension.keyUsage, true, theKeyUsage.getKeyUsage());
-        } catch (IOException e) {
-            throw new GordianIOException("Failed to create extensions", e);
-        }
     }
 
     /**
@@ -866,111 +777,5 @@ public class GordianCoreCertificate
     @Override
     public int hashCode() {
         return Arrays.hashCode(theEncoded);
-    }
-
-    /**
-     * CA Status.
-     */
-    public static class GordianCAStatus {
-        /**
-         * Is this a CA.
-         */
-        private final boolean isCA;
-
-        /**
-         * The Path Length.
-         */
-        private final BigInteger thePathLen;
-
-        /**
-         * Constructor.
-         * @param pCA is this a CA?
-         */
-        GordianCAStatus(final boolean pCA) {
-            isCA = pCA;
-            thePathLen = null;
-        }
-
-        /**
-         * Constructor.
-         *
-         * @param pPathLen the path length.
-         */
-        GordianCAStatus(final BigInteger pPathLen) {
-            isCA = true;
-            thePathLen = pPathLen;
-        }
-
-        /**
-         * Constructor.
-         *
-         * @param pUsage the keyPair usage
-         * @param pSignerStatus the signerStatus.
-         */
-        GordianCAStatus(final GordianKeyPairUsage pUsage,
-                        final GordianCAStatus pSignerStatus) {
-            isCA = pUsage.getUsageSet().contains(GordianKeyPairUse.CERTIFICATE);
-            if (isCA) {
-                 final BigInteger mySignerPath = pSignerStatus.getPathLen();
-                 thePathLen = mySignerPath == null
-                             ? BigInteger.ZERO
-                             : mySignerPath.add(BigInteger.ONE);
-            } else {
-                thePathLen = null;
-            }
-        }
-
-        /**
-         * is this a CA?.
-         *
-         * @return true/false
-         */
-        boolean isCA() {
-            return isCA;
-        }
-
-        /**
-         * Obtain the pathLen.
-         *
-         * @return the pathLen
-         */
-        BigInteger getPathLen() {
-            return thePathLen;
-        }
-
-        /**
-         * Create extensions.
-         * @param pGenerator the extensions generator
-         * @throws GordianException on error
-         */
-        void createExtensions(final ExtensionsGenerator pGenerator) throws GordianException {
-            /* Protect against exceptions */
-            try {
-                pGenerator.addExtension(Extension.basicConstraints, isCA, thePathLen == null
-                                                                               ? new BasicConstraints(isCA)
-                                                                               : new BasicConstraints(thePathLen.intValue()));
-            } catch (IOException e) {
-                throw new GordianIOException("Failed to create extensions", e);
-            }
-        }
-
-        /**
-         * Determine CAStatus.
-         *
-         * @param pExtensions the extensions.
-         * @return the CAStatus
-         */
-        static GordianCAStatus determineStatus(final Extensions pExtensions) {
-            /* Access details */
-            final BasicConstraints myConstraint = BasicConstraints.fromExtensions(pExtensions);
-
-            /* Check for CA */
-            if (myConstraint != null && myConstraint.isCA()) {
-                return new GordianCAStatus(myConstraint.getPathLenConstraint());
-            }
-
-            /* Not CA */
-            return new GordianCAStatus(false);
-        }
     }
 }
