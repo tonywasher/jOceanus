@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * GordianKnot: Security Suite
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,7 +13,7 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.gordianknot.impl.core.keystore;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
@@ -64,7 +64,8 @@ public class GordianCoreKeyStoreManager
 
     /**
      * Constructor.
-     * @param pFactory the factory
+     *
+     * @param pFactory  the factory
      * @param pKeyStore the keyStore
      */
     GordianCoreKeyStoreManager(final GordianBaseFactory pFactory,
@@ -128,7 +129,6 @@ public class GordianCoreKeyStoreManager
         return (GordianCoreKeyStorePair) theKeyStore.getEntry(pAlias, pPassword);
     }
 
-
     @Override
     public GordianCoreKeyStorePair createKeyPair(final GordianKeyPairSpec pKeySpec,
                                                  final X500Name pSubject,
@@ -148,7 +148,7 @@ public class GordianCoreKeyStoreManager
         /* Create the new chain */
         final List<GordianCertificate> myParentChain = pSigner.getCertificateChain();
         final List<GordianCertificate> myChain = new ArrayList<>(myParentChain);
-        myChain.add(0, myCert);
+        myChain.addFirst(myCert);
 
         /* Record into keyStore */
         theKeyStore.setKeyPair(pAlias, myKeyPair, pPassword, myChain);
@@ -157,22 +157,22 @@ public class GordianCoreKeyStoreManager
 
     @Override
     public GordianCoreKeyStorePair createAlternate(final GordianKeyStorePair pKeyPair,
-                                                   final GordianKeyPairUsage pUsage,
                                                    final GordianKeyStorePair pSigner,
                                                    final String pAlias,
                                                    final char[] pPassword) throws GordianException {
         /* Access the keyPair and subject */
         final GordianCoreKeyPair myKeyPair = (GordianCoreKeyPair) pKeyPair.getKeyPair();
-        final X500Name mySubject = pKeyPair.getCertificateChain().get(0).getSubject().getName();
-        checkKeyPairUsage(myKeyPair.getKeyPairSpec(), pUsage);
-
+        final GordianCertificate myBase = pKeyPair.getCertificateChain().getFirst();
+        final X500Name mySubject = myBase.getSubject().getName();
+        final GordianKeyPairUsage myUsage = myBase.getUsage();
+        
         /* Create the certificate */
-        final GordianCoreCertificate myCert = new GordianCoreCertificate(theFactory, pSigner, myKeyPair, mySubject, pUsage);
+        final GordianCoreCertificate myCert = new GordianCoreCertificate(theFactory, pSigner, myKeyPair, mySubject, myUsage);
 
         /* Create the new chain */
         final List<GordianCertificate> myParentChain = pSigner.getCertificateChain();
         final List<GordianCertificate> myChain = new ArrayList<>(myParentChain);
-        myChain.add(0, myCert);
+        myChain.addFirst(myCert);
 
         /* Record into keyStore */
         theKeyStore.setKeyPair(pAlias, myKeyPair, pPassword, myChain);
@@ -190,14 +190,15 @@ public class GordianCoreKeyStoreManager
         /* Create the new chain */
         final List<GordianCertificate> myParentChain = pSigner.getCertificateChain();
         final List<GordianCertificate> myChain = new ArrayList<>(myParentChain);
-        myChain.add(0, myCert);
+        myChain.addFirst(myCert);
         return myChain;
     }
 
     /**
      * Check Usage for keyPairSpec.
+     *
      * @param pKeyPairSpec the keyPairSpec
-     * @param pUsage   the key usage
+     * @param pUsage       the key usage
      * @throws GordianException on error
      */
     private void checkKeyPairUsage(final GordianKeyPairSpec pKeyPairSpec,

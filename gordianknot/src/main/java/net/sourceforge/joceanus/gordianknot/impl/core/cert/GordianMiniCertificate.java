@@ -74,7 +74,6 @@ public class GordianMiniCertificate
                                   final GordianKeyPair pKeyPair,
                                   final GordianKeyPairUsage pUsage) throws GordianException {
         /* Store parameters */
-        theSubject = new GordianCoreCertificateId(pSubject, null);
         theKeyPair = pKeyPair;
         theUsage = pUsage;
 
@@ -82,6 +81,8 @@ public class GordianMiniCertificate
         final GordianKeyPairFactory myFactory = pFactory.getAsyncFactory().getKeyPairFactory();
         final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(pKeyPair.getKeyPairSpec());
         final X509EncodedKeySpec myX509Spec = myGenerator.getX509Encoding(pKeyPair);
+        final byte[] myKeyId = GordianCertUtils.createKeyId(pFactory, myX509Spec.getEncoded());
+        theSubject = new GordianCoreCertificateId(pSubject, myKeyId);
 
         /* Create the encoded */
         theASN1 = new GordianMiniCertificateASN1(pSubject, myX509Spec, pUsage);
@@ -114,16 +115,17 @@ public class GordianMiniCertificate
         theASN1 = pASN1;
         theEncoded = theASN1.getEncodedBytes();
 
-        /* Store parameters */
-        theSubject = new GordianCoreCertificateId(theASN1.getSubject(), null);
-        theUsage = theASN1.getUsage();
-
         /* Derive the keyPair */
         final GordianKeyPairFactory myFactory = pFactory.getAsyncFactory().getKeyPairFactory();
         final X509EncodedKeySpec myX509Spec = theASN1.getPublicKey();
         final GordianKeyPairSpec myKeySpec = myFactory.determineKeyPairSpec(myX509Spec);
         final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(myKeySpec);
         theKeyPair = myGenerator.derivePublicOnlyKeyPair(myX509Spec);
+
+        /* Store subject and usage */
+        final byte[] myKeyId = GordianCertUtils.createKeyId(pFactory, myX509Spec.getEncoded());
+        theSubject = new GordianCoreCertificateId(theASN1.getSubject(), myKeyId);
+        theUsage = theASN1.getUsage();
     }
 
     @Override

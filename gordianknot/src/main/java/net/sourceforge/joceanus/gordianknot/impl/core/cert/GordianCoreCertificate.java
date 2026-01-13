@@ -21,8 +21,6 @@ import net.sourceforge.joceanus.gordianknot.api.cert.GordianCertificate;
 import net.sourceforge.joceanus.gordianknot.api.cert.GordianCertificateId;
 import net.sourceforge.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
 import net.sourceforge.joceanus.gordianknot.api.cert.GordianKeyPairUse;
-import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigest;
-import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestFactory;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
@@ -39,7 +37,6 @@ import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianCompositeKeyPair;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPair;
 import net.sourceforge.joceanus.gordianknot.impl.core.sign.GordianCoreSignatureFactory;
-import org.bouncycastle.asn1.ASN1BitString;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1OutputStream;
@@ -60,7 +57,6 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Objects;
 
 /**
  * Certificate implementation.
@@ -155,7 +151,7 @@ public class GordianCoreCertificate
         /* Determine the signatureSpec */
         theSigSpec = determineSignatureSpecForKeyPair(theKeyPair);
 
-        /* Determine the algorithm Id for the signatureSpec */
+        /* Determine the algorithmId for the signatureSpec */
         theSigAlgId = determineAlgIdForSignatureSpec(theSigSpec, theKeyPair);
 
         /* Create the TBSCertificate */
@@ -275,14 +271,14 @@ public class GordianCoreCertificate
             theKeyUsage = GordianCertUtils.determineUsage(myExtensions);
             theCAStatus = GordianCAStatus.determineStatus(myExtensions);
 
-            /* Determine whether we are self-signed */
-            final X500Name mySignerName = getSubjectName();
-            isSelfSigned = mySignerName.equals(getIssuerName());
-
             /* Create the ids */
             theSubject = buildSubjectId();
             theIssuer = buildIssuerId();
             theSerialNo = theTbsCertificate.getSerialNumber().getValue();
+
+            /* Determine whether we are self-signed */
+            final X500Name mySignerName = getSubjectName();
+            isSelfSigned = mySignerName.equals(getIssuerName());
 
             /* Store the encoded representation */
             theEncoded = pCertificate.getEncoded();
@@ -301,12 +297,12 @@ public class GordianCoreCertificate
     }
 
     /**
-     * Build the issuer Id for a certificate.
+     * Build the issuerId for a certificate.
      *
      * @return get the issuer id
      */
     private GordianCoreCertificateId buildSubjectId() {
-        return new GordianCoreCertificateId(getSubjectName(), DERBitString.convert(getSubjectId()));
+        return new GordianCoreCertificateId(theTbsCertificate.getSubject(), GordianCertUtils.determineSubjectId(theTbsCertificate));
     }
 
     /**
@@ -315,7 +311,7 @@ public class GordianCoreCertificate
      * @return get the issuer id
      */
     private GordianCoreCertificateId buildIssuerId() {
-        return new GordianCoreCertificateId(getIssuerName(), DERBitString.convert(getIssuerId()));
+        return new GordianCoreCertificateId(theTbsCertificate.getIssuer(), GordianCertUtils.determineIssuerId(theTbsCertificate));
     }
 
     @Override
@@ -346,7 +342,7 @@ public class GordianCoreCertificate
 
     @Override
     public GordianCertificateId getIssuer() {
-        return theIssuer;
+        return isSelfSigned ? theSubject : theIssuer;
     }
 
     /**
@@ -355,7 +351,7 @@ public class GordianCoreCertificate
      * @return the subject
      */
     public X500Name getSubjectName() {
-        return theTbsCertificate.getSubject();
+        return theSubject.getName();
     }
 
     /**
@@ -363,8 +359,8 @@ public class GordianCoreCertificate
      *
      * @return the subjectId
      */
-    ASN1BitString getSubjectId() {
-        return theTbsCertificate.getSubjectUniqueId();
+    byte[] getSubjectId() {
+        return theSubject.getId();
     }
 
     /**
@@ -373,7 +369,7 @@ public class GordianCoreCertificate
      * @return the issuer name
      */
     X500Name getIssuerName() {
-        return theTbsCertificate.getIssuer();
+        return theIssuer.getName();
     }
 
     /**
@@ -381,10 +377,10 @@ public class GordianCoreCertificate
      *
      * @return the issuerId
      */
-    ASN1BitString getIssuerId() {
+    byte[] getIssuerId() {
         return isSelfSigned
                 ? getSubjectId()
-                : theTbsCertificate.getIssuerUniqueId();
+                : theIssuer.getId();
     }
 
     @Override
@@ -557,9 +553,9 @@ public class GordianCoreCertificate
         /* Check that the signing certificate is correct */
         final GordianCoreCertificate mySigner = (GordianCoreCertificate) pSigner;
         final X500Name mySignerName = mySigner.getSubjectName();
-        final DERBitString mySignerId = DERBitString.convert(mySigner.getSubjectId());
+        final byte[] mySignerId = mySigner.getSubjectId();
         if (!mySignerName.equals(getIssuerName())
-                || !Objects.equals(mySignerId, getIssuerId())) {
+                || !Arrays.equals(mySignerId, getIssuerId())) {
             throw new GordianDataException("Incorrect signer certificate");
         }
 
@@ -638,37 +634,14 @@ public class GordianCoreCertificate
         myCertBuilder.setSerialNumber(new ASN1Integer(mySerialNo));
         myCertBuilder.setSubjectPublicKeyInfo(myPublicKeyInfo);
         myCertBuilder.setSignature(theSigAlgId);
-        myCertBuilder.setSubjectUniqueID(createSubjectId(myPublicKeyEncoded, mySerialNo));
-        if (pSigner != null) {
-            myCertBuilder.setIssuerUniqueID(DERBitString.convert(pSigner.getSubjectId()));
-        }
+        final byte[] mySubjectId = GordianCertUtils.createKeyId(theFactory, myPublicKeyEncoded);
+        final byte[] myIssuerId = pSigner == null ? null : pSigner.getSubjectId();
 
         /* Create extensions for the certificate */
-        myCertBuilder.setExtensions(GordianCertUtils.createExtensions(theCAStatus, theKeyUsage));
+        myCertBuilder.setExtensions(GordianCertUtils.createExtensions(theCAStatus, theKeyUsage, mySubjectId, myIssuerId));
 
         /* Generate the TBS Certificate */
         return myCertBuilder.generateTBSCertificate();
-    }
-
-    /**
-     * Create the subjectId.
-     *
-     * @param pEncodedPublicKey the publicKey
-     * @param pSerialNo         the certificate Serial#
-     * @return the subjectId
-     * @throws GordianException on error
-     */
-    private DERBitString createSubjectId(final byte[] pEncodedPublicKey,
-                                         final BigInteger pSerialNo) throws GordianException {
-        /* Build the hash */
-        final GordianDigestSpec mySpec = getDigestSpec();
-        final GordianDigestFactory myDigests = theFactory.getDigestFactory();
-        final GordianDigest myDigest = myDigests.createDigest(mySpec);
-        myDigest.update(pEncodedPublicKey);
-        myDigest.update(pSerialNo.toByteArray());
-
-        /* Create the subjectId */
-        return new DERBitString(myDigest.finish());
     }
 
     /**

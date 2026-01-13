@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * GordianKnot: Security Suite
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,7 +13,7 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.gordianknot.api.keystore;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
@@ -32,6 +32,7 @@ import org.bouncycastle.asn1.x500.X500Name;
 public interface GordianKeyStoreManager {
     /**
      * Obtain the keyStore.
+     *
      * @return the keyStore
      */
     GordianKeyStore getKeyStore();
@@ -40,8 +41,8 @@ public interface GordianKeyStoreManager {
      * Create a new keySet.
      *
      * @param pKeySetSpec the spec of the new keySet
-     * @param pAlias the alias
-     * @param pPassword the password
+     * @param pAlias      the alias
+     * @param pPassword   the password
      * @return the new keySet entry
      * @throws GordianException on error
      */
@@ -52,9 +53,9 @@ public interface GordianKeyStoreManager {
     /**
      * Create a new key.
      *
-     * @param <K> the type of the new key
-     * @param pKeySpec the spec of the new key
-     * @param pAlias the alias
+     * @param <K>       the type of the new key
+     * @param pKeySpec  the spec of the new key
+     * @param pAlias    the alias
      * @param pPassword the password
      * @return the new keySet entry
      * @throws GordianException on error
@@ -66,9 +67,9 @@ public interface GordianKeyStoreManager {
     /**
      * Create a new keyPair with root certificate.
      *
-     * @param pKeySpec the spec of the new keyPair
-     * @param pSubject the name of the entity
-     * @param pAlias the alias
+     * @param pKeySpec  the spec of the new keyPair
+     * @param pSubject  the name of the entity
+     * @param pAlias    the alias
      * @param pPassword the password
      * @return the new keyPair entry
      * @throws GordianException on error
@@ -81,11 +82,11 @@ public interface GordianKeyStoreManager {
     /**
      * Create a new keyPair with certificate.
      *
-     * @param pKeySpec the spec of the new keyPair
-     * @param pSubject the name of the entity
-     * @param pUsage   the key usage
-     * @param pSigner the signer
-     * @param pAlias the alias
+     * @param pKeySpec  the spec of the new keyPair
+     * @param pSubject  the name of the entity
+     * @param pUsage    the key usage
+     * @param pSigner   the signer
+     * @param pAlias    the alias
      * @param pPassword the password
      * @return the new keyPair entry
      * @throws GordianException on error
@@ -100,16 +101,14 @@ public interface GordianKeyStoreManager {
     /**
      * Create an alternate certificate for keyPair.
      *
-     * @param pKeyPair the existing keyPair record
-     * @param pUsage   the key usage
-     * @param pSigner the signer
-     * @param pAlias the alias
+     * @param pKeyPair  the existing keyPair record
+     * @param pSigner   the signer
+     * @param pAlias    the alias
      * @param pPassword the password
      * @return the new keyPair entry
      * @throws GordianException on error
      */
     GordianKeyStorePair createAlternate(GordianKeyStorePair pKeyPair,
-                                        GordianKeyPairUsage pUsage,
                                         GordianKeyStorePair pSigner,
                                         String pAlias,
                                         char[] pPassword) throws GordianException;

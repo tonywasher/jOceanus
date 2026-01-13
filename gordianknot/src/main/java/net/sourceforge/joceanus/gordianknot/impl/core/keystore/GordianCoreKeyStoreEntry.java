@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * GordianKnot: Security Suite
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,20 +13,21 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.gordianknot.impl.core.keystore;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
+import net.sourceforge.joceanus.gordianknot.api.cert.GordianCertificate;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
-import net.sourceforge.joceanus.gordianknot.api.cert.GordianCertificate;
 import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry;
 import net.sourceforge.joceanus.gordianknot.impl.core.cert.GordianCoreCertificate;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Core KeyStoreEntry.
@@ -50,6 +51,7 @@ public class GordianCoreKeyStoreEntry
 
     /**
      * Constructor.
+     *
      * @param pDate the creation date
      */
     GordianCoreKeyStoreEntry(final LocalDate pDate) {
@@ -72,10 +74,9 @@ public class GordianCoreKeyStoreEntry
         }
 
         /* Ensure object is correct class */
-        if (!(pThat instanceof GordianCoreKeyStoreEntry)) {
+        if (!(pThat instanceof GordianCoreKeyStoreEntry myThat)) {
             return false;
         }
-        final GordianCoreKeyStoreEntry myThat = (GordianCoreKeyStoreEntry) pThat;
 
         /* Check that the dates match */
         return theDate.equals(myThat.getCreationDate());
@@ -89,7 +90,7 @@ public class GordianCoreKeyStoreEntry
     /**
      * KeyStore Certificate.
      */
-    static class GordianCoreKeyStoreCertificate
+    public static class GordianCoreKeyStoreCertificate
             extends GordianCoreKeyStoreEntry
             implements GordianKeyStoreCertificate {
         /**
@@ -99,8 +100,9 @@ public class GordianCoreKeyStoreEntry
 
         /**
          * Constructor.
+         *
          * @param pCertificate the certificate
-         * @param pDate the creation date
+         * @param pDate        the creation date
          */
         GordianCoreKeyStoreCertificate(final GordianCoreCertificate pCertificate,
                                        final LocalDate pDate) {
@@ -124,10 +126,9 @@ public class GordianCoreKeyStoreEntry
             }
 
             /* Ensure object is correct class */
-            if (!(pThat instanceof GordianCoreKeyStoreCertificate)) {
+            if (!(pThat instanceof GordianCoreKeyStoreCertificate myThat)) {
                 return false;
             }
-            final GordianCoreKeyStoreCertificate myThat = (GordianCoreKeyStoreCertificate) pThat;
 
             /* Check that the certificates match */
             return theCertificate.equals(myThat.getCertificate())
@@ -136,14 +137,14 @@ public class GordianCoreKeyStoreEntry
 
         @Override
         public int hashCode() {
-            return theCertificate.hashCode() ^ super.hashCode();
+            return Objects.hash(theCertificate, super.hashCode());
         }
     }
 
     /**
      * KeyStore KeyPairEntry.
      */
-    static class GordianCoreKeyStorePair
+    public static class GordianCoreKeyStorePair
             extends GordianCoreKeyStoreEntry
             implements GordianKeyStorePair {
         /**
@@ -158,9 +159,10 @@ public class GordianCoreKeyStoreEntry
 
         /**
          * Constructor.
+         *
          * @param pKeyPair the keyPair.
-         * @param pChain the matching certificateChain
-         * @param pDate the creation date
+         * @param pChain   the matching certificateChain
+         * @param pDate    the creation date
          */
         GordianCoreKeyStorePair(final GordianKeyPair pKeyPair,
                                 final List<GordianCertificate> pChain,
@@ -191,10 +193,9 @@ public class GordianCoreKeyStoreEntry
             }
 
             /* Ensure object is correct class */
-            if (!(pThat instanceof GordianCoreKeyStorePair)) {
+            if (!(pThat instanceof GordianCoreKeyStorePair myThat)) {
                 return false;
             }
-            final GordianCoreKeyStorePair myThat = (GordianCoreKeyStorePair) pThat;
 
             /* Check that the keyPairs match */
             return theKeyPair.equals(myThat.getKeyPair())
@@ -204,14 +205,13 @@ public class GordianCoreKeyStoreEntry
 
         @Override
         public int hashCode() {
-            return theKeyPair.hashCode()
-                    ^ theChain.hashCode()
-                    ^ super.hashCode();
+            return Objects.hash(theKeyPair, theChain, super.hashCode());
         }
     }
 
     /**
      * KeyStore KeyEntry.
+     *
      * @param <T> the key type
      */
     public static class GordianCoreKeyStoreKey<T extends GordianKeySpec>
@@ -224,7 +224,8 @@ public class GordianCoreKeyStoreEntry
 
         /**
          * Constructor.
-         * @param pKey the key
+         *
+         * @param pKey  the key
          * @param pDate the creation date
          */
         GordianCoreKeyStoreKey(final GordianKey<T> pKey,
@@ -249,10 +250,9 @@ public class GordianCoreKeyStoreEntry
             }
 
             /* Ensure object is correct class */
-            if (!(pThat instanceof GordianCoreKeyStoreKey)) {
+            if (!(pThat instanceof GordianCoreKeyStoreKey<?> myThat)) {
                 return false;
             }
-            final GordianCoreKeyStoreKey<?> myThat = (GordianCoreKeyStoreKey<?>) pThat;
 
             /* Check that the keys match */
             return theKey.equals(myThat.getKey())
@@ -261,14 +261,14 @@ public class GordianCoreKeyStoreEntry
 
         @Override
         public int hashCode() {
-            return theKey.hashCode() ^ super.hashCode();
+            return Objects.hash(theKey, super.hashCode());
         }
     }
 
     /**
      * KeyStore KeySet.
      */
-    static class GordianCoreKeyStoreSet
+    public static class GordianCoreKeyStoreSet
             extends GordianCoreKeyStoreEntry
             implements GordianKeyStoreSet {
         /**
@@ -278,8 +278,9 @@ public class GordianCoreKeyStoreEntry
 
         /**
          * Constructor.
+         *
          * @param pKeySet the keySet
-         * @param pDate the creation date
+         * @param pDate   the creation date
          */
         GordianCoreKeyStoreSet(final GordianKeySet pKeySet,
                                final LocalDate pDate) {
@@ -303,10 +304,9 @@ public class GordianCoreKeyStoreEntry
             }
 
             /* Ensure object is correct class */
-            if (!(pThat instanceof GordianCoreKeyStoreSet)) {
+            if (!(pThat instanceof GordianCoreKeyStoreSet myThat)) {
                 return false;
             }
-            final GordianCoreKeyStoreSet myThat = (GordianCoreKeyStoreSet) pThat;
 
             /* Check that the certificates match */
             return theKeySet.equals(myThat.getKeySet())
@@ -315,7 +315,7 @@ public class GordianCoreKeyStoreEntry
 
         @Override
         public int hashCode() {
-            return theKeySet.hashCode() ^ super.hashCode();
+            return Objects.hash(theKeySet, super.hashCode());
         }
     }
 }

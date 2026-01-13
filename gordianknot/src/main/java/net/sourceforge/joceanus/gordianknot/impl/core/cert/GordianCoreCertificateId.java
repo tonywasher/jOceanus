@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * GordianKnot: Security Suite
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,13 +13,13 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.gordianknot.impl.core.cert;
 
 import net.sourceforge.joceanus.gordianknot.api.cert.GordianCertificateId;
-import org.bouncycastle.asn1.DERBitString;
 import org.bouncycastle.asn1.x500.X500Name;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -35,17 +35,18 @@ public final class GordianCoreCertificateId
     /**
      * The ID.
      */
-    private final DERBitString theId;
+    private final byte[] theId;
 
     /**
      * Constructor.
+     *
      * @param pName the name
-     * @param pId the id
+     * @param pId   the id
      */
     public GordianCoreCertificateId(final X500Name pName,
-                                    final DERBitString pId) {
+                                    final byte[] pId) {
         theName = pName;
-        theId = pId;
+        theId = pId == null ? null : pId.clone();
     }
 
     @Override
@@ -54,8 +55,8 @@ public final class GordianCoreCertificateId
     }
 
     @Override
-    public DERBitString getId() {
-        return theId;
+    public byte[] getId() {
+        return theId == null ? null : theId.clone();
     }
 
     @Override
@@ -69,18 +70,17 @@ public final class GordianCoreCertificateId
         }
 
         /* Ensure object is correct class */
-        if (!(pThat instanceof GordianCoreCertificateId)) {
+        if (!(pThat instanceof GordianCoreCertificateId myThat)) {
             return false;
         }
-        final GordianCoreCertificateId myThat = (GordianCoreCertificateId) pThat;
 
         /* Compare fields */
         return theName.equals(myThat.getName())
-                && Objects.equals(theId, myThat.getId());
+                && Arrays.equals(theId, myThat.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(theName, theId);
+        return Objects.hash(theName, Arrays.hashCode(theId));
     }
 }

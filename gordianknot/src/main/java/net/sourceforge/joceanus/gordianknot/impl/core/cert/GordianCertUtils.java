@@ -18,14 +18,22 @@
 package net.sourceforge.joceanus.gordianknot.impl.core.cert;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
 import net.sourceforge.joceanus.gordianknot.api.cert.GordianKeyPairUse;
+import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigest;
+import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestFactory;
+import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
+import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpecBuilder;
+import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
+import org.bouncycastle.asn1.ASN1BitString;
 import org.bouncycastle.asn1.x509.BasicConstraints;
 import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.Extensions;
 import org.bouncycastle.asn1.x509.ExtensionsGenerator;
 import org.bouncycastle.asn1.x509.KeyUsage;
+import org.bouncycastle.asn1.x509.TBSCertificate;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -108,6 +116,40 @@ public final class GordianCertUtils {
     }
 
     /**
+     * Determine subjectId.
+     *
+     * @param pCertificate the certificate.
+     * @return the id
+     */
+    static byte[] determineSubjectId(final TBSCertificate pCertificate) {
+        /* Access details */
+        final Extensions myExtensions = pCertificate.getExtensions();
+        final Extension mySubjectId = myExtensions.getExtension(Extension.subjectKeyIdentifier);
+        if (mySubjectId != null) {
+            return mySubjectId.getExtnValue().getOctets();
+        }
+        final ASN1BitString myId = pCertificate.getSubjectUniqueId();
+        return myId == null ? null : myId.getOctets();
+    }
+
+    /**
+     * Determine issuerId.
+     *
+     * @param pCertificate the certificate.
+     * @return the id
+     */
+    static byte[] determineIssuerId(final TBSCertificate pCertificate) {
+        /* Access details */
+        final Extensions myExtensions = pCertificate.getExtensions();
+        final Extension myIssuerId = myExtensions.getExtension(Extension.authorityKeyIdentifier);
+        if (myIssuerId != null) {
+            return myIssuerId.getExtnValue().getOctets();
+        }
+        final ASN1BitString myId = pCertificate.getIssuerUniqueId();
+        return myId == null ? null : myId.getOctets();
+    }
+
+    /**
      * Check for usage.
      *
      * @param pUsage    the usage control
@@ -122,18 +164,26 @@ public final class GordianCertUtils {
     /**
      * Create extensions for tbsCertificate.
      *
-     * @param pCAStatus the CA status
-     * @param pUsage    the keyPair usage
+     * @param pCAStatus  the CA status
+     * @param pUsage     the keyPair usage
+     * @param pSubjectId the subjectId
+     * @param pIssuerId  the issuerId (or null)
      * @return the extensions
      * @throws GordianException on error
      */
     static Extensions createExtensions(final GordianCAStatus pCAStatus,
-                                       final GordianKeyPairUsage pUsage) throws GordianException {
+                                       final GordianKeyPairUsage pUsage,
+                                       final byte[] pSubjectId,
+                                       final byte[] pIssuerId) throws GordianException {
         /* Protect against exceptions */
         try {
             /* Create extensions for the certificate */
             final ExtensionsGenerator myGenerator = new ExtensionsGenerator();
             myGenerator.addExtension(Extension.keyUsage, true, pUsage.getKeyUsage());
+            myGenerator.addExtension(Extension.subjectKeyIdentifier, true, pSubjectId);
+            if (pIssuerId != null) {
+                myGenerator.addExtension(Extension.authorityKeyIdentifier, true, pIssuerId);
+            }
             pCAStatus.createExtensions(myGenerator);
             return myGenerator.generate();
 
@@ -158,5 +208,24 @@ public final class GordianCertUtils {
         } catch (IOException e) {
             throw new GordianIOException("Failed to create extensions", e);
         }
+    }
+
+    /**
+     * Create the keyId.
+     *
+     * @param pEncodedPublicKey the publicKey
+     * @return the keyId
+     * @throws GordianException on error
+     */
+    static byte[] createKeyId(final GordianFactory pFactory,
+                              final byte[] pEncodedPublicKey) throws GordianException {
+        /* Build the hash */
+        final GordianDigestSpec mySpec = GordianDigestSpecBuilder.sha3(GordianLength.LEN_256);
+        final GordianDigestFactory myDigests = pFactory.getDigestFactory();
+        final GordianDigest myDigest = myDigests.createDigest(mySpec);
+        myDigest.update(pEncodedPublicKey);
+
+        /* Create the keyId */
+        return myDigest.finish();
     }
 }
