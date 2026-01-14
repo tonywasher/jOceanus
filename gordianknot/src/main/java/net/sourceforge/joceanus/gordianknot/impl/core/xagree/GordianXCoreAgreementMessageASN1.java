@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * GordianKnot: Security Suite
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,11 +13,14 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.gordianknot.impl.core.xagree;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
+import net.sourceforge.joceanus.gordianknot.api.cert.GordianCertificate;
+import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianASN1Util.GordianASN1Object;
+import net.sourceforge.joceanus.gordianknot.impl.core.cert.GordianCertificateASN1;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import org.bouncycastle.asn1.ASN1EncodableVector;
@@ -30,7 +33,6 @@ import org.bouncycastle.asn1.BEROctetString;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.DERTaggedObject;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
-import org.bouncycastle.asn1.x509.Certificate;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 
 import java.io.IOException;
@@ -45,9 +47,9 @@ import java.util.Objects;
  * GordianAgreementMessageASN1 ::= SEQUENCE  {
  *      Id Identification
  *      Algs Specifications
- *      clientCertificate [1] Certificate OPTIONAL
- *      serverCertificate [2] Certificate OPTIONAL
- *      signerCertificate [3] Certificate OPTIONAL
+ *      clientCertificate [1] GordianCertificateASN1 OPTIONAL
+ *      serverCertificate [2] GordianCertificateASN1 OPTIONAL
+ *      signerCertificate [3] GordianCertificateASN1 OPTIONAL
  *      initVector [4] OCTET STRING OPTIONAL
  *      encapsulated [5] OCTET STRING OPTIONAL
  *      ephemeral [6] SubjectPublicKeyInfo OPTIONAL
@@ -164,17 +166,17 @@ public final class GordianXCoreAgreementMessageASN1
     /**
      * The Client Certificate.
      */
-    private Certificate theClientCertificate;
+    private GordianCertificateASN1 theClientCertificate;
 
     /**
      * The Server Certificate.
      */
-    private Certificate theServerCertificate;
+    private GordianCertificateASN1 theServerCertificate;
 
     /**
      * The Signer Certificate.
      */
-    private Certificate theSignerCertificate;
+    private GordianCertificateASN1 theSignerCertificate;
 
     /**
      * The InitVector.
@@ -203,6 +205,7 @@ public final class GordianXCoreAgreementMessageASN1
 
     /**
      * Constructor.
+     *
      * @param pType the messageType
      */
     private GordianXCoreAgreementMessageASN1(final GordianXMessageType pType) {
@@ -211,6 +214,7 @@ public final class GordianXCoreAgreementMessageASN1
 
     /**
      * Constructor.
+     *
      * @param pSequence the Sequence
      * @throws GordianException on error
      */
@@ -266,13 +270,13 @@ public final class GordianXCoreAgreementMessageASN1
                 final ASN1TaggedObject myTagged = ASN1TaggedObject.getInstance(en.nextElement());
                 switch (myTagged.getTagNo()) {
                     case TAG_CLIENTCERTIFICATE:
-                        theClientCertificate = Certificate.getInstance(myTagged, false);
+                        theClientCertificate = GordianCertificateASN1.getInstance(myTagged, false);
                         break;
                     case TAG_SERVERCERTIFICATE:
-                        theServerCertificate = Certificate.getInstance(myTagged, false);
+                        theServerCertificate = GordianCertificateASN1.getInstance(myTagged, false);
                         break;
                     case TAG_SIGNERCERTIFICATE:
-                        theSignerCertificate = Certificate.getInstance(myTagged, false);
+                        theSignerCertificate = GordianCertificateASN1.getInstance(myTagged, false);
                         break;
                     case TAG_INITVECTOR:
                         theInitVector = ASN1OctetString.getInstance(myTagged, false).getOctets();
@@ -303,30 +307,34 @@ public final class GordianXCoreAgreementMessageASN1
 
     /**
      * Create a client hello.
+     *
      * @return the clientHello
      */
-    public static GordianXCoreAgreementMessageASN1 newClientHello()  {
+    public static GordianXCoreAgreementMessageASN1 newClientHello() {
         return new GordianXCoreAgreementMessageASN1(GordianXMessageType.CLIENTHELLO);
     }
 
     /**
      * Create a server hello.
+     *
      * @return the serverHello
      */
-    public static GordianXCoreAgreementMessageASN1 newServerHello()  {
+    public static GordianXCoreAgreementMessageASN1 newServerHello() {
         return new GordianXCoreAgreementMessageASN1(GordianXMessageType.SERVERHELLO);
     }
 
     /**
      * Create a client confirm.
+     *
      * @return the clientConfirm
      */
-    public static GordianXCoreAgreementMessageASN1 newClientConfirm()  {
+    public static GordianXCoreAgreementMessageASN1 newClientConfirm() {
         return new GordianXCoreAgreementMessageASN1(GordianXMessageType.CLIENTCONFIRM);
     }
 
     /**
      * Parse the ASN1 object.
+     *
      * @param pObject the object to parse
      * @return the parsed object
      * @throws GordianException on error
@@ -342,6 +350,7 @@ public final class GordianXCoreAgreementMessageASN1
 
     /**
      * Get the messageType.
+     *
      * @return the messageType
      */
     GordianXMessageType getMessageType() {
@@ -350,6 +359,7 @@ public final class GordianXCoreAgreementMessageASN1
 
     /**
      * Check the message type.
+     *
      * @param pMessageType the message type
      * @throws GordianException on error
      */
@@ -361,6 +371,7 @@ public final class GordianXCoreAgreementMessageASN1
 
     /**
      * Get the clientId.
+     *
      * @return the clientId
      */
     Long getClientId() {
@@ -369,6 +380,7 @@ public final class GordianXCoreAgreementMessageASN1
 
     /**
      * Set the clientId.
+     *
      * @param pClientId the clientId
      * @return this object
      */
@@ -379,6 +391,7 @@ public final class GordianXCoreAgreementMessageASN1
 
     /**
      * Get the clientId.
+     *
      * @return the clientId
      */
     Long getServerId() {
@@ -387,6 +400,7 @@ public final class GordianXCoreAgreementMessageASN1
 
     /**
      * Set the serverId.
+     *
      * @param pServerId the serverId
      * @return this object
      */
@@ -397,6 +411,7 @@ public final class GordianXCoreAgreementMessageASN1
 
     /**
      * Get the agreement algorithmId.
+     *
      * @return the agreement algorithmId (or null)
      */
     AlgorithmIdentifier getAgreementId() {
@@ -405,6 +420,7 @@ public final class GordianXCoreAgreementMessageASN1
 
     /**
      * Set the agreement algorithmId.
+     *
      * @param pAgreeId the agreementId
      * @return this object
      */
@@ -415,6 +431,7 @@ public final class GordianXCoreAgreementMessageASN1
 
     /**
      * Get the result algorithmId.
+     *
      * @return the result algorithmId (or null)
      */
     AlgorithmIdentifier getResultId() {
@@ -423,6 +440,7 @@ public final class GordianXCoreAgreementMessageASN1
 
     /**
      * Set the result algorithmId.
+     *
      * @param pResultId the resultId
      * @return this object
      */
@@ -433,60 +451,76 @@ public final class GordianXCoreAgreementMessageASN1
 
     /**
      * Get the client certificate.
+     *
+     * @param pFactory the factory
      * @return the certificate (or null)
+     * @throws GordianException on error
      */
-    Certificate getClientCertificate() {
-        return theServerCertificate;
+    GordianCertificate getClientCertificate(final GordianFactory pFactory) throws GordianException {
+        return theClientCertificate == null ? null : theClientCertificate.getCertificate(pFactory);
     }
 
     /**
      * Set the client certificate.
+     *
      * @param pCertificate the certificate
      * @return this object
+     * @throws GordianException on error
      */
-    GordianXCoreAgreementMessageASN1 setClientCertificate(final Certificate pCertificate) {
-        theClientCertificate = pCertificate;
+    GordianXCoreAgreementMessageASN1 setClientCertificate(final GordianCertificate pCertificate) throws GordianException {
+        theClientCertificate = pCertificate == null ? null : new GordianCertificateASN1(pCertificate);
         return this;
     }
 
     /**
      * Get the server certificate.
+     *
+     * @param pFactory the factory
      * @return the certificate (or null)
+     * @throws GordianException on error
      */
-    Certificate getServerCertificate() {
-        return theServerCertificate;
+    GordianCertificate getServerCertificate(final GordianFactory pFactory) throws GordianException {
+        return theServerCertificate == null ? null : theServerCertificate.getCertificate(pFactory);
     }
 
     /**
      * Set the server certificate.
+     *
      * @param pCertificate the certificate
      * @return this object
+     * @throws GordianException on error
      */
-    GordianXCoreAgreementMessageASN1 setServerCertificate(final Certificate pCertificate) {
-        theServerCertificate = pCertificate;
+    GordianXCoreAgreementMessageASN1 setServerCertificate(final GordianCertificate pCertificate) throws GordianException {
+        theServerCertificate = pCertificate == null ? null : new GordianCertificateASN1(pCertificate);
         return this;
     }
 
     /**
      * Get the signer certificate.
+     *
+     * @param pFactory the factory
      * @return the certificate (or null)
+     * @throws GordianException on error
      */
-    Certificate getSignerCertificate() {
-        return theSignerCertificate;
+    GordianCertificate getSignerCertificate(final GordianFactory pFactory) throws GordianException {
+        return theSignerCertificate == null ? null : theSignerCertificate.getCertificate(pFactory);
     }
 
     /**
      * Set the signer certificate.
+     *
      * @param pCertificate the certificate
      * @return this object
+     * @throws GordianException on error
      */
-    GordianXCoreAgreementMessageASN1 setSignerCertificate(final Certificate pCertificate) {
-        theSignerCertificate = pCertificate;
+    GordianXCoreAgreementMessageASN1 setSignerCertificate(final GordianCertificate pCertificate) throws GordianException {
+        theSignerCertificate = pCertificate == null ? null : new GordianCertificateASN1(pCertificate);
         return this;
     }
 
     /**
      * Get the initVector.
+     *
      * @return the initVector (or null)
      */
     byte[] getInitVector() {
@@ -495,6 +529,7 @@ public final class GordianXCoreAgreementMessageASN1
 
     /**
      * Set the initVector.
+     *
      * @param pInitVector the initVector Tag
      * @return this object
      */
@@ -505,6 +540,7 @@ public final class GordianXCoreAgreementMessageASN1
 
     /**
      * Get the encapsulated.
+     *
      * @return the encapsulated (or null)
      */
     public byte[] getEncapsulated() {
@@ -513,6 +549,7 @@ public final class GordianXCoreAgreementMessageASN1
 
     /**
      * Set the encapsulated.
+     *
      * @param pEncapsulated the encapsulated
      * @return this object
      */
@@ -523,6 +560,7 @@ public final class GordianXCoreAgreementMessageASN1
 
     /**
      * Get the ephemeral.
+     *
      * @return the ephemeral (or null)
      */
     public X509EncodedKeySpec getEphemeral() {
@@ -531,6 +569,7 @@ public final class GordianXCoreAgreementMessageASN1
 
     /**
      * Set the ephemeral.
+     *
      * @param pEphemeral the ephemeral
      * @return this object
      */
@@ -541,6 +580,7 @@ public final class GordianXCoreAgreementMessageASN1
 
     /**
      * Get the confirmation.
+     *
      * @return the confirmation Tag (or null)
      */
     byte[] getConfirmation() {
@@ -549,6 +589,7 @@ public final class GordianXCoreAgreementMessageASN1
 
     /**
      * Set the confirmation.
+     *
      * @param pConfirmation the confirmation Tag
      * @return this object
      */
@@ -559,6 +600,7 @@ public final class GordianXCoreAgreementMessageASN1
 
     /**
      * Get the signature algorithmId.
+     *
      * @return the signature algorithmId (or null)
      */
     AlgorithmIdentifier getSignatureId() {
@@ -567,6 +609,7 @@ public final class GordianXCoreAgreementMessageASN1
 
     /**
      * Get the signature.
+     *
      * @return the signature (or null)
      */
     byte[] getSignature() {
@@ -575,8 +618,9 @@ public final class GordianXCoreAgreementMessageASN1
 
     /**
      * Set the signature and algorithmId.
+     *
      * @param pSignatureId the signature algorithmId
-     * @param pSignature the signature
+     * @param pSignature   the signature
      * @return this object
      */
     GordianXCoreAgreementMessageASN1 setSignature(final AlgorithmIdentifier pSignatureId,
@@ -661,10 +705,10 @@ public final class GordianXCoreAgreementMessageASN1
                 && Objects.equals(getAgreementId(), myThat.getAgreementId())
                 && Objects.equals(getResultId(), myThat.getResultId())
                 && Objects.equals(getSignatureId(), myThat.getSignatureId())
-                && Objects.equals(getClientCertificate(), myThat.getClientCertificate())
-                && Objects.equals(getServerCertificate(), myThat.getServerCertificate())
-                && Objects.equals(getSignerCertificate(), myThat.getSignerCertificate())
                 && Objects.equals(getEphemeral(), myThat.getEphemeral())
+                && Objects.equals(theClientCertificate, myThat.theClientCertificate)
+                && Objects.equals(theServerCertificate, myThat.theServerCertificate)
+                && Objects.equals(theSignerCertificate, myThat.theSignerCertificate)
                 && Arrays.equals(getSignature(), myThat.getSignature())
                 && Arrays.equals(getEncapsulated(), myThat.getEncapsulated())
                 && Arrays.equals(getConfirmation(), myThat.getConfirmation())
@@ -674,8 +718,8 @@ public final class GordianXCoreAgreementMessageASN1
     @Override
     public int hashCode() {
         return Objects.hash(getMessageType(), getClientId(), getServerId(),
-                getAgreementId(), getResultId(), getSignatureId(),
-                getClientCertificate(), getServerCertificate(), getSignerCertificate(), getEphemeral())
+                getAgreementId(), getResultId(), getSignatureId(), getEphemeral(),
+                theClientCertificate, theServerCertificate, theSignerCertificate)
                 ^ Arrays.hashCode(getSignature())
                 ^ Arrays.hashCode(getEncapsulated())
                 ^ Arrays.hashCode(getConfirmation())
@@ -708,6 +752,7 @@ public final class GordianXCoreAgreementMessageASN1
 
         /**
          * Constructor.
+         *
          * @param pId the id
          */
         GordianXMessageType(final int pId) {
@@ -716,6 +761,7 @@ public final class GordianXCoreAgreementMessageASN1
 
         /**
          * Obtain id for messageType.
+         *
          * @return the id
          */
         int getId() {
@@ -724,6 +770,7 @@ public final class GordianXCoreAgreementMessageASN1
 
         /**
          * Determine the MessageType from the id.
+         *
          * @param pId the id
          * @return the messageType
          * @throws GordianException on error

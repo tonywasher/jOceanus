@@ -1,26 +1,21 @@
-/*******************************************************************************
- * Tethys: Java Utilities
- * Copyright 2012-2026 Tony Washer
+/*
+ * Tethys: GUI Utilities
+ * Copyright 2012-2026. Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package net.sourceforge.joceanus.tethys.javafx.table;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.function.Predicate;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
@@ -30,7 +25,6 @@ import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TableView.TableViewSelectionModel;
-
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.tethys.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.tethys.core.table.TethysUICoreTableManager;
@@ -51,6 +45,12 @@ import net.sourceforge.joceanus.tethys.javafx.table.TethysUIFXTableColumn.Tethys
 import net.sourceforge.joceanus.tethys.javafx.table.TethysUIFXTableColumn.TethysUIFXTableShortColumn;
 import net.sourceforge.joceanus.tethys.javafx.table.TethysUIFXTableColumn.TethysUIFXTableStringColumn;
 import net.sourceforge.joceanus.tethys.javafx.table.TethysUIFXTableColumn.TethysUIFXTableUnitsColumn;
+
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * JavaFX Table manager.
@@ -114,7 +114,7 @@ public class TethysUIFXTableManager<C, R>
         theColumns = theTable.getColumns();
         theCellFactory = new TethysUIFXTableCellFactory<>(pFactory);
         theTable.getStyleClass().add(CSS_STYLE_BASE);
-        theTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        theTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
         theNode = new TethysUIFXNode(theTable);
 
         /* Configure the table */
@@ -337,6 +337,7 @@ public class TethysUIFXTableManager<C, R>
     public TethysUIFXTableRatioColumn<C, R> declareRatioColumn(final C pId) {
         return new TethysUIFXTableRatioColumn<>(this, pId);
     }
+
     @Override
     public TethysUIFXTableDateColumn<C, R> declareDateColumn(final C pId) {
         return new TethysUIFXTableDateColumn<>(this, pId);

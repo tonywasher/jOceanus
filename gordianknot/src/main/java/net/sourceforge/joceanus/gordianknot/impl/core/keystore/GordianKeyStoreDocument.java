@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * GordianKnot: Security Suite
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,7 +13,7 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.gordianknot.impl.core.keystore;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
@@ -35,8 +35,6 @@ import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianKeyStoreEl
 import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStorePairElement;
 import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStoreSetElement;
 import net.sourceforge.joceanus.gordianknot.impl.core.lock.GordianPasswordLockSpecASN1;
-import org.bouncycastle.asn1.ASN1BitString;
-import org.bouncycastle.asn1.DERBitString;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -155,6 +153,7 @@ public final class GordianKeyStoreDocument {
 
     /**
      * Constructor from keyStore.
+     *
      * @param pKeyStore the keyStore
      * @throws GordianException on error
      */
@@ -197,7 +196,8 @@ public final class GordianKeyStoreDocument {
 
     /**
      * Constructor from document.
-     * @param pFactory the factory
+     *
+     * @param pFactory  the factory
      * @param pDocument the document
      * @throws GordianException on error
      */
@@ -245,6 +245,7 @@ public final class GordianKeyStoreDocument {
 
     /**
      * Obtain the keyStore.
+     *
      * @return the keyStore
      */
     public GordianBaseKeyStore getKeyStore() {
@@ -253,6 +254,7 @@ public final class GordianKeyStoreDocument {
 
     /**
      * Obtain the document.
+     *
      * @return the document
      */
     public Document getDocument() {
@@ -261,6 +263,7 @@ public final class GordianKeyStoreDocument {
 
     /**
      * build the aliases.
+     *
      * @param pAliases the aliases element
      * @throws GordianException on error
      */
@@ -301,7 +304,8 @@ public final class GordianKeyStoreDocument {
 
     /**
      * build the keySetHash element.
-     * @param pNode the keySetHash node to build
+     *
+     * @param pNode  the keySetHash node to build
      * @param pEntry the keySetHash entry
      */
     private void buildKeySetLockElement(final Element pNode,
@@ -314,7 +318,8 @@ public final class GordianKeyStoreDocument {
 
     /**
      * build the keySet element.
-     * @param pNode the keySet node to build
+     *
+     * @param pNode  the keySet node to build
      * @param pEntry the keySet entry
      */
     private void buildKeySetElement(final Element pNode,
@@ -332,7 +337,8 @@ public final class GordianKeyStoreDocument {
 
     /**
      * build the key element.
-     * @param pNode the key node to build
+     *
+     * @param pNode  the key node to build
      * @param pEntry the key entry
      * @throws GordianException on error
      */
@@ -356,7 +362,8 @@ public final class GordianKeyStoreDocument {
 
     /**
      * build the privateKey element.
-     * @param pNode the privateKey node to build
+     *
+     * @param pNode  the privateKey node to build
      * @param pEntry the privateKey entry
      * @throws GordianException on error
      */
@@ -385,7 +392,8 @@ public final class GordianKeyStoreDocument {
 
     /**
      * build the certificate element.
-     * @param pNode the certificate node to build
+     *
+     * @param pNode  the certificate node to build
      * @param pEntry the certificate entry
      * @throws GordianException on error
      */
@@ -397,8 +405,9 @@ public final class GordianKeyStoreDocument {
 
     /**
      * build the certificateKey element.
+     *
      * @param pNode the holding node
-     * @param pKey the certificate key
+     * @param pKey  the certificate key
      * @throws GordianException on error
      */
     private void buildCertificateKey(final Element pNode,
@@ -420,13 +429,14 @@ public final class GordianKeyStoreDocument {
 
     /**
      * build the certificateId element.
+     *
      * @param pNode the holding node
-     * @param pId the certificate id
+     * @param pId   the certificate id
      * @throws GordianException on error
      */
     private void buildCertificateId(final Element pNode,
                                     final GordianCertificateId pId) throws GordianException {
-        /* protecte against exceptions */
+        /* protect against exceptions */
         try {
             /* Build Name entry */
             final Element myNameEl = theDocument.createElement(ELEMENT_NAME);
@@ -436,7 +446,7 @@ public final class GordianKeyStoreDocument {
             /* Build id entry */
             final Element myIdEl = theDocument.createElement(ELEMENT_ID);
             pNode.appendChild(myIdEl);
-            myIdEl.setTextContent(GordianDataConverter.byteArrayToBase64(pId.getId().getEncoded()));
+            myIdEl.setTextContent(GordianDataConverter.byteArrayToBase64(pId.getId()));
 
             /* Handle exceptions */
         } catch (IOException e) {
@@ -446,6 +456,7 @@ public final class GordianKeyStoreDocument {
 
     /**
      * build the certificates.
+     *
      * @param pCerts the certificates element
      */
     private void buildCertificates(final Node pCerts) {
@@ -464,6 +475,7 @@ public final class GordianKeyStoreDocument {
 
     /**
      * parse the aliases.
+     *
      * @param pAliases the aliases element
      * @throws GordianException on error
      */
@@ -505,9 +517,10 @@ public final class GordianKeyStoreDocument {
 
     /**
      * parse the keySetLock alias.
-     * @param pNode the node to parse
+     *
+     * @param pNode  the node to parse
      * @param pAlias the alias
-     * @param pDate the creation date
+     * @param pDate  the creation date
      */
     private void parseKeySetLockElement(final Node pNode,
                                         final String pAlias,
@@ -534,9 +547,10 @@ public final class GordianKeyStoreDocument {
 
     /**
      * parse the keySet alias.
-     * @param pNode the node to parse
+     *
+     * @param pNode  the node to parse
      * @param pAlias the alias
-     * @param pDate the creation date
+     * @param pDate  the creation date
      * @throws GordianException on error
      */
     private void parseKeySetElement(final Node pNode,
@@ -576,9 +590,10 @@ public final class GordianKeyStoreDocument {
 
     /**
      * parse the key alias.
-     * @param pNode the node to parse
+     *
+     * @param pNode  the node to parse
      * @param pAlias the alias
-     * @param pDate the creation date
+     * @param pDate  the creation date
      * @throws GordianException on error
      */
     private void parseKeyElement(final Node pNode,
@@ -625,9 +640,10 @@ public final class GordianKeyStoreDocument {
 
     /**
      * parse the key alias.
-     * @param pNode the node to parse
+     *
+     * @param pNode  the node to parse
      * @param pAlias the alias
-     * @param pDate the creation date
+     * @param pDate  the creation date
      * @throws GordianException on error
      */
     private void parsePrivateKeyElement(final Node pNode,
@@ -690,9 +706,10 @@ public final class GordianKeyStoreDocument {
 
     /**
      * parse the certificate alias.
-     * @param pNode the node to parse
+     *
+     * @param pNode  the node to parse
      * @param pAlias the alias
-     * @param pDate the creation date
+     * @param pDate  the creation date
      * @throws GordianException on error
      */
     private void parseCertificateElement(final Node pNode,
@@ -720,6 +737,7 @@ public final class GordianKeyStoreDocument {
 
     /**
      * parse the certificateKey.
+     *
      * @param pNode the node to parse
      * @return the key
      * @throws GordianException on error
@@ -760,6 +778,7 @@ public final class GordianKeyStoreDocument {
 
     /**
      * parse the certificateKey.
+     *
      * @param pNode the node to parse
      * @return the key
      * @throws GordianException on error
@@ -787,8 +806,7 @@ public final class GordianKeyStoreDocument {
                 }
 
                 /* Parse the issuer and build the key */
-                final byte[] myIdBytes = GordianDataConverter.base64ToByteArray(myNode.getTextContent());
-                final DERBitString myId = DERBitString.convert(ASN1BitString.getInstance(myIdBytes));
+                final byte[] myId = GordianDataConverter.base64ToByteArray(myNode.getTextContent());
                 return new GordianCoreCertificateId(myName, myId);
             }
 
@@ -802,6 +820,7 @@ public final class GordianKeyStoreDocument {
 
     /**
      * parse the certificates.
+     *
      * @param pCerts the certificates element
      * @throws GordianException on error
      */
@@ -861,6 +880,7 @@ public final class GordianKeyStoreDocument {
 
         /**
          * Constructor.
+         *
          * @param pElement the element name
          */
         GordianStoreEntryType(final String pElement) {
@@ -869,6 +889,7 @@ public final class GordianKeyStoreDocument {
 
         /**
          * Obtain the element name.
+         *
          * @return the element name
          */
         public String getElementName() {
@@ -877,6 +898,7 @@ public final class GordianKeyStoreDocument {
 
         /**
          * Determine entry type.
+         *
          * @param pEntry the entry
          * @return the entry type
          */
@@ -901,6 +923,7 @@ public final class GordianKeyStoreDocument {
 
         /**
          * Determine entry type.
+         *
          * @param pElement the element
          * @return the entry type
          */

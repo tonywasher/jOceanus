@@ -1,19 +1,19 @@
-/*******************************************************************************
+/*
  * Themis: Java Project Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package net.sourceforge.joceanus.themis.xanalysis.solver.reflect;
 
 import com.github.javaparser.ast.body.BodyDeclaration;
@@ -30,6 +30,8 @@ import net.sourceforge.joceanus.themis.xanalysis.parser.type.ThemisXAnalysisType
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -58,6 +60,7 @@ public class ThemisXAnalysisReflectJar
 
     /**
      * Constructor.
+     *
      * @param pParser the project parser.
      * @throws OceanusException on error
      */
@@ -70,6 +73,7 @@ public class ThemisXAnalysisReflectJar
 
     /**
      * Process external class list.
+     *
      * @param pExternalClasses the external classes.
      * @throws OceanusException on error
      */
@@ -95,6 +99,7 @@ public class ThemisXAnalysisReflectJar
 
     /**
      * Process external class list.
+     *
      * @param pExternal the external classes.
      * @throws OceanusException on error
      */
@@ -114,6 +119,7 @@ public class ThemisXAnalysisReflectJar
 
     /**
      * Process an ancestor.
+     *
      * @param pAncestor the ancestor.
      * @throws OceanusException on error
      */
@@ -145,6 +151,7 @@ public class ThemisXAnalysisReflectJar
 
     /**
      * determine the URL List.
+     *
      * @param pProject the project
      * @return the URL List
      * @throws OceanusException on error
@@ -156,11 +163,12 @@ public class ThemisXAnalysisReflectJar
             /* Protect against exceptions */
             try {
                 final File myJar = myId.getMavenJarPath();
-                final URL myUrl = new URL("jar:file:/" + myJar + "!/");
+                final URL myUrl = (new URI("jar:file:/" + myJar + "!/")).toURL();
                 myList.add(myUrl);
 
                 /* Handle exceptions */
-            } catch (MalformedURLException e) {
+            } catch (URISyntaxException
+                     | MalformedURLException e) {
                 throw new ThemisDataException("Failed to build URL", e);
             }
         }
@@ -171,6 +179,7 @@ public class ThemisXAnalysisReflectJar
 
     /**
      * Load a class.
+     *
      * @param pClassName the class name.
      * @return the loaded class
      * @throws OceanusException on error
@@ -195,6 +204,7 @@ public class ThemisXAnalysisReflectJar
 
     /**
      * Change class name to make last class subClass.
+     *
      * @param pClassName the class name
      * @return the subClass name or null
      */
@@ -208,6 +218,7 @@ public class ThemisXAnalysisReflectJar
 
     /**
      * build class.
+     *
      * @param pSource the source class
      * @return the parsed class
      * @throws OceanusException on error
