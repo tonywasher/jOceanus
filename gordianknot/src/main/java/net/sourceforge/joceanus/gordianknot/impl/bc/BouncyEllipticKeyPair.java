@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * GordianKnot: Security Suite
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,21 +13,19 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.gordianknot.impl.bc;
 
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianElliptic;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignParams;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
-import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyDHKeyPair.BouncyDHPrivateKey;
-import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyDHKeyPair.BouncyDHPublicKey;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncySignature.BouncyDERCoder;
@@ -101,7 +99,8 @@ public final class BouncyEllipticKeyPair {
             extends BouncyPublicKey<ECPublicKeyParameters> {
         /**
          * Constructor.
-         * @param pKeySpec the keySpec
+         *
+         * @param pKeySpec   the keySpec
          * @param pPublicKey the public key
          */
         BouncyECPublicKey(final GordianKeyPairSpec pKeySpec,
@@ -121,6 +120,7 @@ public final class BouncyEllipticKeyPair {
 
         /**
          * Is the private key valid for this public key?
+         *
          * @param pPrivate the private key
          * @return true/false
          */
@@ -131,7 +131,8 @@ public final class BouncyEllipticKeyPair {
 
         /**
          * CompareKeys.
-         * @param pFirst the first key
+         *
+         * @param pFirst  the first key
          * @param pSecond the second key
          * @return true/false
          */
@@ -149,7 +150,8 @@ public final class BouncyEllipticKeyPair {
             extends BouncyPrivateKey<ECPrivateKeyParameters> {
         /**
          * Constructor.
-         * @param pKeySpec the keySpec
+         *
+         * @param pKeySpec    the keySpec
          * @param pPrivateKey the private key
          */
         BouncyECPrivateKey(final GordianKeyPairSpec pKeySpec,
@@ -169,7 +171,8 @@ public final class BouncyEllipticKeyPair {
 
         /**
          * CompareKeys.
-         * @param pFirst the first key
+         *
+         * @param pFirst  the first key
          * @param pSecond the second key
          * @return true/false
          */
@@ -192,6 +195,7 @@ public final class BouncyEllipticKeyPair {
 
         /**
          * Constructor.
+         *
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
          * @throws GordianException on error
@@ -208,8 +212,8 @@ public final class BouncyEllipticKeyPair {
             final GordianElliptic myElliptic = pKeySpec.getElliptic();
             final String myCurve = myElliptic.getCurveName();
             final X9ECParameters x9 = myElliptic.hasCustomCurve()
-                                ? ECUtil.getNamedCurveByName(myCurve)
-                                : ECNamedCurveTable.getByName(myCurve);
+                    ? ECUtil.getNamedCurveByName(myCurve)
+                    : ECNamedCurveTable.getByName(myCurve);
             if (x9 == null) {
                 throw new GordianLogicException("Invalid KeySpec - " + pKeySpec);
             }
@@ -223,6 +227,7 @@ public final class BouncyEllipticKeyPair {
 
         /**
          * Create the generator.
+         *
          * @return the generator
          */
         ECKeyPairGenerator newGenerator() {
@@ -308,6 +313,7 @@ public final class BouncyEllipticKeyPair {
 
         /**
          * Derive public key from encoded.
+         *
          * @param pEncodedKey the encoded key
          * @return the public key
          * @throws GordianException on error
@@ -346,8 +352,9 @@ public final class BouncyEllipticKeyPair {
 
         /**
          * Constructor.
+         *
          * @param pFactory the factory
-         * @param pSpec the signatureSpec.
+         * @param pSpec    the signatureSpec.
          * @throws GordianException on error
          */
         BouncyECSignature(final GordianBaseFactory pFactory,
@@ -428,8 +435,9 @@ public final class BouncyEllipticKeyPair {
 
         /**
          * Constructor.
+         *
          * @param pFactory the security factory
-         * @param pSpec the agreementSpec
+         * @param pSpec    the agreementSpec
          */
         BouncyECIESAgreement(final GordianBaseFactory pFactory,
                              final GordianAgreementSpec pSpec) {
@@ -496,8 +504,9 @@ public final class BouncyEllipticKeyPair {
 
         /**
          * Constructor.
+         *
          * @param pFactory the security factory
-         * @param pSpec the agreementSpec
+         * @param pSpec    the agreementSpec
          */
         BouncyECAnonymousAgreement(final GordianBaseFactory pFactory,
                                    final GordianAgreementSpec pSpec) {
@@ -573,8 +582,9 @@ public final class BouncyEllipticKeyPair {
 
         /**
          * Constructor.
+         *
          * @param pFactory the security factory
-         * @param pSpec the agreementSpec
+         * @param pSpec    the agreementSpec
          */
         BouncyECBasicAgreement(final GordianBaseFactory pFactory,
                                final GordianAgreementSpec pSpec) {
@@ -645,8 +655,9 @@ public final class BouncyEllipticKeyPair {
 
         /**
          * Constructor.
+         *
          * @param pFactory the security factory
-         * @param pSpec the agreementSpec
+         * @param pSpec    the agreementSpec
          */
         BouncyECSignedAgreement(final GordianBaseFactory pFactory,
                                 final GordianAgreementSpec pSpec) {
@@ -710,8 +721,9 @@ public final class BouncyEllipticKeyPair {
 
         /**
          * Constructor.
+         *
          * @param pFactory the security factory
-         * @param pSpec the agreementSpec
+         * @param pSpec    the agreementSpec
          */
         BouncyECUnifiedAgreement(final GordianBaseFactory pFactory,
                                  final GordianAgreementSpec pSpec) {
@@ -780,7 +792,7 @@ public final class BouncyEllipticKeyPair {
 
             /* Return confirmation if needed */
             return buildClientConfirmASN1();
-         }
+        }
     }
 
     /**
@@ -795,8 +807,9 @@ public final class BouncyEllipticKeyPair {
 
         /**
          * Constructor.
+         *
          * @param pFactory the security factory
-         * @param pSpec the agreementSpec
+         * @param pSpec    the agreementSpec
          */
         BouncyECMQVAgreement(final GordianBaseFactory pFactory,
                              final GordianAgreementSpec pSpec) {
@@ -885,8 +898,9 @@ public final class BouncyEllipticKeyPair {
 
         /**
          * Constructor.
+         *
          * @param pFactory the security factory
-         * @param pSpec the agreementSpec
+         * @param pSpec    the agreementSpec
          * @throws GordianException on error
          */
         BouncyECIESXAgreementEngine(final GordianXCoreAgreementFactory pFactory,
@@ -943,8 +957,9 @@ public final class BouncyEllipticKeyPair {
 
         /**
          * Constructor.
+         *
          * @param pFactory the security factory
-         * @param pSpec the agreementSpec
+         * @param pSpec    the agreementSpec
          * @throws GordianException on error
          */
         BouncyECAnonXAgreementEngine(final GordianXCoreAgreementFactory pFactory,
@@ -999,8 +1014,9 @@ public final class BouncyEllipticKeyPair {
 
         /**
          * Constructor.
+         *
          * @param pFactory the security factory
-         * @param pSpec the agreementSpec
+         * @param pSpec    the agreementSpec
          * @throws GordianException on error
          */
         BouncyECBasicXAgreementEngine(final GordianXCoreAgreementFactory pFactory,
@@ -1015,8 +1031,8 @@ public final class BouncyEllipticKeyPair {
         @Override
         public void processClientHello() throws GordianException {
             /* Access keys */
-            final BouncyDHPublicKey myPublic = (BouncyDHPublicKey) getPublicKey(getClientKeyPair());
-            final BouncyDHPrivateKey myPrivate = (BouncyDHPrivateKey) getPrivateKey(getServerKeyPair());
+            final BouncyECPublicKey myPublic = (BouncyECPublicKey) getPublicKey(getClientKeyPair());
+            final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(getServerKeyPair());
 
             /* Derive the secret */
             theAgreement.init(myPrivate.getPrivateKey());
@@ -1030,8 +1046,8 @@ public final class BouncyEllipticKeyPair {
         @Override
         public void processServerHello() throws GordianException {
             /* Access keys */
-            final BouncyDHPublicKey myPublic = (BouncyDHPublicKey) getPublicKey(getServerKeyPair());
-            final BouncyDHPrivateKey myPrivate = (BouncyDHPrivateKey) getPrivateKey(getClientKeyPair());
+            final BouncyECPublicKey myPublic = (BouncyECPublicKey) getPublicKey(getServerKeyPair());
+            final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(getClientKeyPair());
 
             /* Derive the secret */
             theAgreement.init(myPrivate.getPrivateKey());
@@ -1055,8 +1071,9 @@ public final class BouncyEllipticKeyPair {
 
         /**
          * Constructor.
+         *
          * @param pFactory the security factory
-         * @param pSpec the agreementSpec
+         * @param pSpec    the agreementSpec
          * @throws GordianException on error
          */
         BouncyECUnifiedXAgreementEngine(final GordianXCoreAgreementFactory pFactory,
@@ -1117,8 +1134,9 @@ public final class BouncyEllipticKeyPair {
 
         /**
          * Constructor.
+         *
          * @param pFactory the security factory
-         * @param pSpec the agreementSpec
+         * @param pSpec    the agreementSpec
          * @throws GordianException on error
          */
         BouncyECMQVXAgreementEngine(final GordianXCoreAgreementFactory pFactory,
@@ -1179,8 +1197,9 @@ public final class BouncyEllipticKeyPair {
 
         /**
          * Constructor.
+         *
          * @param pFactory the factory
-         * @param pSpec the encryptorSpec
+         * @param pSpec    the encryptorSpec
          */
         BouncyECEncryptor(final GordianBaseFactory pFactory,
                           final GordianEncryptorSpec pSpec) {

@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * GordianKnot: Security Suite
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,10 +13,11 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.gordianknot.impl.jca;
 
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementType;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianKDFType;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
@@ -28,7 +29,6 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianNTRUPrimeSpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianPrivateKey;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianPublicKey;
 import net.sourceforge.joceanus.gordianknot.impl.core.xagree.GordianXCoreAgreementEngine;
@@ -47,7 +47,6 @@ import org.bouncycastle.jcajce.spec.UserKeyingMaterialSpec;
 
 import javax.crypto.KeyAgreement;
 import javax.crypto.KeyGenerator;
-import javax.security.auth.DestroyFailedException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -81,8 +80,9 @@ public final class JcaXAgreement {
 
         /**
          * Constructor.
-         * @param pFactory the security factory
-         * @param pSpec the agreementSpec
+         *
+         * @param pFactory   the security factory
+         * @param pSpec      the agreementSpec
          * @param pGenerator the generator
          */
         JcaPostQuantumXEngine(final GordianXCoreAgreementFactory pFactory,
@@ -111,13 +111,9 @@ public final class JcaXAgreement {
 
                 /* Store secret */
                 storeSecret(mySecret.getEncoded());
-                mySecret.destroy();
 
             } catch (InvalidAlgorithmParameterException e) {
                 throw new GordianCryptoException(ERR_AGREEMENT, e);
-
-            } catch (DestroyFailedException e) {
-                throw new GordianIOException("Failed to destroy secret", e);
             }
         }
 
@@ -134,13 +130,9 @@ public final class JcaXAgreement {
                 /* Store secret */
                 final SecretKeyWithEncapsulation mySecret = (SecretKeyWithEncapsulation) theGenerator.generateKey();
                 storeSecret(mySecret.getEncoded());
-                mySecret.destroy();
 
             } catch (InvalidAlgorithmParameterException e) {
                 throw new GordianCryptoException(ERR_AGREEMENT, e);
-
-            } catch (DestroyFailedException e) {
-                throw new GordianIOException("Failed to destroy secret", e);
             }
         }
     }
@@ -157,8 +149,9 @@ public final class JcaXAgreement {
 
         /**
          * Constructor.
-         * @param pFactory the security factory
-         * @param pSpec the agreementSpec
+         *
+         * @param pFactory   the security factory
+         * @param pSpec      the agreementSpec
          * @param pAgreement the agreement
          */
         JcaNewHopeXEngine(final GordianXCoreAgreementFactory pFactory,
@@ -225,8 +218,9 @@ public final class JcaXAgreement {
 
         /**
          * Constructor.
-         * @param pFactory the security factory
-         * @param pSpec the agreementSpec
+         *
+         * @param pFactory   the security factory
+         * @param pSpec      the agreementSpec
          * @param pAgreement the agreement
          */
         JcaAnonXEngine(final GordianXCoreAgreementFactory pFactory,
@@ -290,8 +284,9 @@ public final class JcaXAgreement {
 
         /**
          * Constructor.
-         * @param pFactory the security factory
-         * @param pSpec the agreementSpec
+         *
+         * @param pFactory   the security factory
+         * @param pSpec      the agreementSpec
          * @param pAgreement the agreement
          */
         JcaBasicXEngine(final GordianXCoreAgreementFactory pFactory,
@@ -355,8 +350,9 @@ public final class JcaXAgreement {
 
         /**
          * Constructor.
-         * @param pFactory the security factory
-         * @param pSpec the agreementSpec
+         *
+         * @param pFactory   the security factory
+         * @param pSpec      the agreementSpec
          * @param pAgreement the agreement
          */
         JcaUnifiedXEngine(final GordianXCoreAgreementFactory pFactory,
@@ -389,7 +385,7 @@ public final class JcaXAgreement {
                 storeSecret(theAgreement.generateSecret());
 
             } catch (InvalidKeyException
-                    | InvalidAlgorithmParameterException e) {
+                     | InvalidAlgorithmParameterException e) {
                 throw new GordianCryptoException(ERR_AGREEMENT, e);
             }
         }
@@ -414,7 +410,7 @@ public final class JcaXAgreement {
                 storeSecret(theAgreement.generateSecret());
 
             } catch (InvalidKeyException
-                    | InvalidAlgorithmParameterException e) {
+                     | InvalidAlgorithmParameterException e) {
                 throw new GordianCryptoException(ERR_AGREEMENT, e);
             }
         }
@@ -432,8 +428,9 @@ public final class JcaXAgreement {
 
         /**
          * Constructor.
-         * @param pFactory the security factory
-         * @param pSpec the agreementSpec
+         *
+         * @param pFactory   the security factory
+         * @param pSpec      the agreementSpec
          * @param pAgreement the agreement
          */
         JcaMQVXEngine(final GordianXCoreAgreementFactory pFactory,
@@ -502,8 +499,9 @@ public final class JcaXAgreement {
             extends GordianXCoreAgreementEngine {
         /**
          * Constructor.
+         *
          * @param pFactory the security factory
-         * @param pSpec the agreementSpec
+         * @param pSpec    the agreementSpec
          * @throws GordianException on error
          */
         JcaXAgreementBase(final GordianXCoreAgreementFactory pFactory,
@@ -543,8 +541,9 @@ public final class JcaXAgreement {
 
         /**
          * Initialise agreement.
+         *
          * @param pAgreement the agreement
-         * @param pPrivate the private key
+         * @param pPrivate   the private key
          */
         void initAgreement(final KeyAgreement pAgreement,
                            final JcaPrivateKey pPrivate) throws GordianException {
@@ -563,6 +562,7 @@ public final class JcaXAgreement {
 
         /**
          * adjust agreement if necessary.
+         *
          * @param pCurrent the current agreement
          * @param pKeyPair the keyPair
          * @return the adjusted agreement
@@ -573,7 +573,9 @@ public final class JcaXAgreement {
             /* If we need to change agreement based on keySpec */
             if (getSpec().getKeyPairSpec().getKeyPairType().equals(GordianKeyPairType.XDH)) {
                 final String myBase = pKeyPair.getKeyPairSpec().toString();
-                final String myName = getFullAgreementName(myBase + "U", getSpec());
+                final String myXtra = GordianAgreementType.UNIFIED.equals(getSpec().getAgreementType())
+                        ? "U" : "";
+                final String myName = getFullAgreementName(myBase + myXtra, getSpec());
                 return getJavaKeyAgreement(myName, false);
             }
 
@@ -583,23 +585,30 @@ public final class JcaXAgreement {
 
         /**
          * Obtain the required derivation id.
+         *
          * @return the derivation id
          */
         AlgorithmIdentifier derivationAlgorithmId() {
             final GordianAgreementSpec mySpec = getSpec();
             switch (mySpec.getKDFType()) {
-                case SHA256KDF:     return new AlgorithmIdentifier(X9ObjectIdentifiers.id_kdf_kdf2, new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha256));
-                case SHA512KDF:     return new AlgorithmIdentifier(X9ObjectIdentifiers.id_kdf_kdf2, new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha512));
-                case SHA256CKDF:    return new AlgorithmIdentifier(X9ObjectIdentifiers.id_kdf_kdf3, new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha256));
-                case SHA512CKDF:    return new AlgorithmIdentifier(X9ObjectIdentifiers.id_kdf_kdf3, new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha512));
+                case SHA256KDF:
+                    return new AlgorithmIdentifier(X9ObjectIdentifiers.id_kdf_kdf2, new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha256));
+                case SHA512KDF:
+                    return new AlgorithmIdentifier(X9ObjectIdentifiers.id_kdf_kdf2, new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha512));
+                case SHA256CKDF:
+                    return new AlgorithmIdentifier(X9ObjectIdentifiers.id_kdf_kdf3, new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha256));
+                case SHA512CKDF:
+                    return new AlgorithmIdentifier(X9ObjectIdentifiers.id_kdf_kdf3, new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha512));
                 case NONE:
-                default:            return null;
+                default:
+                    return null;
             }
         }
     }
 
     /**
      * Create the BouncyCastle KeyGenerator via JCA.
+     *
      * @param pSpec the KeySpec
      * @return the KeyFactory
      * @throws GordianException on error
@@ -636,7 +645,8 @@ public final class JcaXAgreement {
 
     /**
      * Create the BouncyCastle KeyFactory via JCA.
-     * @param pAlgorithm the Algorithm
+     *
+     * @param pAlgorithm  the Algorithm
      * @param postQuantum is this a postQuantum algorithm?
      * @return the KeyFactory
      * @throws GordianException on error
@@ -659,7 +669,8 @@ public final class JcaXAgreement {
 
     /**
      * Obtain the agreement name.
-     * @param pBase the base agreement
+     *
+     * @param pBase          the base agreement
      * @param pAgreementSpec the agreementSpec
      * @return the full agreement name
      * @throws GordianException on error

@@ -33,7 +33,6 @@ import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignature;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.gordianknot.api.xagree.GordianXAgreementStatus;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.cert.GordianCoreCertificate;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.sign.GordianCoreSignatureFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.xagree.GordianXCoreAgreementCalculator.GordianXDerivationId;
@@ -429,7 +428,7 @@ public class GordianXCoreAgreementBuilder {
                 .setConfirmation(myServer.getConfirm());
 
         /* Store signing details */
-        final GordianCoreCertificate mySignerCert = (GordianCoreCertificate) theState.getSignerCertificate();
+        final GordianCertificate mySignerCert = theState.getSignerCertificate();
         if (mySignerCert != null) {
             /* Access details */
             final GordianCoreSignatureFactory mySigns = (GordianCoreSignatureFactory) theFactory.getAsyncFactory().getSignatureFactory();

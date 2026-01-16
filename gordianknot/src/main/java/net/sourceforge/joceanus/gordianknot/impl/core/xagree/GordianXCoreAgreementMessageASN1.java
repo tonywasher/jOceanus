@@ -251,8 +251,8 @@ public final class GordianXCoreAgreementMessageASN1
             theAgreementId = AlgorithmIdentifier.getInstance(enAlgs.nextElement());
 
             /* Loop through the optional algorithm elements */
-            while (enIds.hasMoreElements()) {
-                final ASN1TaggedObject myTagged = ASN1TaggedObject.getInstance(enIds.nextElement());
+            while (enAlgs.hasMoreElements()) {
+                final ASN1TaggedObject myTagged = ASN1TaggedObject.getInstance(enAlgs.nextElement());
                 switch (myTagged.getTagNo()) {
                     case TAG_RESULTALGID:
                         theResultId = AlgorithmIdentifier.getInstance(myTagged, false);
@@ -642,7 +642,7 @@ public final class GordianXCoreAgreementMessageASN1
             vId.add(new DERTaggedObject(false, TAG_CLIENTID, new ASN1Integer(theClientId)));
         }
         if (theServerId != null) {
-            vId.add(new DERTaggedObject(false, TAG_CLIENTID, new ASN1Integer(theServerId)));
+            vId.add(new DERTaggedObject(false, TAG_SERVERID, new ASN1Integer(theServerId)));
         }
         v.add(new DERSequence(vId));
 

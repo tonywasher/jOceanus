@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * GordianKnot: Security Suite
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,7 +13,7 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.gordianknot.impl.core.xagree;
 
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
@@ -96,8 +96,9 @@ public class GordianXCoreAgreementParams
 
     /**
      * Constructor.
-     * @param pSupplier the supplier
-     * @param pSpec the agreement Spec
+     *
+     * @param pSupplier   the supplier
+     * @param pSpec       the agreement Spec
      * @param pResultType the resultType
      * @throws GordianException on error
      */
@@ -113,6 +114,7 @@ public class GordianXCoreAgreementParams
 
     /**
      * Constructor.
+     *
      * @param pBuilder the builder
      */
     GordianXCoreAgreementParams(final GordianXCoreAgreementBuilder pBuilder) {
@@ -132,6 +134,7 @@ public class GordianXCoreAgreementParams
 
     /**
      * Constructor.
+     *
      * @param pSource the source parameters to copy
      */
     GordianXCoreAgreementParams(final GordianXCoreAgreementParams pSource) {
@@ -150,6 +153,7 @@ public class GordianXCoreAgreementParams
 
     /**
      * is this a client parameters.
+     *
      * @return true/false
      */
     boolean isClient() {
@@ -158,6 +162,7 @@ public class GordianXCoreAgreementParams
 
     /**
      * Obtain the id.
+     *
      * @return the id
      */
     Long getId() {
@@ -176,6 +181,7 @@ public class GordianXCoreAgreementParams
 
     /**
      * Check the resultType is valid.
+     *
      * @param pResultType the resultType
      * @throws GordianException on error
      */
@@ -322,15 +328,15 @@ public class GordianXCoreAgreementParams
     }
 
     @Override
-    public void setSigner(final GordianCertificate pSigner) throws GordianException {
+    public GordianXAgreementParams setSigner(final GordianCertificate pSigner) throws GordianException {
         final GordianSignatureFactory mySignFactory = theFactory.getAsyncFactory().getSignatureFactory();
         final GordianSignatureSpec mySignSpec = pSigner == null ? null : mySignFactory.defaultForKeyPair(pSigner.getKeyPair().getKeyPairSpec());
-        setSigner(pSigner, mySignSpec);
+        return setSigner(pSigner, mySignSpec);
     }
 
     @Override
-    public void setSigner(final GordianCertificate pSigner,
-                          final GordianSignatureSpec pSignSpec) throws GordianException {
+    public GordianXAgreementParams setSigner(final GordianCertificate pSigner,
+                                             final GordianSignatureSpec pSignSpec) throws GordianException {
         /* Not allowed for client parameters */
         if (isClient) {
             throw new GordianDataException("Signer Certificate cannot be set for client");
@@ -359,13 +365,15 @@ public class GordianXCoreAgreementParams
             throw new GordianDataException("Null Signer Certificate not allowed");
         }
 
-        /* Store parameters */
-        theSigner = pSigner;
-        theSignSpec = pSignSpec;
+        /* Create new updated parameters */
+        final GordianXCoreAgreementParams myParams = new GordianXCoreAgreementParams(this);
+        myParams.theSigner = pSigner;
+        myParams.theSignSpec = pSignSpec;
+        return myParams;
     }
 
     @Override
-    public GordianXAgreementParams setAdditionalData(final byte[] pData) throws GordianException {
+    public GordianXAgreementParams setAdditionalData(final byte[] pData) {
         final GordianXCoreAgreementParams myParams = new GordianXCoreAgreementParams(this);
         myParams.theAdditional = pData == null ? null : pData.clone();
         return myParams;

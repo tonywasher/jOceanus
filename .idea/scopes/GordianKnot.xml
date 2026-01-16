@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="GordianKnot" pattern="file[gordianknot]:src/main/java//*||file[gordianknot]:src/test/java//*.properties||file[gordianknot]:src/test/java//*" />
+</component>

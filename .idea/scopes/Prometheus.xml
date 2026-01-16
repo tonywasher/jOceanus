@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="Prometheus" pattern="file[prometheus-core]:src/main/java//*||file[prometheus-sheet-api]:src/main/java//*||file[prometheus-sheet-hssf]:src/main/java//*||file[prometheus-sheet-odf]:src/main/java//*||file[prometheus-core]:src/main/resources//*.properties||file[prometheus-sheet-api]:src/main/resources//*.properties||file[prometheus-core]:src/test/java//*" />
+</component>

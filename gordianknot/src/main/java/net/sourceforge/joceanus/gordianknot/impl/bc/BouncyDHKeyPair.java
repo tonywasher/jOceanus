@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * GordianKnot: Security Suite
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,14 +13,14 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.gordianknot.impl.bc;
 
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianDHGroup;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
@@ -57,8 +57,6 @@ import org.bouncycastle.crypto.params.DHPrivateKeyParameters;
 import org.bouncycastle.crypto.params.DHPublicKeyParameters;
 import org.bouncycastle.crypto.params.DHUPrivateParameters;
 import org.bouncycastle.crypto.params.DHUPublicParameters;
-import org.bouncycastle.crypto.params.XDHUPrivateParameters;
-import org.bouncycastle.crypto.params.XDHUPublicParameters;
 import org.bouncycastle.jcajce.provider.asymmetric.dh.BCDHPrivateKey;
 import org.bouncycastle.jcajce.provider.asymmetric.dh.BCDHPublicKey;
 import org.bouncycastle.jcajce.provider.asymmetric.util.KeyUtil;
@@ -86,7 +84,8 @@ public final class BouncyDHKeyPair {
             extends BouncyPublicKey<DHPublicKeyParameters> {
         /**
          * Constructor.
-         * @param pKeySpec the keySpec
+         *
+         * @param pKeySpec   the keySpec
          * @param pPublicKey the public key
          */
         BouncyDHPublicKey(final GordianKeyPairSpec pKeySpec,
@@ -106,6 +105,7 @@ public final class BouncyDHKeyPair {
 
         /**
          * Is the private key valid for this public key?
+         *
          * @param pPrivate the private key
          * @return true/false
          */
@@ -116,7 +116,8 @@ public final class BouncyDHKeyPair {
 
         /**
          * CompareKeys.
-         * @param pFirst the first key
+         *
+         * @param pFirst  the first key
          * @param pSecond the second key
          * @return true/false
          */
@@ -134,7 +135,8 @@ public final class BouncyDHKeyPair {
             extends BouncyPrivateKey<DHPrivateKeyParameters> {
         /**
          * Constructor.
-         * @param pKeySpec the keySpec
+         *
+         * @param pKeySpec    the keySpec
          * @param pPrivateKey the private key
          */
         BouncyDHPrivateKey(final GordianKeyPairSpec pKeySpec,
@@ -154,7 +156,8 @@ public final class BouncyDHKeyPair {
 
         /**
          * CompareKeys.
-         * @param pFirst the first key
+         *
+         * @param pFirst  the first key
          * @param pSecond the second key
          * @return true/false
          */
@@ -177,6 +180,7 @@ public final class BouncyDHKeyPair {
 
         /**
          * Constructor.
+         *
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
          */
@@ -273,6 +277,7 @@ public final class BouncyDHKeyPair {
 
         /**
          * Derive public key from encoded.
+         *
          * @param pEncodedKey the encoded key
          * @return the public key
          * @throws GordianException on error
@@ -289,16 +294,17 @@ public final class BouncyDHKeyPair {
 
         /**
          * Obtain algorithm Id from DHParameters.
+         *
          * @param pParams the parameters
          * @return the algorithmId.
          */
         private static AlgorithmIdentifier getAlgorithmIdentifier(final DHParameters pParams) {
             /* If this is a public # algorithm */
             return pParams.getQ() != null
-                   ? new AlgorithmIdentifier(X9ObjectIdentifiers.dhpublicnumber,
-                           new DomainParameters(pParams.getP(), pParams.getG(), pParams.getQ(), pParams.getJ(), null).toASN1Primitive())
-                   : new AlgorithmIdentifier(PKCSObjectIdentifiers.dhKeyAgreement,
-                           new DHParameter(pParams.getP(), pParams.getG(), pParams.getL()).toASN1Primitive());
+                    ? new AlgorithmIdentifier(X9ObjectIdentifiers.dhpublicnumber,
+                    new DomainParameters(pParams.getP(), pParams.getG(), pParams.getQ(), pParams.getJ(), null).toASN1Primitive())
+                    : new AlgorithmIdentifier(PKCSObjectIdentifiers.dhKeyAgreement,
+                    new DHParameter(pParams.getP(), pParams.getG(), pParams.getL()).toASN1Primitive());
         }
     }
 
@@ -314,8 +320,9 @@ public final class BouncyDHKeyPair {
 
         /**
          * Constructor.
+         *
          * @param pFactory the security factory
-         * @param pSpec the agreementSpec
+         * @param pSpec    the agreementSpec
          */
         BouncyDHAnonymousAgreement(final GordianBaseFactory pFactory,
                                    final GordianAgreementSpec pSpec) {
@@ -394,8 +401,9 @@ public final class BouncyDHKeyPair {
 
         /**
          * Constructor.
+         *
          * @param pFactory the security factory
-         * @param pSpec the agreementSpec
+         * @param pSpec    the agreementSpec
          */
         BouncyDHBasicAgreement(final GordianBaseFactory pFactory,
                                final GordianAgreementSpec pSpec) {
@@ -466,8 +474,9 @@ public final class BouncyDHKeyPair {
 
         /**
          * Constructor.
+         *
          * @param pFactory the security factory
-         * @param pSpec the agreementSpec
+         * @param pSpec    the agreementSpec
          */
         BouncyDHSignedAgreement(final GordianBaseFactory pFactory,
                                 final GordianAgreementSpec pSpec) {
@@ -531,8 +540,9 @@ public final class BouncyDHKeyPair {
 
         /**
          * Constructor.
+         *
          * @param pFactory the security factory
-         * @param pSpec the agreementSpec
+         * @param pSpec    the agreementSpec
          */
         BouncyDHUnifiedAgreement(final GordianBaseFactory pFactory,
                                  final GordianAgreementSpec pSpec) {
@@ -599,7 +609,7 @@ public final class BouncyDHKeyPair {
 
             /* Return confirmation if needed */
             return buildClientConfirmASN1();
-         }
+        }
     }
 
     /**
@@ -614,8 +624,9 @@ public final class BouncyDHKeyPair {
 
         /**
          * Constructor.
+         *
          * @param pFactory the security factory
-         * @param pSpec the agreementSpec
+         * @param pSpec    the agreementSpec
          */
         BouncyDHMQVAgreement(final GordianBaseFactory pFactory,
                              final GordianAgreementSpec pSpec) {
@@ -699,8 +710,9 @@ public final class BouncyDHKeyPair {
 
         /**
          * Constructor.
+         *
          * @param pFactory the security factory
-         * @param pSpec the agreementSpec
+         * @param pSpec    the agreementSpec
          * @throws GordianException on error
          */
         BouncyDHAnonXAgreementEngine(final GordianXCoreAgreementFactory pFactory,
@@ -755,8 +767,9 @@ public final class BouncyDHKeyPair {
 
         /**
          * Constructor.
+         *
          * @param pFactory the security factory
-         * @param pSpec the agreementSpec
+         * @param pSpec    the agreementSpec
          * @throws GordianException on error
          */
         BouncyDHBasicXAgreementEngine(final GordianXCoreAgreementFactory pFactory,
@@ -811,8 +824,9 @@ public final class BouncyDHKeyPair {
 
         /**
          * Constructor.
+         *
          * @param pFactory the security factory
-         * @param pSpec the agreementSpec
+         * @param pSpec    the agreementSpec
          * @throws GordianException on error
          */
         BouncyDHUnifiedXAgreementEngine(final GordianXCoreAgreementFactory pFactory,
@@ -854,13 +868,13 @@ public final class BouncyDHKeyPair {
             final BouncyDHPrivateKey myEphPrivate = (BouncyDHPrivateKey) getPrivateKey(getClientEphemeral());
 
             /* Derive the secret */
-            final XDHUPrivateParameters myPrivParams
-                    = new XDHUPrivateParameters(myPrivate.getPrivateKey(), myEphPrivate.getPrivateKey(), myEphPublic.getPublicKey());
+            final DHUPrivateParameters myPrivParams
+                    = new DHUPrivateParameters(myPrivate.getPrivateKey(), myEphPrivate.getPrivateKey(), myEphPublic.getPublicKey());
             theAgreement.init(myPrivParams);
 
             /* Store secret */
-            final XDHUPublicParameters myPubParams
-                    = new XDHUPublicParameters(myServerPublic.getPublicKey(), myServerEphPublic.getPublicKey());
+            final DHUPublicParameters myPubParams
+                    = new DHUPublicParameters(myServerPublic.getPublicKey(), myServerEphPublic.getPublicKey());
             storeSecret(theAgreement.calculateAgreement(myPubParams));
         }
     }
@@ -877,8 +891,9 @@ public final class BouncyDHKeyPair {
 
         /**
          * Constructor.
+         *
          * @param pFactory the security factory
-         * @param pSpec the agreementSpec
+         * @param pSpec    the agreementSpec
          * @throws GordianException on error
          */
         BouncyDHMQVXAgreementEngine(final GordianXCoreAgreementFactory pFactory,

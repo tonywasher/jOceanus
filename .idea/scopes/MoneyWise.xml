@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="MoneyWise" pattern="file[moneywise-core]:src/test/java//*||file[moneywise-core]:src/main/java//*||file[moneywise-javafx]:src/main/java//*||file[moneywise-swing]:src/main/java//*||file[moneywise-core]:src/main/resources//*.properties" />
+</component>

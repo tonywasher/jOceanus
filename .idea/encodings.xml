@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/astraeus/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/gordianknot/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/metis/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/moneywise/moneywise-core/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/moneywise/moneywise-javafx/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/moneywise/moneywise-swing/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/moneywise/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/oceanus/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/prometheus/prometheus-core/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/prometheus/prometheus-services/prometheus-sheet-api/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/prometheus/prometheus-services/prometheus-sheet-hssf/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/prometheus/prometheus-services/prometheus-sheet-odf/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/prometheus/prometheus-services/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/prometheus/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/tethys/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/tethys/tethys-core/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/tethys/tethys-javafx/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/tethys/tethys-swing/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/tethys/tethys-test/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/themis/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/themis/themis-core/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/themis/themis-javafx/src/main/java" charset="UTF-8" />
+  </component>
+</project>

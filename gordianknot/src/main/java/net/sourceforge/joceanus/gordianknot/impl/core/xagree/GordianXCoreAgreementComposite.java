@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * GordianKnot: Security Suite
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,7 +13,7 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.gordianknot.impl.core.xagree;
 
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
@@ -35,12 +35,8 @@ import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.DERSequence;
-import org.bouncycastle.asn1.misc.MiscObjectIdentifiers;
-import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
-import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 
 import java.io.IOException;
-import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -74,9 +70,10 @@ public class GordianXCoreAgreementComposite extends GordianXCoreAgreementEngine 
 
     /**
      * Constructor.
+     *
      * @param pSupplier the supplier
-     * @param pSpec the agreementSpec
-     * @param pEngines the engines
+     * @param pSpec     the agreementSpec
+     * @param pEngines  the engines
      * @throws GordianException on error
      */
     GordianXCoreAgreementComposite(final GordianXCoreAgreementSupplier pSupplier,
@@ -91,6 +88,7 @@ public class GordianXCoreAgreementComposite extends GordianXCoreAgreementEngine 
 
     /**
      * Obtain list of subAgreementSpecs.
+     *
      * @param pSpec the composite agreement Spec
      * @return the list of subAgreementSpecs
      */
@@ -123,14 +121,15 @@ public class GordianXCoreAgreementComposite extends GordianXCoreAgreementEngine 
         final GordianXCoreAgreementParticipant myClient = theState.getClient();
         final GordianCompositeKeyPair myClientKeyPair = (GordianCompositeKeyPair) myClient.getKeyPair();
         final Iterator<GordianKeyPair> myClientIterator = myClientKeyPair == null ? null : myClientKeyPair.iterator();
+        final GordianCompositeKeyPair myEphemeralKeyPair = (GordianCompositeKeyPair) myClient.getEphemeralKeyPair();
+        final Iterator<GordianKeyPair> myEphemeralIterator = myEphemeralKeyPair == null ? null : myEphemeralKeyPair.iterator();
         final GordianXCoreAgreementParticipant myServer = theState.getServer();
         final GordianCompositeKeyPair myServerKeyPair = (GordianCompositeKeyPair) myServer.getKeyPair();
-        final Iterator<GordianKeyPair> myServerIterator = myServerKeyPair.iterator();
+        final Iterator<GordianKeyPair> myServerIterator = myServerKeyPair == null ? null : myServerKeyPair.iterator();
 
         /* Protect against exceptions */
         try {
-            /* Create vectors for ephemeral keyPairs and encapsulated */
-            final ASN1EncodableVector myEphemeral = new ASN1EncodableVector();
+            /* Create vector for encapsulated */
             final ASN1EncodableVector myEncapsulated = new ASN1EncodableVector();
 
             /* Loop through the engines */
@@ -142,17 +141,12 @@ public class GordianXCoreAgreementComposite extends GordianXCoreAgreementEngine 
 
                 /* Update keyPairs and initVector */
                 myEngClient.setKeyPair(myClientKeyPair == null ? null : myClientIterator.next());
-                myEngServer.setKeyPair(myServerIterator.next());
+                myEngClient.setEphemeralKeyPair(myEphemeralKeyPair == null ? null : myEphemeralIterator.next());
+                myEngServer.setKeyPair(myServerKeyPair == null ? null : myServerIterator.next());
                 myEngClient.setInitVector(myClient.getInitVector());
 
                 /* Build clientHello details in the engine */
                 myEngine.buildClientHello();
-
-                /* Add any Ephemeral to keySpec sequence */
-                final X509EncodedKeySpec myEngEphemeral = myEngClient.getEphemeralKeySpec();
-                if (myEngEphemeral != null) {
-                    myEphemeral.add(SubjectPublicKeyInfo.getInstance(myEngEphemeral));
-                }
 
                 /* Add any encapsulated to sequence */
                 final byte[] myEngEncapsulated = myEngState.getEncapsulated();
@@ -162,11 +156,6 @@ public class GordianXCoreAgreementComposite extends GordianXCoreAgreementEngine 
             }
 
             /* Record combined ephemeral and encapsulated */
-            if (myEphemeral.size() > 0) {
-                final AlgorithmIdentifier myId = new AlgorithmIdentifier(MiscObjectIdentifiers.id_alg_composite);
-                final SubjectPublicKeyInfo myInfo = new SubjectPublicKeyInfo(myId, new DERSequence(myEphemeral).getEncoded());
-                myClient.setEphemeralKeySpec(new X509EncodedKeySpec(myInfo.getEncoded()));
-            }
             if (myEncapsulated.size() > 0) {
                 theState.setEncapsulated(new DERSequence(myEncapsulated).getEncoded());
             }
@@ -184,6 +173,7 @@ public class GordianXCoreAgreementComposite extends GordianXCoreAgreementEngine 
 
     /**
      * Process the clientHello.
+     *
      * @throws GordianException on error
      */
     public void processClientHello() throws GordianException {
@@ -193,52 +183,34 @@ public class GordianXCoreAgreementComposite extends GordianXCoreAgreementEngine 
         final Iterator<GordianKeyPair> myClientIterator = myClientKeyPair == null ? null : myClientKeyPair.iterator();
         final GordianXCoreAgreementParticipant myServer = theState.getServer();
         final GordianCompositeKeyPair myServerKeyPair = (GordianCompositeKeyPair) myServer.getKeyPair();
-        final Iterator<GordianKeyPair> myServerIterator = myServerKeyPair.iterator();
-        final GordianCompositeKeyPair myEphemeralKeyPair = (GordianCompositeKeyPair) myClient.getEphemeralKeyPair();
-        final Iterator<GordianKeyPair> myEphemeralIterator = myEphemeralKeyPair == null ? null : myEphemeralKeyPair.iterator();
+        final Iterator<GordianKeyPair> myServerIterator = myServerKeyPair == null ? null : myServerKeyPair.iterator();
+        final GordianCompositeKeyPair myClientEphemeralKeyPair = (GordianCompositeKeyPair) myClient.getEphemeralKeyPair();
+        final Iterator<GordianKeyPair> myClientEphemeralIterator = myClientEphemeralKeyPair == null ? null : myClientEphemeralKeyPair.iterator();
+        final GordianCompositeKeyPair myServerEphemeralKeyPair = (GordianCompositeKeyPair) myServer.getEphemeralKeyPair();
+        final Iterator<GordianKeyPair> myServerEphemeralIterator = myServerEphemeralKeyPair == null ? null : myServerEphemeralKeyPair.iterator();
 
-        /* Protect against exceptions */
-        try {
-            /* Create vector for ephemeral keyPairs and access encapsulated sequence */
-            final ASN1EncodableVector myEphemeral = new ASN1EncodableVector();
-            final byte[] myEncapsulated = theState.getEncapsulated();
-            final Enumeration<?> enEnc = myEncapsulated == null ? null : ASN1Sequence.getInstance(myEncapsulated).getObjects();
+        /* Access encapsulated sequence */
+        final byte[] myEncapsulated = theState.getEncapsulated();
+        final Enumeration<?> enEnc = myEncapsulated == null ? null : ASN1Sequence.getInstance(myEncapsulated).getObjects();
 
-            /* Loop through the engines */
-            for (GordianXCoreAgreementEngine myEngine : theEngines) {
-                /* Access engine details */
-                final GordianXCoreAgreementState myEngState = myEngine.getBuilder().getState();
-                final GordianXCoreAgreementParticipant myEngClient = myEngState.getClient();
-                final GordianXCoreAgreementParticipant myEngServer = myEngState.getServer();
+        /* Loop through the engines */
+        for (GordianXCoreAgreementEngine myEngine : theEngines) {
+            /* Access engine details */
+            final GordianXCoreAgreementState myEngState = myEngine.getBuilder().getState();
+            final GordianXCoreAgreementParticipant myEngClient = myEngState.getClient();
+            final GordianXCoreAgreementParticipant myEngServer = myEngState.getServer();
 
-                /* Update keyPairs and initVector */
-                myEngClient.setKeyPair(myClientKeyPair == null ? null : myClientIterator.next());
-                myEngServer.setKeyPair(myServerIterator.next());
-                myEngClient.setInitVector(myClient.getInitVector());
-                myEngServer.setInitVector(myServer.getInitVector());
-                myEngClient.setEphemeralKeyPair(myEphemeralKeyPair == null ? null : myEphemeralIterator.next());
-                myEngState.setEncapsulated(enEnc == null ? null : ASN1OctetString.getInstance(enEnc.nextElement()).getOctets());
+            /* Update keyPairs and initVector */
+            myEngClient.setKeyPair(myClientKeyPair == null ? null : myClientIterator.next());
+            myEngServer.setKeyPair(myServerKeyPair == null ? null : myServerIterator.next());
+            myEngClient.setInitVector(myClient.getInitVector());
+            myEngServer.setInitVector(myServer.getInitVector());
+            myEngClient.setEphemeralKeyPair(myClientEphemeralKeyPair == null ? null : myClientEphemeralIterator.next());
+            myEngServer.setEphemeralKeyPair(myServerEphemeralKeyPair == null ? null : myServerEphemeralIterator.next());
+            myEngState.setEncapsulated(enEnc == null ? null : ASN1OctetString.getInstance(enEnc.nextElement()).getOctets());
 
-                /* Process clientHello details in the engine */
-                myEngine.processClientHello();
-
-                /* Add any Ephemeral to keySpec sequence */
-                final X509EncodedKeySpec myEngEphemeral = myEngClient.getEphemeralKeySpec();
-                if (myEngEphemeral != null) {
-                    myEphemeral.add(SubjectPublicKeyInfo.getInstance(myEngEphemeral));
-                }
-            }
-
-            /* Record combined ephemeral */
-            if (myEphemeral.size() > 0) {
-                final AlgorithmIdentifier myId = new AlgorithmIdentifier(MiscObjectIdentifiers.id_alg_composite);
-                final SubjectPublicKeyInfo myInfo = new SubjectPublicKeyInfo(myId, new DERSequence(myEphemeral).getEncoded());
-                myClient.setEphemeralKeySpec(new X509EncodedKeySpec(myInfo.getEncoded()));
-            }
-
-            /* catch exceptions */
-        } catch (IOException e) {
-            throw new GordianIOException("Failed to process combined clientHello", e);
+            /* Process clientHello details in the engine */
+            myEngine.processClientHello();
         }
 
         /* Sort out the result if no confirm */
@@ -251,44 +223,26 @@ public class GordianXCoreAgreementComposite extends GordianXCoreAgreementEngine 
     public void processServerHello() throws GordianException {
         /* Access the client and server keyPairs */
         final GordianXCoreAgreementParticipant myServer = theState.getServer();
+        final boolean isSigned = theState.getSpec().getAgreementType().isSigned();
         final GordianCompositeKeyPair myEphemeralKeyPair = (GordianCompositeKeyPair) myServer.getEphemeralKeyPair();
         final Iterator<GordianKeyPair> myEphemeralIterator = myEphemeralKeyPair == null ? null : myEphemeralKeyPair.iterator();
 
-        /* Protect against exceptions */
-        try {
-            /* Create vector for ephemeral keyPairs and access encapsulated sequence */
-            final ASN1EncodableVector myEphemeral = new ASN1EncodableVector();
+        /* Loop through the engines */
+        for (GordianXCoreAgreementEngine myEngine : theEngines) {
+            /* Access engine details */
+            final GordianXCoreAgreementBuilder myEngBuilder = myEngine.getBuilder();
+            final GordianXCoreAgreementState myEngState = myEngBuilder.getState();
+            final GordianXCoreAgreementParticipant myEngServer = myEngState.getServer();
 
-            /* Loop through the engines */
-            for (GordianXCoreAgreementEngine myEngine : theEngines) {
-                /* Access engine details */
-                final GordianXCoreAgreementState myEngState = myEngine.getBuilder().getState();
-                final GordianXCoreAgreementParticipant myEngServer = myEngState.getServer();
-
-                /* Store initVector and ephemeral keyPair */
-                myEngServer.setInitVector(myServer.getInitVector());
-                myEngServer.setEphemeralKeyPair(myEphemeralIterator == null ? null : myEphemeralIterator.next());
-
-                /* Process serverHello details in the engine */
-                myEngine.processServerHello();
-
-                /* Add any Ephemeral to keySpec sequence */
-                final X509EncodedKeySpec myEngEphemeral = myEngServer.getEphemeralKeySpec();
-                if (myEngEphemeral != null) {
-                    myEphemeral.add(SubjectPublicKeyInfo.getInstance(myEngEphemeral));
-                }
+            /* Store initVector and ephemeral keyPair */
+            myEngServer.setInitVector(myServer.getInitVector());
+            myEngServer.setEphemeralKeyPair(myEphemeralIterator == null ? null : myEphemeralIterator.next());
+            if (isSigned) {
+                myEngBuilder.copyEphemerals();
             }
 
-            /* Record combined ephemeral */
-            if (myEphemeral.size() > 0) {
-                final AlgorithmIdentifier myId = new AlgorithmIdentifier(MiscObjectIdentifiers.id_alg_composite);
-                final SubjectPublicKeyInfo myInfo = new SubjectPublicKeyInfo(myId, new DERSequence(myEphemeral).getEncoded());
-                myServer.setEphemeralKeySpec(new X509EncodedKeySpec(myInfo.getEncoded()));
-            }
-
-            /* catch exceptions */
-        } catch (IOException e) {
-            throw new GordianIOException("Failed to process combined clientHello", e);
+            /* Process serverHello details in the engine */
+            myEngine.processServerHello();
         }
 
         /* Sort out the result */
@@ -303,6 +257,7 @@ public class GordianXCoreAgreementComposite extends GordianXCoreAgreementEngine 
 
     /**
      * Merge and store the result.
+     *
      * @throws GordianException on error
      */
     private void mergeResults() throws GordianException {

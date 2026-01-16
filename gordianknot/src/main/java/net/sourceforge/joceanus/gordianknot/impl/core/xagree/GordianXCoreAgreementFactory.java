@@ -36,7 +36,6 @@ import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.cert.GordianMiniCertificate;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
@@ -118,8 +117,6 @@ public abstract class GordianXCoreAgreementFactory
         myAgreement.setServerCertificate(pParams.getServerCertificate());
         myAgreement.setResultType(pParams.getResultType());
 
-        /* Store the parameters */
-
         /* Build the clientHello */
         myAgreement.buildClientHello();
 
@@ -157,17 +154,6 @@ public abstract class GordianXCoreAgreementFactory
         final GordianAgreementSpec mySpec = getSpecForIdentifier(pClientHello.getAgreementId());
         final GordianXCoreAgreementEngine myEngine = createEngine(mySpec);
         final GordianXCoreAgreement myAgreement = new GordianXCoreAgreement(myEngine);
-
-        /* If this is a signed agreement */
-        if (GordianAgreementType.SIGNED.equals(mySpec.getAgreementType())) {
-            /* Handle no signer certificate */
-            if (theSignerCertificate == null) {
-                throw new GordianLogicException("No signer declared for Signed agreement");
-            }
-
-            /* Declare the signer */
-            myAgreement.setSignerCertificate(theSignSpec, theSignerCertificate);
-        }
 
         /* Parse the clientHello */
         myAgreement.parseClientHello(pClientHello);

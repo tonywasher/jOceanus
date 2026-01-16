@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="Oceanus" pattern="file[oceanus]:src/main/java//*||file[oceanus]:src/test/java//*.properties||file[oceanus]:src/test/java//*" />
+</component>

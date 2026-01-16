@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * GordianKnot: Security Suite
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,7 +13,7 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.gordianknot.impl.core.xagree;
 
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
@@ -72,6 +72,7 @@ public class GordianXCoreAgreement
 
     /**
      * Constructor.
+     *
      * @param pEngine the engine
      * @throws GordianException on error
      */
@@ -91,6 +92,7 @@ public class GordianXCoreAgreement
 
     /**
      * Obtain the spec.
+     *
      * @return the spec
      */
     GordianAgreementSpec getAgreementSpec() {
@@ -99,6 +101,7 @@ public class GordianXCoreAgreement
 
     /**
      * Set the status.
+     *
      * @param pStatus the status
      */
     void setStatus(final GordianXAgreementStatus pStatus) {
@@ -112,6 +115,7 @@ public class GordianXCoreAgreement
 
     /**
      * Set the resultType.
+     *
      * @param pResultType the resultType
      * @throws GordianException on error
      */
@@ -127,6 +131,7 @@ public class GordianXCoreAgreement
 
     /**
      * Check status.
+     *
      * @param pStatus the required status
      * @throws GordianException on error
      */
@@ -140,6 +145,7 @@ public class GordianXCoreAgreement
 
     /**
      * Set the client certificate.
+     *
      * @param pClient the client certificate
      * @throws GordianException on error
      */
@@ -159,6 +165,7 @@ public class GordianXCoreAgreement
 
     /**
      * Set the server certificate.
+     *
      * @param pServer the server certificate
      * @throws GordianException on error
      */
@@ -177,8 +184,9 @@ public class GordianXCoreAgreement
 
     /**
      * Set the signer details.
+     *
      * @param pSignSpec the signature spec
-     * @param pSigner the signer certificate
+     * @param pSigner   the signer certificate
      * @throws GordianException on error
      */
     void setSignerCertificate(final GordianSignatureSpec pSignSpec,
@@ -189,6 +197,7 @@ public class GordianXCoreAgreement
 
     /**
      * Set parameters.
+     *
      * @param pParams the parameters
      * @throws GordianException on error
      */
@@ -211,26 +220,17 @@ public class GordianXCoreAgreement
         checkStatus(GordianXAgreementStatus.AWAITING_SERVERPRIVATE);
 
         /* Ensure that we are updating from correct parameters */
-        if (Objects.equals(theParams.getId(), ((GordianXCoreAgreementParams) pParams).getId())) {
+        if (!Objects.equals(theParams.getId(), ((GordianXCoreAgreementParams) pParams).getId())) {
             throw new GordianDataException("Invalid parameters provided");
         }
 
-        /* Ensure that the server has a private key */
+        /* Determine agreement type */
         final GordianAgreementSpec mySpec = theState.getSpec();
-        final GordianCertificate myServerCert = pParams.getSignerCertificate();
-        if (myServerCert.getKeyPair().isPublicOnly()) {
-            throw new GordianDataException("Server Certificate is Public Only");
-        }
-
-        /* Update the server certificate */
-        setServerCertificate(myServerCert);
-
-        /* Store additional data */
-        theState.setAdditionalData(pParams.getAdditionalData());
+        final boolean isSigned = mySpec.getAgreementType().isSigned();
 
         /* If this is a signed agreement */
-        if (GordianAgreementType.SIGNED.equals(mySpec.getAgreementType())) {
-             /* Handle no signer certificate */
+        if (isSigned) {
+            /* Handle no signer certificate */
             final GordianCertificate mySignerCert = pParams.getSignerCertificate();
             if (mySignerCert == null) {
                 throw new GordianLogicException("No signer declared for Signed agreement");
@@ -238,7 +238,20 @@ public class GordianXCoreAgreement
 
             /* Declare the signer */
             setSignerCertificate(pParams.getSignatureSpec(), mySignerCert);
+
+        } else {
+            /* Ensure that the server has a private key */
+            final GordianCertificate myServerCert = pParams.getServerCertificate();
+            if (myServerCert.getKeyPair().isPublicOnly()) {
+                throw new GordianDataException("Server Certificate is Public Only");
+            }
+
+            /* Update the server certificate */
+            setServerCertificate(myServerCert);
         }
+
+        /* Store additional data */
+        theState.setAdditionalData(pParams.getAdditionalData());
 
         /* Update the parameters */
         theParams = new GordianXCoreAgreementParams((GordianXCoreAgreementParams) pParams);
@@ -263,6 +276,7 @@ public class GordianXCoreAgreement
 
     /**
      * Set the next message (or null).
+     *
      * @param pMessage the next message
      * @throws GordianException on error
      */
@@ -277,6 +291,7 @@ public class GordianXCoreAgreement
 
     /**
      * Build the clientHello.
+     *
      * @throws GordianException on error
      */
     void buildClientHello() throws GordianException {
@@ -309,6 +324,7 @@ public class GordianXCoreAgreement
 
     /**
      * Process the clientHello.
+     *
      * @param pClientHello the clientHello
      * @throws GordianException on error
      */
@@ -321,14 +337,15 @@ public class GordianXCoreAgreement
 
     /**
      * Process the clientHello.
+     *
      * @throws GordianException on error
      */
     void processClientHello() throws GordianException {
         /* Create ServerId and InitVector */
         if (!theSpec.getAgreementType().isAnonymous()) {
             theBuilder.newServerId();
+            theBuilder.newServerIV();
         }
-        theBuilder.newServerIV();
 
         /* Create serverEphemeral if needed */
         if (needServerEphemeral()) {
@@ -366,6 +383,7 @@ public class GordianXCoreAgreement
 
     /**
      * Process the serverHello.
+     *
      * @param pServerHello the serverHello
      * @throws GordianException on error
      */
@@ -399,6 +417,7 @@ public class GordianXCoreAgreement
 
     /**
      * Process the clientConfirm.
+     *
      * @param pClientConfirm the clientConfirm
      * @throws GordianException on error
      */
@@ -422,6 +441,7 @@ public class GordianXCoreAgreement
 
     /**
      * Do we need a client ephemeral?
+     *
      * @return true/false
      */
     private boolean needClientEphemeral() {
@@ -429,16 +449,20 @@ public class GordianXCoreAgreement
             case SIGNED:
             case SM2:
             case MQV:
-            case UNIFIED: return true;
-            case ANON: return !GordianKeyPairType.NEWHOPE.equals(theSpec.getKeyPairSpec().getKeyPairType());
+            case UNIFIED:
+                return true;
+            case ANON:
+                return !GordianKeyPairType.NEWHOPE.equals(theSpec.getKeyPairSpec().getKeyPairType());
             case KEM:
             case BASIC:
-            default: return false;
+            default:
+                return false;
         }
     }
 
     /**
      * Do we need a server ephemeral?
+     *
      * @return true/false
      */
     private boolean needServerEphemeral() {
@@ -446,11 +470,13 @@ public class GordianXCoreAgreement
             case SIGNED:
             case SM2:
             case MQV:
-            case UNIFIED: return true;
+            case UNIFIED:
+                return true;
             case ANON:
             case KEM:
             case BASIC:
-            default: return false;
+            default:
+                return false;
         }
     }
 }

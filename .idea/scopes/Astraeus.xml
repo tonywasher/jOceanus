@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="Astraeus" pattern="file[astraeus]:src/main/java//*||file[astraeus]:src/test/java//*" />
+</component>

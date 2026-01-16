@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="Themis" pattern="file[themis-core]:src/main/java//*||file[themis-core]:src/test/java//*||file[themis-javafx]:src/main/java//*||file[themis-core]:src/main/resources//*.properties" />
+</component>

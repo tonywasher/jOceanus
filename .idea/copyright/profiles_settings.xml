@@ -1,0 +1,14 @@
+<component name="CopyrightManager">
+  <settings>
+    <module2copyright>
+      <element module="Astraeus" copyright="Astraeus" />
+      <element module="GordianKnot" copyright="GordianKnot" />
+      <element module="Metis" copyright="Metis" />
+      <element module="MoneyWise" copyright="MoneyWise" />
+      <element module="Oceanus" copyright="Oceanus" />
+      <element module="Prometheus" copyright="Prometheus" />
+      <element module="Tethys" copyright="Tethys" />
+      <element module="Themis" copyright="Themis" />
+    </module2copyright>
+  </settings>
+</component>
