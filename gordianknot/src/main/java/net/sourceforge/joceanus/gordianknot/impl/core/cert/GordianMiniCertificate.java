@@ -104,7 +104,7 @@ public class GordianMiniCertificate
     /**
      * Constructor.
      *
-     * @param pFactory the factory
+     * @param pFactory the factory.
      * @param pASN1    the ASN1
      * @throws GordianException on error
      */

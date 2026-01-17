@@ -272,6 +272,9 @@ public class GordianXCoreAgreement
             /* Create the rejection serverHello */
             setNextMessage(theBuilder.newServerHello());
         }
+
+        /* Set result available */
+        theBuilder.setStatus(GordianXAgreementStatus.RESULT_AVAILABLE);
     }
 
     /**

@@ -165,7 +165,7 @@ public class GordianCoreKeyStoreManager
         final GordianCertificate myBase = pKeyPair.getCertificateChain().getFirst();
         final X500Name mySubject = myBase.getSubject().getName();
         final GordianKeyPairUsage myUsage = myBase.getUsage();
-        
+
         /* Create the certificate */
         final GordianCoreCertificate myCert = new GordianCoreCertificate(theFactory, pSigner, myKeyPair, mySubject, myUsage);
 

@@ -274,7 +274,7 @@ public class GordianCoreKeyStore
 
         /* Look for all issuers */
         final Map<GordianCertificateId, GordianCertificate> myCertMap = theSubjectCerts.get(pIssuerId);
-        List<GordianCertificate> myCerts = new ArrayList<>(myCertMap.values());
+        final List<GordianCertificate> myCerts = new ArrayList<>(myCertMap.values());
 
         /* Loop through all the certificates */
         for (GordianCertificate myCert : myCerts) {
