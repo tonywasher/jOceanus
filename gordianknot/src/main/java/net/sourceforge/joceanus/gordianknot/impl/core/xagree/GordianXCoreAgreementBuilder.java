@@ -82,6 +82,16 @@ public class GordianXCoreAgreementBuilder {
     private final GordianXCoreAgreementCalculator theResultCalc;
 
     /**
+     * Should we fail signature during testing?
+     */
+    private boolean failSignature;
+
+    /**
+     * Should we fail confirmation during testing?
+     */
+    private boolean failConfirmation;
+
+    /**
      * Constructor.
      *
      * @param pSupplier the supplier
@@ -132,6 +142,20 @@ public class GordianXCoreAgreementBuilder {
     }
 
     /**
+     * Ask to fail signature during testing.
+     */
+    void failSignature() {
+        failSignature = true;
+    }
+
+    /**
+     * Ask to fail confirmation during testing.
+     */
+    void failConfirmation() {
+        failConfirmation = true;
+    }
+
+    /**
      * Set the status.
      *
      * @param pStatus the status
@@ -176,16 +200,19 @@ public class GordianXCoreAgreementBuilder {
      * @throws GordianException on error
      */
     private void processSecret(final byte[] pSecret) throws GordianException {
-        /* If we are using confirmation and are not SM2 */
+        /* If we are using confirmation */
+        boolean bSuccess = true;
         final GordianAgreementSpec mySpec = theState.getSpec();
         if (Boolean.TRUE.equals(mySpec.withConfirm())
                 && mySpec.getAgreementType() != GordianAgreementType.SM2) {
             /* calculate the confirmation tags */
-            calculateConfirmationTags(pSecret);
+            bSuccess = calculateConfirmationTags(pSecret);
         }
 
         /* Calculate result */
-        theState.setResult(theResultCalc.processSecret(pSecret, theState.getResultType()));
+        if (bSuccess) {
+            theState.setResult(theResultCalc.processSecret(pSecret, theState.getResultType()));
+        }
     }
 
     /**
@@ -193,18 +220,18 @@ public class GordianXCoreAgreementBuilder {
      *
      * @param pError the error
      */
-    void setError(final String pError) {
+    public void setError(final String pError) {
         /* Store details of the error */
         theState.setResultType(pError);
         theState.setResult(new GordianDataException(pError));
     }
 
     /**
-     * Is there an errorState?.
+     * Is the agreement rejected?.
      *
      * @return true/false
      */
-    public boolean isError() {
+    public boolean isRejected() {
         return theState.getResultType() instanceof String;
     }
 
@@ -337,38 +364,46 @@ public class GordianXCoreAgreementBuilder {
      * Set the client confirm.
      *
      * @param pConfirm the clientConfirm
-     * @throws GordianException on error
+     * @return noError true/false
      */
-    void setClientConfirm(final byte[] pConfirm) throws GordianException {
+    boolean setClientConfirm(final byte[] pConfirm) {
         /* Access any expected value */
         final GordianXCoreAgreementParticipant myClient = theState.getClient();
         final byte[] myExpected = myClient.getConfirm();
 
         /* If we have an expected value, reject any difference */
-        if (myExpected != null
-                && !Arrays.constantTimeAreEqual(myExpected, pConfirm)) {
-            throw new GordianDataException("Client Confirmation failed");
+        if (failConfirmation
+                || (myExpected != null && !Arrays.constantTimeAreEqual(myExpected, pConfirm))) {
+            setError("Client Confirmation failed");
+            return false;
         }
+
+        /* Store the value */
         myClient.setConfirm(pConfirm);
+        return true;
     }
 
     /**
-     * Set the client confirm.
+     * Set the server confirm.
      *
-     * @param pConfirm the clientConfirm
-     * @throws GordianException on error
+     * @param pConfirm the serverConfirm
+     * @return noError true/false
      */
-    void setServerConfirm(final byte[] pConfirm) throws GordianException {
+    boolean setServerConfirm(final byte[] pConfirm) {
         /* Access any expected value */
         final GordianXCoreAgreementParticipant myServer = theState.getServer();
         final byte[] myExpected = myServer.getConfirm();
 
         /* If we have an expected value, reject any difference */
         if (myExpected != null
-                && !Arrays.constantTimeAreEqual(myExpected, pConfirm)) {
-            throw new GordianDataException("Server Confirmation failed");
+                && (failConfirmation || !Arrays.constantTimeAreEqual(myExpected, pConfirm))) {
+            setError("Server Confirmation failed");
+            return false;
         }
+
+        /* Store the value */
         myServer.setConfirm(pConfirm);
+        return true;
     }
 
     /**
@@ -463,16 +498,18 @@ public class GordianXCoreAgreementBuilder {
         final GordianXCoreAgreementParticipant myClient = theState.getClient();
         final GordianXCoreAgreementParticipant myServer = theState.getServer();
 
+        /* Set standard details */
+        myMsg.setAgreementId(theSupplier.getIdentifierForSpec(theState.getSpec()))
+                .setServerId(myServer.getId());
+
         /* Handle error result */
         if (theState.getResultType() instanceof String myType) {
             myMsg.setResultId(theSupplier.getIdentifierForResultType(myType));
             return myMsg;
         }
 
-        /* Set standard details */
-        myMsg.setAgreementId(theSupplier.getIdentifierForSpec(theState.getSpec()))
-                .setServerId(myServer.getId())
-                .setConfirmation(myClient.getConfirm());
+        /* Set confirmation */
+        myMsg.setConfirmation(myClient.getConfirm());
 
         /* Return the message */
         return myMsg;
@@ -511,9 +548,10 @@ public class GordianXCoreAgreementBuilder {
      * Parse the serverHello.
      *
      * @param pServerHello the message
+     * @return noError true/false
      * @throws GordianException on error
      */
-    void parseServerHello(final GordianXCoreAgreementMessageASN1 pServerHello) throws GordianException {
+    boolean parseServerHello(final GordianXCoreAgreementMessageASN1 pServerHello) throws GordianException {
         /* Access details */
         final GordianXCoreAgreementParticipant myClient = theState.getClient();
         final GordianXCoreAgreementParticipant myServer = theState.getServer();
@@ -522,7 +560,7 @@ public class GordianXCoreAgreementBuilder {
         final AlgorithmIdentifier myResId = pServerHello.getResultId();
         if (myResId != null) {
             setError((String) theSupplier.getResultTypeForIdentifier(myResId));
-            return;
+            return false;
         }
 
         /* Store server details */
@@ -552,40 +590,43 @@ public class GordianXCoreAgreementBuilder {
             mySigner.update(myClient.getInitVector());
             mySigner.update(myServer.getEphemeralKeySpec().getEncoded());
             mySigner.update(myServer.getInitVector());
-            if (!mySigner.verify(pServerHello.getSignature())) {
+            if (failSignature || !mySigner.verify(pServerHello.getSignature())) {
                 setError("Signature Failed");
+                return false;
             }
         }
+
+        /* Success */
+        return true;
     }
 
     /**
      * Parse the clientConfirm.
      *
      * @param pClientConfirm the clientConfirm
+     * @return noError true/false
      * @throws GordianException on error
      */
-    void parseClientConfirm(final GordianXCoreAgreementMessageASN1 pClientConfirm) throws GordianException {
-        /* Access details */
-        final GordianXCoreAgreementParticipant myClient = theState.getClient();
-
+    boolean parseClientConfirm(final GordianXCoreAgreementMessageASN1 pClientConfirm) throws GordianException {
         /* Handle error result */
         final AlgorithmIdentifier myResId = pClientConfirm.getResultId();
         if (myResId != null) {
             setError((String) theSupplier.getResultTypeForIdentifier(myResId));
-            return;
+            return false;
         }
 
         /* Store client details */
-        myClient.setConfirm(pClientConfirm.getConfirmation());
+        return setClientConfirm(pClientConfirm.getConfirmation());
     }
 
     /**
      * Calculate the confirmation tags.
      *
      * @param pSecret the secret
+     * @return noError true/false
      * @throws GordianException on error
      */
-    private void calculateConfirmationTags(final byte[] pSecret) throws GordianException {
+    private boolean calculateConfirmationTags(final byte[] pSecret) throws GordianException {
         /* Access details */
         final GordianXCoreAgreementParticipant myClient = theState.getClient();
         final GordianXCoreAgreementParticipant myServer = theState.getServer();
@@ -610,13 +651,19 @@ public class GordianXCoreAgreementBuilder {
         myMac.update(myClientSpec);
         myMac.update(myServerEphemeral);
         myMac.update(myClientEphemeral);
-        setServerConfirm(myMac.finish());
+        boolean bSuccess = setServerConfirm(myMac.finish());
 
-        /* Build Client Confirmation tag */
-        myMac.update(myClientSpec);
-        myMac.update(myServerSpec);
-        myMac.update(myClientEphemeral);
-        myMac.update(myServerEphemeral);
-        setClientConfirm(myMac.finish());
+        /* If we are OK */
+        if (bSuccess) {
+            /* Build Client Confirmation tag */
+            myMac.update(myClientSpec);
+            myMac.update(myServerSpec);
+            myMac.update(myClientEphemeral);
+            myMac.update(myServerEphemeral);
+            bSuccess = setClientConfirm(myMac.finish());
+        }
+
+        /* Return success */
+        return bSuccess;
     }
 }

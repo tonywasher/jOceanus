@@ -53,22 +53,24 @@
                     in any case are heavyweight to generate. Therefore <strong>miniCertificates</strong> are
                     available to provide lightweight certificates that can drive agreements.</p>
                 <p>The only contents or mini-certificates are the keyPair, the defined usage and the X500Name. The Name
-                    does not need to have any meaning, but can convey whatever information is required by the application</p>
+                    does not need to have any meaning, but can convey whatever information is required by the application.</p>
             </subsection>
             <subsection name="Anonymous Agreement">
                 <p>An anonymous agreement is an agreement where the only certificate required is that of the server.
                     It must be specified in the parameters prior to the agreement being created. If a keyPair is
                     required at the server, then it is an ephemeral anonymous keyPair.</p>
-                <p>The client creates a <strong>ClientHello</strong> message to be sent to the server, and immediately
-                    enters the <strong>RESULT_AVAILABLE</strong> state and makes the result available to the caller.</p>
-                <p>The server will parse the incoming <strong>ClientHello</strong> message and create a corresponding
-                    <strong>GordianXAgreementParams</strong> object. It cannot immediately continue, since it does not
-                    know the privateKey of the server, so it enters the <strong>AWAITING_SERVERPRIVATE</strong> state.</p>
-                <p>The server is expected to look at the serverCertificate contained in the parameters, and replace it
-                    with a certificate that contains the privateKey of the server, before updating the agreement.</p>
-                <p>The server can now calculate the result and enters the <strong>RESULT_AVAILABLE</strong> state making
-                    the result available to the caller</p>
-                <p>A random client InitVector is included in the process to randomize the result</p>
+                <ul>
+                    <li>The client creates a <strong>ClientHello</strong> message to be sent to the server, and immediately
+                        enters the <strong>RESULT_AVAILABLE</strong> state and makes the result available to the caller.</li>
+                    <li>The server will parse the incoming <strong>ClientHello</strong> message and create a corresponding
+                        <strong>GordianXAgreementParams</strong> object. It cannot immediately continue, since it does not
+                        know the privateKey of the server, so it enters the <strong>AWAITING_SERVERPRIVATE</strong> state.</li>
+                    <li>The server is expected to look at the serverCertificate contained in the parameters, and replace it
+                        with a certificate that contains the privateKey of the server, before updating the agreement.</li>
+                    <li>The server can now calculate the result and enters the <strong>RESULT_AVAILABLE</strong> state making
+                        the result available to the caller</li>
+                    <li>A random client InitVector is included in the process to randomize the result</li>
+                </ul>
                  <subsection name="Sample">
                     <source>
 /* Access factory */
@@ -94,34 +96,36 @@ GordianXAgreementParams myParams = myAgreementFactory.newAgreementParams(mySpec,
                                                      .setServerCertificate(myTargetCert);
 final GordianXAgreement mySender = myAgrees.createAgreement(myParams);
 final byte[] myClientHello = mySender.nextMessage();
-final GordianKeySet myClientKeySet = (GordianKeySet) mySender.getResult();
+final GordianKeySet myClientKeySet = mySender.getKeySetResult();
 
 /* Handle receipt at server */
 final GordianXAgreement myResponder = myAgreementFactory.parseAgreementMessage(myClientHello);
 myParams = myResponder.getAgreementParams()
                       .setServerCertificate(myTargetCert);
 myResponder.updateParams(myParams);
-final GordianKeySet myServerKeySet = (GordianKeySet) myResponder.getResult();
+final GordianKeySet myServerKeySet = myResponder.getKeySetResult();
                     </source>
                 </subsection>
             </subsection>
             <subsection name="Handshake Agreement">
-                <p>A handshake agreement is an agreement where certificates are required for both the client and the
-                    server. Both certificates must be specified in the parameters prior to the agreement being created.
-                    The clientCertificate must contain the private key of the keyPair.</p>
-                <p>The client creates a <strong>ClientHello</strong> message to be sent to the server, and immediately
-                    enters the <strong>AWAITING_SERVERHELLO</strong> state. The agreement is added to the factory cache.</p>
-                <p>The server will parse the incoming <strong>ClientHello</strong> message as per the Anonymous case.
-                    The only difference is that a <strong>ServerHello</strong> message is created to send to the client.</p>
-                <p>It is possible for the server to reject the agreement, perhaps because it did not recognize the
-                    serverCertificate or accept the clientCertificate. It this case it can set an errorMessage which will
-                    cause the result to be an Exception object, and will transmit the error in the
-                    <strong>ServerHello</strong> message so that it becomes the result at the client as well.</p>
-                <p>The client will parse the incoming <strong>ServerHello</strong> message and will look up the agreement
-                    in the cache. If no matching agreement is found then the message is rejected.</p>
-                <p>The client can now calculate the result and deletes the agreement from the cache and enters the
-                    <strong>RESULT_AVAILABLE</strong> state making the result available to the caller</p>
-                <p>Random client and server InitVectors are included in the process to randomize the result</p>
+                <ul>
+                    <li>A handshake agreement is an agreement where certificates are required for both the client and the
+                        server. Both certificates must be specified in the parameters prior to the agreement being created.
+                        The clientCertificate must contain the private key of the keyPair.</li>
+                    <li>The client creates a <strong>ClientHello</strong> message to be sent to the server, and immediately
+                        enters the <strong>AWAITING_SERVERHELLO</strong> state. The agreement is added to the factory cache.</li>
+                    <li>The server will parse the incoming <strong>ClientHello</strong> message as per the Anonymous case.
+                        The only difference is that a <strong>ServerHello</strong> message is created to send to the client.</li>
+                    <li>It is possible for the server to reject the agreement, perhaps because it did not recognize the
+                        serverCertificate or accept the clientCertificate. It this case it can set an errorMessage which will
+                        cause the result to be an Exception object. The error will be transmitted in the
+                    <strong>ServerHello</strong> message so that it becomes the result at the client as well.</li>
+                    <li>The client will parse the incoming <strong>ServerHello</strong> message and will look up the agreement
+                        in the cache. If no matching agreement is found then the message is rejected.</li>
+                    <li>The client can now calculate the result and deletes the agreement from the cache and enters the
+                        <strong>RESULT_AVAILABLE</strong> state making the result available to the caller</li>
+                    <li>Random client and server InitVectors are included in the process to randomize the result</li>
+                </ul>
                <subsection name="Sample">
                     <source>
 /* Access factory */
@@ -159,30 +163,36 @@ myParams = myResponder.getAgreementParams()
                       .setServerCertificate(myTargetCert);
 myResponder.updateParams(myParams);
 final byte[] myServerHello = myResponder.nextMessage();
-final GordianKeySet myServerKeySet = (GordianKeySet) myResponder.getResult();
+final GordianKeySet myServerKeySet = myResponder.getKeySetResult();
 
 /* Process ServerHello at Client (will receive existing agreement) */
 final GordianXAgreement myClient = myAgreementFactory.parseAgreementMessage(myServerHello);
-final GordianKeySet myClientKeySet = (GordianKeySet) myClient.getResult();
+final GordianKeySet myClientKeySet = myClient.getKeySetResult();
                     </source>
                 </subsection>
             </subsection>
             <subsection name="Confirmation Agreement">
                 <p>A confirmation agreement is simply a handshake agreement with an additional step.</p>
-                <p>The client creates a <strong>ClientHello</strong> message the same as for a handshake agreement.</p>
-                <p>The server processes the <strong>ClientHello</strong> as before but rather than making the result
-                    available, it enters the <strong>AWAITING_CLIENTCONFIRM</strong> state. The agreement is added to
-                    the factory cache.</p>
-                <p>The client will parse the incoming <strong>ServerHello</strong> message as per a handshake agreement,
-                    with the addition that a confirmation process is performed and a <strong>ClientConfirm</strong>
-                    message is created to send to the server.</p>
-                <p>The server will parse the incoming <strong>ClientConfirm</strong> message and will look up the agreement
-                    in the cache. If no matching agreement is found then the message is rejected.</p>
-                <p>The server can now process the confirmation and calculate the result and deletes the agreement from
-                    the cache and enters the <strong>RESULT_AVAILABLE</strong> state making the result available to the caller</p>
-                <p>The <strong>SM2</strong> confirm is defined by the SM2 algorithm. For <strong>UNIFIED</strong> and
-                    <strong>MQV</strong> agreements the confirmation tags are calculated over the well-known and
-                    ephemeral keyPairs using an hMac keyed by the agreed result.</p>
+                <ul>
+                    <li>The client creates a <strong>ClientHello</strong> message the same as for a handshake agreement.</li>
+                    <li>The server processes the <strong>ClientHello</strong> as before but rather than making the result
+                        available, it enters the <strong>AWAITING_CLIENTCONFIRM</strong> state. The agreement is added to
+                        the factory cache.</li>
+                    <li>The client will parse the incoming <strong>ServerHello</strong> message as per a handshake agreement,
+                        with the addition that a confirmation process is performed and a <strong>ClientConfirm</strong>
+                        message is created to send to the server. If the server rejected the message then no
+                        <strong>ClientConfirm</strong>is created.</li>
+                    <li>If confirmation fails at the client then the result will be an exception object. The error will
+                        be transmitted in the <strong>ClientConfirm</strong> message so that it becomes the result at the server as well.</li>
+                    <li>The server will parse the incoming <strong>ClientConfirm</strong> message and will look up the agreement
+                        in the cache. If no matching agreement is found then the message is rejected.</li>
+                    <li>The server can now process the confirmation and calculate the result and deletes the agreement from
+                        the cache and enters the <strong>RESULT_AVAILABLE</strong> state making the result available to the caller</li>
+                    <li>If confirmation fails at the server then the result will be an exception object.</li>
+                    <li>The <strong>SM2</strong> confirm is defined by the SM2 algorithm. For <strong>UNIFIED</strong> and
+                        <strong>MQV</strong> agreements the confirmation tags are calculated over the well-known and
+                        ephemeral keyPairs using an hMac keyed by the agreed result.</li>
+                </ul>
                 <subsection name="Sample">
                     <source>
 /* Access factory */
@@ -224,28 +234,31 @@ final byte[] myServerHello = myResponder.nextMessage();
 /* Process ServerHello at Client (will receive existing agreement) */
 final GordianXAgreement myClient = myAgrees.parseAgreementMessage(myServerHello);
 final byte[] myClientConfirm = myClient.nextMessage();
-final GordianKeySet myClientKeySet = (GordianKeySet) myClient.getResult();
+final GordianKeySet myClientKeySet = myClient.getKeySetResult();
 
 /* Process ClientConfirm at Server (will receive existing agreement) */
 final GordianXAgreement myServer = myAgreementFactory.parseAgreementMessage(myClientConfirm);
-final GordianKeySet myServerKeySet = (GordianKeySet) myServer.getResult();
+final GordianKeySet myServerKeySet = myServer.getKeySetResult();
                     </source>
                 </subsection>
             </subsection>
             <subsection name="Signed Agreement">
                 <p>A signed agreement is simply a handshake agreement used with ephemeral keyPairs with the results
                     signed by a known signer. No client/server certificates are required.</p>
-                <p>The client creates a <strong>ClientHello</strong> message the same as for a handshake agreement.</p>
-                <p>The server processes the <strong>ClientHello</strong> but rather than waiting for a
-                    serverCertificate with a private key, it waits for signerCertificate with a private key.</p>
-                <p>It is possible to specify a default signerCertificate and signatureAlgorithm in the factory, and
-                    this will be set as a default in the parameters, so that the server does not have to override
-                    on a per-message basis.</p>
-                <p>The server will then sign the results and include the signature and signerCertificate in the
-                    <strong>ServerHello</strong> message to be sent to the client.</p>
-                <p>The client will verify the incoming <strong>ServerHello</strong> message using the signature and
-                    signerCertificate, and will proceed as per the handshake agreement.</p>
-                <p>The signature is calculated over the two ephemeral keys and the initVectors</p>
+                <ul>
+                    <li>The client creates a <strong>ClientHello</strong> message the same as for a handshake agreement.</li>
+                    <li>The server processes the <strong>ClientHello</strong> but rather than waiting for a
+                        serverCertificate with a private key, it waits for signerCertificate with a private key.</li>
+                    <li>It is possible to specify a default signerCertificate and signatureAlgorithm in the factory, and
+                        this will be set as a default in the parameters, so that the server does not have to override
+                        on a per-message basis.</li>
+                    <li>The server will then sign the results and include the signature and signerCertificate in the
+                        <strong>ServerHello</strong> message to be sent to the client.</li>
+                    <li>The client will verify the incoming <strong>ServerHello</strong> message using the signature and
+                        signerCertificate, and will proceed as per the handshake agreement.</li>
+                    <li>If the signature fails, then the result is an Exception object.</li>
+                    <li>The signature is calculated over the two ephemeral keys and the initVectors</li>
+                </ul>
                 <subsection name="Sample">
                     <source>
 /* Access factory */
@@ -277,11 +290,11 @@ myParams = myResponder.getAgreementParams()
                       .setSigner(mySignerCert);
 myResponder.updateParams(myParams);
 final byte[] myServerHello = myResponder.nextMessage();
-final GordianKeySet myServerKeySet = (GordianKeySet) myResponder.getResult();
+final GordianKeySet myServerKeySet = myResponder.getKeySetResult();
 
 /* Process ServerHello at Client (will receive existing agreement) */
 final GordianXAgreement myClient = myAgreementFactory.parseAgreementMessage(myServerHello);
-final GordianKeySet myClientKeySet = (GordianKeySet) myClient.getResult();
+final GordianKeySet myClientKeySet = myClient.getKeySetResult();
                     </source>
                 </subsection>
             </subsection>
@@ -290,8 +303,10 @@ final GordianKeySet myClientKeySet = (GordianKeySet) myClient.getResult();
                     desired AgreementSpec. There are three small variations.
                     <ol>
                         <li>Confirm is not supported for <strong>SM2</strong> agreements</li>
-                        <li>Signed agreements are implemented as a set of <strong>Basic</strong> Agreements with the results signed.</li>
-                        <li>The various individual agreements are used as inputs to the HKDF algorithm to extract a combined agreement secret</li>
+                        <li>The various individual agreements are used as inputs to the HKDF algorithm to extract a
+                            combined agreement secret</li>
+                        <li>Signed agreements are implemented as a set of <strong>Basic</strong> Agreements with the
+                            combined results signed.</li>
                     </ol>
                 </p>
                 <subsection name="Sample">

@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * GordianKnot: Security Suite
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,7 +13,7 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.gordianknot.impl.bc;
 
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
@@ -69,6 +69,7 @@ public final class BouncySM2KeyPair {
             extends BouncyECKeyPairGenerator {
         /**
          * Constructor.
+         *
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
          * @throws GordianException on error
@@ -97,8 +98,9 @@ public final class BouncySM2KeyPair {
 
         /**
          * Constructor.
+         *
          * @param pFactory the factory
-         * @param pSpec the signatureSpec.
+         * @param pSpec    the signatureSpec.
          * @throws GordianException on error
          */
         BouncySM2Signature(final GordianBaseFactory pFactory,
@@ -208,8 +210,9 @@ public final class BouncySM2KeyPair {
 
         /**
          * Constructor.
+         *
          * @param pFactory the security factory
-         * @param pSpec the agreementSpec
+         * @param pSpec    the agreementSpec
          */
         BouncyECSM2Agreement(final GordianBaseFactory pFactory,
                              final GordianAgreementSpec pSpec) {
@@ -335,8 +338,9 @@ public final class BouncySM2KeyPair {
 
         /**
          * Constructor.
+         *
          * @param pFactory the security factory
-         * @param pSpec the agreementSpec
+         * @param pSpec    the agreementSpec
          * @throws GordianException on error
          */
         BouncySM2XAgreementEngine(final GordianXCoreAgreementFactory pFactory,
@@ -408,14 +412,14 @@ public final class BouncySM2KeyPair {
                     final byte[][] myResults = theAgreement.calculateKeyWithConfirmation(KEYLEN, myConfirm, myPubParams);
 
                     /* Store the confirmationTag */
-                    setClientConfirm(myResults[1]);
-
-                    /* Store the secret */
-                    storeSecret(myResults[0]);
+                    if (setClientConfirm(myResults[1])) {
+                        /* Store the secret */
+                        storeSecret(myResults[0]);
+                    }
 
                     /* Catch mismatch on confirmation tag */
                 } catch (IllegalStateException e) {
-                    throw new GordianIOException("Confirmation failed", e);
+                    getBuilder().setError("Server Confirmation failed");
                 }
 
                 /* else standard agreement */
@@ -438,8 +442,9 @@ public final class BouncySM2KeyPair {
 
         /**
          * Constructor.
+         *
          * @param pFactory the factory
-         * @param pSpec the encryptorSpec
+         * @param pSpec    the encryptorSpec
          * @throws GordianException on error
          */
         BouncySM2Encryptor(final GordianBaseFactory pFactory,
@@ -450,7 +455,7 @@ public final class BouncySM2KeyPair {
             final GordianSM2EncryptionSpec mySpec = pSpec.getSM2EncryptionSpec();
             final BouncyDigest myDigest = (BouncyDigest) myFactory.createDigest(mySpec.getDigestSpec());
             final Mode mySM2Mode = mySpec.getEncryptionType() == GordianSM2EncryptionType.C1C2C3
-                                   ? Mode.C1C2C3 : Mode.C1C3C2;
+                    ? Mode.C1C2C3 : Mode.C1C3C2;
             theEncryptor = new SM2Engine(myDigest.getDigest(), mySM2Mode);
         }
 

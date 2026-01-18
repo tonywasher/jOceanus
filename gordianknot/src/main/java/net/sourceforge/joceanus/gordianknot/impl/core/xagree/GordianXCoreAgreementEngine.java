@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * GordianKnot: Security Suite
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,7 +13,7 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.gordianknot.impl.core.xagree;
 
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
@@ -71,8 +71,9 @@ public abstract class GordianXCoreAgreementEngine {
 
     /**
      * Constructor.
+     *
      * @param pSupplier the supplier
-     * @param pSpec the agreementSpec
+     * @param pSpec     the agreementSpec
      * @throws GordianException on error
      */
     protected GordianXCoreAgreementEngine(final GordianXCoreAgreementSupplier pSupplier,
@@ -86,6 +87,7 @@ public abstract class GordianXCoreAgreementEngine {
 
     /**
      * Obtain the supplier.
+     *
      * @return the supplier
      */
     GordianXCoreAgreementSupplier getSupplier() {
@@ -94,6 +96,7 @@ public abstract class GordianXCoreAgreementEngine {
 
     /**
      * Obtain the builder.
+     *
      * @return the builder
      */
     public GordianXCoreAgreementBuilder getBuilder() {
@@ -102,6 +105,7 @@ public abstract class GordianXCoreAgreementEngine {
 
     /**
      * Obtain the spec.
+     *
      * @return the spec
      */
     public GordianAgreementSpec getSpec() {
@@ -110,6 +114,7 @@ public abstract class GordianXCoreAgreementEngine {
 
     /**
      * Obtain the random.
+     *
      * @return the random
      */
     public SecureRandom getRandom() {
@@ -118,6 +123,7 @@ public abstract class GordianXCoreAgreementEngine {
 
     /**
      * Obtain client keyPair.
+     *
      * @return the client keyPair
      */
     public GordianKeyPair getClientKeyPair() {
@@ -126,6 +132,7 @@ public abstract class GordianXCoreAgreementEngine {
 
     /**
      * Obtain server keyPair.
+     *
      * @return the server keyPair
      */
     public GordianKeyPair getServerKeyPair() {
@@ -134,6 +141,7 @@ public abstract class GordianXCoreAgreementEngine {
 
     /**
      * Obtain client ephemeral keyPair.
+     *
      * @return the ephemeral keyPair
      */
     public GordianKeyPair getClientEphemeral() {
@@ -142,6 +150,7 @@ public abstract class GordianXCoreAgreementEngine {
 
     /**
      * Set client ephemeral keyPair.
+     *
      * @param pEphemeral the ephemeral keyPair
      * @throws GordianException on error
      */
@@ -150,8 +159,9 @@ public abstract class GordianXCoreAgreementEngine {
     }
 
     /**
-     * Obtain server keyPair.
-     * @return the server keyPair
+     * Obtain server ephemeral keyPair.
+     *
+     * @return the ephemeral keyPair
      */
     public GordianKeyPair getServerEphemeral() {
         return theServer.getEphemeralKeyPair();
@@ -159,6 +169,7 @@ public abstract class GordianXCoreAgreementEngine {
 
     /**
      * Obtain encapsulation.
+     *
      * @return the encapsulation
      */
     public byte[] getEncapsulated() {
@@ -166,7 +177,8 @@ public abstract class GordianXCoreAgreementEngine {
     }
 
     /**
-     * Obtain server keyPair.
+     * Set encapsulation.
+     *
      * @param pEncapsulated the encapsulated
      */
     public void setEncapsulated(final byte[] pEncapsulated) {
@@ -175,32 +187,35 @@ public abstract class GordianXCoreAgreementEngine {
 
     /**
      * Set the client confirm.
+     *
      * @param pConfirm the clientConfirm
-     * @throws GordianException on error
+     * @return noError true/false
      */
-    public void setClientConfirm(final byte[] pConfirm) throws GordianException {
-        theBuilder.setClientConfirm(pConfirm);
+    public boolean setClientConfirm(final byte[] pConfirm) {
+        return theBuilder.setClientConfirm(pConfirm);
     }
 
     /**
-     * Obtain encapsulation.
-     * @return the encapsulation
+     * Obtain server Confirm.
+     *
+     * @return the serverConfirm
      */
     public byte[] getServerConfirm() {
         return theServer.getConfirm();
     }
 
     /**
-     * Set the client confirm.
-     * @param pConfirm the clientConfirm
-     * @throws GordianException on error
+     * Set the server confirm.
+     *
+     * @param pConfirm the serverConfirm
      */
-    public void setServerConfirm(final byte[] pConfirm) throws GordianException {
+    public void setServerConfirm(final byte[] pConfirm) {
         theBuilder.setServerConfirm(pConfirm);
     }
 
     /**
      * Obtain public key from pair.
+     *
      * @param pKeyPair the keyPair
      * @return the public key
      * @throws GordianException on error
@@ -212,6 +227,7 @@ public abstract class GordianXCoreAgreementEngine {
 
     /**
      * Obtain private key from pair.
+     *
      * @param pKeyPair the keyPair
      * @return the private key
      * @throws GordianException on error
@@ -228,6 +244,7 @@ public abstract class GordianXCoreAgreementEngine {
 
     /**
      * Build the clientHello.
+     *
      * @throws GordianException on error
      */
     public void buildClientHello() throws GordianException {
@@ -236,12 +253,14 @@ public abstract class GordianXCoreAgreementEngine {
 
     /**
      * Process the clientHello.
+     *
      * @throws GordianException on error
      */
     public abstract void processClientHello() throws GordianException;
 
     /**
      * Process the serverHello.
+     *
      * @throws GordianException on error
      */
     public void processServerHello() throws GordianException {
@@ -250,6 +269,7 @@ public abstract class GordianXCoreAgreementEngine {
 
     /**
      * Process the clientConfirm.
+     *
      * @throws GordianException on error
      */
     public void processClientConfirm() throws GordianException {
@@ -258,6 +278,7 @@ public abstract class GordianXCoreAgreementEngine {
 
     /**
      * Store the secret.
+     *
      * @param pSecret the secret
      * @throws GordianException on error
      */
@@ -301,17 +322,23 @@ public abstract class GordianXCoreAgreementEngine {
 
     /**
      * Obtain the required derivation function.
+     *
      * @return the derivation function
      */
     public DerivationFunction newDerivationFunction() {
         final GordianAgreementSpec mySpec = theState.getSpec();
         switch (mySpec.getKDFType()) {
-            case SHA256KDF:     return new KDF2BytesGenerator(new SHA256Digest());
-            case SHA512KDF:     return new KDF2BytesGenerator(new SHA512Digest());
-            case SHA256CKDF:    return new ConcatenationKDFGenerator(new SHA256Digest());
-            case SHA512CKDF:    return new ConcatenationKDFGenerator(new SHA512Digest());
+            case SHA256KDF:
+                return new KDF2BytesGenerator(new SHA256Digest());
+            case SHA512KDF:
+                return new KDF2BytesGenerator(new SHA512Digest());
+            case SHA256CKDF:
+                return new ConcatenationKDFGenerator(new SHA256Digest());
+            case SHA512CKDF:
+                return new ConcatenationKDFGenerator(new SHA512Digest());
             case NONE:
-            default:            return new GordianXCoreNullKeyDerivation();
+            default:
+                return new GordianXCoreNullKeyDerivation();
         }
     }
 

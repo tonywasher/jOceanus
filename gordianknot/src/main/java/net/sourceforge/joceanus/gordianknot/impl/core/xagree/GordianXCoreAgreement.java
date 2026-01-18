@@ -20,7 +20,15 @@ import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementType;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.cert.GordianCertificate;
+import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamCipher;
+import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamCipherSpec;
+import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymCipher;
+import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymCipherSpec;
+import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
+import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairType;
+import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
+import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.gordianknot.api.xagree.GordianXAgreement;
 import net.sourceforge.joceanus.gordianknot.api.xagree.GordianXAgreementParams;
@@ -129,6 +137,48 @@ public class GordianXCoreAgreement
         return theState.getResult();
     }
 
+    @Override
+    public GordianFactory getFactoryResult() {
+        return GordianXAgreementStatus.RESULT_AVAILABLE.equals(theState.getStatus())
+                && theState.getResultType() instanceof GordianFactoryType
+                ? (GordianFactory) theState.getResult() : null;
+    }
+
+    @Override
+    public GordianKeySet getKeySetResult() {
+        return GordianXAgreementStatus.RESULT_AVAILABLE.equals(theState.getStatus())
+                && theState.getResultType() instanceof GordianKeySetSpec
+                ? (GordianKeySet) theState.getResult() : null;
+    }
+
+    @Override
+    public GordianSymCipher[] getSymCipherPairResult() {
+        return GordianXAgreementStatus.RESULT_AVAILABLE.equals(theState.getStatus())
+                && theState.getResultType() instanceof GordianSymCipherSpec
+                ? (GordianSymCipher[]) theState.getResult() : null;
+    }
+
+    @Override
+    public GordianStreamCipher[] getStreamCipherPairResult() {
+        return GordianXAgreementStatus.RESULT_AVAILABLE.equals(theState.getStatus())
+                && theState.getResultType() instanceof GordianStreamCipherSpec
+                ? (GordianStreamCipher[]) theState.getResult() : null;
+    }
+
+    @Override
+    public byte[] getByteArrayResult() {
+        return GordianXAgreementStatus.RESULT_AVAILABLE.equals(theState.getStatus())
+                && theState.getResultType() instanceof Integer
+                ? (byte[]) theState.getResult() : null;
+    }
+
+    @Override
+    public GordianException getRejectionResult() {
+        return GordianXAgreementStatus.RESULT_AVAILABLE.equals(theState.getStatus())
+                && theState.getResultType() instanceof String
+                ? (GordianException) theState.getResult() : null;
+    }
+
     /**
      * Check status.
      *
@@ -141,6 +191,20 @@ public class GordianXCoreAgreement
         if (myStatus != pStatus) {
             throw new GordianLogicException("Invalid State: " + myStatus);
         }
+    }
+
+    /**
+     * Ask to fail signature during testing.
+     */
+    public void failSignature() {
+        theBuilder.failSignature();
+    }
+
+    /**
+     * Ask to fail confirmation during testing.
+     */
+    public void failConfirmation() {
+        theBuilder.failConfirmation();
     }
 
     /**
@@ -195,27 +259,8 @@ public class GordianXCoreAgreement
                 .setSignerCertificate(pSigner);
     }
 
-    /**
-     * Set parameters.
-     *
-     * @param pParams the parameters
-     * @throws GordianException on error
-     */
-    void setParameters(final GordianXCoreAgreementParams pParams) throws GordianException {
-        /* Set the details */
-        setClientCertificate(pParams.getClientCertificate());
-        setServerCertificate(pParams.getServerCertificate());
-        setResultType(pParams.getResultType());
-
-        /* Store additional data */
-        theState.setAdditionalData(pParams.getAdditionalData());
-
-        /* Update the parameters */
-        theParams = new GordianXCoreAgreementParams(pParams);
-    }
-
     @Override
-    public GordianXAgreement updateParams(final GordianXAgreementParams pParams) throws GordianException {
+    public void updateParams(final GordianXAgreementParams pParams) throws GordianException {
         /* Must be looking for serverPrivate */
         checkStatus(GordianXAgreementStatus.AWAITING_SERVERPRIVATE);
 
@@ -258,7 +303,6 @@ public class GordianXCoreAgreement
 
         /* Process the augmented clientHello and return the agreement */
         processClientHello();
-        return this;
     }
 
     @Override
@@ -275,6 +319,11 @@ public class GordianXCoreAgreement
 
         /* Set result available */
         theBuilder.setStatus(GordianXAgreementStatus.RESULT_AVAILABLE);
+    }
+
+    @Override
+    public boolean isRejected() {
+        return theBuilder.isRejected();
     }
 
     /**
@@ -395,18 +444,19 @@ public class GordianXCoreAgreement
         checkStatus(GordianXAgreementStatus.AWAITING_SERVERHELLO);
 
         /* Parse the serverHello */
-        theBuilder.parseServerHello(pServerHello);
+        final boolean bSuccess = theBuilder.parseServerHello(pServerHello);
+        if (bSuccess) {
+            /* Copy ephemerals to keyPairs for signed */
+            if (theSpec.getAgreementType().isSigned()) {
+                theBuilder.copyEphemerals();
+            }
 
-        /* Copy ephemerals to keyPairs for signed */
-        if (theSpec.getAgreementType().isSigned()) {
-            theBuilder.copyEphemerals();
+            /* Process the serverHello */
+            theEngine.processServerHello();
         }
 
-        /* If we have no error */
-        theEngine.processServerHello();
-
         /* If we need to send confirm */
-        if (Boolean.TRUE.equals(theSpec.withConfirm())) {
+        if (bSuccess && Boolean.TRUE.equals(theSpec.withConfirm())) {
             /* Build the new clientConfirm */
             setNextMessage(theBuilder.newClientConfirm());
         } else {
@@ -429,10 +479,10 @@ public class GordianXCoreAgreement
         checkStatus(GordianXAgreementStatus.AWAITING_CLIENTCONFIRM);
 
         /* Parse the clientConfirm */
-        theBuilder.parseClientConfirm(pClientConfirm);
-
-        /* If we have no error */
-        theEngine.processClientConfirm();
+        if (theBuilder.parseClientConfirm(pClientConfirm)) {
+            /* Process if we have no error */
+            theEngine.processClientConfirm();
+        }
 
         /* Update status */
         setNextMessage(null);
