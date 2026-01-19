@@ -36,6 +36,7 @@ import net.sourceforge.joceanus.gordianknot.impl.core.xagree.GordianXCoreAgreeme
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPair.JcaPrivateKey;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPair.JcaPublicKey;
 import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
+import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x9.X9ObjectIdentifiers;
 import org.bouncycastle.jcajce.SecretKeyWithEncapsulation;
@@ -177,7 +178,7 @@ public final class JcaXAgreement {
                 final GordianKeyPairSpec mySpec = getSpec().getKeyPairSpec();
                 final JcaPublicKey myPublic = new JcaPublicKey(mySpec, myKey);
                 final JcaKeyPair myEphemeral = new JcaKeyPair(myPublic);
-                setClientEphemeral(myEphemeral);
+                setClientEphemeralAsEncapsulated(myEphemeral);
 
                 /* Store secret */
                 storeSecret(theAgreement.generateSecret());
@@ -508,11 +509,6 @@ public final class JcaXAgreement {
                           final GordianAgreementSpec pSpec) throws GordianException {
             /* Invoke underlying constructor */
             super(pFactory, pSpec);
-
-            /* Enable derivation for NewHope */
-            if (GordianKeyPairType.NEWHOPE.equals(pSpec.getKeyPairSpec().getKeyPairType())) {
-                enableDerivation();
-            }
         }
 
         @Override
@@ -599,6 +595,16 @@ public final class JcaXAgreement {
                     return new AlgorithmIdentifier(X9ObjectIdentifiers.id_kdf_kdf3, new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha256));
                 case SHA512CKDF:
                     return new AlgorithmIdentifier(X9ObjectIdentifiers.id_kdf_kdf3, new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha512));
+                case SHA256HKDF:
+                    return new AlgorithmIdentifier(PKCSObjectIdentifiers.id_alg_hkdf_with_sha256, null);
+                case SHA512HKDF:
+                    return new AlgorithmIdentifier(PKCSObjectIdentifiers.id_alg_hkdf_with_sha512, null);
+                case KMAC128:
+                    return new AlgorithmIdentifier(NISTObjectIdentifiers.id_Kmac128, null);
+                case KMAC256:
+                    return new AlgorithmIdentifier(NISTObjectIdentifiers.id_Kmac256, null);
+                case SHAKE256:
+                    return new AlgorithmIdentifier(NISTObjectIdentifiers.id_shake256, null);
                 case NONE:
                 default:
                     return null;
@@ -688,6 +694,10 @@ public final class JcaXAgreement {
                 return pBase + "withSHA256CKDF";
             case SHA512CKDF:
                 return pBase + "withSHA512CKDF";
+            case SHA256HKDF:
+                return pBase + "withSHA256HKDF";
+            case SHA512HKDF:
+                return pBase + "withSHA512HKDF";
             default:
                 throw new GordianDataException(GordianBaseData.getInvalidText(pAgreementSpec));
         }

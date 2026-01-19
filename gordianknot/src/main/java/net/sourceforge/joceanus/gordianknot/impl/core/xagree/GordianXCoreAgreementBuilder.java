@@ -24,6 +24,7 @@ import net.sourceforge.joceanus.gordianknot.api.cert.GordianCertificate;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpec;
@@ -320,15 +321,14 @@ public class GordianXCoreAgreementBuilder {
     }
 
     /**
-     * Set the client ephemeral.
+     * Set the client ephemeral as Encapsulated.
      *
      * @param pEphemeral the keyPair
      * @throws GordianException on error
      */
-    public void setClientEphemeral(final GordianKeyPair pEphemeral) throws GordianException {
-        theState.getClient()
-                .setEphemeralKeyPair(pEphemeral)
-                .setEphemeralKeySpec(theKeyPairGenerator.getX509Encoding(pEphemeral));
+    public void setClientEphemeralAsEncapsulated(final GordianKeyPair pEphemeral) throws GordianException {
+        final X509EncodedKeySpec myKeySpec = theKeyPairGenerator.getX509Encoding(pEphemeral);
+        theState.setEncapsulated(myKeySpec.getEncoded());
     }
 
     /**
@@ -349,15 +349,6 @@ public class GordianXCoreAgreementBuilder {
     void copyEphemerals() {
         theState.getClient().copyEphemeral();
         theState.getServer().copyEphemeral();
-    }
-
-    /**
-     * Set the encapsulated message.
-     *
-     * @param pEncapsulated the message
-     */
-    public void setEncapsulated(final byte[] pEncapsulated) {
-        theState.setEncapsulated(pEncapsulated);
     }
 
     /**
@@ -527,8 +518,8 @@ public class GordianXCoreAgreementBuilder {
         final GordianXCoreAgreementParticipant myServer = theState.getServer();
 
         /* Set standard details */
-        theState.setResultType(theSupplier.getResultTypeForIdentifier(pClientHello.getResultId()))
-                .setEncapsulated(pClientHello.getEncapsulated());
+        theState.setResultType(theSupplier.getResultTypeForIdentifier(pClientHello.getResultId()));
+        parseEncapsulated(pClientHello.getEncapsulated());
 
         /* Store client details */
         myClient.setId(pClientHello.getClientId())
@@ -617,6 +608,23 @@ public class GordianXCoreAgreementBuilder {
 
         /* Store client details */
         return setClientConfirm(pClientConfirm.getConfirmation());
+    }
+
+    /**
+     * Parse the clientHello.
+     *
+     * @param pEncapsulated the encapsulated
+     * @throws GordianException on error
+     */
+    void parseEncapsulated(final byte[] pEncapsulated) throws GordianException {
+        if (pEncapsulated != null
+                && GordianKeyPairType.NEWHOPE.equals(theState.getSpec().getKeyPairSpec().getKeyPairType())) {
+            final GordianKeyPair myKeyPair
+                    = theKeyPairGenerator.derivePublicOnlyKeyPair(new X509EncodedKeySpec(pEncapsulated));
+            theState.getClient().setEphemeralKeyPair(myKeyPair);
+        } else {
+            theState.setEncapsulated(pEncapsulated);
+        }
     }
 
     /**

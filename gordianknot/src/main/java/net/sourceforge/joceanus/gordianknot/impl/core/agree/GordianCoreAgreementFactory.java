@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * GordianKnot: Security Suite
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,7 +13,7 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.gordianknot.impl.core.agree;
 
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreement;
@@ -75,6 +75,7 @@ public abstract class GordianCoreAgreementFactory
 
     /**
      * Obtain the factory.
+     *
      * @return the factory
      */
     protected GordianBaseFactory getFactory() {
@@ -123,6 +124,7 @@ public abstract class GordianCoreAgreementFactory
 
     /**
      * Check the agreementSpec.
+     *
      * @param pAgreementSpec the agreementSpec
      * @throws GordianException on error
      */
@@ -135,6 +137,7 @@ public abstract class GordianCoreAgreementFactory
 
     /**
      * Obtain the nextId.
+     *
      * @return the nextId
      */
     Integer getNextId() {
@@ -199,7 +202,7 @@ public abstract class GordianCoreAgreementFactory
 
             /* Check confirmation */
             if (Boolean.TRUE.equals(pAgreementSpec.withConfirm())
-                && !pAgreementSpec.getAgreementType().canConfirm()) {
+                    && !pAgreementSpec.getAgreementType().canConfirm()) {
                 return false;
             }
 
@@ -214,6 +217,7 @@ public abstract class GordianCoreAgreementFactory
 
     /**
      * Obtain Identifier for AgreementSpec.
+     *
      * @param pSpec the agreementSpec.
      * @return the Identifier
      */
@@ -223,6 +227,7 @@ public abstract class GordianCoreAgreementFactory
 
     /**
      * Obtain AgreementSpec for Identifier.
+     *
      * @param pIdentifier the identifier.
      * @return the agreementSpec (or null if not found)
      */
@@ -232,6 +237,7 @@ public abstract class GordianCoreAgreementFactory
 
     /**
      * Obtain the agreement algorithm Ids.
+     *
      * @return the agreement Algorithm Ids
      */
     public GordianAgreementAlgId getAlgorithmIds() {
@@ -257,6 +263,7 @@ public abstract class GordianCoreAgreementFactory
 
     /**
      * Obtain a list of all possible agreements for the keyPairSpec.
+     *
      * @param pKeyPairSpec the keyPairSpec
      * @return the list
      */
@@ -267,15 +274,13 @@ public abstract class GordianCoreAgreementFactory
         /* Switch on keyPairType */
         switch (pKeyPairSpec.getKeyPairType()) {
             case RSA:
+            case MLKEM:
                 myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.KEM));
                 break;
             case NEWHOPE:
-                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.ANON));
-                break;
             case CMCE:
             case FRODO:
             case SABER:
-            case MLKEM:
             case HQC:
             case BIKE:
             case NTRU:
@@ -334,7 +339,8 @@ public abstract class GordianCoreAgreementFactory
 
     /**
      * Create list of KDF variants.
-     * @param pKeyPairSpec the keyPairSpec
+     *
+     * @param pKeyPairSpec   the keyPairSpec
      * @param pAgreementType the agreementType
      * @return the list
      */
@@ -351,9 +357,10 @@ public abstract class GordianCoreAgreementFactory
 
     /**
      * Create list of KDF variants.
-     * @param pKeyPairSpec the keyPairSpec
+     *
+     * @param pKeyPairSpec   the keyPairSpec
      * @param pAgreementType the agreementType
-     * @param pConfirm with key confirmation
+     * @param pConfirm       with key confirmation
      * @return the list
      */
     public static List<GordianAgreementSpec> listAllKDFs(final GordianKeyPairSpec pKeyPairSpec,

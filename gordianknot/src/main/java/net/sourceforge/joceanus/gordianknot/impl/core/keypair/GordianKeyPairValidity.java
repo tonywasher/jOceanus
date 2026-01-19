@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * GordianKnot: Security Suite
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,7 +13,7 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.gordianknot.impl.core.keypair;
 
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementFactory;
@@ -57,6 +57,7 @@ public final class GordianKeyPairValidity {
 
     /**
      * Check keyPair validity.
+     *
      * @param pFactory the factory
      * @param pKeyPair the keyPair
      * @throws GordianException on error
@@ -77,8 +78,9 @@ public final class GordianKeyPairValidity {
 
     /**
      * Check keyPair validity via signature.
-     * @param pFactory the factory
-     * @param pKeyPair the keyPair
+     *
+     * @param pFactory  the factory
+     * @param pKeyPair  the keyPair
      * @param pSignSpec the signature spec
      * @throws GordianException on error
      */
@@ -108,8 +110,9 @@ public final class GordianKeyPairValidity {
 
     /**
      * Check keyPair validity via encryption.
-     * @param pFactory the factory
-     * @param pKeyPair the keyPair
+     *
+     * @param pFactory     the factory
+     * @param pKeyPair     the keyPair
      * @param pEncryptSpec the encryption spec
      * @throws GordianException on error
      */
@@ -139,8 +142,9 @@ public final class GordianKeyPairValidity {
 
     /**
      * Check keyPair validity via agreement.
-     * @param pFactory the factory
-     * @param pKeyPair the keyPair
+     *
+     * @param pFactory   the factory
+     * @param pKeyPair   the keyPair
      * @param pAgreeSpec the agreementSpec
      * @throws GordianException on error
      */
@@ -168,6 +172,7 @@ public final class GordianKeyPairValidity {
 
     /**
      * Obtain validity check for keyPair.
+     *
      * @param pFactory the factory
      * @param pKeyPair the keyPair
      * @return the validity check
@@ -196,7 +201,6 @@ public final class GordianKeyPairValidity {
             case ELGAMAL:
                 return GordianEncryptorSpecBuilder.elGamal(GordianDigestSpecBuilder.sha2(GordianLength.LEN_512));
             case DH:
-            case NEWHOPE:
                 return GordianAgreementSpecBuilder.anon(mySpec, GordianKDFType.SHA256KDF);
             case XDH:
                 return mySpec.getEdwardsElliptic().is25519()
@@ -210,6 +214,7 @@ public final class GordianKeyPairValidity {
             case BIKE:
             case NTRU:
             case NTRUPRIME:
+            case NEWHOPE:
                 return GordianAgreementSpecBuilder.kem(mySpec, GordianKDFType.NONE);
             default:
                 return null;

@@ -196,7 +196,8 @@ public class GordianXCoreAgreementComposite extends GordianXCoreAgreementEngine 
         /* Loop through the engines */
         for (GordianXCoreAgreementEngine myEngine : theEngines) {
             /* Access engine details */
-            final GordianXCoreAgreementState myEngState = myEngine.getBuilder().getState();
+            final GordianXCoreAgreementBuilder myEngBuilder = myEngine.getBuilder();
+            final GordianXCoreAgreementState myEngState = myEngBuilder.getState();
             final GordianXCoreAgreementParticipant myEngClient = myEngState.getClient();
             final GordianXCoreAgreementParticipant myEngServer = myEngState.getServer();
 
@@ -207,7 +208,7 @@ public class GordianXCoreAgreementComposite extends GordianXCoreAgreementEngine 
             myEngServer.setInitVector(myServer.getInitVector());
             myEngClient.setEphemeralKeyPair(myClientEphemeralKeyPair == null ? null : myClientEphemeralIterator.next());
             myEngServer.setEphemeralKeyPair(myServerEphemeralKeyPair == null ? null : myServerEphemeralIterator.next());
-            myEngState.setEncapsulated(enEnc == null ? null : ASN1OctetString.getInstance(enEnc.nextElement()).getOctets());
+            myEngBuilder.parseEncapsulated(enEnc == null ? null : ASN1OctetString.getInstance(enEnc.nextElement()).getOctets());
 
             /* Process clientHello details in the engine */
             myEngine.processClientHello();

@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * GordianKnot: Security Suite
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,7 +13,7 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.gordianknot.impl.jca;
 
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
@@ -21,8 +21,8 @@ import net.sourceforge.joceanus.gordianknot.api.agree.GordianKDFType;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeyType;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairType;
@@ -81,8 +81,9 @@ public final class JcaAgreement {
 
         /**
          * Constructor.
-         * @param pFactory the security factory
-         * @param pSpec the agreementSpec
+         *
+         * @param pFactory   the security factory
+         * @param pSpec      the agreementSpec
          * @param pAgreement the agreement
          */
         JcaEncapsulationAgreement(final GordianBaseFactory pFactory,
@@ -163,8 +164,9 @@ public final class JcaAgreement {
 
         /**
          * Constructor.
-         * @param pFactory the security factory
-         * @param pSpec the agreementSpec
+         *
+         * @param pFactory   the security factory
+         * @param pSpec      the agreementSpec
          * @param pGenerator the generator
          */
         JcaPostQuantumAgreement(final GordianBaseFactory pFactory,
@@ -239,8 +241,9 @@ public final class JcaAgreement {
 
         /**
          * Constructor.
-         * @param pFactory the security factory
-         * @param pSpec the agreementSpec
+         *
+         * @param pFactory   the security factory
+         * @param pSpec      the agreementSpec
          * @param pAgreement the agreement
          */
         JcaAnonymousAgreement(final GordianBaseFactory pFactory,
@@ -287,9 +290,8 @@ public final class JcaAgreement {
                 storeSecret(theAgreement.generateSecret());
                 return myClientHello;
 
-
             } catch (InvalidKeyException
-                    | InvalidAlgorithmParameterException e) {
+                     | InvalidAlgorithmParameterException e) {
                 throw new GordianCryptoException(ERR_AGREEMENT, e);
             }
         }
@@ -328,13 +330,14 @@ public final class JcaAgreement {
                 storeSecret(theAgreement.generateSecret());
 
             } catch (InvalidKeyException
-                    | InvalidAlgorithmParameterException e) {
+                     | InvalidAlgorithmParameterException e) {
                 throw new GordianCryptoException(ERR_AGREEMENT, e);
             }
         }
 
         /**
          * Establish the agreement.
+         *
          * @param pKeyPair the keyPair
          * @throws GordianException on error
          */
@@ -359,8 +362,9 @@ public final class JcaAgreement {
 
         /**
          * Constructor.
-         * @param pFactory the security factory
-         * @param pSpec the agreementSpec
+         *
+         * @param pFactory   the security factory
+         * @param pSpec      the agreementSpec
          * @param pAgreement the agreement
          */
         JcaBasicAgreement(final GordianBaseFactory pFactory,
@@ -408,7 +412,7 @@ public final class JcaAgreement {
                 return buildServerHello();
 
             } catch (InvalidKeyException
-                    | InvalidAlgorithmParameterException e) {
+                     | InvalidAlgorithmParameterException e) {
                 throw new GordianCryptoException(ERR_AGREEMENT, e);
             }
         }
@@ -442,13 +446,14 @@ public final class JcaAgreement {
                 storeSecret(theAgreement.generateSecret());
 
             } catch (InvalidKeyException
-                    | InvalidAlgorithmParameterException e) {
+                     | InvalidAlgorithmParameterException e) {
                 throw new GordianCryptoException(ERR_AGREEMENT, e);
             }
         }
 
         /**
          * Establish the agreement.
+         *
          * @param pKeyPair the keyPair
          * @throws GordianException on error
          */
@@ -473,8 +478,9 @@ public final class JcaAgreement {
 
         /**
          * Constructor.
-         * @param pFactory the security factory
-         * @param pSpec the agreementSpec
+         *
+         * @param pFactory   the security factory
+         * @param pSpec      the agreementSpec
          * @param pAgreement the agreement
          */
         JcaSignedAgreement(final GordianBaseFactory pFactory,
@@ -516,7 +522,7 @@ public final class JcaAgreement {
                 return buildServerHelloASN1(pServer);
 
             } catch (InvalidKeyException
-                    | InvalidAlgorithmParameterException e) {
+                     | InvalidAlgorithmParameterException e) {
                 throw new GordianCryptoException(ERR_AGREEMENT, e);
             }
         }
@@ -547,13 +553,14 @@ public final class JcaAgreement {
                 storeSecret(theAgreement.generateSecret());
 
             } catch (InvalidKeyException
-                    | InvalidAlgorithmParameterException e) {
+                     | InvalidAlgorithmParameterException e) {
                 throw new GordianCryptoException(ERR_AGREEMENT, e);
             }
         }
 
         /**
          * Establish the agreement.
+         *
          * @param pKeyPair the keyPair
          * @throws GordianException on error
          */
@@ -578,8 +585,9 @@ public final class JcaAgreement {
 
         /**
          * Constructor.
-         * @param pFactory the security factory
-         * @param pSpec the agreementSpec
+         *
+         * @param pFactory   the security factory
+         * @param pSpec      the agreementSpec
          * @param pAgreement the agreement
          */
         JcaUnifiedAgreement(final GordianBaseFactory pFactory,
@@ -624,7 +632,7 @@ public final class JcaAgreement {
                 return buildServerHello();
 
             } catch (InvalidKeyException
-                    | InvalidAlgorithmParameterException e) {
+                     | InvalidAlgorithmParameterException e) {
                 throw new GordianCryptoException(ERR_AGREEMENT, e);
             }
         }
@@ -661,13 +669,14 @@ public final class JcaAgreement {
                 return buildClientConfirmASN1();
 
             } catch (InvalidKeyException
-                    | InvalidAlgorithmParameterException e) {
+                     | InvalidAlgorithmParameterException e) {
                 throw new GordianCryptoException(ERR_AGREEMENT, e);
             }
         }
 
         /**
          * Establish the agreement.
+         *
          * @param pKeyPair the keyPair
          * @throws GordianException on error
          */
@@ -692,8 +701,9 @@ public final class JcaAgreement {
 
         /**
          * Constructor.
-         * @param pFactory the security factory
-         * @param pSpec the agreementSpec
+         *
+         * @param pFactory   the security factory
+         * @param pSpec      the agreementSpec
          * @param pAgreement the agreement
          */
         JcaMQVAgreement(final GordianBaseFactory pFactory,
@@ -735,7 +745,7 @@ public final class JcaAgreement {
                 return buildServerHello();
 
             } catch (InvalidKeyException
-                    | InvalidAlgorithmParameterException e) {
+                     | InvalidAlgorithmParameterException e) {
                 throw new GordianCryptoException(ERR_AGREEMENT, e);
             }
         }
@@ -769,7 +779,7 @@ public final class JcaAgreement {
                 return buildClientConfirmASN1();
 
             } catch (InvalidKeyException
-                    | InvalidAlgorithmParameterException e) {
+                     | InvalidAlgorithmParameterException e) {
                 throw new GordianCryptoException(ERR_AGREEMENT, e);
             }
         }
@@ -777,7 +787,8 @@ public final class JcaAgreement {
 
     /**
      * Obtain the agreement name.
-     * @param pBase the base agreement
+     *
+     * @param pBase          the base agreement
      * @param pAgreementSpec the agreementSpec
      * @return the full agreement name
      * @throws GordianException on error
@@ -802,7 +813,8 @@ public final class JcaAgreement {
 
     /**
      * Create the BouncyCastle KeyFactory via JCA.
-     * @param pAlgorithm the Algorithm
+     *
+     * @param pAlgorithm  the Algorithm
      * @param postQuantum is this a postQuantum algorithm?
      * @return the KeyFactory
      * @throws GordianException on error
@@ -825,6 +837,7 @@ public final class JcaAgreement {
 
     /**
      * Create the BouncyCastle KeyGenerator via JCA.
+     *
      * @param pSpec the KeySpec
      * @return the KeyFactory
      * @throws GordianException on error

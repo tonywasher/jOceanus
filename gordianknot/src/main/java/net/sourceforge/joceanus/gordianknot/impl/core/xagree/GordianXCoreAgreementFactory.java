@@ -313,9 +313,11 @@ public abstract class GordianXCoreAgreementFactory
             switch (pAgreementSpec.getKDFType()) {
                 case SHA256KDF:
                 case SHA256CKDF:
+                case SHA256HKDF:
                     return myEdwards.is25519();
                 case SHA512KDF:
                 case SHA512CKDF:
+                case SHA512HKDF:
                     return !myEdwards.is25519();
                 default:
                     break;
@@ -411,8 +413,6 @@ public abstract class GordianXCoreAgreementFactory
                 myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.KEM));
                 break;
             case NEWHOPE:
-                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.ANON));
-                break;
             case CMCE:
             case FRODO:
             case SABER:

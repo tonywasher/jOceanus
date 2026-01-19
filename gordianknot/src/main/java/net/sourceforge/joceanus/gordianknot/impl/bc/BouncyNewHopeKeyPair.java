@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * GordianKnot: Security Suite
- * Copyright 2012,2022 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,13 +13,13 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.gordianknot.impl.bc;
 
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianRSAModulus;
@@ -69,7 +69,8 @@ public final class BouncyNewHopeKeyPair {
             extends BouncyPublicKey<NHPublicKeyParameters> {
         /**
          * Constructor.
-         * @param pKeySpec the keySpec
+         *
+         * @param pKeySpec   the keySpec
          * @param pPublicKey the public key
          */
         BouncyNewHopePublicKey(final GordianKeyPairSpec pKeySpec,
@@ -95,7 +96,8 @@ public final class BouncyNewHopeKeyPair {
             extends BouncyPrivateKey<NHPrivateKeyParameters> {
         /**
          * Constructor.
-         * @param pKeySpec the keySpec
+         *
+         * @param pKeySpec    the keySpec
          * @param pPrivateKey the private key
          */
         BouncyNewHopePrivateKey(final GordianKeyPairSpec pKeySpec,
@@ -126,6 +128,7 @@ public final class BouncyNewHopeKeyPair {
 
         /**
          * Constructor.
+         *
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
          */
@@ -219,6 +222,7 @@ public final class BouncyNewHopeKeyPair {
 
         /**
          * Derive public key from encoded.
+         *
          * @param pEncodedKey the encoded key
          * @return the public key
          * @throws GordianException on error
@@ -247,8 +251,9 @@ public final class BouncyNewHopeKeyPair {
             extends GordianCoreAnonymousAgreement {
         /**
          * Constructor.
+         *
          * @param pFactory the security factory
-         * @param pSpec the agreementSpec
+         * @param pSpec    the agreementSpec
          */
         BouncyNewHopeAgreement(final GordianBaseFactory pFactory,
                                final GordianAgreementSpec pSpec) {
@@ -325,8 +330,9 @@ public final class BouncyNewHopeKeyPair {
             extends BouncyXAgreementBase {
         /**
          * Constructor.
+         *
          * @param pFactory the security factory
-         * @param pSpec the agreementSpec
+         * @param pSpec    the agreementSpec
          * @throws GordianException on error
          */
         BouncyNewHopeXAgreementEngine(final GordianXCoreAgreementFactory pFactory,
@@ -346,7 +352,7 @@ public final class BouncyNewHopeKeyPair {
             final GordianKeyPairSpec mySpec = getSpec().getKeyPairSpec();
             final BouncyNewHopePublicKey myPublic = new BouncyNewHopePublicKey(mySpec, (NHPublicKeyParameters) myPair.getPublicKey());
             final BouncyKeyPair myEphemeral = new BouncyKeyPair(myPublic);
-            setClientEphemeral(myEphemeral);
+            setClientEphemeralAsEncapsulated(myEphemeral);
 
             /* Store secret */
             storeSecret(myPair.getSharedValue());

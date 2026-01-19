@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * GordianKnot: Security Suite
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,10 +13,9 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.gordianknot.junit.regression;
 
-import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementFactory;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementType;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
@@ -26,10 +25,9 @@ import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianAsyncFactory;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryType;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianCMCESpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianDHGroup;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianDSAElliptic;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianFRODOSpec;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianFalconSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
@@ -49,6 +47,7 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianXMSSKeySpec.Gordi
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureFactory;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureType;
+import net.sourceforge.joceanus.gordianknot.api.xagree.GordianXAgreementFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPairFactory;
 import org.junit.jupiter.api.BeforeAll;
@@ -87,9 +86,9 @@ class AsymmetricStore {
         final String myBuildType = System.getProperty("joceanus.fullBuild");
         if (myBuildType != null) {
             /* Test everything */
-            allSpecs=true;
-            theSigType=null;
-            theKeyType=null;
+            allSpecs = true;
+            theSigType = null;
+            theKeyType = null;
 
             /* else allow further configuration */
         } else {
@@ -164,6 +163,7 @@ class AsymmetricStore {
 
         /**
          * Constructor.
+         *
          * @param pFactory the factory
          * @param pPartner the partner factory
          * @param pKeySpec the keySpec
@@ -184,12 +184,13 @@ class AsymmetricStore {
 
             /* Check whether the keySpec is supported by the partner */
             thePartner = pPartner.getAsyncFactory().getKeyPairFactory().supportedKeyPairSpecs().test(pKeySpec)
-                         ? pPartner.getAsyncFactory()
-                         : null;
+                    ? pPartner.getAsyncFactory()
+                    : null;
         }
 
         /**
          * Obtain the factoryType.
+         *
          * @return the factoryType
          */
         GordianFactoryType getFactoryType() {
@@ -198,6 +199,7 @@ class AsymmetricStore {
 
         /**
          * Obtain the factory.
+         *
          * @return the factory
          */
         GordianAsyncFactory getFactory() {
@@ -206,6 +208,7 @@ class AsymmetricStore {
 
         /**
          * Obtain the partner factory.
+         *
          * @return the factory
          */
         GordianAsyncFactory getPartner() {
@@ -214,6 +217,7 @@ class AsymmetricStore {
 
         /**
          * Obtain the keySpec.
+         *
          * @return the keySpec
          */
         GordianKeyPairSpec getKeySpec() {
@@ -222,6 +226,7 @@ class AsymmetricStore {
 
         /**
          * Obtain the keyPairs for the FactoryKeySpec
+         *
          * @return the keyPairs
          */
         FactoryKeyPairs getKeyPairs() {
@@ -230,6 +235,7 @@ class AsymmetricStore {
 
         /**
          * Obtain the signatureList.
+         *
          * @return the signature list
          */
         List<FactorySignature> getSignatures() {
@@ -238,6 +244,7 @@ class AsymmetricStore {
 
         /**
          * Obtain the agreementList.
+         *
          * @return the agreement list
          */
         List<FactoryAgreement> getAgreements() {
@@ -246,6 +253,7 @@ class AsymmetricStore {
 
         /**
          * Obtain the encryptorList.
+         *
          * @return the encryptor list
          */
         List<FactoryEncryptor> getEncryptors() {
@@ -315,6 +323,7 @@ class AsymmetricStore {
 
         /**
          * Constructor.
+         *
          * @param pOwner the owner
          */
         FactoryKeyPairs(final FactoryKeySpec pOwner) {
@@ -323,6 +332,7 @@ class AsymmetricStore {
 
         /**
          * Obtain (or create) the keyPair for the FactoryKeySpec
+         *
          * @return the keyPair
          * @throws GordianException on error
          */
@@ -352,6 +362,7 @@ class AsymmetricStore {
 
         /**
          * Obtain the X509 encoding.
+         *
          * @return the encoding
          * @throws GordianException on error
          */
@@ -363,6 +374,7 @@ class AsymmetricStore {
 
         /**
          * Obtain the PKCS8 encoding.
+         *
          * @return the encoding
          * @throws GordianException on error
          */
@@ -374,6 +386,7 @@ class AsymmetricStore {
 
         /**
          * Obtain (or create) the keyPair for the target
+         *
          * @return the keyPair
          * @throws GordianException on error
          */
@@ -403,6 +416,7 @@ class AsymmetricStore {
 
         /**
          * Obtain (or create) the mirror keyPair
+         *
          * @return the mirror keyPair
          * @throws GordianException on error
          */
@@ -437,6 +451,7 @@ class AsymmetricStore {
 
         /**
          * Obtain (or create) the partner Self keyPair
+         *
          * @return the partnerSelf keyPair
          * @throws GordianException on error
          */
@@ -444,7 +459,7 @@ class AsymmetricStore {
             /* Return partnerSelf keyPair if it exists */
             GordianKeyPair myPartnerSelf = thePartnerSelf;
             if (myPartnerSelf != null
-                 || theOwner.getPartner() == null) {
+                    || theOwner.getPartner() == null) {
                 return myPartnerSelf;
             }
 
@@ -474,6 +489,7 @@ class AsymmetricStore {
 
         /**
          * Obtain (or create) the partner Target keyPair
+         *
          * @return the partnerTarget keyPair
          * @throws GordianException on error
          */
@@ -526,7 +542,8 @@ class AsymmetricStore {
 
         /**
          * Constructor.
-         * @param pOwner the owner
+         *
+         * @param pOwner    the owner
          * @param pSignSpec the signatureSpec
          */
         FactorySignature(final FactoryKeySpec pOwner,
@@ -537,6 +554,7 @@ class AsymmetricStore {
 
         /**
          * Obtain the owner.
+         *
          * @return the owner
          */
         FactoryKeySpec getOwner() {
@@ -545,6 +563,7 @@ class AsymmetricStore {
 
         /**
          * Obtain the spec.
+         *
          * @return the spec
          */
         GordianSignatureSpec getSpec() {
@@ -573,7 +592,8 @@ class AsymmetricStore {
 
         /**
          * Constructor.
-         * @param pOwner the owner
+         *
+         * @param pOwner     the owner
          * @param pAgreeSpec the agreementSpec
          */
         FactoryAgreement(final FactoryKeySpec pOwner,
@@ -584,6 +604,7 @@ class AsymmetricStore {
 
         /**
          * Obtain the owner.
+         *
          * @return the owner
          */
         FactoryKeySpec getOwner() {
@@ -592,6 +613,7 @@ class AsymmetricStore {
 
         /**
          * Obtain the spec.
+         *
          * @return the spec
          */
         GordianAgreementSpec getSpec() {
@@ -620,7 +642,8 @@ class AsymmetricStore {
 
         /**
          * Constructor.
-         * @param pOwner the owner
+         *
+         * @param pOwner       the owner
          * @param pEncryptSpec the encryptorSpec
          */
         FactoryEncryptor(final FactoryKeySpec pOwner,
@@ -631,6 +654,7 @@ class AsymmetricStore {
 
         /**
          * Obtain the owner.
+         *
          * @return the owner
          */
         FactoryKeySpec getOwner() {
@@ -639,6 +663,7 @@ class AsymmetricStore {
 
         /**
          * Obtain the spec.
+         *
          * @return the spec
          */
         GordianEncryptorSpec getSpec() {
@@ -653,6 +678,7 @@ class AsymmetricStore {
 
     /**
      * Obtain the list of KeySpecs to test for a given factory.
+     *
      * @param pFactory the factory
      * @param pPartner the partner
      * @return the list
@@ -678,6 +704,7 @@ class AsymmetricStore {
 
     /**
      * Obtain the list of KeySpecs to test for a given factory.
+     *
      * @param pFactory the factory
      * @param pPartner the partner
      * @param pKeyType the keyType
@@ -690,8 +717,8 @@ class AsymmetricStore {
         final List<FactoryKeySpec> myResult = new ArrayList<>();
         final GordianCoreKeyPairFactory myFactory = (GordianCoreKeyPairFactory) pFactory.getAsyncFactory().getKeyPairFactory();
         List<GordianKeyPairSpec> mySpecs = pKeyType == GordianKeyPairType.COMPOSITE
-                   ? compositeKeySpecProvider()
-                   : myFactory.listAllSupportedKeyPairSpecs(pKeyType);
+                ? compositeKeySpecProvider()
+                : myFactory.listAllSupportedKeyPairSpecs(pKeyType);
         for (GordianKeyPairSpec myKeySpec : mySpecs) {
             /* If the keyType is LMS */
             if (pKeyType == GordianKeyPairType.LMS) {
@@ -730,6 +757,7 @@ class AsymmetricStore {
 
     /**
      * Update the list of Signatures to test.
+     *
      * @param pKeySpec the keySpec
      */
     static void signatureProvider(final AsymmetricStore.FactoryKeySpec pKeySpec) {
@@ -740,8 +768,8 @@ class AsymmetricStore {
         final GordianAsyncFactory myFactory = pKeySpec.theFactory;
         final GordianSignatureFactory mySignFactory = myFactory.getSignatureFactory();
         final List<GordianSignatureSpec> mySignSpecs = pKeySpec.getKeySpec().getKeyPairType() == GordianKeyPairType.COMPOSITE
-                      ? compositeSignatureSpecProvider(pKeySpec)
-                      : mySignFactory.listAllSupportedSignatures(pKeySpec.theKeySpec.getKeyPairType());
+                ? compositeSignatureSpecProvider(pKeySpec)
+                : mySignFactory.listAllSupportedSignatures(pKeySpec.theKeySpec.getKeyPairType());
 
         /* Skip key if there are no possible signatures */
         if (mySignSpecs.isEmpty()) {
@@ -765,6 +793,7 @@ class AsymmetricStore {
 
     /**
      * Update the list of Agreements to test.
+     *
      * @param pKeySpec the keySpec
      */
     static void agreementProvider(final FactoryKeySpec pKeySpec) {
@@ -773,7 +802,7 @@ class AsymmetricStore {
 
         /* Access the list of possible agreements */
         final GordianAsyncFactory myFactory = pKeySpec.theFactory;
-        final GordianAgreementFactory myAgreeFactory = myFactory.getAgreementFactory();
+        final GordianXAgreementFactory myAgreeFactory = myFactory.getXAgreementFactory();
         final List<GordianAgreementSpec> myAgreeSpecs = pKeySpec.getKeySpec().getKeyPairType() == GordianKeyPairType.COMPOSITE
                 ? compositeAgreementSpecProvider(pKeySpec)
                 : myAgreeFactory.listAllSupportedAgreements(pKeySpec.theKeySpec);
@@ -794,6 +823,7 @@ class AsymmetricStore {
 
     /**
      * Update the list of Encryptors to test.
+     *
      * @param pKeySpec the keySpec
      */
     static void encryptorProvider(final FactoryKeySpec pKeySpec) {
@@ -823,31 +853,34 @@ class AsymmetricStore {
 
     /**
      * Composite keyPairSpec provider.
+     *
      * @return the list
      */
     private static List<GordianKeyPairSpec> compositeKeySpecProvider() {
         final List<GordianKeyPairSpec> myResult = new ArrayList<>();
         myResult.add(GordianKeyPairSpecBuilder.composite(GordianKeyPairSpecBuilder.rsa(GordianRSAModulus.MOD2048),
-                                                         GordianKeyPairSpecBuilder.ec(GordianDSAElliptic.SECP256R1),
-                                                         GordianKeyPairSpecBuilder.ed25519()));
+                GordianKeyPairSpecBuilder.falcon(GordianFalconSpec.FALCON512),
+                GordianKeyPairSpecBuilder.ed25519()));
         myResult.add(GordianKeyPairSpecBuilder.composite(GordianKeyPairSpecBuilder.dh(GordianDHGroup.FFDHE2048),
-                                                         GordianKeyPairSpecBuilder.ec(GordianDSAElliptic.SECP256R1)));
+                GordianKeyPairSpecBuilder.x25519(),
+                GordianKeyPairSpecBuilder.ec(GordianDSAElliptic.SECP256R1)));
         myResult.add(GordianKeyPairSpecBuilder.composite(GordianKeyPairSpecBuilder.sm2(GordianSM2Elliptic.SM2P256V1),
-                                                         GordianKeyPairSpecBuilder.ec(GordianDSAElliptic.SECP256R1)));
-        myResult.add(GordianKeyPairSpecBuilder.composite(GordianKeyPairSpecBuilder.cmce(GordianCMCESpec.BASE3488),
-                                                         GordianKeyPairSpecBuilder.frodo(GordianFRODOSpec.AES640),
-                                                         GordianKeyPairSpecBuilder.saber(GordianSABERSpec.BASE128)));
+                GordianKeyPairSpecBuilder.ec(GordianDSAElliptic.SECP256R1)));
+        myResult.add(GordianKeyPairSpecBuilder.composite(GordianKeyPairSpecBuilder.newHope(),
+                GordianKeyPairSpecBuilder.ec(GordianDSAElliptic.SECP256R1),
+                GordianKeyPairSpecBuilder.saber(GordianSABERSpec.BASE128)));
         myResult.add(GordianKeyPairSpecBuilder.composite(GordianKeyPairSpecBuilder.rsa(GordianRSAModulus.MOD2048),
-                                                         GordianKeyPairSpecBuilder.elGamal(GordianDHGroup.FFDHE2048),
-                                                         GordianKeyPairSpecBuilder.sm2(GordianSM2Elliptic.SM2P256V1)));
+                GordianKeyPairSpecBuilder.elGamal(GordianDHGroup.FFDHE2048),
+                GordianKeyPairSpecBuilder.sm2(GordianSM2Elliptic.SM2P256V1)));
         myResult.add(GordianKeyPairSpecBuilder.composite(GordianKeyPairSpecBuilder.xmss(GordianXMSSDigestType.SHA256, GordianXMSSHeight.H10),
-                                                         GordianKeyPairSpecBuilder.lms(new GordianLMSKeySpec(GordianLMSHash.SHA256, GordianLMSHeight.H5,
-                                                                                               GordianLMSWidth.W1, GordianLength.LEN_256))));
+                GordianKeyPairSpecBuilder.lms(new GordianLMSKeySpec(GordianLMSHash.SHA256, GordianLMSHeight.H5,
+                        GordianLMSWidth.W1, GordianLength.LEN_256))));
         return myResult;
     }
 
     /**
      * Composite signatureSpec provider.
+     *
      * @param pKeySpec the keySpec
      * @return the list
      */
@@ -860,6 +893,7 @@ class AsymmetricStore {
 
     /**
      * Composite encryptorSpec provider.
+     *
      * @param pKeySpec the keySpec
      * @return the list
      */
@@ -881,6 +915,7 @@ class AsymmetricStore {
 
     /**
      * Composite encryptorSpec provider.
+     *
      * @param pKeySpec the keySpec
      * @return the list
      */

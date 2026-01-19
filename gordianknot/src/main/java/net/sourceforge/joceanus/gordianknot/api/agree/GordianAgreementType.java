@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * GordianKnot: Security Suite
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,7 +13,7 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.gordianknot.api.agree;
 
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairType;
@@ -59,6 +59,7 @@ public enum GordianAgreementType {
 
     /**
      * Is this an anonymous agreement?
+     *
      * @return true/false
      */
     public boolean isAnonymous() {
@@ -73,6 +74,7 @@ public enum GordianAgreementType {
 
     /**
      * Is this a signed agreement?
+     *
      * @return true/false
      */
     public boolean isSigned() {
@@ -81,6 +83,7 @@ public enum GordianAgreementType {
 
     /**
      * Is this an confirmable agreement?
+     *
      * @return true/false
      */
     public boolean canConfirm() {
@@ -96,6 +99,7 @@ public enum GordianAgreementType {
 
     /**
      * Is this Agreement supported for this KeyPairType?
+     *
      * @param pKeyPairType the keyPair
      * @return true/false
      */
@@ -104,19 +108,27 @@ public enum GordianAgreementType {
             return true;
         }
         switch (this) {
-            case KEM:       return hasKEM(pKeyPairType);
-            case ANON:      return hasAnon(pKeyPairType);
+            case KEM:
+                return hasKEM(pKeyPairType);
+            case ANON:
+                return hasAnon(pKeyPairType);
             case BASIC:
-            case SIGNED:    return hasBasic(pKeyPairType);
-            case SM2:       return hasSM2(pKeyPairType);
-            case MQV:       return hasMQV(pKeyPairType);
-            case UNIFIED:   return hasUnified(pKeyPairType);
-            default:        return false;
+            case SIGNED:
+                return hasBasic(pKeyPairType);
+            case SM2:
+                return hasSM2(pKeyPairType);
+            case MQV:
+                return hasMQV(pKeyPairType);
+            case UNIFIED:
+                return hasUnified(pKeyPairType);
+            default:
+                return false;
         }
     }
 
     /**
      * Does the keyPairType have an KEM agreement?
+     *
      * @param pKeyPairType the keyPairType
      * @return true/false
      */
@@ -135,6 +147,7 @@ public enum GordianAgreementType {
             case BIKE:
             case NTRU:
             case NTRUPRIME:
+            case NEWHOPE:
                 return true;
             default:
                 return false;
@@ -143,6 +156,7 @@ public enum GordianAgreementType {
 
     /**
      * Does the keyPairType have an ANON agreement?
+     *
      * @param pKeyPairType the keyPairType
      * @return true/false
      */
@@ -154,7 +168,6 @@ public enum GordianAgreementType {
             case GOST2012:
             case DSTU4145:
             case XDH:
-            case NEWHOPE:
                 return true;
             default:
                 return false;
@@ -163,6 +176,7 @@ public enum GordianAgreementType {
 
     /**
      * Does the kKeyPairType have an SM2 agreement?
+     *
      * @param pKeyPairType the keyPairType
      * @return true/false
      */
@@ -179,6 +193,7 @@ public enum GordianAgreementType {
 
     /**
      * Does the keyPairType have a Basic agreement?
+     *
      * @param pKeyPairType the keyPairType
      * @return true/false
      */
@@ -188,15 +203,17 @@ public enum GordianAgreementType {
 
     /**
      * Does the keyPairType have a MQV agreement?
+     *
      * @param pKeyPairType the keyPairType
      * @return true/false
      */
     public static boolean hasMQV(final GordianKeyPairType pKeyPairType) {
-        return  pKeyPairType == GordianKeyPairType.DH || isEC(pKeyPairType);
+        return pKeyPairType == GordianKeyPairType.DH || isEC(pKeyPairType);
     }
 
     /**
      * Does the keyPairType have a Unified agreement?
+     *
      * @param pKeyPairType the keyPairType
      * @return true/false
      */
@@ -206,6 +223,7 @@ public enum GordianAgreementType {
 
     /**
      * Is the keyPairType EC/DH?
+     *
      * @param pKeyPairType the keyPairType
      * @return true/false
      */
@@ -225,6 +243,7 @@ public enum GordianAgreementType {
 
     /**
      * Is the keyPairType EC?
+     *
      * @param pKeyPairType the keyPairType
      * @return true/false
      */

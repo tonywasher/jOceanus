@@ -26,7 +26,6 @@ import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymCipher;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryType;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
@@ -499,13 +498,12 @@ public class GordianXCoreAgreement
      */
     private boolean needClientEphemeral() {
         switch (theSpec.getAgreementType()) {
+            case ANON:
             case SIGNED:
             case SM2:
             case MQV:
             case UNIFIED:
                 return true;
-            case ANON:
-                return !GordianKeyPairType.NEWHOPE.equals(theSpec.getKeyPairSpec().getKeyPairType());
             case KEM:
             case BASIC:
             default:

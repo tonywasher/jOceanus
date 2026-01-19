@@ -24,13 +24,12 @@ import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPair;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianPrivateKey;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianPublicKey;
+import net.sourceforge.joceanus.gordianknot.impl.core.xagree.GordianXCoreAgreementDerivation.GordianXCoreNullKeyDerivation;
 import org.bouncycastle.crypto.DerivationFunction;
-import org.bouncycastle.crypto.DerivationParameters;
 import org.bouncycastle.crypto.agreement.kdf.ConcatenationKDFGenerator;
 import org.bouncycastle.crypto.digests.SHA256Digest;
 import org.bouncycastle.crypto.digests.SHA512Digest;
 import org.bouncycastle.crypto.generators.KDF2BytesGenerator;
-import org.bouncycastle.crypto.params.KDFParameters;
 import org.bouncycastle.util.Arrays;
 
 import java.security.SecureRandom;
@@ -67,7 +66,7 @@ public abstract class GordianXCoreAgreementEngine {
     /**
      * The keyDerivation function.
      */
-    private DerivationFunction theKDF;
+    private GordianXCoreAgreementDerivation theKDF;
 
     /**
      * Constructor.
@@ -149,13 +148,13 @@ public abstract class GordianXCoreAgreementEngine {
     }
 
     /**
-     * Set client ephemeral keyPair.
+     * Set client ephemeral keyPair as Encapsulated.
      *
      * @param pEphemeral the ephemeral keyPair
      * @throws GordianException on error
      */
-    public void setClientEphemeral(final GordianKeyPair pEphemeral) throws GordianException {
-        theBuilder.setClientEphemeral(pEphemeral);
+    public void setClientEphemeralAsEncapsulated(final GordianKeyPair pEphemeral) throws GordianException {
+        theBuilder.setClientEphemeralAsEncapsulated(pEphemeral);
     }
 
     /**
@@ -284,27 +283,19 @@ public abstract class GordianXCoreAgreementEngine {
      */
     public void storeSecret(final byte[] pSecret) throws GordianException {
         /* Protect against failure */
-        final byte[] mySecret = new byte[pSecret.length];
         try {
             /* If we have a kdf */
             if (theKDF != null) {
-                /* Create KDF Parameters */
-                final KDFParameters myParms = new KDFParameters(pSecret, new byte[0]);
-                theKDF.init(myParms);
-
                 /* Create the secret */
-                theKDF.generateBytes(mySecret, 0, mySecret.length);
-                theBuilder.storeSecret(mySecret);
+                theKDF.deriveBytes(pSecret);
 
-            } else {
                 /* Just process the secret */
+            } else {
                 theBuilder.storeSecret(pSecret);
             }
 
-            /* Clear buffers */
-        } finally {
             /* Clear the secret */
-            Arrays.fill(mySecret, (byte) 0);
+        } finally {
             Arrays.fill(pSecret, (byte) 0);
         }
     }
@@ -316,7 +307,7 @@ public abstract class GordianXCoreAgreementEngine {
         /* Only enable derivation if it is not none */
         final GordianAgreementSpec mySpec = theState.getSpec();
         if (!GordianKDFType.NONE.equals(mySpec.getKDFType())) {
-            theKDF = newDerivationFunction();
+            theKDF = new GordianXCoreAgreementDerivation(theBuilder);
         }
     }
 
@@ -339,35 +330,6 @@ public abstract class GordianXCoreAgreementEngine {
             case NONE:
             default:
                 return new GordianXCoreNullKeyDerivation();
-        }
-    }
-
-    /**
-     * NullKeyDerivation.
-     */
-    private static final class GordianXCoreNullKeyDerivation
-            implements DerivationFunction {
-        /**
-         * The key.
-         */
-        private byte[] theKey;
-
-        @Override
-        public int generateBytes(final byte[] pBuffer,
-                                 final int pOffset,
-                                 final int pLength) {
-            /* Create the array that is to be copied */
-            final byte[] myKey = Arrays.copyOf(theKey, pLength);
-            Arrays.fill(theKey, (byte) 0);
-            System.arraycopy(myKey, 0, pBuffer, pOffset, pLength);
-            Arrays.fill(myKey, (byte) 0);
-            return pLength;
-        }
-
-        @Override
-        public void init(final DerivationParameters pParms) {
-            final byte[] mySecret = ((KDFParameters) pParms).getSharedSecret();
-            theKey = Arrays.copyOf(mySecret, mySecret.length);
         }
     }
 }
