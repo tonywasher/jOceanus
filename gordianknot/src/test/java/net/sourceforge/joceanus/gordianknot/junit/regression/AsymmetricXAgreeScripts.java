@@ -43,8 +43,8 @@ import net.sourceforge.joceanus.gordianknot.api.xagree.GordianXAgreement;
 import net.sourceforge.joceanus.gordianknot.api.xagree.GordianXAgreementFactory;
 import net.sourceforge.joceanus.gordianknot.api.xagree.GordianXAgreementParams;
 import net.sourceforge.joceanus.gordianknot.api.xagree.GordianXAgreementStatus;
-import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.xagree.GordianXCoreAgreement;
+import net.sourceforge.joceanus.gordianknot.impl.core.xagree.GordianXCoreAgreementFactory;
 import net.sourceforge.joceanus.gordianknot.junit.regression.AsymmetricStore.FactoryAgreement;
 import net.sourceforge.joceanus.gordianknot.junit.regression.AsymmetricStore.FactoryKeyPairs;
 import net.sourceforge.joceanus.gordianknot.junit.regression.KeyStoreUtils.KeyStoreAlias;
@@ -608,7 +608,7 @@ public final class AsymmetricXAgreeScripts {
      */
     private static void checkAgreementAlgId(final FactoryAgreement pAgreement) {
         /* Access the factory */
-        final GordianCoreAgreementFactory myFactory = (GordianCoreAgreementFactory) pAgreement.getOwner().getFactory().getAgreementFactory();
+        final GordianXCoreAgreementFactory myFactory = (GordianXCoreAgreementFactory) pAgreement.getOwner().getFactory().getXAgreementFactory();
 
         /* Check that we have an id */
         final AlgorithmIdentifier myId = myFactory.getIdentifierForSpec(pAgreement.getSpec());

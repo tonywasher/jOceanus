@@ -16,13 +16,14 @@
  */
 package net.sourceforge.joceanus.gordianknot.impl.core.keypair;
 
-import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementFactory;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpecBuilder;
-import net.sourceforge.joceanus.gordianknot.api.agree.GordianAnonymousAgreement;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianKDFType;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
+import net.sourceforge.joceanus.gordianknot.api.cert.GordianCertificate;
+import net.sourceforge.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
+import net.sourceforge.joceanus.gordianknot.api.cert.GordianKeyPairUse;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpecBuilder;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptor;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorFactory;
@@ -34,9 +35,15 @@ import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignParams;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignature;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureFactory;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
+import net.sourceforge.joceanus.gordianknot.api.xagree.GordianXAgreement;
+import net.sourceforge.joceanus.gordianknot.api.xagree.GordianXAgreementFactory;
+import net.sourceforge.joceanus.gordianknot.api.xagree.GordianXAgreementParams;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x500.X500NameBuilder;
+import org.bouncycastle.asn1.x500.style.BCStyle;
 
 import java.util.Arrays;
 
@@ -48,6 +55,11 @@ public final class GordianKeyPairValidity {
      * Error message.
      */
     private static final String ERRORMSG = "Mismatch on public/private key";
+
+    /**
+     * Server X500Name.
+     */
+    private static final X500Name SERVER = new X500NameBuilder(BCStyle.INSTANCE).addRDN(BCStyle.CN, "Server").build();
 
     /**
      * Private constructor.
@@ -152,16 +164,18 @@ public final class GordianKeyPairValidity {
                                       final GordianKeyPair pKeyPair,
                                       final GordianAgreementSpec pAgreeSpec) throws GordianException {
         /* Create agreement on client side */
-        final GordianAgreementFactory myAgrees = pFactory.getAsyncFactory().getAgreementFactory();
-        GordianAnonymousAgreement myAgreement
-                = (GordianAnonymousAgreement) myAgrees.createAgreement(pAgreeSpec);
-        final byte[] myHello = myAgreement.createClientHello(pKeyPair);
+        final GordianXAgreementFactory myAgrees = pFactory.getAsyncFactory().getXAgreementFactory();
+        final GordianCertificate myCert = myAgrees.newMiniCertificate(SERVER, pKeyPair, new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));
+        GordianXAgreementParams myParams = myAgrees.newAgreementParams(pAgreeSpec, GordianLength.LEN_256.getByteLength())
+                .setServerCertificate(myCert);
+        GordianXAgreement myAgreement = myAgrees.createAgreement(myParams);
+        final byte[] myHello = myAgreement.nextMessage();
         final byte[] myClient = (byte[]) myAgreement.getResult();
 
         /* Accept agreement on server side */
-        /* We have to use a new agreement due to bug in JCA NewHope support */
-        myAgreement = (GordianAnonymousAgreement) myAgrees.createAgreement(pAgreeSpec);
-        myAgreement.acceptClientHello(pKeyPair, myHello);
+        myAgreement = myAgrees.parseAgreementMessage(myHello);
+        myParams = myAgreement.getAgreementParams().setServerCertificate(myCert);
+        myAgreement.updateParams(myParams);
         final byte[] myServer = (byte[]) myAgreement.getResult();
 
         /* Check that we have the same result at either end */
