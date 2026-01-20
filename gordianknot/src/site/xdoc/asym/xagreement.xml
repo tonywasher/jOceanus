@@ -340,7 +340,7 @@ final GordianCertificate myTargetCert = myAgreementFactory.newMiniCertificate(my
                 </subsection>
             </subsection>
             <subsection name="Algorithms">
-                <p>The following agreement algorithms are supported. Please </p>
+                <p>The following agreement algorithms are supported.</p>
                 <table class="defTable">
                     <tr><th class="defHdr">KeyPairType</th><th class="defHdr">AgreementType</th><th class="defHdr">Notes</th></tr>
                     <tr><td>RSA</td><td>KEM</td><td>Not available in JCA</td></tr>

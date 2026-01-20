@@ -481,8 +481,8 @@ public abstract class GordianXCoreAgreementFactory
      * @param pAgreementType the agreementType
      * @return the list
      */
-    private static List<GordianAgreementSpec> listAllKDFs(final GordianKeyPairSpec pKeyPairSpec,
-                                                          final GordianAgreementType pAgreementType) {
+    public static List<GordianAgreementSpec> listAllKDFs(final GordianKeyPairSpec pKeyPairSpec,
+                                                         final GordianAgreementType pAgreementType) {
         return listAllKDFs(pKeyPairSpec, pAgreementType, Boolean.FALSE);
     }
 

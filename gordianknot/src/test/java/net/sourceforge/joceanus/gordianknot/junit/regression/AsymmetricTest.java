@@ -68,7 +68,6 @@ class AsymmetricTest {
     static void setUp() throws GordianException {
         AsymmetricStore.parseOptions();
         createSecurityFactories();
-        AsymmetricAgreeScripts.createSecuritySigners(fcBCFACTORY, fcJCAFACTORY);
         AsymmetricXAgreeScripts.createSecuritySigners(fcBCFACTORY, fcJCAFACTORY);
     }
 
@@ -133,14 +132,6 @@ class AsymmetricTest {
 
             /* Add agreement Tests */
             AsymmetricStore.agreementProvider(myKeySpec);
-            //if (!myKeySpec.getAgreements().isEmpty()) {
-            //    Stream<DynamicNode> myTests = myKeySpec.getAgreements().stream()
-            //            .map(x -> DynamicContainer.dynamicContainer(x.toString(), AsymmetricAgreeScripts.agreementTests(x)));
-            //    myTests = Stream.of(DynamicContainer.dynamicContainer("Agreements", myTests));
-            //    myKeyStream = Stream.concat(myKeyStream, myTests);
-            //}
-
-            /* Add xAgreement Tests */
             if (!myKeySpec.getAgreements().isEmpty()) {
                 Stream<DynamicNode> myTests = myKeySpec.getAgreements().stream()
                         .map(x -> DynamicContainer.dynamicContainer(x.toString(), AsymmetricXAgreeScripts.xAgreementTests(x)));
@@ -234,7 +225,7 @@ class AsymmetricTest {
 
         /* Create a keySet */
         final GordianKeySetFactory myKeySetFactory = myFactory.getFactory().getKeySetFactory();
-        final GordianKeySet myKeySet = myKeySetFactory.generateKeySet(AsymmetricAgreeScripts.KEYSETSPEC);
+        final GordianKeySet myKeySet = myKeySetFactory.generateKeySet(AsymmetricXAgreeScripts.KEYSETSPEC);
         final byte[] mySecured = myKeySet.securePrivateKey(myPair);
         final GordianKeyPair myDerived = myKeySet.deriveKeyPair(myPublic, mySecured);
         Assertions.assertEquals(myPair, myDerived, "Incorrect derived pair");

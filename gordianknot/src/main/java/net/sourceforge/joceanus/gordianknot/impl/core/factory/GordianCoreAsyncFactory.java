@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * GordianKnot: Security Suite
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,10 +13,9 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.gordianknot.impl.core.factory;
 
-import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementFactory;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorFactory;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianAsyncFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
@@ -47,11 +46,6 @@ public abstract class GordianCoreAsyncFactory
     private final GordianSignatureFactory theSignatureFactory;
 
     /**
-     * The agreement factory.
-     */
-    private final GordianAgreementFactory theAgreementFactory;
-
-    /**
      * The XAgreement factory.
      */
     private final GordianXAgreementFactory theXAgreementFactory;
@@ -68,13 +62,13 @@ public abstract class GordianCoreAsyncFactory
 
     /**
      * Constructor.
+     *
      * @param pFactory the factory
      */
     protected GordianCoreAsyncFactory(final GordianBaseFactory pFactory) {
         theFactory = pFactory;
         theKeyPairFactory = newKeyPairFactory(theFactory);
         theSignatureFactory = newSignatureFactory(theFactory);
-        theAgreementFactory = newAgreementFactory(theFactory);
         theXAgreementFactory = newXAgreementFactory(theFactory);
         theEncryptorFactory = newEncryptorFactory(theFactory);
         theKeyStoreFactory = new GordianCoreKeyStoreFactory(theFactory);
@@ -82,6 +76,7 @@ public abstract class GordianCoreAsyncFactory
 
     /**
      * Obtain the factory.
+     *
      * @return the factory
      */
     public GordianBaseFactory getFactory() {
@@ -95,6 +90,7 @@ public abstract class GordianCoreAsyncFactory
 
     /**
      * Create a new keyPair factory.
+     *
      * @param pFactory the factory
      * @return the new keyPair factory
      */
@@ -107,22 +103,11 @@ public abstract class GordianCoreAsyncFactory
 
     /**
      * Create a new signature factory.
+     *
      * @param pFactory the factory
      * @return the new keyPair factory
      */
     public abstract GordianSignatureFactory newSignatureFactory(GordianBaseFactory pFactory);
-
-    @Override
-    public GordianAgreementFactory getAgreementFactory() {
-        return theAgreementFactory;
-    }
-
-    /**
-     * Create a new agreement factory.
-     * @param pFactory the factory
-     * @return the new agreement factory
-     */
-    public abstract GordianAgreementFactory newAgreementFactory(GordianBaseFactory pFactory);
 
     @Override
     public GordianXAgreementFactory getXAgreementFactory() {
@@ -131,6 +116,7 @@ public abstract class GordianCoreAsyncFactory
 
     /**
      * Create a new XAgreement factory.
+     *
      * @param pFactory the factory
      * @return the new agreement factory
      */
@@ -143,6 +129,7 @@ public abstract class GordianCoreAsyncFactory
 
     /**
      * Create a new encryptor factory.
+     *
      * @param pFactory the factory
      * @return the new encryptor factory
      */

@@ -43,15 +43,15 @@ public interface GordianXAgreement {
     /**
      * Obtain result.
      *
-     * @return the result which may be any of
-     * <table>
-     *     <tr><td>GordianFactory</td><td>If a factory was agreed</td></tr>
-     *     <tr><td>GordianSymCipher[2]</td><td>If a pair of symCiphers was agreed</td></tr>
-     *     <tr><td>GordianStreamCipher[2]</td><td>If a pair of streamCiphers was agreed</td></tr>
-     *     <tr><td>GordianKeySet</td><td>If a keySet was agreed</td></tr>
-     *     <tr><td>byte[]</td><td>If a defined length byte array was agreed</td></tr>
-     *     <tr><td>GordianException</td><td>If the agreement was rejected.</td></tr>
-     * </table>
+     * @return the result which can be any of
+     * <dl>
+     *     <dt>GordianFactory</dt><dd>If a factory was agreed</dd>
+     *     <dt>GordianSymCipher[2]</dt><dd>If a pair of symCiphers was agreed</dd>
+     *     <dt>GordianStreamCipher[2]</dt><dd>If a pair of streamCiphers was agreed</dd>
+     *     <dt>GordianKeySet</dt><dd>If a keySet was agreed</dd>
+     *     <dt>byte[]</dt><dd>If a defined length byte array was agreed</dd>
+     *     <dt>GordianException</dt><dd>If the agreement was rejected.</dd>
+     * </dl>
      * @throws GordianException on error
      */
     Object getResult() throws GordianException;

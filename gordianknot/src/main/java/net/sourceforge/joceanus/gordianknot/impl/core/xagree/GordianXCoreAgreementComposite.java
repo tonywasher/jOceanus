@@ -23,13 +23,13 @@ import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
-import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianAgreementResult.GordianDerivationId;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import net.sourceforge.joceanus.gordianknot.impl.core.kdf.GordianHKDFEngine;
 import net.sourceforge.joceanus.gordianknot.impl.core.kdf.GordianHKDFParams;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianCompositeKeyPair;
+import net.sourceforge.joceanus.gordianknot.impl.core.xagree.GordianXCoreAgreementCalculator.GordianXDerivationId;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Sequence;
@@ -266,7 +266,7 @@ public class GordianXCoreAgreementComposite extends GordianXCoreAgreementEngine 
         final GordianHKDFParams myParams = GordianHKDFParams.extractOnly();
         try {
             /* Create the HKDF parameters */
-            final GordianDigestSpec myDigestSpec = new GordianDigestSpec(GordianDerivationId.COMPOSITE.getDigestType());
+            final GordianDigestSpec myDigestSpec = new GordianDigestSpec(GordianXDerivationId.COMPOSITE.getDigestType());
             Random myRandom = null;
 
             /* Loop through the engines */

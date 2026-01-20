@@ -37,13 +37,13 @@ public interface GordianXAgreementFactory {
      *
      * @param pSpec       the agreementSpec
      * @param pResultType the result type
-     *                    <table>
-     *                        <tr><td>GordianFactoryType</td><td>To agree a Factory</td></tr>
-     *                        <tr><td>GordianSymCipherSpec</td><td>To agree a symCipher pair</td></tr>
-     *                        <tr><td>GordianStreamCipherSpec</td><td>To agree a streamCipher pair</td></tr>
-     *                        <tr><td>GordianKeySetSpec</td><td>To agree a KeySet</td></tr>
-     *                        <tr><td>Integer</td><td>To agree a defined length byte array</td></tr>
-     *                    </table>
+     *                    <dl>
+     *                        <dt>GordianFactoryType</dt><dd>To agree a Factory</dd>
+     *                        <dt>GordianSymCipherSpec</dt><dd>To agree a symCipher pair</dd>
+     *                        <dt>GordianStreamCipherSpec</dt><dd>To agree a streamCipher pair</dd>
+     *                        <dt>GordianKeySetSpec</dt><dd>To agree a KeySet</dd>
+     *                        <dt>Integer</dt><dd>To agree a defined length byte array</dd>
+     *                    </dl>
      * @return the Params
      * @throws GordianException on error
      */

@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * GordianKnot: Security Suite
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,7 +13,7 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.gordianknot.impl.bc;
 
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
@@ -27,8 +27,6 @@ import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignParams;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
-import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianAgreementMessageASN1;
-import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreAnonymousAgreement;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.encrypt.GordianCoreEncryptor;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
@@ -92,7 +90,8 @@ public final class BouncyRSAKeyPair {
             extends BouncyPublicKey<RSAKeyParameters> {
         /**
          * Constructor.
-         * @param pKeySpec the keySpec
+         *
+         * @param pKeySpec   the keySpec
          * @param pPublicKey the public key
          */
         BouncyRSAPublicKey(final GordianKeyPairSpec pKeySpec,
@@ -112,7 +111,8 @@ public final class BouncyRSAKeyPair {
 
         /**
          * CompareKeys.
-         * @param pFirst the first key
+         *
+         * @param pFirst  the first key
          * @param pSecond the second key
          * @return true/false
          */
@@ -124,6 +124,7 @@ public final class BouncyRSAKeyPair {
 
         /**
          * Is the private key valid for this public key?
+         *
          * @param pPrivate the private key
          * @return true/false
          */
@@ -141,7 +142,8 @@ public final class BouncyRSAKeyPair {
             extends BouncyPrivateKey<RSAPrivateCrtKeyParameters> {
         /**
          * Constructor.
-         * @param pKeySpec the keySpec
+         *
+         * @param pKeySpec    the keySpec
          * @param pPrivateKey the private key
          */
         BouncyRSAPrivateKey(final GordianKeyPairSpec pKeySpec,
@@ -161,7 +163,8 @@ public final class BouncyRSAKeyPair {
 
         /**
          * CompareKeys.
-         * @param pFirst the first key
+         *
+         * @param pFirst  the first key
          * @param pSecond the second key
          * @return true/false
          */
@@ -204,6 +207,7 @@ public final class BouncyRSAKeyPair {
 
         /**
          * Constructor.
+         *
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
          */
@@ -298,6 +302,7 @@ public final class BouncyRSAKeyPair {
 
         /**
          * Derive public key from encoded.
+         *
          * @param pEncodedKey the encoded key
          * @return the public key
          * @throws GordianException on error
@@ -331,8 +336,9 @@ public final class BouncyRSAKeyPair {
 
         /**
          * Constructor.
+         *
          * @param pFactory the factory
-         * @param pSpec the signatureSpec.
+         * @param pSpec    the signatureSpec.
          * @throws GordianException on error
          */
         BouncyPSSSignature(final GordianBaseFactory pFactory,
@@ -343,6 +349,7 @@ public final class BouncyRSAKeyPair {
 
         /**
          * Obtain the signer.
+         *
          * @return the signer.
          */
         protected Signer getSigner() {
@@ -373,8 +380,9 @@ public final class BouncyRSAKeyPair {
 
         /**
          * Obtain RSASigner.
+         *
          * @param pFactory the factory
-         * @param pSpec the signatureSpec
+         * @param pSpec    the signatureSpec
          * @return the RSASigner
          * @throws GordianException on error
          */
@@ -413,8 +421,9 @@ public final class BouncyRSAKeyPair {
             extends BouncyPSSSignature {
         /**
          * Constructor.
+         *
          * @param pFactory the factory
-         * @param pSpec the signatureSpec
+         * @param pSpec    the signatureSpec
          * @throws GordianException on error
          */
         BouncyRSASignature(final GordianBaseFactory pFactory,
@@ -438,8 +447,8 @@ public final class BouncyRSAKeyPair {
             /* Initialise and set the signer */
             final BouncyRSAPrivateKey myPrivate = (BouncyRSAPrivateKey) myPair.getPrivateKey();
             final CipherParameters myParms = getSignatureSpec().getSignatureType().isPSS()
-                                             ? new ParametersWithRandom(myPrivate.getPrivateKey(), getRandom())
-                                             : myPrivate.getPrivateKey();
+                    ? new ParametersWithRandom(myPrivate.getPrivateKey(), getRandom())
+                    : myPrivate.getPrivateKey();
             getSigner().init(true, myParms);
         }
 
@@ -464,7 +473,7 @@ public final class BouncyRSAKeyPair {
             try {
                 return getSigner().generateSignature();
             } catch (DataLengthException
-                    | CryptoException e) {
+                     | CryptoException e) {
                 throw new GordianCryptoException(BouncySignature.ERROR_SIGGEN, e);
             }
         }
@@ -476,84 +485,6 @@ public final class BouncyRSAKeyPair {
 
             /* Verify the message */
             return getSigner().verifySignature(pSignature);
-        }
-    }
-
-    /**
-     * RSA Encapsulation.
-     */
-    public static class BouncyRSAEncapsulationAgreement
-            extends GordianCoreAnonymousAgreement {
-        /**
-         * Key Length.
-         */
-        private static final int KEYLEN = 32;
-
-        /**
-         * The generator.
-         */
-        private final RSAKEMGenerator theGenerator;
-
-        /**
-         * Derivation function.
-         */
-        private final DerivationFunction theDerivation;
-
-        /**
-         * Constructor.
-         * @param pFactory the security factory
-         * @param pSpec the agreementSpec
-         */
-        BouncyRSAEncapsulationAgreement(final GordianBaseFactory pFactory,
-                                        final GordianAgreementSpec pSpec) {
-            /* Initialise underlying class */
-            super(pFactory, pSpec);
-
-            /* Create Agreement */
-            theDerivation = newDerivationFunction();
-            theGenerator = new RSAKEMGenerator(KEYLEN, theDerivation, getRandom());
-        }
-
-        @Override
-        public GordianAgreementMessageASN1 createClientHelloASN1(final GordianKeyPair pServer) throws GordianException {
-            /* Protect against exceptions */
-            try {
-                /* Check keyPair */
-                BouncyKeyPair.checkKeyPair(pServer);
-                checkKeyPair(pServer);
-
-                /* Create encapsulation */
-                final BouncyRSAPublicKey myPublic = (BouncyRSAPublicKey) getPublicKey(pServer);
-                final SecretWithEncapsulation myResult = theGenerator.generateEncapsulated(myPublic.getPublicKey());
-
-                /* Create message */
-                final GordianAgreementMessageASN1 myClientHello = buildClientHelloASN1(myResult.getEncapsulation());
-
-                /* Store secret and create initVector */
-                storeSecret(myResult.getSecret());
-                myResult.destroy();
-
-                /* Return the clientHello message  */
-                return myClientHello;
-            } catch (DestroyFailedException e) {
-                throw new GordianIOException("Failed to destroy secret", e);
-            }
-        }
-
-        @Override
-        public void acceptClientHelloASN1(final GordianKeyPair pServer,
-                                          final GordianAgreementMessageASN1 pClientHello) throws GordianException {
-            /* Check keyPair */
-            BouncyKeyPair.checkKeyPair(pServer);
-            checkKeyPair(pServer);
-
-            /* Initialise Key Encapsulation */
-            final BouncyRSAPrivateKey myPrivate = (BouncyRSAPrivateKey) getPrivateKey(pServer);
-            final RSAKEMExtractor myExtractor = new RSAKEMExtractor(myPrivate.getPrivateKey(), KEYLEN, theDerivation);
-
-            /* Parse clientHello message and store secret */
-            final byte[] myMessage = pClientHello.getEncapsulated();
-            storeSecret(myExtractor.extractSecret(myMessage));
         }
     }
 
@@ -574,8 +505,9 @@ public final class BouncyRSAKeyPair {
 
         /**
          * Constructor.
+         *
          * @param pFactory the security factory
-         * @param pSpec the agreementSpec
+         * @param pSpec    the agreementSpec
          * @throws GordianException on error
          */
         BouncyRSAXAgreementEngine(final GordianXCoreAgreementFactory pFactory,
@@ -627,8 +559,9 @@ public final class BouncyRSAKeyPair {
             extends BouncyCoreEncryptor {
         /**
          * Constructor.
+         *
          * @param pFactory the factory
-         * @param pSpec the encryptorSpec
+         * @param pSpec    the encryptorSpec
          * @throws GordianException on error
          */
         BouncyRSAEncryptor(final GordianBaseFactory pFactory,
@@ -660,9 +593,10 @@ public final class BouncyRSAKeyPair {
 
         /**
          * Constructor.
+         *
          * @param pFactory the factory
-         * @param pSpec the encryptorSpec
-         * @param pEngine the underlying engine
+         * @param pSpec    the encryptorSpec
+         * @param pEngine  the underlying engine
          * @throws GordianException on error
          */
         protected BouncyCoreEncryptor(final GordianBaseFactory pFactory,
@@ -725,6 +659,7 @@ public final class BouncyRSAKeyPair {
 
         /**
          * Process a data buffer.
+         *
          * @param pData the buffer to process
          * @return the processed buffer
          * @throws GordianException on error
@@ -773,6 +708,7 @@ public final class BouncyRSAKeyPair {
 
         /**
          * Obtain the length of the buffer required for the processed output.
+         *
          * @param pLength the length of input data
          * @return the number of bytes.
          */
@@ -782,7 +718,8 @@ public final class BouncyRSAKeyPair {
 
         /**
          * Obtain the number of blocks required for the length in terms of blocks.
-         * @param pLength the length of data
+         *
+         * @param pLength      the length of data
          * @param pBlockLength the blockLength
          * @return the number of blocks.
          */
