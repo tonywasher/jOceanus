@@ -111,7 +111,7 @@ public class GordianCertificateASN1
     }
 
     /**
-     * Parse the ASN1 object
+     * Parse the ASN1 object.
      *
      * @param pObject  the tagged object
      * @param explicit is the tagging explicit

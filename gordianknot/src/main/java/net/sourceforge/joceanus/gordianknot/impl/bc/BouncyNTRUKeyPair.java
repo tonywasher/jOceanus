@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * GordianKnot: Security Suite
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,7 +13,7 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.gordianknot.impl.bc;
 
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
@@ -22,13 +22,11 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
-import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianAgreementMessageASN1;
-import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreAnonymousAgreement;
+import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
-import net.sourceforge.joceanus.gordianknot.impl.core.xagree.GordianXCoreAgreementFactory;
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
@@ -70,7 +68,8 @@ public final class BouncyNTRUKeyPair {
             extends BouncyPublicKey<NTRUPublicKeyParameters> {
         /**
          * Constructor.
-         * @param pKeySpec the keySpec
+         *
+         * @param pKeySpec   the keySpec
          * @param pPublicKey the public key
          */
         BouncyNTRUPublicKey(final GordianKeyPairSpec pKeySpec,
@@ -96,7 +95,8 @@ public final class BouncyNTRUKeyPair {
             extends BouncyPrivateKey<NTRUPrivateKeyParameters> {
         /**
          * Constructor.
-         * @param pKeySpec the keySpec
+         *
+         * @param pKeySpec    the keySpec
          * @param pPrivateKey the private key
          */
         BouncyNTRUPrivateKey(final GordianKeyPairSpec pKeySpec,
@@ -128,6 +128,7 @@ public final class BouncyNTRUKeyPair {
 
         /**
          * Constructor.
+         *
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
          * @throws GordianException on error
@@ -228,6 +229,7 @@ public final class BouncyNTRUKeyPair {
 
         /**
          * Derive public key from encoded.
+         *
          * @param pEncodedKey the encoded key
          * @return the public key
          * @throws GordianException on error
@@ -250,85 +252,19 @@ public final class BouncyNTRUKeyPair {
     }
 
     /**
-     * NTRU Agreement.
+     * NTRU Agreement Engine.
      */
-    public static class BouncyNTRUAgreement
-            extends GordianCoreAnonymousAgreement {
-        /**
-         * The generator.
-         */
-        private final NTRUKEMGenerator theGenerator;
-
+    public static class BouncyNTRUAgreementEngine
+            extends BouncyAgreementBase {
         /**
          * Constructor.
+         *
          * @param pFactory the security factory
-         * @param pSpec the agreementSpec
-         */
-        BouncyNTRUAgreement(final GordianBaseFactory pFactory,
-                            final GordianAgreementSpec pSpec) {
-            /* Initialise underlying class */
-            super(pFactory, pSpec);
-
-            /* Create Agreement */
-            theGenerator = new NTRUKEMGenerator(getRandom());
-        }
-
-        @Override
-        public GordianAgreementMessageASN1 createClientHelloASN1(final GordianKeyPair pServer) throws GordianException {
-            /* Protect against exceptions */
-            try {
-                /* Check keyPair */
-                BouncyKeyPair.checkKeyPair(pServer);
-                checkKeyPair(pServer);
-
-                /* Create encapsulation */
-                final BouncyNTRUPublicKey myPublic = (BouncyNTRUPublicKey) getPublicKey(pServer);
-                final SecretWithEncapsulation myResult = theGenerator.generateEncapsulated(myPublic.getPublicKey());
-
-                /* Build the clientHello Message */
-                final GordianAgreementMessageASN1 myClientHello = buildClientHelloASN1(myResult.getEncapsulation());
-
-                /* Store secret and create initVector */
-                storeSecret(myResult.getSecret());
-                myResult.destroy();
-
-                /* Return the message  */
-                return myClientHello;
-            } catch (DestroyFailedException e) {
-                throw new GordianIOException("Failed to destroy secret", e);
-            }
-        }
-
-        @Override
-        public void acceptClientHelloASN1(final GordianKeyPair pServer,
-                                          final GordianAgreementMessageASN1 pClientHello) throws GordianException {
-            /* Check keyPair */
-            BouncyKeyPair.checkKeyPair(pServer);
-            checkKeyPair(pServer);
-
-            /* Initialise Key Encapsulation */
-            final BouncyNTRUPrivateKey myPrivate = (BouncyNTRUPrivateKey) getPrivateKey(pServer);
-            final NTRUKEMExtractor myExtractor = new NTRUKEMExtractor(myPrivate.getPrivateKey());
-
-            /* Parse clientHello message and store secret */
-            final byte[] myMessage = pClientHello.getEncapsulated();
-            storeSecret(myExtractor.extractSecret(myMessage));
-        }
-    }
-
-    /**
-     * NTRU XAgreement Engine.
-     */
-    public static class BouncyNTRUXAgreementEngine
-            extends BouncyXAgreementBase {
-        /**
-         * Constructor.
-         * @param pFactory the security factory
-         * @param pSpec the agreementSpec
+         * @param pSpec    the agreementSpec
          * @throws GordianException on error
          */
-        BouncyNTRUXAgreementEngine(final GordianXCoreAgreementFactory pFactory,
-                                   final GordianAgreementSpec pSpec) throws GordianException {
+        BouncyNTRUAgreementEngine(final GordianCoreAgreementFactory pFactory,
+                                  final GordianAgreementSpec pSpec) throws GordianException {
             /* Initialize underlying class */
             super(pFactory, pSpec);
         }

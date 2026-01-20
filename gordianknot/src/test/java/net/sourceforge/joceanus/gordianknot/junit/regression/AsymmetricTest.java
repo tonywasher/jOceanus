@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * GordianKnot: Security Suite
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,7 +13,7 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.gordianknot.junit.regression;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
@@ -68,11 +68,12 @@ class AsymmetricTest {
     static void setUp() throws GordianException {
         AsymmetricStore.parseOptions();
         createSecurityFactories();
-        AsymmetricAgreeScripts.createSecuritySigners(fcBCFACTORY, fcJCAFACTORY);
+        AsymmetricXAgreeScripts.createSecuritySigners(fcBCFACTORY, fcJCAFACTORY);
     }
 
     /**
      * Initialise Factories.
+     *
      * @throws GordianException on error
      */
     private static void createSecurityFactories() throws GordianException {
@@ -83,6 +84,7 @@ class AsymmetricTest {
 
     /**
      * Create the bouncyCastle asymmetric test suite.
+     *
      * @return the test stream
      */
     @TestFactory
@@ -92,6 +94,7 @@ class AsymmetricTest {
 
     /**
      * Create the jca asymmetric test suite.
+     *
      * @return the test stream
      */
     @TestFactory
@@ -101,6 +104,7 @@ class AsymmetricTest {
 
     /**
      * Create the asymmetric test suite for a factory.
+     *
      * @param pFactory the factory
      * @param pPartner the partner factory
      * @return the test stream
@@ -130,8 +134,8 @@ class AsymmetricTest {
             AsymmetricStore.agreementProvider(myKeySpec);
             if (!myKeySpec.getAgreements().isEmpty()) {
                 Stream<DynamicNode> myTests = myKeySpec.getAgreements().stream()
-                        .map(x -> DynamicContainer.dynamicContainer(x.toString(), AsymmetricAgreeScripts.agreementTests(x)));
-                myTests = Stream.of(DynamicContainer.dynamicContainer("Agreements", myTests));
+                        .map(x -> DynamicContainer.dynamicContainer(x.toString(), AsymmetricXAgreeScripts.xAgreementTests(x)));
+                myTests = Stream.of(DynamicContainer.dynamicContainer("XAgreements", myTests));
                 myKeyStream = Stream.concat(myKeyStream, myTests);
             }
 
@@ -154,6 +158,7 @@ class AsymmetricTest {
 
     /**
      * Generate KeyPairs.
+     *
      * @param pKeySpec the keySpec
      * @throws GordianException on error
      */
@@ -171,6 +176,7 @@ class AsymmetricTest {
 
     /**
      * Check KeyPair.
+     *
      * @param pKeySpec the keySpec
      * @throws GordianException on error
      */
@@ -206,6 +212,7 @@ class AsymmetricTest {
 
     /**
      * Check KeyPair.
+     *
      * @param pKeySpec the keySpec
      * @throws GordianException on error
      */
@@ -218,7 +225,7 @@ class AsymmetricTest {
 
         /* Create a keySet */
         final GordianKeySetFactory myKeySetFactory = myFactory.getFactory().getKeySetFactory();
-        final GordianKeySet myKeySet = myKeySetFactory.generateKeySet(AsymmetricAgreeScripts.KEYSETSPEC);
+        final GordianKeySet myKeySet = myKeySetFactory.generateKeySet(AsymmetricXAgreeScripts.KEYSETSPEC);
         final byte[] mySecured = myKeySet.securePrivateKey(myPair);
         final GordianKeyPair myDerived = myKeySet.deriveKeyPair(myPublic, mySecured);
         Assertions.assertEquals(myPair, myDerived, "Incorrect derived pair");

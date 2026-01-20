@@ -27,20 +27,20 @@ allprojects {
     }
 
     /* Standard properties */
-    project.ext { 
+    project.ext {
         /* Dependency versions */
         bouncyCastleVersion = "1.83"
         jUnitVersion = "6.0.1"
         jsonVersion = "20251224"
         mySQLVersion = "9.5.0"
         MariaDBVersion = "3.5.7"
-        postGreSQLVersion = "42.7.8"
+        postGreSQLVersion = "42.7.9"
         mssqlVersion = "13.2.1.jre11"
         h2Version = "2.4.240"
         apachePOIVersion = "5.5.1"
         jsoupVersion = "1.22.1"
         jFreeChartVersion = "1.5.6"
-        javaParserVersion = "3.27.1"
+        javaParserVersion = "3.28.0"
 
         /* javaFX versions */
         javaFXVersion = "21"
@@ -60,7 +60,7 @@ allprojects {
 }
 
 /* Store calculated properties in the root project */
-ext { 
+ext {
     /* git details */
     gitRepo = getGitRepo()
     gitBranch = getGitBranch()
@@ -72,15 +72,15 @@ ext {
     /* Base manifest details */
     baseManifest = [
             "Implementation-Version": project.version,
-            "Created-By"     : "Gradle ${gradle.gradleVersion}",
-            "Git-Repo"       : gitRepo,
-            "Git-Branch"     : gitBranch,
-            "Git-Rev"        : "sha1-" + gitRev,
-            "Built-By"       : System.properties['user.name'],
-            "Build-Timestamp": new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").format(new Date()),
-            "Build-Jdk"      : "${System.properties['java.version']} (${System.properties['java.vendor']} ${System.properties['java.vm.version']})",
-            "Build-OS"       : "${System.properties['os.name']} ${System.properties['os.arch']} ${System.properties['os.version']}"
-    ]    
+            "Created-By"            : "Gradle ${gradle.gradleVersion}",
+            "Git-Repo"              : gitRepo,
+            "Git-Branch"            : gitBranch,
+            "Git-Rev"               : "sha1-" + gitRev,
+            "Built-By"              : System.properties['user.name'],
+            "Build-Timestamp"       : new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").format(new Date()),
+            "Build-Jdk"             : "${System.properties['java.version']} (${System.properties['java.vendor']} ${System.properties['java.vm.version']})",
+            "Build-OS"              : "${System.properties['os.name']} ${System.properties['os.arch']} ${System.properties['os.version']}"
+    ]
 }
 
 /* sub-project setup */
@@ -119,8 +119,8 @@ subprojects {
 
     /* Add annotations */
     dependencies {
-	    compileOnly "org.jetbrains:annotations:$jetBrainsAnnotationsVersion"
-    } 
+        compileOnly "org.jetbrains:annotations:$jetBrainsAnnotationsVersion"
+    }
 
     /* Java options */
     compileJava {
@@ -148,7 +148,7 @@ subprojects {
     }
 
     /* Project properties */
-    project.ext { 
+    project.ext {
         /* Manifest Attributes */
         manifestAttrs = rootProject.ext.baseManifest.clone()
 
@@ -157,22 +157,22 @@ subprojects {
         moduleName = null
         preLoaderClass = null
         splashScreen = null
-    } 
+    }
 }
 
 /* Distribution task */
 task distribute {
     doLast {
-        rootProject.ext.distributionMap.each{ k, v -> 
+        rootProject.ext.distributionMap.each { k, v ->
             if (shouldCopy(k, "$appDir/$v")) {
                 copy {
                     into("$appDir/" + stripFileName("$v"))
                     from k
                 }
-            }	
+            }
         }
         buildJRE()
-    }        
+    }
 }
 distribute.dependsOn ":moneywise-swing:jar", ":moneywise-javafx:jar", ":themis-javafx:jar", ":prometheus-sheet-odf:jar", ":prometheus-sheet-hssf:jar"
 assemble.dependsOn distribute
@@ -186,6 +186,7 @@ clean.doFirst {
 jar.enabled = false
 
 /* Obtain gitBranch details */
+
 String getGitBranch() {
     def projectDirFile = new File("$projectDir")
 
@@ -199,6 +200,7 @@ String getGitBranch() {
 }
 
 /* Obtain gitRevision details */
+
 String getGitRev() {
     def projectDirFile = new File("$projectDir")
 
@@ -207,11 +209,12 @@ String getGitRev() {
     rpProc.waitForOrKill(10 * 1000)
     if (rpProc.exitValue() == 0) {
         return rpProc.text.trim()
-    } 
+    }
     return "gitRevision not found"
 }
 
 /* Obtain gitRepository details */
+
 String getGitRepo() {
     def projectDirFile = new File("$projectDir")
 
@@ -220,33 +223,34 @@ String getGitRepo() {
     rmProc.waitForOrKill(10 * 1000)
     if (rmProc.exitValue() == 0) {
         return rmProc.text.trim()
-    } 
+    }
     return "gitRepository not found"
 }
 
 /* Obtain Maven repository style path for artifact */
+
 String standardizePath(String pPath) {
     /* Convert to standard style and access root directory */
     String myPath = pPath.replaceAll("\\\\", "/")
     String projDir = "$rootDir"
 
     /* If the artifact has been built within the project */
-    if (pPath.startsWith(projDir)) { 
-       /* Obtain directory version of group */      
-       String myGroup = group.replaceAll("\\.", "/") 
+    if (pPath.startsWith(projDir)) {
+        /* Obtain directory version of group */
+        String myGroup = group.replaceAll("\\.", "/")
 
-       /* Strip of the full prefix to the artifact */
-       myPath = myPath.substring(projDir.length())
-       String bldDir = "/build/libs/"
-       int myIndex = myPath.indexOf(bldDir)
-       String myJar = myPath.substring(myIndex + bldDir.length()) 
+        /* Strip of the full prefix to the artifact */
+        myPath = myPath.substring(projDir.length())
+        String bldDir = "/build/libs/"
+        int myIndex = myPath.indexOf(bldDir)
+        String myJar = myPath.substring(myIndex + bldDir.length())
 
-       /* Split out artifact name */
-       myIndex = myJar.indexOf("-" + version)
-       String myArtifact = myJar.substring(0, myIndex)
+        /* Split out artifact name */
+        myIndex = myJar.indexOf("-" + version)
+        String myArtifact = myJar.substring(0, myIndex)
 
-       /* return required path */
-       return myGroup + "/" + myArtifact + "/" + version + "/" + myJar
+        /* return required path */
+        return myGroup + "/" + myArtifact + "/" + version + "/" + myJar
     }
 
     /* If the artifact is in the gradle cache */
@@ -254,87 +258,92 @@ String standardizePath(String pPath) {
     int myIndex = myPath.indexOf(gradleCacheDir)
     if (myIndex != -1) {
         /* Split off prefix */
-        myPath = myPath.substring(myIndex + gradleCacheDir.length()) 
+        myPath = myPath.substring(myIndex + gradleCacheDir.length())
 
         /* Split off group */
         myIndex = myPath.indexOf("/")
         String myGroup = myPath.substring(0, myIndex).replaceAll("\\.", "/")
-        myPath = myPath.substring(myIndex+1)
+        myPath = myPath.substring(myIndex + 1)
 
         /* Split off artifact */
         myIndex = myPath.indexOf("/")
         String myArtifact = myPath.substring(0, myIndex)
-        myPath = myPath.substring(myIndex+1)
+        myPath = myPath.substring(myIndex + 1)
 
         /* Split off version */
         myIndex = myPath.indexOf("/")
         String myVersion = myPath.substring(0, myIndex)
-   
+
         /* return required path */
         return myGroup + "/" + myArtifact + "/" + myVersion + "/" + myArtifact + "-" + myVersion + ".jar"
-    } 
+    }
 
     /* Must be from local maven repository */
     String mavenDir = "/.m2/repository/"
     myIndex = myPath.indexOf(mavenDir)
-    return myPath.substring(myIndex + mavenDir.length()) 
+    return myPath.substring(myIndex + mavenDir.length())
 }
 
 /* Strip the fileName from the path */
+
 String stripFileName(String pPath) {
     int myIndex = pPath.lastIndexOf("/")
-    return pPath.substring(0, myIndex) 
+    return pPath.substring(0, myIndex)
 }
 
 /* Register project */
+
 void registerProject(Project pProject) {
     /* Add implementation title and classPath */
     pProject.ext.manifestAttrs["Implementation-Title"] = pProject.description
-    pProject.ext.manifestAttrs["Class-Path"] = pProject.configurations.runtimeClasspath.collect { 
-                                       "../${appLibDir}" + standardizePath(it.absolutePath) }.join(' ')
+    pProject.ext.manifestAttrs["Class-Path"] = pProject.configurations.runtimeClasspath.collect {
+        "../${appLibDir}" + standardizePath(it.absolutePath)
+    }.join(' ')
 
     /* Add mainClass and moduleName if defined */
     if (pProject.ext.mainClass != null) {
         pProject.ext.manifestAttrs["Main-Class"] = pProject.ext.mainClass
         buildDistribution(pProject)
-    }          
+    }
     if (pProject.ext.moduleName != null) {
         pProject.ext.manifestAttrs["Automatic-Module-Name"] = pProject.ext.moduleName
-    }          
+    }
 
     /* Add preLoader/splashScreen if defined */
     if (pProject.ext.preLoaderClass != null) {
         pProject.ext.manifestAttrs["JavaFX-Preloader-Class"] = pProject.ext.preLoaderClass
-    }          
+    }
     if (pProject.ext.splashScreen != null) {
         pProject.ext.manifestAttrs["SplashScreen-Image"] = pProject.ext.splashScreen
-    }          
+    }
 }
 
 /* Build list of distributable modules */
+
 void buildDistribution(Project pProject) {
     def jarName = pProject.name + "-" + version + ".jar"
     def fullJarName = "${pProject.projectDir}/build/libs/$jarName"
     rootProject.ext.distributionMap[fullJarName] = "${appBinDir}" + jarName
     pProject.configurations.runtimeClasspath.each { d ->
-            def oldName = d.getAbsolutePath()
-            def newName = "${appLibDir}" + standardizePath(d.getAbsolutePath())
-            rootProject.ext.distributionMap[oldName] = newName
+        def oldName = d.getAbsolutePath()
+        def newName = "${appLibDir}" + standardizePath(d.getAbsolutePath())
+        rootProject.ext.distributionMap[oldName] = newName
     }
 }
 
 /* Check to see whether we should copy a file */
+
 boolean shouldCopy(String pSource, String pTarget) {
     /* Can't copy if source file does not exist */
     File mySrc = new File(pSource)
     if (!mySrc.exists()) {
-       return false;
+        return false;
     }
 
     /* Always copy if target file does not exist */
     File myTgt = new File(pTarget)
     if (!myTgt.exists()) {
-       return true;
+        return true;
     }
 
     /* Only copy if source file is newer than target */
@@ -342,6 +351,7 @@ boolean shouldCopy(String pSource, String pTarget) {
 }
 
 /* Build the JRE */
+
 void buildJRE() {
     def projectDirFile = new File("$projectDir")
     def MODS = 'java.base,java.xml,java.net.http,java.prefs,java.sql,java.desktop,java.logging,java.security.jgss,jdk.net,jdk.unsupported,java.datatransfer,java.naming,java.management,jdk.net,jdk.crypto.ec,jdk.jsobject,jdk.xml.dom'

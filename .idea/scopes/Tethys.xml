@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="Tethys" pattern="file[tethys-core]:src/main/java//*||file[tethys-javafx]:src/main/java//*||file[tethys-swing]:src/main/java//*||file[tethys-core]:src/main/resources//*.properties||file[tethys-test]:src/main/java//*||file[tethys-test]:src/main/resources//*.properties" />
+</component>

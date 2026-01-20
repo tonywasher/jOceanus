@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * GordianKnot: Security Suite
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,7 +13,7 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.gordianknot.impl.bc;
 
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
@@ -25,28 +25,22 @@ import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianSM2EncryptionSpec;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianSM2EncryptionSpec.GordianSM2EncryptionType;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignParams;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
-import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECPrivateKey;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECPublicKey;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
-import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianAgreementMessageASN1;
-import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreEphemeralAgreement;
+import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.encrypt.GordianCoreEncryptor;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import net.sourceforge.joceanus.gordianknot.impl.core.sign.GordianCoreSignature;
-import net.sourceforge.joceanus.gordianknot.impl.core.xagree.GordianXCoreAgreementFactory;
 import org.bouncycastle.crypto.CryptoException;
 import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.agreement.SM2KeyExchange;
 import org.bouncycastle.crypto.engines.SM2Engine;
 import org.bouncycastle.crypto.engines.SM2Engine.Mode;
-import org.bouncycastle.crypto.generators.SM2KeyPairGenerator;
 import org.bouncycastle.crypto.params.ParametersWithRandom;
 import org.bouncycastle.crypto.params.SM2KeyExchangePrivateParameters;
 import org.bouncycastle.crypto.params.SM2KeyExchangePublicParameters;
@@ -63,29 +57,6 @@ public final class BouncySM2KeyPair {
     }
 
     /**
-     * BouncyCastle Elliptic KeyPair generator.
-     */
-    public static class BouncySM2KeyPairGenerator
-            extends BouncyECKeyPairGenerator {
-        /**
-         * Constructor.
-         * @param pFactory the Security Factory
-         * @param pKeySpec the keySpec
-         * @throws GordianException on error
-         */
-        BouncySM2KeyPairGenerator(final GordianBaseFactory pFactory,
-                                  final GordianKeyPairSpec pKeySpec) throws GordianException {
-            /* Initialise underlying class */
-            super(pFactory, pKeySpec);
-        }
-
-        @Override
-        SM2KeyPairGenerator newGenerator() {
-            return new SM2KeyPairGenerator();
-        }
-    }
-
-    /**
      * SM2 signature.
      */
     public static class BouncySM2Signature
@@ -97,8 +68,9 @@ public final class BouncySM2KeyPair {
 
         /**
          * Constructor.
+         *
          * @param pFactory the factory
-         * @param pSpec the signatureSpec.
+         * @param pSpec    the signatureSpec.
          * @throws GordianException on error
          */
         BouncySM2Signature(final GordianBaseFactory pFactory,
@@ -192,137 +164,10 @@ public final class BouncySM2KeyPair {
     }
 
     /**
-     * EC SM2 Agreement.
+     * SM2 Agreement Engine.
      */
-    public static class BouncyECSM2Agreement
-            extends GordianCoreEphemeralAgreement {
-        /**
-         * Key length.
-         */
-        private static final int KEYLEN = 64;
-
-        /**
-         * Key Agreement.
-         */
-        private final SM2KeyExchange theAgreement;
-
-        /**
-         * Constructor.
-         * @param pFactory the security factory
-         * @param pSpec the agreementSpec
-         */
-        BouncyECSM2Agreement(final GordianBaseFactory pFactory,
-                             final GordianAgreementSpec pSpec) {
-            /* Initialise underlying class */
-            super(pFactory, pSpec);
-
-            /* Create the agreement */
-            theAgreement = new SM2KeyExchange();
-        }
-
-        @Override
-        public GordianAgreementMessageASN1 acceptClientHelloASN1(final GordianKeyPair pClient,
-                                                                 final GordianKeyPair pServer,
-                                                                 final GordianAgreementMessageASN1 pClientHello) throws GordianException {
-            /* process clientHello */
-            BouncyKeyPair.checkKeyPair(pClient);
-            BouncyKeyPair.checkKeyPair(pServer);
-            processClientHelloASN1(pClient, pServer, pClientHello);
-
-            /* Initialise agreement */
-            final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(pServer);
-            final BouncyECPrivateKey myEphPrivate = (BouncyECPrivateKey) getPrivateKey(getServerEphemeralKeyPair());
-            final SM2KeyExchangePrivateParameters myPrivParams = new SM2KeyExchangePrivateParameters(false,
-                    myPrivate.getPrivateKey(), myEphPrivate.getPrivateKey());
-            theAgreement.init(myPrivParams);
-
-            /* Prepare for agreement */
-            final BouncyECPublicKey mySrcPublic = (BouncyECPublicKey) getPublicKey(pClient);
-            final BouncyECPublicKey mySrcEphPublic = (BouncyECPublicKey) getPublicKey(getClientEphemeralKeyPair());
-            final SM2KeyExchangePublicParameters myPubParams = new SM2KeyExchangePublicParameters(mySrcPublic.getPublicKey(),
-                    mySrcEphPublic.getPublicKey());
-
-            /* If we are confirming */
-            if (Boolean.TRUE.equals(getAgreementSpec().withConfirm())) {
-                /* Create agreement and confirmation tags */
-                final byte[][] myResults = theAgreement.calculateKeyWithConfirmation(KEYLEN, null, myPubParams);
-
-                /* Store the confirmationTags */
-                storeConfirmationTags(myResults[1], myResults[2]);
-
-                /* Store the secret */
-                storeSecret(myResults[0]);
-
-                /* else standard agreement */
-            } else {
-                /* Calculate and store the secret */
-                storeSecret(theAgreement.calculateKey(KEYLEN, myPubParams));
-            }
-
-            /* Return the serverHello */
-            return buildServerHello();
-        }
-
-        @Override
-        public GordianAgreementMessageASN1 acceptServerHelloASN1(final GordianKeyPair pServer,
-                                                                 final GordianAgreementMessageASN1 pServerHello) throws GordianException {
-            /* Check keyPair */
-            BouncyKeyPair.checkKeyPair(pServer);
-            checkKeyPair(pServer);
-
-            /* process the serverHello */
-            processServerHelloASN1(pServer, pServerHello);
-
-            /* Initialise agreement */
-            final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(getClientKeyPair());
-            final BouncyECPrivateKey myEphPrivate = (BouncyECPrivateKey) getPrivateKey(getClientEphemeralKeyPair());
-            final SM2KeyExchangePrivateParameters myPrivParams = new SM2KeyExchangePrivateParameters(true,
-                    myPrivate.getPrivateKey(), myEphPrivate.getPrivateKey());
-            theAgreement.init(myPrivParams);
-
-            /* Calculate agreement */
-            final BouncyECPublicKey mySrcPublic = (BouncyECPublicKey) getPublicKey(pServer);
-            final BouncyECPublicKey mySrcEphPublic = (BouncyECPublicKey) getPublicKey(getServerEphemeralKeyPair());
-            final SM2KeyExchangePublicParameters myPubParams = new SM2KeyExchangePublicParameters(mySrcPublic.getPublicKey(),
-                    mySrcEphPublic.getPublicKey());
-
-            /* If we are confirming */
-            if (Boolean.TRUE.equals(getAgreementSpec().withConfirm())) {
-                /* Obtain confirmationTag in serverHello */
-                final byte[] myConfirm = getServerConfirmationTag();
-
-                /* Protect against exception */
-                try {
-                    /* Create agreement and confirmation tags */
-                    final byte[][] myResults = theAgreement.calculateKeyWithConfirmation(KEYLEN, myConfirm, myPubParams);
-
-                    /* Store the confirmationTag */
-                    storeConfirmationTag(myResults[1]);
-
-                    /* Store the secret */
-                    storeSecret(myResults[0]);
-
-                    /* Catch mismatch on confirmation tag */
-                } catch (IllegalStateException e) {
-                    throw new GordianIOException("Confirmation failed", e);
-                }
-
-                /* else standard agreement */
-            } else {
-                /* Calculate and store the secret */
-                storeSecret(theAgreement.calculateKey(KEYLEN, myPubParams));
-            }
-
-            /* Return confirmation if needed */
-            return buildClientConfirmASN1();
-        }
-    }
-
-    /**
-     * SM2 XAgreement Engine.
-     */
-    public static class BouncySM2XAgreementEngine
-            extends BouncyXAgreementBase {
+    public static class BouncySM2AgreementEngine
+            extends BouncyAgreementBase {
         /**
          * Key length.
          */
@@ -335,12 +180,13 @@ public final class BouncySM2KeyPair {
 
         /**
          * Constructor.
+         *
          * @param pFactory the security factory
-         * @param pSpec the agreementSpec
+         * @param pSpec    the agreementSpec
          * @throws GordianException on error
          */
-        BouncySM2XAgreementEngine(final GordianXCoreAgreementFactory pFactory,
-                                  final GordianAgreementSpec pSpec) throws GordianException {
+        BouncySM2AgreementEngine(final GordianCoreAgreementFactory pFactory,
+                                 final GordianAgreementSpec pSpec) throws GordianException {
             /* Initialize underlying class */
             super(pFactory, pSpec);
 
@@ -408,14 +254,14 @@ public final class BouncySM2KeyPair {
                     final byte[][] myResults = theAgreement.calculateKeyWithConfirmation(KEYLEN, myConfirm, myPubParams);
 
                     /* Store the confirmationTag */
-                    setClientConfirm(myResults[1]);
-
-                    /* Store the secret */
-                    storeSecret(myResults[0]);
+                    if (setClientConfirm(myResults[1])) {
+                        /* Store the secret */
+                        storeSecret(myResults[0]);
+                    }
 
                     /* Catch mismatch on confirmation tag */
                 } catch (IllegalStateException e) {
-                    throw new GordianIOException("Confirmation failed", e);
+                    getBuilder().setError("Server Confirmation failed");
                 }
 
                 /* else standard agreement */
@@ -438,8 +284,9 @@ public final class BouncySM2KeyPair {
 
         /**
          * Constructor.
+         *
          * @param pFactory the factory
-         * @param pSpec the encryptorSpec
+         * @param pSpec    the encryptorSpec
          * @throws GordianException on error
          */
         BouncySM2Encryptor(final GordianBaseFactory pFactory,
@@ -450,7 +297,7 @@ public final class BouncySM2KeyPair {
             final GordianSM2EncryptionSpec mySpec = pSpec.getSM2EncryptionSpec();
             final BouncyDigest myDigest = (BouncyDigest) myFactory.createDigest(mySpec.getDigestSpec());
             final Mode mySM2Mode = mySpec.getEncryptionType() == GordianSM2EncryptionType.C1C2C3
-                                   ? Mode.C1C2C3 : Mode.C1C3C2;
+                    ? Mode.C1C2C3 : Mode.C1C3C2;
             theEncryptor = new SM2Engine(myDigest.getDigest(), mySM2Mode);
         }
 

@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * GordianKnot: Security Suite
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,41 +13,38 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.gordianknot.impl.bc;
 
-import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreement;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianNTRUPrimeSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianNTRUPrimeSpec.GordianNTRUPrimeType;
-import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyBIKEKeyPair.BouncyBIKEAgreement;
-import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyCMCEKeyPair.BouncyCMCEAgreement;
-import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyDHKeyPair.BouncyDHAnonymousAgreement;
-import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyDHKeyPair.BouncyDHBasicAgreement;
-import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyDHKeyPair.BouncyDHMQVAgreement;
-import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyDHKeyPair.BouncyDHSignedAgreement;
-import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyDHKeyPair.BouncyDHUnifiedAgreement;
-import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECAnonymousAgreement;
-import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECBasicAgreement;
-import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECIESAgreement;
-import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECMQVAgreement;
-import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECSignedAgreement;
-import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECUnifiedAgreement;
-import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyFrodoKeyPair.BouncyFrodoAgreement;
-import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyHQCKeyPair.BouncyHQCAgreement;
-import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyMLKEMKeyPair.BouncyMLKEMAgreement;
-import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyNTRUKeyPair.BouncyNTRUAgreement;
-import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyNTRULPrimeKeyPair.BouncyNTRULPrimeAgreement;
-import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyNewHopeKeyPair.BouncyNewHopeAgreement;
-import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyRSAKeyPair.BouncyRSAEncapsulationAgreement;
-import net.sourceforge.joceanus.gordianknot.impl.bc.BouncySABERKeyPair.BouncySABERAgreement;
-import net.sourceforge.joceanus.gordianknot.impl.bc.BouncySM2KeyPair.BouncyECSM2Agreement;
-import net.sourceforge.joceanus.gordianknot.impl.bc.BouncySNTRUPrimeKeyPair.BouncySNTRUPrimeAgreement;
-import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyXDHKeyPair.BouncyXDHAnonymousAgreement;
-import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyXDHKeyPair.BouncyXDHBasicAgreement;
-import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyXDHKeyPair.BouncyXDHSignedAgreement;
-import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyXDHKeyPair.BouncyXDHUnifiedAgreement;
+import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyBIKEKeyPair.BouncyBIKEAgreementEngine;
+import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyCMCEKeyPair.BouncyCMCEAgreementEngine;
+import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyDHKeyPair.BouncyDHAnonAgreementEngine;
+import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyDHKeyPair.BouncyDHBasicAgreementEngine;
+import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyDHKeyPair.BouncyDHMQVAgreementEngine;
+import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyDHKeyPair.BouncyDHUnifiedAgreementEngine;
+import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECAnonAgreementEngine;
+import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECBasicAgreementEngine;
+import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECIESAgreementEngine;
+import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECMQVAgreementEngine;
+import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECUnifiedAgreementEngine;
+import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyFrodoKeyPair.BouncyFrodoAgreementEngine;
+import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyHQCKeyPair.BouncyHQCAgreementEngine;
+import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyMLKEMKeyPair.BouncyMLKEMAgreementEngine;
+import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyNTRUKeyPair.BouncyNTRUAgreementEngine;
+import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyNTRULPrimeKeyPair.BouncyNTRULPrimeAgreementEngine;
+import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyNewHopeKeyPair.BouncyNewHopeAgreementEngine;
+import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyRSAKeyPair.BouncyRSAAgreementEngine;
+import net.sourceforge.joceanus.gordianknot.impl.bc.BouncySABERKeyPair.BouncySABERAgreementEngine;
+import net.sourceforge.joceanus.gordianknot.impl.bc.BouncySM2KeyPair.BouncySM2AgreementEngine;
+import net.sourceforge.joceanus.gordianknot.impl.bc.BouncySNTRUPrimeKeyPair.BouncySNTRUPrimeAgreementEngine;
+import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyXDHKeyPair.BouncyXDHAnonAgreementEngine;
+import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyXDHKeyPair.BouncyXDHBasicAgreementEngine;
+import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyXDHKeyPair.BouncyXDHUnifiedAgreementEngine;
+import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementEngine;
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
@@ -64,64 +61,47 @@ public class BouncyAgreementFactory
      * @param pFactory the factory
      */
     BouncyAgreementFactory(final GordianBaseFactory pFactory) {
-        /* Initialise underlying class */
         super(pFactory);
     }
 
     @Override
-    public GordianAgreement createAgreement(final GordianAgreementSpec pAgreementSpec) throws GordianException {
-        /* Check validity of Agreement */
-        checkAgreementSpec(pAgreementSpec);
-
-        /* Create the agreement */
-        return getBCAgreement(pAgreementSpec);
-    }
-
-    /**
-     * Create the BouncyCastle Agreement.
-     *
-     * @param pSpec the agreementSpec
-     * @return the Agreement
-     * @throws GordianException on error
-     */
-    private GordianAgreement getBCAgreement(final GordianAgreementSpec pSpec) throws GordianException {
+    public GordianCoreAgreementEngine createEngine(final GordianAgreementSpec pSpec) throws GordianException {
         switch (pSpec.getKeyPairSpec().getKeyPairType()) {
             case RSA:
-                return new BouncyRSAEncapsulationAgreement(getFactory(), pSpec);
+                return new BouncyRSAAgreementEngine(this, pSpec);
             case EC:
             case GOST2012:
             case DSTU4145:
             case SM2:
-                return getBCECAgreement(pSpec);
+                return getBCECEngine(pSpec);
             case DH:
-                return getBCDHAgreement(pSpec);
+                return getBCDHEngine(pSpec);
             case NEWHOPE:
-                return new BouncyNewHopeAgreement(getFactory(), pSpec);
+                return new BouncyNewHopeAgreementEngine(this, pSpec);
             case CMCE:
-                return new BouncyCMCEAgreement(getFactory(), pSpec);
+                return new BouncyCMCEAgreementEngine(this, pSpec);
             case FRODO:
-                return new BouncyFrodoAgreement(getFactory(), pSpec);
+                return new BouncyFrodoAgreementEngine(this, pSpec);
             case SABER:
-                return new BouncySABERAgreement(getFactory(), pSpec);
+                return new BouncySABERAgreementEngine(this, pSpec);
             case MLKEM:
-                return new BouncyMLKEMAgreement(getFactory(), pSpec);
+                return new BouncyMLKEMAgreementEngine(this, pSpec);
             case HQC:
-                return new BouncyHQCAgreement(getFactory(), pSpec);
+                return new BouncyHQCAgreementEngine(this, pSpec);
             case BIKE:
-                return new BouncyBIKEAgreement(getFactory(), pSpec);
+                return new BouncyBIKEAgreementEngine(this, pSpec);
             case NTRU:
-                return new BouncyNTRUAgreement(getFactory(), pSpec);
+                return new BouncyNTRUAgreementEngine(this, pSpec);
             case NTRUPRIME:
                 final GordianNTRUPrimeSpec mySpec = pSpec.getKeyPairSpec().getNTRUPrimeKeySpec();
                 return mySpec.getType() == GordianNTRUPrimeType.NTRUL
-                        ? new BouncyNTRULPrimeAgreement(getFactory(), pSpec)
-                        : new BouncySNTRUPrimeAgreement(getFactory(), pSpec);
+                        ? new BouncyNTRULPrimeAgreementEngine(this, pSpec)
+                        : new BouncySNTRUPrimeAgreementEngine(this, pSpec);
             case XDH:
-                return getBCXDHAgreement(pSpec);
+                return getBCXDHEngine(pSpec);
             case COMPOSITE:
-                return getCompositeAgreement(pSpec);
             default:
-                throw new GordianDataException(GordianBaseData.getInvalidText(pSpec));
+                return super.createEngine(pSpec);
         }
     }
 
@@ -132,22 +112,21 @@ public class BouncyAgreementFactory
      * @return the Agreement
      * @throws GordianException on error
      */
-    private GordianAgreement getBCECAgreement(final GordianAgreementSpec pSpec) throws GordianException {
+    private GordianCoreAgreementEngine getBCECEngine(final GordianAgreementSpec pSpec) throws GordianException {
         switch (pSpec.getAgreementType()) {
             case KEM:
-                return new BouncyECIESAgreement(getFactory(), pSpec);
+                return new BouncyECIESAgreementEngine(this, pSpec);
             case ANON:
-                return new BouncyECAnonymousAgreement(getFactory(), pSpec);
-            case BASIC:
-                return new BouncyECBasicAgreement(getFactory(), pSpec);
+                return new BouncyECAnonAgreementEngine(this, pSpec);
             case SIGNED:
-                return new BouncyECSignedAgreement(getFactory(), pSpec);
+            case BASIC:
+                return new BouncyECBasicAgreementEngine(this, pSpec);
             case MQV:
-                return new BouncyECMQVAgreement(getFactory(), pSpec);
+                return new BouncyECMQVAgreementEngine(this, pSpec);
             case UNIFIED:
-                return new BouncyECUnifiedAgreement(getFactory(), pSpec);
+                return new BouncyECUnifiedAgreementEngine(this, pSpec);
             case SM2:
-                return new BouncyECSM2Agreement(getFactory(), pSpec);
+                return new BouncySM2AgreementEngine(this, pSpec);
             default:
                 throw new GordianDataException(GordianBaseData.getInvalidText(pSpec));
         }
@@ -160,18 +139,17 @@ public class BouncyAgreementFactory
      * @return the Agreement
      * @throws GordianException on error
      */
-    private GordianAgreement getBCDHAgreement(final GordianAgreementSpec pSpec) throws GordianException {
+    private GordianCoreAgreementEngine getBCDHEngine(final GordianAgreementSpec pSpec) throws GordianException {
         switch (pSpec.getAgreementType()) {
             case ANON:
-                return new BouncyDHAnonymousAgreement(getFactory(), pSpec);
-            case BASIC:
-                return new BouncyDHBasicAgreement(getFactory(), pSpec);
+                return new BouncyDHAnonAgreementEngine(this, pSpec);
             case SIGNED:
-                return new BouncyDHSignedAgreement(getFactory(), pSpec);
+            case BASIC:
+                return new BouncyDHBasicAgreementEngine(this, pSpec);
             case MQV:
-                return new BouncyDHMQVAgreement(getFactory(), pSpec);
+                return new BouncyDHMQVAgreementEngine(this, pSpec);
             case UNIFIED:
-                return new BouncyDHUnifiedAgreement(getFactory(), pSpec);
+                return new BouncyDHUnifiedAgreementEngine(this, pSpec);
             default:
                 throw new GordianDataException(GordianBaseData.getInvalidText(pSpec));
         }
@@ -184,16 +162,15 @@ public class BouncyAgreementFactory
      * @return the Agreement
      * @throws GordianException on error
      */
-    private GordianAgreement getBCXDHAgreement(final GordianAgreementSpec pSpec) throws GordianException {
+    private GordianCoreAgreementEngine getBCXDHEngine(final GordianAgreementSpec pSpec) throws GordianException {
         switch (pSpec.getAgreementType()) {
             case ANON:
-                return new BouncyXDHAnonymousAgreement(getFactory(), pSpec);
-            case BASIC:
-                return new BouncyXDHBasicAgreement(getFactory(), pSpec);
+                return new BouncyXDHAnonAgreementEngine(this, pSpec);
             case SIGNED:
-                return new BouncyXDHSignedAgreement(getFactory(), pSpec);
+            case BASIC:
+                return new BouncyXDHBasicAgreementEngine(this, pSpec);
             case UNIFIED:
-                return new BouncyXDHUnifiedAgreement(getFactory(), pSpec);
+                return new BouncyXDHUnifiedAgreementEngine(this, pSpec);
             default:
                 throw new GordianDataException(GordianBaseData.getInvalidText(pSpec));
         }

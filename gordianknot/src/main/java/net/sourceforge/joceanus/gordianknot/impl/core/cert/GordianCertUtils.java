@@ -45,7 +45,7 @@ public final class GordianCertUtils {
     /**
      * Private constructor.
      */
-    GordianCertUtils() {
+    private GordianCertUtils() {
     }
 
     /**
@@ -213,6 +213,7 @@ public final class GordianCertUtils {
     /**
      * Create the keyId.
      *
+     * @param pFactory          the factory
      * @param pEncodedPublicKey the publicKey
      * @return the keyId
      * @throws GordianException on error

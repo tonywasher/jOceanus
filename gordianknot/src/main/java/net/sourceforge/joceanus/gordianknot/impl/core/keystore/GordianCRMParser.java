@@ -16,12 +16,12 @@
  */
 package net.sourceforge.joceanus.gordianknot.impl.core.keystore;
 
-import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementFactory;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
-import net.sourceforge.joceanus.gordianknot.api.agree.GordianAnonymousAgreement;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.cert.GordianCertificate;
 import net.sourceforge.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
+import net.sourceforge.joceanus.gordianknot.api.cert.GordianKeyPairUse;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptor;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorFactory;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
@@ -36,6 +36,9 @@ import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.Go
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignParams;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignature;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreement;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementFactory;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementParams;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.cert.GordianCertUtils;
 import net.sourceforge.joceanus.gordianknot.impl.core.cert.GordianCoreCertificate;
@@ -459,16 +462,20 @@ public class GordianCRMParser {
         final GordianAgreementSpec myAgreeSpec = myAgreeFactory.defaultForKeyPair(mySpec);
 
         /* Create agreement */
-        final GordianAnonymousAgreement mySender = (GordianAnonymousAgreement) myAgreeFactory.createAgreement(myAgreeSpec);
-        mySender.setResultType(null);
-        final GordianAnonymousAgreement myResponder = (GordianAnonymousAgreement) myAgreeFactory.createAgreement(myAgreeSpec);
-        final byte[] myClientHello = mySender.createClientHello(pKeyPair);
-        myResponder.acceptClientHello(pKeyPair, myClientHello);
+        final GordianCertificate myCert = myAgreeFactory.newMiniCertificate(GordianCRMEncryptor.SERVER, pKeyPair,
+                new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));
+        GordianAgreementParams myParams = myAgreeFactory.newAgreementParams(myAgreeSpec, GordianLength.LEN_256.getByteLength())
+                .setServerCertificate(myCert);
+        final GordianAgreement mySender = myAgreeFactory.createAgreement(myParams);
+        final byte[] myClientHello = mySender.nextMessage();
+        final GordianAgreement myResponder = myAgreeFactory.parseAgreementMessage(myClientHello);
+        myParams = myResponder.getAgreementParams().setServerCertificate(myCert);
+        myResponder.updateParams(myParams);
 
         /* Check the agreements */
         final byte[] myFirst = (byte[]) mySender.getResult();
         final byte[] mySecond = (byte[]) myResponder.getResult();
-        if (!org.bouncycastle.util.Arrays.areEqual(myFirst, mySecond)) {
+        if (!Arrays.equals(myFirst, mySecond)) {
             throw new GordianDataException("Private key failed validation");
         }
     }

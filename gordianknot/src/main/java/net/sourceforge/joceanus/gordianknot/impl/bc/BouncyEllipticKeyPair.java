@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * GordianKnot: Security Suite
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,37 +13,28 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.gordianknot.impl.bc;
 
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianElliptic;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignParams;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
-import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyDHKeyPair.BouncyDHPrivateKey;
-import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyDHKeyPair.BouncyDHPublicKey;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncySignature.BouncyDERCoder;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncySignature.BouncyDigestSignature;
-import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianAgreementMessageASN1;
-import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreAnonymousAgreement;
-import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreBasicAgreement;
-import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreEphemeralAgreement;
-import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreSignedAgreement;
+import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.encrypt.GordianCoreEncryptor;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
-import net.sourceforge.joceanus.gordianknot.impl.core.xagree.GordianXCoreAgreementFactory;
 import net.sourceforge.joceanus.gordianknot.impl.ext.engines.GordianEllipticEncryptor;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
@@ -101,7 +92,8 @@ public final class BouncyEllipticKeyPair {
             extends BouncyPublicKey<ECPublicKeyParameters> {
         /**
          * Constructor.
-         * @param pKeySpec the keySpec
+         *
+         * @param pKeySpec   the keySpec
          * @param pPublicKey the public key
          */
         BouncyECPublicKey(final GordianKeyPairSpec pKeySpec,
@@ -121,6 +113,7 @@ public final class BouncyEllipticKeyPair {
 
         /**
          * Is the private key valid for this public key?
+         *
          * @param pPrivate the private key
          * @return true/false
          */
@@ -131,7 +124,8 @@ public final class BouncyEllipticKeyPair {
 
         /**
          * CompareKeys.
-         * @param pFirst the first key
+         *
+         * @param pFirst  the first key
          * @param pSecond the second key
          * @return true/false
          */
@@ -149,7 +143,8 @@ public final class BouncyEllipticKeyPair {
             extends BouncyPrivateKey<ECPrivateKeyParameters> {
         /**
          * Constructor.
-         * @param pKeySpec the keySpec
+         *
+         * @param pKeySpec    the keySpec
          * @param pPrivateKey the private key
          */
         BouncyECPrivateKey(final GordianKeyPairSpec pKeySpec,
@@ -169,7 +164,8 @@ public final class BouncyEllipticKeyPair {
 
         /**
          * CompareKeys.
-         * @param pFirst the first key
+         *
+         * @param pFirst  the first key
          * @param pSecond the second key
          * @return true/false
          */
@@ -192,6 +188,7 @@ public final class BouncyEllipticKeyPair {
 
         /**
          * Constructor.
+         *
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
          * @throws GordianException on error
@@ -208,8 +205,8 @@ public final class BouncyEllipticKeyPair {
             final GordianElliptic myElliptic = pKeySpec.getElliptic();
             final String myCurve = myElliptic.getCurveName();
             final X9ECParameters x9 = myElliptic.hasCustomCurve()
-                                ? ECUtil.getNamedCurveByName(myCurve)
-                                : ECNamedCurveTable.getByName(myCurve);
+                    ? ECUtil.getNamedCurveByName(myCurve)
+                    : ECNamedCurveTable.getByName(myCurve);
             if (x9 == null) {
                 throw new GordianLogicException("Invalid KeySpec - " + pKeySpec);
             }
@@ -223,6 +220,7 @@ public final class BouncyEllipticKeyPair {
 
         /**
          * Create the generator.
+         *
          * @return the generator
          */
         ECKeyPairGenerator newGenerator() {
@@ -308,6 +306,7 @@ public final class BouncyEllipticKeyPair {
 
         /**
          * Derive public key from encoded.
+         *
          * @param pEncodedKey the encoded key
          * @return the public key
          * @throws GordianException on error
@@ -346,8 +345,9 @@ public final class BouncyEllipticKeyPair {
 
         /**
          * Constructor.
+         *
          * @param pFactory the factory
-         * @param pSpec the signatureSpec.
+         * @param pSpec    the signatureSpec.
          * @throws GordianException on error
          */
         BouncyECSignature(final GordianBaseFactory pFactory,
@@ -407,472 +407,10 @@ public final class BouncyEllipticKeyPair {
     }
 
     /**
-     * ECIES Encapsulation.
+     * EC Agreement Engine.
      */
-    public static class BouncyECIESAgreement
-            extends GordianCoreAnonymousAgreement {
-        /**
-         * Key Length.
-         */
-        private static final int KEYLEN = 32;
-
-        /**
-         * Key Generator.
-         */
-        private final ECIESKEMGenerator theGenerator;
-
-        /**
-         * Derivation function.
-         */
-        private final DerivationFunction theDerivation;
-
-        /**
-         * Constructor.
-         * @param pFactory the security factory
-         * @param pSpec the agreementSpec
-         */
-        BouncyECIESAgreement(final GordianBaseFactory pFactory,
-                             final GordianAgreementSpec pSpec) {
-            /* Initialise underlying class */
-            super(pFactory, pSpec);
-
-            /* Create Key Encapsulation */
-            theDerivation = newDerivationFunction();
-            theGenerator = new ECIESKEMGenerator(KEYLEN, theDerivation, getRandom());
-        }
-
-        @Override
-        public GordianAgreementMessageASN1 createClientHelloASN1(final GordianKeyPair pServer) throws GordianException {
-            /* Protect against exceptions */
-            try {
-                /* Check keyPair */
-                BouncyKeyPair.checkKeyPair(pServer);
-                checkKeyPair(pServer);
-
-                /* Create encapsulation */
-                final BouncyECPublicKey myPublic = (BouncyECPublicKey) getPublicKey(pServer);
-                final SecretWithEncapsulation myResult = theGenerator.generateEncapsulated(myPublic.getPublicKey());
-
-                /* Build the clientHello Message */
-                final GordianAgreementMessageASN1 myClientHello = buildClientHelloASN1(myResult.getEncapsulation());
-
-                /* Store secret and create initVector */
-                storeSecret(myResult.getSecret());
-                myResult.destroy();
-
-                /* Return the clientHello message  */
-                return myClientHello;
-            } catch (DestroyFailedException e) {
-                throw new GordianIOException("Failed to destroy secret", e);
-            }
-        }
-
-        @Override
-        public void acceptClientHelloASN1(final GordianKeyPair pServer,
-                                          final GordianAgreementMessageASN1 pClientHello) throws GordianException {
-            /* Check keyPair */
-            BouncyKeyPair.checkKeyPair(pServer);
-            checkKeyPair(pServer);
-
-            /* initialise Key Encapsulation */
-            final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(pServer);
-            final ECIESKEMExtractor myExtractor = new ECIESKEMExtractor(myPrivate.getPrivateKey(), KEYLEN, theDerivation);
-
-            /* Parse clientHello message and store secret */
-            final byte[] myMessage = pClientHello.getEncapsulated();
-            storeSecret(myExtractor.extractSecret(myMessage));
-        }
-    }
-
-    /**
-     * EC Anonymous.
-     */
-    public static class BouncyECAnonymousAgreement
-            extends GordianCoreAnonymousAgreement {
-        /**
-         * The agreement.
-         */
-        private final ECDHCBasicAgreement theAgreement;
-
-        /**
-         * Constructor.
-         * @param pFactory the security factory
-         * @param pSpec the agreementSpec
-         */
-        BouncyECAnonymousAgreement(final GordianBaseFactory pFactory,
-                                   final GordianAgreementSpec pSpec) {
-            /* Initialise underlying class */
-            super(pFactory, pSpec);
-
-            /* Create the agreement */
-            theAgreement = new ECDHCBasicAgreement();
-
-            /* Add in the derivation function */
-            enableDerivation();
-        }
-
-        @Override
-        public GordianAgreementMessageASN1 createClientHelloASN1(final GordianKeyPair pServer) throws GordianException {
-            /* Check keyPair */
-            BouncyKeyPair.checkKeyPair(pServer);
-            checkKeyPair(pServer);
-
-            /* Create an ephemeral keyPair */
-            final GordianKeyPairFactory myFactory = getFactory().getAsyncFactory().getKeyPairFactory();
-            final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(pServer.getKeyPairSpec());
-            final GordianKeyPair myPair = myGenerator.generateKeyPair();
-            final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(myPair);
-
-            /* Create the request  */
-            final X509EncodedKeySpec myKeySpec = myGenerator.getX509Encoding(myPair);
-            final GordianAgreementMessageASN1 myClientHello = buildClientHelloASN1(myKeySpec);
-
-            /* Derive the secret */
-            theAgreement.init(myPrivate.getPrivateKey());
-            final BouncyECPublicKey myTarget = (BouncyECPublicKey) getPublicKey(pServer);
-            final BigInteger mySecret = theAgreement.calculateAgreement(myTarget.getPublicKey());
-            storeSecret(BigIntegers.asUnsignedByteArray(theAgreement.getFieldSize(), mySecret));
-            return myClientHello;
-        }
-
-        @Override
-        public void acceptClientHelloASN1(final GordianKeyPair pSelf,
-                                          final GordianAgreementMessageASN1 pClientHello) throws GordianException {
-            /* Check keyPair */
-            BouncyKeyPair.checkKeyPair(pSelf);
-            checkKeyPair(pSelf);
-
-            /* Obtain source keySpec */
-            final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(pSelf);
-            final X509EncodedKeySpec myKeySpec = pClientHello.getEphemeral();
-            final GordianKeyPairFactory myFactory = getFactory().getAsyncFactory().getKeyPairFactory();
-            final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(pSelf.getKeyPairSpec());
-
-            /* Derive partner key */
-            final GordianKeyPair myPartner = myGenerator.derivePublicOnlyKeyPair(myKeySpec);
-            final BouncyECPublicKey myPublicKey = (BouncyECPublicKey) getPublicKey(myPartner);
-
-            /* Derive the secret */
-            theAgreement.init(myPrivate.getPrivateKey());
-            final BigInteger mySecret = theAgreement.calculateAgreement(myPublicKey.getPublicKey());
-
-            /* Store secret */
-            storeSecret(BigIntegers.asUnsignedByteArray(theAgreement.getFieldSize(), mySecret));
-        }
-    }
-
-    /**
-     * EC Basic Agreement.
-     */
-    public static class BouncyECBasicAgreement
-            extends GordianCoreBasicAgreement {
-        /**
-         * Key Agreement.
-         */
-        private final ECDHCBasicAgreement theAgreement;
-
-        /**
-         * Constructor.
-         * @param pFactory the security factory
-         * @param pSpec the agreementSpec
-         */
-        BouncyECBasicAgreement(final GordianBaseFactory pFactory,
-                               final GordianAgreementSpec pSpec) {
-            /* Initialise underlying class */
-            super(pFactory, pSpec);
-
-            /* Derive the secret */
-            theAgreement = new ECDHCBasicAgreement();
-
-            /* Add in the derivation function */
-            enableDerivation();
-        }
-
-        @Override
-        public GordianAgreementMessageASN1 acceptClientHelloASN1(final GordianKeyPair pClient,
-                                                                 final GordianKeyPair pServer,
-                                                                 final GordianAgreementMessageASN1 pClientHello) throws GordianException {
-            /* Check keyPair */
-            BouncyKeyPair.checkKeyPair(pClient);
-            checkKeyPair(pClient);
-            BouncyKeyPair.checkKeyPair(pServer);
-            checkKeyPair(pServer);
-
-            /* Process the clientHello */
-            processClientHelloASN1(pServer, pClientHello);
-            final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(pServer);
-            final BouncyECPublicKey myPublic = (BouncyECPublicKey) getPublicKey(pClient);
-
-            /* Derive the secret */
-            theAgreement.init(myPrivate.getPrivateKey());
-            final BigInteger mySecret = theAgreement.calculateAgreement(myPublic.getPublicKey());
-
-            /* Store secret */
-            storeSecret(BigIntegers.asUnsignedByteArray(theAgreement.getFieldSize(), mySecret));
-
-            /* Return the serverHello */
-            return buildServerHello();
-        }
-
-        @Override
-        public void acceptServerHelloASN1(final GordianKeyPair pServer,
-                                          final GordianAgreementMessageASN1 pServerHello) throws GordianException {
-            /* Check keyPair */
-            BouncyKeyPair.checkKeyPair(pServer);
-            checkKeyPair(pServer);
-
-            /* process the serverHello */
-            processServerHelloASN1(pServerHello);
-            final BouncyPrivateKey<?> myPrivate = (BouncyPrivateKey<?>) getPrivateKey(getClientKeyPair());
-
-            /* Calculate agreement */
-            theAgreement.init(myPrivate.getPrivateKey());
-            final BouncyPublicKey<?> mySrcPublic = (BouncyPublicKey<?>) getPublicKey(pServer);
-            final BigInteger mySecret = theAgreement.calculateAgreement(mySrcPublic.getPublicKey());
-            storeSecret(BigIntegers.asUnsignedByteArray(theAgreement.getFieldSize(), mySecret));
-        }
-    }
-
-    /**
-     * EC Signed Agreement.
-     */
-    public static class BouncyECSignedAgreement
-            extends GordianCoreSignedAgreement {
-        /**
-         * Agreement.
-         */
-        private final ECDHCBasicAgreement theAgreement;
-
-        /**
-         * Constructor.
-         * @param pFactory the security factory
-         * @param pSpec the agreementSpec
-         */
-        BouncyECSignedAgreement(final GordianBaseFactory pFactory,
-                                final GordianAgreementSpec pSpec) {
-            /* Initialise underlying class */
-            super(pFactory, pSpec);
-
-            /* Create the agreement */
-            theAgreement = new ECDHCBasicAgreement();
-            enableDerivation();
-        }
-
-        @Override
-        public GordianAgreementMessageASN1 acceptClientHelloASN1(final GordianKeyPair pServer,
-                                                                 final GordianAgreementMessageASN1 pClientHello) throws GordianException {
-            /* Process clientHello */
-            BouncyKeyPair.checkKeyPair(pServer);
-            processClientHelloASN1(pClientHello);
-            final BouncyPrivateKey<?> myPrivate = (BouncyPrivateKey<?>) getPrivateKey(getServerEphemeralKeyPair());
-            final BouncyPublicKey<?> myPublic = (BouncyPublicKey<?>) getPublicKey(getClientEphemeralKeyPair());
-
-            /* Derive the secret */
-            theAgreement.init(myPrivate.getPrivateKey());
-            final BigInteger mySecretInt = theAgreement.calculateAgreement(myPublic.getPublicKey());
-            final byte[] mySecret = BigIntegers.asUnsignedByteArray(theAgreement.getFieldSize(), mySecretInt);
-
-            /* Store secret */
-            storeSecret(mySecret);
-
-            /* Return the serverHello */
-            return buildServerHelloASN1(pServer);
-        }
-
-        @Override
-        public void acceptServerHelloASN1(final GordianKeyPair pServer,
-                                          final GordianAgreementMessageASN1 pServerHello) throws GordianException {
-            /* process the serverHello */
-            BouncyKeyPair.checkKeyPair(pServer);
-            processServerHelloASN1(pServer, pServerHello);
-            final BouncyPrivateKey<?> myPrivate = (BouncyPrivateKey<?>) getPrivateKey(getClientEphemeralKeyPair());
-
-            /* Calculate agreement */
-            theAgreement.init(myPrivate.getPrivateKey());
-            final BouncyPublicKey<?> myPublic = (BouncyPublicKey<?>) getPublicKey(getServerEphemeralKeyPair());
-            final BigInteger mySecretInt = theAgreement.calculateAgreement(myPublic.getPublicKey());
-            final byte[] mySecret = BigIntegers.asUnsignedByteArray(theAgreement.getFieldSize(), mySecretInt);
-
-            /* Store secret */
-            storeSecret(mySecret);
-        }
-    }
-
-    /**
-     * EC Unified Agreement.
-     */
-    public static class BouncyECUnifiedAgreement
-            extends GordianCoreEphemeralAgreement {
-        /**
-         * Key Agreement.
-         */
-        private final ECDHCUnifiedAgreement theAgreement;
-
-        /**
-         * Constructor.
-         * @param pFactory the security factory
-         * @param pSpec the agreementSpec
-         */
-        BouncyECUnifiedAgreement(final GordianBaseFactory pFactory,
-                                 final GordianAgreementSpec pSpec) {
-            /* Initialise underlying class */
-            super(pFactory, pSpec);
-
-            /* Create Key Agreement */
-            theAgreement = new ECDHCUnifiedAgreement();
-
-            /* Add in the derivation function */
-            enableDerivation();
-        }
-
-        @Override
-        public GordianAgreementMessageASN1 acceptClientHelloASN1(final GordianKeyPair pClient,
-                                                                 final GordianKeyPair pServer,
-                                                                 final GordianAgreementMessageASN1 pClientHello) throws GordianException {
-            /* process clientHello */
-            BouncyKeyPair.checkKeyPair(pClient);
-            BouncyKeyPair.checkKeyPair(pServer);
-            processClientHelloASN1(pClient, pServer, pClientHello);
-
-            /* Initialise agreement */
-            final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(pServer);
-            final BouncyECPrivateKey myEphPrivate = (BouncyECPrivateKey) getPrivateKey(getServerEphemeralKeyPair());
-            final BouncyECPublicKey myEphPublic = (BouncyECPublicKey) getPublicKey(getServerEphemeralKeyPair());
-            final ECDHUPrivateParameters myPrivParams = new ECDHUPrivateParameters(myPrivate.getPrivateKey(),
-                    myEphPrivate.getPrivateKey(), myEphPublic.getPublicKey());
-            theAgreement.init(myPrivParams);
-
-            /* Calculate agreement */
-            final BouncyECPublicKey mySrcPublic = (BouncyECPublicKey) getPublicKey(pClient);
-            final BouncyECPublicKey mySrcEphPublic = (BouncyECPublicKey) getPublicKey(getClientEphemeralKeyPair());
-            final ECDHUPublicParameters myPubParams = new ECDHUPublicParameters(mySrcPublic.getPublicKey(),
-                    mySrcEphPublic.getPublicKey());
-            storeSecret(theAgreement.calculateAgreement(myPubParams));
-
-            /* Return the serverHello */
-            return buildServerHello();
-        }
-
-        @Override
-        public GordianAgreementMessageASN1 acceptServerHelloASN1(final GordianKeyPair pServer,
-                                                                 final GordianAgreementMessageASN1 pServerHello) throws GordianException {
-            /* Check keyPair */
-            BouncyKeyPair.checkKeyPair(pServer);
-            checkKeyPair(pServer);
-
-            /* process the serverHello */
-            processServerHelloASN1(pServer, pServerHello);
-
-            /* Initialise agreement */
-            final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(getClientKeyPair());
-            final BouncyECPrivateKey myEphPrivate = (BouncyECPrivateKey) getPrivateKey(getClientEphemeralKeyPair());
-            final BouncyECPublicKey myEphPublic = (BouncyECPublicKey) getPublicKey(getClientEphemeralKeyPair());
-            final ECDHUPrivateParameters myPrivParams = new ECDHUPrivateParameters(myPrivate.getPrivateKey(),
-                    myEphPrivate.getPrivateKey(), myEphPublic.getPublicKey());
-            theAgreement.init(myPrivParams);
-
-            /* Calculate agreement */
-            final BouncyECPublicKey mySrcPublic = (BouncyECPublicKey) getPublicKey(pServer);
-            final BouncyECPublicKey mySrcEphPublic = (BouncyECPublicKey) getPublicKey(getServerEphemeralKeyPair());
-            final ECDHUPublicParameters myPubParams = new ECDHUPublicParameters(mySrcPublic.getPublicKey(),
-                    mySrcEphPublic.getPublicKey());
-            storeSecret(theAgreement.calculateAgreement(myPubParams));
-
-            /* Return confirmation if needed */
-            return buildClientConfirmASN1();
-         }
-    }
-
-    /**
-     * EC MQV Agreement.
-     */
-    public static class BouncyECMQVAgreement
-            extends GordianCoreEphemeralAgreement {
-        /**
-         * Key Agreement.
-         */
-        private final ECMQVBasicAgreement theAgreement;
-
-        /**
-         * Constructor.
-         * @param pFactory the security factory
-         * @param pSpec the agreementSpec
-         */
-        BouncyECMQVAgreement(final GordianBaseFactory pFactory,
-                             final GordianAgreementSpec pSpec) {
-            /* Initialise underlying class */
-            super(pFactory, pSpec);
-
-            /* Create Key Agreement */
-            theAgreement = new ECMQVBasicAgreement();
-
-            /* Add in the derivation function */
-            enableDerivation();
-        }
-
-        @Override
-        public GordianAgreementMessageASN1 acceptClientHelloASN1(final GordianKeyPair pClient,
-                                                                 final GordianKeyPair pServer,
-                                                                 final GordianAgreementMessageASN1 pClientHello) throws GordianException {
-            /* process clientHello */
-            BouncyKeyPair.checkKeyPair(pClient);
-            BouncyKeyPair.checkKeyPair(pServer);
-            processClientHelloASN1(pClient, pServer, pClientHello);
-
-            /* Initialise agreement */
-            final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(pServer);
-            final BouncyECPrivateKey myEphPrivate = (BouncyECPrivateKey) getPrivateKey(getServerEphemeralKeyPair());
-            final BouncyECPublicKey myEphPublic = (BouncyECPublicKey) getPublicKey(getServerEphemeralKeyPair());
-            final MQVPrivateParameters myPrivParams = new MQVPrivateParameters(myPrivate.getPrivateKey(),
-                    myEphPrivate.getPrivateKey(), myEphPublic.getPublicKey());
-            theAgreement.init(myPrivParams);
-
-            /* Calculate agreement */
-            final BouncyECPublicKey mySrcPublic = (BouncyECPublicKey) getPublicKey(pClient);
-            final BouncyECPublicKey mySrcEphPublic = (BouncyECPublicKey) getPublicKey(getClientEphemeralKeyPair());
-            final MQVPublicParameters myPubParams = new MQVPublicParameters(mySrcPublic.getPublicKey(),
-                    mySrcEphPublic.getPublicKey());
-            storeSecret(BigIntegers.asUnsignedByteArray(theAgreement.getFieldSize(), theAgreement.calculateAgreement(myPubParams)));
-
-            /* Return the serverHello */
-            return buildServerHello();
-        }
-
-        @Override
-        public GordianAgreementMessageASN1 acceptServerHelloASN1(final GordianKeyPair pServer,
-                                                                 final GordianAgreementMessageASN1 pServerHello) throws GordianException {
-            /* Check keyPair */
-            BouncyKeyPair.checkKeyPair(pServer);
-            checkKeyPair(pServer);
-
-            /* process the serverHello */
-            processServerHelloASN1(pServer, pServerHello);
-
-            /* Initialise agreement */
-            final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(getClientKeyPair());
-            final BouncyECPrivateKey myEphPrivate = (BouncyECPrivateKey) getPrivateKey(getClientEphemeralKeyPair());
-            final BouncyECPublicKey myEphPublic = (BouncyECPublicKey) getPublicKey(getClientEphemeralKeyPair());
-            final MQVPrivateParameters myPrivParams = new MQVPrivateParameters(myPrivate.getPrivateKey(),
-                    myEphPrivate.getPrivateKey(), myEphPublic.getPublicKey());
-            theAgreement.init(myPrivParams);
-
-            /* Calculate agreement */
-            final BouncyECPublicKey mySrcPublic = (BouncyECPublicKey) getPublicKey(pServer);
-            final BouncyECPublicKey mySrcEphPublic = (BouncyECPublicKey) getPublicKey(getServerEphemeralKeyPair());
-            final MQVPublicParameters myPubParams = new MQVPublicParameters(mySrcPublic.getPublicKey(),
-                    mySrcEphPublic.getPublicKey());
-            storeSecret(BigIntegers.asUnsignedByteArray(theAgreement.getFieldSize(), theAgreement.calculateAgreement(myPubParams)));
-
-            /* Return confirmation if needed */
-            return buildClientConfirmASN1();
-        }
-    }
-
-    /**
-     * EC XAgreement Engine.
-     */
-    public static class BouncyECIESXAgreementEngine
-            extends BouncyXAgreementBase {
+    public static class BouncyECIESAgreementEngine
+            extends BouncyAgreementBase {
         /**
          * Key Length.
          */
@@ -885,12 +423,13 @@ public final class BouncyEllipticKeyPair {
 
         /**
          * Constructor.
+         *
          * @param pFactory the security factory
-         * @param pSpec the agreementSpec
+         * @param pSpec    the agreementSpec
          * @throws GordianException on error
          */
-        BouncyECIESXAgreementEngine(final GordianXCoreAgreementFactory pFactory,
-                                    final GordianAgreementSpec pSpec) throws GordianException {
+        BouncyECIESAgreementEngine(final GordianCoreAgreementFactory pFactory,
+                                   final GordianAgreementSpec pSpec) throws GordianException {
             /* Initialize underlying class */
             super(pFactory, pSpec);
 
@@ -932,10 +471,10 @@ public final class BouncyEllipticKeyPair {
     }
 
     /**
-     * EC Anonymous XAgreement Engine.
+     * EC Anonymous Agreement Engine.
      */
-    public static class BouncyECAnonXAgreementEngine
-            extends BouncyXAgreementBase {
+    public static class BouncyECAnonAgreementEngine
+            extends BouncyAgreementBase {
         /**
          * The agreement.
          */
@@ -943,12 +482,13 @@ public final class BouncyEllipticKeyPair {
 
         /**
          * Constructor.
+         *
          * @param pFactory the security factory
-         * @param pSpec the agreementSpec
+         * @param pSpec    the agreementSpec
          * @throws GordianException on error
          */
-        BouncyECAnonXAgreementEngine(final GordianXCoreAgreementFactory pFactory,
-                                     final GordianAgreementSpec pSpec) throws GordianException {
+        BouncyECAnonAgreementEngine(final GordianCoreAgreementFactory pFactory,
+                                    final GordianAgreementSpec pSpec) throws GordianException {
             /* Initialize underlying class */
             super(pFactory, pSpec);
 
@@ -988,10 +528,10 @@ public final class BouncyEllipticKeyPair {
     }
 
     /**
-     * EC Basic XAgreement Engine.
+     * EC Basic Agreement Engine.
      */
-    public static class BouncyECBasicXAgreementEngine
-            extends BouncyXAgreementBase {
+    public static class BouncyECBasicAgreementEngine
+            extends BouncyAgreementBase {
         /**
          * The agreement.
          */
@@ -999,12 +539,13 @@ public final class BouncyEllipticKeyPair {
 
         /**
          * Constructor.
+         *
          * @param pFactory the security factory
-         * @param pSpec the agreementSpec
+         * @param pSpec    the agreementSpec
          * @throws GordianException on error
          */
-        BouncyECBasicXAgreementEngine(final GordianXCoreAgreementFactory pFactory,
-                                      final GordianAgreementSpec pSpec) throws GordianException {
+        BouncyECBasicAgreementEngine(final GordianCoreAgreementFactory pFactory,
+                                     final GordianAgreementSpec pSpec) throws GordianException {
             /* Initialize underlying class */
             super(pFactory, pSpec);
 
@@ -1015,8 +556,8 @@ public final class BouncyEllipticKeyPair {
         @Override
         public void processClientHello() throws GordianException {
             /* Access keys */
-            final BouncyDHPublicKey myPublic = (BouncyDHPublicKey) getPublicKey(getClientKeyPair());
-            final BouncyDHPrivateKey myPrivate = (BouncyDHPrivateKey) getPrivateKey(getServerKeyPair());
+            final BouncyECPublicKey myPublic = (BouncyECPublicKey) getPublicKey(getClientKeyPair());
+            final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(getServerKeyPair());
 
             /* Derive the secret */
             theAgreement.init(myPrivate.getPrivateKey());
@@ -1030,8 +571,8 @@ public final class BouncyEllipticKeyPair {
         @Override
         public void processServerHello() throws GordianException {
             /* Access keys */
-            final BouncyDHPublicKey myPublic = (BouncyDHPublicKey) getPublicKey(getServerKeyPair());
-            final BouncyDHPrivateKey myPrivate = (BouncyDHPrivateKey) getPrivateKey(getClientKeyPair());
+            final BouncyECPublicKey myPublic = (BouncyECPublicKey) getPublicKey(getServerKeyPair());
+            final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(getClientKeyPair());
 
             /* Derive the secret */
             theAgreement.init(myPrivate.getPrivateKey());
@@ -1044,10 +585,10 @@ public final class BouncyEllipticKeyPair {
     }
 
     /**
-     * EC Unified XAgreement Engine.
+     * EC Unified Agreement Engine.
      */
-    public static class BouncyECUnifiedXAgreementEngine
-            extends BouncyXAgreementBase {
+    public static class BouncyECUnifiedAgreementEngine
+            extends BouncyAgreementBase {
         /**
          * The agreement.
          */
@@ -1055,12 +596,13 @@ public final class BouncyEllipticKeyPair {
 
         /**
          * Constructor.
+         *
          * @param pFactory the security factory
-         * @param pSpec the agreementSpec
+         * @param pSpec    the agreementSpec
          * @throws GordianException on error
          */
-        BouncyECUnifiedXAgreementEngine(final GordianXCoreAgreementFactory pFactory,
-                                        final GordianAgreementSpec pSpec) throws GordianException {
+        BouncyECUnifiedAgreementEngine(final GordianCoreAgreementFactory pFactory,
+                                       final GordianAgreementSpec pSpec) throws GordianException {
             /* Initialize underlying class */
             super(pFactory, pSpec);
 
@@ -1106,10 +648,10 @@ public final class BouncyEllipticKeyPair {
     }
 
     /**
-     * EC MQV XAgreement Engine.
+     * EC MQV Agreement Engine.
      */
-    public static class BouncyECMQVXAgreementEngine
-            extends BouncyXAgreementBase {
+    public static class BouncyECMQVAgreementEngine
+            extends BouncyAgreementBase {
         /**
          * The agreement.
          */
@@ -1117,12 +659,13 @@ public final class BouncyEllipticKeyPair {
 
         /**
          * Constructor.
+         *
          * @param pFactory the security factory
-         * @param pSpec the agreementSpec
+         * @param pSpec    the agreementSpec
          * @throws GordianException on error
          */
-        BouncyECMQVXAgreementEngine(final GordianXCoreAgreementFactory pFactory,
-                                    final GordianAgreementSpec pSpec) throws GordianException {
+        BouncyECMQVAgreementEngine(final GordianCoreAgreementFactory pFactory,
+                                   final GordianAgreementSpec pSpec) throws GordianException {
             /* Initialize underlying class */
             super(pFactory, pSpec);
 
@@ -1179,8 +722,9 @@ public final class BouncyEllipticKeyPair {
 
         /**
          * Constructor.
+         *
          * @param pFactory the factory
-         * @param pSpec the encryptorSpec
+         * @param pSpec    the encryptorSpec
          */
         BouncyECEncryptor(final GordianBaseFactory pFactory,
                           final GordianEncryptorSpec pSpec) {

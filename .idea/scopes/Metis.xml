@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="Metis" pattern="file[metis]:src/main/java//*||file[metis]:src/main/resources//*.properties" />
+</component>

@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * GordianKnot: Security Suite
- * Copyright 2012,2022 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,24 +13,20 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.gordianknot.impl.bc;
 
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianRSAModulus;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
-import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianAgreementMessageASN1;
-import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreAnonymousAgreement;
+import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
-import net.sourceforge.joceanus.gordianknot.impl.core.xagree.GordianXCoreAgreementFactory;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
@@ -69,7 +65,8 @@ public final class BouncyNewHopeKeyPair {
             extends BouncyPublicKey<NHPublicKeyParameters> {
         /**
          * Constructor.
-         * @param pKeySpec the keySpec
+         *
+         * @param pKeySpec   the keySpec
          * @param pPublicKey the public key
          */
         BouncyNewHopePublicKey(final GordianKeyPairSpec pKeySpec,
@@ -95,7 +92,8 @@ public final class BouncyNewHopeKeyPair {
             extends BouncyPrivateKey<NHPrivateKeyParameters> {
         /**
          * Constructor.
-         * @param pKeySpec the keySpec
+         *
+         * @param pKeySpec    the keySpec
          * @param pPrivateKey the private key
          */
         BouncyNewHopePrivateKey(final GordianKeyPairSpec pKeySpec,
@@ -126,6 +124,7 @@ public final class BouncyNewHopeKeyPair {
 
         /**
          * Constructor.
+         *
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
          */
@@ -219,6 +218,7 @@ public final class BouncyNewHopeKeyPair {
 
         /**
          * Derive public key from encoded.
+         *
          * @param pEncodedKey the encoded key
          * @return the public key
          * @throws GordianException on error
@@ -241,96 +241,19 @@ public final class BouncyNewHopeKeyPair {
     }
 
     /**
-     * NewHope Encapsulation.
+     * NewHope Agreement Engine.
      */
-    public static class BouncyNewHopeAgreement
-            extends GordianCoreAnonymousAgreement {
+    public static class BouncyNewHopeAgreementEngine
+            extends BouncyAgreementBase {
         /**
          * Constructor.
+         *
          * @param pFactory the security factory
-         * @param pSpec the agreementSpec
-         */
-        BouncyNewHopeAgreement(final GordianBaseFactory pFactory,
-                               final GordianAgreementSpec pSpec) {
-            /* Initialise underlying class */
-            super(pFactory, pSpec);
-
-            /* Add in the derivation function */
-            enableDerivation();
-        }
-
-        @Override
-        public GordianAgreementMessageASN1 createClientHelloASN1(final GordianKeyPair pServer) throws GordianException {
-            try {
-                /* Check keyPair */
-                BouncyKeyPair.checkKeyPair(pServer);
-                checkKeyPair(pServer);
-
-                /* Generate an Exchange KeyPair */
-                final NHExchangePairGenerator myGenerator = new NHExchangePairGenerator(getRandom());
-                final BouncyNewHopePublicKey myTarget = (BouncyNewHopePublicKey) getPublicKey(pServer);
-                final ExchangePair myPair = myGenerator.GenerateExchange(myTarget.getPublicKey());
-
-                /* Obtain the encoded keySpec of the public key */
-                final NHPublicKeyParameters myParms = (NHPublicKeyParameters) myPair.getPublicKey();
-                final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfoFactory.createSubjectPublicKeyInfo(myParms);
-                final X509EncodedKeySpec myKeySpec = new X509EncodedKeySpec(myInfo.getEncoded());
-
-                /* Build the clientHello Message */
-                final GordianAgreementMessageASN1 myClientHello = buildClientHelloASN1(myKeySpec);
-
-                /* Derive the secret */
-                final byte[] mySecret = myPair.getSharedValue();
-                storeSecret(mySecret);
-
-                /* Return the clientHello  */
-                return myClientHello;
-
-            } catch (IOException e) {
-                throw new GordianCryptoException(BouncyKeyPairGenerator.ERROR_PARSE, e);
-            }
-        }
-
-        @Override
-        public void acceptClientHelloASN1(final GordianKeyPair pServer,
-                                          final GordianAgreementMessageASN1 pClientHello) throws GordianException {
-            /* Check keyPair */
-            BouncyKeyPair.checkKeyPair(pServer);
-            checkKeyPair(pServer);
-
-            /* Obtain keySpec */
-            final X509EncodedKeySpec myKeySpec = pClientHello.getEphemeral();
-
-            /* Derive ephemeral Public key */
-            final GordianKeyPairFactory myFactory = getFactory().getAsyncFactory().getKeyPairFactory();
-            final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(pServer.getKeyPairSpec());
-            final GordianKeyPair myPair = myGenerator.derivePublicOnlyKeyPair(myKeySpec);
-            final BouncyNewHopePublicKey myPublic = (BouncyNewHopePublicKey) getPublicKey(myPair);
-
-            /* Derive the secret */
-            final BouncyNewHopePrivateKey myPrivate = (BouncyNewHopePrivateKey) getPrivateKey(pServer);
-            final NHAgreement myAgreement = new NHAgreement();
-            myAgreement.init(myPrivate.getPrivateKey());
-            final byte[] mySecret = myAgreement.calculateAgreement(myPublic.getPublicKey());
-
-            /* Store secret */
-            storeSecret(mySecret);
-        }
-    }
-
-    /**
-     * NewHope XAgreement Engine.
-     */
-    public static class BouncyNewHopeXAgreementEngine
-            extends BouncyXAgreementBase {
-        /**
-         * Constructor.
-         * @param pFactory the security factory
-         * @param pSpec the agreementSpec
+         * @param pSpec    the agreementSpec
          * @throws GordianException on error
          */
-        BouncyNewHopeXAgreementEngine(final GordianXCoreAgreementFactory pFactory,
-                                      final GordianAgreementSpec pSpec) throws GordianException {
+        BouncyNewHopeAgreementEngine(final GordianCoreAgreementFactory pFactory,
+                                     final GordianAgreementSpec pSpec) throws GordianException {
             /* Initialize underlying class */
             super(pFactory, pSpec);
         }
@@ -346,7 +269,7 @@ public final class BouncyNewHopeKeyPair {
             final GordianKeyPairSpec mySpec = getSpec().getKeyPairSpec();
             final BouncyNewHopePublicKey myPublic = new BouncyNewHopePublicKey(mySpec, (NHPublicKeyParameters) myPair.getPublicKey());
             final BouncyKeyPair myEphemeral = new BouncyKeyPair(myPublic);
-            setClientEphemeral(myEphemeral);
+            setClientEphemeralAsEncapsulated(myEphemeral);
 
             /* Store secret */
             storeSecret(myPair.getSharedValue());

@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * GordianKnot: Security Suite
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,14 +13,14 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.gordianknot.impl.core.lock;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
-import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianAgreementMessageASN1;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianASN1Util.GordianASN1Object;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
+import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementMessageASN1;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
@@ -43,7 +43,7 @@ public class GordianKeyPairLockASN1
     /**
      * The AgreementMessageASN1.
      */
-    private final GordianAgreementMessageASN1 theAgreement;
+    private final GordianCoreAgreementMessageASN1 theAgreement;
 
     /**
      * The PasswordLockASN1.
@@ -52,10 +52,11 @@ public class GordianKeyPairLockASN1
 
     /**
      * Create the ASN1 sequence.
+     *
      * @param pAgreement the agreement
-     * @param pLock the passwordLock
+     * @param pLock      the passwordLock
      */
-    public GordianKeyPairLockASN1(final GordianAgreementMessageASN1 pAgreement,
+    public GordianKeyPairLockASN1(final GordianCoreAgreementMessageASN1 pAgreement,
                                   final GordianPasswordLockASN1 pLock) {
         /* Store the Spec */
         theAgreement = pAgreement;
@@ -64,6 +65,7 @@ public class GordianKeyPairLockASN1
 
     /**
      * Constructor.
+     *
      * @param pSequence the Sequence
      * @throws GordianException on error
      */
@@ -72,7 +74,7 @@ public class GordianKeyPairLockASN1
         try {
             /* Extract the parameters from the sequence */
             final Enumeration<?> en = pSequence.getObjects();
-            theAgreement = GordianAgreementMessageASN1.getInstance(en.nextElement());
+            theAgreement = GordianCoreAgreementMessageASN1.getInstance(en.nextElement());
             theLock = GordianPasswordLockASN1.getInstance(en.nextElement());
 
             /* Make sure that we have completed the sequence */
@@ -88,6 +90,7 @@ public class GordianKeyPairLockASN1
 
     /**
      * Parse the ASN1 object.
+     *
      * @param pObject the object to parse
      * @return the parsed object
      * @throws GordianException on error
@@ -103,14 +106,16 @@ public class GordianKeyPairLockASN1
 
     /**
      * Obtain the agreementASN1.
+     *
      * @return the agreementASN1
      */
-    public GordianAgreementMessageASN1 getAgreement() {
+    public GordianCoreAgreementMessageASN1 getAgreement() {
         return theAgreement;
     }
 
     /**
      * Obtain the passwordLockASN1.
+     *
      * @return the passwordLockASN1
      */
     public GordianPasswordLockASN1 getPasswordLock() {

@@ -28,6 +28,7 @@ module net.sourceforge.joceanus.gordianknot {
     /* Exports */
     exports net.sourceforge.joceanus.gordianknot.api.agree;
     exports net.sourceforge.joceanus.gordianknot.api.base;
+    exports net.sourceforge.joceanus.gordianknot.api.cert;
     exports net.sourceforge.joceanus.gordianknot.api.cipher;
     exports net.sourceforge.joceanus.gordianknot.api.digest;
     exports net.sourceforge.joceanus.gordianknot.api.encrypt;
@@ -42,6 +43,5 @@ module net.sourceforge.joceanus.gordianknot {
     exports net.sourceforge.joceanus.gordianknot.api.sign;
     exports net.sourceforge.joceanus.gordianknot.api.zip;
     exports net.sourceforge.joceanus.gordianknot.util;
-    exports net.sourceforge.joceanus.gordianknot.api.cert;
 }
 

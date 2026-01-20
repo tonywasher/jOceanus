@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * GordianKnot: Security Suite
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,26 +13,19 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.gordianknot.impl.bc;
 
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
-import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianAgreementMessageASN1;
-import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreAnonymousAgreement;
-import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreBasicAgreement;
-import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreEphemeralAgreement;
-import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreSignedAgreement;
+import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
-import net.sourceforge.joceanus.gordianknot.impl.core.xagree.GordianXCoreAgreementFactory;
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
@@ -79,7 +72,8 @@ public final class BouncyXDHKeyPair {
             extends BouncyPublicKey<X25519PublicKeyParameters> {
         /**
          * Constructor.
-         * @param pKeySpec the keySpec
+         *
+         * @param pKeySpec   the keySpec
          * @param pPublicKey the public key
          */
         BouncyX25519PublicKey(final GordianKeyPairSpec pKeySpec,
@@ -105,7 +99,8 @@ public final class BouncyXDHKeyPair {
             extends BouncyPrivateKey<X25519PrivateKeyParameters> {
         /**
          * Constructor.
-         * @param pKeySpec the keySpec
+         *
+         * @param pKeySpec    the keySpec
          * @param pPrivateKey the private key
          */
         BouncyX25519PrivateKey(final GordianKeyPairSpec pKeySpec,
@@ -132,7 +127,8 @@ public final class BouncyXDHKeyPair {
             extends BouncyPublicKey<X448PublicKeyParameters> {
         /**
          * Constructor.
-         * @param pKeySpec the keySpec
+         *
+         * @param pKeySpec   the keySpec
          * @param pPublicKey the public key
          */
         BouncyX448PublicKey(final GordianKeyPairSpec pKeySpec,
@@ -158,7 +154,8 @@ public final class BouncyXDHKeyPair {
             extends BouncyPrivateKey<X448PrivateKeyParameters> {
         /**
          * Constructor.
-         * @param pKeySpec the keySpec
+         *
+         * @param pKeySpec    the keySpec
          * @param pPrivateKey the private key
          */
         BouncyX448PrivateKey(final GordianKeyPairSpec pKeySpec,
@@ -190,6 +187,7 @@ public final class BouncyXDHKeyPair {
 
         /**
          * Constructor.
+         *
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
          */
@@ -286,6 +284,7 @@ public final class BouncyXDHKeyPair {
 
         /**
          * Derive public key from encoded.
+         *
          * @param pEncodedKey the encoded key
          * @return the public key
          * @throws GordianException on error
@@ -319,6 +318,7 @@ public final class BouncyXDHKeyPair {
 
         /**
          * Constructor.
+         *
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
          */
@@ -415,6 +415,7 @@ public final class BouncyXDHKeyPair {
 
         /**
          * Derive public key from encoded.
+         *
          * @param pEncodedKey the encoded key
          * @return the public key
          * @throws GordianException on error
@@ -438,330 +439,7 @@ public final class BouncyXDHKeyPair {
 
     /**
      * Establish the agreement.
-     * @param pKeyPair the keyPair
-     * @return the agreement
-     */
-    private static RawAgreement establishAgreement(final GordianKeyPair pKeyPair) {
-        return pKeyPair.getKeyPairSpec().getEdwardsElliptic().is25519()
-                       ? new X25519Agreement()
-                       : new X448Agreement();
-    }
-
-    /**
-     * XDH Anonymous.
-     */
-    public static class BouncyXDHAnonymousAgreement
-            extends GordianCoreAnonymousAgreement {
-        /**
-         * The agreement.
-         */
-        private RawAgreement theAgreement;
-
-        /**
-         * Constructor.
-         * @param pFactory the security factory
-         * @param pSpec the agreementSpec
-         */
-        BouncyXDHAnonymousAgreement(final GordianBaseFactory pFactory,
-                                    final GordianAgreementSpec pSpec) {
-            /* Initialise underlying class */
-            super(pFactory, pSpec);
-
-            /* Enable derivation */
-            enableDerivation();
-        }
-
-        @Override
-        public GordianAgreementMessageASN1 createClientHelloASN1(final GordianKeyPair pServer) throws GordianException {
-            /* Check keyPair */
-            BouncyKeyPair.checkKeyPair(pServer);
-            checkKeyPair(pServer);
-
-            /* Establish agreement */
-            theAgreement = establishAgreement(pServer);
-
-            /* Create an ephemeral keyPair */
-            final GordianKeyPairFactory myFactory = getFactory().getAsyncFactory().getKeyPairFactory();
-            final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(pServer.getKeyPairSpec());
-            final GordianKeyPair myPair = myGenerator.generateKeyPair();
-            final BouncyPrivateKey<?> myPrivate = (BouncyPrivateKey<?>) getPrivateKey(myPair);
-
-            /* Create the request  */
-            final X509EncodedKeySpec myKeySpec = myGenerator.getX509Encoding(myPair);
-            final GordianAgreementMessageASN1 myClientHello = buildClientHelloASN1(myKeySpec);
-
-            /* Derive the secret */
-            theAgreement.init(myPrivate.getPrivateKey());
-            final BouncyPublicKey<?> myTarget = (BouncyPublicKey<?>) getPublicKey(pServer);
-            final byte[] mySecret = new byte[theAgreement.getAgreementSize()];
-            theAgreement.calculateAgreement(myTarget.getPublicKey(), mySecret, 0);
-            storeSecret(mySecret);
-            return myClientHello;
-        }
-
-        @Override
-        public void acceptClientHelloASN1(final GordianKeyPair pServer,
-                                          final GordianAgreementMessageASN1 pClientHello) throws GordianException {
-            /* Check keyPair */
-            BouncyKeyPair.checkKeyPair(pServer);
-            checkKeyPair(pServer);
-
-            /* Establish agreement */
-            theAgreement = establishAgreement(pServer);
-
-            /* Parse request */
-            final BouncyPrivateKey<?> myPrivate = (BouncyPrivateKey<?>) getPrivateKey(pServer);
-            final X509EncodedKeySpec myKeySpec = pClientHello.getEphemeral();
-            final GordianKeyPairFactory myFactory = getFactory().getAsyncFactory().getKeyPairFactory();
-            final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(pServer.getKeyPairSpec());
-
-            /* Derive partner key */
-            final GordianKeyPair myPartner = myGenerator.derivePublicOnlyKeyPair(myKeySpec);
-            final BouncyPublicKey<?> myPublic = (BouncyPublicKey<?>) getPublicKey(myPartner);
-
-            /* Derive the secret */
-            theAgreement.init(myPrivate.getPrivateKey());
-            final byte[] mySecret = new byte[theAgreement.getAgreementSize()];
-            theAgreement.calculateAgreement(myPublic.getPublicKey(), mySecret, 0);
-            storeSecret(mySecret);
-        }
-    }
-
-    /**
-     * XDH Basic Agreement.
-     */
-    public static class BouncyXDHBasicAgreement
-            extends GordianCoreBasicAgreement {
-        /**
-         * Agreement.
-         */
-        private RawAgreement theAgreement;
-
-        /**
-         * Constructor.
-         * @param pFactory the security factory
-         * @param pSpec the agreementSpec
-         */
-        BouncyXDHBasicAgreement(final GordianBaseFactory pFactory,
-                                final GordianAgreementSpec pSpec) {
-            /* Initialise underlying class */
-            super(pFactory, pSpec);
-
-            /* Create the agreement */
-            enableDerivation();
-        }
-
-        @Override
-        public GordianAgreementMessageASN1 acceptClientHelloASN1(final GordianKeyPair pClient,
-                                                                 final GordianKeyPair pServer,
-                                                                 final GordianAgreementMessageASN1 pClientHello) throws GordianException {
-            /* Check keyPair */
-            BouncyKeyPair.checkKeyPair(pClient);
-            checkKeyPair(pClient);
-            BouncyKeyPair.checkKeyPair(pServer);
-            checkKeyPair(pServer);
-
-            /* Establish agreement */
-            theAgreement = establishAgreement(pServer);
-
-            /* Process clientHello */
-            processClientHelloASN1(pServer, pClientHello);
-            final BouncyPrivateKey<?> myPrivate = (BouncyPrivateKey<?>) getPrivateKey(pServer);
-            final BouncyPublicKey<?> myPublic = (BouncyPublicKey<?>) getPublicKey(pClient);
-
-            /* Derive the secret */
-            theAgreement.init(myPrivate.getPrivateKey());
-            final byte[] mySecret = new byte[theAgreement.getAgreementSize()];
-            theAgreement.calculateAgreement(myPublic.getPublicKey(), mySecret, 0);
-            storeSecret(mySecret);
-
-            /* Return the serverHello */
-            return buildServerHello();
-        }
-
-        @Override
-        public void acceptServerHelloASN1(final GordianKeyPair pServer,
-                                          final GordianAgreementMessageASN1 pServerHello) throws GordianException {
-            /* Check keyPair */
-            BouncyKeyPair.checkKeyPair(pServer);
-            checkKeyPair(pServer);
-
-            /* Establish agreement */
-            theAgreement = establishAgreement(pServer);
-
-            /* process the serverHello */
-            processServerHelloASN1(pServerHello);
-            final BouncyPrivateKey<?> myPrivate = (BouncyPrivateKey<?>) getPrivateKey(getClientKeyPair());
-
-            /* Calculate agreement */
-            theAgreement.init(myPrivate.getPrivateKey());
-            final BouncyPublicKey<?> mySrcPublic = (BouncyPublicKey<?>) getPublicKey(pServer);
-            final byte[] mySecret = new byte[theAgreement.getAgreementSize()];
-            theAgreement.calculateAgreement(mySrcPublic.getPublicKey(), mySecret, 0);
-            storeSecret(mySecret);
-        }
-    }
-
-    /**
-     * XDH Signed Agreement.
-     */
-    public static class BouncyXDHSignedAgreement
-            extends GordianCoreSignedAgreement {
-        /**
-         * Agreement.
-         */
-        private RawAgreement theAgreement;
-
-        /**
-         * Constructor.
-         * @param pFactory the security factory
-         * @param pSpec the agreementSpec
-         */
-        BouncyXDHSignedAgreement(final GordianBaseFactory pFactory,
-                                 final GordianAgreementSpec pSpec) {
-            /* Initialise underlying class */
-            super(pFactory, pSpec);
-
-            /* Create the agreement */
-            enableDerivation();
-        }
-
-        @Override
-        public GordianAgreementMessageASN1 acceptClientHelloASN1(final GordianKeyPair pServer,
-                                                                 final GordianAgreementMessageASN1 pClientHello) throws GordianException {
-            /* Process clientHello */
-            BouncyKeyPair.checkKeyPair(pServer);
-            processClientHelloASN1(pClientHello);
-            final BouncyPrivateKey<?> myPrivate = (BouncyPrivateKey<?>) getPrivateKey(getServerEphemeralKeyPair());
-            final BouncyPublicKey<?> myPublic = (BouncyPublicKey<?>) getPublicKey(getClientEphemeralKeyPair());
-
-            /* Establish agreement */
-            theAgreement = establishAgreement(getServerEphemeralKeyPair());
-
-            /* Derive the secret */
-            theAgreement.init(myPrivate.getPrivateKey());
-            final byte[] mySecret = new byte[theAgreement.getAgreementSize()];
-            theAgreement.calculateAgreement(myPublic.getPublicKey(), mySecret, 0);
-            storeSecret(mySecret);
-
-            /* Return the serverHello */
-            return buildServerHelloASN1(pServer);
-        }
-
-        @Override
-        public void acceptServerHelloASN1(final GordianKeyPair pServer,
-                                          final GordianAgreementMessageASN1 pServerHello) throws GordianException {
-            /* process the serverHello */
-            BouncyKeyPair.checkKeyPair(pServer);
-            processServerHelloASN1(pServer, pServerHello);
-            final BouncyPrivateKey<?> myPrivate = (BouncyPrivateKey<?>) getPrivateKey(getClientEphemeralKeyPair());
-            final BouncyPublicKey<?> mySrcPublic = (BouncyPublicKey<?>) getPublicKey(getServerEphemeralKeyPair());
-
-            /* Establish agreement */
-            theAgreement = establishAgreement(getServerEphemeralKeyPair());
-
-            /* Calculate agreement */
-            theAgreement.init(myPrivate.getPrivateKey());
-            final byte[] mySecret = new byte[theAgreement.getAgreementSize()];
-            theAgreement.calculateAgreement(mySrcPublic.getPublicKey(), mySecret, 0);
-            storeSecret(mySecret);
-        }
-    }
-
-    /**
-     * XDH Unified Agreement.
-     */
-    public static class BouncyXDHUnifiedAgreement
-            extends GordianCoreEphemeralAgreement {
-        /**
-         * Agreement.
-         */
-        private XDHUnifiedAgreement theAgreement;
-
-        /**
-         * Constructor.
-         * @param pFactory the security factory
-         * @param pSpec the agreementSpec
-         */
-        BouncyXDHUnifiedAgreement(final GordianBaseFactory pFactory,
-                                  final GordianAgreementSpec pSpec) {
-            /* Initialise underlying class */
-            super(pFactory, pSpec);
-
-            /* Add in the derivation function */
-            enableDerivation();
-        }
-
-        @Override
-        public GordianAgreementMessageASN1 acceptClientHelloASN1(final GordianKeyPair pClient,
-                                                                 final GordianKeyPair pServer,
-                                                                 final GordianAgreementMessageASN1 pClientHello) throws GordianException {
-            /* Establish agreement */
-            theAgreement = new XDHUnifiedAgreement(establishAgreement(pServer));
-
-            /* process clientHello */
-            BouncyKeyPair.checkKeyPair(pClient);
-            BouncyKeyPair.checkKeyPair(pServer);
-            processClientHelloASN1(pClient, pServer, pClientHello);
-
-            /* Initialise agreement */
-            final BouncyPrivateKey<?> myPrivate = (BouncyPrivateKey<?>) getPrivateKey(pServer);
-            final BouncyPrivateKey<?> myEphPrivate = (BouncyPrivateKey<?>) getPrivateKey(getServerEphemeralKeyPair());
-            final BouncyPublicKey<?> myEphPublic = (BouncyPublicKey<?>) getPublicKey(getServerEphemeralKeyPair());
-            final XDHUPrivateParameters myPrivParams = new XDHUPrivateParameters(myPrivate.getPrivateKey(),
-                    myEphPrivate.getPrivateKey(), myEphPublic.getPublicKey());
-            theAgreement.init(myPrivParams);
-
-            /* Calculate agreement */
-            final BouncyPublicKey<?> mySrcPublic = (BouncyPublicKey<?>) getPublicKey(pClient);
-            final BouncyPublicKey<?> mySrcEphPublic = (BouncyPublicKey<?>) getPublicKey(getClientEphemeralKeyPair());
-            final XDHUPublicParameters myPubParams = new XDHUPublicParameters(mySrcPublic.getPublicKey(),
-                    mySrcEphPublic.getPublicKey());
-            final byte[] mySecret = new byte[theAgreement.getAgreementSize()];
-            theAgreement.calculateAgreement(myPubParams, mySecret, 0);
-            storeSecret(mySecret);
-
-            /* Return the serverHello */
-            return buildServerHello();
-        }
-
-        @Override
-        public GordianAgreementMessageASN1 acceptServerHelloASN1(final GordianKeyPair pServer,
-                                                                 final GordianAgreementMessageASN1 pServerHello) throws GordianException {
-            /* Check keyPair */
-            BouncyKeyPair.checkKeyPair(pServer);
-            checkKeyPair(pServer);
-
-            /* Establish agreement */
-            theAgreement = new XDHUnifiedAgreement(establishAgreement(pServer));
-
-            /* process the serverHello */
-            processServerHelloASN1(pServer, pServerHello);
-
-            /* Initialise agreement */
-            final BouncyPrivateKey<?> myPrivate = (BouncyPrivateKey<?>) getPrivateKey(getClientKeyPair());
-            final BouncyPrivateKey<?> myEphPrivate = (BouncyPrivateKey<?>) getPrivateKey(getClientEphemeralKeyPair());
-            final BouncyPublicKey<?> myEphPublic = (BouncyPublicKey<?>) getPublicKey(getClientEphemeralKeyPair());
-            final XDHUPrivateParameters myPrivParams = new XDHUPrivateParameters(myPrivate.getPrivateKey(),
-                    myEphPrivate.getPrivateKey(), myEphPublic.getPublicKey());
-            theAgreement.init(myPrivParams);
-
-            /* Calculate agreement */
-            final BouncyPublicKey<?> mySrcPublic = (BouncyPublicKey<?>) getPublicKey(pServer);
-            final BouncyPublicKey<?> mySrcEphPublic = (BouncyPublicKey<?>) getPublicKey(getServerEphemeralKeyPair());
-            final XDHUPublicParameters myPubParams = new XDHUPublicParameters(mySrcPublic.getPublicKey(),
-                    mySrcEphPublic.getPublicKey());
-            final byte[] mySecret = new byte[theAgreement.getAgreementSize()];
-            theAgreement.calculateAgreement(myPubParams, mySecret, 0);
-            storeSecret(mySecret);
-
-            /* Return confirmation if needed */
-            return buildClientConfirmASN1();
-        }
-    }
-
-    /**
-     * Establish the agreement.
+     *
      * @param pSpec the keyPairSpec
      * @return the agreement
      */
@@ -772,10 +450,10 @@ public final class BouncyXDHKeyPair {
     }
 
     /**
-     * XDH Anonymous XAgreement Engine.
+     * XDH Anonymous Agreement Engine.
      */
-    public static class BouncyXDHAnonXAgreementEngine
-            extends BouncyXAgreementBase {
+    public static class BouncyXDHAnonAgreementEngine
+            extends BouncyAgreementBase {
         /**
          * The agreement.
          */
@@ -783,12 +461,13 @@ public final class BouncyXDHKeyPair {
 
         /**
          * Constructor.
+         *
          * @param pFactory the security factory
-         * @param pSpec the agreementSpec
+         * @param pSpec    the agreementSpec
          * @throws GordianException on error
          */
-        BouncyXDHAnonXAgreementEngine(final GordianXCoreAgreementFactory pFactory,
-                                      final GordianAgreementSpec pSpec) throws GordianException {
+        BouncyXDHAnonAgreementEngine(final GordianCoreAgreementFactory pFactory,
+                                     final GordianAgreementSpec pSpec) throws GordianException {
             /* Initialize underlying class */
             super(pFactory, pSpec);
 
@@ -828,10 +507,10 @@ public final class BouncyXDHKeyPair {
     }
 
     /**
-     * DH Basic XAgreement Engine.
+     * DH Basic Agreement Engine.
      */
-    public static class BouncyXDHBasicXAgreementEngine
-            extends BouncyXAgreementBase {
+    public static class BouncyXDHBasicAgreementEngine
+            extends BouncyAgreementBase {
         /**
          * The agreement.
          */
@@ -839,12 +518,13 @@ public final class BouncyXDHKeyPair {
 
         /**
          * Constructor.
+         *
          * @param pFactory the security factory
-         * @param pSpec the agreementSpec
+         * @param pSpec    the agreementSpec
          * @throws GordianException on error
          */
-        BouncyXDHBasicXAgreementEngine(final GordianXCoreAgreementFactory pFactory,
-                                       final GordianAgreementSpec pSpec) throws GordianException {
+        BouncyXDHBasicAgreementEngine(final GordianCoreAgreementFactory pFactory,
+                                      final GordianAgreementSpec pSpec) throws GordianException {
             /* Initialize underlying class */
             super(pFactory, pSpec);
 
@@ -884,10 +564,10 @@ public final class BouncyXDHKeyPair {
     }
 
     /**
-     * XDH Unified XAgreement Engine.
+     * XDH Unified Agreement Engine.
      */
-    public static class BouncyXDHUnifiedXAgreementEngine
-            extends BouncyXAgreementBase {
+    public static class BouncyXDHUnifiedAgreementEngine
+            extends BouncyAgreementBase {
         /**
          * The agreement.
          */
@@ -895,12 +575,13 @@ public final class BouncyXDHKeyPair {
 
         /**
          * Constructor.
+         *
          * @param pFactory the security factory
-         * @param pSpec the agreementSpec
+         * @param pSpec    the agreementSpec
          * @throws GordianException on error
          */
-        BouncyXDHUnifiedXAgreementEngine(final GordianXCoreAgreementFactory pFactory,
-                                         final GordianAgreementSpec pSpec) throws GordianException {
+        BouncyXDHUnifiedAgreementEngine(final GordianCoreAgreementFactory pFactory,
+                                        final GordianAgreementSpec pSpec) throws GordianException {
             /* Initialize underlying class */
             super(pFactory, pSpec);
 
