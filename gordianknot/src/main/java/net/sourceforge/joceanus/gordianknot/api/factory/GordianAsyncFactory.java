@@ -20,7 +20,7 @@ import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreFactory;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureFactory;
-import net.sourceforge.joceanus.gordianknot.api.xagree.GordianXAgreementFactory;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementFactory;
 
 /**
  * Async Factory API.
@@ -41,11 +41,11 @@ public interface GordianAsyncFactory {
     GordianSignatureFactory getSignatureFactory();
 
     /**
-     * Obtain the XagreementFactory.
+     * Obtain the agreementFactory.
      *
      * @return the agreement factory
      */
-    GordianXAgreementFactory getXAgreementFactory();
+    GordianAgreementFactory getAgreementFactory();
 
     /**
      * Obtain the encryptorFactory.

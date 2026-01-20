@@ -28,13 +28,13 @@ import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateK
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncySignature.BouncyDERCoder;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncySignature.BouncyDigestSignature;
+import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.encrypt.GordianCoreEncryptor;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
-import net.sourceforge.joceanus.gordianknot.impl.core.xagree.GordianXCoreAgreementFactory;
 import net.sourceforge.joceanus.gordianknot.impl.ext.engines.GordianEllipticEncryptor;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
@@ -407,10 +407,10 @@ public final class BouncyEllipticKeyPair {
     }
 
     /**
-     * EC XAgreement Engine.
+     * EC Agreement Engine.
      */
-    public static class BouncyECIESXAgreementEngine
-            extends BouncyXAgreementBase {
+    public static class BouncyECIESAgreementEngine
+            extends BouncyAgreementBase {
         /**
          * Key Length.
          */
@@ -428,8 +428,8 @@ public final class BouncyEllipticKeyPair {
          * @param pSpec    the agreementSpec
          * @throws GordianException on error
          */
-        BouncyECIESXAgreementEngine(final GordianXCoreAgreementFactory pFactory,
-                                    final GordianAgreementSpec pSpec) throws GordianException {
+        BouncyECIESAgreementEngine(final GordianCoreAgreementFactory pFactory,
+                                   final GordianAgreementSpec pSpec) throws GordianException {
             /* Initialize underlying class */
             super(pFactory, pSpec);
 
@@ -471,10 +471,10 @@ public final class BouncyEllipticKeyPair {
     }
 
     /**
-     * EC Anonymous XAgreement Engine.
+     * EC Anonymous Agreement Engine.
      */
-    public static class BouncyECAnonXAgreementEngine
-            extends BouncyXAgreementBase {
+    public static class BouncyECAnonAgreementEngine
+            extends BouncyAgreementBase {
         /**
          * The agreement.
          */
@@ -487,8 +487,8 @@ public final class BouncyEllipticKeyPair {
          * @param pSpec    the agreementSpec
          * @throws GordianException on error
          */
-        BouncyECAnonXAgreementEngine(final GordianXCoreAgreementFactory pFactory,
-                                     final GordianAgreementSpec pSpec) throws GordianException {
+        BouncyECAnonAgreementEngine(final GordianCoreAgreementFactory pFactory,
+                                    final GordianAgreementSpec pSpec) throws GordianException {
             /* Initialize underlying class */
             super(pFactory, pSpec);
 
@@ -528,10 +528,10 @@ public final class BouncyEllipticKeyPair {
     }
 
     /**
-     * EC Basic XAgreement Engine.
+     * EC Basic Agreement Engine.
      */
-    public static class BouncyECBasicXAgreementEngine
-            extends BouncyXAgreementBase {
+    public static class BouncyECBasicAgreementEngine
+            extends BouncyAgreementBase {
         /**
          * The agreement.
          */
@@ -544,8 +544,8 @@ public final class BouncyEllipticKeyPair {
          * @param pSpec    the agreementSpec
          * @throws GordianException on error
          */
-        BouncyECBasicXAgreementEngine(final GordianXCoreAgreementFactory pFactory,
-                                      final GordianAgreementSpec pSpec) throws GordianException {
+        BouncyECBasicAgreementEngine(final GordianCoreAgreementFactory pFactory,
+                                     final GordianAgreementSpec pSpec) throws GordianException {
             /* Initialize underlying class */
             super(pFactory, pSpec);
 
@@ -585,10 +585,10 @@ public final class BouncyEllipticKeyPair {
     }
 
     /**
-     * EC Unified XAgreement Engine.
+     * EC Unified Agreement Engine.
      */
-    public static class BouncyECUnifiedXAgreementEngine
-            extends BouncyXAgreementBase {
+    public static class BouncyECUnifiedAgreementEngine
+            extends BouncyAgreementBase {
         /**
          * The agreement.
          */
@@ -601,8 +601,8 @@ public final class BouncyEllipticKeyPair {
          * @param pSpec    the agreementSpec
          * @throws GordianException on error
          */
-        BouncyECUnifiedXAgreementEngine(final GordianXCoreAgreementFactory pFactory,
-                                        final GordianAgreementSpec pSpec) throws GordianException {
+        BouncyECUnifiedAgreementEngine(final GordianCoreAgreementFactory pFactory,
+                                       final GordianAgreementSpec pSpec) throws GordianException {
             /* Initialize underlying class */
             super(pFactory, pSpec);
 
@@ -648,10 +648,10 @@ public final class BouncyEllipticKeyPair {
     }
 
     /**
-     * EC MQV XAgreement Engine.
+     * EC MQV Agreement Engine.
      */
-    public static class BouncyECMQVXAgreementEngine
-            extends BouncyXAgreementBase {
+    public static class BouncyECMQVAgreementEngine
+            extends BouncyAgreementBase {
         /**
          * The agreement.
          */
@@ -664,8 +664,8 @@ public final class BouncyEllipticKeyPair {
          * @param pSpec    the agreementSpec
          * @throws GordianException on error
          */
-        BouncyECMQVXAgreementEngine(final GordianXCoreAgreementFactory pFactory,
-                                    final GordianAgreementSpec pSpec) throws GordianException {
+        BouncyECMQVAgreementEngine(final GordianCoreAgreementFactory pFactory,
+                                   final GordianAgreementSpec pSpec) throws GordianException {
             /* Initialize underlying class */
             super(pFactory, pSpec);
 

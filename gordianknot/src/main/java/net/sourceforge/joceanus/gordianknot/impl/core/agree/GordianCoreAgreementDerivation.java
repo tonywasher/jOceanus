@@ -15,7 +15,7 @@
  * the License.
  */
 
-package net.sourceforge.joceanus.gordianknot.impl.core.xagree;
+package net.sourceforge.joceanus.gordianknot.impl.core.agree;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
@@ -38,11 +38,11 @@ import org.bouncycastle.util.Arrays;
 /**
  * Derivation Classes.
  */
-public class GordianXCoreAgreementDerivation {
+public class GordianCoreAgreementDerivation {
     /**
      * Derivation functional interface.
      */
-    private interface GordianXCoreAgreementDerivationMethod {
+    private interface GordianCoreAgreementDerivationMethod {
         /**
          * derive the bytes from the secret into result buffer.
          *
@@ -59,17 +59,17 @@ public class GordianXCoreAgreementDerivation {
     /**
      * The builder.
      */
-    private final GordianXCoreAgreementBuilder theBuilder;
+    private final GordianCoreAgreementBuilder theBuilder;
 
     /**
      * The state.
      */
-    private final GordianXCoreAgreementState theState;
+    private final GordianCoreAgreementState theState;
 
     /**
      * The derivation method.
      */
-    private final GordianXCoreAgreementDerivationMethod theDerivation;
+    private final GordianCoreAgreementDerivationMethod theDerivation;
 
     /**
      * The result.
@@ -81,7 +81,7 @@ public class GordianXCoreAgreementDerivation {
      *
      * @param pBuilder the builder
      */
-    GordianXCoreAgreementDerivation(final GordianXCoreAgreementBuilder pBuilder) {
+    GordianCoreAgreementDerivation(final GordianCoreAgreementBuilder pBuilder) {
         theBuilder = pBuilder;
         theState = theBuilder.getState();
         theDerivation = derivationMethod();
@@ -111,7 +111,7 @@ public class GordianXCoreAgreementDerivation {
      *
      * @return the derivation method
      */
-    private GordianXCoreAgreementDerivationMethod derivationMethod() {
+    private GordianCoreAgreementDerivationMethod derivationMethod() {
         switch (theState.getSpec().getKDFType()) {
             case SHA256KDF:
             case SHA512KDF:
@@ -265,7 +265,7 @@ public class GordianXCoreAgreementDerivation {
     /**
      * NullKeyDerivation.
      */
-    static final class GordianXCoreNullKeyDerivation
+    static final class GordianCoreNullKeyDerivation
             implements DerivationFunction {
         /**
          * The key.

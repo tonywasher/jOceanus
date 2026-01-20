@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package net.sourceforge.joceanus.gordianknot.impl.core.xagree;
+package net.sourceforge.joceanus.gordianknot.impl.core.agree;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.cert.GordianCertificate;
@@ -70,7 +70,7 @@ import java.util.Objects;
  *  }
  * </pre>
  */
-public final class GordianXCoreAgreementMessageASN1
+public final class GordianCoreAgreementMessageASN1
         extends GordianASN1Object {
     /**
      * The clientCertificate tag.
@@ -136,7 +136,7 @@ public final class GordianXCoreAgreementMessageASN1
     /**
      * The MessageType.
      */
-    private final GordianXMessageType theMessageType;
+    private final GordianAgreementMessageType theMessageType;
 
     /**
      * The ClientId.
@@ -208,7 +208,7 @@ public final class GordianXCoreAgreementMessageASN1
      *
      * @param pType the messageType
      */
-    private GordianXCoreAgreementMessageASN1(final GordianXMessageType pType) {
+    private GordianCoreAgreementMessageASN1(final GordianAgreementMessageType pType) {
         theMessageType = pType;
     }
 
@@ -218,7 +218,7 @@ public final class GordianXCoreAgreementMessageASN1
      * @param pSequence the Sequence
      * @throws GordianException on error
      */
-    private GordianXCoreAgreementMessageASN1(final ASN1Sequence pSequence) throws GordianException {
+    private GordianCoreAgreementMessageASN1(final ASN1Sequence pSequence) throws GordianException {
         /* Protect against exceptions */
         try {
             /* Access the sequence */
@@ -228,7 +228,7 @@ public final class GordianXCoreAgreementMessageASN1
             /* Access id element */
             final ASN1Sequence myId = ASN1Sequence.getInstance(en.nextElement());
             final Enumeration<?> enIds = myId.getObjects();
-            theMessageType = GordianXMessageType.determineType(ASN1Integer.getInstance(enIds.nextElement()).intValueExact());
+            theMessageType = GordianAgreementMessageType.determineType(ASN1Integer.getInstance(enIds.nextElement()).intValueExact());
 
             /* Loop through the optional id elements */
             while (enIds.hasMoreElements()) {
@@ -310,8 +310,8 @@ public final class GordianXCoreAgreementMessageASN1
      *
      * @return the clientHello
      */
-    public static GordianXCoreAgreementMessageASN1 newClientHello() {
-        return new GordianXCoreAgreementMessageASN1(GordianXMessageType.CLIENTHELLO);
+    public static GordianCoreAgreementMessageASN1 newClientHello() {
+        return new GordianCoreAgreementMessageASN1(GordianAgreementMessageType.CLIENTHELLO);
     }
 
     /**
@@ -319,8 +319,8 @@ public final class GordianXCoreAgreementMessageASN1
      *
      * @return the serverHello
      */
-    public static GordianXCoreAgreementMessageASN1 newServerHello() {
-        return new GordianXCoreAgreementMessageASN1(GordianXMessageType.SERVERHELLO);
+    public static GordianCoreAgreementMessageASN1 newServerHello() {
+        return new GordianCoreAgreementMessageASN1(GordianAgreementMessageType.SERVERHELLO);
     }
 
     /**
@@ -328,8 +328,8 @@ public final class GordianXCoreAgreementMessageASN1
      *
      * @return the clientConfirm
      */
-    public static GordianXCoreAgreementMessageASN1 newClientConfirm() {
-        return new GordianXCoreAgreementMessageASN1(GordianXMessageType.CLIENTCONFIRM);
+    public static GordianCoreAgreementMessageASN1 newClientConfirm() {
+        return new GordianCoreAgreementMessageASN1(GordianAgreementMessageType.CLIENTCONFIRM);
     }
 
     /**
@@ -339,11 +339,11 @@ public final class GordianXCoreAgreementMessageASN1
      * @return the parsed object
      * @throws GordianException on error
      */
-    public static GordianXCoreAgreementMessageASN1 getInstance(final Object pObject) throws GordianException {
-        if (pObject instanceof GordianXCoreAgreementMessageASN1 myASN1) {
+    public static GordianCoreAgreementMessageASN1 getInstance(final Object pObject) throws GordianException {
+        if (pObject instanceof GordianCoreAgreementMessageASN1 myASN1) {
             return myASN1;
         } else if (pObject != null) {
-            return new GordianXCoreAgreementMessageASN1(ASN1Sequence.getInstance(pObject));
+            return new GordianCoreAgreementMessageASN1(ASN1Sequence.getInstance(pObject));
         }
         throw new GordianDataException("Null sequence");
     }
@@ -353,7 +353,7 @@ public final class GordianXCoreAgreementMessageASN1
      *
      * @return the messageType
      */
-    GordianXMessageType getMessageType() {
+    GordianAgreementMessageType getMessageType() {
         return theMessageType;
     }
 
@@ -363,7 +363,7 @@ public final class GordianXCoreAgreementMessageASN1
      * @param pMessageType the message type
      * @throws GordianException on error
      */
-    public void checkMessageType(final GordianXMessageType pMessageType) throws GordianException {
+    public void checkMessageType(final GordianAgreementMessageType pMessageType) throws GordianException {
         if (!theMessageType.equals(pMessageType)) {
             throw new GordianDataException("Unexpected Message type: " + pMessageType);
         }
@@ -384,7 +384,7 @@ public final class GordianXCoreAgreementMessageASN1
      * @param pClientId the clientId
      * @return this object
      */
-    GordianXCoreAgreementMessageASN1 setClientId(final Long pClientId) {
+    GordianCoreAgreementMessageASN1 setClientId(final Long pClientId) {
         theClientId = pClientId;
         return this;
     }
@@ -404,7 +404,7 @@ public final class GordianXCoreAgreementMessageASN1
      * @param pServerId the serverId
      * @return this object
      */
-    GordianXCoreAgreementMessageASN1 setServerId(final Long pServerId) {
+    GordianCoreAgreementMessageASN1 setServerId(final Long pServerId) {
         theServerId = pServerId;
         return this;
     }
@@ -424,7 +424,7 @@ public final class GordianXCoreAgreementMessageASN1
      * @param pAgreeId the agreementId
      * @return this object
      */
-    GordianXCoreAgreementMessageASN1 setAgreementId(final AlgorithmIdentifier pAgreeId) {
+    GordianCoreAgreementMessageASN1 setAgreementId(final AlgorithmIdentifier pAgreeId) {
         theAgreementId = pAgreeId;
         return this;
     }
@@ -444,7 +444,7 @@ public final class GordianXCoreAgreementMessageASN1
      * @param pResultId the resultId
      * @return this object
      */
-    GordianXCoreAgreementMessageASN1 setResultId(final AlgorithmIdentifier pResultId) {
+    GordianCoreAgreementMessageASN1 setResultId(final AlgorithmIdentifier pResultId) {
         theResultId = pResultId;
         return this;
     }
@@ -467,7 +467,7 @@ public final class GordianXCoreAgreementMessageASN1
      * @return this object
      * @throws GordianException on error
      */
-    GordianXCoreAgreementMessageASN1 setClientCertificate(final GordianCertificate pCertificate) throws GordianException {
+    GordianCoreAgreementMessageASN1 setClientCertificate(final GordianCertificate pCertificate) throws GordianException {
         theClientCertificate = pCertificate == null ? null : new GordianCertificateASN1(pCertificate);
         return this;
     }
@@ -490,7 +490,7 @@ public final class GordianXCoreAgreementMessageASN1
      * @return this object
      * @throws GordianException on error
      */
-    GordianXCoreAgreementMessageASN1 setServerCertificate(final GordianCertificate pCertificate) throws GordianException {
+    GordianCoreAgreementMessageASN1 setServerCertificate(final GordianCertificate pCertificate) throws GordianException {
         theServerCertificate = pCertificate == null ? null : new GordianCertificateASN1(pCertificate);
         return this;
     }
@@ -513,7 +513,7 @@ public final class GordianXCoreAgreementMessageASN1
      * @return this object
      * @throws GordianException on error
      */
-    GordianXCoreAgreementMessageASN1 setSignerCertificate(final GordianCertificate pCertificate) throws GordianException {
+    GordianCoreAgreementMessageASN1 setSignerCertificate(final GordianCertificate pCertificate) throws GordianException {
         theSignerCertificate = pCertificate == null ? null : new GordianCertificateASN1(pCertificate);
         return this;
     }
@@ -533,7 +533,7 @@ public final class GordianXCoreAgreementMessageASN1
      * @param pInitVector the initVector Tag
      * @return this object
      */
-    GordianXCoreAgreementMessageASN1 setInitVector(final byte[] pInitVector) {
+    GordianCoreAgreementMessageASN1 setInitVector(final byte[] pInitVector) {
         theInitVector = pInitVector;
         return this;
     }
@@ -553,7 +553,7 @@ public final class GordianXCoreAgreementMessageASN1
      * @param pEncapsulated the encapsulated
      * @return this object
      */
-    GordianXCoreAgreementMessageASN1 setEncapsulated(final byte[] pEncapsulated) {
+    GordianCoreAgreementMessageASN1 setEncapsulated(final byte[] pEncapsulated) {
         theEncapsulated = pEncapsulated;
         return this;
     }
@@ -573,7 +573,7 @@ public final class GordianXCoreAgreementMessageASN1
      * @param pEphemeral the ephemeral
      * @return this object
      */
-    GordianXCoreAgreementMessageASN1 setEphemeral(final X509EncodedKeySpec pEphemeral) {
+    GordianCoreAgreementMessageASN1 setEphemeral(final X509EncodedKeySpec pEphemeral) {
         theEphemeral = pEphemeral;
         return this;
     }
@@ -593,7 +593,7 @@ public final class GordianXCoreAgreementMessageASN1
      * @param pConfirmation the confirmation Tag
      * @return this object
      */
-    GordianXCoreAgreementMessageASN1 setConfirmation(final byte[] pConfirmation) {
+    GordianCoreAgreementMessageASN1 setConfirmation(final byte[] pConfirmation) {
         theConfirmation = pConfirmation;
         return this;
     }
@@ -623,8 +623,8 @@ public final class GordianXCoreAgreementMessageASN1
      * @param pSignature   the signature
      * @return this object
      */
-    GordianXCoreAgreementMessageASN1 setSignature(final AlgorithmIdentifier pSignatureId,
-                                                  final byte[] pSignature) {
+    GordianCoreAgreementMessageASN1 setSignature(final AlgorithmIdentifier pSignatureId,
+                                                 final byte[] pSignature) {
         theSignatureId = pSignatureId;
         theSignature = pSignature;
         return this;
@@ -698,7 +698,7 @@ public final class GordianXCoreAgreementMessageASN1
         }
 
         /* Check that the fields are equal */
-        return pThat instanceof GordianXCoreAgreementMessageASN1 myThat
+        return pThat instanceof GordianCoreAgreementMessageASN1 myThat
                 && Objects.equals(getMessageType(), myThat.getMessageType())
                 && Objects.equals(getClientId(), myThat.getClientId())
                 && Objects.equals(getServerId(), myThat.getServerId())
@@ -729,7 +729,7 @@ public final class GordianXCoreAgreementMessageASN1
     /**
      * The messageType.
      */
-    public enum GordianXMessageType {
+    public enum GordianAgreementMessageType {
         /**
          * ClientHello.
          */
@@ -755,7 +755,7 @@ public final class GordianXCoreAgreementMessageASN1
          *
          * @param pId the id
          */
-        GordianXMessageType(final int pId) {
+        GordianAgreementMessageType(final int pId) {
             theId = pId;
         }
 
@@ -775,8 +775,8 @@ public final class GordianXCoreAgreementMessageASN1
          * @return the messageType
          * @throws GordianException on error
          */
-        private static GordianXMessageType determineType(final int pId) throws GordianException {
-            for (GordianXMessageType myType : values()) {
+        private static GordianAgreementMessageType determineType(final int pId) throws GordianException {
+            for (GordianAgreementMessageType myType : values()) {
                 if (pId == myType.getId()) {
                     return myType;
                 }

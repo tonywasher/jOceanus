@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.gordianknot.junit.regression;
 
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementType;
-import net.sourceforge.joceanus.gordianknot.api.agree.GordianKDFType;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementKDF;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.cert.GordianCertificate;
@@ -40,12 +40,12 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpecBuilder;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
-import net.sourceforge.joceanus.gordianknot.api.xagree.GordianXAgreement;
-import net.sourceforge.joceanus.gordianknot.api.xagree.GordianXAgreementFactory;
-import net.sourceforge.joceanus.gordianknot.api.xagree.GordianXAgreementParams;
-import net.sourceforge.joceanus.gordianknot.api.xagree.GordianXAgreementStatus;
-import net.sourceforge.joceanus.gordianknot.impl.core.xagree.GordianXCoreAgreement;
-import net.sourceforge.joceanus.gordianknot.impl.core.xagree.GordianXCoreAgreementFactory;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreement;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementFactory;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementParams;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementStatus;
+import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreAgreement;
+import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
 import net.sourceforge.joceanus.gordianknot.junit.regression.AsymmetricStore.FactoryAgreement;
 import net.sourceforge.joceanus.gordianknot.junit.regression.AsymmetricStore.FactoryKeyPairs;
 import net.sourceforge.joceanus.gordianknot.junit.regression.KeyStoreUtils.KeyStoreAlias;
@@ -135,7 +135,7 @@ public final class AsymmetricXAgreeScripts {
         final GordianKeyPairSpec mySpec = GordianKeyPairSpecBuilder.ed448();
         GordianAsyncFactory myFactory = pBCFactory.getAsyncFactory();
         GordianKeyPairFactory myKPFactory = myFactory.getKeyPairFactory();
-        GordianXAgreementFactory myAgreeFactory = myFactory.getXAgreementFactory();
+        GordianAgreementFactory myAgreeFactory = myFactory.getAgreementFactory();
         GordianKeyPairGenerator myGenerator = myKPFactory.getKeyPairGenerator(mySpec);
         GordianKeyPair myKeyPair = myGenerator.generateKeyPair();
         sgBCSIGNER = myAgreeFactory.newMiniCertificate(SIGNERNAME, myKeyPair, new GordianKeyPairUsage(GordianKeyPairUse.SIGNATURE));
@@ -145,7 +145,7 @@ public final class AsymmetricXAgreeScripts {
         final PKCS8EncodedKeySpec myPrivate = myGenerator.getPKCS8Encoding(myKeyPair);
         myFactory = pJCAFactory.getAsyncFactory();
         myKPFactory = myFactory.getKeyPairFactory();
-        myAgreeFactory = myFactory.getXAgreementFactory();
+        myAgreeFactory = myFactory.getAgreementFactory();
         myGenerator = myKPFactory.getKeyPairGenerator(mySpec);
         myKeyPair = myGenerator.deriveKeyPair(myPublic, myPrivate);
         sgJCASIGNER = myAgreeFactory.newMiniCertificate(SIGNERNAME, myKeyPair, new GordianKeyPairUsage(GordianKeyPairUse.SIGNATURE));
@@ -194,7 +194,7 @@ public final class AsymmetricXAgreeScripts {
         final GordianAsyncFactory myTgtAsym = pAgreement.getOwner().getPartner();
         if (myTgtAsym != null) {
             /* Add partner test if the partner supports this agreement */
-            final GordianXAgreementFactory myTgtAgrees = pAgreement.getOwner().getPartner().getXAgreementFactory();
+            final GordianAgreementFactory myTgtAgrees = pAgreement.getOwner().getPartner().getAgreementFactory();
             if (myTgtAgrees.validAgreementSpecForKeyPairSpec(pAgreement.getOwner().getKeySpec(), pAgreement.getSpec())) {
                 myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("PartnerAgree", () -> checkPartnerAgreement(pAgreement))));
             }
@@ -247,10 +247,10 @@ public final class AsymmetricXAgreeScripts {
         final FactoryKeyPairs myPairs = pAgreement.getOwner().getKeyPairs();
         final GordianKeyPair myPair = myPairs.getKeyPair();
         final GordianKeyPair myTarget = myType.isAnonymous() ? myPair : myPairs.getTargetKeyPair();
-        final byte[] myAdditional = GordianKDFType.NONE.equals(mySpec.getKDFType()) ? null : "HelloThere".getBytes();
+        final byte[] myAdditional = GordianAgreementKDF.NONE.equals(mySpec.getKDFType()) ? null : "HelloThere".getBytes();
 
         /* Create mini-certificates */
-        final GordianXAgreementFactory myAgrees = pAgreement.getOwner().getFactory().getXAgreementFactory();
+        final GordianAgreementFactory myAgrees = pAgreement.getOwner().getFactory().getAgreementFactory();
         final GordianCertificate myClientCert = (myType.isSigned() || myType.isAnonymous())
                 ? null : myAgrees.newMiniCertificate(CLIENTNAME, myPair, new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));
         final GordianCertificate myTargetCert = myType.isSigned()
@@ -259,15 +259,15 @@ public final class AsymmetricXAgreeScripts {
                 ? getFactorySigner(pAgreement) : null;
 
         /* Create the client hello */
-        GordianXAgreementParams myParams = myAgrees.newAgreementParams(mySpec, pResultType)
+        GordianAgreementParams myParams = myAgrees.newAgreementParams(mySpec, pResultType)
                 .setClientCertificate(myClientCert)
                 .setServerCertificate(myTargetCert)
                 .setAdditionalData(myAdditional);
-        final GordianXAgreement mySender = myAgrees.createAgreement(myParams);
+        final GordianAgreement mySender = myAgrees.createAgreement(myParams);
         final byte[] myClientHello = mySender.nextMessage();
 
         /* Handle receipt at server */
-        final GordianXAgreement myResponder = myAgrees.parseAgreementMessage(myClientHello);
+        final GordianAgreement myResponder = myAgrees.parseAgreementMessage(myClientHello);
         myParams = myResponder.getAgreementParams()
                 .setServerCertificate(myTargetCert)
                 .setSigner(mySignerCert)
@@ -277,7 +277,7 @@ public final class AsymmetricXAgreeScripts {
         /* If we are not anonymous */
         if (!myType.isAnonymous()) {
             final byte[] myServerHello = myResponder.nextMessage();
-            final GordianXAgreement myClient = myAgrees.parseAgreementMessage(myServerHello);
+            final GordianAgreement myClient = myAgrees.parseAgreementMessage(myServerHello);
             Assertions.assertSame(myClient, mySender, "Did not match client");
         } else {
             Assertions.assertNull(myResponder.nextMessage(), "Unexpected ongoing message after anonymous agreement");
@@ -286,7 +286,7 @@ public final class AsymmetricXAgreeScripts {
         /* If we are confirming */
         if (mySpec.withConfirm()) {
             final byte[] myClientConfirm = mySender.nextMessage();
-            final GordianXAgreement myServer = myAgrees.parseAgreementMessage(myClientConfirm);
+            final GordianAgreement myServer = myAgrees.parseAgreementMessage(myClientConfirm);
             Assertions.assertSame(myServer, myResponder, "Did not match server");
             Assertions.assertNull(myServer.nextMessage(), "Unexpected ongoing message at server");
         } else if (!myType.isAnonymous()) {
@@ -294,9 +294,9 @@ public final class AsymmetricXAgreeScripts {
         }
 
         /* Check that the values match */
-        Assertions.assertEquals(GordianXAgreementStatus.RESULT_AVAILABLE, mySender.getStatus(), "Sender result not available");
+        Assertions.assertEquals(GordianAgreementStatus.RESULT_AVAILABLE, mySender.getStatus(), "Sender result not available");
         final Object myFirst = mySender.getResult();
-        Assertions.assertEquals(GordianXAgreementStatus.RESULT_AVAILABLE, myResponder.getStatus(), "Responder result not available");
+        Assertions.assertEquals(GordianAgreementStatus.RESULT_AVAILABLE, myResponder.getStatus(), "Responder result not available");
         final Object mySecond = myResponder.getResult();
         final boolean isEqual = Objects.deepEquals(myFirst, mySecond);
         Assertions.assertTrue(isEqual, "Failed to agree result");
@@ -318,8 +318,8 @@ public final class AsymmetricXAgreeScripts {
         final GordianKeyPair myPartnerTarget = myPairs.getPartnerTargetKeyPair();
 
         /* Check the miniCertificates */
-        final GordianXAgreementFactory mySrcAgrees = pAgreement.getOwner().getFactory().getXAgreementFactory();
-        final GordianXAgreementFactory myPartnerAgrees = pAgreement.getOwner().getPartner().getXAgreementFactory();
+        final GordianAgreementFactory mySrcAgrees = pAgreement.getOwner().getFactory().getAgreementFactory();
+        final GordianAgreementFactory myPartnerAgrees = pAgreement.getOwner().getPartner().getAgreementFactory();
         final GordianCertificate myClientCert = (myType.isSigned() || myType.isAnonymous())
                 ? null : mySrcAgrees.newMiniCertificate(CLIENTNAME, myPair, new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));
         final GordianCertificate myTargetCert = myType.isSigned()
@@ -330,14 +330,14 @@ public final class AsymmetricXAgreeScripts {
                 ? getPartnerSigner(pAgreement) : null;
 
         /* Create the client hello */
-        GordianXAgreementParams myParams = mySrcAgrees.newAgreementParams(mySpec, BYTEARRAY)
+        GordianAgreementParams myParams = mySrcAgrees.newAgreementParams(mySpec, BYTEARRAY)
                 .setClientCertificate(myClientCert)
                 .setServerCertificate(myTargetCert);
-        final GordianXAgreement mySender = mySrcAgrees.createAgreement(myParams);
+        final GordianAgreement mySender = mySrcAgrees.createAgreement(myParams);
         final byte[] myClientHello = mySender.nextMessage();
 
         /* Handle receipt at server */
-        final GordianXAgreement myResponder = myPartnerAgrees.parseAgreementMessage(myClientHello);
+        final GordianAgreement myResponder = myPartnerAgrees.parseAgreementMessage(myClientHello);
         myParams = myResponder.getAgreementParams()
                 .setServerCertificate(myServerCert)
                 .setSigner(mySignerCert);
@@ -346,7 +346,7 @@ public final class AsymmetricXAgreeScripts {
         /* If we are not anonymous */
         if (!myType.isAnonymous()) {
             final byte[] myServerHello = myResponder.nextMessage();
-            final GordianXAgreement myClient = mySrcAgrees.parseAgreementMessage(myServerHello);
+            final GordianAgreement myClient = mySrcAgrees.parseAgreementMessage(myServerHello);
             Assertions.assertSame(myClient, mySender, "Did not match client");
         } else {
             Assertions.assertNull(myResponder.nextMessage(), "Unexpected ongoing message on anonymous agreement");
@@ -355,7 +355,7 @@ public final class AsymmetricXAgreeScripts {
         /* If we are confirming */
         if (mySpec.withConfirm()) {
             final byte[] myClientConfirm = mySender.nextMessage();
-            final GordianXAgreement myServer = myPartnerAgrees.parseAgreementMessage(myClientConfirm);
+            final GordianAgreement myServer = myPartnerAgrees.parseAgreementMessage(myClientConfirm);
             Assertions.assertSame(myServer, myResponder, "Did not match server");
             Assertions.assertNull(myServer.nextMessage(), "Unexpected ongoing message at server");
         } else if (!myType.isAnonymous()) {
@@ -363,10 +363,10 @@ public final class AsymmetricXAgreeScripts {
         }
 
         /* Check that the values match */
-        Assertions.assertEquals(GordianXAgreementStatus.RESULT_AVAILABLE, mySender.getStatus(), "Sender result not available");
+        Assertions.assertEquals(GordianAgreementStatus.RESULT_AVAILABLE, mySender.getStatus(), "Sender result not available");
         final byte[] myFirst = (byte[]) mySender.getResult();
         Assertions.assertInstanceOf(byte[].class, myFirst, "Unexpected Client resultType");
-        Assertions.assertEquals(GordianXAgreementStatus.RESULT_AVAILABLE, myResponder.getStatus(), "Responder result not available");
+        Assertions.assertEquals(GordianAgreementStatus.RESULT_AVAILABLE, myResponder.getStatus(), "Responder result not available");
         final byte[] mySecond = (byte[]) myResponder.getResult();
         Assertions.assertInstanceOf(byte[].class, mySecond, "Unexpected Server resultType");
         Assertions.assertArrayEquals(myFirst, mySecond, "Failed to agree crossFactory bytes");
@@ -414,35 +414,35 @@ public final class AsymmetricXAgreeScripts {
         final GordianKeyPair myTarget = myPairs.getTargetKeyPair();
 
         /* Create mini-certificates */
-        final GordianXAgreementFactory myAgrees = pAgreement.getOwner().getFactory().getXAgreementFactory();
+        final GordianAgreementFactory myAgrees = pAgreement.getOwner().getFactory().getAgreementFactory();
         final GordianCertificate myClientCert = myType.isSigned()
                 ? null : myAgrees.newMiniCertificate(CLIENTNAME, myPair, new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));
         final GordianCertificate myTargetCert = myType.isSigned()
                 ? null : myAgrees.newMiniCertificate(SERVERNAME, myTarget, new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));
 
         /* Create the client hello */
-        GordianXAgreementParams myParams = myAgrees.newAgreementParams(mySpec, KEYSETSPEC)
+        GordianAgreementParams myParams = myAgrees.newAgreementParams(mySpec, KEYSETSPEC)
                 .setClientCertificate(myClientCert)
                 .setServerCertificate(myTargetCert);
-        final GordianXAgreement mySender = myAgrees.createAgreement(myParams);
+        final GordianAgreement mySender = myAgrees.createAgreement(myParams);
         final byte[] myClientHello = mySender.nextMessage();
 
         /* Handle receipt at server */
-        final GordianXAgreement myResponder = myAgrees.parseAgreementMessage(myClientHello);
+        final GordianAgreement myResponder = myAgrees.parseAgreementMessage(myClientHello);
         myResponder.setError("Rejected by server");
 
         /* Process rejection at client */
         final byte[] myServerHello = myResponder.nextMessage();
-        final GordianXAgreement myClient = myAgrees.parseAgreementMessage(myServerHello);
+        final GordianAgreement myClient = myAgrees.parseAgreementMessage(myServerHello);
         Assertions.assertSame(myClient, mySender, "Did not match client");
         Assertions.assertNull(myClient.nextMessage(), "Unexpected ongoing message at client");
 
         /* Check that the values match */
-        Assertions.assertEquals(GordianXAgreementStatus.RESULT_AVAILABLE, mySender.getStatus(), "Sender result not available");
+        Assertions.assertEquals(GordianAgreementStatus.RESULT_AVAILABLE, mySender.getStatus(), "Sender result not available");
         Assertions.assertTrue(mySender.isRejected(), "Client result not rejected");
         final Object myFirst = mySender.getResult();
         Assertions.assertInstanceOf(GordianException.class, myFirst, "Unexpected Client resultType");
-        Assertions.assertEquals(GordianXAgreementStatus.RESULT_AVAILABLE, myResponder.getStatus(), "Responder result not available");
+        Assertions.assertEquals(GordianAgreementStatus.RESULT_AVAILABLE, myResponder.getStatus(), "Responder result not available");
         Assertions.assertTrue(myResponder.isRejected(), "Server result not rejected");
         final Object mySecond = myResponder.getResult();
         Assertions.assertInstanceOf(GordianException.class, mySecond, "Unexpected Server resultType");
@@ -459,16 +459,16 @@ public final class AsymmetricXAgreeScripts {
         final GordianAgreementSpec mySpec = pAgreement.getSpec();
 
         /* Create mini-certificates */
-        final GordianXAgreementFactory myAgrees = pAgreement.getOwner().getFactory().getXAgreementFactory();
+        final GordianAgreementFactory myAgrees = pAgreement.getOwner().getFactory().getAgreementFactory();
         final GordianCertificate mySignerCert = getFactorySigner(pAgreement);
 
         /* Create the client hello */
-        GordianXAgreementParams myParams = myAgrees.newAgreementParams(mySpec, GordianFactoryType.BC);
-        final GordianXCoreAgreement mySender = (GordianXCoreAgreement) myAgrees.createAgreement(myParams);
+        GordianAgreementParams myParams = myAgrees.newAgreementParams(mySpec, GordianFactoryType.BC);
+        final GordianCoreAgreement mySender = (GordianCoreAgreement) myAgrees.createAgreement(myParams);
         final byte[] myClientHello = mySender.nextMessage();
 
         /* Handle receipt at server */
-        final GordianXAgreement myResponder = myAgrees.parseAgreementMessage(myClientHello);
+        final GordianAgreement myResponder = myAgrees.parseAgreementMessage(myClientHello);
         myParams = myResponder.getAgreementParams()
                 .setSigner(mySignerCert);
         myResponder.updateParams(myParams);
@@ -476,16 +476,16 @@ public final class AsymmetricXAgreeScripts {
         /* Handle receipt at client */
         final byte[] myServerHello = myResponder.nextMessage();
         mySender.failSignature();
-        final GordianXAgreement myClient = myAgrees.parseAgreementMessage(myServerHello);
+        final GordianAgreement myClient = myAgrees.parseAgreementMessage(myServerHello);
         Assertions.assertSame(myClient, mySender, "Did not match client");
         Assertions.assertNull(myClient.nextMessage(), "Unexpected ongoing message at client");
 
         /* Check that the values match */
-        Assertions.assertEquals(GordianXAgreementStatus.RESULT_AVAILABLE, mySender.getStatus(), "Sender result not available");
+        Assertions.assertEquals(GordianAgreementStatus.RESULT_AVAILABLE, mySender.getStatus(), "Sender result not available");
         Assertions.assertTrue(mySender.isRejected(), "Client result not rejected");
         final Object myFirst = mySender.getResult();
         Assertions.assertInstanceOf(GordianException.class, myFirst, "Unexpected Client resultType");
-        Assertions.assertEquals(GordianXAgreementStatus.RESULT_AVAILABLE, myResponder.getStatus(), "Responder result not available");
+        Assertions.assertEquals(GordianAgreementStatus.RESULT_AVAILABLE, myResponder.getStatus(), "Responder result not available");
         final Object mySecond = myResponder.getResult();
         Assertions.assertFalse(myResponder.isRejected(), "Server result rejected");
         Assertions.assertInstanceOf(GordianFactory.class, mySecond, "Unexpected Server resultType");
@@ -506,21 +506,21 @@ public final class AsymmetricXAgreeScripts {
         final GordianKeyPair myTarget = myPairs.getTargetKeyPair();
 
         /* Create mini-certificates */
-        final GordianXAgreementFactory myAgrees = pAgreement.getOwner().getFactory().getXAgreementFactory();
+        final GordianAgreementFactory myAgrees = pAgreement.getOwner().getFactory().getAgreementFactory();
         final GordianCertificate myClientCert = myType.isSigned()
                 ? null : myAgrees.newMiniCertificate(CLIENTNAME, myPair, new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));
         final GordianCertificate myTargetCert = myType.isSigned()
                 ? null : myAgrees.newMiniCertificate(SERVERNAME, myTarget, new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));
 
         /* Create the client hello */
-        GordianXAgreementParams myParams = myAgrees.newAgreementParams(mySpec, KEYSETSPEC)
+        GordianAgreementParams myParams = myAgrees.newAgreementParams(mySpec, KEYSETSPEC)
                 .setClientCertificate(myClientCert)
                 .setServerCertificate(myTargetCert);
-        final GordianXCoreAgreement mySender = (GordianXCoreAgreement) myAgrees.createAgreement(myParams);
+        final GordianCoreAgreement mySender = (GordianCoreAgreement) myAgrees.createAgreement(myParams);
         final byte[] myClientHello = mySender.nextMessage();
 
         /* Handle receipt at server */
-        final GordianXAgreement myResponder = myAgrees.parseAgreementMessage(myClientHello);
+        final GordianAgreement myResponder = myAgrees.parseAgreementMessage(myClientHello);
         myParams = myResponder.getAgreementParams()
                 .setServerCertificate(myTargetCert);
         myResponder.updateParams(myParams);
@@ -528,21 +528,21 @@ public final class AsymmetricXAgreeScripts {
         /* Handle receipt at client */
         mySender.failConfirmation();
         final byte[] myServerHello = myResponder.nextMessage();
-        final GordianXAgreement myClient = myAgrees.parseAgreementMessage(myServerHello);
+        final GordianAgreement myClient = myAgrees.parseAgreementMessage(myServerHello);
         Assertions.assertSame(myClient, mySender, "Did not match client");
 
         /* Process rejection at server */
         final byte[] myClientConfirm = mySender.nextMessage();
-        final GordianXAgreement myServer = myAgrees.parseAgreementMessage(myClientConfirm);
+        final GordianAgreement myServer = myAgrees.parseAgreementMessage(myClientConfirm);
         Assertions.assertSame(myServer, myResponder, "Did not match server");
         Assertions.assertNull(myServer.nextMessage(), "Unexpected ongoing message at server");
 
         /* Check that the values match */
-        Assertions.assertEquals(GordianXAgreementStatus.RESULT_AVAILABLE, mySender.getStatus(), "Sender result not available");
+        Assertions.assertEquals(GordianAgreementStatus.RESULT_AVAILABLE, mySender.getStatus(), "Sender result not available");
         Assertions.assertTrue(mySender.isRejected(), "Client result not rejected");
         final Object myFirst = mySender.getResult();
         Assertions.assertInstanceOf(GordianException.class, myFirst, "Unexpected Client resultType");
-        Assertions.assertEquals(GordianXAgreementStatus.RESULT_AVAILABLE, myResponder.getStatus(), "Responder result not available");
+        Assertions.assertEquals(GordianAgreementStatus.RESULT_AVAILABLE, myResponder.getStatus(), "Responder result not available");
         Assertions.assertTrue(myResponder.isRejected(), "Server result not rejected");
         final Object mySecond = myResponder.getResult();
         Assertions.assertInstanceOf(GordianException.class, mySecond, "Unexpected Server resultType");
@@ -563,43 +563,43 @@ public final class AsymmetricXAgreeScripts {
         final GordianKeyPair myTarget = myPairs.getTargetKeyPair();
 
         /* Create mini-certificates */
-        final GordianXAgreementFactory myAgrees = pAgreement.getOwner().getFactory().getXAgreementFactory();
+        final GordianAgreementFactory myAgrees = pAgreement.getOwner().getFactory().getAgreementFactory();
         final GordianCertificate myClientCert = myType.isSigned()
                 ? null : myAgrees.newMiniCertificate(CLIENTNAME, myPair, new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));
         final GordianCertificate myTargetCert = myType.isSigned()
                 ? null : myAgrees.newMiniCertificate(SERVERNAME, myTarget, new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));
 
         /* Create the client hello */
-        GordianXAgreementParams myParams = myAgrees.newAgreementParams(mySpec, KEYSETSPEC)
+        GordianAgreementParams myParams = myAgrees.newAgreementParams(mySpec, KEYSETSPEC)
                 .setClientCertificate(myClientCert)
                 .setServerCertificate(myTargetCert);
-        final GordianXAgreement mySender = myAgrees.createAgreement(myParams);
+        final GordianAgreement mySender = myAgrees.createAgreement(myParams);
         final byte[] myClientHello = mySender.nextMessage();
 
         /* Handle receipt at server */
-        final GordianXCoreAgreement myResponder = (GordianXCoreAgreement) myAgrees.parseAgreementMessage(myClientHello);
+        final GordianCoreAgreement myResponder = (GordianCoreAgreement) myAgrees.parseAgreementMessage(myClientHello);
         myParams = myResponder.getAgreementParams()
                 .setServerCertificate(myTargetCert);
         myResponder.updateParams(myParams);
 
         /* Handle receipt at client */
         final byte[] myServerHello = myResponder.nextMessage();
-        final GordianXAgreement myClient = myAgrees.parseAgreementMessage(myServerHello);
+        final GordianAgreement myClient = myAgrees.parseAgreementMessage(myServerHello);
         Assertions.assertSame(myClient, mySender, "Did not match client");
 
         /* Handle receipt at server */
         myResponder.failConfirmation();
         final byte[] myClientConfirm = mySender.nextMessage();
-        final GordianXAgreement myServer = myAgrees.parseAgreementMessage(myClientConfirm);
+        final GordianAgreement myServer = myAgrees.parseAgreementMessage(myClientConfirm);
         Assertions.assertSame(myServer, myResponder, "Did not match server");
         Assertions.assertNull(myServer.nextMessage(), "Unexpected ongoing message at server");
 
         /* Check that the values match */
-        Assertions.assertEquals(GordianXAgreementStatus.RESULT_AVAILABLE, mySender.getStatus(), "Sender result not available");
+        Assertions.assertEquals(GordianAgreementStatus.RESULT_AVAILABLE, mySender.getStatus(), "Sender result not available");
         Assertions.assertFalse(mySender.isRejected(), "Client result rejected");
         final Object myFirst = mySender.getResult();
         Assertions.assertInstanceOf(GordianKeySet.class, myFirst, "Unexpected Client resultType");
-        Assertions.assertEquals(GordianXAgreementStatus.RESULT_AVAILABLE, myResponder.getStatus(), "Responder result not available");
+        Assertions.assertEquals(GordianAgreementStatus.RESULT_AVAILABLE, myResponder.getStatus(), "Responder result not available");
         Assertions.assertTrue(myResponder.isRejected(), "Server result not rejected");
         final Object mySecond = myResponder.getResult();
         Assertions.assertInstanceOf(GordianException.class, mySecond, "Unexpected Server resultType");
@@ -612,7 +612,7 @@ public final class AsymmetricXAgreeScripts {
      */
     private static void checkAgreementAlgId(final FactoryAgreement pAgreement) {
         /* Access the factory */
-        final GordianXCoreAgreementFactory myFactory = (GordianXCoreAgreementFactory) pAgreement.getOwner().getFactory().getXAgreementFactory();
+        final GordianCoreAgreementFactory myFactory = (GordianCoreAgreementFactory) pAgreement.getOwner().getFactory().getAgreementFactory();
 
         /* Check that we have an id */
         final AlgorithmIdentifier myId = myFactory.getIdentifierForSpec(pAgreement.getSpec());

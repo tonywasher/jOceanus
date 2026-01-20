@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package net.sourceforge.joceanus.gordianknot.impl.core.xagree;
+package net.sourceforge.joceanus.gordianknot.impl.core.agree;
 
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementType;
@@ -29,9 +29,9 @@ import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
-import net.sourceforge.joceanus.gordianknot.api.xagree.GordianXAgreement;
-import net.sourceforge.joceanus.gordianknot.api.xagree.GordianXAgreementParams;
-import net.sourceforge.joceanus.gordianknot.api.xagree.GordianXAgreementStatus;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreement;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementParams;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementStatus;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 
@@ -40,27 +40,27 @@ import java.util.Objects;
 /**
  * Key Agreement.
  */
-public class GordianXCoreAgreement
-        implements GordianXAgreement {
+public class GordianCoreAgreement
+        implements GordianAgreement {
     /**
      * The Engine.
      */
-    private final GordianXCoreAgreementEngine theEngine;
+    private final GordianCoreAgreementEngine theEngine;
 
     /**
      * The supplier.
      */
-    private final GordianXCoreAgreementSupplier theSupplier;
+    private final GordianCoreAgreementSupplier theSupplier;
 
     /**
      * The Builder.
      */
-    private final GordianXCoreAgreementBuilder theBuilder;
+    private final GordianCoreAgreementBuilder theBuilder;
 
     /**
      * The State.
      */
-    private final GordianXCoreAgreementState theState;
+    private final GordianCoreAgreementState theState;
 
     /**
      * The Agreement Spec.
@@ -70,7 +70,7 @@ public class GordianXCoreAgreement
     /**
      * The Parameters.
      */
-    private GordianXCoreAgreementParams theParams;
+    private GordianCoreAgreementParams theParams;
 
     /**
      * The Next Message.
@@ -83,7 +83,7 @@ public class GordianXCoreAgreement
      * @param pEngine the engine
      * @throws GordianException on error
      */
-    public GordianXCoreAgreement(final GordianXCoreAgreementEngine pEngine) throws GordianException {
+    public GordianCoreAgreement(final GordianCoreAgreementEngine pEngine) throws GordianException {
         /* Store details */
         theEngine = pEngine;
         theSupplier = theEngine.getSupplier();
@@ -93,8 +93,8 @@ public class GordianXCoreAgreement
     }
 
     @Override
-    public GordianXAgreementParams getAgreementParams() {
-        return new GordianXCoreAgreementParams(theParams);
+    public GordianAgreementParams getAgreementParams() {
+        return new GordianCoreAgreementParams(theParams);
     }
 
     /**
@@ -111,12 +111,12 @@ public class GordianXCoreAgreement
      *
      * @param pStatus the status
      */
-    void setStatus(final GordianXAgreementStatus pStatus) {
+    void setStatus(final GordianAgreementStatus pStatus) {
         theState.setStatus(pStatus);
     }
 
     @Override
-    public GordianXAgreementStatus getStatus() {
+    public GordianAgreementStatus getStatus() {
         return theState.getStatus();
     }
 
@@ -132,48 +132,48 @@ public class GordianXCoreAgreement
 
     @Override
     public Object getResult() throws GordianException {
-        checkStatus(GordianXAgreementStatus.RESULT_AVAILABLE);
+        checkStatus(GordianAgreementStatus.RESULT_AVAILABLE);
         return theState.getResult();
     }
 
     @Override
     public GordianFactory getFactoryResult() {
-        return GordianXAgreementStatus.RESULT_AVAILABLE.equals(theState.getStatus())
+        return GordianAgreementStatus.RESULT_AVAILABLE.equals(theState.getStatus())
                 && theState.getResultType() instanceof GordianFactoryType
                 ? (GordianFactory) theState.getResult() : null;
     }
 
     @Override
     public GordianKeySet getKeySetResult() {
-        return GordianXAgreementStatus.RESULT_AVAILABLE.equals(theState.getStatus())
+        return GordianAgreementStatus.RESULT_AVAILABLE.equals(theState.getStatus())
                 && theState.getResultType() instanceof GordianKeySetSpec
                 ? (GordianKeySet) theState.getResult() : null;
     }
 
     @Override
     public GordianSymCipher[] getSymCipherPairResult() {
-        return GordianXAgreementStatus.RESULT_AVAILABLE.equals(theState.getStatus())
+        return GordianAgreementStatus.RESULT_AVAILABLE.equals(theState.getStatus())
                 && theState.getResultType() instanceof GordianSymCipherSpec
                 ? (GordianSymCipher[]) theState.getResult() : null;
     }
 
     @Override
     public GordianStreamCipher[] getStreamCipherPairResult() {
-        return GordianXAgreementStatus.RESULT_AVAILABLE.equals(theState.getStatus())
+        return GordianAgreementStatus.RESULT_AVAILABLE.equals(theState.getStatus())
                 && theState.getResultType() instanceof GordianStreamCipherSpec
                 ? (GordianStreamCipher[]) theState.getResult() : null;
     }
 
     @Override
     public byte[] getByteArrayResult() {
-        return GordianXAgreementStatus.RESULT_AVAILABLE.equals(theState.getStatus())
+        return GordianAgreementStatus.RESULT_AVAILABLE.equals(theState.getStatus())
                 && theState.getResultType() instanceof Integer
                 ? (byte[]) theState.getResult() : null;
     }
 
     @Override
     public GordianException getRejectionResult() {
-        return GordianXAgreementStatus.RESULT_AVAILABLE.equals(theState.getStatus())
+        return GordianAgreementStatus.RESULT_AVAILABLE.equals(theState.getStatus())
                 && theState.getResultType() instanceof String
                 ? (GordianException) theState.getResult() : null;
     }
@@ -184,9 +184,9 @@ public class GordianXCoreAgreement
      * @param pStatus the required status
      * @throws GordianException on error
      */
-    protected void checkStatus(final GordianXAgreementStatus pStatus) throws GordianException {
+    protected void checkStatus(final GordianAgreementStatus pStatus) throws GordianException {
         /* If we are in the wrong state */
-        final GordianXAgreementStatus myStatus = theState.getStatus();
+        final GordianAgreementStatus myStatus = theState.getStatus();
         if (myStatus != pStatus) {
             throw new GordianLogicException("Invalid State: " + myStatus);
         }
@@ -259,12 +259,12 @@ public class GordianXCoreAgreement
     }
 
     @Override
-    public void updateParams(final GordianXAgreementParams pParams) throws GordianException {
+    public void updateParams(final GordianAgreementParams pParams) throws GordianException {
         /* Must be looking for serverPrivate */
-        checkStatus(GordianXAgreementStatus.AWAITING_SERVERPRIVATE);
+        checkStatus(GordianAgreementStatus.AWAITING_SERVERPRIVATE);
 
         /* Ensure that we are updating from correct parameters */
-        if (!Objects.equals(theParams.getId(), ((GordianXCoreAgreementParams) pParams).getId())) {
+        if (!Objects.equals(theParams.getId(), ((GordianCoreAgreementParams) pParams).getId())) {
             throw new GordianDataException("Invalid parameters provided");
         }
 
@@ -298,7 +298,7 @@ public class GordianXCoreAgreement
         theState.setAdditionalData(pParams.getAdditionalData());
 
         /* Update the parameters */
-        theParams = new GordianXCoreAgreementParams((GordianXCoreAgreementParams) pParams);
+        theParams = new GordianCoreAgreementParams((GordianCoreAgreementParams) pParams);
 
         /* Process the augmented clientHello and return the agreement */
         processClientHello();
@@ -307,7 +307,7 @@ public class GordianXCoreAgreement
     @Override
     public void setError(final String pError) throws GordianException {
         /* Only allowed while awaiting ServerPrivate */
-        checkStatus(GordianXAgreementStatus.AWAITING_SERVERPRIVATE);
+        checkStatus(GordianAgreementStatus.AWAITING_SERVERPRIVATE);
         theBuilder.setError(pError);
 
         /* If we are not anonymous */
@@ -317,7 +317,7 @@ public class GordianXCoreAgreement
         }
 
         /* Set result available */
-        theBuilder.setStatus(GordianXAgreementStatus.RESULT_AVAILABLE);
+        theBuilder.setStatus(GordianAgreementStatus.RESULT_AVAILABLE);
     }
 
     @Override
@@ -331,7 +331,7 @@ public class GordianXCoreAgreement
      * @param pMessage the next message
      * @throws GordianException on error
      */
-    void setNextMessage(final GordianXCoreAgreementMessageASN1 pMessage) throws GordianException {
+    void setNextMessage(final GordianCoreAgreementMessageASN1 pMessage) throws GordianException {
         theNextMsg = pMessage == null ? null : pMessage.getEncodedBytes();
     }
 
@@ -356,7 +356,7 @@ public class GordianXCoreAgreement
      */
     void buildClientHello() throws GordianException {
         /* Take a snapshot of the parameters */
-        theParams = new GordianXCoreAgreementParams(theBuilder);
+        theParams = new GordianCoreAgreementParams(theBuilder);
 
         /* Create ClientId and InitVector */
         if (!theSpec.getAgreementType().isAnonymous()) {
@@ -371,13 +371,13 @@ public class GordianXCoreAgreement
 
         /* Create the new ClientHello */
         theEngine.buildClientHello();
-        final GordianXCoreAgreementMessageASN1 myMsg = theBuilder.newClientHello();
+        final GordianCoreAgreementMessageASN1 myMsg = theBuilder.newClientHello();
 
         /* Set next message and status */
         setNextMessage(myMsg);
         theBuilder.setStatus(theSpec.getAgreementType().isAnonymous()
-                ? GordianXAgreementStatus.RESULT_AVAILABLE
-                : GordianXAgreementStatus.AWAITING_SERVERHELLO);
+                ? GordianAgreementStatus.RESULT_AVAILABLE
+                : GordianAgreementStatus.AWAITING_SERVERHELLO);
 
         /* Store into cache if required */
         if (!theSpec.getAgreementType().isAnonymous()) {
@@ -391,11 +391,11 @@ public class GordianXCoreAgreement
      * @param pClientHello the clientHello
      * @throws GordianException on error
      */
-    void parseClientHello(final GordianXCoreAgreementMessageASN1 pClientHello) throws GordianException {
+    void parseClientHello(final GordianCoreAgreementMessageASN1 pClientHello) throws GordianException {
         /* Parse the clientHello */
         theBuilder.parseClientHello(pClientHello);
-        theParams = new GordianXCoreAgreementParams(theBuilder);
-        theBuilder.setStatus(GordianXAgreementStatus.AWAITING_SERVERPRIVATE);
+        theParams = new GordianCoreAgreementParams(theBuilder);
+        theBuilder.setStatus(GordianAgreementStatus.AWAITING_SERVERPRIVATE);
     }
 
     /**
@@ -426,16 +426,16 @@ public class GordianXCoreAgreement
         /* If we are anonymous */
         if (theSpec.getAgreementType().isAnonymous()) {
             /* Set that the result is available */
-            theBuilder.setStatus(GordianXAgreementStatus.RESULT_AVAILABLE);
+            theBuilder.setStatus(GordianAgreementStatus.RESULT_AVAILABLE);
 
             /* Else we need to build a serverHello */
         } else {
             /* Build the new serverHello */
-            final GordianXCoreAgreementMessageASN1 myMsg = theBuilder.newServerHello();
+            final GordianCoreAgreementMessageASN1 myMsg = theBuilder.newServerHello();
             setNextMessage(myMsg);
             theBuilder.setStatus(Boolean.TRUE.equals(theSpec.withConfirm())
-                    ? GordianXAgreementStatus.AWAITING_CLIENTCONFIRM
-                    : GordianXAgreementStatus.RESULT_AVAILABLE);
+                    ? GordianAgreementStatus.AWAITING_CLIENTCONFIRM
+                    : GordianAgreementStatus.RESULT_AVAILABLE);
 
             /* Store into cache if required */
             if (Boolean.TRUE.equals(theSpec.withConfirm())) {
@@ -450,9 +450,9 @@ public class GordianXCoreAgreement
      * @param pServerHello the serverHello
      * @throws GordianException on error
      */
-    public void processServerHello(final GordianXCoreAgreementMessageASN1 pServerHello) throws GordianException {
+    public void processServerHello(final GordianCoreAgreementMessageASN1 pServerHello) throws GordianException {
         /* Check that we are expecting a serverHello */
-        checkStatus(GordianXAgreementStatus.AWAITING_SERVERHELLO);
+        checkStatus(GordianAgreementStatus.AWAITING_SERVERHELLO);
 
         /* Parse the serverHello */
         final boolean bSuccess = theBuilder.parseServerHello(pServerHello);
@@ -473,7 +473,7 @@ public class GordianXCoreAgreement
         } else {
             setNextMessage(null);
         }
-        theBuilder.setStatus(GordianXAgreementStatus.RESULT_AVAILABLE);
+        theBuilder.setStatus(GordianAgreementStatus.RESULT_AVAILABLE);
 
         /* remove from cache */
         theSupplier.removeAgreement(pServerHello.getClientId());
@@ -485,9 +485,9 @@ public class GordianXCoreAgreement
      * @param pClientConfirm the clientConfirm
      * @throws GordianException on error
      */
-    public void processClientConfirm(final GordianXCoreAgreementMessageASN1 pClientConfirm) throws GordianException {
+    public void processClientConfirm(final GordianCoreAgreementMessageASN1 pClientConfirm) throws GordianException {
         /* Check that we are expecting a confirmation */
-        checkStatus(GordianXAgreementStatus.AWAITING_CLIENTCONFIRM);
+        checkStatus(GordianAgreementStatus.AWAITING_CLIENTCONFIRM);
 
         /* Parse the clientConfirm */
         if (theBuilder.parseClientConfirm(pClientConfirm)) {
@@ -497,7 +497,7 @@ public class GordianXCoreAgreement
 
         /* Update status */
         setNextMessage(null);
-        theBuilder.setStatus(GordianXAgreementStatus.RESULT_AVAILABLE);
+        theBuilder.setStatus(GordianAgreementStatus.RESULT_AVAILABLE);
 
         /* remove from cache */
         theSupplier.removeAgreement(pClientConfirm.getServerId());

@@ -14,11 +14,11 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.gordianknot.impl.core.xagree;
+package net.sourceforge.joceanus.gordianknot.impl.core.agree;
 
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementType;
-import net.sourceforge.joceanus.gordianknot.api.agree.GordianKDFType;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementKDF;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherSpec;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamCipherSpec;
@@ -58,7 +58,7 @@ import java.util.Map;
 /**
  * Mappings from EncodedId to AgreementSpec.
  */
-public class GordianXCoreAgreementAlgId {
+public class GordianCoreAgreementAlgId {
     /**
      * AgreementOID branch.
      */
@@ -116,9 +116,10 @@ public class GordianXCoreAgreementAlgId {
 
     /**
      * Constructor.
+     *
      * @param pFactory the factory
      */
-    GordianXCoreAgreementAlgId(final GordianFactory pFactory) {
+    GordianCoreAgreementAlgId(final GordianFactory pFactory) {
         /* Store parameters */
         theFactory = pFactory;
 
@@ -140,7 +141,7 @@ public class GordianXCoreAgreementAlgId {
         /* Loop through all the Agreement types */
         for (GordianAgreementType myType : GordianAgreementType.values()) {
             /* Loop through all the KDF types */
-            for (GordianKDFType myKDF : GordianKDFType.values()) {
+            for (GordianAgreementKDF myKDF : GordianAgreementKDF.values()) {
                 /* Add agreements */
                 addAgreement(new GordianAgreementSpec(NULLKEYPAIRSPEC, myType, myKDF));
                 addAgreement(new GordianAgreementSpec(NULLKEYPAIRSPEC, myType, myKDF, Boolean.TRUE));
@@ -159,7 +160,7 @@ public class GordianXCoreAgreementAlgId {
         ASN1ObjectIdentifier myId = AGREESPECOID.branch(Integer.toString(myType.ordinal() + 1));
 
         /* Add branch for kdfType */
-        final GordianKDFType myKDFType = pSpec.getKDFType();
+        final GordianAgreementKDF myKDFType = pSpec.getKDFType();
         myId = myId.branch(Integer.toString(myKDFType.ordinal() + 1));
 
         /* Add branch for confirm (if present) */
@@ -290,7 +291,7 @@ public class GordianXCoreAgreementAlgId {
      */
     public GordianAgreementSpec determineAgreementSpec(final AlgorithmIdentifier pId) {
         /* Obtain the ObjectIdentifiers */
-        final ASN1ObjectIdentifier myId  = pId.getAlgorithm();
+        final ASN1ObjectIdentifier myId = pId.getAlgorithm();
         final AlgorithmIdentifier myPairId = AlgorithmIdentifier.getInstance(pId.getParameters());
 
         /* Derive the specs */
@@ -312,7 +313,8 @@ public class GordianXCoreAgreementAlgId {
 
     /**
      * Add agreement to maps.
-     * @param pSpec the agreementSpec
+     *
+     * @param pSpec       the agreementSpec
      * @param pIdentifier the identifier
      */
     private void addToMaps(final GordianAgreementSpec pSpec,
@@ -323,7 +325,8 @@ public class GordianXCoreAgreementAlgId {
 
     /**
      * Add keyPair to maps.
-     * @param pSpec the keyPairSpec
+     *
+     * @param pSpec       the keyPairSpec
      * @param pIdentifier the identifier
      */
     private void addToMaps(final GordianKeyPairSpec pSpec,
@@ -334,6 +337,7 @@ public class GordianXCoreAgreementAlgId {
 
     /**
      * Obtain identifier for result.
+     *
      * @param pResultType the result type
      * @return the identifier
      * @throws GordianException on error
@@ -368,11 +372,12 @@ public class GordianXCoreAgreementAlgId {
 
     /**
      * process result algorithmId.
+     *
      * @param pResId the result algorithmId.
      * @return the resultType
      * @throws GordianException on error
      */
-    public Object  processResultIdentifier(final AlgorithmIdentifier pResId) throws GordianException {
+    public Object processResultIdentifier(final AlgorithmIdentifier pResId) throws GordianException {
         /* Look for a Factory */
         final ASN1ObjectIdentifier myAlgId = pResId.getAlgorithm();
         if (GordianBaseData.BCFACTORYOID.equals(myAlgId)) {

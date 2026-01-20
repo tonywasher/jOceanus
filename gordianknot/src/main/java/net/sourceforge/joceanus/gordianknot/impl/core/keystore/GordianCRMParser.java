@@ -36,9 +36,9 @@ import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.Go
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignParams;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignature;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
-import net.sourceforge.joceanus.gordianknot.api.xagree.GordianXAgreement;
-import net.sourceforge.joceanus.gordianknot.api.xagree.GordianXAgreementFactory;
-import net.sourceforge.joceanus.gordianknot.api.xagree.GordianXAgreementParams;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreement;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementFactory;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementParams;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.cert.GordianCertUtils;
 import net.sourceforge.joceanus.gordianknot.impl.core.cert.GordianCoreCertificate;
@@ -403,7 +403,7 @@ public class GordianCRMParser {
         }
 
         /* Check for agreement private key */
-        final GordianAgreementSpec myAgreeSpec = myFactory.getXAgreementFactory().defaultForKeyPair(mySpec);
+        final GordianAgreementSpec myAgreeSpec = myFactory.getAgreementFactory().defaultForKeyPair(mySpec);
         if (myAgreeSpec != null) {
             checkAgreementPrivateKey(pKeyPair);
             return;
@@ -457,18 +457,18 @@ public class GordianCRMParser {
     private void checkAgreementPrivateKey(final GordianKeyPair pKeyPair) throws GordianException {
         /* Access details */
         final GordianBaseFactory myFactory = theGateway.getFactory();
-        final GordianXAgreementFactory myAgreeFactory = myFactory.getAsyncFactory().getXAgreementFactory();
+        final GordianAgreementFactory myAgreeFactory = myFactory.getAsyncFactory().getAgreementFactory();
         final GordianKeyPairSpec mySpec = pKeyPair.getKeyPairSpec();
         final GordianAgreementSpec myAgreeSpec = myAgreeFactory.defaultForKeyPair(mySpec);
 
         /* Create agreement */
         final GordianCertificate myCert = myAgreeFactory.newMiniCertificate(GordianCRMEncryptor.SERVER, pKeyPair,
                 new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));
-        GordianXAgreementParams myParams = myAgreeFactory.newAgreementParams(myAgreeSpec, GordianLength.LEN_256.getByteLength())
+        GordianAgreementParams myParams = myAgreeFactory.newAgreementParams(myAgreeSpec, GordianLength.LEN_256.getByteLength())
                 .setServerCertificate(myCert);
-        final GordianXAgreement mySender = myAgreeFactory.createAgreement(myParams);
+        final GordianAgreement mySender = myAgreeFactory.createAgreement(myParams);
         final byte[] myClientHello = mySender.nextMessage();
-        final GordianXAgreement myResponder = myAgreeFactory.parseAgreementMessage(myClientHello);
+        final GordianAgreement myResponder = myAgreeFactory.parseAgreementMessage(myClientHello);
         myParams = myResponder.getAgreementParams().setServerCertificate(myCert);
         myResponder.updateParams(myParams);
 

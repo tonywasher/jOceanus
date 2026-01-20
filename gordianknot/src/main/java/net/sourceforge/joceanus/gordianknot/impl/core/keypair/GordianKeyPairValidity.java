@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.gordianknot.impl.core.keypair;
 
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpecBuilder;
-import net.sourceforge.joceanus.gordianknot.api.agree.GordianKDFType;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementKDF;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.cert.GordianCertificate;
@@ -35,9 +35,9 @@ import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignParams;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignature;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureFactory;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
-import net.sourceforge.joceanus.gordianknot.api.xagree.GordianXAgreement;
-import net.sourceforge.joceanus.gordianknot.api.xagree.GordianXAgreementFactory;
-import net.sourceforge.joceanus.gordianknot.api.xagree.GordianXAgreementParams;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreement;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementFactory;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementParams;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
@@ -164,11 +164,11 @@ public final class GordianKeyPairValidity {
                                       final GordianKeyPair pKeyPair,
                                       final GordianAgreementSpec pAgreeSpec) throws GordianException {
         /* Create agreement on client side */
-        final GordianXAgreementFactory myAgrees = pFactory.getAsyncFactory().getXAgreementFactory();
+        final GordianAgreementFactory myAgrees = pFactory.getAsyncFactory().getAgreementFactory();
         final GordianCertificate myCert = myAgrees.newMiniCertificate(SERVER, pKeyPair, new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));
-        GordianXAgreementParams myParams = myAgrees.newAgreementParams(pAgreeSpec, GordianLength.LEN_256.getByteLength())
+        GordianAgreementParams myParams = myAgrees.newAgreementParams(pAgreeSpec, GordianLength.LEN_256.getByteLength())
                 .setServerCertificate(myCert);
-        GordianXAgreement myAgreement = myAgrees.createAgreement(myParams);
+        GordianAgreement myAgreement = myAgrees.createAgreement(myParams);
         final byte[] myHello = myAgreement.nextMessage();
         final byte[] myClient = (byte[]) myAgreement.getResult();
 
@@ -215,11 +215,11 @@ public final class GordianKeyPairValidity {
             case ELGAMAL:
                 return GordianEncryptorSpecBuilder.elGamal(GordianDigestSpecBuilder.sha2(GordianLength.LEN_512));
             case DH:
-                return GordianAgreementSpecBuilder.anon(mySpec, GordianKDFType.SHA256KDF);
+                return GordianAgreementSpecBuilder.anon(mySpec, GordianAgreementKDF.SHA256KDF);
             case XDH:
                 return mySpec.getEdwardsElliptic().is25519()
-                        ? GordianAgreementSpecBuilder.anon(mySpec, GordianKDFType.SHA256KDF)
-                        : GordianAgreementSpecBuilder.anon(mySpec, GordianKDFType.SHA512KDF);
+                        ? GordianAgreementSpecBuilder.anon(mySpec, GordianAgreementKDF.SHA256KDF)
+                        : GordianAgreementSpecBuilder.anon(mySpec, GordianAgreementKDF.SHA512KDF);
             case CMCE:
             case FRODO:
             case SABER:
@@ -229,7 +229,7 @@ public final class GordianKeyPairValidity {
             case NTRU:
             case NTRUPRIME:
             case NEWHOPE:
-                return GordianAgreementSpecBuilder.kem(mySpec, GordianKDFType.NONE);
+                return GordianAgreementSpecBuilder.kem(mySpec, GordianAgreementKDF.NONE);
             default:
                 return null;
         }

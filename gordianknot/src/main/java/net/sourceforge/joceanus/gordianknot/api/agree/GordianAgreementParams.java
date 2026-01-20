@@ -14,9 +14,8 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package net.sourceforge.joceanus.gordianknot.api.xagree;
+package net.sourceforge.joceanus.gordianknot.api.agree;
 
-import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.cert.GordianCertificate;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
@@ -24,7 +23,7 @@ import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
 /**
  * Key Agreement Parameters Specification.
  */
-public interface GordianXAgreementParams {
+public interface GordianAgreementParams {
     /**
      * Obtain the agreementSpec.
      *
@@ -81,7 +80,7 @@ public interface GordianXAgreementParams {
      * @return the new agreementParams
      * @throws GordianException on error
      */
-    GordianXAgreementParams setClientCertificate(GordianCertificate pClient) throws GordianException;
+    GordianAgreementParams setClientCertificate(GordianCertificate pClient) throws GordianException;
 
     /**
      * Set server Certificate.
@@ -90,7 +89,7 @@ public interface GordianXAgreementParams {
      * @return the new agreementParams
      * @throws GordianException on error
      */
-    GordianXAgreementParams setServerCertificate(GordianCertificate pServer) throws GordianException;
+    GordianAgreementParams setServerCertificate(GordianCertificate pServer) throws GordianException;
 
     /**
      * Declare signer certificate.
@@ -99,7 +98,7 @@ public interface GordianXAgreementParams {
      * @return the new agreementParams
      * @throws GordianException on error
      */
-    GordianXAgreementParams setSigner(GordianCertificate pSigner) throws GordianException;
+    GordianAgreementParams setSigner(GordianCertificate pSigner) throws GordianException;
 
     /**
      * Declare signer certificate and specification.
@@ -109,8 +108,8 @@ public interface GordianXAgreementParams {
      * @return the new agreementParams
      * @throws GordianException on error
      */
-    GordianXAgreementParams setSigner(GordianCertificate pSigner,
-                                      GordianSignatureSpec pSignSpec) throws GordianException;
+    GordianAgreementParams setSigner(GordianCertificate pSigner,
+                                     GordianSignatureSpec pSignSpec) throws GordianException;
 
     /**
      * Set additional data.
@@ -119,5 +118,5 @@ public interface GordianXAgreementParams {
      * @return the new agreementParams
      * @throws GordianException on error
      */
-    GordianXAgreementParams setAdditionalData(byte[] pData) throws GordianException;
+    GordianAgreementParams setAdditionalData(byte[] pData) throws GordianException;
 }

@@ -43,7 +43,7 @@ public final class GordianAgreementSpec {
     /**
      * KDFType.
      */
-    private final GordianKDFType theKDFType;
+    private final GordianAgreementKDF theKDFType;
 
     /**
      * With Confirmation?.
@@ -62,26 +62,28 @@ public final class GordianAgreementSpec {
 
     /**
      * Constructor.
-     * @param pKeyPairSpec the keyPairSpec
+     *
+     * @param pKeyPairSpec   the keyPairSpec
      * @param pAgreementType the agreement type
-     * @param pKDFType the KDF type
+     * @param pKDFType       the KDF type
      */
     public GordianAgreementSpec(final GordianKeyPairSpec pKeyPairSpec,
                                 final GordianAgreementType pAgreementType,
-                                final GordianKDFType pKDFType) {
+                                final GordianAgreementKDF pKDFType) {
         this(pKeyPairSpec, pAgreementType, pKDFType, Boolean.FALSE);
     }
 
     /**
      * Constructor.
-     * @param pKeyPairSpec the keyPairSpec
+     *
+     * @param pKeyPairSpec   the keyPairSpec
      * @param pAgreementType the agreement type
-     * @param pKDFType the KDF type
-     * @param pConfirm with key confirmation
+     * @param pKDFType       the KDF type
+     * @param pConfirm       with key confirmation
      */
     public GordianAgreementSpec(final GordianKeyPairSpec pKeyPairSpec,
                                 final GordianAgreementType pAgreementType,
-                                final GordianKDFType pKDFType,
+                                final GordianAgreementKDF pKDFType,
                                 final Boolean pConfirm) {
         theKeyPairSpec = pKeyPairSpec;
         theAgreementType = pAgreementType;
@@ -92,6 +94,7 @@ public final class GordianAgreementSpec {
 
     /**
      * Obtain the keyPairSpec.
+     *
      * @return the keyPairSpec
      */
     public GordianKeyPairSpec getKeyPairSpec() {
@@ -100,6 +103,7 @@ public final class GordianAgreementSpec {
 
     /**
      * Obtain the agreementType.
+     *
      * @return the agreementType
      */
     public GordianAgreementType getAgreementType() {
@@ -108,14 +112,16 @@ public final class GordianAgreementSpec {
 
     /**
      * Obtain the kdfType.
+     *
      * @return the kdfType
      */
-    public GordianKDFType getKDFType() {
+    public GordianAgreementKDF getKDFType() {
         return theKDFType;
     }
 
     /**
      * Is this agreement with key confirmation?
+     *
      * @return true/false
      */
     public Boolean withConfirm() {
@@ -124,6 +130,7 @@ public final class GordianAgreementSpec {
 
     /**
      * Is this Agreement supported?
+     *
      * @return true/false
      */
     public boolean isSupported() {
@@ -133,6 +140,7 @@ public final class GordianAgreementSpec {
 
     /**
      * Is the agreementSpec valid?
+     *
      * @return true/false.
      */
     public boolean isValid() {
@@ -141,6 +149,7 @@ public final class GordianAgreementSpec {
 
     /**
      * Check spec validity.
+     *
      * @return valid true/false
      */
     private boolean checkValidity() {
@@ -179,7 +188,7 @@ public final class GordianAgreementSpec {
                         + SEP + theAgreementType;
 
                 /* Add KDF type if present */
-                if (GordianKDFType.NONE != theKDFType) {
+                if (GordianAgreementKDF.NONE != theKDFType) {
                     theName += SEP + theKDFType;
                 }
 

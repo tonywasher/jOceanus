@@ -14,11 +14,11 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package net.sourceforge.joceanus.gordianknot.impl.core.xagree;
+package net.sourceforge.joceanus.gordianknot.impl.core.agree;
 
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementType;
-import net.sourceforge.joceanus.gordianknot.api.agree.GordianKDFType;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementKDF;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import net.sourceforge.joceanus.gordianknot.impl.core.kdf.GordianHKDFEngine;
 import net.sourceforge.joceanus.gordianknot.impl.core.kdf.GordianHKDFParams;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianCompositeKeyPair;
-import net.sourceforge.joceanus.gordianknot.impl.core.xagree.GordianXCoreAgreementCalculator.GordianXDerivationId;
+import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementCalculator.GordianDerivationId;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Sequence;
@@ -47,7 +47,7 @@ import java.util.Random;
 /**
  * Implementation engine for composite Agreements.
  */
-public class GordianXCoreAgreementComposite extends GordianXCoreAgreementEngine {
+public class GordianCoreAgreementComposite extends GordianCoreAgreementEngine {
     /**
      * The factory.
      */
@@ -56,17 +56,17 @@ public class GordianXCoreAgreementComposite extends GordianXCoreAgreementEngine 
     /**
      * List of underlying engines.
      */
-    private final List<GordianXCoreAgreementEngine> theEngines;
+    private final List<GordianCoreAgreementEngine> theEngines;
 
     /**
      * The builder.
      */
-    private final GordianXCoreAgreementBuilder theBuilder;
+    private final GordianCoreAgreementBuilder theBuilder;
 
     /**
      * The builder.
      */
-    private final GordianXCoreAgreementState theState;
+    private final GordianCoreAgreementState theState;
 
     /**
      * Constructor.
@@ -76,9 +76,9 @@ public class GordianXCoreAgreementComposite extends GordianXCoreAgreementEngine 
      * @param pEngines  the engines
      * @throws GordianException on error
      */
-    GordianXCoreAgreementComposite(final GordianXCoreAgreementSupplier pSupplier,
-                                   final GordianAgreementSpec pSpec,
-                                   final List<GordianXCoreAgreementEngine> pEngines) throws GordianException {
+    GordianCoreAgreementComposite(final GordianCoreAgreementSupplier pSupplier,
+                                  final GordianAgreementSpec pSpec,
+                                  final List<GordianCoreAgreementEngine> pEngines) throws GordianException {
         super(pSupplier, pSpec);
         theFactory = pSupplier.getFactory();
         theEngines = pEngines;
@@ -100,7 +100,7 @@ public class GordianXCoreAgreementComposite extends GordianXCoreAgreementEngine 
         final GordianAgreementType myType = pSpec.getAgreementType().isSigned()
                 ? GordianAgreementType.BASIC
                 : pSpec.getAgreementType();
-        final GordianKDFType myKDF = pSpec.getKDFType();
+        final GordianAgreementKDF myKDF = pSpec.getKDFType();
 
         /* Loop through the keyPairs */
         final GordianKeyPairSpec myKeyPairSpec = pSpec.getKeyPairSpec();
@@ -118,12 +118,12 @@ public class GordianXCoreAgreementComposite extends GordianXCoreAgreementEngine 
     @Override
     public void buildClientHello() throws GordianException {
         /* Access the client and server keyPairs */
-        final GordianXCoreAgreementParticipant myClient = theState.getClient();
+        final GordianCoreAgreementParticipant myClient = theState.getClient();
         final GordianCompositeKeyPair myClientKeyPair = (GordianCompositeKeyPair) myClient.getKeyPair();
         final Iterator<GordianKeyPair> myClientIterator = myClientKeyPair == null ? null : myClientKeyPair.iterator();
         final GordianCompositeKeyPair myEphemeralKeyPair = (GordianCompositeKeyPair) myClient.getEphemeralKeyPair();
         final Iterator<GordianKeyPair> myEphemeralIterator = myEphemeralKeyPair == null ? null : myEphemeralKeyPair.iterator();
-        final GordianXCoreAgreementParticipant myServer = theState.getServer();
+        final GordianCoreAgreementParticipant myServer = theState.getServer();
         final GordianCompositeKeyPair myServerKeyPair = (GordianCompositeKeyPair) myServer.getKeyPair();
         final Iterator<GordianKeyPair> myServerIterator = myServerKeyPair == null ? null : myServerKeyPair.iterator();
 
@@ -133,11 +133,11 @@ public class GordianXCoreAgreementComposite extends GordianXCoreAgreementEngine 
             final ASN1EncodableVector myEncapsulated = new ASN1EncodableVector();
 
             /* Loop through the engines */
-            for (GordianXCoreAgreementEngine myEngine : theEngines) {
+            for (GordianCoreAgreementEngine myEngine : theEngines) {
                 /* Access engine details */
-                final GordianXCoreAgreementState myEngState = myEngine.getBuilder().getState();
-                final GordianXCoreAgreementParticipant myEngClient = myEngState.getClient();
-                final GordianXCoreAgreementParticipant myEngServer = myEngState.getServer();
+                final GordianCoreAgreementState myEngState = myEngine.getBuilder().getState();
+                final GordianCoreAgreementParticipant myEngClient = myEngState.getClient();
+                final GordianCoreAgreementParticipant myEngServer = myEngState.getServer();
 
                 /* Update keyPairs and initVector */
                 myEngClient.setKeyPair(myClientKeyPair == null ? null : myClientIterator.next());
@@ -178,10 +178,10 @@ public class GordianXCoreAgreementComposite extends GordianXCoreAgreementEngine 
      */
     public void processClientHello() throws GordianException {
         /* Access the client and server keyPairs */
-        final GordianXCoreAgreementParticipant myClient = theState.getClient();
+        final GordianCoreAgreementParticipant myClient = theState.getClient();
         final GordianCompositeKeyPair myClientKeyPair = (GordianCompositeKeyPair) myClient.getKeyPair();
         final Iterator<GordianKeyPair> myClientIterator = myClientKeyPair == null ? null : myClientKeyPair.iterator();
-        final GordianXCoreAgreementParticipant myServer = theState.getServer();
+        final GordianCoreAgreementParticipant myServer = theState.getServer();
         final GordianCompositeKeyPair myServerKeyPair = (GordianCompositeKeyPair) myServer.getKeyPair();
         final Iterator<GordianKeyPair> myServerIterator = myServerKeyPair == null ? null : myServerKeyPair.iterator();
         final GordianCompositeKeyPair myClientEphemeralKeyPair = (GordianCompositeKeyPair) myClient.getEphemeralKeyPair();
@@ -194,12 +194,12 @@ public class GordianXCoreAgreementComposite extends GordianXCoreAgreementEngine 
         final Enumeration<?> enEnc = myEncapsulated == null ? null : ASN1Sequence.getInstance(myEncapsulated).getObjects();
 
         /* Loop through the engines */
-        for (GordianXCoreAgreementEngine myEngine : theEngines) {
+        for (GordianCoreAgreementEngine myEngine : theEngines) {
             /* Access engine details */
-            final GordianXCoreAgreementBuilder myEngBuilder = myEngine.getBuilder();
-            final GordianXCoreAgreementState myEngState = myEngBuilder.getState();
-            final GordianXCoreAgreementParticipant myEngClient = myEngState.getClient();
-            final GordianXCoreAgreementParticipant myEngServer = myEngState.getServer();
+            final GordianCoreAgreementBuilder myEngBuilder = myEngine.getBuilder();
+            final GordianCoreAgreementState myEngState = myEngBuilder.getState();
+            final GordianCoreAgreementParticipant myEngClient = myEngState.getClient();
+            final GordianCoreAgreementParticipant myEngServer = myEngState.getServer();
 
             /* Update keyPairs and initVector */
             myEngClient.setKeyPair(myClientKeyPair == null ? null : myClientIterator.next());
@@ -223,17 +223,17 @@ public class GordianXCoreAgreementComposite extends GordianXCoreAgreementEngine 
     @Override
     public void processServerHello() throws GordianException {
         /* Access the client and server keyPairs */
-        final GordianXCoreAgreementParticipant myServer = theState.getServer();
+        final GordianCoreAgreementParticipant myServer = theState.getServer();
         final boolean isSigned = theState.getSpec().getAgreementType().isSigned();
         final GordianCompositeKeyPair myEphemeralKeyPair = (GordianCompositeKeyPair) myServer.getEphemeralKeyPair();
         final Iterator<GordianKeyPair> myEphemeralIterator = myEphemeralKeyPair == null ? null : myEphemeralKeyPair.iterator();
 
         /* Loop through the engines */
-        for (GordianXCoreAgreementEngine myEngine : theEngines) {
+        for (GordianCoreAgreementEngine myEngine : theEngines) {
             /* Access engine details */
-            final GordianXCoreAgreementBuilder myEngBuilder = myEngine.getBuilder();
-            final GordianXCoreAgreementState myEngState = myEngBuilder.getState();
-            final GordianXCoreAgreementParticipant myEngServer = myEngState.getServer();
+            final GordianCoreAgreementBuilder myEngBuilder = myEngine.getBuilder();
+            final GordianCoreAgreementState myEngState = myEngBuilder.getState();
+            final GordianCoreAgreementParticipant myEngServer = myEngState.getServer();
 
             /* Store initVector and ephemeral keyPair */
             myEngServer.setInitVector(myServer.getInitVector());
@@ -266,11 +266,11 @@ public class GordianXCoreAgreementComposite extends GordianXCoreAgreementEngine 
         final GordianHKDFParams myParams = GordianHKDFParams.extractOnly();
         try {
             /* Create the HKDF parameters */
-            final GordianDigestSpec myDigestSpec = new GordianDigestSpec(GordianXDerivationId.COMPOSITE.getDigestType());
+            final GordianDigestSpec myDigestSpec = new GordianDigestSpec(GordianDerivationId.COMPOSITE.getDigestType());
             Random myRandom = null;
 
             /* Loop through the engines */
-            for (GordianXCoreAgreementEngine myEngine : theEngines) {
+            for (GordianCoreAgreementEngine myEngine : theEngines) {
                 /* Access the secret result */
                 final byte[] myPart = (byte[]) myEngine.getBuilder().getState().getResult();
 

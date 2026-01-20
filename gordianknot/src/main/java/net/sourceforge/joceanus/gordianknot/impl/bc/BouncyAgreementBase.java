@@ -22,22 +22,23 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianPrivateKey;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianPublicKey;
-import net.sourceforge.joceanus.gordianknot.impl.core.xagree.GordianXCoreAgreementEngine;
-import net.sourceforge.joceanus.gordianknot.impl.core.xagree.GordianXCoreAgreementFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementEngine;
+import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
 
 /**
  * Base Agreement Engine class.
  */
-public abstract class BouncyXAgreementBase
-        extends GordianXCoreAgreementEngine {
+public abstract class BouncyAgreementBase
+        extends GordianCoreAgreementEngine {
     /**
      * Constructor.
+     *
      * @param pFactory the security factory
-     * @param pSpec the agreementSpec
+     * @param pSpec    the agreementSpec
      * @throws GordianException on error
      */
-    BouncyXAgreementBase(final GordianXCoreAgreementFactory pFactory,
-                         final GordianAgreementSpec pSpec) throws GordianException {
+    BouncyAgreementBase(final GordianCoreAgreementFactory pFactory,
+                        final GordianAgreementSpec pSpec) throws GordianException {
         /* Invoke underlying constructor */
         super(pFactory, pSpec);
 

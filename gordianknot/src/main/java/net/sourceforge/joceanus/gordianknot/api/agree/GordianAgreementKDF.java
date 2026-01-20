@@ -21,7 +21,7 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairType;
 /**
  * KDF types.
  */
-public enum GordianKDFType {
+public enum GordianAgreementKDF {
     /**
      * None.
      */

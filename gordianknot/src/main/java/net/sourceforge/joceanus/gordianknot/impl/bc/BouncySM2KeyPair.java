@@ -31,11 +31,11 @@ import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyEllipticKeyPair.Bouncy
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECPublicKey;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
+import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.encrypt.GordianCoreEncryptor;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.sign.GordianCoreSignature;
-import net.sourceforge.joceanus.gordianknot.impl.core.xagree.GordianXCoreAgreementFactory;
 import org.bouncycastle.crypto.CryptoException;
 import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.agreement.SM2KeyExchange;
@@ -164,10 +164,10 @@ public final class BouncySM2KeyPair {
     }
 
     /**
-     * SM2 XAgreement Engine.
+     * SM2 Agreement Engine.
      */
-    public static class BouncySM2XAgreementEngine
-            extends BouncyXAgreementBase {
+    public static class BouncySM2AgreementEngine
+            extends BouncyAgreementBase {
         /**
          * Key length.
          */
@@ -185,8 +185,8 @@ public final class BouncySM2KeyPair {
          * @param pSpec    the agreementSpec
          * @throws GordianException on error
          */
-        BouncySM2XAgreementEngine(final GordianXCoreAgreementFactory pFactory,
-                                  final GordianAgreementSpec pSpec) throws GordianException {
+        BouncySM2AgreementEngine(final GordianCoreAgreementFactory pFactory,
+                                 final GordianAgreementSpec pSpec) throws GordianException {
             /* Initialize underlying class */
             super(pFactory, pSpec);
 

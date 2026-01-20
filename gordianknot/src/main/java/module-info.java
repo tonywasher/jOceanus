@@ -26,6 +26,7 @@ module net.sourceforge.joceanus.gordianknot {
     requires org.bouncycastle.util;
 
     /* Exports */
+    exports net.sourceforge.joceanus.gordianknot.api.agree;
     exports net.sourceforge.joceanus.gordianknot.api.base;
     exports net.sourceforge.joceanus.gordianknot.api.cert;
     exports net.sourceforge.joceanus.gordianknot.api.cipher;
@@ -40,7 +41,6 @@ module net.sourceforge.joceanus.gordianknot {
     exports net.sourceforge.joceanus.gordianknot.api.mac;
     exports net.sourceforge.joceanus.gordianknot.api.random;
     exports net.sourceforge.joceanus.gordianknot.api.sign;
-    exports net.sourceforge.joceanus.gordianknot.api.xagree;
     exports net.sourceforge.joceanus.gordianknot.api.zip;
     exports net.sourceforge.joceanus.gordianknot.util;
 }

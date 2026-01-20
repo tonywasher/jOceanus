@@ -21,7 +21,7 @@ import net.sourceforge.joceanus.gordianknot.api.factory.GordianAsyncFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreFactory;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureFactory;
-import net.sourceforge.joceanus.gordianknot.api.xagree.GordianXAgreementFactory;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianCoreKeyStoreFactory;
 
@@ -48,7 +48,7 @@ public abstract class GordianCoreAsyncFactory
     /**
      * The XAgreement factory.
      */
-    private final GordianXAgreementFactory theXAgreementFactory;
+    private final GordianAgreementFactory theXAgreementFactory;
 
     /**
      * The encryptor factory.
@@ -69,7 +69,7 @@ public abstract class GordianCoreAsyncFactory
         theFactory = pFactory;
         theKeyPairFactory = newKeyPairFactory(theFactory);
         theSignatureFactory = newSignatureFactory(theFactory);
-        theXAgreementFactory = newXAgreementFactory(theFactory);
+        theXAgreementFactory = newAgreementFactory(theFactory);
         theEncryptorFactory = newEncryptorFactory(theFactory);
         theKeyStoreFactory = new GordianCoreKeyStoreFactory(theFactory);
     }
@@ -110,17 +110,17 @@ public abstract class GordianCoreAsyncFactory
     public abstract GordianSignatureFactory newSignatureFactory(GordianBaseFactory pFactory);
 
     @Override
-    public GordianXAgreementFactory getXAgreementFactory() {
+    public GordianAgreementFactory getAgreementFactory() {
         return theXAgreementFactory;
     }
 
     /**
-     * Create a new XAgreement factory.
+     * Create a new Agreement factory.
      *
      * @param pFactory the factory
      * @return the new agreement factory
      */
-    public abstract GordianXAgreementFactory newXAgreementFactory(GordianBaseFactory pFactory);
+    public abstract GordianAgreementFactory newAgreementFactory(GordianBaseFactory pFactory);
 
     @Override
     public GordianEncryptorFactory getEncryptorFactory() {

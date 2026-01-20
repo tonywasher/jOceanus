@@ -14,17 +14,17 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package net.sourceforge.joceanus.gordianknot.impl.core.xagree;
+package net.sourceforge.joceanus.gordianknot.impl.core.agree;
 
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
-import net.sourceforge.joceanus.gordianknot.api.agree.GordianKDFType;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementKDF;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPair;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianPrivateKey;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianPublicKey;
-import net.sourceforge.joceanus.gordianknot.impl.core.xagree.GordianXCoreAgreementDerivation.GordianXCoreNullKeyDerivation;
+import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementDerivation.GordianCoreNullKeyDerivation;
 import org.bouncycastle.crypto.DerivationFunction;
 import org.bouncycastle.crypto.agreement.kdf.ConcatenationKDFGenerator;
 import org.bouncycastle.crypto.digests.SHA256Digest;
@@ -37,36 +37,36 @@ import java.security.SecureRandom;
 /**
  * Implementation engine for Agreements.
  */
-public abstract class GordianXCoreAgreementEngine {
+public abstract class GordianCoreAgreementEngine {
     /**
      * The supplier.
      */
-    private final GordianXCoreAgreementSupplier theSupplier;
+    private final GordianCoreAgreementSupplier theSupplier;
 
     /**
      * The builder.
      */
-    private final GordianXCoreAgreementBuilder theBuilder;
+    private final GordianCoreAgreementBuilder theBuilder;
 
     /**
      * The state.
      */
-    private final GordianXCoreAgreementState theState;
+    private final GordianCoreAgreementState theState;
 
     /**
      * The client.
      */
-    private final GordianXCoreAgreementParticipant theClient;
+    private final GordianCoreAgreementParticipant theClient;
 
     /**
      * The server.
      */
-    private final GordianXCoreAgreementParticipant theServer;
+    private final GordianCoreAgreementParticipant theServer;
 
     /**
      * The keyDerivation function.
      */
-    private GordianXCoreAgreementDerivation theKDF;
+    private GordianCoreAgreementDerivation theKDF;
 
     /**
      * Constructor.
@@ -75,10 +75,10 @@ public abstract class GordianXCoreAgreementEngine {
      * @param pSpec     the agreementSpec
      * @throws GordianException on error
      */
-    protected GordianXCoreAgreementEngine(final GordianXCoreAgreementSupplier pSupplier,
-                                          final GordianAgreementSpec pSpec) throws GordianException {
+    protected GordianCoreAgreementEngine(final GordianCoreAgreementSupplier pSupplier,
+                                         final GordianAgreementSpec pSpec) throws GordianException {
         theSupplier = pSupplier;
-        theBuilder = new GordianXCoreAgreementBuilder(pSupplier, pSpec);
+        theBuilder = new GordianCoreAgreementBuilder(pSupplier, pSpec);
         theState = theBuilder.getState();
         theClient = theState.getClient();
         theServer = theState.getServer();
@@ -89,7 +89,7 @@ public abstract class GordianXCoreAgreementEngine {
      *
      * @return the supplier
      */
-    GordianXCoreAgreementSupplier getSupplier() {
+    GordianCoreAgreementSupplier getSupplier() {
         return theSupplier;
     }
 
@@ -98,7 +98,7 @@ public abstract class GordianXCoreAgreementEngine {
      *
      * @return the builder
      */
-    public GordianXCoreAgreementBuilder getBuilder() {
+    public GordianCoreAgreementBuilder getBuilder() {
         return theBuilder;
     }
 
@@ -306,8 +306,8 @@ public abstract class GordianXCoreAgreementEngine {
     protected void enableDerivation() {
         /* Only enable derivation if it is not none */
         final GordianAgreementSpec mySpec = theState.getSpec();
-        if (!GordianKDFType.NONE.equals(mySpec.getKDFType())) {
-            theKDF = new GordianXCoreAgreementDerivation(theBuilder);
+        if (!GordianAgreementKDF.NONE.equals(mySpec.getKDFType())) {
+            theKDF = new GordianCoreAgreementDerivation(theBuilder);
         }
     }
 
@@ -329,7 +329,7 @@ public abstract class GordianXCoreAgreementEngine {
                 return new ConcatenationKDFGenerator(new SHA512Digest());
             case NONE:
             default:
-                return new GordianXCoreNullKeyDerivation();
+                return new GordianCoreNullKeyDerivation();
         }
     }
 }

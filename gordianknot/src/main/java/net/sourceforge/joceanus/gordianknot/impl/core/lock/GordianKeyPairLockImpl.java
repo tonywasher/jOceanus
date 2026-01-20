@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.gordianknot.impl.core.lock;
 
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementType;
-import net.sourceforge.joceanus.gordianknot.api.agree.GordianKDFType;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementKDF;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.cert.GordianCertificate;
 import net.sourceforge.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
@@ -31,16 +31,16 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianKeyPairLock;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
-import net.sourceforge.joceanus.gordianknot.api.xagree.GordianXAgreement;
-import net.sourceforge.joceanus.gordianknot.api.xagree.GordianXAgreementFactory;
-import net.sourceforge.joceanus.gordianknot.api.xagree.GordianXAgreementParams;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreement;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementFactory;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementParams;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianParameters;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySet;
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianKeySetData;
-import net.sourceforge.joceanus.gordianknot.impl.core.xagree.GordianXCoreAgreementMessageASN1;
+import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementMessageASN1;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.X500NameBuilder;
 import org.bouncycastle.asn1.x500.style.BCStyle;
@@ -96,13 +96,13 @@ public class GordianKeyPairLockImpl
         try {
             /* Create the agreement and derive the factory */
             final GordianAsyncFactory myAsyncFactory = pLockingFactory.getAsyncFactory();
-            final GordianXAgreementFactory myAgreeFactory = myAsyncFactory.getXAgreementFactory();
+            final GordianAgreementFactory myAgreeFactory = myAsyncFactory.getAgreementFactory();
             final GordianCertificate myCert = myAgreeFactory.newMiniCertificate(SERVER, pKeyPair,
                     new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));
             final GordianAgreementSpec mySpec = getAgreementSpec(pKeyPair.getKeyPairSpec());
-            final GordianXAgreementParams myParams = myAgreeFactory.newAgreementParams(mySpec, GordianFactoryType.BC)
+            final GordianAgreementParams myParams = myAgreeFactory.newAgreementParams(mySpec, GordianFactoryType.BC)
                     .setServerCertificate(myCert);
-            final GordianXAgreement myAgreement = myAgreeFactory.createAgreement(myParams);
+            final GordianAgreement myAgreement = myAgreeFactory.createAgreement(myParams);
             final byte[] myClientHello = myAgreement.nextMessage();
             final GordianBaseFactory myFactory = (GordianBaseFactory) myAgreement.getFactoryResult();
 
@@ -115,7 +115,7 @@ public class GordianKeyPairLockImpl
 
             /* Create lockBytes */
             final GordianPasswordLockASN1 myLock = myRecipe.buildLockASN1(myPassword.length, null);
-            theLockASN1 = new GordianKeyPairLockASN1(GordianXCoreAgreementMessageASN1.getInstance(myClientHello), myLock);
+            theLockASN1 = new GordianKeyPairLockASN1(GordianCoreAgreementMessageASN1.getInstance(myClientHello), myLock);
             theLockBytes = theLockASN1.getEncodedBytes();
             theKeyPair = pKeyPair;
 
@@ -183,12 +183,12 @@ public class GordianKeyPairLockImpl
 
             /* Resolve the agreement */
             final GordianAsyncFactory myAsyncFactory = pLockingFactory.getAsyncFactory();
-            final GordianXAgreementFactory myAgreeFactory = myAsyncFactory.getXAgreementFactory();
+            final GordianAgreementFactory myAgreeFactory = myAsyncFactory.getAgreementFactory();
             final byte[] myClientHello = theLockASN1.getAgreement().getEncodedBytes();
-            final GordianXAgreement myAgreement = myAgreeFactory.parseAgreementMessage(myClientHello);
+            final GordianAgreement myAgreement = myAgreeFactory.parseAgreementMessage(myClientHello);
             final GordianCertificate myCert = myAgreeFactory.newMiniCertificate(SERVER, pKeyPair,
                     new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT));
-            final GordianXAgreementParams myParams = myAgreement.getAgreementParams().setServerCertificate(myCert);
+            final GordianAgreementParams myParams = myAgreement.getAgreementParams().setServerCertificate(myCert);
             myAgreement.updateParams(myParams);
             final GordianBaseFactory myFactory = (GordianBaseFactory) myAgreement.getFactoryResult();
 
@@ -235,16 +235,16 @@ public class GordianKeyPairLockImpl
      */
     private static GordianAgreementSpec getAgreementSpec(final GordianKeyPairSpec pKeySpec) throws GordianException {
         /* Determine KDF type */
-        final GordianKDFType myKDFType = GordianEdwardsElliptic.CURVE25519.equals(pKeySpec.getSubKeyType())
-                ? GordianKDFType.SHA256KDF
-                : GordianKDFType.SHA512KDF;
+        final GordianAgreementKDF myKDFType = GordianEdwardsElliptic.CURVE25519.equals(pKeySpec.getSubKeyType())
+                ? GordianAgreementKDF.SHA256KDF
+                : GordianAgreementKDF.SHA512KDF;
 
         /* Determine AgreementType - either ANON or KEM */
         if (GordianAgreementType.ANON.isSupported(pKeySpec.getKeyPairType())) {
             return new GordianAgreementSpec(pKeySpec, GordianAgreementType.ANON, myKDFType);
         }
         if (GordianAgreementType.KEM.isSupported(pKeySpec.getKeyPairType())) {
-            return new GordianAgreementSpec(pKeySpec, GordianAgreementType.KEM, GordianKDFType.NONE);
+            return new GordianAgreementSpec(pKeySpec, GordianAgreementType.KEM, GordianAgreementKDF.NONE);
         }
         throw new GordianLogicException("Invalid KeyPair type");
     }

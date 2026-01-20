@@ -16,6 +16,6 @@
  ******************************************************************************/
 
 /**
- * Key Agreement API.
+ * Core Agreement Implementation.
  */
-package net.sourceforge.joceanus.gordianknot.api.xagree;
+package net.sourceforge.joceanus.gordianknot.impl.core.agree;

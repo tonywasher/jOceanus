@@ -14,28 +14,30 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.gordianknot.impl.core.xagree;
+package net.sourceforge.joceanus.gordianknot.impl.core.agree;
 
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
-import net.sourceforge.joceanus.gordianknot.api.xagree.GordianXAgreement;
-import net.sourceforge.joceanus.gordianknot.api.xagree.GordianXAgreementFactory;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreement;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
 /**
  * Factory supplier interface.
  */
-public interface GordianXCoreAgreementSupplier
-        extends GordianXAgreementFactory {
+public interface GordianCoreAgreementSupplier
+        extends GordianAgreementFactory {
     /**
      * Obtain the factory.
+     *
      * @return the factory
      */
     GordianBaseFactory getFactory();
 
     /**
      * Check the agreementSpec.
+     *
      * @param pAgreementSpec the agreementSpec
      * @throws GordianException on error
      */
@@ -43,6 +45,7 @@ public interface GordianXCoreAgreementSupplier
 
     /**
      * Obtain Identifier for AgreementSpec.
+     *
      * @param pSpec the agreementSpec.
      * @return the Identifier
      */
@@ -50,6 +53,7 @@ public interface GordianXCoreAgreementSupplier
 
     /**
      * Obtain AgreementSpec for Identifier.
+     *
      * @param pIdentifier the identifier.
      * @return the agreementSpec (or null if not found)
      */
@@ -57,6 +61,7 @@ public interface GordianXCoreAgreementSupplier
 
     /**
      * Obtain Identifier for ResultType.
+     *
      * @param pResultType the resultType.
      * @return the Identifier
      * @throws GordianException on error
@@ -65,6 +70,7 @@ public interface GordianXCoreAgreementSupplier
 
     /**
      * Obtain AgreementSpec for Identifier.
+     *
      * @param pIdentifier the identifier.
      * @return the resultType
      * @throws GordianException on error
@@ -73,20 +79,23 @@ public interface GordianXCoreAgreementSupplier
 
     /**
      * Obtain the next Id.
+     *
      * @return the nextId
      */
     Long getNextId();
 
     /**
      * Store agreement under id.
-     * @param pId the id
+     *
+     * @param pId        the id
      * @param pAgreement the agreement
      */
     void storeAgreement(Long pId,
-                        GordianXAgreement pAgreement);
+                        GordianAgreement pAgreement);
 
     /**
      * Remove agreement under id.
+     *
      * @param pId the id
      */
     void removeAgreement(Long pId);

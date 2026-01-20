@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package net.sourceforge.joceanus.gordianknot.impl.core.xagree;
+package net.sourceforge.joceanus.gordianknot.impl.core.agree;
 
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementType;
@@ -32,11 +32,11 @@ import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpecBuilder;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignParams;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignature;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
-import net.sourceforge.joceanus.gordianknot.api.xagree.GordianXAgreementStatus;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementStatus;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.sign.GordianCoreSignatureFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.xagree.GordianXCoreAgreementCalculator.GordianXDerivationId;
+import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementCalculator.GordianDerivationId;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.util.Arrays;
 
@@ -46,7 +46,7 @@ import java.security.spec.X509EncodedKeySpec;
 /**
  * Agreement Builder.
  */
-public class GordianXCoreAgreementBuilder {
+public class GordianCoreAgreementBuilder {
     /**
      * InitVectorLength.
      */
@@ -55,7 +55,7 @@ public class GordianXCoreAgreementBuilder {
     /**
      * The Supplier.
      */
-    private final GordianXCoreAgreementSupplier theSupplier;
+    private final GordianCoreAgreementSupplier theSupplier;
 
     /**
      * The factory.
@@ -75,12 +75,12 @@ public class GordianXCoreAgreementBuilder {
     /**
      * The state.
      */
-    private final GordianXCoreAgreementState theState;
+    private final GordianCoreAgreementState theState;
 
     /**
      * The result calculator.
      */
-    private final GordianXCoreAgreementCalculator theResultCalc;
+    private final GordianCoreAgreementCalculator theResultCalc;
 
     /**
      * Should we fail signature during testing?
@@ -99,20 +99,20 @@ public class GordianXCoreAgreementBuilder {
      * @param pSpec     the agreement spec
      * @throws GordianException on error
      */
-    GordianXCoreAgreementBuilder(final GordianXCoreAgreementSupplier pSupplier,
-                                 final GordianAgreementSpec pSpec) throws GordianException {
+    GordianCoreAgreementBuilder(final GordianCoreAgreementSupplier pSupplier,
+                                final GordianAgreementSpec pSpec) throws GordianException {
         /* Store parameters and access factory and random */
         theSupplier = pSupplier;
         theFactory = pSupplier.getFactory();
         theRandom = theFactory.getRandomSource().getRandom();
 
         /* Create the state */
-        theState = new GordianXCoreAgreementState(pSpec);
+        theState = new GordianCoreAgreementState(pSpec);
         final GordianKeyPairFactory myFactory = theFactory.getAsyncFactory().getKeyPairFactory();
         theKeyPairGenerator = myFactory.getKeyPairGenerator(pSpec.getKeyPairSpec());
 
         /* Create the result calculator */
-        theResultCalc = new GordianXCoreAgreementCalculator(theFactory, theState);
+        theResultCalc = new GordianCoreAgreementCalculator(theFactory, theState);
     }
 
     /**
@@ -120,7 +120,7 @@ public class GordianXCoreAgreementBuilder {
      *
      * @return the supplier
      */
-    public GordianXCoreAgreementSupplier getSupplier() {
+    public GordianCoreAgreementSupplier getSupplier() {
         return theSupplier;
     }
 
@@ -129,7 +129,7 @@ public class GordianXCoreAgreementBuilder {
      *
      * @return the state
      */
-    public GordianXCoreAgreementState getState() {
+    public GordianCoreAgreementState getState() {
         return theState;
     }
 
@@ -161,7 +161,7 @@ public class GordianXCoreAgreementBuilder {
      *
      * @param pStatus the status
      */
-    void setStatus(final GordianXAgreementStatus pStatus) {
+    void setStatus(final GordianAgreementStatus pStatus) {
         theState.setStatus(pStatus);
     }
 
@@ -260,7 +260,7 @@ public class GordianXCoreAgreementBuilder {
      * @param pCert the Certificate
      * @return the Builder
      */
-    GordianXCoreAgreementBuilder setSignerCertificate(final GordianCertificate pCert) {
+    GordianCoreAgreementBuilder setSignerCertificate(final GordianCertificate pCert) {
         theState.setSignerCertificate(pCert);
         return this;
     }
@@ -271,7 +271,7 @@ public class GordianXCoreAgreementBuilder {
      * @param pSpec the signSpec
      * @return the Builder
      */
-    GordianXCoreAgreementBuilder setSignSpec(final GordianSignatureSpec pSpec) {
+    GordianCoreAgreementBuilder setSignSpec(final GordianSignatureSpec pSpec) {
         theState.setSignSpec(pSpec);
         return this;
     }
@@ -359,7 +359,7 @@ public class GordianXCoreAgreementBuilder {
      */
     boolean setClientConfirm(final byte[] pConfirm) {
         /* Access any expected value */
-        final GordianXCoreAgreementParticipant myClient = theState.getClient();
+        final GordianCoreAgreementParticipant myClient = theState.getClient();
         final byte[] myExpected = myClient.getConfirm();
 
         /* If we have an expected value, reject any difference */
@@ -382,7 +382,7 @@ public class GordianXCoreAgreementBuilder {
      */
     boolean setServerConfirm(final byte[] pConfirm) {
         /* Access any expected value */
-        final GordianXCoreAgreementParticipant myServer = theState.getServer();
+        final GordianCoreAgreementParticipant myServer = theState.getServer();
         final byte[] myExpected = myServer.getConfirm();
 
         /* If we have an expected value, reject any difference */
@@ -403,11 +403,11 @@ public class GordianXCoreAgreementBuilder {
      * @return the clientHello message
      * @throws GordianException on error
      */
-    GordianXCoreAgreementMessageASN1 newClientHello() throws GordianException {
+    GordianCoreAgreementMessageASN1 newClientHello() throws GordianException {
         /* Access details */
-        final GordianXCoreAgreementMessageASN1 myMsg = GordianXCoreAgreementMessageASN1.newClientHello();
-        final GordianXCoreAgreementParticipant myClient = theState.getClient();
-        final GordianXCoreAgreementParticipant myServer = theState.getServer();
+        final GordianCoreAgreementMessageASN1 myMsg = GordianCoreAgreementMessageASN1.newClientHello();
+        final GordianCoreAgreementParticipant myClient = theState.getClient();
+        final GordianCoreAgreementParticipant myServer = theState.getServer();
 
         /* Set standard details */
         myMsg.setAgreementId(theSupplier.getIdentifierForSpec(theState.getSpec()))
@@ -431,11 +431,11 @@ public class GordianXCoreAgreementBuilder {
      * @return the serverHello message
      * @throws GordianException on error
      */
-    GordianXCoreAgreementMessageASN1 newServerHello() throws GordianException {
+    GordianCoreAgreementMessageASN1 newServerHello() throws GordianException {
         /* Access details */
-        final GordianXCoreAgreementMessageASN1 myMsg = GordianXCoreAgreementMessageASN1.newServerHello();
-        final GordianXCoreAgreementParticipant myClient = theState.getClient();
-        final GordianXCoreAgreementParticipant myServer = theState.getServer();
+        final GordianCoreAgreementMessageASN1 myMsg = GordianCoreAgreementMessageASN1.newServerHello();
+        final GordianCoreAgreementParticipant myClient = theState.getClient();
+        final GordianCoreAgreementParticipant myServer = theState.getServer();
 
         /* Set standard details */
         myMsg.setAgreementId(theSupplier.getIdentifierForSpec(theState.getSpec()))
@@ -483,11 +483,11 @@ public class GordianXCoreAgreementBuilder {
      * @return the clientConfirm
      * @throws GordianException on error
      */
-    GordianXCoreAgreementMessageASN1 newClientConfirm() throws GordianException {
+    GordianCoreAgreementMessageASN1 newClientConfirm() throws GordianException {
         /* Access details */
-        final GordianXCoreAgreementMessageASN1 myMsg = GordianXCoreAgreementMessageASN1.newClientConfirm();
-        final GordianXCoreAgreementParticipant myClient = theState.getClient();
-        final GordianXCoreAgreementParticipant myServer = theState.getServer();
+        final GordianCoreAgreementMessageASN1 myMsg = GordianCoreAgreementMessageASN1.newClientConfirm();
+        final GordianCoreAgreementParticipant myClient = theState.getClient();
+        final GordianCoreAgreementParticipant myServer = theState.getServer();
 
         /* Set standard details */
         myMsg.setAgreementId(theSupplier.getIdentifierForSpec(theState.getSpec()))
@@ -512,10 +512,10 @@ public class GordianXCoreAgreementBuilder {
      * @param pClientHello the message
      * @throws GordianException on error
      */
-    void parseClientHello(final GordianXCoreAgreementMessageASN1 pClientHello) throws GordianException {
+    void parseClientHello(final GordianCoreAgreementMessageASN1 pClientHello) throws GordianException {
         /* Access details */
-        final GordianXCoreAgreementParticipant myClient = theState.getClient();
-        final GordianXCoreAgreementParticipant myServer = theState.getServer();
+        final GordianCoreAgreementParticipant myClient = theState.getClient();
+        final GordianCoreAgreementParticipant myServer = theState.getServer();
 
         /* Set standard details */
         theState.setResultType(theSupplier.getResultTypeForIdentifier(pClientHello.getResultId()));
@@ -542,10 +542,10 @@ public class GordianXCoreAgreementBuilder {
      * @return noError true/false
      * @throws GordianException on error
      */
-    boolean parseServerHello(final GordianXCoreAgreementMessageASN1 pServerHello) throws GordianException {
+    boolean parseServerHello(final GordianCoreAgreementMessageASN1 pServerHello) throws GordianException {
         /* Access details */
-        final GordianXCoreAgreementParticipant myClient = theState.getClient();
-        final GordianXCoreAgreementParticipant myServer = theState.getServer();
+        final GordianCoreAgreementParticipant myClient = theState.getClient();
+        final GordianCoreAgreementParticipant myServer = theState.getServer();
 
         /* Handle error result */
         final AlgorithmIdentifier myResId = pServerHello.getResultId();
@@ -598,7 +598,7 @@ public class GordianXCoreAgreementBuilder {
      * @return noError true/false
      * @throws GordianException on error
      */
-    boolean parseClientConfirm(final GordianXCoreAgreementMessageASN1 pClientConfirm) throws GordianException {
+    boolean parseClientConfirm(final GordianCoreAgreementMessageASN1 pClientConfirm) throws GordianException {
         /* Handle error result */
         final AlgorithmIdentifier myResId = pClientConfirm.getResultId();
         if (myResId != null) {
@@ -636,15 +636,15 @@ public class GordianXCoreAgreementBuilder {
      */
     private boolean calculateConfirmationTags(final byte[] pSecret) throws GordianException {
         /* Access details */
-        final GordianXCoreAgreementParticipant myClient = theState.getClient();
-        final GordianXCoreAgreementParticipant myServer = theState.getServer();
+        final GordianCoreAgreementParticipant myClient = theState.getClient();
+        final GordianCoreAgreementParticipant myServer = theState.getServer();
 
         /* Derive the key */
-        final byte[] myKey = theResultCalc.calculateDerivedSecret(pSecret, GordianXDerivationId.TAGS, GordianLength.LEN_512.getByteLength());
+        final byte[] myKey = theResultCalc.calculateDerivedSecret(pSecret, GordianDerivationId.TAGS, GordianLength.LEN_512.getByteLength());
 
         /* Create the hMac and initialize with the key */
         final GordianMacFactory myMacs = theFactory.getMacFactory();
-        final GordianMacSpec mySpec = GordianMacSpecBuilder.hMac(GordianXDerivationId.TAGS.getDigestType());
+        final GordianMacSpec mySpec = GordianMacSpecBuilder.hMac(GordianDerivationId.TAGS.getDigestType());
         final GordianMac myMac = myMacs.createMac(mySpec);
         myMac.initKeyBytes(myKey);
 

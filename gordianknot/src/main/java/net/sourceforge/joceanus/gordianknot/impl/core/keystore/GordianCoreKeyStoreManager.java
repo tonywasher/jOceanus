@@ -214,7 +214,7 @@ public class GordianCoreKeyStoreManager
         final GordianAsyncFactory myAsyncFactory = theFactory.getAsyncFactory();
         final boolean bFail = (needsSign && myAsyncFactory.getSignatureFactory().defaultForKeyPair(pKeyPairSpec) == null)
                 || (needsEnc && myAsyncFactory.getEncryptorFactory().defaultForKeyPair(pKeyPairSpec) == null)
-                || (needsAgree && myAsyncFactory.getXAgreementFactory().defaultForKeyPair(pKeyPairSpec) == null);
+                || (needsAgree && myAsyncFactory.getAgreementFactory().defaultForKeyPair(pKeyPairSpec) == null);
 
         /* Handle failure */
         if (bFail) {

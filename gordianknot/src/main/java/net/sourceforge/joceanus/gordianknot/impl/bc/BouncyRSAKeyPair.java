@@ -27,13 +27,13 @@ import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignParams;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
+import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.encrypt.GordianCoreEncryptor;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
 import net.sourceforge.joceanus.gordianknot.impl.core.sign.GordianCoreSignature;
-import net.sourceforge.joceanus.gordianknot.impl.core.xagree.GordianXCoreAgreementFactory;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.crypto.AsymmetricBlockCipher;
@@ -489,10 +489,10 @@ public final class BouncyRSAKeyPair {
     }
 
     /**
-     * RSA XAgreement Engine.
+     * RSA Agreement Engine.
      */
-    public static class BouncyRSAXAgreementEngine
-            extends BouncyXAgreementBase {
+    public static class BouncyRSAAgreementEngine
+            extends BouncyAgreementBase {
         /**
          * Key Length.
          */
@@ -510,8 +510,8 @@ public final class BouncyRSAKeyPair {
          * @param pSpec    the agreementSpec
          * @throws GordianException on error
          */
-        BouncyRSAXAgreementEngine(final GordianXCoreAgreementFactory pFactory,
-                                  final GordianAgreementSpec pSpec) throws GordianException {
+        BouncyRSAAgreementEngine(final GordianCoreAgreementFactory pFactory,
+                                 final GordianAgreementSpec pSpec) throws GordianException {
             /* Initialize underlying class */
             super(pFactory, pSpec);
 

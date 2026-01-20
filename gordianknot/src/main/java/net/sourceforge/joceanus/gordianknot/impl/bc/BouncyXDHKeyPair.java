@@ -22,10 +22,10 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
+import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
-import net.sourceforge.joceanus.gordianknot.impl.core.xagree.GordianXCoreAgreementFactory;
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
@@ -450,10 +450,10 @@ public final class BouncyXDHKeyPair {
     }
 
     /**
-     * XDH Anonymous XAgreement Engine.
+     * XDH Anonymous Agreement Engine.
      */
-    public static class BouncyXDHAnonXAgreementEngine
-            extends BouncyXAgreementBase {
+    public static class BouncyXDHAnonAgreementEngine
+            extends BouncyAgreementBase {
         /**
          * The agreement.
          */
@@ -466,8 +466,8 @@ public final class BouncyXDHKeyPair {
          * @param pSpec    the agreementSpec
          * @throws GordianException on error
          */
-        BouncyXDHAnonXAgreementEngine(final GordianXCoreAgreementFactory pFactory,
-                                      final GordianAgreementSpec pSpec) throws GordianException {
+        BouncyXDHAnonAgreementEngine(final GordianCoreAgreementFactory pFactory,
+                                     final GordianAgreementSpec pSpec) throws GordianException {
             /* Initialize underlying class */
             super(pFactory, pSpec);
 
@@ -507,10 +507,10 @@ public final class BouncyXDHKeyPair {
     }
 
     /**
-     * DH Basic XAgreement Engine.
+     * DH Basic Agreement Engine.
      */
-    public static class BouncyXDHBasicXAgreementEngine
-            extends BouncyXAgreementBase {
+    public static class BouncyXDHBasicAgreementEngine
+            extends BouncyAgreementBase {
         /**
          * The agreement.
          */
@@ -523,8 +523,8 @@ public final class BouncyXDHKeyPair {
          * @param pSpec    the agreementSpec
          * @throws GordianException on error
          */
-        BouncyXDHBasicXAgreementEngine(final GordianXCoreAgreementFactory pFactory,
-                                       final GordianAgreementSpec pSpec) throws GordianException {
+        BouncyXDHBasicAgreementEngine(final GordianCoreAgreementFactory pFactory,
+                                      final GordianAgreementSpec pSpec) throws GordianException {
             /* Initialize underlying class */
             super(pFactory, pSpec);
 
@@ -564,10 +564,10 @@ public final class BouncyXDHKeyPair {
     }
 
     /**
-     * XDH Unified XAgreement Engine.
+     * XDH Unified Agreement Engine.
      */
-    public static class BouncyXDHUnifiedXAgreementEngine
-            extends BouncyXAgreementBase {
+    public static class BouncyXDHUnifiedAgreementEngine
+            extends BouncyAgreementBase {
         /**
          * The agreement.
          */
@@ -580,8 +580,8 @@ public final class BouncyXDHKeyPair {
          * @param pSpec    the agreementSpec
          * @throws GordianException on error
          */
-        BouncyXDHUnifiedXAgreementEngine(final GordianXCoreAgreementFactory pFactory,
-                                         final GordianAgreementSpec pSpec) throws GordianException {
+        BouncyXDHUnifiedAgreementEngine(final GordianCoreAgreementFactory pFactory,
+                                        final GordianAgreementSpec pSpec) throws GordianException {
             /* Initialize underlying class */
             super(pFactory, pSpec);
 

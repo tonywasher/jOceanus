@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.gordianknot.impl.core.xagree;
+package net.sourceforge.joceanus.gordianknot.impl.core.agree;
 
 import net.sourceforge.joceanus.gordianknot.api.cert.GordianCertificate;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
@@ -24,7 +24,7 @@ import java.security.spec.X509EncodedKeySpec;
 /**
  * Participant state.
  */
-public class GordianXCoreAgreementParticipant {
+public class GordianCoreAgreementParticipant {
     /**
      * Certificate.
      */
@@ -62,6 +62,7 @@ public class GordianXCoreAgreementParticipant {
 
     /**
      * Obtain the certificate.
+     *
      * @return the certificate
      */
     GordianCertificate getCertificate() {
@@ -70,10 +71,11 @@ public class GordianXCoreAgreementParticipant {
 
     /**
      * Set the certificate.
+     *
      * @param pCertificate the certificate
      * @return the state
      */
-    GordianXCoreAgreementParticipant setCertificate(final GordianCertificate pCertificate) {
+    GordianCoreAgreementParticipant setCertificate(final GordianCertificate pCertificate) {
         theCertificate = pCertificate;
         theKeyPair = theCertificate == null ? null : theCertificate.getKeyPair();
         return this;
@@ -81,6 +83,7 @@ public class GordianXCoreAgreementParticipant {
 
     /**
      * Obtain the keyPair.
+     *
      * @return the keyPair
      */
     public GordianKeyPair getKeyPair() {
@@ -89,16 +92,18 @@ public class GordianXCoreAgreementParticipant {
 
     /**
      * Set the keyPair.
+     *
      * @param pKeyPair the keyPair
      * @return the state
      */
-    GordianXCoreAgreementParticipant setKeyPair(final GordianKeyPair pKeyPair) {
+    GordianCoreAgreementParticipant setKeyPair(final GordianKeyPair pKeyPair) {
         theKeyPair = pKeyPair;
         return this;
     }
 
     /**
      * Obtain the ephemeral keyPair.
+     *
      * @return the keyPair
      */
     public GordianKeyPair getEphemeralKeyPair() {
@@ -107,16 +112,18 @@ public class GordianXCoreAgreementParticipant {
 
     /**
      * Set the ephemeral keyPair.
+     *
      * @param pKeyPair the keyPair
      * @return the state
      */
-    GordianXCoreAgreementParticipant setEphemeralKeyPair(final GordianKeyPair pKeyPair) {
+    GordianCoreAgreementParticipant setEphemeralKeyPair(final GordianKeyPair pKeyPair) {
         theEphemeral = pKeyPair;
         return this;
     }
 
     /**
      * Obtain the ephemeral keySpec.
+     *
      * @return the keySpec
      */
     X509EncodedKeySpec getEphemeralKeySpec() {
@@ -125,10 +132,11 @@ public class GordianXCoreAgreementParticipant {
 
     /**
      * Set the ephemeral keySpec.
+     *
      * @param pKeySpec the keySpec
      * @return the state
      */
-    GordianXCoreAgreementParticipant setEphemeralKeySpec(final X509EncodedKeySpec pKeySpec) {
+    GordianCoreAgreementParticipant setEphemeralKeySpec(final X509EncodedKeySpec pKeySpec) {
         theKeySpec = pKeySpec;
         return this;
     }
@@ -138,10 +146,11 @@ public class GordianXCoreAgreementParticipant {
      */
     void copyEphemeral() {
         theKeyPair = theEphemeral;
-     }
+    }
 
     /**
      * Obtain the certificate.
+     *
      * @return the certificate
      */
     byte[] getInitVector() {
@@ -150,16 +159,18 @@ public class GordianXCoreAgreementParticipant {
 
     /**
      * Set the initVector.
+     *
      * @param pInitVector the initVector
      * @return the state
      */
-    GordianXCoreAgreementParticipant setInitVector(final byte[] pInitVector) {
+    GordianCoreAgreementParticipant setInitVector(final byte[] pInitVector) {
         theInitVector = pInitVector;
         return this;
     }
 
     /**
      * Obtain the id.
+     *
      * @return the id
      */
     Long getId() {
@@ -168,16 +179,18 @@ public class GordianXCoreAgreementParticipant {
 
     /**
      * Set the id.
+     *
      * @param pId the id
      * @return the state
      */
-    GordianXCoreAgreementParticipant setId(final Long pId) {
+    GordianCoreAgreementParticipant setId(final Long pId) {
         theId = pId;
         return this;
     }
 
     /**
      * Obtain the confirmation.
+     *
      * @return the confirmation
      */
     public byte[] getConfirm() {
@@ -186,10 +199,11 @@ public class GordianXCoreAgreementParticipant {
 
     /**
      * Set the confirmation.
+     *
      * @param pConfirm the confirmation
      * @return the state
      */
-    GordianXCoreAgreementParticipant setConfirm(final byte[] pConfirm) {
+    GordianCoreAgreementParticipant setConfirm(final byte[] pConfirm) {
         theConfirm = pConfirm;
         return this;
     }

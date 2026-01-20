@@ -14,11 +14,11 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package net.sourceforge.joceanus.gordianknot.impl.core.xagree;
+package net.sourceforge.joceanus.gordianknot.impl.core.agree;
 
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
-import net.sourceforge.joceanus.gordianknot.api.xagree.GordianXAgreement;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreement;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianRandomSource;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 
@@ -30,7 +30,7 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * Agreement Cache.
  */
-public class GordianXCoreAgreementCache {
+public class GordianCoreAgreementCache {
     /**
      * The id control.
      */
@@ -39,14 +39,14 @@ public class GordianXCoreAgreementCache {
     /**
      * The map of id to agreement.
      */
-    private final Map<Long, GordianXCoreAgreement> theMap;
+    private final Map<Long, GordianCoreAgreement> theMap;
 
     /**
      * Constructor.
      *
      * @param pRandom the random generator.
      */
-    GordianXCoreAgreementCache(final GordianRandomSource pRandom) {
+    GordianCoreAgreementCache(final GordianRandomSource pRandom) {
         /* Initialize the id bank */
         final long myInit = ((long) pRandom.getRandom().nextInt()) << Integer.SIZE;
         theNextId = new AtomicLong(myInit);
@@ -72,10 +72,10 @@ public class GordianXCoreAgreementCache {
      * @return the matching agreement
      * @throws GordianException on error
      */
-    GordianXCoreAgreement lookUpAgreement(final Long pId,
-                                          final GordianAgreementSpec pSpec) throws GordianException {
+    GordianCoreAgreement lookUpAgreement(final Long pId,
+                                         final GordianAgreementSpec pSpec) throws GordianException {
         /* Look up the Agreement */
-        final GordianXCoreAgreement myAgreement = theMap.get(pId);
+        final GordianCoreAgreement myAgreement = theMap.get(pId);
 
         /* Validate the agreement */
         if (myAgreement == null) {
@@ -96,8 +96,8 @@ public class GordianXCoreAgreementCache {
      * @param pAgreement the agreement
      */
     void storeAgreement(final Long pId,
-                        final GordianXAgreement pAgreement) {
-        theMap.put(pId, (GordianXCoreAgreement) pAgreement);
+                        final GordianAgreement pAgreement) {
+        theMap.put(pId, (GordianCoreAgreement) pAgreement);
     }
 
     /**

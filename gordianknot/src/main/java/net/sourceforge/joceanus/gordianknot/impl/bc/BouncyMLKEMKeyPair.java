@@ -22,11 +22,11 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
+import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
-import net.sourceforge.joceanus.gordianknot.impl.core.xagree.GordianXCoreAgreementFactory;
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
@@ -252,10 +252,10 @@ public final class BouncyMLKEMKeyPair {
     }
 
     /**
-     * MLKEM XAgreement Engine.
+     * MLKEM Agreement Engine.
      */
-    public static class BouncyMLKEMXAgreementEngine
-            extends BouncyXAgreementBase {
+    public static class BouncyMLKEMAgreementEngine
+            extends BouncyAgreementBase {
         /**
          * Constructor.
          *
@@ -263,8 +263,8 @@ public final class BouncyMLKEMKeyPair {
          * @param pSpec    the agreementSpec
          * @throws GordianException on error
          */
-        BouncyMLKEMXAgreementEngine(final GordianXCoreAgreementFactory pFactory,
-                                    final GordianAgreementSpec pSpec) throws GordianException {
+        BouncyMLKEMAgreementEngine(final GordianCoreAgreementFactory pFactory,
+                                   final GordianAgreementSpec pSpec) throws GordianException {
             /* Initialize underlying class */
             super(pFactory, pSpec);
         }

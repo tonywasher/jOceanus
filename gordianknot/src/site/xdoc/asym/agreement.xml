@@ -6,11 +6,11 @@
     <body>
         <section name="GordianKnot Asymmetric Agreements">
             <subsection name="Overview">
-                <p>Agreements are supported via the <strong>GordianXAgreementFactory</strong> interface.</p>
-                <p>A <strong>GordianXAgreement</strong> is created at the client by the factory using a
-                    <b>GordianXAgreementParams</b> object and this will produce a <strong>ClientHello</strong> message to be sent
+                <p>Agreements are supported via the <strong>GordianAgreementFactory</strong> interface.</p>
+                <p>A <strong>GordianAgreement</strong> is created at the client by the factory using a
+                    <b>GordianAgreementParams</b> object and this will produce a <strong>ClientHello</strong> message to be sent
                     to the server. The receiving factory will take the <strong>ClientHello</strong> message and create a second
-                    <strong>GordianXAgreement</strong> object that will process the client message. For non-anonymous agreements,
+                    <strong>GordianAgreement</strong> object that will process the client message. For non-anonymous agreements,
                     a further <strong>ServerHello</strong> message is generated to be sent back to the client for processing.
                     In turn, for confirm agreements, another <strong>ClientConfirm</strong> message is created for sending back
                     to the server for processing. The result will be available from the agreement once all processing
@@ -64,7 +64,7 @@
                     <li>The client creates a <strong>ClientHello</strong> message to be sent to the server, and immediately
                         enters the <strong>RESULT_AVAILABLE</strong> state and makes the result available to the caller.</li>
                     <li>The server will parse the incoming <strong>ClientHello</strong> message and create a corresponding
-                        <strong>GordianXAgreementParams</strong> object. It cannot immediately continue, since it does not
+                        <strong>GordianAgreementParams</strong> object. It cannot immediately continue, since it does not
                         know the privateKey of the server, so it enters the <strong>AWAITING_SERVERPRIVATE</strong> state.</li>
                     <li>The server is expected to look at the serverCertificate contained in the parameters, and replace it
                         with a certificate that contains the privateKey of the server, before updating the agreement.</li>
@@ -78,7 +78,7 @@
 final GordianFactory myBaseFactory = GordianGenerator.createFactory();
 final GordianAsyncFactory myAsyncFactory = myBase.getAsyncFactory();
 final GordianKeyPairFactory myKeyPairFactory = myAsyncFactory.getKeyPairFactory();
-final GordianXAgreementFactory myAgreementFactory = myAsyncFactory.getXAgreementFactory();
+final GordianAgreementFactory myAgreementFactory = myAsyncFactory.getAgreementFactory();
 
 /* Access keyPairGenerator and create pair */
 final GordianKeyPairSpec mySpec = GordianKeyPairSpecBuilder.dh(GordianDHGroup.FFDHE2048);
@@ -93,14 +93,14 @@ final GordianCertificate myTargetCert = myAgreementFactory.newMiniCertificate(my
 /* Create the client hello */
 final GordianAgreementSpec myAgreeSpec = GordianAgreementSpecBuilder.anon(mySpec, GordianKDFType.SHA256KDF);
 final GordianKeySetSpec myKeySetSpec = new GordianKeySetSpec(GordianLength.LEN_256);
-GordianXAgreementParams myParams = myAgreementFactory.newAgreementParams(mySpec, myKeySetSpec)
-                                                     .setServerCertificate(myTargetCert);
-final GordianXAgreement mySender = myAgrees.createAgreement(myParams);
+GordianAgreementParams myParams = myAgreementFactory.newAgreementParams(mySpec, myKeySetSpec)
+                                                    .setServerCertificate(myTargetCert);
+final GordianAgreement mySender = myAgrees.createAgreement(myParams);
 final byte[] myClientHello = mySender.nextMessage();
 final GordianKeySet myClientKeySet = mySender.getKeySetResult();
 
 /* Handle receipt at server */
-final GordianXAgreement myResponder = myAgreementFactory.parseAgreementMessage(myClientHello);
+final GordianAgreement myResponder = myAgreementFactory.parseAgreementMessage(myClientHello);
 myParams = myResponder.getAgreementParams()
                       .setServerCertificate(myTargetCert);
 myResponder.updateParams(myParams);
@@ -136,7 +136,7 @@ final GordianKeySet myServerKeySet = myResponder.getKeySetResult();
 final GordianFactory myBaseFactory = GordianGenerator.createFactory();
 final GordianAsyncFactory myAsyncFactory = myBase.getAsyncFactory();
 final GordianKeyPairFactory myKeyPairFactory = myAsyncFactory.getKeyPairFactory();
-final GordianXAgreementFactory myAgreementFactory = myAsyncFactory.getXAgreementFactory();
+final GordianAgreementFactory myAgreementFactory = myAsyncFactory.getAgreementFactory();
 
 /* Access keyPairGenerator and create pairs */
 final GordianKeyPairSpec mySpec = GordianKeyPairSpecBuilder.dh(GordianDHGroup.FFDHE2048);
@@ -155,14 +155,14 @@ final GordianCertificate myTargetCert = myAgreementFactory.newMiniCertificate(my
 /* Create the client hello */
 final GordianAgreementSpec myAgreeSpec = GordianAgreementSpecBuilder.unified(mySpec, GordianKDFType.SHA256KDF);
 final GordianKeySetSpec myKeySetSpec = new GordianKeySetSpec(GordianLength.LEN_256);
-GordianXAgreementParams myParams = myAgreementFactory.newAgreementParams(mySpec, myKeySetSpec)
-                                                     .setClientCertificate(mySourceCert)
-                                                     .setServerCertificate(myTargetCert);
-final GordianXAgreement mySender = myAgrees.createAgreement(myParams);
+GordianAgreementParams myParams = myAgreementFactory.newAgreementParams(mySpec, myKeySetSpec)
+                                                    .setClientCertificate(mySourceCert)
+                                                    .setServerCertificate(myTargetCert);
+final GordianAgreement mySender = myAgrees.createAgreement(myParams);
 final byte[] myClientHello = mySender.nextMessage();
 
 /* Handle receipt at server */
-final GordianXAgreement myResponder = myAgreementFactory.parseAgreementMessage(myClientHello);
+final GordianAgreement myResponder = myAgreementFactory.parseAgreementMessage(myClientHello);
 myParams = myResponder.getAgreementParams()
                       .setServerCertificate(myTargetCert);
 myResponder.updateParams(myParams);
@@ -170,7 +170,7 @@ final byte[] myServerHello = myResponder.nextMessage();
 final GordianKeySet myServerKeySet = myResponder.getKeySetResult();
 
 /* Process ServerHello at Client (will receive existing agreement) */
-final GordianXAgreement myClient = myAgreementFactory.parseAgreementMessage(myServerHello);
+final GordianAgreement myClient = myAgreementFactory.parseAgreementMessage(myServerHello);
 final GordianKeySet myClientKeySet = myClient.getKeySetResult();
                     </source>
                 </subsection>
@@ -204,7 +204,7 @@ final GordianKeySet myClientKeySet = myClient.getKeySetResult();
 final GordianFactory myBaseFactory = GordianGenerator.createFactory();
 final GordianAsyncFactory myAsyncFactory = myBase.getAsyncFactory();
 final GordianKeyPairFactory myKeyPairFactory = myAsyncFactory.getKeyPairFactory();
-final GordianXAgreementFactory myAgreementFactory = myAsyncFactory.getXAgreementFactory();
+final GordianAgreementFactory myAgreementFactory = myAsyncFactory.getAgreementFactory();
 
 /* Access keyPairGenerator and create pairs */
 final GordianKeyPairSpec mySpec = GordianKeyPairSpecBuilder.dh(GordianDHGroup.FFDHE2048);
@@ -223,26 +223,26 @@ final GordianCertificate myTargetCert = myAgreementFactory.newMiniCertificate(my
 /* Create the client hello */
 final GordianAgreementSpec myAgreeSpec = GordianAgreementSpecBuilder.unifiedConfirm(mySpec, GordianKDFType.SHA256KDF);
 final GordianKeySetSpec myKeySetSpec = new GordianKeySetSpec(GordianLength.LEN_256);
-GordianXAgreementParams myParams = myAgreementFactory.newAgreementParams(mySpec, myKeySetSpec)
-                                                     .setClientCertificate(mySourceCert)
-                                                     .setServerCertificate(myTargetCert);
-final GordianXAgreement mySender = myAgrees.createAgreement(myParams);
+GordianAgreementParams myParams = myAgreementFactory.newAgreementParams(mySpec, myKeySetSpec)
+                                                    .setClientCertificate(mySourceCert)
+                                                    .setServerCertificate(myTargetCert);
+final GordianAgreement mySender = myAgrees.createAgreement(myParams);
 final byte[] myClientHello = mySender.nextMessage();
 
 /* Handle receipt at server */
-final GordianXAgreement myResponder = myAgreementFactory.parseAgreementMessage(myClientHello);
+final GordianAgreement myResponder = myAgreementFactory.parseAgreementMessage(myClientHello);
 myParams = myResponder.getAgreementParams()
                       .setServerCertificate(myTargetCert);
 myResponder.updateParams(myParams);
 final byte[] myServerHello = myResponder.nextMessage();
 
 /* Process ServerHello at Client (will receive existing agreement) */
-final GordianXAgreement myClient = myAgrees.parseAgreementMessage(myServerHello);
+final GordianAgreement myClient = myAgrees.parseAgreementMessage(myServerHello);
 final byte[] myClientConfirm = myClient.nextMessage();
 final GordianKeySet myClientKeySet = myClient.getKeySetResult();
 
 /* Process ClientConfirm at Server (will receive existing agreement) */
-final GordianXAgreement myServer = myAgreementFactory.parseAgreementMessage(myClientConfirm);
+final GordianAgreement myServer = myAgreementFactory.parseAgreementMessage(myClientConfirm);
 final GordianKeySet myServerKeySet = myServer.getKeySetResult();
                     </source>
                 </subsection>
@@ -271,7 +271,7 @@ final GordianKeySet myServerKeySet = myServer.getKeySetResult();
 final GordianFactory myBaseFactory = GordianGenerator.createFactory();
 final GordianAsyncFactory myAsyncFactory = myBase.getAsyncFactory();
 final GordianKeyPairFactory myKeyPairFactory = myAsyncFactory.getKeyPairFactory();
-final GordianXAgreementFactory myAgreementFactory = myAsyncFactory.getXAgreementFactory();
+final GordianAgreementFactory myAgreementFactory = myAsyncFactory.getAgreementFactory();
 
 /* Access keyPairGenerator and create pair */
 final GordianKeyPairSpec mySpec = GordianKeyPairSpecBuilder.ed25519();
@@ -286,12 +286,12 @@ final GordianCertificate mySignerCert = myAgreementFactory.newMiniCertificate(my
 /* Create the client hello */
 final GordianAgreementSpec myAgreeSpec = GordianAgreementSpecBuilder.unified(mySpec, GordianKDFType.SHA256KDF);
 final GordianKeySetSpec myKeySetSpec = new GordianKeySetSpec(GordianLength.LEN_256);
-GordianXAgreementParams myParams = myAgreementFactory.newAgreementParams(mySpec, myKeySetSpec);
-final GordianXAgreement mySender = myAgrees.createAgreement(myParams);
+GordianAgreementParams myParams = myAgreementFactory.newAgreementParams(mySpec, myKeySetSpec);
+final GordianAgreement mySender = myAgrees.createAgreement(myParams);
 final byte[] myClientHello = mySender.nextMessage();
 
 /* Handle receipt at server */
-final GordianXAgreement myResponder = myAgreementFactory.parseAgreementMessage(myClientHello);
+final GordianAgreement myResponder = myAgreementFactory.parseAgreementMessage(myClientHello);
 myParams = myResponder.getAgreementParams()
                       .setSigner(mySignerCert);
 myResponder.updateParams(myParams);
@@ -299,7 +299,7 @@ final byte[] myServerHello = myResponder.nextMessage();
 final GordianKeySet myServerKeySet = myResponder.getKeySetResult();
 
 /* Process ServerHello at Client (will receive existing agreement) */
-final GordianXAgreement myClient = myAgreementFactory.parseAgreementMessage(myServerHello);
+final GordianAgreement myClient = myAgreementFactory.parseAgreementMessage(myServerHello);
 final GordianKeySet myClientKeySet = myClient.getKeySetResult();
                     </source>
                 </subsection>
@@ -321,7 +321,7 @@ final GordianKeySet myClientKeySet = myClient.getKeySetResult();
 final GordianFactory myBaseFactory = GordianGenerator.createFactory();
 final GordianAsyncFactory myAsyncFactory = myBase.getAsyncFactory();
 final GordianKeyPairFactory myKeyPairFactory = myAsyncFactory.getKeyPairFactory();
-final GordianXAgreementFactory myAgreementFactory = myAsyncFactory.getXAgreementFactory();
+final GordianAgreementFactory myAgreementFactory = myAsyncFactory.getAgreementFactory();
 
 /* Access keyPairGenerator and create pair */
 final GordianKeyPairSpec mySpec = GordianKeyPairSpecBuilder.composite(GordianKeyPairSpec.dh(GordianDGroup.FFDHE2048),

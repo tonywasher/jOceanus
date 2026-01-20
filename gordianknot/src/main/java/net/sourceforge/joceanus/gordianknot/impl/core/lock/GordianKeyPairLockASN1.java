@@ -20,7 +20,7 @@ import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianASN1Util.GordianASN1Object;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
-import net.sourceforge.joceanus.gordianknot.impl.core.xagree.GordianXCoreAgreementMessageASN1;
+import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementMessageASN1;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
@@ -43,7 +43,7 @@ public class GordianKeyPairLockASN1
     /**
      * The AgreementMessageASN1.
      */
-    private final GordianXCoreAgreementMessageASN1 theAgreement;
+    private final GordianCoreAgreementMessageASN1 theAgreement;
 
     /**
      * The PasswordLockASN1.
@@ -56,7 +56,7 @@ public class GordianKeyPairLockASN1
      * @param pAgreement the agreement
      * @param pLock      the passwordLock
      */
-    public GordianKeyPairLockASN1(final GordianXCoreAgreementMessageASN1 pAgreement,
+    public GordianKeyPairLockASN1(final GordianCoreAgreementMessageASN1 pAgreement,
                                   final GordianPasswordLockASN1 pLock) {
         /* Store the Spec */
         theAgreement = pAgreement;
@@ -74,7 +74,7 @@ public class GordianKeyPairLockASN1
         try {
             /* Extract the parameters from the sequence */
             final Enumeration<?> en = pSequence.getObjects();
-            theAgreement = GordianXCoreAgreementMessageASN1.getInstance(en.nextElement());
+            theAgreement = GordianCoreAgreementMessageASN1.getInstance(en.nextElement());
             theLock = GordianPasswordLockASN1.getInstance(en.nextElement());
 
             /* Make sure that we have completed the sequence */
@@ -109,7 +109,7 @@ public class GordianKeyPairLockASN1
      *
      * @return the agreementASN1
      */
-    public GordianXCoreAgreementMessageASN1 getAgreement() {
+    public GordianCoreAgreementMessageASN1 getAgreement() {
         return theAgreement;
     }
 

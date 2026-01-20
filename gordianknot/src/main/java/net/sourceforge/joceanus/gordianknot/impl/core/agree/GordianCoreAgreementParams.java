@@ -14,11 +14,11 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package net.sourceforge.joceanus.gordianknot.impl.core.xagree;
+package net.sourceforge.joceanus.gordianknot.impl.core.agree;
 
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementType;
-import net.sourceforge.joceanus.gordianknot.api.agree.GordianKDFType;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementKDF;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.cert.GordianCertificate;
 import net.sourceforge.joceanus.gordianknot.api.cert.GordianKeyPairUse;
@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureFactory;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
-import net.sourceforge.joceanus.gordianknot.api.xagree.GordianXAgreementParams;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementParams;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherFactory;
@@ -43,8 +43,8 @@ import java.util.Objects;
 /**
  * Key Agreement Parameters Implementation.
  */
-public class GordianXCoreAgreementParams
-        implements GordianXAgreementParams {
+public class GordianCoreAgreementParams
+        implements GordianAgreementParams {
     /**
      * The factory.
      */
@@ -103,9 +103,9 @@ public class GordianXCoreAgreementParams
      * @param pResultType the resultType
      * @throws GordianException on error
      */
-    GordianXCoreAgreementParams(final GordianXCoreAgreementSupplier pSupplier,
-                                final GordianAgreementSpec pSpec,
-                                final Object pResultType) throws GordianException {
+    GordianCoreAgreementParams(final GordianCoreAgreementSupplier pSupplier,
+                               final GordianAgreementSpec pSpec,
+                               final Object pResultType) throws GordianException {
         isClient = true;
         theFactory = pSupplier.getFactory();
         theSpec = pSpec;
@@ -118,10 +118,10 @@ public class GordianXCoreAgreementParams
      *
      * @param pBuilder the builder
      */
-    GordianXCoreAgreementParams(final GordianXCoreAgreementBuilder pBuilder) {
+    GordianCoreAgreementParams(final GordianCoreAgreementBuilder pBuilder) {
         /* Copy all fields */
-        final GordianXCoreAgreementSupplier mySupplier = pBuilder.getSupplier();
-        final GordianXCoreAgreementState myState = pBuilder.getState();
+        final GordianCoreAgreementSupplier mySupplier = pBuilder.getSupplier();
+        final GordianCoreAgreementState myState = pBuilder.getState();
         isClient = false;
         theId = mySupplier.getNextId();
         theFactory = pBuilder.getSupplier().getFactory();
@@ -138,7 +138,7 @@ public class GordianXCoreAgreementParams
      *
      * @param pSource the source parameters to copy
      */
-    GordianXCoreAgreementParams(final GordianXCoreAgreementParams pSource) {
+    GordianCoreAgreementParams(final GordianCoreAgreementParams pSource) {
         /* Copy all fields */
         isClient = pSource.isClient();
         theId = pSource.getId();
@@ -254,7 +254,7 @@ public class GordianXCoreAgreementParams
     }
 
     @Override
-    public GordianXAgreementParams setClientCertificate(final GordianCertificate pClient) throws GordianException {
+    public GordianAgreementParams setClientCertificate(final GordianCertificate pClient) throws GordianException {
         /* Not allowed for server parameters */
         if (!isClient) {
             throw new GordianDataException("Client Certificate cannot be changed for server");
@@ -283,13 +283,13 @@ public class GordianXCoreAgreementParams
         }
 
         /* Create new updated parameters */
-        final GordianXCoreAgreementParams myParams = new GordianXCoreAgreementParams(this);
+        final GordianCoreAgreementParams myParams = new GordianCoreAgreementParams(this);
         myParams.theClient = pClient;
         return myParams;
     }
 
     @Override
-    public GordianXAgreementParams setServerCertificate(final GordianCertificate pServer) throws GordianException {
+    public GordianAgreementParams setServerCertificate(final GordianCertificate pServer) throws GordianException {
         /* If we have a server certificate */
         final GordianAgreementSpec mySpec = getAgreementSpec();
         if (pServer != null) {
@@ -323,21 +323,21 @@ public class GordianXCoreAgreementParams
         }
 
         /* Create new updated parameters */
-        final GordianXCoreAgreementParams myParams = new GordianXCoreAgreementParams(this);
+        final GordianCoreAgreementParams myParams = new GordianCoreAgreementParams(this);
         myParams.theServer = pServer;
         return myParams;
     }
 
     @Override
-    public GordianXAgreementParams setSigner(final GordianCertificate pSigner) throws GordianException {
+    public GordianAgreementParams setSigner(final GordianCertificate pSigner) throws GordianException {
         final GordianSignatureFactory mySignFactory = theFactory.getAsyncFactory().getSignatureFactory();
         final GordianSignatureSpec mySignSpec = pSigner == null ? null : mySignFactory.defaultForKeyPair(pSigner.getKeyPair().getKeyPairSpec());
         return setSigner(pSigner, mySignSpec);
     }
 
     @Override
-    public GordianXAgreementParams setSigner(final GordianCertificate pSigner,
-                                             final GordianSignatureSpec pSignSpec) throws GordianException {
+    public GordianAgreementParams setSigner(final GordianCertificate pSigner,
+                                            final GordianSignatureSpec pSignSpec) throws GordianException {
         /* Not allowed for client parameters */
         if (isClient) {
             throw new GordianDataException("Signer Certificate cannot be set for client");
@@ -367,22 +367,22 @@ public class GordianXCoreAgreementParams
         }
 
         /* Create new updated parameters */
-        final GordianXCoreAgreementParams myParams = new GordianXCoreAgreementParams(this);
+        final GordianCoreAgreementParams myParams = new GordianCoreAgreementParams(this);
         myParams.theSigner = pSigner;
         myParams.theSignSpec = pSignSpec;
         return myParams;
     }
 
     @Override
-    public GordianXAgreementParams setAdditionalData(final byte[] pData) throws GordianException {
+    public GordianAgreementParams setAdditionalData(final byte[] pData) throws GordianException {
         /* Only allowed if KDFType is not NONE */
         if (pData != null
-                && GordianKDFType.NONE.equals(theSpec.getKDFType())) {
+                && GordianAgreementKDF.NONE.equals(theSpec.getKDFType())) {
             throw new GordianDataException("Additional Data not allowed for KDFType NONE");
         }
 
         /* Create new updated parameters */
-        final GordianXCoreAgreementParams myParams = new GordianXCoreAgreementParams(this);
+        final GordianCoreAgreementParams myParams = new GordianCoreAgreementParams(this);
         myParams.theAdditional = pData == null ? null : pData.clone();
         return myParams;
     }

@@ -16,9 +16,9 @@
  */
 package net.sourceforge.joceanus.gordianknot.impl.jca;
 
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementKDF;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementType;
-import net.sourceforge.joceanus.gordianknot.api.agree.GordianKDFType;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeyType;
@@ -26,13 +26,13 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianNTRUPrimeSpec;
+import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementEngine;
+import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianPrivateKey;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianPublicKey;
-import net.sourceforge.joceanus.gordianknot.impl.core.xagree.GordianXCoreAgreementEngine;
-import net.sourceforge.joceanus.gordianknot.impl.core.xagree.GordianXCoreAgreementFactory;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPair.JcaPrivateKey;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPair.JcaPublicKey;
 import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
@@ -57,7 +57,7 @@ import java.security.PublicKey;
 /**
  * Agreement classes.
  */
-public final class JcaXAgreement {
+public final class JcaAgreement {
     /**
      * Failed agreement message.
      */
@@ -66,14 +66,14 @@ public final class JcaXAgreement {
     /**
      * Private constructor.
      */
-    private JcaXAgreement() {
+    private JcaAgreement() {
     }
 
     /**
      * Jca PostQuantum Agreement.
      */
-    public static class JcaPostQuantumXEngine
-            extends JcaXAgreementBase {
+    public static class JcaPostQuantumEngine
+            extends JcaAgreementBase {
         /**
          * Key Agreement.
          */
@@ -86,9 +86,9 @@ public final class JcaXAgreement {
          * @param pSpec      the agreementSpec
          * @param pGenerator the generator
          */
-        JcaPostQuantumXEngine(final GordianXCoreAgreementFactory pFactory,
-                              final GordianAgreementSpec pSpec,
-                              final KeyGenerator pGenerator) throws GordianException {
+        JcaPostQuantumEngine(final GordianCoreAgreementFactory pFactory,
+                             final GordianAgreementSpec pSpec,
+                             final KeyGenerator pGenerator) throws GordianException {
             /* Initialize underlying class */
             super(pFactory, pSpec);
 
@@ -141,8 +141,8 @@ public final class JcaXAgreement {
     /**
      * Jca NewHope Agreement.
      */
-    public static class JcaNewHopeXEngine
-            extends JcaXAgreementBase {
+    public static class JcaNewHopeEngine
+            extends JcaAgreementBase {
         /**
          * Key Agreement.
          */
@@ -155,9 +155,9 @@ public final class JcaXAgreement {
          * @param pSpec      the agreementSpec
          * @param pAgreement the agreement
          */
-        JcaNewHopeXEngine(final GordianXCoreAgreementFactory pFactory,
-                          final GordianAgreementSpec pSpec,
-                          final KeyAgreement pAgreement) throws GordianException {
+        JcaNewHopeEngine(final GordianCoreAgreementFactory pFactory,
+                         final GordianAgreementSpec pSpec,
+                         final KeyAgreement pAgreement) throws GordianException {
             /* Initialize underlying class */
             super(pFactory, pSpec);
 
@@ -210,8 +210,8 @@ public final class JcaXAgreement {
     /**
      * Jca Anonymous Agreement.
      */
-    public static class JcaAnonXEngine
-            extends JcaXAgreementBase {
+    public static class JcaAnonEngine
+            extends JcaAgreementBase {
         /**
          * Key Agreement.
          */
@@ -224,9 +224,9 @@ public final class JcaXAgreement {
          * @param pSpec      the agreementSpec
          * @param pAgreement the agreement
          */
-        JcaAnonXEngine(final GordianXCoreAgreementFactory pFactory,
-                       final GordianAgreementSpec pSpec,
-                       final KeyAgreement pAgreement) throws GordianException {
+        JcaAnonEngine(final GordianCoreAgreementFactory pFactory,
+                      final GordianAgreementSpec pSpec,
+                      final KeyAgreement pAgreement) throws GordianException {
             /* Initialize underlying class */
             super(pFactory, pSpec);
 
@@ -276,8 +276,8 @@ public final class JcaXAgreement {
     /**
      * Jca Basic Agreement.
      */
-    public static class JcaBasicXEngine
-            extends JcaXAgreementBase {
+    public static class JcaBasicEngine
+            extends JcaAgreementBase {
         /**
          * Key Agreement.
          */
@@ -290,9 +290,9 @@ public final class JcaXAgreement {
          * @param pSpec      the agreementSpec
          * @param pAgreement the agreement
          */
-        JcaBasicXEngine(final GordianXCoreAgreementFactory pFactory,
-                        final GordianAgreementSpec pSpec,
-                        final KeyAgreement pAgreement) throws GordianException {
+        JcaBasicEngine(final GordianCoreAgreementFactory pFactory,
+                       final GordianAgreementSpec pSpec,
+                       final KeyAgreement pAgreement) throws GordianException {
             /* Initialize underlying class */
             super(pFactory, pSpec);
 
@@ -342,8 +342,8 @@ public final class JcaXAgreement {
     /**
      * Jca Unified Agreement.
      */
-    public static class JcaUnifiedXEngine
-            extends JcaXAgreementBase {
+    public static class JcaUnifiedEngine
+            extends JcaAgreementBase {
         /**
          * Key Agreement.
          */
@@ -356,9 +356,9 @@ public final class JcaXAgreement {
          * @param pSpec      the agreementSpec
          * @param pAgreement the agreement
          */
-        JcaUnifiedXEngine(final GordianXCoreAgreementFactory pFactory,
-                          final GordianAgreementSpec pSpec,
-                          final KeyAgreement pAgreement) throws GordianException {
+        JcaUnifiedEngine(final GordianCoreAgreementFactory pFactory,
+                         final GordianAgreementSpec pSpec,
+                         final KeyAgreement pAgreement) throws GordianException {
             /* Initialize underlying class */
             super(pFactory, pSpec);
 
@@ -420,8 +420,8 @@ public final class JcaXAgreement {
     /**
      * Jca MQV Agreement.
      */
-    public static class JcaMQVXEngine
-            extends JcaXAgreementBase {
+    public static class JcaMQVEngine
+            extends JcaAgreementBase {
         /**
          * Key Agreement.
          */
@@ -434,9 +434,9 @@ public final class JcaXAgreement {
          * @param pSpec      the agreementSpec
          * @param pAgreement the agreement
          */
-        JcaMQVXEngine(final GordianXCoreAgreementFactory pFactory,
-                      final GordianAgreementSpec pSpec,
-                      final KeyAgreement pAgreement) throws GordianException {
+        JcaMQVEngine(final GordianCoreAgreementFactory pFactory,
+                     final GordianAgreementSpec pSpec,
+                     final KeyAgreement pAgreement) throws GordianException {
             /* Initialize underlying class */
             super(pFactory, pSpec);
 
@@ -496,8 +496,8 @@ public final class JcaXAgreement {
     /**
      * Base Agreement Engine class.
      */
-    public abstract static class JcaXAgreementBase
-            extends GordianXCoreAgreementEngine {
+    public abstract static class JcaAgreementBase
+            extends GordianCoreAgreementEngine {
         /**
          * Empty byteArray.
          */
@@ -510,8 +510,8 @@ public final class JcaXAgreement {
          * @param pSpec    the agreementSpec
          * @throws GordianException on error
          */
-        JcaXAgreementBase(final GordianXCoreAgreementFactory pFactory,
-                          final GordianAgreementSpec pSpec) throws GordianException {
+        JcaAgreementBase(final GordianCoreAgreementFactory pFactory,
+                         final GordianAgreementSpec pSpec) throws GordianException {
             /* Invoke underlying constructor */
             super(pFactory, pSpec);
         }
@@ -550,7 +550,7 @@ public final class JcaXAgreement {
                            final JcaPrivateKey pPrivate) throws GordianException {
             /* Protect against exceptions */
             try {
-                if (getSpec().getKDFType() == GordianKDFType.NONE) {
+                if (getSpec().getKDFType() == GordianAgreementKDF.NONE) {
                     pAgreement.init(pPrivate.getPrivateKey(), getRandom());
                 } else {
                     pAgreement.init(pPrivate.getPrivateKey(), new UserKeyingMaterialSpec(getAdditional()), getRandom());

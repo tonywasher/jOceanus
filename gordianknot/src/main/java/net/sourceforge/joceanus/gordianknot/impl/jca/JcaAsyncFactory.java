@@ -16,10 +16,10 @@
  */
 package net.sourceforge.joceanus.gordianknot.impl.jca;
 
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementFactory;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureFactory;
-import net.sourceforge.joceanus.gordianknot.api.xagree.GordianXAgreementFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.factory.GordianCoreAsyncFactory;
 
@@ -49,8 +49,8 @@ public class JcaAsyncFactory
     }
 
     @Override
-    public GordianXAgreementFactory newXAgreementFactory(final GordianBaseFactory pFactory) {
-        return new JcaXAgreementFactory(pFactory);
+    public GordianAgreementFactory newAgreementFactory(final GordianBaseFactory pFactory) {
+        return new JcaAgreementFactory(pFactory);
     }
 
     @Override
