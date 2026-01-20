@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.gordianknot.junit.regression;
 
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementType;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianKDFType;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.cert.GordianCertificate;
@@ -246,6 +247,7 @@ public final class AsymmetricXAgreeScripts {
         final FactoryKeyPairs myPairs = pAgreement.getOwner().getKeyPairs();
         final GordianKeyPair myPair = myPairs.getKeyPair();
         final GordianKeyPair myTarget = myType.isAnonymous() ? myPair : myPairs.getTargetKeyPair();
+        final byte[] myAdditional = GordianKDFType.NONE.equals(mySpec.getKDFType()) ? null : "HelloThere".getBytes();
 
         /* Create mini-certificates */
         final GordianXAgreementFactory myAgrees = pAgreement.getOwner().getFactory().getXAgreementFactory();
@@ -259,7 +261,8 @@ public final class AsymmetricXAgreeScripts {
         /* Create the client hello */
         GordianXAgreementParams myParams = myAgrees.newAgreementParams(mySpec, pResultType)
                 .setClientCertificate(myClientCert)
-                .setServerCertificate(myTargetCert);
+                .setServerCertificate(myTargetCert)
+                .setAdditionalData(myAdditional);
         final GordianXAgreement mySender = myAgrees.createAgreement(myParams);
         final byte[] myClientHello = mySender.nextMessage();
 
@@ -267,7 +270,8 @@ public final class AsymmetricXAgreeScripts {
         final GordianXAgreement myResponder = myAgrees.parseAgreementMessage(myClientHello);
         myParams = myResponder.getAgreementParams()
                 .setServerCertificate(myTargetCert)
-                .setSigner(mySignerCert);
+                .setSigner(mySignerCert)
+                .setAdditionalData(myAdditional);
         myResponder.updateParams(myParams);
 
         /* If we are not anonymous */

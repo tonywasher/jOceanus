@@ -380,7 +380,7 @@ public final class JcaXAgreement {
 
                 /* Derive the secret */
                 final DHUParameterSpec myParams = new DHUParameterSpec(myEphPublic.getPublicKey(),
-                        myEphPrivate.getPrivateKey(), myClientEphPublic.getPublicKey(), new byte[0]);
+                        myEphPrivate.getPrivateKey(), myClientEphPublic.getPublicKey(), getAdditional());
                 theAgreement.init(myPrivate.getPrivateKey(), myParams, getRandom());
                 theAgreement.doPhase(myClientPublic.getPublicKey(), true);
                 storeSecret(theAgreement.generateSecret());
@@ -405,7 +405,7 @@ public final class JcaXAgreement {
 
                 /* Derive the secret */
                 final DHUParameterSpec myParams = new DHUParameterSpec(myEphPublic.getPublicKey(),
-                        myEphPrivate.getPrivateKey(), myServerEphPublic.getPublicKey(), new byte[0]);
+                        myEphPrivate.getPrivateKey(), myServerEphPublic.getPublicKey(), getAdditional());
                 theAgreement.init(myPrivate.getPrivateKey(), myParams);
                 theAgreement.doPhase(myServerPublic.getPublicKey(), true);
                 storeSecret(theAgreement.generateSecret());
@@ -457,7 +457,7 @@ public final class JcaXAgreement {
 
                 /* Derive the secret */
                 final MQVParameterSpec myParams = new MQVParameterSpec(myEphPublic.getPublicKey(),
-                        myEphPrivate.getPrivateKey(), myClientEphPublic.getPublicKey(), new byte[0]);
+                        myEphPrivate.getPrivateKey(), myClientEphPublic.getPublicKey(), getAdditional());
                 theAgreement.init(myPrivate.getPrivateKey(), myParams, getRandom());
                 theAgreement.doPhase(myClientPublic.getPublicKey(), true);
                 storeSecret(theAgreement.generateSecret());
@@ -481,7 +481,7 @@ public final class JcaXAgreement {
 
                 /* Derive the secret */
                 final MQVParameterSpec myParams = new MQVParameterSpec(myEphPublic.getPublicKey(),
-                        myEphPrivate.getPrivateKey(), myServerEphPublic.getPublicKey(), new byte[0]);
+                        myEphPrivate.getPrivateKey(), myServerEphPublic.getPublicKey(), getAdditional());
                 theAgreement.init(myPrivate.getPrivateKey(), myParams);
                 theAgreement.doPhase(myServerPublic.getPublicKey(), true);
                 storeSecret(theAgreement.generateSecret());
@@ -498,6 +498,11 @@ public final class JcaXAgreement {
      */
     public abstract static class JcaXAgreementBase
             extends GordianXCoreAgreementEngine {
+        /**
+         * Empty byteArray.
+         */
+        private static final byte[] EMPTY = new byte[0];
+
         /**
          * Constructor.
          *
@@ -548,12 +553,22 @@ public final class JcaXAgreement {
                 if (getSpec().getKDFType() == GordianKDFType.NONE) {
                     pAgreement.init(pPrivate.getPrivateKey(), getRandom());
                 } else {
-                    pAgreement.init(pPrivate.getPrivateKey(), new UserKeyingMaterialSpec(new byte[0]), getRandom());
+                    pAgreement.init(pPrivate.getPrivateKey(), new UserKeyingMaterialSpec(getAdditional()), getRandom());
                 }
             } catch (InvalidKeyException
                      | InvalidAlgorithmParameterException e) {
                 throw new GordianCryptoException(ERR_AGREEMENT, e);
             }
+        }
+
+        /**
+         * Obtain the additionalInfo.
+         *
+         * @return the additionalData
+         */
+        byte[] getAdditional() {
+            final byte[] myAdditional = this.getBuilder().getState().getAdditionalData();
+            return myAdditional == null ? EMPTY : myAdditional;
         }
 
         /**

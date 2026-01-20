@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.gordianknot.impl.core.xagree;
 
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementType;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianKDFType;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.cert.GordianCertificate;
 import net.sourceforge.joceanus.gordianknot.api.cert.GordianKeyPairUse;
@@ -373,7 +374,14 @@ public class GordianXCoreAgreementParams
     }
 
     @Override
-    public GordianXAgreementParams setAdditionalData(final byte[] pData) {
+    public GordianXAgreementParams setAdditionalData(final byte[] pData) throws GordianException {
+        /* Only allowed if KDFType is not NONE */
+        if (pData != null
+                && GordianKDFType.NONE.equals(theSpec.getKDFType())) {
+            throw new GordianDataException("Additional Data not allowed for KDFType NONE");
+        }
+
+        /* Create new updated parameters */
         final GordianXCoreAgreementParams myParams = new GordianXCoreAgreementParams(this);
         myParams.theAdditional = pData == null ? null : pData.clone();
         return myParams;

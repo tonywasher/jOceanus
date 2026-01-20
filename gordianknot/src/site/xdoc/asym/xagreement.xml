@@ -43,9 +43,7 @@
                         then the default signature algorithm for the signer keyPair is used</td></tr>
                     <tr><td>AdditionalData</td><td>AdditionalData to be added to personalize the agreement. This is not
                         transmitted and must be supplied independently and identically by client and server. It is only
-                        available via the KDF and therefore the KDF must not be NONE for this parameter to be accepted.
-                        <strong>NOTE</strong> only <strong>MLKEM</strong> of the postQuantum algorithms currently supports
-                        this option</td></tr>
+                        available via the KDF and therefore the KDF must not be NONE for this parameter to be accepted.</td></tr>
                 </table>
             </subsection>
             <subsection name="MiniCertificates">
@@ -59,6 +57,9 @@
                 <p>An anonymous agreement is an agreement where the only certificate required is that of the server.
                     It must be specified in the parameters prior to the agreement being created. If a keyPair is
                     required at the server, then it is an ephemeral anonymous keyPair.</p>
+                <p>There are two type of anonymous agreements, which produce different types of messages. The
+                    <strong>KEM</strong> agreement produces an encapsulated secret, whereas the <strong>ANON</strong>
+                    agreement produces an ephemeral keyPair.</p>
                 <ul>
                     <li>The client creates a <strong>ClientHello</strong> message to be sent to the server, and immediately
                         enters the <strong>RESULT_AVAILABLE</strong> state and makes the result available to the caller.</li>
@@ -108,10 +109,13 @@ final GordianKeySet myServerKeySet = myResponder.getKeySetResult();
                 </subsection>
             </subsection>
             <subsection name="Handshake Agreement">
+                <p>A handshake agreement is an agreement where certificates are required for both the client and the
+                    server. Both certificates must be specified in the parameters prior to the agreement being created.
+                    The clientCertificate must contain the private key of the keyPair.</p>
+                <p>A <strong>BASIC</strong> agreement, just utilizes the keyPairs from the certificates. Three further
+                    agreement types - <strong>UNIFIED</strong>, <strong>MQV</strong> and <strong>SM2</strong> use
+                    additional ephemeral keyPairs, but differ in internal implementation</p>
                 <ul>
-                    <li>A handshake agreement is an agreement where certificates are required for both the client and the
-                        server. Both certificates must be specified in the parameters prior to the agreement being created.
-                        The clientCertificate must contain the private key of the keyPair.</li>
                     <li>The client creates a <strong>ClientHello</strong> message to be sent to the server, and immediately
                         enters the <strong>AWAITING_SERVERHELLO</strong> state. The agreement is added to the factory cache.</li>
                     <li>The server will parse the incoming <strong>ClientHello</strong> message as per the Anonymous case.
@@ -172,7 +176,8 @@ final GordianKeySet myClientKeySet = myClient.getKeySetResult();
                 </subsection>
             </subsection>
             <subsection name="Confirmation Agreement">
-                <p>A confirmation agreement is simply a handshake agreement with an additional step.</p>
+                <p>A confirmation agreement is simply a handshake agreement with an additional step. It requires the
+                    use of ephemeral keyPairs, so is not available for <strong>BASIC</strong> agreements</p>
                 <ul>
                     <li>The client creates a <strong>ClientHello</strong> message the same as for a handshake agreement.</li>
                     <li>The server processes the <strong>ClientHello</strong> as before but rather than making the result
@@ -244,7 +249,8 @@ final GordianKeySet myServerKeySet = myServer.getKeySetResult();
             </subsection>
             <subsection name="Signed Agreement">
                 <p>A signed agreement is simply a handshake agreement used with ephemeral keyPairs with the results
-                    signed by a known signer. No client/server certificates are required.</p>
+                    signed by a known signer. No client/server certificates are required. It is signified by an
+                    agreement type of <strong>SIGNED</strong>.</p>
                 <ul>
                     <li>The client creates a <strong>ClientHello</strong> message the same as for a handshake agreement.</li>
                     <li>The server processes the <strong>ClientHello</strong> but rather than waiting for a
@@ -334,18 +340,16 @@ final GordianCertificate myTargetCert = myAgreementFactory.newMiniCertificate(my
                 </subsection>
             </subsection>
             <subsection name="Algorithms">
-                <p>The following agreement algorithms are supported.</p>
+                <p>The following agreement algorithms are supported. Please </p>
                 <table class="defTable">
-                    <tr><th class="defHdr">Algorithm</th><th>Type</th><th class="defHdr">KeyTypes</th><th>Notes</th></tr>
-                    <tr><td>KEM</td><td>Anonymous</td><td>RSA, EC, GOST2012, DSTU4145, SM2, CMCE, Frodo, SABER,
-                        MLKEM, BIKE, HQC, NTRU, NTRUPRIME, NEWHOPE</td><td>RSA, EC, GOST2012, DSTU4145 and SM2 are not available on JCA</td></tr>
-                    <tr><td>Anonymous</td><td>Anonymous</td><td>DH, EC, GOST2012, DSTU4145, SM2, XDH</td><td/></tr>
-                    <tr><td>Basic</td><td>Handshake</td><td>DH, EC, GOST2012, DSTU4145, SM2, XDH</td><td/></tr>
-                    <tr><td>Signed</td><td>Signed</td><td>DH, EC, GOST2012, DSTU4145, SM2, XDH</td><td/></tr>
-                    <tr><td>MQV</td><td>Handshake</td><td>DH, EC, GOST2012, DSTU4145, SM2</td><td/></tr>
-                    <tr><td>Unified</td><td>Handshake</td><td>DH, EC, GOST2012, DSTU4145, SM2, XDH</td><td/></tr>
-                    <tr><td>SM2</td><td>Handshake</td><td>EC, GOST2012, SM2</td><td>Not available on JCA</td></tr>
-                </table>
+                    <tr><th class="defHdr">KeyPairType</th><th class="defHdr">AgreementType</th><th class="defHdr">Notes</th></tr>
+                    <tr><td>RSA</td><td>KEM</td><td>Not available in JCA</td></tr>
+                    <tr><td>EC, GOST2012, SM2</td><td>KEM, ANON, BASIC, SIGNED, MQV, UNIFIED, SM2</td><td>KEM and SM2 not available in JCA</td></tr>
+                    <tr><td>DSTU4145</td><td>KEM, ANON, BASIC, SIGNED, MQV, UNIFIED</td><td>KEM not available in JCA</td></tr>
+                    <tr><td>DH</td><td>ANON, BASIC, SIGNED, MQV, UNIFIED</td><td/></tr>
+                    <tr><td>XDH</td><td>ANON, BASIC, SIGNED, UNIFIED</td><td/></tr>
+                    <tr><td>BIKE, CMCE, Frodo, HQC, MLKEM, NEWHOPE, NTRU, NTRUPRIME, SABER</td><td>KEM</td><td/></tr>
+                 </table>
             </subsection>
         </section>
     </body>

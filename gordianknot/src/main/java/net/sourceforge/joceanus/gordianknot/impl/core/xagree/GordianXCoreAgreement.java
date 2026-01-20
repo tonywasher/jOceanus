@@ -341,11 +341,23 @@ public class GordianXCoreAgreement
     }
 
     /**
+     * Set additionalData.
+     *
+     * @param pData the additional data
+     */
+    void setAdditionalData(final byte[] pData) {
+        theState.setAdditionalData(pData);
+    }
+
+    /**
      * Build the clientHello.
      *
      * @throws GordianException on error
      */
     void buildClientHello() throws GordianException {
+        /* Take a snapshot of the parameters */
+        theParams = new GordianXCoreAgreementParams(theBuilder);
+
         /* Create ClientId and InitVector */
         if (!theSpec.getAgreementType().isAnonymous()) {
             theBuilder.newClientId();
