@@ -15,9 +15,6 @@
  * the License.
  ******************************************************************************/
 
-import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetFactory;
-import io.github.tonywasher.joceanus.prometheus.service.sheet.odf.PrometheusOdfFactory;
-
 /**
  * Prometheus Sheet ODF.
  */
@@ -30,6 +27,6 @@ module io.github.tonywasher.joceanus.prometheus.sheet.odf {
     requires io.github.tonywasher.joceanus.prometheus.sheet.api;
 
     /* Services provided */
-    provides PrometheusSheetFactory
-            with PrometheusOdfFactory;
+    provides io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetFactory
+            with io.github.tonywasher.joceanus.prometheus.service.sheet.odf.PrometheusOdfFactory;
 }

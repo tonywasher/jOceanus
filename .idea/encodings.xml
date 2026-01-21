@@ -10,10 +10,10 @@
     <file url="file://$PROJECT_DIR$/moneywise/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/oceanus/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/prometheus/prometheus-core/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/prometheus/prometheus-services/prometheus-sheet-api/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/prometheus/prometheus-services/prometheus-sheet-hssf/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/prometheus/prometheus-services/prometheus-sheet-odf/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/prometheus/prometheus-services/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/prometheus/sheet/prometheus-sheet-api/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/prometheus/sheet/prometheus-sheet-hssf/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/prometheus/sheet/prometheus-sheet-odf/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/prometheus/sheet/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/prometheus/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/tethys/src/main/java" charset="UTF-8" />

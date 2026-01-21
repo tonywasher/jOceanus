@@ -1,10 +1,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>net.sourceforge.joceanus</groupId>
+    <groupId>io.github.tonywasher.joceanus</groupId>
     <artifactId>prometheus</artifactId>
     <version>1.6.3-SNAPSHOT</version>
   </parent>
+  <groupId>${parent.groupId}.prometheus</groupId>
   <artifactId>prometheus-core</artifactId>
   <name>Prometheus Core Application Framework</name>
   <description>Java Core Application Framework</description>
@@ -40,39 +41,39 @@
       <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>${project.groupId}</groupId>
+      <groupId>${project.groupId}.services</groupId>
       <artifactId>prometheus-sheet-api</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>${project.groupId}</groupId>
+      <groupId>${project.groupId}.services</groupId>
       <artifactId>prometheus-sheet-hssf</artifactId>
       <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>${project.groupId}</groupId>
+      <groupId>${project.groupId}.services</groupId>
       <artifactId>prometheus-sheet-odf</artifactId>
       <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>${project.groupId}</groupId>
+      <groupId>${parent.groupId}</groupId>
       <artifactId>metis</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>${project.groupId}</groupId>
+      <groupId>${parent.groupId}</groupId>
       <artifactId>gordianknot</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>${project.groupId}</groupId>
+      <groupId>${parent.groupId}.tethys</groupId>
       <artifactId>tethys-core</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>${project.groupId}</groupId>
+      <groupId>${parent.groupId}</groupId>
       <artifactId>oceanus</artifactId>
       <version>${project.version}</version>
     </dependency>

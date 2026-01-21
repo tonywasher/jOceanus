@@ -11,9 +11,10 @@ dependencies {
 
 /* Description */
 description = 'MoneyWise Personal Finance - Core'
+group = 'io.github.tonywasher.joceanus.moneywise'
 
 /* Register the project */
-registerProject(project) 
+registerProject(project)
 
 /* Test jar details */
 tasks.register('testsJar', Jar) {

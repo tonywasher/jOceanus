@@ -22,12 +22,33 @@
         <module name="moneywise-core" />
         <module name="tethys-test" />
         <module name="prometheus-core" />
-        <module name="gordianknot" />
         <module name="prometheus-sheet-odf" />
-        <module name="oceanus" />
         <module name="prometheus-sheet-hssf" />
       </profile>
+      <profile name="Annotation profile for gordianknot" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/jetbrains/annotations/26.0.2-1/annotations-26.0.2-1.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/jetbrains/annotations/26.0.2-1/annotations-26.0.2-1.jar" />
+        </processorPath>
+        <module name="gordianknot" />
+      </profile>
+      <profile name="Annotation profile for oceanus" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/jetbrains/annotations/26.0.2-1/annotations-26.0.2-1.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/jetbrains/annotations/26.0.2-1/annotations-26.0.2-1.jar" />
+        </processorPath>
+        <module name="oceanus" />
+      </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="prometheus-services" target="21" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
@@ -46,6 +67,7 @@
       <module name="prometheus-sheet-api" options="-Xlint:unchecked -Xlint:deprecation" />
       <module name="prometheus-sheet-hssf" options="-Xlint:unchecked -Xlint:deprecation" />
       <module name="prometheus-sheet-odf" options="-Xlint:unchecked -Xlint:deprecation" />
+      <module name="sheet" options="-Xlint:unchecked -Xlint:deprecation" />
       <module name="tethys" options="-Xlint:unchecked -Xlint:deprecation" />
       <module name="tethys-core" options="-Xlint:unchecked -Xlint:deprecation" />
       <module name="tethys-javafx" options="-Xlint:unchecked -Xlint:deprecation" />

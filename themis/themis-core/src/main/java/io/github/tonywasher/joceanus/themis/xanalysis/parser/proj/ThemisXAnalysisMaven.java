@@ -100,6 +100,26 @@ public class ThemisXAnalysisMaven {
     private static final String EL_SOURCE = "source";
 
     /**
+     * Parent groupId indication.
+     */
+    private static final String PARENT_GROUP = "${parent.groupId}";
+
+    /**
+     * Parent version indication.
+     */
+    private static final String PARENT_VERSION = "${parent.version}";
+
+    /**
+     * Project groupId indication.
+     */
+    private static final String PROJECT_GROUP = "${project.groupId}";
+
+    /**
+     * Project version indication.
+     */
+    private static final String PROJECT_VERSION = "${project.version}";
+
+    /**
      * The XPath.
      */
     private final XPath theXPath;
@@ -142,7 +162,7 @@ public class ThemisXAnalysisMaven {
     /**
      * Has the id been found?
      */
-    private boolean idFound;
+    //private boolean idFound;
 
     /**
      * Constructor.
@@ -250,10 +270,12 @@ public class ThemisXAnalysisMaven {
         final ThemisXAnalysisMavenId myParent = myParentEl == null
                 ? null
                 : new ThemisXAnalysisMavenId(myParentEl);
+        storeParentProperties(myParent);
 
         /* Obtain our mavenId */
         final ThemisXAnalysisMavenId myId = new ThemisXAnalysisMavenId(myDoc, myParent);
-        idFound = true;
+        storeProjectProperties(myId);
+        //idFound = true;
 
         /* Process modules */
         processModules();
@@ -331,6 +353,32 @@ public class ThemisXAnalysisMaven {
     }
 
     /**
+     * Store parent properties.
+     */
+    private void storeParentProperties(final ThemisXAnalysisMavenId pParent) {
+        /* Store parent groupId */
+        theProperties.put(PARENT_GROUP, pParent == null ? null : pParent.getGroupId());
+        theProperties.put(PARENT_VERSION, pParent == null ? null : pParent.getVersion());
+    }
+
+    /**
+     * Store parent properties.
+     */
+    private void storeProjectProperties(final ThemisXAnalysisMavenId pProject) {
+        /* Determine project groupId */
+        String myGroupId = pProject.getGroupId();
+        myGroupId = myGroupId != null ? myGroupId : theProperties.get(PARENT_GROUP);
+
+        /* Determine project version */
+        String myVersion = pProject.getVersion();
+        myVersion = myVersion != null ? myVersion : theProperties.get(PARENT_VERSION);
+
+        /* Store project details */
+        theProperties.put(PROJECT_GROUP, myGroupId);
+        theProperties.put(PROJECT_VERSION, myVersion);
+    }
+
+    /**
      * Process modules.
      *
      * @throws OceanusException on error
@@ -369,9 +417,9 @@ public class ThemisXAnalysisMaven {
                 /* Return result if we have a match */
                 if (myChild instanceof Element myElement
                         && EL_DEPENDENCY.equals(myChild.getNodeName())) {
-                    final ThemisXAnalysisMavenId myId = new ThemisXAnalysisMavenId(myElement, pParent);
+                    final ThemisXAnalysisMavenId myId = new ThemisXAnalysisMavenId(myElement);
                     if (!myId.isSkippable()) {
-                        theDependencies.add(new ThemisXAnalysisMavenId(myElement, pParent));
+                        theDependencies.add(myId);
                     }
                 }
             }
@@ -407,11 +455,13 @@ public class ThemisXAnalysisMaven {
      * @return the value or the replaced property
      */
     private String replaceProperty(final String pValue) {
-        final String myValue = theProperties.get(pValue);
-        if (myValue != null) {
-            return myValue;
+        String myResult = pValue;
+        for (Map.Entry<String, String> myEntry : theProperties.entrySet()) {
+            if (myResult.contains(myEntry.getKey())) {
+                myResult = myResult.replace(myEntry.getKey(), myEntry.getValue());
+            }
         }
-        return theParent != null ? theParent.replaceProperty(pValue) : pValue;
+        return theParent != null ? theParent.replaceProperty(myResult) : myResult;
     }
 
     /**
@@ -447,16 +497,6 @@ public class ThemisXAnalysisMaven {
          * Optional element.
          */
         private static final String EL_OPTIONAL = "optional";
-
-        /**
-         * Parent groupId indication.
-         */
-        private static final String PARENT_GROUP = "${project.groupId}";
-
-        /**
-         * Parent version indication.
-         */
-        private static final String PARENT_VERSION = "${project.version}";
 
         /**
          * The artifactId.
@@ -515,12 +555,10 @@ public class ThemisXAnalysisMaven {
             this(pElement);
 
             /* Handle missing groupId/version */
-            if (PARENT_GROUP.equals(theGroupId)
-                    || (!idFound && theGroupId == null)) {
+            if (theGroupId == null) {
                 theGroupId = pParent.getGroupId();
             }
-            if (PARENT_VERSION.equals(theVersion)
-                    || (!idFound && theVersion == null)) {
+            if (theVersion == null) {
                 theVersion = pParent.getVersion();
             }
 

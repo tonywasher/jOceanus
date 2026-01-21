@@ -1,17 +1,18 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>net.sourceforge.joceanus</groupId>
+    <groupId>io.github.tonywasher</groupId>
     <artifactId>joceanus</artifactId>
     <version>1.6.3-SNAPSHOT</version>
   </parent>
+  <groupId>io.github.tonywasher.joceanus</groupId>
   <artifactId>prometheus</artifactId>
   <name>Prometheus Application Framework</name>
   <description>Java Application Framework</description>
   <packaging>pom</packaging>
   <modules>
     <module>prometheus-core</module>
-    <module>prometheus-services</module>
+    <module>sheet</module>
   </modules>
   <properties>
     <scmComponent>prometheus</scmComponent>

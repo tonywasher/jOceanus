@@ -1,21 +1,22 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>net.sourceforge.joceanus</groupId>
+        <groupId>io.github.tonywasher.joceanus</groupId>
         <artifactId>moneywise</artifactId>
         <version>1.6.3-SNAPSHOT</version>
     </parent>
+    <groupId>io.github.tonywasher.joceanus.moneywise</groupId>
     <artifactId>moneywise-javafx</artifactId>
     <name>MoneyWise Personal Finance - javaFX</name>
     <description>Personal Finance Application</description>
     <dependencies>
         <dependency>
-            <groupId>net.sourceforge.joceanus</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>moneywise-core</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>net.sourceforge.joceanus</groupId>
+            <groupId>${parent.groupId}.tethys</groupId>
             <artifactId>tethys-javafx</artifactId>
             <version>${project.version}</version>
         </dependency>
