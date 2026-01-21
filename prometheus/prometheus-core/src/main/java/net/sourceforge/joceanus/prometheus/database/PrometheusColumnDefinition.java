@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Prometheus: Application Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,19 +13,19 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.prometheus.database;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.data.MetisDataResource;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.database.PrometheusTableDefinition.PrometheusSortOrder;
 import net.sourceforge.joceanus.prometheus.exc.PrometheusDataException;
 import net.sourceforge.joceanus.prometheus.preference.PrometheusColumnType;
@@ -42,6 +42,7 @@ import java.util.ListIterator;
 
 /**
  * Column definition classes handling data-type specifics.
+ *
  * @author Tony Washer
  */
 public abstract class PrometheusColumnDefinition {
@@ -107,8 +108,9 @@ public abstract class PrometheusColumnDefinition {
 
     /**
      * Constructor.
+     *
      * @param pTable the table to which the column belongs
-     * @param pId the column id
+     * @param pId    the column id
      */
     protected PrometheusColumnDefinition(final PrometheusTableDefinition pTable,
                                          final MetisDataFieldId pId) {
@@ -122,6 +124,7 @@ public abstract class PrometheusColumnDefinition {
 
     /**
      * Obtain the column name.
+     *
      * @return the name
      */
     protected String getColumnName() {
@@ -130,6 +133,7 @@ public abstract class PrometheusColumnDefinition {
 
     /**
      * Obtain the column id.
+     *
      * @return the id
      */
     protected MetisDataFieldId getColumnId() {
@@ -138,6 +142,7 @@ public abstract class PrometheusColumnDefinition {
 
     /**
      * Obtain the sort order.
+     *
      * @return the sort order
      */
     protected PrometheusSortOrder getSortOrder() {
@@ -146,6 +151,7 @@ public abstract class PrometheusColumnDefinition {
 
     /**
      * Obtain the value.
+     *
      * @return the value
      */
     protected Object getObject() {
@@ -154,6 +160,7 @@ public abstract class PrometheusColumnDefinition {
 
     /**
      * Obtain the table.
+     *
      * @return the table
      */
     protected PrometheusTableDefinition getTable() {
@@ -162,6 +169,7 @@ public abstract class PrometheusColumnDefinition {
 
     /**
      * Obtain the value.
+     *
      * @return the value
      */
     protected PrometheusJDBCDriver getDriver() {
@@ -178,6 +186,7 @@ public abstract class PrometheusColumnDefinition {
 
     /**
      * Set value.
+     *
      * @param pValue the value
      */
     protected void setObject(final Object pValue) {
@@ -187,6 +196,7 @@ public abstract class PrometheusColumnDefinition {
 
     /**
      * Is the value set.
+     *
      * @return true/false
      */
     protected boolean isValueSet() {
@@ -195,6 +205,7 @@ public abstract class PrometheusColumnDefinition {
 
     /**
      * Build the creation string for this column.
+     *
      * @param pBuilder the String builder
      */
     protected void buildCreateString(final StringBuilder pBuilder) {
@@ -233,6 +244,7 @@ public abstract class PrometheusColumnDefinition {
 
     /**
      * Set sortOrder.
+     *
      * @param pOrder the Sort direction
      */
     public void setSortOrder(final PrometheusSortOrder pOrder) {
@@ -242,14 +254,16 @@ public abstract class PrometheusColumnDefinition {
 
     /**
      * Build the column type for this column.
+     *
      * @param pBuilder the String builder
      */
     protected abstract void buildColumnType(StringBuilder pBuilder);
 
     /**
      * Load the value for this column.
+     *
      * @param pResults the results
-     * @param pIndex the index of the result column
+     * @param pIndex   the index of the result column
      * @throws SQLException on error
      */
     protected abstract void loadValue(ResultSet pResults,
@@ -257,8 +271,9 @@ public abstract class PrometheusColumnDefinition {
 
     /**
      * Store the value for this column.
+     *
      * @param pStatement the prepared statement
-     * @param pIndex the index of the statement
+     * @param pIndex     the index of the statement
      * @throws SQLException on error
      */
     protected abstract void storeValue(PreparedStatement pStatement,
@@ -266,6 +281,7 @@ public abstract class PrometheusColumnDefinition {
 
     /**
      * Define the key reference.
+     *
      * @param pBuilder the String builder
      */
     protected void buildKeyReference(final StringBuilder pBuilder) {
@@ -273,6 +289,7 @@ public abstract class PrometheusColumnDefinition {
 
     /**
      * Locate reference.
+     *
      * @param pTables the list of defined tables
      */
     protected void locateReference(final List<PrometheusTableDataItem<?>> pTables) {
@@ -285,8 +302,9 @@ public abstract class PrometheusColumnDefinition {
             extends PrometheusColumnDefinition {
         /**
          * Constructor.
+         *
          * @param pTable the table to which the column belongs
-         * @param pId the column id
+         * @param pId    the column id
          */
         protected PrometheusIntegerColumn(final PrometheusTableDefinition pTable,
                                           final MetisDataFieldId pId) {
@@ -302,6 +320,7 @@ public abstract class PrometheusColumnDefinition {
 
         /**
          * Set the value.
+         *
          * @param pValue the value
          */
         protected void setValue(final Integer pValue) {
@@ -310,6 +329,7 @@ public abstract class PrometheusColumnDefinition {
 
         /**
          * Get the value.
+         *
          * @return the value
          */
         protected Integer getValue() {
@@ -346,6 +366,7 @@ public abstract class PrometheusColumnDefinition {
             extends PrometheusIntegerColumn {
         /**
          * Constructor.
+         *
          * @param pTable the table to which the column belongs
          */
         PrometheusIdColumn(final PrometheusTableDefinition pTable) {
@@ -377,8 +398,9 @@ public abstract class PrometheusColumnDefinition {
 
         /**
          * Constructor.
-         * @param pTable the table to which the column belongs
-         * @param pId the column id
+         *
+         * @param pTable    the table to which the column belongs
+         * @param pId       the column id
          * @param pRefTable the name of the referenced table
          */
         PrometheusReferenceColumn(final PrometheusTableDefinition pTable,
@@ -431,9 +453,10 @@ public abstract class PrometheusColumnDefinition {
 
         /**
          * build Join String.
+         *
          * @param pBuilder the String Builder
-         * @param pChar the character for this table
-         * @param pOffset the join offset
+         * @param pChar    the character for this table
+         * @param pOffset  the join offset
          */
         void buildJoinString(final StringBuilder pBuilder,
                              final char pChar,
@@ -474,8 +497,9 @@ public abstract class PrometheusColumnDefinition {
 
         /**
          * build Order String.
+         *
          * @param pBuilder the String Builder
-         * @param pOffset the join offset
+         * @param pOffset  the join offset
          */
         void buildOrderString(final StringBuilder pBuilder,
                               final Integer pOffset) {
@@ -538,8 +562,9 @@ public abstract class PrometheusColumnDefinition {
             extends PrometheusColumnDefinition {
         /**
          * Constructor.
+         *
          * @param pTable the table to which the column belongs
-         * @param pId the column id
+         * @param pId    the column id
          */
         PrometheusShortColumn(final PrometheusTableDefinition pTable,
                               final MetisDataFieldId pId) {
@@ -555,6 +580,7 @@ public abstract class PrometheusColumnDefinition {
 
         /**
          * Set the value.
+         *
          * @param pValue the value
          */
         void setValue(final Short pValue) {
@@ -563,6 +589,7 @@ public abstract class PrometheusColumnDefinition {
 
         /**
          * Get the value.
+         *
          * @return the value
          */
         Short getValue() {
@@ -599,8 +626,9 @@ public abstract class PrometheusColumnDefinition {
             extends PrometheusColumnDefinition {
         /**
          * Constructor.
+         *
          * @param pTable the table to which the column belongs
-         * @param pId the column id
+         * @param pId    the column id
          */
         PrometheusLongColumn(final PrometheusTableDefinition pTable,
                              final MetisDataFieldId pId) {
@@ -616,6 +644,7 @@ public abstract class PrometheusColumnDefinition {
 
         /**
          * Set the value.
+         *
          * @param pValue the value
          */
         void setValue(final Long pValue) {
@@ -624,6 +653,7 @@ public abstract class PrometheusColumnDefinition {
 
         /**
          * Get the value.
+         *
          * @return the value
          */
         Long getValue() {
@@ -660,8 +690,9 @@ public abstract class PrometheusColumnDefinition {
             extends PrometheusColumnDefinition {
         /**
          * Constructor.
+         *
          * @param pTable the table to which the column belongs
-         * @param pId the column id
+         * @param pId    the column id
          */
         PrometheusDateColumn(final PrometheusTableDefinition pTable,
                              final MetisDataFieldId pId) {
@@ -677,6 +708,7 @@ public abstract class PrometheusColumnDefinition {
 
         /**
          * Set the value.
+         *
          * @param pValue the value
          */
         void setValue(final OceanusDate pValue) {
@@ -685,6 +717,7 @@ public abstract class PrometheusColumnDefinition {
 
         /**
          * Get the value.
+         *
          * @return the value
          */
         OceanusDate getValue() {
@@ -723,8 +756,9 @@ public abstract class PrometheusColumnDefinition {
             extends PrometheusColumnDefinition {
         /**
          * Constructor.
+         *
          * @param pTable the table to which the column belongs
-         * @param pId the column id
+         * @param pId    the column id
          */
         PrometheusBooleanColumn(final PrometheusTableDefinition pTable,
                                 final MetisDataFieldId pId) {
@@ -740,6 +774,7 @@ public abstract class PrometheusColumnDefinition {
 
         /**
          * Set the value.
+         *
          * @param pValue the value
          */
         void setValue(final Boolean pValue) {
@@ -748,6 +783,7 @@ public abstract class PrometheusColumnDefinition {
 
         /**
          * Get the value.
+         *
          * @return the value
          */
         Boolean getValue() {
@@ -789,8 +825,9 @@ public abstract class PrometheusColumnDefinition {
 
         /**
          * Constructor.
-         * @param pTable the table to which the column belongs
-         * @param pId the column id
+         *
+         * @param pTable  the table to which the column belongs
+         * @param pId     the column id
          * @param pLength the length
          */
         protected PrometheusStringColumn(final PrometheusTableDefinition pTable,
@@ -812,6 +849,7 @@ public abstract class PrometheusColumnDefinition {
 
         /**
          * Set the value.
+         *
          * @param pValue the value
          */
         protected void setValue(final String pValue) {
@@ -820,6 +858,7 @@ public abstract class PrometheusColumnDefinition {
 
         /**
          * Get the value.
+         *
          * @return the value
          */
         protected String getValue() {
@@ -852,8 +891,9 @@ public abstract class PrometheusColumnDefinition {
             extends PrometheusStringColumn {
         /**
          * Constructor.
+         *
          * @param pTable the table to which the column belongs
-         * @param pId the column id
+         * @param pId    the column id
          */
         PrometheusMoneyColumn(final PrometheusTableDefinition pTable,
                               final MetisDataFieldId pId) {
@@ -869,6 +909,7 @@ public abstract class PrometheusColumnDefinition {
 
         /**
          * Set the value.
+         *
          * @param pValue the value
          */
         void setValue(final OceanusMoney pValue) {
@@ -893,6 +934,7 @@ public abstract class PrometheusColumnDefinition {
 
         /**
          * Obtain the value.
+         *
          * @param pFormatter the data formatter
          * @return the money value
          * @throws OceanusException on error
@@ -913,8 +955,9 @@ public abstract class PrometheusColumnDefinition {
             extends PrometheusStringColumn {
         /**
          * Constructor.
+         *
          * @param pTable the table to which the column belongs
-         * @param pId the column id
+         * @param pId    the column id
          */
         PrometheusRateColumn(final PrometheusTableDefinition pTable,
                              final MetisDataFieldId pId) {
@@ -935,6 +978,7 @@ public abstract class PrometheusColumnDefinition {
 
         /**
          * Set the value.
+         *
          * @param pValue the value
          */
         void setValue(final OceanusRate pValue) {
@@ -959,6 +1003,7 @@ public abstract class PrometheusColumnDefinition {
 
         /**
          * Obtain the value.
+         *
          * @param pFormatter the data formatter
          * @return the money value
          * @throws OceanusException on error
@@ -979,8 +1024,9 @@ public abstract class PrometheusColumnDefinition {
             extends PrometheusStringColumn {
         /**
          * Constructor.
+         *
          * @param pTable the table to which the column belongs
-         * @param pId the column id
+         * @param pId    the column id
          */
         PrometheusPriceColumn(final PrometheusTableDefinition pTable,
                               final MetisDataFieldId pId) {
@@ -1001,6 +1047,7 @@ public abstract class PrometheusColumnDefinition {
 
         /**
          * Set the value.
+         *
          * @param pValue the value
          */
         void setValue(final OceanusPrice pValue) {
@@ -1025,6 +1072,7 @@ public abstract class PrometheusColumnDefinition {
 
         /**
          * Obtain the value.
+         *
          * @param pFormatter the data formatter
          * @return the money value
          * @throws OceanusException on error
@@ -1045,8 +1093,9 @@ public abstract class PrometheusColumnDefinition {
             extends PrometheusStringColumn {
         /**
          * Constructor.
+         *
          * @param pTable the table to which the column belongs
-         * @param pId the column id
+         * @param pId    the column id
          */
         PrometheusUnitsColumn(final PrometheusTableDefinition pTable,
                               final MetisDataFieldId pId) {
@@ -1067,6 +1116,7 @@ public abstract class PrometheusColumnDefinition {
 
         /**
          * Set the value.
+         *
          * @param pValue the value
          */
         void setValue(final OceanusUnits pValue) {
@@ -1091,6 +1141,7 @@ public abstract class PrometheusColumnDefinition {
 
         /**
          * Obtain the value.
+         *
          * @param pFormatter the data formatter
          * @return the money value
          * @throws OceanusException on error
@@ -1111,8 +1162,9 @@ public abstract class PrometheusColumnDefinition {
             extends PrometheusStringColumn {
         /**
          * Constructor.
+         *
          * @param pTable the table to which the column belongs
-         * @param pId the column id
+         * @param pId    the column id
          */
         PrometheusRatioColumn(final PrometheusTableDefinition pTable,
                               final MetisDataFieldId pId) {
@@ -1133,6 +1185,7 @@ public abstract class PrometheusColumnDefinition {
 
         /**
          * Set the value.
+         *
          * @param pValue the value
          */
         void setValue(final OceanusRatio pValue) {
@@ -1157,6 +1210,7 @@ public abstract class PrometheusColumnDefinition {
 
         /**
          * Obtain the value.
+         *
          * @param pFormatter the data formatter
          * @return the money value
          * @throws OceanusException on error
@@ -1182,8 +1236,9 @@ public abstract class PrometheusColumnDefinition {
 
         /**
          * Constructor.
-         * @param pTable the table to which the column belongs
-         * @param pId the column id
+         *
+         * @param pTable  the table to which the column belongs
+         * @param pId     the column id
          * @param pLength the length of the column
          */
         PrometheusBinaryColumn(final PrometheusTableDefinition pTable,
@@ -1208,6 +1263,7 @@ public abstract class PrometheusColumnDefinition {
 
         /**
          * Set the value.
+         *
          * @param pValue the value
          */
         void setValue(final byte[] pValue) {
@@ -1216,6 +1272,7 @@ public abstract class PrometheusColumnDefinition {
 
         /**
          * Get the value.
+         *
          * @return the value
          */
         byte[] getValue() {

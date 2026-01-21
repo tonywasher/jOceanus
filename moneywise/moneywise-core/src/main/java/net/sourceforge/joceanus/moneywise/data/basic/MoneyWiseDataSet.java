@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,12 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.data.basic;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.metis.list.MetisListKey;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCash.MoneyWiseCashList;
@@ -59,9 +62,6 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticResource;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTaxBasis.MoneyWiseTaxBasisList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryType.MoneyWiseTransCategoryTypeList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoType.MoneyWiseTransInfoTypeList;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataList;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
 import net.sourceforge.joceanus.prometheus.toolkit.PrometheusToolkit;
@@ -111,6 +111,7 @@ public class MoneyWiseDataSet
 
     /**
      * Standard constructor.
+     *
      * @param pUtilitySet the utility set
      * @param pTaxFactory the tax factory
      */
@@ -137,6 +138,7 @@ public class MoneyWiseDataSet
 
     /**
      * Constructor for a cloned DataSet.
+     *
      * @param pSource the source DataSet
      */
     private MoneyWiseDataSet(final MoneyWiseDataSet pSource) {
@@ -156,6 +158,7 @@ public class MoneyWiseDataSet
 
     /**
      * Obtain DepositCategoryTypes.
+     *
      * @return the Deposit category types
      */
     public MoneyWiseDepositCategoryTypeList getDepositCategoryTypes() {
@@ -164,6 +167,7 @@ public class MoneyWiseDataSet
 
     /**
      * Obtain CashCategoryTypes.
+     *
      * @return the Cash category types
      */
     public MoneyWiseCashCategoryTypeList getCashCategoryTypes() {
@@ -172,6 +176,7 @@ public class MoneyWiseDataSet
 
     /**
      * Obtain LoanCategoryTypes.
+     *
      * @return the Loan category types
      */
     public MoneyWiseLoanCategoryTypeList getLoanCategoryTypes() {
@@ -180,6 +185,7 @@ public class MoneyWiseDataSet
 
     /**
      * Obtain PayeeTypes.
+     *
      * @return the Payee types
      */
     public MoneyWisePayeeTypeList getPayeeTypes() {
@@ -188,6 +194,7 @@ public class MoneyWiseDataSet
 
     /**
      * Obtain PortfolioTypes.
+     *
      * @return the Portfolio types
      */
     public MoneyWisePortfolioTypeList getPortfolioTypes() {
@@ -196,6 +203,7 @@ public class MoneyWiseDataSet
 
     /**
      * Obtain SecurityTypes.
+     *
      * @return the Security types
      */
     public MoneyWiseSecurityTypeList getSecurityTypes() {
@@ -204,6 +212,7 @@ public class MoneyWiseDataSet
 
     /**
      * Obtain TransactionCategoryTypes.
+     *
      * @return the Transaction Category types
      */
     public MoneyWiseTransCategoryTypeList getTransCategoryTypes() {
@@ -212,6 +221,7 @@ public class MoneyWiseDataSet
 
     /**
      * Obtain TaxBases.
+     *
      * @return the Tax bases
      */
     public MoneyWiseTaxBasisList getTaxBases() {
@@ -220,6 +230,7 @@ public class MoneyWiseDataSet
 
     /**
      * Obtain Asset Currencies.
+     *
      * @return the Asset Currencies
      */
     public MoneyWiseCurrencyList getAccountCurrencies() {
@@ -228,6 +239,7 @@ public class MoneyWiseDataSet
 
     /**
      * Obtain AccountInfoTypes.
+     *
      * @return the Account Info types
      */
     public MoneyWiseAccountInfoTypeList getActInfoTypes() {
@@ -236,6 +248,7 @@ public class MoneyWiseDataSet
 
     /**
      * Obtain TransactionInfoTypes.
+     *
      * @return the Transaction Info types
      */
     public MoneyWiseTransInfoTypeList getTransInfoTypes() {
@@ -244,6 +257,7 @@ public class MoneyWiseDataSet
 
     /**
      * Obtain Transaction Tags.
+     *
      * @return the Transaction Tags
      */
     public MoneyWiseTransTagList getTransactionTags() {
@@ -252,6 +266,7 @@ public class MoneyWiseDataSet
 
     /**
      * Obtain Regions.
+     *
      * @return the regions
      */
     public MoneyWiseRegionList getRegions() {
@@ -260,6 +275,7 @@ public class MoneyWiseDataSet
 
     /**
      * Obtain DepositCategories.
+     *
      * @return the Deposit categories
      */
     public MoneyWiseDepositCategoryList getDepositCategories() {
@@ -268,6 +284,7 @@ public class MoneyWiseDataSet
 
     /**
      * Obtain CashCategories.
+     *
      * @return the Cash categories
      */
     public MoneyWiseCashCategoryList getCashCategories() {
@@ -276,6 +293,7 @@ public class MoneyWiseDataSet
 
     /**
      * Obtain LoanCategories.
+     *
      * @return the Loan categories
      */
     public MoneyWiseLoanCategoryList getLoanCategories() {
@@ -284,6 +302,7 @@ public class MoneyWiseDataSet
 
     /**
      * Obtain TransactionCategories.
+     *
      * @return the Transaction categories
      */
     public MoneyWiseTransCategoryList getTransCategories() {
@@ -292,6 +311,7 @@ public class MoneyWiseDataSet
 
     /**
      * Obtain ExchangeRates.
+     *
      * @return the ExchangeRates
      */
     public MoneyWiseExchangeRateList getExchangeRates() {
@@ -300,6 +320,7 @@ public class MoneyWiseDataSet
 
     /**
      * Obtain Payees.
+     *
      * @return the Payees
      */
     public MoneyWisePayeeList getPayees() {
@@ -308,6 +329,7 @@ public class MoneyWiseDataSet
 
     /**
      * Obtain PayeeInfo.
+     *
      * @return the Payee Info
      */
     public MoneyWisePayeeInfoList getPayeeInfo() {
@@ -316,6 +338,7 @@ public class MoneyWiseDataSet
 
     /**
      * Obtain Securities.
+     *
      * @return the Securities
      */
     public MoneyWiseSecurityList getSecurities() {
@@ -324,6 +347,7 @@ public class MoneyWiseDataSet
 
     /**
      * Obtain SecurityPrices.
+     *
      * @return the Security prices
      */
     public MoneyWiseSecurityPriceList getSecurityPrices() {
@@ -332,6 +356,7 @@ public class MoneyWiseDataSet
 
     /**
      * Obtain SecurityInfo.
+     *
      * @return the Security Info
      */
     public MoneyWiseSecurityInfoList getSecurityInfo() {
@@ -340,6 +365,7 @@ public class MoneyWiseDataSet
 
     /**
      * Obtain Deposits.
+     *
      * @return the Deposits
      */
     public MoneyWiseDepositList getDeposits() {
@@ -348,6 +374,7 @@ public class MoneyWiseDataSet
 
     /**
      * Obtain DepositRates.
+     *
      * @return the Deposit rates
      */
     public MoneyWiseDepositRateList getDepositRates() {
@@ -356,6 +383,7 @@ public class MoneyWiseDataSet
 
     /**
      * Obtain DepositInfo.
+     *
      * @return the Deposit Info
      */
     public MoneyWiseDepositInfoList getDepositInfo() {
@@ -364,6 +392,7 @@ public class MoneyWiseDataSet
 
     /**
      * Obtain Cash.
+     *
      * @return the Cash
      */
     public MoneyWiseCashList getCash() {
@@ -372,6 +401,7 @@ public class MoneyWiseDataSet
 
     /**
      * Obtain CashInfo.
+     *
      * @return the Cash Info
      */
     public MoneyWiseCashInfoList getCashInfo() {
@@ -380,6 +410,7 @@ public class MoneyWiseDataSet
 
     /**
      * Obtain Loans.
+     *
      * @return the Loans
      */
     public MoneyWiseLoanList getLoans() {
@@ -388,6 +419,7 @@ public class MoneyWiseDataSet
 
     /**
      * Obtain LoanInfo.
+     *
      * @return the Loan Info
      */
     public MoneyWiseLoanInfoList getLoanInfo() {
@@ -396,6 +428,7 @@ public class MoneyWiseDataSet
 
     /**
      * Obtain Portfolios.
+     *
      * @return the Portfolios
      */
     public MoneyWisePortfolioList getPortfolios() {
@@ -404,6 +437,7 @@ public class MoneyWiseDataSet
 
     /**
      * Obtain PortfolioInfo.
+     *
      * @return the Portfolio Info
      */
     public MoneyWisePortfolioInfoList getPortfolioInfo() {
@@ -412,6 +446,7 @@ public class MoneyWiseDataSet
 
     /**
      * Obtain Transactions.
+     *
      * @return the Transactions
      */
     public MoneyWiseTransactionList getTransactions() {
@@ -420,6 +455,7 @@ public class MoneyWiseDataSet
 
     /**
      * Obtain TransactionInfo.
+     *
      * @return the Transaction Info
      */
     public MoneyWiseTransInfoList getTransactionInfo() {
@@ -428,6 +464,7 @@ public class MoneyWiseDataSet
 
     /**
      * Obtain Tax Factory.
+     *
      * @return the taxFactory
      */
     public MoneyWiseTaxFactory getTaxFactory() {
@@ -436,6 +473,7 @@ public class MoneyWiseDataSet
 
     /**
      * Obtain Date range.
+     *
      * @return the Date Range
      */
     public OceanusDateRange getDateRange() {
@@ -444,6 +482,7 @@ public class MoneyWiseDataSet
 
     /**
      * Obtain default currency.
+     *
      * @return the default currency
      */
     public MoneyWiseCurrency getReportingCurrency() {
@@ -457,6 +496,7 @@ public class MoneyWiseDataSet
 
     /**
      * Obtain security prices map.
+     *
      * @return the prices map
      */
     public MoneyWiseSecurityPriceDataMap getSecurityPriceDataMap() {
@@ -465,6 +505,7 @@ public class MoneyWiseDataSet
 
     /**
      * Obtain deposit rates map.
+     *
      * @return the rates map
      */
     public MoneyWiseDepositRateDataMap getDepositRateDataMap() {
@@ -473,6 +514,7 @@ public class MoneyWiseDataSet
 
     /**
      * Obtain exchange rates map.
+     *
      * @return the rates map
      */
     public MoneyWiseExchangeRateDataMap getExchangeRateDataMap() {
@@ -481,6 +523,7 @@ public class MoneyWiseDataSet
 
     /**
      * Should we check closed accounts?
+     *
      * @return true/false
      */
     public boolean checkClosedAccounts() {
@@ -503,6 +546,7 @@ public class MoneyWiseDataSet
 
     /**
      * Should we perform new validity checks?
+     *
      * @return true/false
      */
     public boolean newValidityChecks() {
@@ -511,6 +555,7 @@ public class MoneyWiseDataSet
 
     /**
      * Create new list of required type.
+     *
      * @param pListType the list type
      * @return the new list
      */
@@ -546,6 +591,7 @@ public class MoneyWiseDataSet
 
     /**
      * Create new list of required type.
+     *
      * @param pListType the list type
      * @return the new list
      */
@@ -635,8 +681,9 @@ public class MoneyWiseDataSet
      * items that differ between the two DataSets. Items that are in this list, but not in the old
      * list will be viewed as inserted. Items that are in the old list but not in this list will be
      * viewed as deleted. Items that are in both lists but differ will be viewed as changed
+     *
      * @param pReport the report
-     * @param pOld The DataSet to compare to
+     * @param pOld    The DataSet to compare to
      * @return the difference extract
      * @throws OceanusException on error
      */

@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,19 +13,19 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets;
 
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -67,9 +67,10 @@ public final class MoneyWiseXAnalysisTaxBasisAccountBucket
 
     /**
      * Constructor.
+     *
      * @param pAnalysis the analysis
-     * @param pParent the parent bucket
-     * @param pAccount the account
+     * @param pParent   the parent bucket
+     * @param pAccount  the account
      */
     MoneyWiseXAnalysisTaxBasisAccountBucket(final MoneyWiseXAnalysis pAnalysis,
                                             final MoneyWiseXAnalysisTaxBasisBucket pParent,
@@ -83,10 +84,11 @@ public final class MoneyWiseXAnalysisTaxBasisAccountBucket
 
     /**
      * Constructor.
+     *
      * @param pAnalysis the analysis
-     * @param pParent the parent bucket
-     * @param pBase the underlying bucket
-     * @param pDate the date for the bucket
+     * @param pParent   the parent bucket
+     * @param pBase     the underlying bucket
+     * @param pDate     the date for the bucket
      */
     private MoneyWiseXAnalysisTaxBasisAccountBucket(final MoneyWiseXAnalysis pAnalysis,
                                                     final MoneyWiseXAnalysisTaxBasisBucket pParent,
@@ -101,10 +103,11 @@ public final class MoneyWiseXAnalysisTaxBasisAccountBucket
 
     /**
      * Constructor.
+     *
      * @param pAnalysis the analysis
-     * @param pParent the parent bucket
-     * @param pBase the underlying bucket
-     * @param pRange the range for the bucket
+     * @param pParent   the parent bucket
+     * @param pBase     the underlying bucket
+     * @param pRange    the range for the bucket
      */
     private MoneyWiseXAnalysisTaxBasisAccountBucket(final MoneyWiseXAnalysis pAnalysis,
                                                     final MoneyWiseXAnalysisTaxBasisBucket pParent,
@@ -119,6 +122,7 @@ public final class MoneyWiseXAnalysisTaxBasisAccountBucket
 
     /**
      * derive asset key for an asset.
+     *
      * @param pAsset the asset
      * @return the asset key
      */
@@ -144,6 +148,7 @@ public final class MoneyWiseXAnalysisTaxBasisAccountBucket
 
     /**
      * Obtain simple name.
+     *
      * @return the simple name
      */
     public String getSimpleName() {
@@ -153,12 +158,13 @@ public final class MoneyWiseXAnalysisTaxBasisAccountBucket
     @Override
     public String getName() {
         return getTaxBasis().getName()
-               + ':'
-               + getSimpleName();
+                + ':'
+                + getSimpleName();
     }
 
     /**
      * Obtain account.
+     *
      * @return the account
      */
     public MoneyWiseTransAsset getAccount() {
@@ -167,6 +173,7 @@ public final class MoneyWiseXAnalysisTaxBasisAccountBucket
 
     /**
      * Obtain parent.
+     *
      * @return the parent
      */
     public MoneyWiseXAnalysisTaxBasisBucket getParent() {
@@ -212,8 +219,9 @@ public final class MoneyWiseXAnalysisTaxBasisAccountBucket
 
         /**
          * Construct a top-level List.
+         *
          * @param pAnalysis the analysis
-         * @param pParent the parent bucket
+         * @param pParent   the parent bucket
          */
         protected MoneyWiseXAnalysisTaxBasisAccountBucketList(final MoneyWiseXAnalysis pAnalysis,
                                                               final MoneyWiseXAnalysisTaxBasisBucket pParent) {
@@ -225,10 +233,11 @@ public final class MoneyWiseXAnalysisTaxBasisAccountBucket
 
         /**
          * Construct a dated List.
+         *
          * @param pAnalysis the analysis
-         * @param pParent the parent bucket
-         * @param pBase the base list
-         * @param pDate the Date
+         * @param pParent   the parent bucket
+         * @param pBase     the base list
+         * @param pDate     the Date
          */
         protected MoneyWiseXAnalysisTaxBasisAccountBucketList(final MoneyWiseXAnalysis pAnalysis,
                                                               final MoneyWiseXAnalysisTaxBasisBucket pParent,
@@ -256,10 +265,11 @@ public final class MoneyWiseXAnalysisTaxBasisAccountBucket
 
         /**
          * Construct a ranged List.
+         *
          * @param pAnalysis the analysis
-         * @param pParent the parent bucket
-         * @param pBase the base list
-         * @param pRange the Date Range
+         * @param pParent   the parent bucket
+         * @param pBase     the base list
+         * @param pRange    the Date Range
          */
         protected MoneyWiseXAnalysisTaxBasisAccountBucketList(final MoneyWiseXAnalysis pAnalysis,
                                                               final MoneyWiseXAnalysisTaxBasisBucket pParent,
@@ -305,6 +315,7 @@ public final class MoneyWiseXAnalysisTaxBasisAccountBucket
 
         /**
          * Obtain the analysis.
+         *
          * @return the analysis
          */
         protected MoneyWiseXAnalysis getAnalysis() {
@@ -313,14 +324,15 @@ public final class MoneyWiseXAnalysisTaxBasisAccountBucket
 
         /**
          * Adjust value.
+         *
          * @param pAccount the relevant account
-         * @param pValue the value
-         * @param pAdjust adjustment control
+         * @param pValue   the value
+         * @param pAdjust  adjustment control
          * @return the adjusted taxBasisAccountBucket (or null)
          */
-        MoneyWiseXAnalysisTaxBasisAccountBucket  adjustValue(final MoneyWiseTransAsset pAccount,
-                                                             final OceanusMoney pValue,
-                                                             final MoneyWiseXTaxBasisAdjust pAdjust) {
+        MoneyWiseXAnalysisTaxBasisAccountBucket adjustValue(final MoneyWiseTransAsset pAccount,
+                                                            final OceanusMoney pValue,
+                                                            final MoneyWiseXTaxBasisAdjust pAdjust) {
             /* Access the relevant account bucket */
             final MoneyWiseXAnalysisTaxBasisAccountBucket myBucket = getBucket(pAccount);
 
@@ -330,6 +342,7 @@ public final class MoneyWiseXAnalysisTaxBasisAccountBucket
 
         /**
          * Obtain the TaxBasisAccountBucket for a given account.
+         *
          * @param pAccount the account
          * @return the bucket
          */
@@ -355,6 +368,7 @@ public final class MoneyWiseXAnalysisTaxBasisAccountBucket
 
         /**
          * Find the TaxBasisAccountBucket for a given account.
+         *
          * @param pAccount the account
          * @return the bucket (or null)
          */

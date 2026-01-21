@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,14 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.data.basic;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateFormatter;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataList;
@@ -24,11 +29,6 @@ import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDeposit.MoneyWiseDepositList;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateFormatter;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInstanceMap;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataMapItem;
@@ -48,6 +48,7 @@ import java.util.Map;
 
 /**
  * DepositRate data type.
+ *
  * @author Tony Washer
  */
 public class MoneyWiseDepositRate
@@ -84,7 +85,8 @@ public class MoneyWiseDepositRate
 
     /**
      * Copy Constructor.
-     * @param pList the list
+     *
+     * @param pList   the list
      * @param pPeriod The Period to copy
      */
     protected MoneyWiseDepositRate(final MoneyWiseDepositRateList pList,
@@ -95,6 +97,7 @@ public class MoneyWiseDepositRate
 
     /**
      * Edit Constructor.
+     *
      * @param pList the list
      */
     public MoneyWiseDepositRate(final MoneyWiseDepositRateList pList) {
@@ -103,7 +106,8 @@ public class MoneyWiseDepositRate
 
     /**
      * Values constructor.
-     * @param pList the List to add to
+     *
+     * @param pList   the List to add to
      * @param pValues the values constructor
      * @throws OceanusException on error
      */
@@ -221,6 +225,7 @@ public class MoneyWiseDepositRate
 
     /**
      * Obtain Rate.
+     *
      * @return the rate
      */
     public OceanusRate getRate() {
@@ -229,6 +234,7 @@ public class MoneyWiseDepositRate
 
     /**
      * Obtain Encrypted rate.
+     *
      * @return the Bytes
      */
     public byte[] getRateBytes() {
@@ -237,6 +243,7 @@ public class MoneyWiseDepositRate
 
     /**
      * Obtain Encrypted Rate Field.
+     *
      * @return the Field
      */
     private PrometheusEncryptedPair getRateField() {
@@ -245,6 +252,7 @@ public class MoneyWiseDepositRate
 
     /**
      * Obtain Bonus.
+     *
      * @return the bonus rate
      */
     public OceanusRate getBonus() {
@@ -253,6 +261,7 @@ public class MoneyWiseDepositRate
 
     /**
      * Obtain Encrypted bonus.
+     *
      * @return the Bytes
      */
     public byte[] getBonusBytes() {
@@ -261,6 +270,7 @@ public class MoneyWiseDepositRate
 
     /**
      * Obtain Encrypted Rate Field.
+     *
      * @return the Field
      */
     private PrometheusEncryptedPair getBonusField() {
@@ -269,6 +279,7 @@ public class MoneyWiseDepositRate
 
     /**
      * Obtain date.
+     *
      * @return the date
      */
     public OceanusDate getDate() {
@@ -277,6 +288,7 @@ public class MoneyWiseDepositRate
 
     /**
      * Obtain End Date.
+     *
      * @return the End Date
      */
     public OceanusDate getEndDate() {
@@ -285,6 +297,7 @@ public class MoneyWiseDepositRate
 
     /**
      * Obtain Deposit.
+     *
      * @return the deposit
      */
     public MoneyWiseDeposit getDeposit() {
@@ -293,6 +306,7 @@ public class MoneyWiseDepositRate
 
     /**
      * Obtain DepositId.
+     *
      * @return the depositId
      */
     public Integer getDepositId() {
@@ -304,6 +318,7 @@ public class MoneyWiseDepositRate
 
     /**
      * Obtain DepositName.
+     *
      * @return the depositName
      */
     public String getDepositName() {
@@ -315,6 +330,7 @@ public class MoneyWiseDepositRate
 
     /**
      * Set the account.
+     *
      * @param pValue the account
      */
     private void setValueDeposit(final MoneyWiseDeposit pValue) {
@@ -323,6 +339,7 @@ public class MoneyWiseDepositRate
 
     /**
      * Set the deposit id.
+     *
      * @param pId the deposit id
      */
     private void setValueDeposit(final Integer pId) {
@@ -331,6 +348,7 @@ public class MoneyWiseDepositRate
 
     /**
      * Set the deposit name.
+     *
      * @param pName the deposit name
      */
     private void setValueDeposit(final String pName) {
@@ -339,6 +357,7 @@ public class MoneyWiseDepositRate
 
     /**
      * Set the rate.
+     *
      * @param pValue the rate
      * @throws OceanusException on error
      */
@@ -348,6 +367,7 @@ public class MoneyWiseDepositRate
 
     /**
      * Set the rate.
+     *
      * @param pBytes the encrypted rate
      * @throws OceanusException on error
      */
@@ -357,6 +377,7 @@ public class MoneyWiseDepositRate
 
     /**
      * Set the rate.
+     *
      * @param pValue the rate
      */
     private void setValueRate(final PrometheusEncryptedPair pValue) {
@@ -365,6 +386,7 @@ public class MoneyWiseDepositRate
 
     /**
      * Set the rate.
+     *
      * @param pValue the rate
      */
     private void setValueRate(final String pValue) {
@@ -373,6 +395,7 @@ public class MoneyWiseDepositRate
 
     /**
      * Set the bonus rate.
+     *
      * @param pValue the bonus rate
      * @throws OceanusException on error
      */
@@ -382,6 +405,7 @@ public class MoneyWiseDepositRate
 
     /**
      * Set the encrypted bonus.
+     *
      * @param pBytes the encrypted bonus
      * @throws OceanusException on error
      */
@@ -391,6 +415,7 @@ public class MoneyWiseDepositRate
 
     /**
      * Set the bonus.
+     *
      * @param pValue the bonus
      */
     private void setValueBonus(final PrometheusEncryptedPair pValue) {
@@ -399,6 +424,7 @@ public class MoneyWiseDepositRate
 
     /**
      * Set the bonus.
+     *
      * @param pValue the bonus
      */
     private void setValueBonus(final String pValue) {
@@ -407,6 +433,7 @@ public class MoneyWiseDepositRate
 
     /**
      * Set the end date.
+     *
      * @param pValue the date
      */
     private void setValueEndDate(final OceanusDate pValue) {
@@ -430,6 +457,7 @@ public class MoneyWiseDepositRate
 
     /**
      * Compare this rate to another to establish sort order.
+     *
      * @param pThat The Rate to compare to
      * @return (-1,0,1) depending of whether this object is before, equal, or after the passed
      * object in the sort order
@@ -469,6 +497,7 @@ public class MoneyWiseDepositRate
 
     /**
      * Resolve links in an updateSet.
+     *
      * @param pEditSet the edit Set
      * @throws OceanusException on error
      */
@@ -480,6 +509,7 @@ public class MoneyWiseDepositRate
 
     /**
      * Set the deposit.
+     *
      * @param pValue the deposit
      */
     public void setDeposit(final MoneyWiseDeposit pValue) {
@@ -488,6 +518,7 @@ public class MoneyWiseDepositRate
 
     /**
      * Set a new rate.
+     *
      * @param pRate the rate
      * @throws OceanusException on error
      */
@@ -497,6 +528,7 @@ public class MoneyWiseDepositRate
 
     /**
      * Set a new bonus.
+     *
      * @param pBonus the rate
      * @throws OceanusException on error
      */
@@ -506,6 +538,7 @@ public class MoneyWiseDepositRate
 
     /**
      * Set a new date.
+     *
      * @param pDate the new date
      */
     public void setEndDate(final OceanusDate pDate) {
@@ -528,6 +561,7 @@ public class MoneyWiseDepositRate
 
     /**
      * Update Rate from a Rate extract.
+     *
      * @param pRate the updated item
      * @return whether changes have been made
      */
@@ -580,6 +614,7 @@ public class MoneyWiseDepositRate
 
         /**
          * Construct an empty CORE rate list.
+         *
          * @param pData the DataSet for the list
          */
         protected MoneyWiseDepositRateList(final MoneyWiseDataSet pData) {
@@ -588,6 +623,7 @@ public class MoneyWiseDepositRate
 
         /**
          * Constructor for a cloned List.
+         *
          * @param pSource the source List
          */
         private MoneyWiseDepositRateList(final MoneyWiseDepositRateList pSource) {
@@ -628,6 +664,7 @@ public class MoneyWiseDepositRate
 
         /**
          * Construct an edit extract of a Rate list.
+         *
          * @param pEditSet the editSet
          * @return the edit list
          * @throws OceanusException on error
@@ -658,6 +695,7 @@ public class MoneyWiseDepositRate
 
         /**
          * Add a new item to the core list.
+         *
          * @param pRate item
          * @return the newly added item
          */
@@ -675,6 +713,7 @@ public class MoneyWiseDepositRate
 
         /**
          * Add a new item to the edit list.
+         *
          * @return the new item
          */
         @Override
@@ -757,6 +796,7 @@ public class MoneyWiseDepositRate
 
         /**
          * Obtain mapOfMaps.
+         *
          * @return the map
          */
         private Map<MoneyWiseDeposit, Map<OceanusDate, Integer>> getMapOfMaps() {
@@ -765,6 +805,7 @@ public class MoneyWiseDepositRate
 
         /**
          * Obtain mapOfRates.
+         *
          * @return the map
          */
         private Map<MoneyWiseDeposit, MoneyWiseRateList> getMapOfRates() {
@@ -807,6 +848,7 @@ public class MoneyWiseDepositRate
 
         /**
          * Check validity of Rate.
+         *
          * @param pItem the rate
          * @return true/false
          */
@@ -826,8 +868,9 @@ public class MoneyWiseDepositRate
 
         /**
          * Check availability of date for a deposit.
+         *
          * @param pDeposit the deposit
-         * @param pDate the key to look up
+         * @param pDate    the key to look up
          * @return true/false
          */
         public boolean availableDate(final MoneyWiseDeposit pDeposit,
@@ -840,8 +883,9 @@ public class MoneyWiseDepositRate
 
         /**
          * Obtain rate for date.
+         *
          * @param pDeposit the deposit
-         * @param pDate the date
+         * @param pDate    the date
          * @return the latest rate for the date.
          */
         public MoneyWiseDepositRate getRateForDate(final MoneyWiseDeposit pDeposit,
@@ -898,6 +942,7 @@ public class MoneyWiseDepositRate
 
             /**
              * Constructor.
+             *
              * @param pDeposit the deposit
              */
             private MoneyWiseRateList(final MoneyWiseDeposit pDeposit) {

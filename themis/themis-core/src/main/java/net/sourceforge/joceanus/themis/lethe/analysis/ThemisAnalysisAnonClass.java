@@ -1,29 +1,29 @@
-/*******************************************************************************
+/*
  * Themis: Java Project Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package net.sourceforge.joceanus.themis.lethe.analysis;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.themis.lethe.analysis.ThemisAnalysisContainer.ThemisAnalysisAdoptable;
+import net.sourceforge.joceanus.themis.lethe.analysis.ThemisAnalysisFile.ThemisAnalysisObject;
 
 import java.util.ArrayDeque;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.List;
-
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.lethe.analysis.ThemisAnalysisContainer.ThemisAnalysisAdoptable;
-import net.sourceforge.joceanus.themis.lethe.analysis.ThemisAnalysisFile.ThemisAnalysisObject;
 
 /**
  * Anonymous Class.
@@ -72,8 +72,9 @@ public class ThemisAnalysisAnonClass
 
     /**
      * Constructor.
+     *
      * @param pParser the parser
-     * @param pLine the initial class line
+     * @param pLine   the initial class line
      * @throws OceanusException on error
      */
     ThemisAnalysisAnonClass(final ThemisAnalysisParser pParser,
@@ -168,6 +169,7 @@ public class ThemisAnalysisAnonClass
 
     /**
      * Check for anonymous class.
+     *
      * @param pLine the line to check
      * @return true/false
      */

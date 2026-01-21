@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Prometheus: Application Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,25 +13,24 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.prometheus.service.sheet.hssf;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
+import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCell;
+import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCellAddress;
+import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetException;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
-
-import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCell;
-import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCellAddress;
-import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
 
 /**
  * Class representing a cell within a sheet or a view.
@@ -50,10 +49,11 @@ public class PrometheusExcelHSSFCell
 
     /**
      * Constructor.
-     * @param pRow the row for the cell
+     *
+     * @param pRow       the row for the cell
      * @param pExcelCell the Excel Cell
-     * @param pColIndex the column index
-     * @param pReadOnly is the cell readOnly?
+     * @param pColIndex  the column index
+     * @param pReadOnly  is the cell readOnly?
      */
     PrometheusExcelHSSFCell(final PrometheusExcelHSSFRow pRow,
                             final HSSFCell pExcelCell,
@@ -67,9 +67,10 @@ public class PrometheusExcelHSSFCell
 
     /**
      * Parse a value.
-     * @param <T> the value type to parse
+     *
+     * @param <T>     the value type to parse
      * @param pSource the string to parse.
-     * @param pClass the value type class.
+     * @param pClass  the value type class.
      * @return the parsed value
      * @throws OceanusException on error
      */
@@ -80,7 +81,7 @@ public class PrometheusExcelHSSFCell
         } catch (IllegalArgumentException e) {
             final PrometheusSheetCellAddress myAddress = new PrometheusSheetCellAddress(theExcelRow.getSheet().getName(), getPosition());
             throw new PrometheusSheetException(pSource, "Bad Value at Cell "
-                                                   + myAddress, e);
+                    + myAddress, e);
         }
     }
 
@@ -94,8 +95,8 @@ public class PrometheusExcelHSSFCell
             case FORMULA:
                 final CellValue myValue = theExcelRow.evaluateFormula(theExcelCell);
                 return CellType.BOOLEAN == myValue.getCellType()
-                                                                 ? myValue.getBooleanValue()
-                                                                 : null;
+                        ? myValue.getBooleanValue()
+                        : null;
             default:
                 return null;
         }
@@ -104,8 +105,8 @@ public class PrometheusExcelHSSFCell
     @Override
     public OceanusDate getDate() {
         return CellType.NUMERIC == theExcelCell.getCellType()
-                                                              ? new OceanusDate(theExcelCell.getDateCellValue())
-                                                              : null;
+                ? new OceanusDate(theExcelCell.getDateCellValue())
+                : null;
     }
 
     @Override
@@ -117,8 +118,8 @@ public class PrometheusExcelHSSFCell
             case FORMULA:
                 final CellValue myCellValue = theExcelRow.evaluateFormula(theExcelCell);
                 return CellType.NUMERIC == myCellValue.getCellType()
-                                                                     ? ((Double) myCellValue.getNumberValue()).intValue()
-                                                                     : null;
+                        ? ((Double) myCellValue.getNumberValue()).intValue()
+                        : null;
             default:
                 return null;
         }
@@ -133,8 +134,8 @@ public class PrometheusExcelHSSFCell
             case FORMULA:
                 final CellValue myCellValue = theExcelRow.evaluateFormula(theExcelCell);
                 return CellType.NUMERIC == myCellValue.getCellType()
-                                                                     ? ((Double) myCellValue.getNumberValue()).longValue()
-                                                                     : null;
+                        ? ((Double) myCellValue.getNumberValue()).longValue()
+                        : null;
             default:
                 return null;
         }
@@ -159,6 +160,7 @@ public class PrometheusExcelHSSFCell
 
     /**
      * Resolve the formula value as string.
+     *
      * @return the resolved value
      */
     private String getStringFormulaValue() {
@@ -219,7 +221,7 @@ public class PrometheusExcelHSSFCell
 
         /* Set the style for the cell */
         theExcelRow.setCellStyle(this, pValue);
-     }
+    }
 
     @Override
     protected void setIntegerValue(final Integer pValue) {
@@ -274,6 +276,7 @@ public class PrometheusExcelHSSFCell
 
     /**
      * Set cell style.
+     *
      * @param pStyle the style type to use
      */
     void setCellStyle(final HSSFCellStyle pStyle) {

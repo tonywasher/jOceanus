@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,11 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.ui.dialog;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
@@ -33,8 +35,6 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseLoanCategoryClas
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.moneywise.ui.MoneyWiseIcon;
 import net.sourceforge.joceanus.moneywise.ui.base.MoneyWiseAssetTable;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.prometheus.ui.fieldset.PrometheusFieldSet;
 import net.sourceforge.joceanus.prometheus.ui.fieldset.PrometheusFieldSetEvent;
@@ -73,9 +73,10 @@ public class MoneyWiseLoanDialog
 
     /**
      * Constructor.
+     *
      * @param pFactory the GUI factory
      * @param pEditSet the edit set
-     * @param pOwner the owning table
+     * @param pOwner   the owning table
      */
     public MoneyWiseLoanDialog(final TethysUIFactory<?> pFactory,
                                final PrometheusEditSet pEditSet,
@@ -99,6 +100,7 @@ public class MoneyWiseLoanDialog
 
     /**
      * Build Main subPanel.
+     *
      * @param pFactory the GUI factory
      */
     private void buildMainPanel(final TethysUIFactory<?> pFactory) {
@@ -135,6 +137,7 @@ public class MoneyWiseLoanDialog
 
     /**
      * Build account subPanel.
+     *
      * @param pFactory the GUI factory
      */
     private void buildAccountPanel(final TethysUIFactory<?> pFactory) {
@@ -161,10 +164,11 @@ public class MoneyWiseLoanDialog
         mySortCode.setValidator(this::isValidSortCode);
         myAccount.setValidator(this::isValidAccount);
         myReference.setValidator(this::isValidReference);
-     }
+    }
 
     /**
      * Build Notes subPanel.
+     *
      * @param pFactory the GUI factory
      */
     private void buildNotesPanel(final TethysUIFactory<?> pFactory) {
@@ -297,6 +301,7 @@ public class MoneyWiseLoanDialog
 
     /**
      * Build the category menu for an item.
+     *
      * @param pMenu the menu
      * @param pLoan the loan to build for
      */
@@ -348,6 +353,7 @@ public class MoneyWiseLoanDialog
 
     /**
      * Build the parent menu for an item.
+     *
      * @param pMenu the menu
      * @param pLoan the loan to build for
      */
@@ -394,6 +400,7 @@ public class MoneyWiseLoanDialog
 
     /**
      * Build the currency menu for an item.
+     *
      * @param pMenu the menu
      * @param pLoan the loan to build for
      */

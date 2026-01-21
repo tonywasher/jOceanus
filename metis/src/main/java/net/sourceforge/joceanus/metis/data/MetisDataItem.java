@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Metis: Java Data Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,11 +13,11 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.metis.data;
 
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 
 import java.util.Iterator;
 import java.util.List;
@@ -40,6 +40,7 @@ public final class MetisDataItem {
     public interface MetisDataObjectFormat {
         /**
          * Obtain Object summary.
+         *
          * @param pFormatter the data formatter
          * @return the display summary of the object
          */
@@ -54,6 +55,7 @@ public final class MetisDataItem {
     public interface MetisDataIndexedItem {
         /**
          * Get the Id to index the list.
+         *
          * @return the Id
          */
         Integer getIndexedId();
@@ -65,6 +67,7 @@ public final class MetisDataItem {
     public interface MetisDataNamedItem {
         /**
          * Get the Name.
+         *
          * @return the name
          */
         String getName();
@@ -76,6 +79,7 @@ public final class MetisDataItem {
     public interface MetisDataDatedItem {
         /**
          * Get the Date.
+         *
          * @return the date
          */
         OceanusDate getDate();
@@ -88,6 +92,7 @@ public final class MetisDataItem {
     public interface MetisDataDisableItem {
         /**
          * Determine whether the item is disabled.
+         *
          * @return true/false
          */
         boolean isDisabled();
@@ -99,6 +104,7 @@ public final class MetisDataItem {
     public interface MetisDataFieldId {
         /**
          * Obtain the fieldId.
+         *
          * @return the fieldId
          */
         String getId();
@@ -110,6 +116,7 @@ public final class MetisDataItem {
     public interface MetisDataSingularItem {
         /**
          * Obtain the singular value.
+         *
          * @return the value
          */
         MetisDataSingularValue getSingularValue();
@@ -121,6 +128,7 @@ public final class MetisDataItem {
     public interface MetisDataSingularValue {
         /**
          * Is the value singular?
+         *
          * @return true/false
          */
         boolean isSingular();
@@ -132,6 +140,7 @@ public final class MetisDataItem {
     public interface MetisDataDeletableItem {
         /**
          * Is this active?
+         *
          * @return true/false
          */
         default boolean isActive() {
@@ -140,12 +149,14 @@ public final class MetisDataItem {
 
         /**
          * Is this item deleted?
+         *
          * @return true/false
          */
         boolean isDeleted();
 
         /**
          * Set the deleted flags for the item.
+         *
          * @param pFlag true/false
          */
         void setDeleted(boolean pFlag);
@@ -153,6 +164,7 @@ public final class MetisDataItem {
 
     /**
      * List interface.
+     *
      * @param <T> the list element type
      */
     @FunctionalInterface
@@ -160,35 +172,39 @@ public final class MetisDataItem {
             extends MetisDataObjectFormat {
         /**
          * Obtain underlying list.
+         *
          * @return the list
          */
         List<T> getUnderlyingList();
 
         /**
          * Obtain the list iterator.
+         *
          * @return the iterator
          */
         default Iterator<T> iterator() {
             final List<T> myList = getUnderlyingList();
             return myList == null
-                                  ? null
-                                  : myList.iterator();
+                    ? null
+                    : myList.iterator();
         }
 
         /**
          * Obtain the list iterator.
+         *
          * @param pIndex the list position
          * @return the iterator
          */
         default ListIterator<T> listIterator(final int pIndex) {
             final List<T> myList = getUnderlyingList();
             return myList == null
-                                  ? null
-                                  : myList.listIterator(pIndex);
+                    ? null
+                    : myList.listIterator(pIndex);
         }
 
         /**
          * Is the list empty?.
+         *
          * @return true/false
          */
         default boolean isEmpty() {
@@ -198,13 +214,14 @@ public final class MetisDataItem {
 
         /**
          * Obtain the size of the list.
+         *
          * @return the size
          */
         default int size() {
             final List<T> myList = getUnderlyingList();
             return myList == null
-                                  ? 0
-                                  : myList.size();
+                    ? 0
+                    : myList.size();
         }
 
         /**
@@ -219,6 +236,7 @@ public final class MetisDataItem {
 
         /**
          * Add the item.
+         *
          * @param pItem the item
          * @return true/false - was item added?
          */
@@ -228,8 +246,9 @@ public final class MetisDataItem {
 
         /**
          * Add the item at index.
+         *
          * @param pIndex the index
-         * @param pItem the item
+         * @param pItem  the item
          */
         default void add(final int pIndex,
                          final T pItem) {
@@ -238,6 +257,7 @@ public final class MetisDataItem {
 
         /**
          * Remove the item.
+         *
          * @param pItem the item
          * @return true/false - was item in list?
          */
@@ -248,20 +268,23 @@ public final class MetisDataItem {
 
     /**
      * Map interface.
+     *
      * @param <K> the map key type
      * @param <V> the map value type
      */
     @FunctionalInterface
     public interface MetisDataMap<K, V>
-        extends MetisDataObjectFormat {
+            extends MetisDataObjectFormat {
         /**
          * Obtain underlying map.
+         *
          * @return the map
          */
         Map<K, V> getUnderlyingMap();
 
         /**
          * Is the map empty?.
+         *
          * @return true/false
          */
         default boolean isEmpty() {
@@ -270,6 +293,7 @@ public final class MetisDataItem {
 
         /**
          * Obtain the size of the map.
+         *
          * @return the size
          */
         default int size() {
@@ -278,7 +302,8 @@ public final class MetisDataItem {
 
         /**
          * Put the value into the map.
-         * @param pKey the key
+         *
+         * @param pKey   the key
          * @param pValue the value
          * @return the original value
          */
@@ -289,6 +314,7 @@ public final class MetisDataItem {
 
         /**
          * Obtain the value for the key.
+         *
          * @param pKey the key
          * @return the associated value
          */

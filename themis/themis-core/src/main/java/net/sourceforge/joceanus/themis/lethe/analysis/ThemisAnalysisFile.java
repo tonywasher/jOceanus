@@ -1,26 +1,26 @@
-/*******************************************************************************
+/*
  * Themis: Java Project Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package net.sourceforge.joceanus.themis.lethe.analysis;
 
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.lethe.analysis.ThemisAnalysisDataMap.ThemisAnalysisDataType;
-import net.sourceforge.joceanus.themis.lethe.analysis.ThemisAnalysisDataMap.ThemisAnalysisIntermediate;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.exc.ThemisDataException;
 import net.sourceforge.joceanus.themis.exc.ThemisIOException;
+import net.sourceforge.joceanus.themis.lethe.analysis.ThemisAnalysisDataMap.ThemisAnalysisDataType;
+import net.sourceforge.joceanus.themis.lethe.analysis.ThemisAnalysisDataMap.ThemisAnalysisIntermediate;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -37,7 +37,7 @@ import java.util.List;
  * Analysis representation of a java file.
  */
 public class ThemisAnalysisFile
-    implements ThemisAnalysisContainer, ThemisAnalysisIntermediate {
+        implements ThemisAnalysisContainer, ThemisAnalysisIntermediate {
     /**
      * Object class.
      */
@@ -45,24 +45,28 @@ public class ThemisAnalysisFile
             extends ThemisAnalysisDataType, ThemisAnalysisContainer {
         /**
          * Obtain the short name.
+         *
          * @return the name
          */
         String getShortName();
 
         /**
          * Obtain the full name of the object.
+         *
          * @return the fullName
          */
         String getFullName();
 
         /**
          * Obtain ancestors.
+         *
          * @return the list of ancestors
          */
         List<ThemisAnalysisReference> getAncestors();
 
         /**
          * Obtain properties.
+         *
          * @return the properties
          */
         ThemisAnalysisProperties getProperties();
@@ -105,8 +109,9 @@ public class ThemisAnalysisFile
 
     /**
      * Constructor.
+     *
      * @param pPackage the package
-     * @param pFile the file to analyse
+     * @param pFile    the file to analyse
      */
     ThemisAnalysisFile(final ThemisAnalysisPackage pPackage,
                        final File pFile) {
@@ -122,6 +127,7 @@ public class ThemisAnalysisFile
 
     /**
      * Obtain the name of the fileClass.
+     *
      * @return the name
      */
     public String getName() {
@@ -130,6 +136,7 @@ public class ThemisAnalysisFile
 
     /**
      * Obtain the location of the fileClass.
+     *
      * @return the location
      */
     public String getLocation() {
@@ -138,6 +145,7 @@ public class ThemisAnalysisFile
 
     /**
      * Process the file.
+     *
      * @throws OceanusException on error
      */
     void processFile() throws OceanusException {
@@ -154,7 +162,7 @@ public class ThemisAnalysisFile
              BufferedReader myReader = new BufferedReader(myInputReader)) {
 
             /* Read the header entry */
-            for (;;) {
+            for (; ; ) {
                 /* Read some characters into the buffer */
                 final int myChars = myReader.read(myBuffer, myOffset, BUFLEN - myOffset);
                 if (myChars == -1 && myOffset == 0) {
@@ -196,6 +204,7 @@ public class ThemisAnalysisFile
 
     /**
      * Obtain the package.
+     *
      * @return the package
      */
     String getPackageName() {
@@ -209,8 +218,9 @@ public class ThemisAnalysisFile
 
     /**
      * Process lines.
-     * @param pLines the list of lines to build
-     * @param pBuffer the character buffer
+     *
+     * @param pLines    the list of lines to build
+     * @param pBuffer   the character buffer
      * @param pNumChars the number of characters in the buffer
      * @return the remaining characters in the buffer
      * @throws OceanusException on error
@@ -222,7 +232,7 @@ public class ThemisAnalysisFile
         int myOffset = 0;
 
         /* Look for line feed in the buffer */
-        int myLF  = findLineFeedInBuffer(pBuffer, 0, pNumChars);
+        int myLF = findLineFeedInBuffer(pBuffer, 0, pNumChars);
         while (myLF != -1) {
             /* Build the line */
             final ThemisAnalysisLine myLine = buildLine(pBuffer, myOffset, myLF);
@@ -230,7 +240,7 @@ public class ThemisAnalysisFile
 
             /* Look for next lineFeed */
             myOffset = myLF + 1;
-            myLF  = findLineFeedInBuffer(pBuffer, myOffset, pNumChars);
+            myLF = findLineFeedInBuffer(pBuffer, myOffset, pNumChars);
         }
 
         /* Copy remaining characters down */
@@ -245,8 +255,9 @@ public class ThemisAnalysisFile
 
     /**
      * Find lineFeed in buffer.
-     * @param pBuffer the character buffer
-     * @param pOffset the starting offset
+     *
+     * @param pBuffer   the character buffer
+     * @param pOffset   the starting offset
      * @param pNumChars the number of characters in the buffer
      * @return the remaining characters in the buffer
      * @throws OceanusException on error
@@ -257,7 +268,7 @@ public class ThemisAnalysisFile
         /* Loop through the buffer */
         for (int i = pOffset; i < pNumChars; i++) {
             /* Check for LF and NULL */
-            switch (pBuffer[i])  {
+            switch (pBuffer[i]) {
                 case ThemisAnalysisChar.LF:
                     return i;
                 case ThemisAnalysisChar.NULL:
@@ -273,8 +284,9 @@ public class ThemisAnalysisFile
 
     /**
      * Build line from buffer.
-     * @param pBuffer the character buffer
-     * @param pOffset the starting offset
+     *
+     * @param pBuffer   the character buffer
+     * @param pOffset   the starting offset
      * @param pLineFeed the location of the lineFeed
      * @return the new line
      */
@@ -293,6 +305,7 @@ public class ThemisAnalysisFile
 
     /**
      * Post-process the lines as first Pass.
+     *
      * @param pLines the lines to process
      * @throws OceanusException on error
      */
@@ -307,8 +320,8 @@ public class ThemisAnalysisFile
 
             /* Process comments/blanks/package/imports */
             boolean processed = myParser.processCommentsAndBlanks(myLine)
-                    ||  processPackage(myLine)
-                    ||  myParser.processImports(myLine);
+                    || processPackage(myLine)
+                    || myParser.processImports(myLine);
 
             /* If we haven't processed yet */
             if (!processed) {
@@ -331,6 +344,7 @@ public class ThemisAnalysisFile
 
     /**
      * perform consolidation processing pass.
+     *
      * @throws OceanusException on error
      */
     void consolidationProcessingPass() throws OceanusException {
@@ -340,6 +354,7 @@ public class ThemisAnalysisFile
 
     /**
      * Perform final processing pass.
+     *
      * @throws OceanusException on error
      */
     void finalProcessingPass() throws OceanusException {
@@ -361,6 +376,7 @@ public class ThemisAnalysisFile
 
     /**
      * Process a potential import line.
+     *
      * @param pLine the line
      * @return have we processed the line?
      * @throws OceanusException on error

@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,12 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.lethe.views;
 
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
@@ -51,12 +54,10 @@ import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAn
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisTaxBasisValues;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisTransAttr;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseViewResource;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 
 /**
  * Analysis Filter Classes.
+ *
  * @param <B> the underlying bucket type
  * @param <T> the attribute for the filter
  */
@@ -99,8 +100,9 @@ public abstract class MoneyWiseAnalysisFilter<B, T extends Enum<T> & MoneyWiseAn
 
     /**
      * Constructor.
+     *
      * @param pBucket the underlying bucket
-     * @param pClass the attribute class
+     * @param pClass  the attribute class
      */
     protected MoneyWiseAnalysisFilter(final B pBucket,
                                       final Class<T> pClass) {
@@ -122,6 +124,7 @@ public abstract class MoneyWiseAnalysisFilter<B, T extends Enum<T> & MoneyWiseAn
 
     /**
      * Set attribute.
+     *
      * @param pAttr the attribute
      */
     public void setCurrentAttribute(final MoneyWiseAnalysisAttribute pAttr) {
@@ -130,6 +133,7 @@ public abstract class MoneyWiseAnalysisFilter<B, T extends Enum<T> & MoneyWiseAn
 
     /**
      * Obtain current attribute.
+     *
      * @return the current attribute
      */
     public T getCurrentAttribute() {
@@ -138,12 +142,14 @@ public abstract class MoneyWiseAnalysisFilter<B, T extends Enum<T> & MoneyWiseAn
 
     /**
      * Get Analysis Type.
+     *
      * @return the Analysis Type
      */
     public abstract MoneyWiseAnalysisType getAnalysisType();
 
     /**
      * Obtain underlying bucket.
+     *
      * @return theBucket
      */
     public B getBucket() {
@@ -152,6 +158,7 @@ public abstract class MoneyWiseAnalysisFilter<B, T extends Enum<T> & MoneyWiseAn
 
     /**
      * Obtain the dateRange.
+     *
      * @return the dateRange
      */
     public OceanusDateRange getDateRange() {
@@ -160,6 +167,7 @@ public abstract class MoneyWiseAnalysisFilter<B, T extends Enum<T> & MoneyWiseAn
 
     /**
      * Obtain the dateRange.
+     *
      * @param pRange the dateRange
      */
     public void setDateRange(final OceanusDateRange pRange) {
@@ -168,6 +176,7 @@ public abstract class MoneyWiseAnalysisFilter<B, T extends Enum<T> & MoneyWiseAn
 
     /**
      * Should we filter this transaction out?
+     *
      * @param pTrans the transaction to check
      * @return true/false
      */
@@ -175,17 +184,19 @@ public abstract class MoneyWiseAnalysisFilter<B, T extends Enum<T> & MoneyWiseAn
         /* Check whether this transaction is registered */
         return !pTrans.isHeader()
                 && (theDateRange.compareToDate(pTrans.getDate()) != 0
-                    || getValuesForTransaction(pTrans) == null);
+                || getValuesForTransaction(pTrans) == null);
     }
 
     /**
      * Obtain base bucket values.
+     *
      * @return the value
      */
     protected abstract MoneyWiseAnalysisValues<?, T> getBaseValues();
 
     /**
      * Obtain values for transaction.
+     *
      * @param pTrans the transaction
      * @return the values
      */
@@ -193,6 +204,7 @@ public abstract class MoneyWiseAnalysisFilter<B, T extends Enum<T> & MoneyWiseAn
 
     /**
      * Obtain delta value for transaction.
+     *
      * @param pTrans the transaction
      * @return the delta value
      */
@@ -200,6 +212,7 @@ public abstract class MoneyWiseAnalysisFilter<B, T extends Enum<T> & MoneyWiseAn
 
     /**
      * Populate new transaction.
+     *
      * @param pBuilder the transaction builder
      * @return the new transaction (or null)
      */
@@ -207,6 +220,7 @@ public abstract class MoneyWiseAnalysisFilter<B, T extends Enum<T> & MoneyWiseAn
 
     /**
      * is the counter relevant?
+     *
      * @param pCounter the counter
      * @return true/false
      */
@@ -216,6 +230,7 @@ public abstract class MoneyWiseAnalysisFilter<B, T extends Enum<T> & MoneyWiseAn
 
     /**
      * Obtain starting value for attribute.
+     *
      * @return the value
      */
     public OceanusDecimal getStartingBalance() {
@@ -225,6 +240,7 @@ public abstract class MoneyWiseAnalysisFilter<B, T extends Enum<T> & MoneyWiseAn
 
     /**
      * Obtain total money value for attribute.
+     *
      * @param pTrans the transaction to check
      * @return the value
      */
@@ -237,6 +253,7 @@ public abstract class MoneyWiseAnalysisFilter<B, T extends Enum<T> & MoneyWiseAn
 
     /**
      * Obtain delta debit value for attribute.
+     *
      * @param pTrans the transaction to check
      * @return the value
      */
@@ -255,6 +272,7 @@ public abstract class MoneyWiseAnalysisFilter<B, T extends Enum<T> & MoneyWiseAn
 
     /**
      * Obtain delta credit value for attribute.
+     *
      * @param pTrans the transaction to check
      * @return the value
      */
@@ -268,6 +286,7 @@ public abstract class MoneyWiseAnalysisFilter<B, T extends Enum<T> & MoneyWiseAn
 
     /**
      * Obtain delta value for attribute.
+     *
      * @param pTrans the transaction to check
      * @return the value
      */
@@ -277,6 +296,7 @@ public abstract class MoneyWiseAnalysisFilter<B, T extends Enum<T> & MoneyWiseAn
 
     /**
      * Obtain analysis name.
+     *
      * @return the name
      */
     public abstract String getName();
@@ -310,6 +330,7 @@ public abstract class MoneyWiseAnalysisFilter<B, T extends Enum<T> & MoneyWiseAn
 
     /**
      * Account filter class.
+     *
      * @param <B> the underlying bucket type
      * @param <T> the account data type
      */
@@ -317,6 +338,7 @@ public abstract class MoneyWiseAnalysisFilter<B, T extends Enum<T> & MoneyWiseAn
             extends MoneyWiseAnalysisFilter<B, MoneyWiseAnalysisAccountAttr> {
         /**
          * Constructor.
+         *
          * @param pAccount the account bucket
          */
         protected MoneyWiseAnalysisAccountFilter(final B pAccount) {
@@ -358,6 +380,7 @@ public abstract class MoneyWiseAnalysisFilter<B, T extends Enum<T> & MoneyWiseAn
             extends MoneyWiseAnalysisAccountFilter<MoneyWiseAnalysisDepositBucket, MoneyWiseDeposit> {
         /**
          * Constructor.
+         *
          * @param pDeposit the deposit bucket
          */
         public MoneyWiseAnalysisDepositFilter(final MoneyWiseAnalysisDepositBucket pDeposit) {
@@ -397,6 +420,7 @@ public abstract class MoneyWiseAnalysisFilter<B, T extends Enum<T> & MoneyWiseAn
             extends MoneyWiseAnalysisAccountFilter<MoneyWiseAnalysisCashBucket, MoneyWiseCash> {
         /**
          * Constructor.
+         *
          * @param pCash the cash bucket
          */
         public MoneyWiseAnalysisCashFilter(final MoneyWiseAnalysisCashBucket pCash) {
@@ -435,6 +459,7 @@ public abstract class MoneyWiseAnalysisFilter<B, T extends Enum<T> & MoneyWiseAn
             extends MoneyWiseAnalysisAccountFilter<MoneyWiseAnalysisLoanBucket, MoneyWiseLoan> {
         /**
          * Constructor.
+         *
          * @param pLoan the loan bucket
          */
         public MoneyWiseAnalysisLoanFilter(final MoneyWiseAnalysisLoanBucket pLoan) {
@@ -474,6 +499,7 @@ public abstract class MoneyWiseAnalysisFilter<B, T extends Enum<T> & MoneyWiseAn
             extends MoneyWiseAnalysisFilter<MoneyWiseAnalysisSecurityBucket, MoneyWiseAnalysisSecurityAttr> {
         /**
          * Constructor.
+         *
          * @param pSecurity the security bucket
          */
         public MoneyWiseAnalysisSecurityFilter(final MoneyWiseAnalysisSecurityBucket pSecurity) {
@@ -546,6 +572,7 @@ public abstract class MoneyWiseAnalysisFilter<B, T extends Enum<T> & MoneyWiseAn
 
         /**
          * Constructor.
+         *
          * @param pPortfolio the portfolio bucket
          */
         public MoneyWiseAnalysisPortfolioCashFilter(final MoneyWiseAnalysisPortfolioBucket pPortfolio) {
@@ -557,6 +584,7 @@ public abstract class MoneyWiseAnalysisFilter<B, T extends Enum<T> & MoneyWiseAn
 
         /**
          * Obtain portfolio bucket.
+         *
          * @return the portfolio bucket
          */
         public MoneyWiseAnalysisPortfolioBucket getPortfolioBucket() {
@@ -621,6 +649,7 @@ public abstract class MoneyWiseAnalysisFilter<B, T extends Enum<T> & MoneyWiseAn
             extends MoneyWiseAnalysisFilter<MoneyWiseAnalysisPayeeBucket, MoneyWiseAnalysisPayeeAttr> {
         /**
          * Constructor.
+         *
          * @param pPayee the payee bucket
          */
         public MoneyWiseAnalysisPayeeFilter(final MoneyWiseAnalysisPayeeBucket pPayee) {
@@ -667,6 +696,7 @@ public abstract class MoneyWiseAnalysisFilter<B, T extends Enum<T> & MoneyWiseAn
             extends MoneyWiseAnalysisFilter<MoneyWiseAnalysisTransCategoryBucket, MoneyWiseAnalysisTransAttr> {
         /**
          * Constructor.
+         *
          * @param pCategory the category bucket
          */
         public MoneyWiseAnalysisTransCategoryFilter(final MoneyWiseAnalysisTransCategoryBucket pCategory) {
@@ -716,6 +746,7 @@ public abstract class MoneyWiseAnalysisFilter<B, T extends Enum<T> & MoneyWiseAn
             extends MoneyWiseAnalysisFilter<MoneyWiseAnalysisTaxBasisBucket, MoneyWiseAnalysisTaxBasisAttr> {
         /**
          * Constructor.
+         *
          * @param pTaxBasis the taxBasis bucket
          */
         public MoneyWiseAnalysisTaxBasisFilter(final MoneyWiseAnalysisTaxBasisBucket pTaxBasis) {
@@ -762,6 +793,7 @@ public abstract class MoneyWiseAnalysisFilter<B, T extends Enum<T> & MoneyWiseAn
             extends MoneyWiseAnalysisFilter<MoneyWiseAnalysisTransTagBucket, MoneyWiseAnalysisAccountAttr> {
         /**
          * Constructor.
+         *
          * @param pTag the transactionTag
          */
         public MoneyWiseAnalysisTagFilter(final MoneyWiseAnalysisTransTagBucket pTag) {

@@ -1,23 +1,22 @@
-/*******************************************************************************
- * Tethys: Java Utilities
- * Copyright 2012-2026 Tony Washer
+/*
+ * Tethys: GUI Utilities
+ * Copyright 2012-2026. Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package net.sourceforge.joceanus.tethys.javafx.chart;
 
-import java.util.HashMap;
-import java.util.Map;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.chart.CategoryAxis;
@@ -28,11 +27,12 @@ import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.util.StringConverter;
-
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.tethys.core.chart.TethysUICoreBarChart;
 import net.sourceforge.joceanus.tethys.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.tethys.javafx.base.TethysUIFXNode;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * javaFX barChart.
@@ -56,6 +56,7 @@ public class TethysUIFXBarChart
 
     /**
      * Constructor.
+     *
      * @param pFactory the Gui Factory
      */
     TethysUIFXBarChart(final TethysUICoreFactory<?> pFactory) {

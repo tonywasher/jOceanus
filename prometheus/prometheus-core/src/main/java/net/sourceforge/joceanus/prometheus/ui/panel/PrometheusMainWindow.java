@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Prometheus: Application Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,17 +13,20 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.prometheus.ui.panel;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
+import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.metis.help.MetisHelpModule;
 import net.sourceforge.joceanus.metis.help.MetisHelpWindow;
 import net.sourceforge.joceanus.metis.toolkit.MetisToolkit;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerWindow;
-import net.sourceforge.joceanus.prometheus.threads.PrometheusThreadCreateTables;
-import net.sourceforge.joceanus.prometheus.toolkit.PrometheusToolkit;
 import net.sourceforge.joceanus.prometheus.threads.PrometheusThreadCreateBackup;
 import net.sourceforge.joceanus.prometheus.threads.PrometheusThreadCreateDatabase;
+import net.sourceforge.joceanus.prometheus.threads.PrometheusThreadCreateTables;
 import net.sourceforge.joceanus.prometheus.threads.PrometheusThreadCreateXMLFile;
 import net.sourceforge.joceanus.prometheus.threads.PrometheusThreadId;
 import net.sourceforge.joceanus.prometheus.threads.PrometheusThreadLoadBackup;
@@ -33,13 +36,10 @@ import net.sourceforge.joceanus.prometheus.threads.PrometheusThreadPurgeDatabase
 import net.sourceforge.joceanus.prometheus.threads.PrometheusThreadRenewSecurity;
 import net.sourceforge.joceanus.prometheus.threads.PrometheusThreadStoreDatabase;
 import net.sourceforge.joceanus.prometheus.threads.PrometheusThreadUpdatePassword;
+import net.sourceforge.joceanus.prometheus.toolkit.PrometheusToolkit;
 import net.sourceforge.joceanus.prometheus.ui.PrometheusMenuId;
 import net.sourceforge.joceanus.prometheus.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataControl;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
-import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
-import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.api.dialog.TethysUIAlert;
@@ -157,7 +157,7 @@ public abstract class PrometheusMainWindow
     /**
      * Build the main window.
      *
-     * @param pView       the Data view
+     * @param pView    the Data view
      * @param pToolkit the toolkit
      * @throws OceanusException on error
      */

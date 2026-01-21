@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,13 +13,13 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.data.basic;
 
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleLoader;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticResource;
-import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
-import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -853,6 +853,7 @@ public enum MoneyWiseBasicResource
 
     /**
      * Constructor.
+     *
      * @param pKeyName the key name
      */
     MoneyWiseBasicResource(final String pKeyName) {
@@ -861,6 +862,7 @@ public enum MoneyWiseBasicResource
 
     /**
      * Constructor.
+     *
      * @param pResource the underlying resource
      */
     MoneyWiseBasicResource(final OceanusBundleId pResource) {
@@ -902,6 +904,7 @@ public enum MoneyWiseBasicResource
 
     /**
      * Build asset type map.
+     *
      * @return the map
      */
     private static Map<MoneyWiseAssetType, OceanusBundleId> buildTypeMap() {
@@ -920,6 +923,7 @@ public enum MoneyWiseBasicResource
 
     /**
      * Obtain key for asset type.
+     *
      * @param pValue the Value
      * @return the resource key
      */
@@ -929,6 +933,7 @@ public enum MoneyWiseBasicResource
 
     /**
      * Build asset direction map.
+     *
      * @return the map
      */
     private static Map<MoneyWiseAssetDirection, OceanusBundleId> buildDirectionMap() {
@@ -941,6 +946,7 @@ public enum MoneyWiseBasicResource
 
     /**
      * Obtain key for asset direction.
+     *
      * @param pValue the Value
      * @return the resource key
      */
@@ -950,6 +956,7 @@ public enum MoneyWiseBasicResource
 
     /**
      * Build name map.
+     *
      * @return the map
      */
     private static Map<MoneyWiseBasicDataType, OceanusBundleId> buildNameMap() {
@@ -983,6 +990,7 @@ public enum MoneyWiseBasicResource
 
     /**
      * Obtain key for data item.
+     *
      * @param pValue the Value
      * @return the resource key
      */
@@ -992,6 +1000,7 @@ public enum MoneyWiseBasicResource
 
     /**
      * Build list map.
+     *
      * @return the map
      */
     private static Map<MoneyWiseBasicDataType, OceanusBundleId> buildListMap() {
@@ -1025,6 +1034,7 @@ public enum MoneyWiseBasicResource
 
     /**
      * Obtain key for data list.
+     *
      * @param pValue the Value
      * @return the resource key
      */

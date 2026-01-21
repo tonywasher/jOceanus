@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,10 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.data.statics;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.metis.data.MetisDataResource;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
@@ -24,10 +25,10 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
 import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataClass;
 import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataItem;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * TransactionCategoryType data type.
+ *
  * @author Tony Washer
  */
 public class MoneyWiseTransCategoryType
@@ -49,7 +50,8 @@ public class MoneyWiseTransCategoryType
 
     /**
      * Copy Constructor.
-     * @param pList The list to associate the Category Type with
+     *
+     * @param pList    The list to associate the Category Type with
      * @param pCatType The Category Type to copy
      */
     protected MoneyWiseTransCategoryType(final MoneyWiseTransCategoryTypeList pList,
@@ -59,6 +61,7 @@ public class MoneyWiseTransCategoryType
 
     /**
      * Basic Constructor.
+     *
      * @param pList The list to associate the Category Type with
      * @param pName Name of Category Type
      * @throws OceanusException on error
@@ -70,7 +73,8 @@ public class MoneyWiseTransCategoryType
 
     /**
      * Basic constructor.
-     * @param pList The list to associate the Category Type with
+     *
+     * @param pList  The list to associate the Category Type with
      * @param pClass Class of Category Type
      * @throws OceanusException on error
      */
@@ -81,7 +85,8 @@ public class MoneyWiseTransCategoryType
 
     /**
      * Values constructor.
-     * @param pList The list to associate the item with
+     *
+     * @param pList   The list to associate the item with
      * @param pValues the values
      * @throws OceanusException on error
      */
@@ -97,6 +102,7 @@ public class MoneyWiseTransCategoryType
 
     /**
      * Return the Category class of the Category Type.
+     *
      * @return the class
      */
     public MoneyWiseTransCategoryClass getCategoryClass() {
@@ -130,6 +136,7 @@ public class MoneyWiseTransCategoryType
 
         /**
          * Construct an empty CORE category type list.
+         *
          * @param pData the DataSet for the list
          */
         public MoneyWiseTransCategoryTypeList(final PrometheusDataSet pData) {
@@ -138,6 +145,7 @@ public class MoneyWiseTransCategoryType
 
         /**
          * Constructor for a cloned List.
+         *
          * @param pSource the source List
          */
         private MoneyWiseTransCategoryTypeList(final MoneyWiseTransCategoryTypeList pSource) {
@@ -173,6 +181,7 @@ public class MoneyWiseTransCategoryType
 
         /**
          * Add a new item to the list.
+         *
          * @param pItem item to be added
          * @return the newly added item
          */
@@ -190,6 +199,7 @@ public class MoneyWiseTransCategoryType
 
         /**
          * Create a new empty element in the edit list (null-operation).
+         *
          * @return the newly added item
          */
         @Override
@@ -199,6 +209,7 @@ public class MoneyWiseTransCategoryType
 
         /**
          * Obtain the type of the item.
+         *
          * @return the type of the item
          */
         public String itemType() {
@@ -207,6 +218,7 @@ public class MoneyWiseTransCategoryType
 
         /**
          * Add a TransactionCategoryType.
+         *
          * @param pCategoryType the Name of the category type
          * @return the new type
          * @throws OceanusException on error

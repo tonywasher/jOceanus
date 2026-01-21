@@ -1,44 +1,44 @@
-/*******************************************************************************
+/*
  * Themis: Java Project Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package net.sourceforge.joceanus.themis.lethe.analysis;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.themis.exc.ThemisDataException;
+import net.sourceforge.joceanus.themis.lethe.analysis.ThemisAnalysisGeneric.ThemisAnalysisGenericBase;
 
 import java.nio.CharBuffer;
 import java.util.Deque;
-
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.exc.ThemisDataException;
-import net.sourceforge.joceanus.themis.lethe.analysis.ThemisAnalysisGeneric.ThemisAnalysisGenericBase;
 
 /**
  * Line buffer.
  */
 public class ThemisAnalysisLine
-    implements ThemisAnalysisElement {
+        implements ThemisAnalysisElement {
     /**
      * The token terminators.
      */
     private static final char[] TERMINATORS = {
-        ThemisAnalysisChar.PARENTHESIS_OPEN,
-        ThemisAnalysisChar.PARENTHESIS_CLOSE,
-        ThemisAnalysisChar.GENERIC_OPEN,
-        ThemisAnalysisChar.COMMA,
-        ThemisAnalysisChar.SEMICOLON,
-        ThemisAnalysisChar.COLON,
-        ThemisAnalysisChar.ARRAY_OPEN
+            ThemisAnalysisChar.PARENTHESIS_OPEN,
+            ThemisAnalysisChar.PARENTHESIS_CLOSE,
+            ThemisAnalysisChar.GENERIC_OPEN,
+            ThemisAnalysisChar.COMMA,
+            ThemisAnalysisChar.SEMICOLON,
+            ThemisAnalysisChar.COLON,
+            ThemisAnalysisChar.ARRAY_OPEN
     };
 
     /**
@@ -53,9 +53,10 @@ public class ThemisAnalysisLine
 
     /**
      * Constructor.
+     *
      * @param pBuffer the buffer
      * @param pOffset the offset to copy from
-     * @param pLen the length
+     * @param pLen    the length
      */
     ThemisAnalysisLine(final char[] pBuffer,
                        final int pOffset,
@@ -75,6 +76,7 @@ public class ThemisAnalysisLine
 
     /**
      * Constructor.
+     *
      * @param pBuffer the buffer
      */
     ThemisAnalysisLine(final CharBuffer pBuffer) {
@@ -87,6 +89,7 @@ public class ThemisAnalysisLine
 
     /**
      * Constructor.
+     *
      * @param pLine the line
      */
     ThemisAnalysisLine(final ThemisAnalysisLine pLine) {
@@ -100,6 +103,7 @@ public class ThemisAnalysisLine
 
     /**
      * Constructor.
+     *
      * @param pLines the lines
      */
     ThemisAnalysisLine(final Deque<ThemisAnalysisElement> pLines) {
@@ -123,6 +127,7 @@ public class ThemisAnalysisLine
 
     /**
      * Obtain the length.
+     *
      * @return the length
      */
     public int getLength() {
@@ -131,6 +136,7 @@ public class ThemisAnalysisLine
 
     /**
      * Set the new length.
+     *
      * @param pLen the length
      */
     private void setLength(final int pLen) {
@@ -139,6 +145,7 @@ public class ThemisAnalysisLine
 
     /**
      * Adjust the position.
+     *
      * @param pAdjust the adjustment
      */
     private void adjustPosition(final int pAdjust) {
@@ -147,6 +154,7 @@ public class ThemisAnalysisLine
 
     /**
      * Obtain the character at the given position.
+     *
      * @param pIndex the position of the character
      * @return the character
      */
@@ -156,6 +164,7 @@ public class ThemisAnalysisLine
 
     /**
      * Obtain the properties.
+     *
      * @return the properties
      */
     public ThemisAnalysisProperties getProperties() {
@@ -164,6 +173,7 @@ public class ThemisAnalysisLine
 
     /**
      * Strip trailing comments.
+     *
      * @throws OceanusException on error
      */
     void stripTrailingComments() throws OceanusException {
@@ -181,9 +191,9 @@ public class ThemisAnalysisLine
                 final int myEnd = findEndOfQuotedSequence(myPos);
                 mySkipped += myEnd - myPos;
 
-            /* If we have a line comment */
+                /* If we have a line comment */
             } else if (myChar == ThemisAnalysisChar.COMMENT
-                && theBuffer.charAt(myPos + 1) == ThemisAnalysisChar.COMMENT) {
+                    && theBuffer.charAt(myPos + 1) == ThemisAnalysisChar.COMMENT) {
                 /* Reset the length */
                 setLength(myPos);
                 stripTrailingWhiteSpace();
@@ -250,6 +260,7 @@ public class ThemisAnalysisLine
 
     /**
      * Strip Modifiers.
+     *
      * @throws OceanusException on error
      */
     void stripModifiers() throws OceanusException {
@@ -279,6 +290,7 @@ public class ThemisAnalysisLine
 
     /**
      * Does line start with identifier?
+     *
      * @param pIdentifier the identifier
      * @return true/false
      * @throws OceanusException on error
@@ -316,6 +328,7 @@ public class ThemisAnalysisLine
 
     /**
      * Strip NextToken.
+     *
      * @return the next token
      */
     String stripNextToken() {
@@ -327,6 +340,7 @@ public class ThemisAnalysisLine
 
     /**
      * Peek NextToken.
+     *
      * @return the next token
      */
     String peekNextToken() {
@@ -348,6 +362,7 @@ public class ThemisAnalysisLine
 
     /**
      * Strip NextToken.
+     *
      * @return the next token
      */
     String stripLastToken() {
@@ -359,6 +374,7 @@ public class ThemisAnalysisLine
 
     /**
      * Peek lastToken.
+     *
      * @return the last token
      */
     String peekLastToken() {
@@ -380,6 +396,7 @@ public class ThemisAnalysisLine
 
     /**
      * Is the character a token terminator?
+     *
      * @param pChar the character
      * @return true/false
      */
@@ -395,6 +412,7 @@ public class ThemisAnalysisLine
 
     /**
      * Is the character in the list?
+     *
      * @param pChar the character
      * @param pList the list of characters
      * @return true/false
@@ -415,6 +433,7 @@ public class ThemisAnalysisLine
 
     /**
      * Strip data up to position.
+     *
      * @param pPosition the position to strip to (inclusive)
      * @return the stripped line
      */
@@ -428,6 +447,7 @@ public class ThemisAnalysisLine
 
     /**
      * Does line start with the sequence?
+     *
      * @param pSequence the sequence
      * @return true/false
      */
@@ -452,6 +472,7 @@ public class ThemisAnalysisLine
 
     /**
      * Does line start with the character?
+     *
      * @param pChar the character
      * @return true/false
      */
@@ -468,6 +489,7 @@ public class ThemisAnalysisLine
 
     /**
      * Strip the starting sequence.
+     *
      * @param pSequence the sequence
      */
     void stripStartSequence(final CharSequence pSequence) {
@@ -481,6 +503,7 @@ public class ThemisAnalysisLine
 
     /**
      * Strip the starting character.
+     *
      * @param pChar the character
      */
     void stripStartChar(final char pChar) {
@@ -494,6 +517,7 @@ public class ThemisAnalysisLine
 
     /**
      * Does line end with the sequence?
+     *
      * @param pSequence the sequence
      * @return true/false
      */
@@ -521,6 +545,7 @@ public class ThemisAnalysisLine
 
     /**
      * Does line end with the character?
+     *
      * @param pChar the character
      * @return true/false
      */
@@ -537,6 +562,7 @@ public class ThemisAnalysisLine
 
     /**
      * Strip the starting sequence.
+     *
      * @param pSequence the sequence
      */
     void stripEndSequence(final CharSequence pSequence) {
@@ -550,6 +576,7 @@ public class ThemisAnalysisLine
 
     /**
      * Strip the ending character.
+     *
      * @param pChar the character
      */
     void stripEndChar(final char pChar) {
@@ -564,13 +591,14 @@ public class ThemisAnalysisLine
     /**
      * Find end of nested sequence, allowing for escaped quotes.
      * <p>
-     *     To enable distinction between finding the end of the sequence from still being nested, the nestLevel
-     *     is negative. Hence a result that is negative indicates that the sequence is continuing.
+     * To enable distinction between finding the end of the sequence from still being nested, the nestLevel
+     * is negative. Hence a result that is negative indicates that the sequence is continuing.
      * </p>
+     *
      * @param pStart the start position
      * @param pLevel the current nestLevel (negative value)
-     * @param pTerm the end nest character
-     * @param pNest the start nest character
+     * @param pTerm  the end nest character
+     * @param pNest  the start nest character
      * @return the position of the end of the nest if (non-negative), or nestLevel (negative) if not terminated.
      * @throws OceanusException on error
      */
@@ -632,8 +660,9 @@ public class ThemisAnalysisLine
     /**
      * Find end of single/double quoted sequence, allowing for escaped quote.
      * <p>
-     *     Note that a quoted sequence cannot span lines.
+     * Note that a quoted sequence cannot span lines.
      * </p>
+     *
      * @param pStart the start position of the quote
      * @return the end position of the sequence.
      * @throws OceanusException on error

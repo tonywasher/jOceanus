@@ -1,22 +1,22 @@
-/*******************************************************************************
+/*
  * Themis: Java Project Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package net.sourceforge.joceanus.themis.xanalysis.parser.proj;
 
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisChar;
 import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisParserDef;
 
@@ -51,8 +51,9 @@ public class ThemisXAnalysisPackage {
 
     /**
      * Constructor.
+     *
      * @param pLocation the location
-     * @param pPackage the package name.
+     * @param pPackage  the package name.
      * @throws OceanusException on error
      */
     ThemisXAnalysisPackage(final File pLocation,
@@ -71,6 +72,7 @@ public class ThemisXAnalysisPackage {
 
     /**
      * Obtain the package.
+     *
      * @return the package
      */
     public String getPackage() {
@@ -79,6 +81,7 @@ public class ThemisXAnalysisPackage {
 
     /**
      * Obtain the location.
+     *
      * @return the location
      */
     public File getLocation() {
@@ -87,6 +90,7 @@ public class ThemisXAnalysisPackage {
 
     /**
      * Obtain the files.
+     *
      * @return the files
      */
     public List<ThemisXAnalysisFile> getFiles() {
@@ -95,6 +99,7 @@ public class ThemisXAnalysisPackage {
 
     /**
      * Build list of files.
+     *
      * @param pLocation the location
      * @return the list of files
      */
@@ -103,7 +108,7 @@ public class ThemisXAnalysisPackage {
         final List<ThemisXAnalysisFile> myClasses = new ArrayList<>();
 
         /* Loop through the entries in the directory */
-        for (File myFile: Objects.requireNonNull(pLocation.listFiles())) {
+        for (File myFile : Objects.requireNonNull(pLocation.listFiles())) {
             /* Handle files */
             if (!myFile.isDirectory()) {
                 /* Access the name of the file */
@@ -125,6 +130,7 @@ public class ThemisXAnalysisPackage {
 
     /**
      * parse the Java Code.
+     *
      * @param pParser the parser
      * @throws OceanusException on error
      */

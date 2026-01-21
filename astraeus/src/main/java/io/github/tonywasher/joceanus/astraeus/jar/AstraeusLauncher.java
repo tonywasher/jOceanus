@@ -17,7 +17,7 @@
 package io.github.tonywasher.joceanus.astraeus.jar;
 
 import io.github.tonywasher.joceanus.astraeus.exc.AstraeusException;
-import net.sourceforge.joceanus.oceanus.base.OceanusSystem;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusSystem;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;

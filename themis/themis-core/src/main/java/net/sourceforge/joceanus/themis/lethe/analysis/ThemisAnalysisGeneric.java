@@ -1,29 +1,29 @@
-/*******************************************************************************
+/*
  * Themis: Java Project Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package net.sourceforge.joceanus.themis.lethe.analysis;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.themis.exc.ThemisDataException;
+import net.sourceforge.joceanus.themis.lethe.analysis.ThemisAnalysisDataMap.ThemisAnalysisDataType;
 
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 import java.util.ListIterator;
-
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.exc.ThemisDataException;
-import net.sourceforge.joceanus.themis.lethe.analysis.ThemisAnalysisDataMap.ThemisAnalysisDataType;
 
 /**
  * Generic construct.
@@ -31,6 +31,7 @@ import net.sourceforge.joceanus.themis.lethe.analysis.ThemisAnalysisDataMap.Them
 public interface ThemisAnalysisGeneric {
     /**
      * Is the line a generic?
+     *
      * @param pLine the line
      * @return true/false
      */
@@ -51,12 +52,13 @@ public interface ThemisAnalysisGeneric {
 
         /**
          * Constructor.
+         *
          * @param pLine the line
          * @throws OceanusException on error
          */
         ThemisAnalysisGenericBase(final ThemisAnalysisLine pLine) throws OceanusException {
             /* Find the end of the generic sequence */
-            final int myEnd = pLine.findEndOfNestedSequence(0, 0,  ThemisAnalysisChar.GENERIC_CLOSE, ThemisAnalysisChar.GENERIC_OPEN);
+            final int myEnd = pLine.findEndOfNestedSequence(0, 0, ThemisAnalysisChar.GENERIC_CLOSE, ThemisAnalysisChar.GENERIC_OPEN);
             if (myEnd < 0) {
                 throw new ThemisDataException("End character not found");
             }
@@ -69,8 +71,9 @@ public interface ThemisAnalysisGeneric {
 
         /**
          * Constructor.
+         *
          * @param pParser the parser
-         * @param pLine the line
+         * @param pLine   the line
          * @throws OceanusException on error
          */
         ThemisAnalysisGenericBase(final ThemisAnalysisParser pParser,
@@ -89,6 +92,7 @@ public interface ThemisAnalysisGeneric {
 
         /**
          * Obtain the line.
+         *
          * @return the line
          */
         ThemisAnalysisLine getLine() {
@@ -118,8 +122,9 @@ public interface ThemisAnalysisGeneric {
 
         /**
          * Constructor.
+         *
          * @param pParser the parser
-         * @param pBase the base generic line
+         * @param pBase   the base generic line
          * @throws OceanusException on error
          */
         ThemisAnalysisGenericRef(final ThemisAnalysisParser pParser,
@@ -133,7 +138,7 @@ public interface ThemisAnalysisGeneric {
             final ThemisAnalysisLine myLine = new ThemisAnalysisLine(theBase.getLine());
 
             /* Loop through the line */
-            for (;;) {
+            for (; ; ) {
                 /* Strip leading comma */
                 if (myLine.startsWithChar(ThemisAnalysisChar.COMMA)) {
                     myLine.stripStartChar(ThemisAnalysisChar.COMMA);
@@ -156,7 +161,7 @@ public interface ThemisAnalysisGeneric {
                     /* If we have an extension/subtype */
                     final String myNext = myLine.peekNextToken();
                     if (myNext.equals(ThemisAnalysisKeyWord.EXTENDS.getKeyWord())
-                        || myNext.equals(ThemisAnalysisKeyWord.SUPER.getKeyWord())) {
+                            || myNext.equals(ThemisAnalysisKeyWord.SUPER.getKeyWord())) {
                         /* Access data type */
                         myLine.stripNextToken();
                         ThemisAnalysisReference myRef = ThemisAnalysisParser.parseDataType(myDataMap, myLine);
@@ -184,6 +189,7 @@ public interface ThemisAnalysisGeneric {
 
         /**
          * Obtain the list of references.
+         *
          * @return the list
          */
         public List<ThemisAnalysisReference> getReferences() {
@@ -213,8 +219,9 @@ public interface ThemisAnalysisGeneric {
 
         /**
          * Constructor.
+         *
          * @param pParser the parser
-         * @param pBase the base generic line
+         * @param pBase   the base generic line
          * @throws OceanusException on error
          */
         ThemisAnalysisGenericVarList(final ThemisAnalysisParser pParser,
@@ -228,7 +235,7 @@ public interface ThemisAnalysisGeneric {
             final ThemisAnalysisLine myLine = new ThemisAnalysisLine(theBase.getLine());
 
             /* Loop through the line */
-            for (;;) {
+            for (; ; ) {
                 /* Strip leading comma */
                 if (myLine.startsWithChar(ThemisAnalysisChar.COMMA)) {
                     myLine.stripStartChar(ThemisAnalysisChar.COMMA);
@@ -268,6 +275,7 @@ public interface ThemisAnalysisGeneric {
 
         /**
          * Add to dataList.
+         *
          * @param pParser the parser
          * @throws OceanusException on error
          */
@@ -309,7 +317,8 @@ public interface ThemisAnalysisGeneric {
 
         /**
          * Constructor.
-         * @param pName the name
+         *
+         * @param pName       the name
          * @param pReferences the references
          */
         ThemisAnalysisGenericVar(final String pName,
@@ -321,6 +330,7 @@ public interface ThemisAnalysisGeneric {
 
         /**
          * Obtain the name.
+         *
          * @return the name
          */
         String getName() {
@@ -329,6 +339,7 @@ public interface ThemisAnalysisGeneric {
 
         /**
          * Resolve the generic references.
+         *
          * @param pParser the parser
          * @throws OceanusException on error
          */

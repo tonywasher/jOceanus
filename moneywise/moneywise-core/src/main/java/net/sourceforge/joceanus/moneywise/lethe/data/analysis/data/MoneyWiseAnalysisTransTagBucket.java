@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,12 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.lethe.data.analysis.data;
 
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldTableItem;
@@ -24,9 +27,6 @@ import net.sourceforge.joceanus.metis.list.MetisListIndexed;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransTag;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -69,6 +69,7 @@ public final class MoneyWiseAnalysisTransTagBucket
 
     /**
      * Constructor.
+     *
      * @param pAnalysis the analysis
      * @param pTransTag the tag
      */
@@ -84,9 +85,10 @@ public final class MoneyWiseAnalysisTransTagBucket
 
     /**
      * Constructor.
+     *
      * @param pAnalysis the analysis
-     * @param pBase the underlying bucket
-     * @param pDate the date for the bucket
+     * @param pBase     the underlying bucket
+     * @param pDate     the date for the bucket
      */
     private MoneyWiseAnalysisTransTagBucket(final MoneyWiseAnalysis pAnalysis,
                                             final MoneyWiseAnalysisTransTagBucket pBase,
@@ -111,9 +113,10 @@ public final class MoneyWiseAnalysisTransTagBucket
 
     /**
      * Constructor.
+     *
      * @param pAnalysis the analysis
-     * @param pBase the underlying bucket
-     * @param pRange the range for the bucket
+     * @param pBase     the underlying bucket
+     * @param pRange    the range for the bucket
      */
     private MoneyWiseAnalysisTransTagBucket(final MoneyWiseAnalysis pAnalysis,
                                             final MoneyWiseAnalysisTransTagBucket pBase,
@@ -159,6 +162,7 @@ public final class MoneyWiseAnalysisTransTagBucket
 
     /**
      * Obtain name.
+     *
      * @return the name
      */
     public String getName() {
@@ -167,6 +171,7 @@ public final class MoneyWiseAnalysisTransTagBucket
 
     /**
      * Obtain transactionTag.
+     *
      * @return the tag
      */
     public MoneyWiseTransTag getTransTag() {
@@ -175,6 +180,7 @@ public final class MoneyWiseAnalysisTransTagBucket
 
     /**
      * Obtain the analysis.
+     *
      * @return the analysis
      */
     MoneyWiseAnalysis getAnalysis() {
@@ -183,6 +189,7 @@ public final class MoneyWiseAnalysisTransTagBucket
 
     /**
      * Obtain date range.
+     *
      * @return the range
      */
     public OceanusDateRange getDateRange() {
@@ -191,6 +198,7 @@ public final class MoneyWiseAnalysisTransTagBucket
 
     /**
      * Obtain map Iterator.
+     *
      * @return the iterator
      */
     private Map<Integer, MoneyWiseTransaction> getHashMap() {
@@ -199,6 +207,7 @@ public final class MoneyWiseAnalysisTransTagBucket
 
     /**
      * Obtain map Iterator.
+     *
      * @return the iterator
      */
     private Iterator<MoneyWiseTransaction> iterator() {
@@ -207,6 +216,7 @@ public final class MoneyWiseAnalysisTransTagBucket
 
     /**
      * is the bucket idle.
+     *
      * @return true/false
      */
     boolean isIdle() {
@@ -215,6 +225,7 @@ public final class MoneyWiseAnalysisTransTagBucket
 
     /**
      * Process the transaction.
+     *
      * @param pTrans the transaction
      */
     private void processTransaction(final MoneyWiseTransaction pTrans) {
@@ -224,6 +235,7 @@ public final class MoneyWiseAnalysisTransTagBucket
 
     /**
      * Is this tag marked by the transaction.
+     *
      * @param pTrans the transaction
      * @return true/false
      */
@@ -261,6 +273,7 @@ public final class MoneyWiseAnalysisTransTagBucket
 
         /**
          * Construct a top-level List.
+         *
          * @param pAnalysis the analysis
          */
         MoneyWiseAnalysisTransTagBucketList(final MoneyWiseAnalysis pAnalysis) {
@@ -271,9 +284,10 @@ public final class MoneyWiseAnalysisTransTagBucket
 
         /**
          * Construct a dated List.
+         *
          * @param pAnalysis the analysis
-         * @param pBase the base list
-         * @param pDate the Date
+         * @param pBase     the base list
+         * @param pDate     the Date
          */
         MoneyWiseAnalysisTransTagBucketList(final MoneyWiseAnalysis pAnalysis,
                                             final MoneyWiseAnalysisTransTagBucketList pBase,
@@ -299,9 +313,10 @@ public final class MoneyWiseAnalysisTransTagBucket
 
         /**
          * Construct a ranged List.
+         *
          * @param pAnalysis the analysis
-         * @param pBase the base list
-         * @param pRange the Date Range
+         * @param pBase     the base list
+         * @param pRange    the Date Range
          */
         MoneyWiseAnalysisTransTagBucketList(final MoneyWiseAnalysis pAnalysis,
                                             final MoneyWiseAnalysisTransTagBucketList pBase,
@@ -342,6 +357,7 @@ public final class MoneyWiseAnalysisTransTagBucket
 
         /**
          * Obtain the analysis.
+         *
          * @return the analysis
          */
         MoneyWiseAnalysis getAnalysis() {
@@ -350,6 +366,7 @@ public final class MoneyWiseAnalysisTransTagBucket
 
         /**
          * Obtain item by id.
+         *
          * @param pId the id to lookup
          * @return the item (or null if not present)
          */
@@ -360,6 +377,7 @@ public final class MoneyWiseAnalysisTransTagBucket
 
         /**
          * Obtain the TransTagBucket for a given transaction tag.
+         *
          * @param pTag the transaction tag
          * @return the bucket
          */
@@ -382,6 +400,7 @@ public final class MoneyWiseAnalysisTransTagBucket
 
         /**
          * Obtain the matching TagBucket.
+         *
          * @param pTag the tag
          * @return the matching bucket
          */
@@ -395,6 +414,7 @@ public final class MoneyWiseAnalysisTransTagBucket
 
         /**
          * Obtain the default TagBucket.
+         *
          * @return the default bucket
          */
         public MoneyWiseAnalysisTransTagBucket getDefaultTag() {
@@ -413,7 +433,8 @@ public final class MoneyWiseAnalysisTransTagBucket
 
         /**
          * Process transaction tags.
-         * @param pTrans the transaction
+         *
+         * @param pTrans    the transaction
          * @param pIterator the transaction tag iterator
          */
         public void processTransaction(final MoneyWiseTransaction pTrans,

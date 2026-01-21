@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,12 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.data.basic;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.data.MetisDataEditState;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
@@ -40,9 +43,6 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseLogicException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInstanceMap;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
@@ -101,7 +101,8 @@ public class MoneyWiseSecurity
 
     /**
      * Copy Constructor.
-     * @param pList the list
+     *
+     * @param pList     the list
      * @param pSecurity The Security to copy
      */
     protected MoneyWiseSecurity(final MoneyWiseSecurityList pList,
@@ -133,7 +134,8 @@ public class MoneyWiseSecurity
 
     /**
      * Values constructor.
-     * @param pList the List to add to
+     *
+     * @param pList   the List to add to
      * @param pValues the values constructor
      * @throws OceanusException on error
      */
@@ -150,6 +152,7 @@ public class MoneyWiseSecurity
 
     /**
      * Edit Constructor.
+     *
      * @param pList the list
      */
     public MoneyWiseSecurity(final MoneyWiseSecurityList pList) {
@@ -195,6 +198,7 @@ public class MoneyWiseSecurity
 
     /**
      * Obtain fieldValue for infoSet.
+     *
      * @param pFieldId the fieldId
      * @return the value
      */
@@ -204,6 +208,7 @@ public class MoneyWiseSecurity
 
     /**
      * Obtain Notes.
+     *
      * @return the notes
      */
     public char[] getNotes() {
@@ -214,6 +219,7 @@ public class MoneyWiseSecurity
 
     /**
      * Obtain Symbol.
+     *
      * @return the symbol
      */
     public String getSymbol() {
@@ -224,6 +230,7 @@ public class MoneyWiseSecurity
 
     /**
      * Obtain Region.
+     *
      * @return the region
      */
     public MoneyWiseRegion getRegion() {
@@ -234,6 +241,7 @@ public class MoneyWiseSecurity
 
     /**
      * Obtain UnderlyingStock.
+     *
      * @return the stock
      */
     public MoneyWiseSecurity getUnderlyingStock() {
@@ -244,6 +252,7 @@ public class MoneyWiseSecurity
 
     /**
      * Obtain OptionPrice.
+     *
      * @return the price
      */
     public OceanusPrice getOptionPrice() {
@@ -259,6 +268,7 @@ public class MoneyWiseSecurity
 
     /**
      * Obtain CategoryId.
+     *
      * @return the categoryId
      */
     public Integer getCategoryId() {
@@ -270,6 +280,7 @@ public class MoneyWiseSecurity
 
     /**
      * Obtain CategoryName.
+     *
      * @return the categoryName
      */
     public String getCategoryName() {
@@ -281,6 +292,7 @@ public class MoneyWiseSecurity
 
     /**
      * Obtain SecurityClass.
+     *
      * @return the securityClass
      */
     public MoneyWiseSecurityClass getCategoryClass() {
@@ -418,6 +430,7 @@ public class MoneyWiseSecurity
 
     /**
      * Is this security the required class.
+     *
      * @param pClass the required security class.
      * @return true/false
      */
@@ -456,6 +469,7 @@ public class MoneyWiseSecurity
 
     /**
      * Set defaults.
+     *
      * @throws OceanusException on error
      */
     public void setDefaults() throws OceanusException {
@@ -464,6 +478,7 @@ public class MoneyWiseSecurity
 
     /**
      * autoCorrect values after change.
+     *
      * @throws OceanusException on error
      */
     public void autoCorrect() throws OceanusException {
@@ -513,6 +528,7 @@ public class MoneyWiseSecurity
 
     /**
      * Set a new Notes.
+     *
      * @param pNotes the new notes
      * @throws OceanusException on error
      */
@@ -522,6 +538,7 @@ public class MoneyWiseSecurity
 
     /**
      * Set a new symbol.
+     *
      * @param pSymbol the symbol
      * @throws OceanusException on error
      */
@@ -531,6 +548,7 @@ public class MoneyWiseSecurity
 
     /**
      * Set a new region.
+     *
      * @param pRegion the new region
      * @throws OceanusException on error
      */
@@ -540,6 +558,7 @@ public class MoneyWiseSecurity
 
     /**
      * Set a new underlying stock.
+     *
      * @param pStock the new stock
      * @throws OceanusException on error
      */
@@ -549,6 +568,7 @@ public class MoneyWiseSecurity
 
     /**
      * Set a new option price.
+     *
      * @param pPrice the new price
      * @throws OceanusException on error
      */
@@ -558,8 +578,9 @@ public class MoneyWiseSecurity
 
     /**
      * Set an infoSet value.
+     *
      * @param pInfoClass the class of info to set
-     * @param pValue the value to set
+     * @param pValue     the value to set
      * @throws OceanusException on error
      */
     private void setInfoSetValue(final MoneyWiseAccountInfoClass pInfoClass,
@@ -611,6 +632,7 @@ public class MoneyWiseSecurity
 
     /**
      * Update base security from an edited security.
+     *
      * @param pSecurity the edited security
      * @return whether changes have been made
      */
@@ -667,6 +689,7 @@ public class MoneyWiseSecurity
 
         /**
          * Construct an empty CORE Security list.
+         *
          * @param pData the DataSet for the list
          */
         public MoneyWiseSecurityList(final MoneyWiseDataSet pData) {
@@ -675,6 +698,7 @@ public class MoneyWiseSecurity
 
         /**
          * Constructor for a cloned List.
+         *
          * @param pSource the source List
          */
         protected MoneyWiseSecurityList(final MoneyWiseSecurityList pSource) {
@@ -703,6 +727,7 @@ public class MoneyWiseSecurity
 
         /**
          * Obtain the securityInfoList.
+         *
          * @return the security info list
          */
         public MoneyWiseSecurityInfoList getSecurityInfo() {
@@ -714,6 +739,7 @@ public class MoneyWiseSecurity
 
         /**
          * Obtain the accountInfoTypeList.
+         *
          * @return the account info type list
          */
         public MoneyWiseAccountInfoTypeList getActInfoTypes() {
@@ -734,6 +760,7 @@ public class MoneyWiseSecurity
 
         /**
          * Derive Edit list.
+         *
          * @param pEditSet the editSet
          * @return the edit list
          * @throws OceanusException on error
@@ -799,6 +826,7 @@ public class MoneyWiseSecurity
 
         /**
          * Find the item that uses the symbol.
+         *
          * @param pSymbol the symbol to lookup
          * @return the item (or null)
          */
@@ -809,6 +837,7 @@ public class MoneyWiseSecurity
 
         /**
          * check that symbol is unique.
+         *
          * @param pSymbol the symbol
          * @return true/false
          */
@@ -819,6 +848,7 @@ public class MoneyWiseSecurity
 
         /**
          * Add a new item to the core list.
+         *
          * @param pSecurity item
          * @return the newly added item
          */
@@ -836,6 +866,7 @@ public class MoneyWiseSecurity
 
         /**
          * Add a new item to the edit list.
+         *
          * @return the new item
          */
         @Override
@@ -847,6 +878,7 @@ public class MoneyWiseSecurity
 
         /**
          * Obtain the first security for the specified class.
+         *
          * @param pClass the security class
          * @return the security
          */
@@ -962,6 +994,7 @@ public class MoneyWiseSecurity
 
         /**
          * Obtain the securityMap.
+         *
          * @return the map
          */
         private Map<Integer, MoneyWiseSecurity> getSingularMap() {
@@ -970,6 +1003,7 @@ public class MoneyWiseSecurity
 
         /**
          * Obtain the securityCountMap.
+         *
          * @return the map
          */
         private Map<Integer, Integer> getSingularCountMap() {
@@ -978,6 +1012,7 @@ public class MoneyWiseSecurity
 
         /**
          * Obtain the keyMap.
+         *
          * @return the map
          */
         private Map<String, MoneyWiseSecurity> getSymbolMap() {
@@ -986,6 +1021,7 @@ public class MoneyWiseSecurity
 
         /**
          * Obtain the keyCountMap.
+         *
          * @return the map
          */
         private Map<String, Integer> getSymbolCountMap() {
@@ -1040,6 +1076,7 @@ public class MoneyWiseSecurity
 
         /**
          * find item by symbol.
+         *
          * @param pSymbol the symbol to look up
          * @return the matching item
          */
@@ -1049,6 +1086,7 @@ public class MoneyWiseSecurity
 
         /**
          * find item by name.
+         *
          * @param pName the name to look up
          * @return the matching item
          */
@@ -1058,6 +1096,7 @@ public class MoneyWiseSecurity
 
         /**
          * Check validity of symbol count.
+         *
          * @param pSymbol the symbol to look up
          * @return true/false
          */
@@ -1068,6 +1107,7 @@ public class MoneyWiseSecurity
 
         /**
          * Check validity of name.
+         *
          * @param pName the name to look up
          * @return true/false
          */
@@ -1077,6 +1117,7 @@ public class MoneyWiseSecurity
 
         /**
          * Check availability of name.
+         *
          * @param pName the key to look up
          * @return true/false
          */
@@ -1086,6 +1127,7 @@ public class MoneyWiseSecurity
 
         /**
          * find singular item.
+         *
          * @param pClass the class to look up
          * @return the matching item
          */
@@ -1095,6 +1137,7 @@ public class MoneyWiseSecurity
 
         /**
          * Check validity of singular count.
+         *
          * @param pClass the class to look up
          * @return true/false
          */

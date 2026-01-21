@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Metis: Java Data Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,16 +13,16 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.metis.viewer;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
 import net.sourceforge.joceanus.metis.data.MetisDataDelta;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.exc.MetisIOException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
-import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
-import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -182,6 +182,7 @@ public class MetisViewerBuilder {
 
     /**
      * Constructor.
+     *
      * @param pFormatter the data formatter
      * @throws OceanusException on error
      */
@@ -241,6 +242,7 @@ public class MetisViewerBuilder {
 
     /**
      * Clear an element.
+     *
      * @param pElement the element to clear
      */
     private static void clearElement(final Element pElement) {
@@ -252,6 +254,7 @@ public class MetisViewerBuilder {
 
     /**
      * Reset the document.
+     *
      * @param pPage the associated page
      */
     protected void resetDocument(final MetisViewerPage pPage) {
@@ -265,6 +268,7 @@ public class MetisViewerBuilder {
 
     /**
      * Make title.
+     *
      * @param pTitle the title
      */
     protected void newTitle(final String pTitle) {
@@ -296,6 +300,7 @@ public class MetisViewerBuilder {
 
     /**
      * Make new title cell.
+     *
      * @param pTitle the title
      */
     protected void newTitleCell(final String pTitle) {
@@ -315,13 +320,14 @@ public class MetisViewerBuilder {
 
         /* Set correct class */
         theTblRow.setAttribute(ATTR_CLASS, (theNumRows % 2 == 0)
-                                                                 ? CLASS_EVENROW
-                                                                 : CLASS_ODDROW);
+                ? CLASS_EVENROW
+                : CLASS_ODDROW);
         theNumRows++;
     }
 
     /**
      * Make new data cell.
+     *
      * @param pData the data
      */
     protected void newDataCell(final Object pData) {
@@ -330,7 +336,8 @@ public class MetisViewerBuilder {
 
     /**
      * Make new data cell.
-     * @param pData the data
+     *
+     * @param pData    the data
      * @param pChanged is this a changed field true/false
      */
     protected void newDataCell(final Object pData,
@@ -350,8 +357,8 @@ public class MetisViewerBuilder {
             /* If there is a difference */
             if (!myDiff.isIdentical()) {
                 myCell.setAttribute(ATTR_CLASS, myDiff.isValueChanged()
-                                                                        ? CLASS_CHANGED
-                                                                        : CLASS_SECCHANGED);
+                        ? CLASS_CHANGED
+                        : CLASS_SECCHANGED);
             }
         } else if (pChanged) {
             myCell.setAttribute(ATTR_CLASS, CLASS_CHANGED);
@@ -373,6 +380,7 @@ public class MetisViewerBuilder {
 
     /**
      * Format a value.
+     *
      * @param pValue the value to format
      * @return the formatted value
      */
@@ -382,7 +390,7 @@ public class MetisViewerBuilder {
 
         /* Perform special formatting for a long byte[] */
         if (needsWrapping(pValue)
-            && (myFormat.length() > WRAP_HEXSTRING)) {
+                && (myFormat.length() > WRAP_HEXSTRING)) {
             final StringBuilder myBuffer = new StringBuilder(myFormat.length() << 1);
 
             /* Format the buffer */
@@ -390,10 +398,10 @@ public class MetisViewerBuilder {
 
             /* Insert new lines */
             int iCount = myFormat.length()
-                         / WRAP_HEXSTRING;
+                    / WRAP_HEXSTRING;
             while (iCount > 0) {
                 myBuffer.insert(WRAP_HEXSTRING
-                                * iCount--, '\n');
+                        * iCount--, '\n');
             }
 
             /* Obtain new format */
@@ -406,6 +414,7 @@ public class MetisViewerBuilder {
 
     /**
      * does the object format need wrapping?
+     *
      * @param pObject the object
      * @return true/false
      */

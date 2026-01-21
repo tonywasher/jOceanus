@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,11 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.views;
 
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
 import net.sourceforge.joceanus.metis.data.MetisDataEditState;
 import net.sourceforge.joceanus.metis.data.MetisDataState;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
@@ -31,8 +33,6 @@ import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnal
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisPortfolioBucket.MoneyWiseAnalysisPortfolioBucketList;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisSecurityBucket;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisSecurityBucket.MoneyWiseAnalysisSecurityBucketList;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
 import net.sourceforge.joceanus.prometheus.data.PrometheusEncryptedValues;
@@ -42,6 +42,7 @@ import java.util.ListIterator;
 
 /**
  * Extension of SecurityPrice to cater for spot prices.
+ *
  * @author Tony Washer
  */
 public final class MoneyWiseSpotSecurityPrice
@@ -87,7 +88,8 @@ public final class MoneyWiseSpotSecurityPrice
 
     /**
      * Constructor for a new SpotPrice where no price data exists.
-     * @param pList the Spot Price List
+     *
+     * @param pList     the Spot Price List
      * @param pSecurity the price for the date
      */
     private MoneyWiseSpotSecurityPrice(final MoneyWiseSpotSecurityList pList,
@@ -105,6 +107,7 @@ public final class MoneyWiseSpotSecurityPrice
 
     /**
      * Obtain previous price.
+     *
      * @return the price.
      */
     public OceanusPrice getPrevPrice() {
@@ -113,6 +116,7 @@ public final class MoneyWiseSpotSecurityPrice
 
     /**
      * Set previous price.
+     *
      * @param pPrice the price
      */
     protected void setPrevPrice(final OceanusPrice pPrice) {
@@ -121,6 +125,7 @@ public final class MoneyWiseSpotSecurityPrice
 
     /**
      * Obtain previous date.
+     *
      * @return the date.
      */
     public OceanusDate getPrevDate() {
@@ -129,6 +134,7 @@ public final class MoneyWiseSpotSecurityPrice
 
     /**
      * Set previous date.
+     *
      * @param pDate the date
      */
     protected void setPrevDate(final OceanusDate pDate) {
@@ -142,6 +148,7 @@ public final class MoneyWiseSpotSecurityPrice
 
     /**
      * Set disabled.
+     *
      * @param pDisabled the flag
      */
     protected void setDisabled(final boolean pDisabled) {
@@ -258,9 +265,10 @@ public final class MoneyWiseSpotSecurityPrice
 
         /**
          * Constructor.
-         * @param pView the view
+         *
+         * @param pView      the view
          * @param pPortfolio the portfolio
-         * @param pDate the date
+         * @param pDate      the date
          */
         public MoneyWiseSpotSecurityList(final MoneyWiseView pView,
                                          final MoneyWisePortfolio pPortfolio,
@@ -380,6 +388,7 @@ public final class MoneyWiseSpotSecurityPrice
 
         /**
          * Obtain the portfolio.
+         *
          * @return the portfolio
          */
         private MoneyWisePortfolio getPortfolio() {
@@ -388,6 +397,7 @@ public final class MoneyWiseSpotSecurityPrice
 
         /**
          * Obtain the date.
+         *
          * @return the date
          */
         private OceanusDate getDate() {
@@ -396,6 +406,7 @@ public final class MoneyWiseSpotSecurityPrice
 
         /**
          * Obtain the next date.
+         *
          * @return the date
          */
         public OceanusDate getNext() {
@@ -404,6 +415,7 @@ public final class MoneyWiseSpotSecurityPrice
 
         /**
          * Obtain the previous date.
+         *
          * @return the date
          */
         public OceanusDate getPrev() {

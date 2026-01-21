@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Prometheus: Application Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,18 +13,18 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.prometheus.service.sheet;
 
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimalFormatter;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimalParser;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimalFormatter;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimalParser;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 
 /**
  * Excel/Oasis format string builder class.
@@ -158,6 +158,7 @@ public final class PrometheusSheetFormats {
 
     /**
      * Obtain format for integer.
+     *
      * @return the format
      */
     private static String getIntegerFormat() {
@@ -173,6 +174,7 @@ public final class PrometheusSheetFormats {
 
     /**
      * Obtain format for standard decimal.
+     *
      * @param pValue the example decimal
      * @return the format
      */
@@ -199,6 +201,7 @@ public final class PrometheusSheetFormats {
 
     /**
      * Obtain format for rate.
+     *
      * @param pValue the example rate
      * @return the format
      */
@@ -211,7 +214,7 @@ public final class PrometheusSheetFormats {
 
         /* Determine scale */
         final int myScale = pValue.scale()
-                            - OceanusDecimalParser.ADJUST_PERCENT;
+                - OceanusDecimalParser.ADJUST_PERCENT;
         if (myScale > 0) {
             /* Append the decimal point */
             myBuilder.append(OceanusDecimalFormatter.STR_DEC);
@@ -229,6 +232,7 @@ public final class PrometheusSheetFormats {
 
     /**
      * Obtain format for extended decimal.
+     *
      * @param pValue the example decimal
      * @return the format
      */
@@ -251,6 +255,7 @@ public final class PrometheusSheetFormats {
 
     /**
      * Obtain format for currency.
+     *
      * @param pValue the example currency
      * @return the format
      */
@@ -280,6 +285,7 @@ public final class PrometheusSheetFormats {
 
     /**
      * Obtain format for currency, with zero usage.
+     *
      * @param pValue the example currency
      * @return the format
      */
@@ -307,6 +313,7 @@ public final class PrometheusSheetFormats {
 
     /**
      * Obtain data format string for a cell type.
+     *
      * @param pType the cell style type
      * @return the format string
      */
@@ -316,6 +323,7 @@ public final class PrometheusSheetFormats {
 
     /**
      * Obtain default value for a cell type.
+     *
      * @param pType the cell style type
      * @return the format string
      */
@@ -346,6 +354,7 @@ public final class PrometheusSheetFormats {
 
     /**
      * Obtain data format string for a cell value.
+     *
      * @param pValue the cell value
      * @return the format string
      */
@@ -357,7 +366,7 @@ public final class PrometheusSheetFormats {
             return FORMAT_BOOLEAN;
         }
         if (pValue instanceof Integer
-            || pValue instanceof Long) {
+                || pValue instanceof Long) {
             return getIntegerFormat();
         }
         if (pValue instanceof OceanusMoney m) {
@@ -377,6 +386,7 @@ public final class PrometheusSheetFormats {
 
     /**
      * Obtain alternate data format string for a cell value.
+     *
      * @param pValue the cell value
      * @return the format string
      */
@@ -389,27 +399,30 @@ public final class PrometheusSheetFormats {
 
     /**
      * Obtain style name.
+     *
      * @param pStyle the style type
      * @return the name of the style
      */
     private static String getStyleName(final String pStyle) {
         return "sn"
-               + pStyle;
+                + pStyle;
     }
 
     /**
      * Obtain data format string for a cell type.
+     *
      * @param pType the cell style type
      * @return the format string
      */
     public static String getFormatName(final PrometheusSheetCellStyleType pType) {
         return pType == PrometheusSheetCellStyleType.HEADER
-               ? getAlternateFormatName(STR_NULL)
-               : getFormatName(getDefaultValue(pType));
+                ? getAlternateFormatName(STR_NULL)
+                : getFormatName(getDefaultValue(pType));
     }
 
     /**
      * Obtain format name for a cell.
+     *
      * @param pValue the cell value
      * @return the format string
      */
@@ -424,18 +437,18 @@ public final class PrometheusSheetFormats {
             return getStyleName(OceanusDate.class.getSimpleName());
         }
         if (pValue instanceof Integer
-            || pValue instanceof Long) {
+                || pValue instanceof Long) {
             return getStyleName(Integer.class.getSimpleName());
         }
         if (pValue instanceof OceanusPrice p) {
             final String myCurr = p.getCurrency().getCurrencyCode();
             return getStyleName(OceanusPrice.class.getSimpleName()
-                                + myCurr);
+                    + myCurr);
         }
         if (pValue instanceof OceanusMoney m) {
             final String myCurr = m.getCurrency().getCurrencyCode();
             return getStyleName(OceanusMoney.class.getSimpleName()
-                                + myCurr);
+                    + myCurr);
         }
         if (pValue instanceof OceanusRate) {
             return getStyleName(OceanusRate.class.getSimpleName());
@@ -451,6 +464,7 @@ public final class PrometheusSheetFormats {
 
     /**
      * Obtain currency format name for a cell.
+     *
      * @param pValue the cell value
      * @return the format string
      */
@@ -461,20 +475,21 @@ public final class PrometheusSheetFormats {
         if (pValue instanceof OceanusPrice p) {
             final String myCurr = p.getCurrency().getCurrencyCode();
             return getStyleName(OceanusPrice.class.getSimpleName()
-                                + FORMAT_CURR
-                                + myCurr);
+                    + FORMAT_CURR
+                    + myCurr);
         }
         if (pValue instanceof OceanusMoney m) {
             final String myCurr = m.getCurrency().getCurrencyCode();
             return getStyleName(OceanusMoney.class.getSimpleName()
-                                + FORMAT_CURR
-                                + myCurr);
+                    + FORMAT_CURR
+                    + myCurr);
         }
         return null;
     }
 
     /**
      * Determine whether cell type has data format.
+     *
      * @param pType the cell type
      * @return true/false
      */
@@ -496,6 +511,7 @@ public final class PrometheusSheetFormats {
 
     /**
      * Obtain data format for a value.
+     *
      * @param pValue the cell value
      * @return the cell style type
      */
@@ -510,7 +526,7 @@ public final class PrometheusSheetFormats {
             return PrometheusSheetCellStyleType.BOOLEAN;
         }
         if (pValue instanceof Integer
-            || pValue instanceof Long) {
+                || pValue instanceof Long) {
             return PrometheusSheetCellStyleType.INTEGER;
         }
         if (pValue instanceof OceanusPrice) {

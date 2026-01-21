@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,17 +13,17 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.tax;
 
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataObjectFormat;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,6 +49,7 @@ public class MoneyWiseTaxBandSet
 
     /**
      * Constructor.
+     *
      * @param pBands the set of tax bands
      */
     public MoneyWiseTaxBandSet(final MoneyWiseTaxBand... pBands) {
@@ -58,6 +59,7 @@ public class MoneyWiseTaxBandSet
 
     /**
      * Constructor.
+     *
      * @param pSource the source to clone
      */
     public MoneyWiseTaxBandSet(final MoneyWiseTaxBandSet pSource) {
@@ -84,6 +86,7 @@ public class MoneyWiseTaxBandSet
 
     /**
      * Add a tax band.
+     *
      * @param pBand the tax band
      */
     public void addTaxBand(final MoneyWiseTaxBand pBand) {
@@ -92,6 +95,7 @@ public class MoneyWiseTaxBandSet
 
     /**
      * Obtain a zero amount.
+     *
      * @return the zero amount
      */
     public OceanusMoney getZeroAmount() {
@@ -103,6 +107,7 @@ public class MoneyWiseTaxBandSet
 
     /**
      * Are there multiple taxBands?
+     *
      * @return true/false
      */
     public boolean multipleBands() {
@@ -139,8 +144,9 @@ public class MoneyWiseTaxBandSet
 
         /**
          * Constructor.
+         *
          * @param pAmount the amount
-         * @param pRate the rate
+         * @param pRate   the rate
          */
         public MoneyWiseTaxBand(final OceanusMoney pAmount,
                                 final OceanusRate pRate) {
@@ -152,6 +158,7 @@ public class MoneyWiseTaxBandSet
 
         /**
          * Constructor.
+         *
          * @param pRate the rate
          */
         public MoneyWiseTaxBand(final OceanusRate pRate) {
@@ -160,6 +167,7 @@ public class MoneyWiseTaxBandSet
 
         /**
          * Constructor.
+         *
          * @param pSource the source band
          */
         public MoneyWiseTaxBand(final MoneyWiseTaxBand pSource) {
@@ -172,6 +180,7 @@ public class MoneyWiseTaxBandSet
 
         /**
          * Obtain the amount.
+         *
          * @return the amount
          */
         public OceanusMoney getAmount() {
@@ -180,6 +189,7 @@ public class MoneyWiseTaxBandSet
 
         /**
          * Obtain the rate.
+         *
          * @return the rate
          */
         public OceanusRate getRate() {

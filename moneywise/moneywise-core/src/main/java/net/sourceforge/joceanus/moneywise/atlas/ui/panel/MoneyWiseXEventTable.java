@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,19 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.atlas.ui.panel;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateConfig;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEvent;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
+import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.ui.MetisAction;
@@ -45,16 +55,6 @@ import net.sourceforge.joceanus.moneywise.ui.MoneyWiseIcon;
 import net.sourceforge.joceanus.moneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.moneywise.ui.base.MoneyWiseBaseTable;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateConfig;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
-import net.sourceforge.joceanus.oceanus.event.OceanusEvent;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
-import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.prometheus.ui.PrometheusActionButtons;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
@@ -144,12 +144,13 @@ public class MoneyWiseXEventTable
 
     /**
      * Constructor.
-     * @param pView the view
-     * @param pEditSet the editSet
+     *
+     * @param pView        the view
+     * @param pEditSet     the editSet
      * @param pAnalysisMgr the analysisManager
-     * @param pError the error panel
-     * @param pFilter the filter viewer entry
-     * @param pAnalysis the analysis viewer entry
+     * @param pError       the error panel
+     * @param pFilter      the filter viewer entry
+     * @param pAnalysis    the analysis viewer entry
      */
     MoneyWiseXEventTable(final MoneyWiseView pView,
                          final PrometheusEditSet pEditSet,
@@ -406,6 +407,7 @@ public class MoneyWiseXEventTable
 
     /**
      * Obtain the selection panel.
+     *
      * @return the select panel
      */
     MoneyWiseXAnalysisSelect getSelect() {
@@ -414,6 +416,7 @@ public class MoneyWiseXEventTable
 
     /**
      * Obtain the action buttons.
+     *
      * @return the action buttons
      */
     PrometheusActionButtons getActionButtons() {
@@ -422,7 +425,8 @@ public class MoneyWiseXEventTable
 
     /**
      * Delete row.
-     * @param pRow the row
+     *
+     * @param pRow   the row
      * @param pValue the value (ignored)
      * @throws OceanusException on error
      */
@@ -438,6 +442,7 @@ public class MoneyWiseXEventTable
 
     /**
      * handle Date event.
+     *
      * @param pConfig the dateConfig
      */
     private void handleDateEvent(final OceanusDateConfig pConfig) {
@@ -462,6 +467,7 @@ public class MoneyWiseXEventTable
 
     /**
      * Determine reconciled state.
+     *
      * @param pEvent the transaction
      * @return the state
      */
@@ -471,6 +477,7 @@ public class MoneyWiseXEventTable
 
     /**
      * Determine direction state.
+     *
      * @param pEvent the transaction
      * @return the state
      */
@@ -488,6 +495,7 @@ public class MoneyWiseXEventTable
 
     /**
      * Obtain filtered debit for event.
+     *
      * @param pEvent the event
      * @return the debit
      */
@@ -497,6 +505,7 @@ public class MoneyWiseXEventTable
 
     /**
      * Obtain filtered debit for event.
+     *
      * @param pEvent the event
      * @return the debit
      */
@@ -506,6 +515,7 @@ public class MoneyWiseXEventTable
 
     /**
      * Obtain filtered balance for event.
+     *
      * @param pEvent the event
      * @return the balance
      */
@@ -515,6 +525,7 @@ public class MoneyWiseXEventTable
 
     /**
      * Obtain filtered date for event.
+     *
      * @param pEvent the event
      * @return the date value
      */
@@ -524,6 +535,7 @@ public class MoneyWiseXEventTable
 
     /**
      * Obtain filtered comment for event.
+     *
      * @param pEvent the event
      * @return the comments
      */
@@ -533,6 +545,7 @@ public class MoneyWiseXEventTable
 
     /**
      * Obtain filtered direction for event.
+     *
      * @param pEvent the event
      * @return the direction value
      */
@@ -542,6 +555,7 @@ public class MoneyWiseXEventTable
 
     /**
      * Obtain filtered action for event.
+     *
      * @param pEvent the event
      * @return the action value
      */
@@ -557,6 +571,7 @@ public class MoneyWiseXEventTable
 
     /**
      * Select Statement.
+     *
      * @param pSelect the selection
      */
     void selectStatement(final MoneyWiseXStatementSelect pSelect) {
@@ -720,6 +735,7 @@ public class MoneyWiseXEventTable
 
     /**
      * Select event.
+     *
      * @param pEvent the event to select
      */
     void selectEvent(final MoneyWiseXAnalysisEvent pEvent) {
@@ -742,6 +758,7 @@ public class MoneyWiseXEventTable
 
     /**
      * handle Action Buttons.
+     *
      * @param pEvent the event
      */
     private void handleActionButtons(final OceanusEvent<PrometheusUIEvent> pEvent) {
@@ -780,8 +797,9 @@ public class MoneyWiseXEventTable
 
     /**
      * Obtain the popUpMenu for Accounts.
+     *
      * @param pEvent the event
-     * @param pMenu the menu to build
+     * @param pMenu  the menu to build
      */
     private void buildAccountMenu(final MoneyWiseXAnalysisEvent pEvent,
                                   final TethysUIScrollMenu<MoneyWiseTransAsset> pMenu) {
@@ -791,8 +809,9 @@ public class MoneyWiseXEventTable
 
     /**
      * Obtain the popUpMenu for Partner Accounts.
+     *
      * @param pEvent the event
-     * @param pMenu the menu to build
+     * @param pMenu  the menu to build
      */
     private void buildPartnerMenu(final MoneyWiseXAnalysisEvent pEvent,
                                   final TethysUIScrollMenu<MoneyWiseTransAsset> pMenu) {
@@ -802,8 +821,9 @@ public class MoneyWiseXEventTable
 
     /**
      * Build the popUpMenu for categories.
+     *
      * @param pEvent the event
-     * @param pMenu the menu to build
+     * @param pMenu  the menu to build
      */
     private void buildCategoryMenu(final MoneyWiseXAnalysisEvent pEvent,
                                    final TethysUIScrollMenu<MoneyWiseTransCategory> pMenu) {
@@ -813,8 +833,9 @@ public class MoneyWiseXEventTable
 
     /**
      * Build the popUpMenu for returned.
+     *
      * @param pEvent the event
-     * @param pMenu the menu to build
+     * @param pMenu  the menu to build
      */
     private void buildReturnedMenu(final MoneyWiseXAnalysisEvent pEvent,
                                    final TethysUIScrollMenu<MoneyWiseTransAsset> pMenu) {
@@ -864,6 +885,7 @@ public class MoneyWiseXEventTable
 
     /**
      * Adjust columns.
+     *
      * @param pSet the set to display.
      */
     private void adjustColumns(final MoneyWiseAnalysisColumnSet pSet) {
@@ -964,7 +986,7 @@ public class MoneyWiseXEventTable
         myTable.getColumn(MoneyWiseTransInfoClass.DILUTION).setVisible(false);
         myTable.getColumn(MoneyWiseTransInfoClass.RETURNEDCASHACCOUNT).setVisible(false);
         myTable.getColumn(MoneyWiseTransInfoClass.RETURNEDCASH).setVisible(false);
-     }
+    }
 
 
     /**
@@ -979,6 +1001,7 @@ public class MoneyWiseXEventTable
 
         /**
          * Constructor.
+         *
          * @param pList the Transaction list
          */
         protected AnalysisHeader(final MoneyWiseTransactionList pList) {
@@ -1015,6 +1038,7 @@ public class MoneyWiseXEventTable
 
         /**
          * Constructor.
+         *
          * @param pKeyName the key name
          */
         MoneyWiseTransDataId(final MetisDataFieldId pKeyName) {
@@ -1085,7 +1109,7 @@ public class MoneyWiseXEventTable
         /**
          * Constructor.
          *
-         * @param pView the data view
+         * @param pView        the data view
          * @param pAnalysisMgr the analysisManager
          */
         public MoneyWiseXStatementPanel(final MoneyWiseView pView,
@@ -1154,6 +1178,7 @@ public class MoneyWiseXEventTable
 
         /**
          * Select Statement.
+         *
          * @param pSelect the selection
          */
         public void selectStatement(final MoneyWiseXStatementSelect pSelect) {
@@ -1179,6 +1204,7 @@ public class MoneyWiseXEventTable
 
         /**
          * handle Action Buttons.
+         *
          * @param pEvent the event
          */
         private void handleActionButtons(final OceanusEvent<PrometheusUIEvent> pEvent) {
@@ -1213,6 +1239,7 @@ public class MoneyWiseXEventTable
 
         /**
          * Does the panel have updates?
+         *
          * @return true/false
          */
         public boolean hasUpdates() {
@@ -1221,6 +1248,7 @@ public class MoneyWiseXEventTable
 
         /**
          * Does the panel have a session?
+         *
          * @return true/false
          */
         public boolean hasSession() {
@@ -1229,6 +1257,7 @@ public class MoneyWiseXEventTable
 
         /**
          * Does the panel have errors?
+         *
          * @return true/false
          */
         public boolean hasErrors() {

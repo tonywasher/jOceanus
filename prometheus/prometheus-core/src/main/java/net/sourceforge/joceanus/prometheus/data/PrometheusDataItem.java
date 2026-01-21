@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Prometheus: Application Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,12 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.prometheus.data;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.convert.OceanusDataConverter;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.data.MetisDataEditState;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
@@ -26,9 +29,6 @@ import net.sourceforge.joceanus.metis.field.MetisFieldState;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionValues;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionedItem;
 import net.sourceforge.joceanus.metis.list.MetisListKey;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.convert.OceanusDataConverter;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataList.PrometheusListStyle;
 import net.sourceforge.joceanus.prometheus.exc.PrometheusDataException;
 
@@ -38,6 +38,7 @@ import java.util.Iterator;
  * Provides the abstract DataItem class as the basis for data items. The implementation of the
  * interface means that this object can only be held in one list at a time and is unique within that
  * list
+ *
  * @see PrometheusDataList
  */
 public abstract class PrometheusDataItem
@@ -165,8 +166,9 @@ public abstract class PrometheusDataItem
 
     /**
      * Construct a new item.
+     *
      * @param pList the list that this item is associated with
-     * @param uId the Id of the new item (or 0 if not yet known)
+     * @param uId   the Id of the new item (or 0 if not yet known)
      */
     protected PrometheusDataItem(final PrometheusDataList<?> pList,
                                  final Integer uId) {
@@ -183,7 +185,8 @@ public abstract class PrometheusDataItem
 
     /**
      * Construct a new item.
-     * @param pList the list that this item is associated with
+     *
+     * @param pList   the list that this item is associated with
      * @param pValues the data values
      */
     protected PrometheusDataItem(final PrometheusDataList<?> pList,
@@ -194,6 +197,7 @@ public abstract class PrometheusDataItem
 
     /**
      * Construct a new item based on an old item.
+     *
      * @param pList the list that this item is associated with
      * @param pBase the old item
      */
@@ -291,6 +295,7 @@ public abstract class PrometheusDataItem
 
     /**
      * Obtain valueSet version.
+     *
      * @return the valueSet version
      */
     public int getValueSetVersion() {
@@ -304,6 +309,7 @@ public abstract class PrometheusDataItem
 
     /**
      * Obtain the list.
+     *
      * @return the list
      */
     public PrometheusDataList<?> getList() {
@@ -312,6 +318,7 @@ public abstract class PrometheusDataItem
 
     /**
      * Obtain the dataSet.
+     *
      * @return the dataSet
      */
     public PrometheusDataSet getDataSet() {
@@ -320,6 +327,7 @@ public abstract class PrometheusDataItem
 
     /**
      * Obtain the dataSet.
+     *
      * @return the dataSet
      */
     private PrometheusDataSet getTheDataSet() {
@@ -328,6 +336,7 @@ public abstract class PrometheusDataItem
 
     /**
      * Get the list style for this item.
+     *
      * @return the list style
      */
     public PrometheusListStyle getStyle() {
@@ -346,6 +355,7 @@ public abstract class PrometheusDataItem
 
     /**
      * Is the item disabled?
+     *
      * @return true/false
      */
     public boolean isDisabled() {
@@ -354,6 +364,7 @@ public abstract class PrometheusDataItem
 
     /**
      * Obtain the touchStatus.
+     *
      * @return the touch status
      */
     public PrometheusDataTouch getTouchStatus() {
@@ -372,6 +383,7 @@ public abstract class PrometheusDataItem
 
     /**
      * Set the header indication.
+     *
      * @param pHeader true/false
      */
     protected void setHeader(final boolean pHeader) {
@@ -380,6 +392,7 @@ public abstract class PrometheusDataItem
 
     /**
      * Determine whether the item is locked (overridden if required).
+     *
      * @return <code>true/false</code>
      */
     public boolean isLocked() {
@@ -388,6 +401,7 @@ public abstract class PrometheusDataItem
 
     /**
      * Determine whether the list is locked (overridden if required).
+     *
      * @return <code>true/false</code>
      */
     public boolean isListLocked() {
@@ -409,6 +423,7 @@ public abstract class PrometheusDataItem
 
     /**
      * Clear the item touches.
+     *
      * @param pItemType the item type
      */
     public void clearTouches(final MetisListKey pItemType) {
@@ -417,6 +432,7 @@ public abstract class PrometheusDataItem
 
     /**
      * Touch the item.
+     *
      * @param pObject object that references the item
      */
     public void touchItem(final PrometheusDataItem pObject) {
@@ -455,6 +471,7 @@ public abstract class PrometheusDataItem
 
     /**
      * Get the base item for this item.
+     *
      * @return the Base item or <code>null</code>
      */
     public PrometheusDataItem getBase() {
@@ -463,6 +480,7 @@ public abstract class PrometheusDataItem
 
     /**
      * Set the base item for this item.
+     *
      * @param pBase the Base item
      */
     public void setBase(final PrometheusDataItem pBase) {
@@ -515,6 +533,7 @@ public abstract class PrometheusDataItem
     /**
      * Set Change history for an update list so that the first and only entry in the change list is
      * the original values of the base.
+     *
      * @param pBase the base item
      */
     public final void setHistory(final PrometheusDataItem pBase) {
@@ -554,6 +573,7 @@ public abstract class PrometheusDataItem
 
     /**
      * Copy flags.
+     *
      * @param pItem the original item
      */
     private void copyFlags(final PrometheusDataItem pItem) {
@@ -562,6 +582,7 @@ public abstract class PrometheusDataItem
 
     /**
      * Resolve all references to current dataSet.
+     *
      * @throws OceanusException on error
      */
     public void resolveDataSetLinks() throws OceanusException {
@@ -569,8 +590,9 @@ public abstract class PrometheusDataItem
 
     /**
      * Resolve a data link into a list.
+     *
      * @param pFieldId the fieldId to resolve
-     * @param pList the list to resolve against
+     * @param pList    the list to resolve against
      * @throws OceanusException on error
      */
     protected void resolveDataLink(final MetisDataFieldId pFieldId,
@@ -608,6 +630,7 @@ public abstract class PrometheusDataItem
 
     /**
      * Is the item to be included in output XML?
+     *
      * @param pField the field to check
      * @return true/false
      */
@@ -646,7 +669,7 @@ public abstract class PrometheusDataItem
 
             /* Skip if not used in equality */
             if (!(myField instanceof MetisFieldVersionedDef myVersioned)
-                || !myVersioned.isEquality()) {
+                    || !myVersioned.isEquality()) {
                 continue;
             }
 
@@ -699,6 +722,7 @@ public abstract class PrometheusDataItem
 
     /**
      * compareTo another dataItem.
+     *
      * @param pThat the DataItem to compare
      * @return the order
      */
@@ -706,6 +730,7 @@ public abstract class PrometheusDataItem
 
     /**
      * compareTo another dataItem.
+     *
      * @param pThat the DataItem to compare
      * @return the order
      */
@@ -715,6 +740,7 @@ public abstract class PrometheusDataItem
 
     /**
      * Get the state of the underlying record.
+     *
      * @return the underlying state
      */
     protected MetisDataState getBaseState() {
@@ -726,6 +752,7 @@ public abstract class PrometheusDataItem
 
     /**
      * Determine index of element within the list.
+     *
      * @return The index
      */
     public int indexOf() {
@@ -735,6 +762,7 @@ public abstract class PrometheusDataItem
 
     /**
      * Apply changes to the item from a changed version. Overwritten by objects that have changes
+     *
      * @param pElement the changed element.
      * @return were changes made?
      */
@@ -753,7 +781,8 @@ public abstract class PrometheusDataItem
 
     /**
      * Does the string contain only valid characters (no control chars)?
-     * @param pString the string
+     *
+     * @param pString     the string
      * @param pDisallowed the set of additional disallowed characters
      * @return true/false
      */
@@ -778,6 +807,7 @@ public abstract class PrometheusDataItem
 
     /**
      * Obtain the byte length of a string.
+     *
      * @param pString the string
      * @return the length
      */
@@ -794,6 +824,7 @@ public abstract class PrometheusDataItem
 
     /**
      * Obtain the field state.
+     *
      * @param pField the field
      * @return the state
      */
@@ -825,6 +856,7 @@ public abstract class PrometheusDataItem
 
     /**
      * Obtain the item State.
+     *
      * @return the state
      */
     public MetisFieldState getItemState() {

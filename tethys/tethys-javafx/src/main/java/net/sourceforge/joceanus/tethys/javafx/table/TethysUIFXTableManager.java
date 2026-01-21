@@ -16,6 +16,7 @@
  */
 package net.sourceforge.joceanus.tethys.javafx.table;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
@@ -25,7 +26,6 @@ import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TableView.TableViewSelectionModel;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.tethys.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.tethys.core.table.TethysUICoreTableManager;
 import net.sourceforge.joceanus.tethys.javafx.base.TethysUIFXNode;

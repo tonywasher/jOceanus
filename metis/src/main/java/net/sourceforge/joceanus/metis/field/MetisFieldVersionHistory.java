@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Metis: Java Data Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,12 +13,12 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.metis.field;
 
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.data.MetisDataResource;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -58,6 +58,7 @@ public class MetisFieldVersionHistory
 
     /**
      * Constructor.
+     *
      * @param pCurr the current values
      */
     protected MetisFieldVersionHistory(final MetisFieldVersionValues pCurr) {
@@ -97,6 +98,7 @@ public class MetisFieldVersionHistory
 
     /**
      * Initialise the current values.
+     *
      * @param pValues the current values
      */
     protected void setValues(final MetisFieldVersionValues pValues) {
@@ -109,6 +111,7 @@ public class MetisFieldVersionHistory
 
     /**
      * Get the changeable values object for this item.
+     *
      * @return the object
      */
     protected MetisFieldVersionValues getValueSet() {
@@ -117,6 +120,7 @@ public class MetisFieldVersionHistory
 
     /**
      * Get original values.
+     *
      * @return original values
      */
     protected MetisFieldVersionValues getOriginalValues() {
@@ -125,6 +129,7 @@ public class MetisFieldVersionHistory
 
     /**
      * Push Item to the history.
+     *
      * @param pVersion the new version
      */
     public void pushHistory(final int pVersion) {
@@ -154,6 +159,7 @@ public class MetisFieldVersionHistory
 
     /**
      * popItem from the history if equal to current.
+     *
      * @return was a change made
      */
     public boolean maybePopHistory() {
@@ -171,6 +177,7 @@ public class MetisFieldVersionHistory
 
     /**
      * Is there any history?
+     *
      * @return whether there are entries in the history list
      */
     public boolean hasHistory() {
@@ -179,6 +186,7 @@ public class MetisFieldVersionHistory
 
     /**
      * Obtain the last values.
+     *
      * @return the last values (or null)
      */
     public MetisFieldVersionValues getLastValues() {
@@ -208,6 +216,7 @@ public class MetisFieldVersionHistory
 
     /**
      * Set history explicitly.
+     *
      * @param pBase the base item
      */
     public void setHistory(final MetisFieldVersionValues pBase) {
@@ -224,6 +233,7 @@ public class MetisFieldVersionHistory
 
     /**
      * Condense history.
+     *
      * @param pNewVersion the new maximum version
      */
     protected void condenseHistory(final int pNewVersion) {
@@ -232,7 +242,7 @@ public class MetisFieldVersionHistory
             /* While we have unnecessary stack entries */
             boolean bNewDelta = false;
             while (!theStack.isEmpty()
-                   && theStack.peek().getVersion() >= pNewVersion) {
+                    && theStack.peek().getVersion() >= pNewVersion) {
                 /* Clear them */
                 theStack.pop();
                 theDeltas.pop();
@@ -255,6 +265,7 @@ public class MetisFieldVersionHistory
 
     /**
      * Determines whether a particular field has changed.
+     *
      * @param pField the field
      * @return the difference
      */

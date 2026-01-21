@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,11 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.quicken.file;
 
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCash;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDeposit;
@@ -28,8 +30,6 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseLoanCategoryClas
 import net.sourceforge.joceanus.moneywise.quicken.definitions.MoneyWiseQAccountLineType;
 import net.sourceforge.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFMoneyLine;
 import net.sourceforge.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFStringLine;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 
 import java.util.HashMap;
 import java.util.List;
@@ -99,7 +99,8 @@ public class MoneyWiseQIFAccount
 
     /**
      * Constructor.
-     * @param pFile the QIF File
+     *
+     * @param pFile    the QIF File
      * @param pAccount the Account
      */
     public MoneyWiseQIFAccount(final MoneyWiseQIFFile pFile,
@@ -143,6 +144,7 @@ public class MoneyWiseQIFAccount
 
     /**
      * Constructor for holding account.
+     *
      * @param pFile the QIF File
      * @param pName the Portfolio Name
      */
@@ -163,9 +165,10 @@ public class MoneyWiseQIFAccount
 
     /**
      * Constructor.
-     * @param pFile the QIF File
+     *
+     * @param pFile      the QIF File
      * @param pFormatter the formatter
-     * @param pLines the data lines
+     * @param pLines     the data lines
      */
     protected MoneyWiseQIFAccount(final MoneyWiseQIFFile pFile,
                                   final OceanusDataFormatter pFormatter,
@@ -224,6 +227,7 @@ public class MoneyWiseQIFAccount
 
     /**
      * Obtain the Name.
+     *
      * @return the Name
      */
     public String getName() {
@@ -232,6 +236,7 @@ public class MoneyWiseQIFAccount
 
     /**
      * Obtain the description.
+     *
      * @return the Name
      */
     public String getDesc() {
@@ -240,6 +245,7 @@ public class MoneyWiseQIFAccount
 
     /**
      * Obtain the account type.
+     *
      * @return the Type
      */
     public String getType() {
@@ -248,6 +254,7 @@ public class MoneyWiseQIFAccount
 
     /**
      * Create the CategoryClass to type map.
+     *
      * @return the map
      */
     private static Map<Enum<?>, String> createClassMap() {
@@ -282,6 +289,7 @@ public class MoneyWiseQIFAccount
             extends MoneyWiseQIFStringLine<MoneyWiseQAccountLineType> {
         /**
          * Constructor.
+         *
          * @param pName the Name
          */
         protected MoneyWiseQIFAccountNameLine(final String pName) {
@@ -296,6 +304,7 @@ public class MoneyWiseQIFAccount
 
         /**
          * Obtain name.
+         *
          * @return the name
          */
         public String getName() {
@@ -310,6 +319,7 @@ public class MoneyWiseQIFAccount
             extends MoneyWiseQIFStringLine<MoneyWiseQAccountLineType> {
         /**
          * Constructor.
+         *
          * @param pDesc the Description
          */
         protected MoneyWiseQIFAccountDescLine(final String pDesc) {
@@ -324,6 +334,7 @@ public class MoneyWiseQIFAccount
 
         /**
          * Obtain description.
+         *
          * @return the description
          */
         public String getDesc() {
@@ -343,6 +354,7 @@ public class MoneyWiseQIFAccount
 
         /**
          * Constructor.
+         *
          * @param pClass the Account Class
          */
         protected MoneyWiseQIFAccountTypeLine(final Enum<?> pClass) {
@@ -355,6 +367,7 @@ public class MoneyWiseQIFAccount
 
         /**
          * Constructor.
+         *
          * @param pType the Account Type
          */
         protected MoneyWiseQIFAccountTypeLine(final String pType) {
@@ -387,6 +400,7 @@ public class MoneyWiseQIFAccount
 
         /**
          * Obtain account class.
+         *
          * @return the account class
          */
         public Enum<?> getAccountClass() {
@@ -401,6 +415,7 @@ public class MoneyWiseQIFAccount
             extends MoneyWiseQIFMoneyLine<MoneyWiseQAccountLineType> {
         /**
          * Constructor.
+         *
          * @param pLimit the Credit Limit
          */
         protected MoneyWiseQIFAccountLimitLine(final OceanusMoney pLimit) {
@@ -415,6 +430,7 @@ public class MoneyWiseQIFAccount
 
         /**
          * Obtain credit limit.
+         *
          * @return the credit limit
          */
         public OceanusMoney getCreditLimit() {

@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,16 +13,16 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.tax.uk;
 
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxBandSet;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxResource;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 
 import java.util.Iterator;
 
@@ -62,6 +62,7 @@ public class MoneyWiseUKTaxBands
 
     /**
      * Constructor.
+     *
      * @param pStandard the standard taxBands
      */
     protected MoneyWiseUKTaxBands(final MoneyWiseTaxBandSet pStandard) {
@@ -70,7 +71,8 @@ public class MoneyWiseUKTaxBands
 
     /**
      * Constructor.
-     * @param pStandard the standard taxBands
+     *
+     * @param pStandard     the standard taxBands
      * @param pHasLoTaxBand do we have a low tax band?
      */
     protected MoneyWiseUKTaxBands(final MoneyWiseTaxBandSet pStandard,
@@ -80,7 +82,8 @@ public class MoneyWiseUKTaxBands
 
     /**
      * Constructor.
-     * @param pStandard the standard taxBands
+     *
+     * @param pStandard  the standard taxBands
      * @param pLoSavings the loSavings taxBand
      */
     protected MoneyWiseUKTaxBands(final MoneyWiseTaxBandSet pStandard,
@@ -90,9 +93,10 @@ public class MoneyWiseUKTaxBands
 
     /**
      * Constructor.
-     * @param pStandard the standard taxBands
+     *
+     * @param pStandard     the standard taxBands
      * @param pHasLoTaxBand do we have a low tax band?
-     * @param pLoSavings the loSavings taxBand
+     * @param pLoSavings    the loSavings taxBand
      */
     private MoneyWiseUKTaxBands(final MoneyWiseTaxBandSet pStandard,
                                 final Boolean pHasLoTaxBand,
@@ -104,6 +108,7 @@ public class MoneyWiseUKTaxBands
 
     /**
      * Constructor.
+     *
      * @param pSource the source taxBands
      */
     protected MoneyWiseUKTaxBands(final MoneyWiseUKTaxBands pSource) {
@@ -117,6 +122,7 @@ public class MoneyWiseUKTaxBands
 
     /**
      * Obtain the standard taxBands.
+     *
      * @return the taxBands
      */
     public MoneyWiseTaxBandSet getStandardSet() {
@@ -125,6 +131,7 @@ public class MoneyWiseUKTaxBands
 
     /**
      * Do we have a Low taxBand?
+     *
      * @return true/false
      */
     public Boolean hasLoTaxBand() {
@@ -133,6 +140,7 @@ public class MoneyWiseUKTaxBands
 
     /**
      * Obtain the low savings taxBand.
+     *
      * @return the taxBands
      */
     public MoneyWiseTaxBand getLoSavings() {
@@ -141,6 +149,7 @@ public class MoneyWiseUKTaxBands
 
     /**
      * Obtain the basic rate of income tax.
+     *
      * @return the rate
      */
     protected OceanusRate getBasicTaxRate() {

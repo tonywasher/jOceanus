@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Metis: Java Data Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,17 +13,18 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.metis.data;
 
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter.OceanusDataFormatterExtension;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataMap;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataObjectFormat;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter.OceanusDataFormatterExtension;
 
 /**
  * Generic Data object formatter.
+ *
  * @author Tony Washer
  */
 public class MetisDataFormatter
@@ -35,6 +36,7 @@ public class MetisDataFormatter
 
     /**
      * Constructor.
+     *
      * @param pFormatter the formatter
      */
     public MetisDataFormatter(final OceanusDataFormatter pFormatter) {
@@ -57,6 +59,7 @@ public class MetisDataFormatter
 
     /**
      * Format the value.
+     *
      * @param pValue the value
      * @return the formatted value
      */
@@ -77,8 +80,9 @@ public class MetisDataFormatter
 
     /**
      * Format the list/map.
+     *
      * @param pValue the value
-     * @param pSize the size
+     * @param pSize  the size
      * @return the formatted value
      */
     private String formatValue(final Object pValue,

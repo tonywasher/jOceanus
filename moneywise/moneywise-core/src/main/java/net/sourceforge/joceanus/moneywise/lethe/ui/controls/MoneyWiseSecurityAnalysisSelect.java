@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,24 +13,22 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.lethe.ui.controls;
 
-import java.util.Iterator;
-
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisPortfolioBucket;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisPortfolioBucket.MoneyWiseAnalysisPortfolioBucketList;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisSecurityBucket;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter;
 import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisSecurityFilter;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIConstant;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
@@ -42,6 +40,8 @@ import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollItem;
 import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollMenu;
 import net.sourceforge.joceanus.tethys.api.pane.TethysUIBoxPaneManager;
+
+import java.util.Iterator;
 
 /**
  * Security Analysis Selection.
@@ -105,6 +105,7 @@ public class MoneyWiseSecurityAnalysisSelect
 
     /**
      * Constructor.
+     *
      * @param pFactory the GUI factory
      */
     protected MoneyWiseSecurityAnalysisSelect(final TethysUIFactory<?> pFactory) {
@@ -206,6 +207,7 @@ public class MoneyWiseSecurityAnalysisSelect
 
     /**
      * Set analysis.
+     *
      * @param pAnalysis the analysis.
      */
     public void setAnalysis(final MoneyWiseAnalysis pAnalysis) {
@@ -371,6 +373,7 @@ public class MoneyWiseSecurityAnalysisSelect
 
         /**
          * Constructor.
+         *
          * @param pState state to copy from
          */
         private MoneyWiseSecurityState(final MoneyWiseSecurityState pState) {
@@ -383,6 +386,7 @@ public class MoneyWiseSecurityAnalysisSelect
 
         /**
          * Obtain the Security Bucket.
+         *
          * @return the Security
          */
         private MoneyWiseAnalysisSecurityBucket getSecurity() {
@@ -391,6 +395,7 @@ public class MoneyWiseSecurityAnalysisSelect
 
         /**
          * Obtain the Portfolio.
+         *
          * @return the portfolio
          */
         private MoneyWiseAnalysisPortfolioBucket getPortfolio() {
@@ -399,6 +404,7 @@ public class MoneyWiseSecurityAnalysisSelect
 
         /**
          * Obtain the dateRange.
+         *
          * @return the dateRange
          */
         private OceanusDateRange getDateRange() {
@@ -407,6 +413,7 @@ public class MoneyWiseSecurityAnalysisSelect
 
         /**
          * Obtain the Filter.
+         *
          * @return the filter
          */
         private MoneyWiseAnalysisSecurityFilter getFilter() {
@@ -415,6 +422,7 @@ public class MoneyWiseSecurityAnalysisSelect
 
         /**
          * Set new Security.
+         *
          * @param pSecurity the Security
          * @return true/false did a change occur
          */
@@ -430,8 +438,9 @@ public class MoneyWiseSecurityAnalysisSelect
 
         /**
          * Set new Security.
+         *
          * @param pPortfolio the Portfolio
-         * @param pSecurity the Security
+         * @param pSecurity  the Security
          */
         private void setTheSecurity(final MoneyWiseAnalysisPortfolioBucket pPortfolio,
                                     final MoneyWiseAnalysisSecurityBucket pSecurity) {
@@ -448,6 +457,7 @@ public class MoneyWiseSecurityAnalysisSelect
 
         /**
          * Set new Portfolio.
+         *
          * @param pPortfolio the Portfolio
          * @return true/false did a change occur
          */
@@ -462,6 +472,7 @@ public class MoneyWiseSecurityAnalysisSelect
 
         /**
          * Obtain first security for portfolio.
+         *
          * @param pPortfolio the portfolio
          * @return the first security
          */
@@ -475,6 +486,7 @@ public class MoneyWiseSecurityAnalysisSelect
 
         /**
          * Set the dateRange.
+         *
          * @param pRange the dateRange
          */
         private void setDateRange(final OceanusDateRange pRange) {

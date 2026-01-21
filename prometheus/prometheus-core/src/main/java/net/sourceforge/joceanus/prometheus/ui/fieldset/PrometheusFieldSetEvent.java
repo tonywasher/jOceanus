@@ -1,6 +1,6 @@
-/* *****************************************************************************
+/*
  * Prometheus: Application Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,12 +13,12 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.prometheus.ui.fieldset;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.prometheus.exc.PrometheusDataException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * FieldSetEvent.
@@ -36,7 +36,8 @@ public class PrometheusFieldSetEvent {
 
     /**
      * Constructor.
-     * @param pFieldId the source fieldId
+     *
+     * @param pFieldId  the source fieldId
      * @param pNewValue the new Value
      */
     public PrometheusFieldSetEvent(final MetisDataFieldId pFieldId,
@@ -47,6 +48,7 @@ public class PrometheusFieldSetEvent {
 
     /**
      * Obtain the source field.
+     *
      * @return the field
      */
     public MetisDataFieldId getFieldId() {
@@ -55,6 +57,7 @@ public class PrometheusFieldSetEvent {
 
     /**
      * Obtain the value.
+     *
      * @return the value
      */
     public Object getValue() {
@@ -63,7 +66,8 @@ public class PrometheusFieldSetEvent {
 
     /**
      * Obtain the value as specific type.
-     * @param <T> the value class
+     *
+     * @param <T>    the value class
      * @param pClass the required class
      * @return the value
      * @throws OceanusException on error

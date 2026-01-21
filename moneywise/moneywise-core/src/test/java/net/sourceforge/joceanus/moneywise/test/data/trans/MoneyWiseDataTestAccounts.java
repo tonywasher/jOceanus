@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,10 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.test.data.trans;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.data.builder.MoneyWiseCashBuilder;
@@ -33,7 +34,6 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePortfolioClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseSecurityClass;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseLogicException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -211,6 +211,7 @@ public class MoneyWiseDataTestAccounts {
 
     /**
      * Constructor.
+     *
      * @param pDataSet the dataSet
      * @throws OceanusException on error
      */
@@ -244,6 +245,7 @@ public class MoneyWiseDataTestAccounts {
 
     /**
      * Obtain the transaction builder.
+     *
      * @return the transaction builder
      */
     MoneyWiseTransactionBuilder getTransBuilder() {
@@ -252,6 +254,7 @@ public class MoneyWiseDataTestAccounts {
 
     /**
      * Create base accounts.
+     *
      * @throws OceanusException on error
      */
     private void createBaseAccounts() throws OceanusException {
@@ -267,6 +270,7 @@ public class MoneyWiseDataTestAccounts {
 
     /**
      * Create payees.
+     *
      * @param pPayees the payees to create
      * @throws OceanusException on error
      */
@@ -330,6 +334,7 @@ public class MoneyWiseDataTestAccounts {
 
     /**
      * Create deposits.
+     *
      * @param pDeposits the deposits to create
      * @throws OceanusException on error
      */
@@ -405,6 +410,7 @@ public class MoneyWiseDataTestAccounts {
 
     /**
      * Create cash.
+     *
      * @param pCash the cash to create
      * @throws OceanusException on error
      */
@@ -449,6 +455,7 @@ public class MoneyWiseDataTestAccounts {
 
     /**
      * Create loans.
+     *
      * @param pLoans the loans to create
      * @throws OceanusException on error
      */
@@ -492,6 +499,7 @@ public class MoneyWiseDataTestAccounts {
 
     /**
      * Create portfolios.
+     *
      * @param pPortfolios the portfolios to create
      * @throws OceanusException on error
      */
@@ -544,6 +552,7 @@ public class MoneyWiseDataTestAccounts {
 
     /**
      * Create securities.
+     *
      * @param pSecurities the securities to create
      * @throws OceanusException on error
      */
@@ -651,9 +660,10 @@ public class MoneyWiseDataTestAccounts {
 
     /**
      * Create secPrice.
+     *
      * @param pSecurity the currency
-     * @param pDate the date
-     * @param pPrice the price
+     * @param pDate     the date
+     * @param pPrice    the price
      * @throws OceanusException on error
      */
     void createSecPrice(final String pSecurity,
@@ -676,9 +686,10 @@ public class MoneyWiseDataTestAccounts {
 
     /**
      * Create xchgRate.
+     *
      * @param pCurrency the currency
-     * @param pDate the date
-     * @param pRate the rate
+     * @param pDate     the date
+     * @param pRate     the rate
      * @throws OceanusException on error
      */
     void createXchgRate(final MoneyWiseCurrencyClass pCurrency,
@@ -701,6 +712,7 @@ public class MoneyWiseDataTestAccounts {
 
     /**
      * Reset data.
+     *
      * @throws OceanusException on error
      */
     public void resetData() throws OceanusException {

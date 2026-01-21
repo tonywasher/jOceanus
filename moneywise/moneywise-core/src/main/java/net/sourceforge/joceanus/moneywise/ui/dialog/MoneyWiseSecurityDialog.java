@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,11 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.ui.dialog;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.field.MetisFieldRequired;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
@@ -39,8 +41,6 @@ import net.sourceforge.joceanus.moneywise.ui.MoneyWiseIcon;
 import net.sourceforge.joceanus.moneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.moneywise.ui.base.MoneyWiseAssetTable;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.prometheus.ui.fieldset.PrometheusFieldSet;
 import net.sourceforge.joceanus.prometheus.ui.fieldset.PrometheusFieldSetEvent;
@@ -86,10 +86,11 @@ public class MoneyWiseSecurityDialog
 
     /**
      * Constructor.
+     *
      * @param pFactory the GUI factory
-     * @param pView the data view
+     * @param pView    the data view
      * @param pEditSet the edit set
-     * @param pOwner the owning table
+     * @param pOwner   the owning table
      */
     public MoneyWiseSecurityDialog(final TethysUIFactory<?> pFactory,
                                    final MoneyWiseView pView,
@@ -124,6 +125,7 @@ public class MoneyWiseSecurityDialog
 
     /**
      * Build Main subPanel.
+     *
      * @param pFactory the GUI factory
      */
     private void buildMainPanel(final TethysUIFactory<?> pFactory) {
@@ -160,6 +162,7 @@ public class MoneyWiseSecurityDialog
 
     /**
      * Build details subPanel.
+     *
      * @param pFactory the GUI factory
      */
     private void buildDetailsPanel(final TethysUIFactory<?> pFactory) {
@@ -192,6 +195,7 @@ public class MoneyWiseSecurityDialog
 
     /**
      * Build Notes subPanel.
+     *
      * @param pFactory the GUI factory
      */
     private void buildNotesPanel(final TethysUIFactory<?> pFactory) {
@@ -283,8 +287,9 @@ public class MoneyWiseSecurityDialog
 
     /**
      * Is the field editable?
+     *
      * @param pSecurity the security
-     * @param pField the field class
+     * @param pField    the field class
      * @return true/false
      */
     public static boolean isEditableField(final MoneyWiseSecurity pSecurity,
@@ -356,6 +361,7 @@ public class MoneyWiseSecurityDialog
 
     /**
      * Add a new price for a new security.
+     *
      * @param pSecurity the security
      * @throws OceanusException on error
      */
@@ -384,7 +390,8 @@ public class MoneyWiseSecurityDialog
 
     /**
      * Build the securityType menu for an item.
-     * @param pMenu the menu
+     *
+     * @param pMenu     the menu
      * @param pSecurity the security to build for
      */
     public void buildSecTypeMenu(final TethysUIScrollMenu<MoneyWiseAssetCategory> pMenu,
@@ -428,7 +435,8 @@ public class MoneyWiseSecurityDialog
 
     /**
      * Build the parent menu for an item.
-     * @param pMenu the menu
+     *
+     * @param pMenu     the menu
      * @param pSecurity the security to build for
      */
     public void buildParentMenu(final TethysUIScrollMenu<MoneyWisePayee> pMenu,
@@ -474,7 +482,8 @@ public class MoneyWiseSecurityDialog
 
     /**
      * Build the region menu for an item.
-     * @param pMenu the menu
+     *
+     * @param pMenu     the menu
      * @param pSecurity the security to build for
      */
     public void buildRegionMenu(final TethysUIScrollMenu<MoneyWiseRegion> pMenu,
@@ -518,7 +527,8 @@ public class MoneyWiseSecurityDialog
 
     /**
      * Build the stock menu for an item.
-     * @param pMenu the menu
+     *
+     * @param pMenu     the menu
      * @param pSecurity the security to build for
      */
     public void buildStockMenu(final TethysUIScrollMenu<MoneyWiseSecurity> pMenu,
@@ -563,7 +573,8 @@ public class MoneyWiseSecurityDialog
 
     /**
      * Build the currency menu for an item.
-     * @param pMenu the menu
+     *
+     * @param pMenu     the menu
      * @param pSecurity the security to build for
      */
     public void buildCurrencyMenu(final TethysUIScrollMenu<MoneyWiseCurrency> pMenu,

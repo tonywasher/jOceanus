@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,11 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.ui.panel;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
@@ -29,8 +31,6 @@ import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
 import net.sourceforge.joceanus.moneywise.ui.base.MoneyWiseAssetTable;
 import net.sourceforge.joceanus.moneywise.ui.dialog.MoneyWisePortfolioDialog;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
@@ -56,9 +56,10 @@ public class MoneyWisePortfolioTable
 
     /**
      * Constructor.
-     * @param pView the view
+     *
+     * @param pView    the view
      * @param pEditSet the editSet
-     * @param pError the error panel
+     * @param pError   the error panel
      */
     MoneyWisePortfolioTable(final MoneyWiseView pView,
                             final PrometheusEditSet pEditSet,
@@ -116,6 +117,7 @@ public class MoneyWisePortfolioTable
 
     /**
      * Select portfolio.
+     *
      * @param pPortfolio the portfolio to select
      */
     void selectPortfolio(final MoneyWisePortfolio pPortfolio) {

@@ -1,28 +1,28 @@
-/*******************************************************************************
+/*
  * Tethys: GUI Utilities
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package net.sourceforge.joceanus.tethys.api.chart;
 
-import java.util.Iterator;
-
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
+
+import java.util.Iterator;
 
 /**
  * Area Chart.
@@ -36,6 +36,7 @@ public interface TethysUIAreaChart
         extends OceanusEventProvider<TethysUIEvent>, TethysUIComponent {
     /**
      * Update AreaChart with data.
+     *
      * @param pData the data
      */
     void updateAreaChart(TethysUIAreaChartData pData);
@@ -46,6 +47,7 @@ public interface TethysUIAreaChart
     interface TethysUIAreaChartData {
         /**
          * Set the XAxis label.
+         *
          * @param pLabel the label.
          * @return the data
          */
@@ -53,6 +55,7 @@ public interface TethysUIAreaChart
 
         /**
          * Set the YAxis label.
+         *
          * @param pLabel the label.
          * @return the data
          */
@@ -60,24 +63,28 @@ public interface TethysUIAreaChart
 
         /**
          * Obtain the title.
+         *
          * @return the title.
          */
         String getTitle();
 
         /**
          * Obtain the XAxis label.
+         *
          * @return the label.
          */
         String getXAxisLabel();
 
         /**
          * Obtain the YAxis label.
+         *
          * @return the label.
          */
         String getYAxisLabel();
 
         /**
          * Create a series.
+         *
          * @param pName the name
          * @return the series
          */
@@ -87,7 +94,8 @@ public interface TethysUIAreaChart
 
         /**
          * Create a series.
-         * @param pName the name
+         *
+         * @param pName   the name
          * @param pSource the source
          * @return the series
          */
@@ -96,6 +104,7 @@ public interface TethysUIAreaChart
 
         /**
          * Obtain the areaChart series.
+         *
          * @return the iterator
          */
         Iterator<TethysUIAreaChartSeries> seriesIterator();
@@ -107,7 +116,8 @@ public interface TethysUIAreaChart
     interface TethysUIAreaChartSeries {
         /**
          * Add a dataPoint.
-         * @param pDate the date
+         *
+         * @param pDate  the date
          * @param pValue the value
          */
         void addPoint(OceanusDate pDate,
@@ -115,22 +125,25 @@ public interface TethysUIAreaChart
 
         /**
          * Obtain the name.
+         *
          * @return the name.
          */
         String getName();
 
         /**
          * Obtain the source.
+         *
          * @return the source.
          */
         Object getSource();
 
         /**
          * Obtain the areaChartSeries points.
+         *
          * @return the iterator
          */
         Iterator<TethysUIAreaChartDataPoint> pointIterator();
-     }
+    }
 
     /**
      * The Data Point definition.
@@ -138,18 +151,21 @@ public interface TethysUIAreaChart
     interface TethysUIAreaChartDataPoint {
         /**
          * Obtain the series.
+         *
          * @return the series.
          */
         TethysUIAreaChartSeries getSeries();
 
         /**
          * Obtain the date.
+         *
          * @return the date.
          */
         OceanusDate getDate();
 
         /**
          * Obtain the value.
+         *
          * @return the value.
          */
         OceanusMoney getValue();

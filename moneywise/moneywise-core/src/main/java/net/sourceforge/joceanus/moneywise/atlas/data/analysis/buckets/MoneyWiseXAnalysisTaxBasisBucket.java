@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,14 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets;
 
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataList;
@@ -39,11 +44,6 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTaxBasis.MoneyWi
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseChargeableGainSlice.MoneyWiseChargeableGainSliceList;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxSource;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 
 import java.util.Comparator;
@@ -120,6 +120,7 @@ public class MoneyWiseXAnalysisTaxBasisBucket
 
     /**
      * Constructor.
+     *
      * @param pAnalysis the analysis
      * @param pTaxBasis the basis
      */
@@ -154,9 +155,10 @@ public class MoneyWiseXAnalysisTaxBasisBucket
 
     /**
      * Constructor.
+     *
      * @param pAnalysis the analysis
-     * @param pBase the underlying bucket
-     * @param pDate the date for the bucket
+     * @param pBase     the underlying bucket
+     * @param pDate     the date for the bucket
      */
     protected MoneyWiseXAnalysisTaxBasisBucket(final MoneyWiseXAnalysis pAnalysis,
                                                final MoneyWiseXAnalysisTaxBasisBucket pBase,
@@ -182,9 +184,10 @@ public class MoneyWiseXAnalysisTaxBasisBucket
 
     /**
      * Constructor.
+     *
      * @param pAnalysis the analysis
-     * @param pBase the underlying bucket
-     * @param pRange the range for the bucket
+     * @param pBase     the underlying bucket
+     * @param pRange    the range for the bucket
      */
     protected MoneyWiseXAnalysisTaxBasisBucket(final MoneyWiseXAnalysis pAnalysis,
                                                final MoneyWiseXAnalysisTaxBasisBucket pBase,
@@ -235,6 +238,7 @@ public class MoneyWiseXAnalysisTaxBasisBucket
 
     /**
      * Obtain name.
+     *
      * @return the name
      */
     public String getName() {
@@ -245,6 +249,7 @@ public class MoneyWiseXAnalysisTaxBasisBucket
 
     /**
      * Obtain tax basis.
+     *
      * @return the basis
      */
     public MoneyWiseTaxBasis getTaxBasis() {
@@ -253,6 +258,7 @@ public class MoneyWiseXAnalysisTaxBasisBucket
 
     /**
      * Do we have accounts.
+     *
      * @return true/false
      */
     public boolean hasAccounts() {
@@ -261,6 +267,7 @@ public class MoneyWiseXAnalysisTaxBasisBucket
 
     /**
      * Is this an expense bucket.
+     *
      * @return true/false
      */
     public boolean isExpense() {
@@ -269,6 +276,7 @@ public class MoneyWiseXAnalysisTaxBasisBucket
 
     /**
      * Obtain account list.
+     *
      * @return the account list
      */
     private MoneyWiseXAnalysisTaxBasisAccountBucketList getAccounts() {
@@ -277,6 +285,7 @@ public class MoneyWiseXAnalysisTaxBasisBucket
 
     /**
      * Obtain account list iterator.
+     *
      * @return the iterator
      */
     public Iterator<MoneyWiseXAnalysisTaxBasisAccountBucket> accountIterator() {
@@ -287,6 +296,7 @@ public class MoneyWiseXAnalysisTaxBasisBucket
 
     /**
      * find an account bucket.
+     *
      * @param pAccount the account
      * @return the bucket
      */
@@ -298,6 +308,7 @@ public class MoneyWiseXAnalysisTaxBasisBucket
 
     /**
      * Is this bucket idle?
+     *
      * @return true/false
      */
     public boolean isIdle() {
@@ -306,6 +317,7 @@ public class MoneyWiseXAnalysisTaxBasisBucket
 
     /**
      * Obtain the value map.
+     *
      * @return the value map
      */
     public MoneyWiseXAnalysisTaxBasisValues getValues() {
@@ -314,6 +326,7 @@ public class MoneyWiseXAnalysisTaxBasisBucket
 
     /**
      * Obtain the value for a particular attribute.
+     *
      * @param pAttr the attribute
      * @return the value
      */
@@ -323,6 +336,7 @@ public class MoneyWiseXAnalysisTaxBasisBucket
 
     /**
      * Obtain the base value map.
+     *
      * @return the base value map
      */
     public MoneyWiseXAnalysisTaxBasisValues getBaseValues() {
@@ -331,6 +345,7 @@ public class MoneyWiseXAnalysisTaxBasisBucket
 
     /**
      * Obtain values for event.
+     *
      * @param pEvent the event
      * @return the values (or null)
      */
@@ -341,6 +356,7 @@ public class MoneyWiseXAnalysisTaxBasisBucket
 
     /**
      * Obtain previous values for event.
+     *
      * @param pEvent the event
      * @return the values (or null)
      */
@@ -350,8 +366,9 @@ public class MoneyWiseXAnalysisTaxBasisBucket
 
     /**
      * Obtain delta for event.
+     *
      * @param pEvent the event
-     * @param pAttr the attribute
+     * @param pAttr  the attribute
      * @return the delta (or null)
      */
     public OceanusDecimal getDeltaForEvent(final MoneyWiseXAnalysisEvent pEvent,
@@ -362,6 +379,7 @@ public class MoneyWiseXAnalysisTaxBasisBucket
 
     /**
      * Obtain the history map.
+     *
      * @return the history map
      */
     private MoneyWiseXAnalysisHistory<MoneyWiseXAnalysisTaxBasisValues, MoneyWiseXAnalysisTaxBasisAttr> getHistoryMap() {
@@ -370,6 +388,7 @@ public class MoneyWiseXAnalysisTaxBasisBucket
 
     /**
      * Obtain the analysis.
+     *
      * @return the analysis
      */
     protected MoneyWiseXAnalysis getAnalysis() {
@@ -378,6 +397,7 @@ public class MoneyWiseXAnalysisTaxBasisBucket
 
     /**
      * Obtain date range.
+     *
      * @return the range
      */
     public OceanusDateRange getDateRange() {
@@ -386,7 +406,8 @@ public class MoneyWiseXAnalysisTaxBasisBucket
 
     /**
      * Set Attribute.
-     * @param pAttr the attribute
+     *
+     * @param pAttr  the attribute
      * @param pValue the value of the attribute
      */
     protected void setValue(final MoneyWiseXAnalysisTaxBasisAttr pAttr,
@@ -397,6 +418,7 @@ public class MoneyWiseXAnalysisTaxBasisBucket
 
     /**
      * Get an attribute value.
+     *
      * @param pAttr the attribute
      * @return the value to set
      */
@@ -412,6 +434,7 @@ public class MoneyWiseXAnalysisTaxBasisBucket
 
     /**
      * Obtain an attribute value.
+     *
      * @param pAttr the attribute
      * @return the value of the attribute or null
      */
@@ -422,6 +445,7 @@ public class MoneyWiseXAnalysisTaxBasisBucket
 
     /**
      * Adjust Gross and Nett values by amount.
+     *
      * @param pAmount the amount
      */
     public void adjustGrossAndNett(final OceanusMoney pAmount) {
@@ -430,6 +454,7 @@ public class MoneyWiseXAnalysisTaxBasisBucket
 
     /**
      * Adjust Gross value by amount.
+     *
      * @param pAmount the amount
      */
     public void adjustGross(final OceanusMoney pAmount) {
@@ -438,6 +463,7 @@ public class MoneyWiseXAnalysisTaxBasisBucket
 
     /**
      * Adjust Gross and Tax values by amount.
+     *
      * @param pAmount the amount
      */
     public void adjustGrossAndTax(final OceanusMoney pAmount) {
@@ -446,8 +472,9 @@ public class MoneyWiseXAnalysisTaxBasisBucket
 
     /**
      * Adjust Gross and Nett values by amount.
+     *
      * @param pAccount the relevant account
-     * @param pAmount the amount
+     * @param pAmount  the amount
      * @return the adjusted taxBasisAccountBucket (or null)
      */
     public MoneyWiseXAnalysisTaxBasisAccountBucket adjustGrossAndNett(final MoneyWiseTransAsset pAccount,
@@ -457,8 +484,9 @@ public class MoneyWiseXAnalysisTaxBasisBucket
 
     /**
      * Adjust Gross value by amount.
+     *
      * @param pAccount the relevant account
-     * @param pAmount the amount
+     * @param pAmount  the amount
      * @return the adjusted taxBasisAccountBucket (or null)
      */
     public MoneyWiseXAnalysisTaxBasisAccountBucket adjustGross(final MoneyWiseTransAsset pAccount,
@@ -468,8 +496,9 @@ public class MoneyWiseXAnalysisTaxBasisBucket
 
     /**
      * Adjust Gross and Tax values by amount.
+     *
      * @param pAccount the relevant account
-     * @param pAmount the amount
+     * @param pAmount  the amount
      * @return the adjusted taxBasisAccountBucket (or null)
      */
     public MoneyWiseXAnalysisTaxBasisAccountBucket adjustGrossAndTax(final MoneyWiseTransAsset pAccount,
@@ -479,9 +508,10 @@ public class MoneyWiseXAnalysisTaxBasisBucket
 
     /**
      * Adjust value.
+     *
      * @param pAccount the relevant account
-     * @param pValue the value
-     * @param pAdjust adjustment control
+     * @param pValue   the value
+     * @param pAdjust  adjustment control
      * @return the adjusted taxBasisAccountBucket (or null)
      */
     MoneyWiseXAnalysisTaxBasisAccountBucket adjustValue(final MoneyWiseTransAsset pAccount,
@@ -549,6 +579,7 @@ public class MoneyWiseXAnalysisTaxBasisBucket
 
     /**
      * Add values.
+     *
      * @param pBucket tax category bucket
      */
     protected void addValues(final MoneyWiseXAnalysisTaxBasisBucket pBucket) {
@@ -589,6 +620,7 @@ public class MoneyWiseXAnalysisTaxBasisBucket
 
         /**
          * should we adjust Nett?
+         *
          * @return true/false
          */
         private boolean adjustNett() {
@@ -597,6 +629,7 @@ public class MoneyWiseXAnalysisTaxBasisBucket
 
         /**
          * should we adjust TaxCredit?
+         *
          * @return true/false
          */
         private boolean adjustTaxCredit() {
@@ -650,8 +683,9 @@ public class MoneyWiseXAnalysisTaxBasisBucket
 
         /**
          * Construct a top-level List.
+         *
          * @param pAnalysis the analysis
-         * @param pGains the new Gains list
+         * @param pGains    the new Gains list
          */
         private MoneyWiseXAnalysisTaxBasisBucketList(final MoneyWiseXAnalysis pAnalysis,
                                                      final MoneyWiseChargeableGainSliceList pGains) {
@@ -665,6 +699,7 @@ public class MoneyWiseXAnalysisTaxBasisBucket
 
         /**
          * Construct a top-level List.
+         *
          * @param pAnalysis the analysis
          */
         protected MoneyWiseXAnalysisTaxBasisBucketList(final MoneyWiseXAnalysis pAnalysis) {
@@ -673,9 +708,10 @@ public class MoneyWiseXAnalysisTaxBasisBucket
 
         /**
          * Construct a dated List.
+         *
          * @param pAnalysis the analysis
-         * @param pBase the base list
-         * @param pDate the Date
+         * @param pBase     the base list
+         * @param pDate     the Date
          */
         protected MoneyWiseXAnalysisTaxBasisBucketList(final MoneyWiseXAnalysis pAnalysis,
                                                        final MoneyWiseXAnalysisTaxBasisBucketList pBase,
@@ -701,9 +737,10 @@ public class MoneyWiseXAnalysisTaxBasisBucket
 
         /**
          * Construct a ranged List.
+         *
          * @param pAnalysis the analysis
-         * @param pBase the base list
-         * @param pRange the Date Range
+         * @param pBase     the base list
+         * @param pRange    the Date Range
          */
         protected MoneyWiseXAnalysisTaxBasisBucketList(final MoneyWiseXAnalysis pAnalysis,
                                                        final MoneyWiseXAnalysisTaxBasisBucketList pBase,
@@ -745,6 +782,7 @@ public class MoneyWiseXAnalysisTaxBasisBucket
 
         /**
          * Obtain the analysis.
+         *
          * @return the analysis
          */
         protected MoneyWiseXAnalysis getAnalysis() {
@@ -753,6 +791,7 @@ public class MoneyWiseXAnalysisTaxBasisBucket
 
         /**
          * Obtain item by id.
+         *
          * @param pId the id to lookup
          * @return the item (or null if not present)
          */
@@ -768,6 +807,7 @@ public class MoneyWiseXAnalysisTaxBasisBucket
 
         /**
          * Obtain the Totals.
+         *
          * @return the totals bucket
          */
         public MoneyWiseXAnalysisTaxBasisBucket getTotals() {
@@ -776,6 +816,7 @@ public class MoneyWiseXAnalysisTaxBasisBucket
 
         /**
          * Allocate the Totals EventCategoryBucket.
+         *
          * @return the bucket
          */
         private MoneyWiseXAnalysisTaxBasisBucket allocateTotalsBucket() {
@@ -785,6 +826,7 @@ public class MoneyWiseXAnalysisTaxBasisBucket
 
         /**
          * Obtain the TaxBasisBucket for a given taxBasis.
+         *
          * @param pClass the taxBasis
          * @return the bucket
          */
@@ -808,6 +850,7 @@ public class MoneyWiseXAnalysisTaxBasisBucket
 
         /**
          * Obtain the matching BasisBucket.
+         *
          * @param pTaxBasis the taxBasis
          * @return the matching bucket
          */
@@ -840,6 +883,7 @@ public class MoneyWiseXAnalysisTaxBasisBucket
 
         /**
          * Obtain the default BasisBucket.
+         *
          * @return the default bucket
          */
         public MoneyWiseXAnalysisTaxBasisBucket getDefaultBasis() {
@@ -851,8 +895,9 @@ public class MoneyWiseXAnalysisTaxBasisBucket
 
         /**
          * record ChargeableGain.
+         *
          * @param pTrans the transaction
-         * @param pGain the gain
+         * @param pGain  the gain
          * @param pSlice the slice
          * @param pYears the years
          */

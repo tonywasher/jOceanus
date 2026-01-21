@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,16 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.lethe.reports;
 
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.report.MetisReportBase;
 import net.sourceforge.joceanus.metis.report.MetisReportHTMLBuilder;
 import net.sourceforge.joceanus.metis.report.MetisReportHTMLBuilder.MetisHTMLTable;
@@ -33,13 +40,6 @@ import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAn
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisSecurityValues;
 import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseCashType;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -97,6 +97,7 @@ public class MoneyWiseReportCapitalGains
 
     /**
      * Constructor.
+     *
      * @param pManager the Report Manager
      */
     protected MoneyWiseReportCapitalGains(final MetisReportManager<MoneyWiseAnalysisFilter<?, ?>> pManager) {
@@ -108,6 +109,7 @@ public class MoneyWiseReportCapitalGains
 
     /**
      * Set the security bucket.
+     *
      * @param pSecurity the security bucket
      */
     protected void setSecurity(final MoneyWiseAnalysisSecurityBucket pSecurity) {
@@ -171,7 +173,8 @@ public class MoneyWiseReportCapitalGains
 
     /**
      * Format the details.
-     * @param pTrans the transaction
+     *
+     * @param pTrans  the transaction
      * @param pValues the values for the transaction
      */
     private void formatTransaction(final MoneyWiseTransaction pTrans,
@@ -207,6 +210,7 @@ public class MoneyWiseReportCapitalGains
 
     /**
      * Format basic details of a transaction.
+     *
      * @param pTrans the transaction
      */
     private void formatBasicTransaction(final MoneyWiseTransaction pTrans) {
@@ -218,6 +222,7 @@ public class MoneyWiseReportCapitalGains
 
     /**
      * Check whether this is a debit transaction for the security.
+     *
      * @param pTrans the transaction
      * @return true/false
      */
@@ -230,6 +235,7 @@ public class MoneyWiseReportCapitalGains
 
     /**
      * Check whether this is a credit transaction for the security.
+     *
      * @param pTrans the transaction
      * @return true/false
      */
@@ -253,7 +259,8 @@ public class MoneyWiseReportCapitalGains
 
     /**
      * Format a value.
-     * @param pAttr the attribute
+     *
+     * @param pAttr  the attribute
      * @param pValue the value
      */
     private void formatValue(final MoneyWiseAnalysisSecurityAttr pAttr,
@@ -269,10 +276,11 @@ public class MoneyWiseReportCapitalGains
 
     /**
      * Format a division.
-     * @param pAttr the attribute
-     * @param pValue the value
+     *
+     * @param pAttr      the attribute
+     * @param pValue     the value
      * @param pNumerator the numerator
-     * @param pDivisor the divisor
+     * @param pDivisor   the divisor
      */
     private void formatDivision(final MoneyWiseAnalysisSecurityAttr pAttr,
                                 final Object pValue,
@@ -290,8 +298,9 @@ public class MoneyWiseReportCapitalGains
 
     /**
      * Format a division.
+     *
      * @param pNumerator the numerator
-     * @param pDivisor the divisor
+     * @param pDivisor   the divisor
      * @return the formatted division
      */
     private String formatDivision(final OceanusDecimal pNumerator,
@@ -301,10 +310,11 @@ public class MoneyWiseReportCapitalGains
 
     /**
      * Format a valuation.
-     * @param pAttr the attribute
-     * @param pValue the value
-     * @param pUnits the units
-     * @param pPrice the price
+     *
+     * @param pAttr        the attribute
+     * @param pValue       the value
+     * @param pUnits       the units
+     * @param pPrice       the price
      * @param pXchangeRate the exchange rate
      */
     private void formatValuation(final MoneyWiseAnalysisSecurityAttr pAttr,
@@ -324,8 +334,9 @@ public class MoneyWiseReportCapitalGains
 
     /**
      * Format a valuation.
-     * @param pUnits the units
-     * @param pPrice the price
+     *
+     * @param pUnits       the units
+     * @param pPrice       the price
      * @param pXchangeRate the exchange rate
      * @return the formatted valuation
      */
@@ -345,9 +356,10 @@ public class MoneyWiseReportCapitalGains
 
     /**
      * Format a multiplication.
-     * @param pAttr the attribute
-     * @param pValue the value
-     * @param pFirst the first item
+     *
+     * @param pAttr   the attribute
+     * @param pValue  the value
+     * @param pFirst  the first item
      * @param pSecond the second item
      */
     private void formatMultiplication(final MoneyWiseAnalysisSecurityAttr pAttr,
@@ -366,7 +378,8 @@ public class MoneyWiseReportCapitalGains
 
     /**
      * Format a multiplication.
-     * @param pFirst the first item
+     *
+     * @param pFirst  the first item
      * @param pSecond the second item
      * @return the formatted multiplication
      */
@@ -377,9 +390,10 @@ public class MoneyWiseReportCapitalGains
 
     /**
      * Format an addition.
-     * @param pAttr the attribute
-     * @param pValue the value
-     * @param pFirst the first item
+     *
+     * @param pAttr   the attribute
+     * @param pValue  the value
+     * @param pFirst  the first item
      * @param pSecond the second item
      */
     private void formatAddition(final MoneyWiseAnalysisSecurityAttr pAttr,
@@ -398,7 +412,8 @@ public class MoneyWiseReportCapitalGains
 
     /**
      * Format an addition.
-     * @param pFirst the first item
+     *
+     * @param pFirst  the first item
      * @param pSecond the second item
      * @return the formatted addition
      */
@@ -409,9 +424,10 @@ public class MoneyWiseReportCapitalGains
 
     /**
      * Format a subtraction.
-     * @param pAttr the attribute
-     * @param pValue the value
-     * @param pFirst the first item
+     *
+     * @param pAttr   the attribute
+     * @param pValue  the value
+     * @param pFirst  the first item
      * @param pSecond the second item
      */
     private void formatSubtraction(final MoneyWiseAnalysisSecurityAttr pAttr,
@@ -430,7 +446,8 @@ public class MoneyWiseReportCapitalGains
 
     /**
      * Format a subtraction.
-     * @param pFirst the first item
+     *
+     * @param pFirst  the first item
      * @param pSecond the second item
      * @return the formatted subtraction
      */
@@ -441,7 +458,8 @@ public class MoneyWiseReportCapitalGains
 
     /**
      * Format a combination.
-     * @param pFirst the first item
+     *
+     * @param pFirst  the first item
      * @param pSecond the second item
      * @param pSymbol the symbol
      * @return the formatted combination
@@ -458,7 +476,8 @@ public class MoneyWiseReportCapitalGains
 
     /**
      * Format a Transfer.
-     * @param pTrans the transaction
+     *
+     * @param pTrans  the transaction
      * @param pValues the values for the transaction
      */
     private void formatTransfer(final MoneyWiseTransaction pTrans,
@@ -476,7 +495,8 @@ public class MoneyWiseReportCapitalGains
 
     /**
      * Format a Dividend.
-     * @param pTrans the transaction
+     *
+     * @param pTrans  the transaction
      * @param pValues the values for the transaction
      */
     private void formatDividend(final MoneyWiseTransaction pTrans,
@@ -493,7 +513,8 @@ public class MoneyWiseReportCapitalGains
 
     /**
      * Format transfer money in.
-     * @param pTrans the transaction
+     *
+     * @param pTrans  the transaction
      * @param pValues the values for the transaction
      */
     private void formatTransferIn(final MoneyWiseTransaction pTrans,
@@ -531,7 +552,8 @@ public class MoneyWiseReportCapitalGains
 
     /**
      * Format transfer money out.
-     * @param pTrans the transaction
+     *
+     * @param pTrans  the transaction
      * @param pValues the values for the transaction
      */
     private void formatTransferOut(final MoneyWiseTransaction pTrans,
@@ -606,7 +628,8 @@ public class MoneyWiseReportCapitalGains
 
     /**
      * Format a Units Adjustment.
-     * @param pTrans the transaction
+     *
+     * @param pTrans  the transaction
      * @param pValues the values for the transaction
      */
     private void formatUnitsAdjust(final MoneyWiseTransaction pTrans,
@@ -634,7 +657,8 @@ public class MoneyWiseReportCapitalGains
 
     /**
      * Format a Stock DeMerger.
-     * @param pTrans the transaction
+     *
+     * @param pTrans  the transaction
      * @param pValues the values for the transaction
      */
     private void formatStockDeMerger(final MoneyWiseTransaction pTrans,
@@ -652,7 +676,8 @@ public class MoneyWiseReportCapitalGains
 
     /**
      * Format debit side of a Stock DeMerger.
-     * @param pTrans the transaction
+     *
+     * @param pTrans  the transaction
      * @param pValues the values for the transaction
      */
     private void formatDebitStockDeMerger(final MoneyWiseTransaction pTrans,
@@ -694,7 +719,8 @@ public class MoneyWiseReportCapitalGains
 
     /**
      * Format credit side of a Stock DeMerger.
-     * @param pTrans the transaction
+     *
+     * @param pTrans  the transaction
      * @param pValues the values for the transaction
      */
     private void formatCreditStockDeMerger(final MoneyWiseTransaction pTrans,
@@ -715,7 +741,8 @@ public class MoneyWiseReportCapitalGains
 
     /**
      * Format a Stock TakeOver.
-     * @param pTrans the transaction
+     *
+     * @param pTrans  the transaction
      * @param pValues the values for the transaction
      */
     private void formatStockTakeOver(final MoneyWiseTransaction pTrans,
@@ -740,9 +767,10 @@ public class MoneyWiseReportCapitalGains
 
     /**
      * Format a StockAndCash TakeOver.
-     * @param pTrans the transaction
+     *
+     * @param pTrans  the transaction
      * @param pValues the values for the transaction
-     * @param pCash the cash consideration
+     * @param pCash   the cash consideration
      */
     private void formatStockAndCashTakeOver(final MoneyWiseTransaction pTrans,
                                             final MoneyWiseAnalysisSecurityValues pValues,
@@ -757,9 +785,10 @@ public class MoneyWiseReportCapitalGains
 
     /**
      * Format debit side of a StockAndCash TakeOver.
-     * @param pTrans the transaction
+     *
+     * @param pTrans  the transaction
      * @param pValues the values for the transaction
-     * @param pCash the cash consideration
+     * @param pCash   the cash consideration
      */
     private void formatDebitStockAndCashTakeOver(final MoneyWiseTransaction pTrans,
                                                  final MoneyWiseAnalysisSecurityValues pValues,
@@ -802,7 +831,8 @@ public class MoneyWiseReportCapitalGains
 
     /**
      * Format credit side of a StockAndCash TakeOver.
-     * @param pTrans the transaction
+     *
+     * @param pTrans  the transaction
      * @param pValues the values for the transaction
      */
     private void formatCreditStockTakeOver(final MoneyWiseTransaction pTrans,
@@ -829,7 +859,8 @@ public class MoneyWiseReportCapitalGains
 
     /**
      * Format a Stock DeMerger.
-     * @param pTrans the transaction
+     *
+     * @param pTrans  the transaction
      * @param pValues the values for the transaction
      */
     private void formatPortfolioXfer(final MoneyWiseTransaction pTrans,

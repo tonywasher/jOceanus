@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Prometheus: Application Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,14 +13,14 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.prometheus.maps;
 
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.data.MetisDataResource;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.metis.list.MetisListKey;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
 
@@ -57,6 +57,7 @@ public class PrometheusMapsItemId
 
     /**
      * Constructor.
+     *
      * @param pItem the item
      */
     PrometheusMapsItemId(final PrometheusDataItem pItem) {
@@ -66,8 +67,8 @@ public class PrometheusMapsItemId
 
     @Override
     public MetisFieldSetDef getDataFieldSet() {
-            return FIELD_DEFS;
-        }
+        return FIELD_DEFS;
+    }
 
     @Override
     public String formatObject(final OceanusDataFormatter pFormatter) {
@@ -76,6 +77,7 @@ public class PrometheusMapsItemId
 
     /**
      * Obtain the listKey.
+     *
      * @return the listKey
      */
     private MetisListKey getListKey() {
@@ -84,6 +86,7 @@ public class PrometheusMapsItemId
 
     /**
      * Obtain the itemId.
+     *
      * @return the id
      */
     private Integer getItemId() {

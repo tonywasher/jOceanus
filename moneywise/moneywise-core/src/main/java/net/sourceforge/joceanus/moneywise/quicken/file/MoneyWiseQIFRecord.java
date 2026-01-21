@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,11 +13,11 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.quicken.file;
 
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.moneywise.quicken.definitions.MoneyWiseQLineType;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -26,6 +26,7 @@ import java.util.Map;
 
 /**
  * QIF File record representation.
+ *
  * @param <T> the line type
  */
 public abstract class MoneyWiseQIFRecord<T extends Enum<T> & MoneyWiseQLineType> {
@@ -81,7 +82,8 @@ public abstract class MoneyWiseQIFRecord<T extends Enum<T> & MoneyWiseQLineType>
 
     /**
      * Constructor.
-     * @param pFile the QIF File
+     *
+     * @param pFile  the QIF File
      * @param pClass the class of the lines
      */
     protected MoneyWiseQIFRecord(final MoneyWiseQIFFile pFile,
@@ -96,6 +98,7 @@ public abstract class MoneyWiseQIFRecord<T extends Enum<T> & MoneyWiseQLineType>
 
     /**
      * Obtain file.
+     *
      * @return the file
      */
     protected MoneyWiseQIFFile getFile() {
@@ -104,6 +107,7 @@ public abstract class MoneyWiseQIFRecord<T extends Enum<T> & MoneyWiseQLineType>
 
     /**
      * Obtain line class.
+     *
      * @return the line class
      */
     protected Class<T> getLineClass() {
@@ -112,6 +116,7 @@ public abstract class MoneyWiseQIFRecord<T extends Enum<T> & MoneyWiseQLineType>
 
     /**
      * Obtain line map.
+     *
      * @return the line map
      */
     protected Map<T, MoneyWiseQIFLine<T>> getLineMap() {
@@ -120,6 +125,7 @@ public abstract class MoneyWiseQIFRecord<T extends Enum<T> & MoneyWiseQLineType>
 
     /**
      * Obtain subList.
+     *
      * @return the subList
      */
     protected List<MoneyWiseQIFRecord<T>> getSubList() {
@@ -128,6 +134,7 @@ public abstract class MoneyWiseQIFRecord<T extends Enum<T> & MoneyWiseQLineType>
 
     /**
      * Obtain line for record.
+     *
      * @param pLineType the line type
      * @return the record
      */
@@ -137,6 +144,7 @@ public abstract class MoneyWiseQIFRecord<T extends Enum<T> & MoneyWiseQLineType>
 
     /**
      * Add line to map.
+     *
      * @param pLine the Line to add
      */
     protected void addLine(final MoneyWiseQIFLine<T> pLine) {
@@ -146,6 +154,7 @@ public abstract class MoneyWiseQIFRecord<T extends Enum<T> & MoneyWiseQLineType>
 
     /**
      * Add subRecord to list.
+     *
      * @param pRecord the record to add
      */
     protected void addRecord(final MoneyWiseQIFRecord<T> pRecord) {
@@ -160,8 +169,9 @@ public abstract class MoneyWiseQIFRecord<T extends Enum<T> & MoneyWiseQLineType>
 
     /**
      * Format record.
+     *
      * @param pFormatter the data formatter
-     * @param pBuilder the string builder
+     * @param pBuilder   the string builder
      */
     public void formatRecord(final OceanusDataFormatter pFormatter,
                              final StringBuilder pBuilder) {
@@ -184,8 +194,9 @@ public abstract class MoneyWiseQIFRecord<T extends Enum<T> & MoneyWiseQLineType>
 
     /**
      * Format lines.
+     *
      * @param pFormatter the data formatter
-     * @param pBuilder the string builder
+     * @param pBuilder   the string builder
      */
     private void formatLines(final OceanusDataFormatter pFormatter,
                              final StringBuilder pBuilder) {
@@ -203,8 +214,9 @@ public abstract class MoneyWiseQIFRecord<T extends Enum<T> & MoneyWiseQLineType>
 
     /**
      * Format item type.
+     *
      * @param pItemType the item type
-     * @param pBuilder the string builder
+     * @param pBuilder  the string builder
      */
     protected static void formatItemType(final String pItemType,
                                          final StringBuilder pBuilder) {
@@ -216,7 +228,8 @@ public abstract class MoneyWiseQIFRecord<T extends Enum<T> & MoneyWiseQLineType>
 
     /**
      * Format Header.
-     * @param pHdr the header
+     *
+     * @param pHdr     the header
      * @param pBuilder the string builder
      */
     protected static void formatHeader(final String pHdr,
@@ -228,7 +241,8 @@ public abstract class MoneyWiseQIFRecord<T extends Enum<T> & MoneyWiseQLineType>
 
     /**
      * Format set switch.
-     * @param pSwitch the switch to set
+     *
+     * @param pSwitch  the switch to set
      * @param pBuilder the string builder
      */
     protected static void setSwitch(final String pSwitch,
@@ -241,7 +255,8 @@ public abstract class MoneyWiseQIFRecord<T extends Enum<T> & MoneyWiseQLineType>
 
     /**
      * Format clear switch.
-     * @param pSwitch the switch to clear
+     *
+     * @param pSwitch  the switch to clear
      * @param pBuilder the string builder
      */
     protected static void clearSwitch(final String pSwitch,
@@ -268,8 +283,7 @@ public abstract class MoneyWiseQIFRecord<T extends Enum<T> & MoneyWiseQLineType>
         }
 
         /* Cast correctly */
-        @SuppressWarnings("unchecked")
-        final MoneyWiseQIFRecord<T> myThat = (MoneyWiseQIFRecord<T>) pThat;
+        @SuppressWarnings("unchecked") final MoneyWiseQIFRecord<T> myThat = (MoneyWiseQIFRecord<T>) pThat;
 
         /* Check class */
         if (!theClass.equals(myThat.getLineClass())) {

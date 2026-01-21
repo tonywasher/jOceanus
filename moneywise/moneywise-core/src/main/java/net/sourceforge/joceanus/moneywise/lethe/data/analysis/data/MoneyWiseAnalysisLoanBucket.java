@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,24 +13,24 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.lethe.data.analysis.data;
 
-import java.util.Currency;
-import java.util.Iterator;
-
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
-import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisAccountAttr;
-import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisAccountValues;
-import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisCreditCardValues;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseLoan;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseLoanCategory;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseLoanCategoryClass;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisAccountAttr;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisAccountValues;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisCreditCardValues;
+
+import java.util.Currency;
+import java.util.Iterator;
 
 /**
  * The Loan Bucket class.
@@ -62,8 +62,9 @@ public final class MoneyWiseAnalysisLoanBucket
 
     /**
      * Constructor.
+     *
      * @param pAnalysis the analysis
-     * @param pLoan the loan
+     * @param pLoan     the loan
      */
     private MoneyWiseAnalysisLoanBucket(final MoneyWiseAnalysis pAnalysis,
                                         final MoneyWiseLoan pLoan) {
@@ -79,8 +80,9 @@ public final class MoneyWiseAnalysisLoanBucket
 
     /**
      * Constructor.
+     *
      * @param pAnalysis the analysis
-     * @param pBase the underlying bucket
+     * @param pBase     the underlying bucket
      */
     private MoneyWiseAnalysisLoanBucket(final MoneyWiseAnalysis pAnalysis,
                                         final MoneyWiseAnalysisLoanBucket pBase) {
@@ -94,9 +96,10 @@ public final class MoneyWiseAnalysisLoanBucket
 
     /**
      * Constructor.
+     *
      * @param pAnalysis the analysis
-     * @param pBase the underlying bucket
-     * @param pDate the date for the bucket
+     * @param pBase     the underlying bucket
+     * @param pDate     the date for the bucket
      */
     private MoneyWiseAnalysisLoanBucket(final MoneyWiseAnalysis pAnalysis,
                                         final MoneyWiseAnalysisLoanBucket pBase,
@@ -111,9 +114,10 @@ public final class MoneyWiseAnalysisLoanBucket
 
     /**
      * Constructor.
+     *
      * @param pAnalysis the analysis
-     * @param pBase the underlying bucket
-     * @param pRange the range for the bucket
+     * @param pBase     the underlying bucket
+     * @param pRange    the range for the bucket
      */
     private MoneyWiseAnalysisLoanBucket(final MoneyWiseAnalysis pAnalysis,
                                         final MoneyWiseAnalysisLoanBucket pBase,
@@ -133,6 +137,7 @@ public final class MoneyWiseAnalysisLoanBucket
 
     /**
      * Obtain the loan category.
+     *
      * @return the loan category
      */
     public MoneyWiseLoanCategory getCategory() {
@@ -141,6 +146,7 @@ public final class MoneyWiseAnalysisLoanBucket
 
     /**
      * Is this a creditCard?
+     *
      * @return true/false
      */
     public Boolean isCreditCard() {
@@ -192,6 +198,7 @@ public final class MoneyWiseAnalysisLoanBucket
 
         /**
          * Construct a top-level List.
+         *
          * @param pAnalysis the analysis
          */
         MoneyWiseAnalysisLoanBucketList(final MoneyWiseAnalysis pAnalysis) {
@@ -201,8 +208,9 @@ public final class MoneyWiseAnalysisLoanBucket
 
         /**
          * Construct a view List.
+         *
          * @param pAnalysis the analysis
-         * @param pBase the base list
+         * @param pBase     the base list
          */
         MoneyWiseAnalysisLoanBucketList(final MoneyWiseAnalysis pAnalysis,
                                         final MoneyWiseAnalysisLoanBucketList pBase) {
@@ -215,9 +223,10 @@ public final class MoneyWiseAnalysisLoanBucket
 
         /**
          * Construct a dated List.
+         *
          * @param pAnalysis the analysis
-         * @param pBase the base list
-         * @param pDate the Date
+         * @param pBase     the base list
+         * @param pDate     the Date
          */
         MoneyWiseAnalysisLoanBucketList(final MoneyWiseAnalysis pAnalysis,
                                         final MoneyWiseAnalysisLoanBucketList pBase,
@@ -231,9 +240,10 @@ public final class MoneyWiseAnalysisLoanBucket
 
         /**
          * Construct a ranged List.
+         *
          * @param pAnalysis the analysis
-         * @param pBase the base list
-         * @param pRange the Date Range
+         * @param pBase     the base list
+         * @param pRange    the Date Range
          */
         MoneyWiseAnalysisLoanBucketList(final MoneyWiseAnalysis pAnalysis,
                                         final MoneyWiseAnalysisLoanBucketList pBase,
@@ -252,6 +262,7 @@ public final class MoneyWiseAnalysisLoanBucket
 
         /**
          * Obtain the matching LoanBucket.
+         *
          * @param pLoan the loan
          * @return the matching bucket
          */
@@ -265,6 +276,7 @@ public final class MoneyWiseAnalysisLoanBucket
 
         /**
          * Obtain the default Cash.
+         *
          * @return the bucket
          */
         public MoneyWiseAnalysisLoanBucket getDefaultLoan() {
@@ -276,6 +288,7 @@ public final class MoneyWiseAnalysisLoanBucket
 
         /**
          * Obtain the default Loan for the category.
+         *
          * @param pCategory the category
          * @return the bucket
          */

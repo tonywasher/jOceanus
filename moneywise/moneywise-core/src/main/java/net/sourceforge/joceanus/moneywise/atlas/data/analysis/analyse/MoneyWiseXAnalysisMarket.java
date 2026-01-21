@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,10 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.atlas.data.analysis.analyse;
 
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEvent;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPayeeBucket;
@@ -25,7 +26,6 @@ import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseX
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePayeeClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 
 import java.util.Currency;
 
@@ -80,6 +80,7 @@ public class MoneyWiseXAnalysisMarket {
 
     /**
      * Constructor.
+     *
      * @param pAnalyser the analyser
      */
     MoneyWiseXAnalysisMarket(final MoneyWiseXAnalysisEventAnalyser pAnalyser) {
@@ -106,6 +107,7 @@ public class MoneyWiseXAnalysisMarket {
 
     /**
      * Adjust totals for a marketGrowth Event.
+     *
      * @param pEvent the event
      * @param pDelta the delta
      */
@@ -128,6 +130,7 @@ public class MoneyWiseXAnalysisMarket {
 
     /**
      * Adjust totals for a currencyFluctuation Event.
+     *
      * @param pEvent the event
      * @param pDelta the delta
      */
@@ -150,6 +153,7 @@ public class MoneyWiseXAnalysisMarket {
 
     /**
      * Adjust market totals.
+     *
      * @param pEvent the event
      */
     void adjustMarketTotals(final MoneyWiseXAnalysisEvent pEvent) {
@@ -175,6 +179,7 @@ public class MoneyWiseXAnalysisMarket {
 
     /**
      * Adjust for standard gains.
+     *
      * @param pGains the gains amount
      */
     void adjustForGains(final OceanusMoney pGains) {

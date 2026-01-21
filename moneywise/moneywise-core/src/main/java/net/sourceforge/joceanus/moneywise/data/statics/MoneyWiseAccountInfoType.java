@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,10 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.data.statics;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.metis.data.MetisDataResource;
 import net.sourceforge.joceanus.metis.data.MetisDataType;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
@@ -25,10 +26,10 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
 import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataClass;
 import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataItem;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * AccountInfoType data type.
+ *
  * @author Tony Washer
  */
 public class MoneyWiseAccountInfoType
@@ -65,7 +66,8 @@ public class MoneyWiseAccountInfoType
 
     /**
      * Copy Constructor.
-     * @param pList The list to associate the Account Info Type with
+     *
+     * @param pList     The list to associate the Account Info Type with
      * @param pInfoType The Account Info Type to copy
      */
     protected MoneyWiseAccountInfoType(final MoneyWiseAccountInfoTypeList pList,
@@ -75,6 +77,7 @@ public class MoneyWiseAccountInfoType
 
     /**
      * Basic Constructor.
+     *
      * @param pList The list to associate the Account Info Type with
      * @param pName Name of Account Info Type
      * @throws OceanusException on error
@@ -86,7 +89,8 @@ public class MoneyWiseAccountInfoType
 
     /**
      * Basic constructor.
-     * @param pList The list to associate the Account Info Type with
+     *
+     * @param pList  The list to associate the Account Info Type with
      * @param pClass Class of Account Info Type
      * @throws OceanusException on error
      */
@@ -97,7 +101,8 @@ public class MoneyWiseAccountInfoType
 
     /**
      * Values constructor.
-     * @param pList The list to associate the item with
+     *
+     * @param pList   The list to associate the item with
      * @param pValues the values
      * @throws OceanusException on error
      */
@@ -113,6 +118,7 @@ public class MoneyWiseAccountInfoType
 
     /**
      * Return the Account Info class of the AccountInfoType.
+     *
      * @return the class
      */
     public MoneyWiseAccountInfoClass getInfoClass() {
@@ -121,6 +127,7 @@ public class MoneyWiseAccountInfoType
 
     /**
      * Return the Data Type of the AccountInfoType.
+     *
      * @return the data type
      */
     public MetisDataType getDataType() {
@@ -129,6 +136,7 @@ public class MoneyWiseAccountInfoType
 
     /**
      * is this a Link?
+     *
      * @return true/false
      */
     public boolean isLink() {
@@ -157,6 +165,7 @@ public class MoneyWiseAccountInfoType
 
         /**
          * Construct an empty CORE account type list.
+         *
          * @param pData the DataSet for the list
          */
         public MoneyWiseAccountInfoTypeList(final PrometheusDataSet pData) {
@@ -165,6 +174,7 @@ public class MoneyWiseAccountInfoType
 
         /**
          * Constructor for a cloned List.
+         *
          * @param pSource the source List
          */
         private MoneyWiseAccountInfoTypeList(final MoneyWiseAccountInfoTypeList pSource) {
@@ -217,6 +227,7 @@ public class MoneyWiseAccountInfoType
 
         /**
          * Obtain the type of the item.
+         *
          * @return the type of the item
          */
         public String itemType() {
@@ -225,6 +236,7 @@ public class MoneyWiseAccountInfoType
 
         /**
          * Add a Basic Open AccountInfoType to the list.
+         *
          * @param pInfoType the Name of the account info type
          * @return the new type
          * @throws OceanusException on error

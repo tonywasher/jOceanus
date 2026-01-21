@@ -1,24 +1,24 @@
-/*******************************************************************************
+/*
  * Themis: Java Project Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package net.sourceforge.joceanus.themis.lethe.analysis;
 
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.lethe.analysis.ThemisAnalysisFile.ThemisAnalysisObject;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.exc.ThemisDataException;
+import net.sourceforge.joceanus.themis.lethe.analysis.ThemisAnalysisFile.ThemisAnalysisObject;
 
 import java.util.ArrayDeque;
 import java.util.Collections;
@@ -29,13 +29,14 @@ import java.util.Iterator;
  * Interface for containers that require postProcessing.
  */
 public interface ThemisAnalysisContainer
-    extends ThemisAnalysisProcessed {
+        extends ThemisAnalysisProcessed {
     /**
      * Adoptable interface.
      */
     interface ThemisAnalysisAdoptable {
         /**
          * Set the parent of this container.
+         *
          * @param pParent the parent
          */
         void setParent(ThemisAnalysisContainer pParent);
@@ -43,6 +44,7 @@ public interface ThemisAnalysisContainer
 
     /**
      * Obtain the dataMap.
+     *
      * @return the map
      */
     default ThemisAnalysisDataMap getDataMap() {
@@ -51,25 +53,28 @@ public interface ThemisAnalysisContainer
 
     /**
      * Obtain the contents.
+     *
      * @return the contents
      */
     Deque<ThemisAnalysisElement> getContents();
 
     /**
      * Obtain the parent of this container.
+     *
      * @return the parent
      */
     ThemisAnalysisContainer getParent();
 
     /**
      * Determine the full name of the child object.
+     *
      * @param pChildName the child name
      * @return the fullName
      */
     default String determineFullChildName(final String pChildName) {
         /* Loop */
         ThemisAnalysisContainer myContainer = this;
-        for (;;) {
+        for (; ; ) {
             if (myContainer instanceof ThemisAnalysisObject myObject) {
                 return myObject.getFullName() + ThemisAnalysisChar.PERIOD + pChildName;
             }
@@ -82,6 +87,7 @@ public interface ThemisAnalysisContainer
 
     /**
      * Post process lines.
+     *
      * @throws OceanusException on error
      */
     default void postProcessLines() throws OceanusException {
@@ -147,6 +153,7 @@ public interface ThemisAnalysisContainer
 
     /**
      * Post process extra lines.
+     *
      * @throws OceanusException on error
      */
     default void postProcessExtras() throws OceanusException {
@@ -155,6 +162,7 @@ public interface ThemisAnalysisContainer
 
     /**
      * Obtain iterator for chained containers.
+     *
      * @return the iterator
      */
     default Iterator<ThemisAnalysisContainer> containerIterator() {

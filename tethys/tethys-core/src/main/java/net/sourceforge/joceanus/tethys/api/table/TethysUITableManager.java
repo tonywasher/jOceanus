@@ -1,29 +1,22 @@
-/*******************************************************************************
+/*
  * Tethys: GUI Utilities
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package net.sourceforge.joceanus.tethys.api.table;
 
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.function.BiPredicate;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
-
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.table.TethysUITableColumn.TethysUITableCharArrayColumn;
 import net.sourceforge.joceanus.tethys.api.table.TethysUITableColumn.TethysUITableDateColumn;
@@ -41,8 +34,16 @@ import net.sourceforge.joceanus.tethys.api.table.TethysUITableColumn.TethysUITab
 import net.sourceforge.joceanus.tethys.api.table.TethysUITableColumn.TethysUITableStringColumn;
 import net.sourceforge.joceanus.tethys.api.table.TethysUITableColumn.TethysUITableUnitsColumn;
 
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.function.BiPredicate;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
+
 /**
  * Tethys Table Manager.
+ *
  * @param <C> the column identity
  * @param <R> the row type
  */
@@ -50,12 +51,14 @@ public interface TethysUITableManager<C, R>
         extends TethysUIComponent {
     /**
      * Is the table editable?
+     *
      * @return true/false
      */
     boolean isEditable();
 
     /**
      * Set the edit-ability of the table.
+     *
      * @param pEditable true/false
      * @return the table
      */
@@ -68,12 +71,14 @@ public interface TethysUITableManager<C, R>
 
     /**
      * do we rePaintRow on commit?
+     *
      * @return true/false
      */
     boolean doRePaintRowOnCommit();
 
     /**
      * Set repaintRow on Commit.
+     *
      * @param pRePaint the flag
      * @return the table
      */
@@ -81,6 +86,7 @@ public interface TethysUITableManager<C, R>
 
     /**
      * Set the error predicate.
+     *
      * @param pError the error predicate
      * @return the table
      */
@@ -88,7 +94,8 @@ public interface TethysUITableManager<C, R>
 
     /**
      * Is the cell in error?
-     * @param pId the column id
+     *
+     * @param pId  the column id
      * @param pRow the row
      * @return true/false
      */
@@ -97,6 +104,7 @@ public interface TethysUITableManager<C, R>
 
     /**
      * Set the changed predicate.
+     *
      * @param pChanged the changed predicate
      * @return the table
      */
@@ -104,7 +112,8 @@ public interface TethysUITableManager<C, R>
 
     /**
      * Is the cell changed?
-     * @param pId the column id
+     *
+     * @param pId  the column id
      * @param pRow the row
      * @return true/false
      */
@@ -113,6 +122,7 @@ public interface TethysUITableManager<C, R>
 
     /**
      * Set the disabled predicate.
+     *
      * @param pDisabled the disabled predicate
      * @return the table
      */
@@ -120,6 +130,7 @@ public interface TethysUITableManager<C, R>
 
     /**
      * Is the row disabled?
+     *
      * @param pRow the row
      * @return true/false
      */
@@ -127,6 +138,7 @@ public interface TethysUITableManager<C, R>
 
     /**
      * Set the filter.
+     *
      * @param pFilter the filter
      * @return the table
      */
@@ -134,6 +146,7 @@ public interface TethysUITableManager<C, R>
 
     /**
      * Set the comparator.
+     *
      * @param pComparator the comparator
      * @return the table
      */
@@ -141,6 +154,7 @@ public interface TethysUITableManager<C, R>
 
     /**
      * Set the on-commit consumer.
+     *
      * @param pOnCommit the consumer
      * @return the table
      */
@@ -148,6 +162,7 @@ public interface TethysUITableManager<C, R>
 
     /**
      * Set the on-select consumer.
+     *
      * @param pOnSelect the consumer
      * @return the table
      */
@@ -155,6 +170,7 @@ public interface TethysUITableManager<C, R>
 
     /**
      * Select a row.
+     *
      * @param pItem the row to select
      */
     void selectRow(R pItem);
@@ -166,12 +182,14 @@ public interface TethysUITableManager<C, R>
 
     /**
      * Select a row and ensure that it is visible.
+     *
      * @param pItem the row to select
      */
     void selectRowWithScroll(R pItem);
 
     /**
      * Set the on-cellEditState consumer.
+     *
      * @param pOnCellEditState the consumer
      * @return the table
      */
@@ -179,6 +197,7 @@ public interface TethysUITableManager<C, R>
 
     /**
      * Set the on-commitError consumer.
+     *
      * @param pOnCommitError the consumer
      * @return the table
      */
@@ -186,6 +205,7 @@ public interface TethysUITableManager<C, R>
 
     /**
      * Set the on-validateError consumer.
+     *
      * @param pOnValidateError the consumer
      * @return the tabke
      */
@@ -193,6 +213,7 @@ public interface TethysUITableManager<C, R>
 
     /**
      * obtain onValidateError consumer.
+     *
      * @return the consumer
      */
     Consumer<String> getOnValidateError();
@@ -216,24 +237,28 @@ public interface TethysUITableManager<C, R>
 
     /**
      * Obtain an iterator over the unsorted items.
+     *
      * @return the iterator.
      */
     Iterator<R> itemIterator();
 
     /**
      * Obtain an iterator over the sorted and filtered items.
+     *
      * @return the iterator.
      */
     Iterator<R> viewIterator();
 
     /**
      * Obtain an iterator over the column ids.
+     *
      * @return the iterator.
      */
     Iterator<C> columnIterator();
 
     /**
      * Obtain the column for the id.
+     *
      * @param pId the id of the column
      * @return the table column
      */
@@ -241,12 +266,14 @@ public interface TethysUITableManager<C, R>
 
     /**
      * Repaint the column.
+     *
      * @param pId the column id
      */
     void repaintColumn(C pId);
 
     /**
      * Declare string column.
+     *
      * @param pId the column id
      * @return the column
      */
@@ -254,6 +281,7 @@ public interface TethysUITableManager<C, R>
 
     /**
      * Declare charArray column.
+     *
      * @param pId the column id
      * @return the column
      */
@@ -261,6 +289,7 @@ public interface TethysUITableManager<C, R>
 
     /**
      * Declare short column.
+     *
      * @param pId the column id
      * @return the column
      */
@@ -268,6 +297,7 @@ public interface TethysUITableManager<C, R>
 
     /**
      * Declare integer column.
+     *
      * @param pId the column id
      * @return the column
      */
@@ -275,6 +305,7 @@ public interface TethysUITableManager<C, R>
 
     /**
      * Declare long column.
+     *
      * @param pId the column id
      * @return the column
      */
@@ -282,6 +313,7 @@ public interface TethysUITableManager<C, R>
 
     /**
      * Declare rawDecimal column.
+     *
      * @param pId the column id
      * @return the column
      */
@@ -289,6 +321,7 @@ public interface TethysUITableManager<C, R>
 
     /**
      * Declare money column.
+     *
      * @param pId the column id
      * @return the column
      */
@@ -296,6 +329,7 @@ public interface TethysUITableManager<C, R>
 
     /**
      * Declare price column.
+     *
      * @param pId the column id
      * @return the column
      */
@@ -303,6 +337,7 @@ public interface TethysUITableManager<C, R>
 
     /**
      * Declare rate column.
+     *
      * @param pId the column id
      * @return the column
      */
@@ -310,6 +345,7 @@ public interface TethysUITableManager<C, R>
 
     /**
      * Declare units column.
+     *
      * @param pId the column id
      * @return the column
      */
@@ -317,6 +353,7 @@ public interface TethysUITableManager<C, R>
 
     /**
      * Declare ratio column.
+     *
      * @param pId the column id
      * @return the column
      */
@@ -324,6 +361,7 @@ public interface TethysUITableManager<C, R>
 
     /**
      * Declare date column.
+     *
      * @param pId the column id
      * @return the column
      */
@@ -331,8 +369,9 @@ public interface TethysUITableManager<C, R>
 
     /**
      * Declare scroll column.
-     * @param <T> the data type
-     * @param pId the column id
+     *
+     * @param <T>    the data type
+     * @param pId    the column id
      * @param pClazz the column class
      * @return the column
      */
@@ -341,8 +380,9 @@ public interface TethysUITableManager<C, R>
 
     /**
      * Declare list column.
-     * @param <T> the data type
-     * @param pId the column id
+     *
+     * @param <T>    the data type
+     * @param pId    the column id
      * @param pClazz the data class
      * @return the column
      */
@@ -351,8 +391,9 @@ public interface TethysUITableManager<C, R>
 
     /**
      * Declare icon column.
-     * @param <T> the data type
-     * @param pId the column id
+     *
+     * @param <T>    the data type
+     * @param pId    the column id
      * @param pClazz the column class
      * @return the column
      */
@@ -362,12 +403,14 @@ public interface TethysUITableManager<C, R>
 
     /**
      * OnRow commit callback.
+     *
      * @param <R> the row type
      */
     @FunctionalInterface
     interface TethysUIOnRowCommit<R> {
         /**
          * CallBack on a rowCommit.
+         *
          * @param pRow the row that is being committed
          * @throws OceanusException on error
          */
@@ -376,12 +419,14 @@ public interface TethysUITableManager<C, R>
 
     /**
      * OnRow select callback.
+     *
      * @param <R> the row type
      */
     @FunctionalInterface
     interface TethysUIOnRowSelect<R> {
         /**
          * CallBack on a rowSelect.
+         *
          * @param pRow the row that is being committed
          */
         void selectRow(R pRow);

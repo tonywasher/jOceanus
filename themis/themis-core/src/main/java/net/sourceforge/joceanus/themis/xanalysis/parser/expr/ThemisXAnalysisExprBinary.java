@@ -1,24 +1,24 @@
-/*******************************************************************************
+/*
  * Themis: Java Project Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package net.sourceforge.joceanus.themis.xanalysis.parser.expr;
 
 import com.github.javaparser.ast.expr.BinaryExpr;
 import com.github.javaparser.ast.expr.BinaryExpr.Operator;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisParserDef;
 
 /**
@@ -43,7 +43,8 @@ public class ThemisXAnalysisExprBinary
 
     /**
      * Constructor.
-     * @param pParser the parser
+     *
+     * @param pParser     the parser
      * @param pExpression the expression
      * @throws OceanusException on error
      */
@@ -54,8 +55,10 @@ public class ThemisXAnalysisExprBinary
         theOperator = pExpression.getOperator();
         theRight = pParser.parseExpression(pExpression.getRight());
     }
+
     /**
      * Obtain the left.
+     *
      * @return the right
      */
     public ThemisXAnalysisExpressionInstance getLeft() {
@@ -64,6 +67,7 @@ public class ThemisXAnalysisExprBinary
 
     /**
      * Obtain the operator.
+     *
      * @return the operator
      */
     public Operator getOperator() {
@@ -72,6 +76,7 @@ public class ThemisXAnalysisExprBinary
 
     /**
      * Obtain the right.
+     *
      * @return the right
      */
     public ThemisXAnalysisExpressionInstance getRight() {

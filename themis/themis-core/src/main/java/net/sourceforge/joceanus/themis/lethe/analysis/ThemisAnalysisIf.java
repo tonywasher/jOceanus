@@ -1,29 +1,29 @@
-/*******************************************************************************
+/*
  * Themis: Java Project Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package net.sourceforge.joceanus.themis.lethe.analysis;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.themis.lethe.analysis.ThemisAnalysisContainer.ThemisAnalysisAdoptable;
+import net.sourceforge.joceanus.themis.lethe.analysis.ThemisAnalysisStatement.ThemisAnalysisStatementHolder;
 
 import java.util.ArrayDeque;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.Iterator;
-
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.lethe.analysis.ThemisAnalysisContainer.ThemisAnalysisAdoptable;
-import net.sourceforge.joceanus.themis.lethe.analysis.ThemisAnalysisStatement.ThemisAnalysisStatementHolder;
 
 /**
  * If construct.
@@ -62,8 +62,9 @@ public class ThemisAnalysisIf
 
     /**
      * Constructor.
+     *
      * @param pParser the parser
-     * @param pLine the initial if line
+     * @param pLine   the initial if line
      * @throws OceanusException on error
      */
     ThemisAnalysisIf(final ThemisAnalysisParser pParser,
@@ -129,6 +130,7 @@ public class ThemisAnalysisIf
 
     /**
      * Obtain the additional else clause (if any).
+     *
      * @return the else clause
      */
     public ThemisAnalysisElse getElse() {
@@ -154,6 +156,7 @@ public class ThemisAnalysisIf
 
     /**
      * Chained Iterator.
+     *
      * @param <T> the item class
      */
     public static class ThemisIteratorChain<T> implements Iterator<T> {
@@ -169,7 +172,8 @@ public class ThemisAnalysisIf
 
         /**
          * Constructor.
-         * @param pLocal the local iterator
+         *
+         * @param pLocal   the local iterator
          * @param pChained the chained iterator
          */
         public ThemisIteratorChain(final Iterator<T> pLocal,
@@ -191,6 +195,7 @@ public class ThemisAnalysisIf
 
     /**
      * Reduced Iterator.
+     *
      * @param <T> the item class
      */
     public static class ThemisReducedIterator<T> implements Iterator<T> {
@@ -199,8 +204,9 @@ public class ThemisAnalysisIf
          */
         private final Iterator<? extends T> theBase;
 
-         /**
+        /**
          * Constructor.
+         *
          * @param pBase the base iterator
          */
         public ThemisReducedIterator(final Iterator<? extends T> pBase) {

@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,12 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.atlas.data.analysis.analyse;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.metis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseNewDepositRate;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEvent;
@@ -31,9 +34,6 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseExchangeRate;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePortfolio.MoneyWisePortfolioList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding.MoneyWiseSecurityHoldingMap;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 
 import java.util.Iterator;
@@ -84,8 +84,9 @@ public class MoneyWiseXAnalysisEventAnalyser {
 
     /**
      * Constructor.
-     * @param pTask the task
-     * @param pEditSet the editSet
+     *
+     * @param pTask          the task
+     * @param pEditSet       the editSet
      * @param pPreferenceMgr the preference manager
      * @throws OceanusException on error
      */
@@ -108,7 +109,7 @@ public class MoneyWiseXAnalysisEventAnalyser {
         theTrans = new MoneyWiseXAnalysisTransAnalyser(this);
 
         /* Loop through the Events */
-        for (;;) {
+        for (; ; ) {
             /* Access next event */
             final MoneyWiseXAnalysisEvent myEvent = theState.nextEvent();
             if (myEvent == null) {
@@ -145,6 +146,7 @@ public class MoneyWiseXAnalysisEventAnalyser {
 
     /**
      * Obtain the analysis.
+     *
      * @return the analysis
      */
     MoneyWiseXAnalysis getAnalysis() {
@@ -153,6 +155,7 @@ public class MoneyWiseXAnalysisEventAnalyser {
 
     /**
      * Obtain the securityHoldingMap.
+     *
      * @return the map
      */
     MoneyWiseSecurityHoldingMap getSecurityHoldingMap() {
@@ -161,6 +164,7 @@ public class MoneyWiseXAnalysisEventAnalyser {
 
     /**
      * Obtain the state.
+     *
      * @return the state
      */
     MoneyWiseXAnalysisState getState() {
@@ -169,6 +173,7 @@ public class MoneyWiseXAnalysisEventAnalyser {
 
     /**
      * Obtain the market analysis.
+     *
      * @return the market
      */
     MoneyWiseXAnalysisMarket getMarket() {
@@ -177,6 +182,7 @@ public class MoneyWiseXAnalysisEventAnalyser {
 
     /**
      * Obtain the tax analysis.
+     *
      * @return the tax
      */
     MoneyWiseXAnalysisTax getTax() {
@@ -185,6 +191,7 @@ public class MoneyWiseXAnalysisEventAnalyser {
 
     /**
      * Obtain the transaction analyser.
+     *
      * @return the analyser
      */
     MoneyWiseXAnalysisTransAnalyser getTransAnalyser() {
@@ -193,6 +200,7 @@ public class MoneyWiseXAnalysisEventAnalyser {
 
     /**
      * Obtain the events iterator.
+     *
      * @return the events iterator
      */
     Iterator<MoneyWiseXAnalysisEvent> eventsIterator() {
@@ -201,6 +209,7 @@ public class MoneyWiseXAnalysisEventAnalyser {
 
     /**
      * Mark active accounts.
+     *
      * @throws OceanusException on error
      */
     public void postProcessAnalysis() throws OceanusException {
@@ -225,6 +234,7 @@ public class MoneyWiseXAnalysisEventAnalyser {
 
     /**
      * process securityPrice.
+     *
      * @param pEvent the event
      */
     private void processSecurityPrice(final MoneyWiseXAnalysisEvent pEvent) {
@@ -260,6 +270,7 @@ public class MoneyWiseXAnalysisEventAnalyser {
 
     /**
      * process ExchangeRate.
+     *
      * @param pEvent the event
      */
     private void processExchangeRate(final MoneyWiseXAnalysisEvent pEvent) {
@@ -293,6 +304,7 @@ public class MoneyWiseXAnalysisEventAnalyser {
 
     /**
      * process depositRate.
+     *
      * @param pEvent the event
      */
     private void processDepositRate(final MoneyWiseXAnalysisEvent pEvent) {
@@ -313,6 +325,7 @@ public class MoneyWiseXAnalysisEventAnalyser {
 
     /**
      * process OpeningBalance.
+     *
      * @param pEvent the event
      */
     private void processOpeningBalance(final MoneyWiseXAnalysisEvent pEvent) {

@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,11 +13,11 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.quicken.file;
 
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.moneywise.quicken.definitions.MoneyWiseQIFType;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
 
 import java.io.BufferedReader;
@@ -56,7 +56,8 @@ public class MoneyWiseQIFParser {
 
     /**
      * Constructor.
-     * @param pFactory the gui factory
+     *
+     * @param pFactory  the gui factory
      * @param pFileType the QIF file type.
      */
     public MoneyWiseQIFParser(final TethysUIFactory<?> pFactory,
@@ -71,6 +72,7 @@ public class MoneyWiseQIFParser {
 
     /**
      * Obtain file.
+     *
      * @return the QIF file.
      */
     public MoneyWiseQIFFile getFile() {
@@ -79,6 +81,7 @@ public class MoneyWiseQIFParser {
 
     /**
      * Load from Stream.
+     *
      * @param pStream the input stream
      * @return continue true/false
      * @throws IOException on error
@@ -88,7 +91,7 @@ public class MoneyWiseQIFParser {
         final List<String> myLines = new ArrayList<>();
 
         /* Loop through the file */
-        for (;;) {
+        for (; ; ) {
             /* Read the next line and break on EOF */
             final String myLine = pStream.readLine();
             if (myLine == null) {
@@ -122,6 +125,7 @@ public class MoneyWiseQIFParser {
 
     /**
      * Process the mode.
+     *
      * @param pLine the line to process
      */
     private void processMode(final String pLine) {
@@ -179,6 +183,7 @@ public class MoneyWiseQIFParser {
 
     /**
      * Process the record.
+     *
      * @param pLines the lines to process
      */
     private void processRecord(final List<String> pLines) {
@@ -212,6 +217,7 @@ public class MoneyWiseQIFParser {
 
     /**
      * Process the class record.
+     *
      * @param pLines the lines to process
      */
     private void processClassRecord(final List<String> pLines) {
@@ -222,6 +228,7 @@ public class MoneyWiseQIFParser {
 
     /**
      * Process the category record.
+     *
      * @param pLines the lines to process
      */
     private void processCategoryRecord(final List<String> pLines) {
@@ -232,6 +239,7 @@ public class MoneyWiseQIFParser {
 
     /**
      * Process the account record.
+     *
      * @param pLines the lines to process
      */
     private void processAccountRecord(final List<String> pLines) {
@@ -242,6 +250,7 @@ public class MoneyWiseQIFParser {
 
     /**
      * Process the security record.
+     *
      * @param pLines the lines to process
      */
     private void processSecurityRecord(final List<String> pLines) {
@@ -252,6 +261,7 @@ public class MoneyWiseQIFParser {
 
     /**
      * Process the event record.
+     *
      * @param pLines the lines to process
      */
     private void processEventRecord(final List<String> pLines) {
@@ -269,6 +279,7 @@ public class MoneyWiseQIFParser {
 
     /**
      * Process the price record.
+     *
      * @param pLines the lines to process
      */
     private void processPriceRecord(final List<String> pLines) {
@@ -318,6 +329,7 @@ public class MoneyWiseQIFParser {
 
         /**
          * Constructor.
+         *
          * @param pType the type
          */
         MoneyWiseQIFSection(final String pType) {
@@ -326,6 +338,7 @@ public class MoneyWiseQIFParser {
 
         /**
          * Determine section.
+         *
          * @param pLine the line to check
          * @return the section
          */

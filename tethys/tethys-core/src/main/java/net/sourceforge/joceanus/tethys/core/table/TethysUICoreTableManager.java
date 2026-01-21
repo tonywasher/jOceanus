@@ -1,20 +1,27 @@
-/*******************************************************************************
- * Tethys: Java Utilities
- * Copyright 2012-2026 Tony Washer
+/*
+ * Tethys: GUI Utilities
+ * Copyright 2012-2026. Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package net.sourceforge.joceanus.tethys.core.table;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.tethys.api.table.TethysUITableCell;
+import net.sourceforge.joceanus.tethys.api.table.TethysUITableColumn;
+import net.sourceforge.joceanus.tethys.api.table.TethysUITableManager;
+import net.sourceforge.joceanus.tethys.core.base.TethysUICoreComponent;
+import net.sourceforge.joceanus.tethys.core.factory.TethysUICoreFactory;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -26,15 +33,9 @@ import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.tethys.api.table.TethysUITableCell;
-import net.sourceforge.joceanus.tethys.api.table.TethysUITableColumn;
-import net.sourceforge.joceanus.tethys.api.table.TethysUITableManager;
-import net.sourceforge.joceanus.tethys.core.base.TethysUICoreComponent;
-import net.sourceforge.joceanus.tethys.core.factory.TethysUICoreFactory;
-
 /**
  * Tethys Table Manager.
+ *
  * @param <C> the column identity
  * @param <R> the row type
  */
@@ -123,6 +124,7 @@ public abstract class TethysUICoreTableManager<C, R>
 
     /**
      * Constructor.
+     *
      * @param pFactory the GUI factory
      */
     protected TethysUICoreTableManager(final TethysUICoreFactory<?> pFactory) {
@@ -210,6 +212,7 @@ public abstract class TethysUICoreTableManager<C, R>
 
     /**
      * Obtain items.
+     *
      * @return the items
      */
     public List<R> getItems() {
@@ -224,6 +227,7 @@ public abstract class TethysUICoreTableManager<C, R>
 
     /**
      * Obtain the filter.
+     *
      * @return the filter
      */
     protected Predicate<R> getFilter() {
@@ -238,6 +242,7 @@ public abstract class TethysUICoreTableManager<C, R>
 
     /**
      * Obtain the comparator.
+     *
      * @return the comparator
      */
     protected Comparator<R> getComparator() {
@@ -252,6 +257,7 @@ public abstract class TethysUICoreTableManager<C, R>
 
     /**
      * process onCommit.
+     *
      * @param pRow the row
      * @throws OceanusException on error
      */
@@ -271,6 +277,7 @@ public abstract class TethysUICoreTableManager<C, R>
 
     /**
      * process onSelect.
+     *
      * @param pRow the row
      */
     protected void processOnSelect(final R pRow) {
@@ -289,6 +296,7 @@ public abstract class TethysUICoreTableManager<C, R>
 
     /**
      * process onCellEditState.
+     *
      * @param pState the state
      */
     public void processOnCellEditState(final Boolean pState) {
@@ -307,6 +315,7 @@ public abstract class TethysUICoreTableManager<C, R>
 
     /**
      * process onCommitError.
+     *
      * @param pError the error
      */
     public void processOnCommitError(final OceanusException pError) {
@@ -350,6 +359,7 @@ public abstract class TethysUICoreTableManager<C, R>
 
     /**
      * Register the column.
+     *
      * @param pColumn the column
      */
     void registerColumn(final TethysUICoreTableColumn<?, C, R> pColumn) {
@@ -358,6 +368,7 @@ public abstract class TethysUICoreTableManager<C, R>
 
     /**
      * Repaint on Commit.
+     *
      * @param pCell the cell that was committed.
      */
     public void rePaintOnCommit(final TethysUITableCell<?, C, R> pCell) {
@@ -388,6 +399,7 @@ public abstract class TethysUICoreTableManager<C, R>
 
     /**
      * Get the last child.
+     *
      * @return the last child
      */
     TethysUICoreTableColumn<?, C, R> getLastChild() {
@@ -396,9 +408,10 @@ public abstract class TethysUICoreTableManager<C, R>
 
     /**
      * Set the last child.
+     *
      * @param pChild the last child
      */
-     void setLastChild(final TethysUICoreTableColumn<?, C, R> pChild) {
+    void setLastChild(final TethysUICoreTableColumn<?, C, R> pChild) {
         theLastChild = pChild;
     }
 }

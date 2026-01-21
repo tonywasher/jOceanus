@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,17 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.quicken.file;
 
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateFormatter;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimalParser;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction;
 import net.sourceforge.joceanus.moneywise.quicken.definitions.MoneyWiseQActionType;
 import net.sourceforge.joceanus.moneywise.quicken.definitions.MoneyWiseQPortfolioLineType;
@@ -31,14 +39,6 @@ import net.sourceforge.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWis
 import net.sourceforge.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFStringLine;
 import net.sourceforge.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFUnitsLine;
 import net.sourceforge.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFXferAccountLine;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateFormatter;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimalParser;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 
 import java.util.List;
 
@@ -64,8 +64,9 @@ public class MoneyWiseQIFPortfolioEvent
 
     /**
      * Constructor.
-     * @param pFile the QIF File
-     * @param pTrans the transaction
+     *
+     * @param pFile   the QIF File
+     * @param pTrans  the transaction
      * @param pAction the action
      */
     protected MoneyWiseQIFPortfolioEvent(final MoneyWiseQIFFile pFile,
@@ -93,9 +94,10 @@ public class MoneyWiseQIFPortfolioEvent
 
     /**
      * Constructor.
-     * @param pFile the QIF File
+     *
+     * @param pFile      the QIF File
      * @param pFormatter the Data Formatter
-     * @param pLines the data lines
+     * @param pLines     the data lines
      */
     protected MoneyWiseQIFPortfolioEvent(final MoneyWiseQIFFile pFile,
                                          final OceanusDataFormatter pFormatter,
@@ -210,6 +212,7 @@ public class MoneyWiseQIFPortfolioEvent
 
     /**
      * Obtain the action.
+     *
      * @return the action.
      */
     public MoneyWiseQActionType getAction() {
@@ -218,6 +221,7 @@ public class MoneyWiseQIFPortfolioEvent
 
     /**
      * record security.
+     *
      * @param pSecurity the security
      */
     protected void recordSecurity(final MoneyWiseQIFSecurity pSecurity) {
@@ -227,6 +231,7 @@ public class MoneyWiseQIFPortfolioEvent
 
     /**
      * record category.
+     *
      * @param pCategory the category
      */
     protected void recordCategory(final MoneyWiseQIFEventCategory pCategory) {
@@ -236,8 +241,9 @@ public class MoneyWiseQIFPortfolioEvent
 
     /**
      * record category.
+     *
      * @param pCategory the category
-     * @param pClasses the classes
+     * @param pClasses  the classes
      */
     protected void recordCategory(final MoneyWiseQIFEventCategory pCategory,
                                   final List<MoneyWiseQIFClass> pClasses) {
@@ -247,6 +253,7 @@ public class MoneyWiseQIFPortfolioEvent
 
     /**
      * record amount.
+     *
      * @param pAmount the amount
      */
     protected void recordAmount(final OceanusMoney pAmount) {
@@ -256,6 +263,7 @@ public class MoneyWiseQIFPortfolioEvent
 
     /**
      * record payee.
+     *
      * @param pPayee the payee
      */
     protected void recordPayee(final String pPayee) {
@@ -265,6 +273,7 @@ public class MoneyWiseQIFPortfolioEvent
 
     /**
      * record payee.
+     *
      * @param pPayee the payee
      */
     protected void recordPayee(final MoneyWiseQIFPayee pPayee) {
@@ -274,8 +283,9 @@ public class MoneyWiseQIFPortfolioEvent
 
     /**
      * record transfer.
+     *
      * @param pAccount the transfer account
-     * @param pAmount the transfer amount
+     * @param pAmount  the transfer amount
      */
     protected void recordXfer(final MoneyWiseQIFAccount pAccount,
                               final OceanusMoney pAmount) {
@@ -286,9 +296,10 @@ public class MoneyWiseQIFPortfolioEvent
 
     /**
      * record transfer.
+     *
      * @param pAccount the transfer account
      * @param pClasses the classes
-     * @param pAmount the transfer amount
+     * @param pAmount  the transfer amount
      */
     protected void recordXfer(final MoneyWiseQIFAccount pAccount,
                               final List<MoneyWiseQIFClass> pClasses,
@@ -300,8 +311,9 @@ public class MoneyWiseQIFPortfolioEvent
 
     /**
      * record transfer.
+     *
      * @param pCategory the transfer category
-     * @param pAmount the transfer amount
+     * @param pAmount   the transfer amount
      */
     protected void recordXfer(final MoneyWiseQIFEventCategory pCategory,
                               final OceanusMoney pAmount) {
@@ -312,6 +324,7 @@ public class MoneyWiseQIFPortfolioEvent
 
     /**
      * record quantity.
+     *
      * @param pQuantity the units quantity
      */
     protected void recordQuantity(final OceanusUnits pQuantity) {
@@ -321,6 +334,7 @@ public class MoneyWiseQIFPortfolioEvent
 
     /**
      * record quantity.
+     *
      * @param pRatio the split ratio
      */
     protected void recordQuantity(final OceanusRatio pRatio) {
@@ -330,6 +344,7 @@ public class MoneyWiseQIFPortfolioEvent
 
     /**
      * record price.
+     *
      * @param pPrice the price
      */
     protected void recordPrice(final OceanusPrice pPrice) {
@@ -339,6 +354,7 @@ public class MoneyWiseQIFPortfolioEvent
 
     /**
      * record commission.
+     *
      * @param pCommission the commission
      */
     protected void recordCommission(final OceanusMoney pCommission) {
@@ -385,6 +401,7 @@ public class MoneyWiseQIFPortfolioEvent
             extends MoneyWiseQIFDateLine<MoneyWiseQPortfolioLineType> {
         /**
          * Constructor.
+         *
          * @param pDate the Date
          */
         protected MoneyWiseQIFPortfolioDateLine(final OceanusDate pDate) {
@@ -405,6 +422,7 @@ public class MoneyWiseQIFPortfolioEvent
             extends MoneyWiseQIFStringLine<MoneyWiseQPortfolioLineType> {
         /**
          * Constructor.
+         *
          * @param pComment the comment
          */
         protected MoneyWiseQIFPortfolioCommentLine(final String pComment) {
@@ -419,6 +437,7 @@ public class MoneyWiseQIFPortfolioEvent
 
         /**
          * Obtain Comment.
+         *
          * @return the comment
          */
         public String getComment() {
@@ -433,6 +452,7 @@ public class MoneyWiseQIFPortfolioEvent
             extends MoneyWiseQIFClearedLine<MoneyWiseQPortfolioLineType> {
         /**
          * Constructor.
+         *
          * @param pCleared is the event cleared?
          */
         protected MoneyWiseQIFPortfolioClearedLine(final Boolean pCleared) {
@@ -453,6 +473,7 @@ public class MoneyWiseQIFPortfolioEvent
             extends MoneyWiseQIFMoneyLine<MoneyWiseQPortfolioLineType> {
         /**
          * Constructor.
+         *
          * @param pAmount the amount
          */
         protected MoneyWiseQIFPortfolioAmountLine(final OceanusMoney pAmount) {
@@ -467,6 +488,7 @@ public class MoneyWiseQIFPortfolioEvent
 
         /**
          * Obtain Amount.
+         *
          * @return the amount
          */
         public OceanusMoney getAmount() {
@@ -481,6 +503,7 @@ public class MoneyWiseQIFPortfolioEvent
             extends MoneyWiseQIFMoneyLine<MoneyWiseQPortfolioLineType> {
         /**
          * Constructor.
+         *
          * @param pCommission the commission
          */
         protected MoneyWiseQIFPortfolioCommissionLine(final OceanusMoney pCommission) {
@@ -495,6 +518,7 @@ public class MoneyWiseQIFPortfolioEvent
 
         /**
          * Obtain Commission.
+         *
          * @return the commission
          */
         public OceanusMoney getCommission() {
@@ -509,6 +533,7 @@ public class MoneyWiseQIFPortfolioEvent
             extends MoneyWiseQIFPriceLine<MoneyWiseQPortfolioLineType> {
         /**
          * Constructor.
+         *
          * @param pPrice the price
          */
         protected MoneyWiseQIFPortfolioPriceLine(final OceanusPrice pPrice) {
@@ -529,6 +554,7 @@ public class MoneyWiseQIFPortfolioEvent
             extends MoneyWiseQIFUnitsLine<MoneyWiseQPortfolioLineType> {
         /**
          * Constructor.
+         *
          * @param pUnits the units
          */
         protected MoneyWiseQIFPortfolioQuantityLine(final OceanusUnits pUnits) {
@@ -549,6 +575,7 @@ public class MoneyWiseQIFPortfolioEvent
             extends MoneyWiseQIFRatioLine<MoneyWiseQPortfolioLineType> {
         /**
          * Constructor.
+         *
          * @param pRatio the ratio
          */
         protected MoneyWiseQIFPortfolioSplitRatioLine(final OceanusRatio pRatio) {
@@ -574,6 +601,7 @@ public class MoneyWiseQIFPortfolioEvent
 
         /**
          * Constructor.
+         *
          * @param pAction the action type
          */
         protected MoneyWiseQIFPortfolioActionLine(final MoneyWiseQActionType pAction) {
@@ -588,6 +616,7 @@ public class MoneyWiseQIFPortfolioEvent
 
         /**
          * Obtain the security.
+         *
          * @return the security
          */
         public MoneyWiseQActionType getAction() {
@@ -609,6 +638,7 @@ public class MoneyWiseQIFPortfolioEvent
             extends MoneyWiseQIFSecurityLine<MoneyWiseQPortfolioLineType> {
         /**
          * Constructor.
+         *
          * @param pSecurity the security
          */
         protected MoneyWiseQIFPortfolioSecurityLine(final MoneyWiseQIFSecurity pSecurity) {
@@ -629,6 +659,7 @@ public class MoneyWiseQIFPortfolioEvent
             extends MoneyWiseQIFPayeeLine<MoneyWiseQPortfolioLineType> {
         /**
          * Constructor.
+         *
          * @param pPayee the payee
          */
         protected MoneyWiseQIFPortfolioPayeeLine(final MoneyWiseQIFPayee pPayee) {
@@ -649,6 +680,7 @@ public class MoneyWiseQIFPortfolioEvent
             extends MoneyWiseQIFStringLine<MoneyWiseQPortfolioLineType> {
         /**
          * Constructor.
+         *
          * @param pPayee the payee description
          */
         protected MoneyWiseQIFPortfolioPayeeDescLine(final String pPayee) {
@@ -669,6 +701,7 @@ public class MoneyWiseQIFPortfolioEvent
             extends MoneyWiseQIFXferAccountLine<MoneyWiseQPortfolioLineType> {
         /**
          * Constructor.
+         *
          * @param pAccount the account
          */
         protected MoneyWiseQIFPortfolioAccountLine(final MoneyWiseQIFAccount pAccount) {
@@ -678,6 +711,7 @@ public class MoneyWiseQIFPortfolioEvent
 
         /**
          * Constructor.
+         *
          * @param pAccount the account
          * @param pClasses the account classes
          */
@@ -700,6 +734,7 @@ public class MoneyWiseQIFPortfolioEvent
             extends MoneyWiseQIFCategoryLine<MoneyWiseQPortfolioLineType> {
         /**
          * Constructor.
+         *
          * @param pCategory the category
          */
         protected MoneyWiseQIFPortfolioCategoryLine(final MoneyWiseQIFEventCategory pCategory) {
@@ -709,8 +744,9 @@ public class MoneyWiseQIFPortfolioEvent
 
         /**
          * Constructor.
+         *
          * @param pCategory the category
-         * @param pClasses the account classes
+         * @param pClasses  the account classes
          */
         protected MoneyWiseQIFPortfolioCategoryLine(final MoneyWiseQIFEventCategory pCategory,
                                                     final List<MoneyWiseQIFClass> pClasses) {
@@ -731,8 +767,9 @@ public class MoneyWiseQIFPortfolioEvent
             extends MoneyWiseQIFCategoryAccountLine<MoneyWiseQPortfolioLineType> {
         /**
          * Constructor.
+         *
          * @param pCategory the category
-         * @param pAccount the account
+         * @param pAccount  the account
          */
         protected MoneyWiseQIFPortfolioCategoryAccountLine(final MoneyWiseQIFEventCategory pCategory,
                                                            final MoneyWiseQIFAccount pAccount) {
@@ -742,9 +779,10 @@ public class MoneyWiseQIFPortfolioEvent
 
         /**
          * Constructor.
+         *
          * @param pCategory the category
-         * @param pAccount the account
-         * @param pClasses the account classes
+         * @param pAccount  the account
+         * @param pClasses  the account classes
          */
         protected MoneyWiseQIFPortfolioCategoryAccountLine(final MoneyWiseQIFEventCategory pCategory,
                                                            final MoneyWiseQIFAccount pAccount,
@@ -766,6 +804,7 @@ public class MoneyWiseQIFPortfolioEvent
             extends MoneyWiseQIFMoneyLine<MoneyWiseQPortfolioLineType> {
         /**
          * Constructor.
+         *
          * @param pAmount the amount
          */
         protected MoneyWiseQIFPortfolioXferAmountLine(final OceanusMoney pAmount) {
@@ -780,6 +819,7 @@ public class MoneyWiseQIFPortfolioEvent
 
         /**
          * Obtain Amount.
+         *
          * @return the amount
          */
         public OceanusMoney getAmount() {

@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,10 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.data.statics;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.metis.data.MetisDataResource;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
@@ -24,10 +25,10 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
 import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataClass;
 import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataItem;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * LoanCategoryType data type.
+ *
  * @author Tony Washer
  */
 public class MoneyWiseLoanCategoryType
@@ -49,7 +50,8 @@ public class MoneyWiseLoanCategoryType
 
     /**
      * Copy Constructor.
-     * @param pList The list to associate the Loan Category Type with
+     *
+     * @param pList    The list to associate the Loan Category Type with
      * @param pCatType The Loan Category Type to copy
      */
     protected MoneyWiseLoanCategoryType(final MoneyWiseLoanCategoryTypeList pList,
@@ -59,6 +61,7 @@ public class MoneyWiseLoanCategoryType
 
     /**
      * Basic constructor.
+     *
      * @param pList The list to associate the Loan Category Type with
      * @param pName Name of Loan Category Type
      * @throws OceanusException on error
@@ -70,7 +73,8 @@ public class MoneyWiseLoanCategoryType
 
     /**
      * Basic constructor.
-     * @param pList The list to associate the Loan Category Type with
+     *
+     * @param pList  The list to associate the Loan Category Type with
      * @param pClass Class of Loan Category Type
      * @throws OceanusException on error
      */
@@ -81,7 +85,8 @@ public class MoneyWiseLoanCategoryType
 
     /**
      * Values constructor.
-     * @param pList The list to associate the item with
+     *
+     * @param pList   The list to associate the item with
      * @param pValues the values
      * @throws OceanusException on error
      */
@@ -97,6 +102,7 @@ public class MoneyWiseLoanCategoryType
 
     /**
      * Return the Loan class of the LoanCategoryType.
+     *
      * @return the class
      */
     public MoneyWiseLoanCategoryClass getLoanClass() {
@@ -105,6 +111,7 @@ public class MoneyWiseLoanCategoryType
 
     /**
      * Determine whether the LoanCategoryType is the required class.
+     *
      * @param pClass the desired class
      * @return <code>true</code> if the loan category type is the required class, <code>false</code>
      * otherwise.
@@ -135,6 +142,7 @@ public class MoneyWiseLoanCategoryType
 
         /**
          * Construct an empty CORE account category list.
+         *
          * @param pData the DataSet for the list
          */
         public MoneyWiseLoanCategoryTypeList(final PrometheusDataSet pData) {
@@ -143,6 +151,7 @@ public class MoneyWiseLoanCategoryType
 
         /**
          * Constructor for a cloned List.
+         *
          * @param pSource the source List
          */
         private MoneyWiseLoanCategoryTypeList(final MoneyWiseLoanCategoryTypeList pSource) {
@@ -195,6 +204,7 @@ public class MoneyWiseLoanCategoryType
 
         /**
          * Obtain the type of the item.
+         *
          * @return the type of the item
          */
         public String itemType() {
@@ -203,6 +213,7 @@ public class MoneyWiseLoanCategoryType
 
         /**
          * Add a LoanCategoryType to the list.
+         *
          * @param pLoanCatType the Name of the loan category type
          * @return the new type
          * @throws OceanusException on error

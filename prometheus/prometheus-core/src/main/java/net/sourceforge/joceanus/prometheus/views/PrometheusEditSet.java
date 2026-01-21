@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Prometheus: Application Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,23 +13,23 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.prometheus.views;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
+import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.metis.data.MetisDataEditState;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.metis.list.MetisListKey;
 import net.sourceforge.joceanus.metis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerErrorList;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
-import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
-import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
-import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataList;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataList.PrometheusDataListSet;
@@ -101,6 +101,7 @@ public class PrometheusEditSet
 
     /**
      * Constructor for an update list.
+     *
      * @param pControl the Data Control
      */
     public PrometheusEditSet(final PrometheusDataControl pControl) {
@@ -109,6 +110,7 @@ public class PrometheusEditSet
 
     /**
      * Constructor for an update list.
+     *
      * @param pControl the Data Control
      * @param pDataSet the DataSet
      */
@@ -146,6 +148,7 @@ public class PrometheusEditSet
 
     /**
      * Set editing flag.
+     *
      * @param pFlag the editing flag
      */
     public void setEditing(final Boolean pFlag) {
@@ -154,6 +157,7 @@ public class PrometheusEditSet
 
     /**
      * Is the item editing?
+     *
      * @return true/false
      */
     public Boolean isEditing() {
@@ -162,6 +166,7 @@ public class PrometheusEditSet
 
     /**
      * Obtain the version.
+     *
      * @return the version
      */
     public int getVersion() {
@@ -170,6 +175,7 @@ public class PrometheusEditSet
 
     /**
      * Obtain the dataSet.
+     *
      * @return the dataSet
      */
     public PrometheusDataSet getDataSet() {
@@ -178,6 +184,7 @@ public class PrometheusEditSet
 
     /**
      * Set the dataSet.
+     *
      * @param pDataSet the dataSet
      */
     public void setDataSet(final PrometheusDataSet pDataSet) {
@@ -186,14 +193,14 @@ public class PrometheusEditSet
 
     /**
      * Register an entry for a class.
-     * @param <T> the object type
+     *
+     * @param <T>       the object type
      * @param pDataType the data type
      * @return the list class entry
      */
     public <T extends PrometheusDataItem> PrometheusEditEntry<T> registerType(final MetisListKey pDataType) {
         /* Locate any existing entry */
-        @SuppressWarnings("unchecked")
-        final PrometheusEditEntry<T> myEntry = (PrometheusEditEntry<T>) theMap.computeIfAbsent(pDataType, t -> {
+        @SuppressWarnings("unchecked") final PrometheusEditEntry<T> myEntry = (PrometheusEditEntry<T>) theMap.computeIfAbsent(pDataType, t -> {
             /* Not found , so add it */
             final PrometheusEditEntry<T> myNewEntry = new PrometheusEditEntry<>(t);
             theLocalFields.declareLocalField(myNewEntry.getName(), n -> myNewEntry);
@@ -209,9 +216,10 @@ public class PrometheusEditSet
      * Obtain the list for a class.
      * <p>
      * Will look first for the list in the updateSet and then in the underlying data.
-     * @param <L> the list type
+     *
+     * @param <L>       the list type
      * @param pDataType the data type
-     * @param pClass the list class
+     * @param pClass    the list class
      * @return the list
      */
     @Override
@@ -233,19 +241,20 @@ public class PrometheusEditSet
 
     /**
      * Set the editEntry for a type.
-     * @param <T> the dataType
+     *
+     * @param <T>       the dataType
      * @param pDataType the data type
-     * @param pList the list
+     * @param pList     the list
      */
     public <T extends PrometheusDataItem> void setEditEntryList(final MetisListKey pDataType,
                                                                 final PrometheusDataList<T> pList) {
-        @SuppressWarnings("unchecked")
-        final PrometheusEditEntry<T> myEntry = (PrometheusEditEntry<T>) theMap.get(pDataType);
+        @SuppressWarnings("unchecked") final PrometheusEditEntry<T> myEntry = (PrometheusEditEntry<T>) theMap.get(pDataType);
         myEntry.setDataList(pList);
     }
 
     /**
      * Obtain an iterator over the listKeys.
+     *
      * @return the iterator
      */
     public Iterator<MetisListKey> keyIterator() {
@@ -254,6 +263,7 @@ public class PrometheusEditSet
 
     /**
      * Obtain an iterator over the listKeys.
+     *
      * @return the iterator
      */
     public Iterator<PrometheusEditEntry<?>> listIterator() {
@@ -299,6 +309,7 @@ public class PrometheusEditSet
 
     /**
      * Rewind items to the required version.
+     *
      * @param pVersion the version to rewind to
      */
     private void rewindToVersion(final int pVersion) {
@@ -444,6 +455,7 @@ public class PrometheusEditSet
 
     /**
      * Prepare changes in a ViewSet back into the core data.
+     *
      * @return success true/false
      */
     private boolean prepareChanges() {
@@ -521,6 +533,7 @@ public class PrometheusEditSet
 
     /**
      * Has this UpdateSet got updates?
+     *
      * @return true/false
      */
     public boolean hasUpdates() {
@@ -530,6 +543,7 @@ public class PrometheusEditSet
 
     /**
      * Has this UpdateSet got errors?
+     *
      * @return true/false
      */
     public boolean hasErrors() {
@@ -577,6 +591,7 @@ public class PrometheusEditSet
 
     /**
      * Get the edit state of this set of tables.
+     *
      * @return the edit state
      */
     public MetisDataEditState getEditState() {
@@ -600,7 +615,8 @@ public class PrometheusEditSet
 
     /**
      * Process Save command.
-     * @param pCmd the command.
+     *
+     * @param pCmd   the command.
      * @param pError the error panel
      */
     public void processCommand(final PrometheusUIEvent pCmd,
@@ -637,9 +653,10 @@ public class PrometheusEditSet
 
     /**
      * Process Edit command.
-     * @param pCmd the command.
+     *
+     * @param pCmd     the command.
      * @param pVersion the version
-     * @param pError the error panel
+     * @param pError   the error panel
      */
     public void processEditCommand(final PrometheusUIEvent pCmd,
                                    final int pVersion,
@@ -676,6 +693,7 @@ public class PrometheusEditSet
 
     /**
      * Condense history.
+     *
      * @param pNewVersion the new maximum version
      */
     private void condenseHistory(final int pNewVersion) {

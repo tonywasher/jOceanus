@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,12 +13,12 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.launch;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.moneywise.ui.MoneyWiseIcon;
 import net.sourceforge.joceanus.moneywise.ui.panel.MoneyWiseMainTab;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIIconId;
 import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.tethys.api.factory.TethysUILaunchProgram;
@@ -54,7 +54,7 @@ public class MoneyWiseApp
     @Override
     public TethysUIIconId[] getIcons() {
         return new TethysUIIconId[]
-                { MoneyWiseIcon.SMALL, MoneyWiseIcon.BIG };
+                {MoneyWiseIcon.SMALL, MoneyWiseIcon.BIG};
     }
 
     @Override
@@ -64,7 +64,7 @@ public class MoneyWiseApp
 
     @Override
     public int[] getPanelDimensions() {
-        return new int[] { WIDTH_SCENE, HEIGHT_SCENE };
+        return new int[]{WIDTH_SCENE, HEIGHT_SCENE};
     }
 
     @Override

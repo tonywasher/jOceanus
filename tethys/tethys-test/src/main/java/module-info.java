@@ -30,7 +30,7 @@ module net.sourceforge.joceanus.tethys.test.core {
     requires org.jfree.jfreechart;
 
     /* jOceanus */
-    requires net.sourceforge.joceanus.oceanus;
+    requires io.github.tonywasher.joceanus.oceanus;
     requires net.sourceforge.joceanus.tethys.core;
     requires net.sourceforge.joceanus.tethys.javafx;
     requires net.sourceforge.joceanus.tethys.swing;

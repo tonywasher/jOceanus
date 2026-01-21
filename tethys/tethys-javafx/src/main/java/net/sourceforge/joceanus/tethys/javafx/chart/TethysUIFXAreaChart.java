@@ -1,24 +1,23 @@
-/*******************************************************************************
- * Tethys: Java Utilities
- * Copyright 2012-2026 Tony Washer
+/*
+ * Tethys: GUI Utilities
+ * Copyright 2012-2026. Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package net.sourceforge.joceanus.tethys.javafx.chart;
 
-import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.Map;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.chart.NumberAxis;
@@ -28,12 +27,13 @@ import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.util.StringConverter;
-
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.tethys.core.chart.TethysUICoreAreaChart;
 import net.sourceforge.joceanus.tethys.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.tethys.javafx.base.TethysUIFXNode;
+
+import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * javaFX AreaChart.
@@ -77,6 +77,7 @@ public class TethysUIFXAreaChart
 
     /**
      * Constructor.
+     *
      * @param pFactory the Gui Factory
      */
     TethysUIFXAreaChart(final TethysUICoreFactory<?> pFactory) {
@@ -186,6 +187,7 @@ public class TethysUIFXAreaChart
 
     /**
      * Determine border adjustment.
+     *
      * @return the border adjustment
      */
     private double getBorderAdjust() {
@@ -195,6 +197,7 @@ public class TethysUIFXAreaChart
 
     /**
      * Determine tick count.
+     *
      * @return the tick count
      */
     private long getTickCount() {
@@ -243,6 +246,7 @@ public class TethysUIFXAreaChart
 
     /**
      * Convert date to epoch.
+     *
      * @param pDate the date
      * @return the epoch
      */

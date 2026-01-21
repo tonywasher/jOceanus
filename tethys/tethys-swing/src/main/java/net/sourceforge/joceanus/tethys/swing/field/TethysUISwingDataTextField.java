@@ -1,27 +1,27 @@
-/*******************************************************************************
+/*
  * Tethys: GUI Utilities
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package net.sourceforge.joceanus.tethys.swing.field;
 
-import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.api.field.TethysUIFieldAttribute;
 import net.sourceforge.joceanus.tethys.core.factory.TethysUICoreFactory;
@@ -80,6 +80,7 @@ import java.util.function.Supplier;
 
 /**
  * Generic class for displaying and editing a data field.
+ *
  * @param <T> the data type
  */
 public abstract class TethysUISwingDataTextField<T>
@@ -141,9 +142,10 @@ public abstract class TethysUISwingDataTextField<T>
 
     /**
      * Constructor.
-     * @param pFactory the GUI factory
+     *
+     * @param pFactory     the GUI factory
      * @param pEditControl the edit Control
-     * @param pLabel the label
+     * @param pLabel       the label
      */
     protected TethysUISwingDataTextField(final TethysUICoreFactory<?> pFactory,
                                          final JComponent pEditControl,
@@ -221,6 +223,7 @@ public abstract class TethysUISwingDataTextField<T>
 
     /**
      * Adjust field.
+     *
      * @param pDataField the dataField
      */
     private void adjustField(final TethysUISwingDataTextField<?> pDataField) {
@@ -250,22 +253,22 @@ public abstract class TethysUISwingDataTextField<T>
         if (isNumeric) {
             if (isChanged) {
                 myFont = isSelected
-                            ? myFontSet.getBoldChangedNumeric()
-                            : myFontSet.getChangedNumeric();
+                        ? myFontSet.getBoldChangedNumeric()
+                        : myFontSet.getChangedNumeric();
             } else {
                 myFont = isSelected
-                            ? myFontSet.getBoldNumeric()
-                            : myFontSet.getNumeric();
+                        ? myFontSet.getBoldNumeric()
+                        : myFontSet.getNumeric();
             }
         } else {
             if (isChanged) {
                 myFont = isSelected
-                            ? myFontSet.getBoldChanged()
-                            : myFontSet.getChanged();
+                        ? myFontSet.getBoldChanged()
+                        : myFontSet.getChanged();
             } else {
                 myFont = isSelected
-                            ? myFontSet.getBoldStandard()
-                            : myFontSet.getStandard();
+                        ? myFontSet.getBoldStandard()
+                        : myFontSet.getStandard();
             }
         }
         myLabel.setFont(myFont);
@@ -277,8 +280,8 @@ public abstract class TethysUISwingDataTextField<T>
             myForeground = myColorSet.getChanged();
         } else {
             myForeground = isDisabled
-                                ? myColorSet.getDisabled()
-                                : myColorSet.getStandard();
+                    ? myColorSet.getDisabled()
+                    : myColorSet.getStandard();
 
         }
         myLabel.setForeground(myForeground);
@@ -293,6 +296,7 @@ public abstract class TethysUISwingDataTextField<T>
 
     /**
      * Obtain the error colour.
+     *
      * @return the colour.
      */
     Color getErrorColour() {
@@ -301,6 +305,7 @@ public abstract class TethysUISwingDataTextField<T>
 
     /**
      * Obtain the GuiFactory.
+     *
      * @return the factory
      */
     protected TethysUICoreFactory<?> getGuiFactory() {
@@ -314,6 +319,7 @@ public abstract class TethysUISwingDataTextField<T>
 
     /**
      * Obtain the label.
+     *
      * @return the label
      */
     public JLabel getLabel() {
@@ -322,6 +328,7 @@ public abstract class TethysUISwingDataTextField<T>
 
     /**
      * Obtain the editControl.
+     *
      * @return the editControl
      */
     public JComponent getEditControl() {
@@ -378,6 +385,7 @@ public abstract class TethysUISwingDataTextField<T>
 
     /**
      * Start cell editing.
+     *
      * @param pCell the cell rectangle
      */
     public abstract void startCellEditing(Rectangle pCell);
@@ -396,6 +404,7 @@ public abstract class TethysUISwingDataTextField<T>
 
     /**
      * Clone the dataField.
+     *
      * @param pLabel the label
      * @return the cloned data field
      */
@@ -424,6 +433,7 @@ public abstract class TethysUISwingDataTextField<T>
 
     /**
      * TextField class.
+     *
      * @param <T> the data type
      * @param <F> the field type
      */
@@ -462,10 +472,11 @@ public abstract class TethysUISwingDataTextField<T>
 
         /**
          * Constructor.
-         * @param pFactory the GUI factory
+         *
+         * @param pFactory   the GUI factory
          * @param pConverter the text converter
-         * @param pLabel the label
-         * @param pField the field
+         * @param pLabel     the label
+         * @param pField     the field
          */
         @SuppressWarnings("checkstyle:MethodParamPad")
         TethysUISwingTextEditField(final TethysUICoreFactory<?> pFactory,
@@ -519,6 +530,7 @@ public abstract class TethysUISwingDataTextField<T>
 
         /**
          * Obtain the converter.
+         *
          * @return the converter.
          */
         protected TethysUICoreDataEditConverter<T> getConverter() {
@@ -708,6 +720,7 @@ public abstract class TethysUISwingDataTextField<T>
             implements TethysUIStringEditField {
         /**
          * Constructor.
+         *
          * @param pFactory the GUI factory
          */
         protected TethysUISwingStringTextField(final TethysUICoreFactory<?> pFactory) {
@@ -716,8 +729,9 @@ public abstract class TethysUISwingDataTextField<T>
 
         /**
          * Constructor.
+         *
          * @param pFactory the GUI factory
-         * @param pLabel the label
+         * @param pLabel   the label
          */
         private TethysUISwingStringTextField(final TethysUICoreFactory<?> pFactory,
                                              final JLabel pLabel) {
@@ -738,6 +752,7 @@ public abstract class TethysUISwingDataTextField<T>
             implements TethysUIStringTextAreaField {
         /**
          * Constructor.
+         *
          * @param pFactory the GUI factory
          */
         protected TethysUISwingStringTextAreaField(final TethysUICoreFactory<?> pFactory) {
@@ -746,8 +761,9 @@ public abstract class TethysUISwingDataTextField<T>
 
         /**
          * Constructor.
+         *
          * @param pFactory the GUI factory
-         * @param pLabel the label
+         * @param pLabel   the label
          */
         private TethysUISwingStringTextAreaField(final TethysUICoreFactory<?> pFactory,
                                                  final JLabel pLabel) {
@@ -768,6 +784,7 @@ public abstract class TethysUISwingDataTextField<T>
             implements TethysUICharArrayEditField {
         /**
          * Constructor.
+         *
          * @param pFactory the GUI factory
          */
         TethysUISwingCharArrayTextField(final TethysUICoreFactory<?> pFactory) {
@@ -776,8 +793,9 @@ public abstract class TethysUISwingDataTextField<T>
 
         /**
          * Constructor.
+         *
          * @param pFactory the GUI factory
-         * @param pLabel the label
+         * @param pLabel   the label
          */
         private TethysUISwingCharArrayTextField(final TethysUICoreFactory<?> pFactory,
                                                 final JLabel pLabel) {
@@ -798,6 +816,7 @@ public abstract class TethysUISwingDataTextField<T>
             implements TethysUICharArrayTextAreaField {
         /**
          * Constructor.
+         *
          * @param pFactory the GUI factory
          */
         protected TethysUISwingCharArrayTextAreaField(final TethysUICoreFactory<?> pFactory) {
@@ -806,8 +825,9 @@ public abstract class TethysUISwingDataTextField<T>
 
         /**
          * Constructor.
+         *
          * @param pFactory the GUI factory
-         * @param pLabel the label
+         * @param pLabel   the label
          */
         private TethysUISwingCharArrayTextAreaField(final TethysUICoreFactory<?> pFactory,
                                                     final JLabel pLabel) {
@@ -828,6 +848,7 @@ public abstract class TethysUISwingDataTextField<T>
             implements TethysUIShortEditField {
         /**
          * Constructor.
+         *
          * @param pFactory the GUI factory
          */
         TethysUISwingShortTextField(final TethysUICoreFactory<?> pFactory) {
@@ -836,8 +857,9 @@ public abstract class TethysUISwingDataTextField<T>
 
         /**
          * Constructor.
+         *
          * @param pFactory the GUI factory
-         * @param pLabel the label
+         * @param pLabel   the label
          */
         private TethysUISwingShortTextField(final TethysUICoreFactory<?> pFactory,
                                             final JLabel pLabel) {
@@ -858,6 +880,7 @@ public abstract class TethysUISwingDataTextField<T>
             implements TethysUIIntegerEditField {
         /**
          * Constructor.
+         *
          * @param pFactory the GUI factory
          */
         TethysUISwingIntegerTextField(final TethysUICoreFactory<?> pFactory) {
@@ -866,8 +889,9 @@ public abstract class TethysUISwingDataTextField<T>
 
         /**
          * Constructor.
+         *
          * @param pFactory the GUI factory
-         * @param pLabel the label
+         * @param pLabel   the label
          */
         private TethysUISwingIntegerTextField(final TethysUICoreFactory<?> pFactory,
                                               final JLabel pLabel) {
@@ -888,6 +912,7 @@ public abstract class TethysUISwingDataTextField<T>
             implements TethysUILongEditField {
         /**
          * Constructor.
+         *
          * @param pFactory the GUI factory
          */
         TethysUISwingLongTextField(final TethysUICoreFactory<?> pFactory) {
@@ -896,8 +921,9 @@ public abstract class TethysUISwingDataTextField<T>
 
         /**
          * Constructor.
+         *
          * @param pFactory the GUI factory
-         * @param pLabel the label
+         * @param pLabel   the label
          */
         private TethysUISwingLongTextField(final TethysUICoreFactory<?> pFactory,
                                            final JLabel pLabel) {
@@ -918,6 +944,7 @@ public abstract class TethysUISwingDataTextField<T>
             implements TethysUIRawDecimalEditField {
         /**
          * Constructor.
+         *
          * @param pFactory the GUI factory
          */
         TethysUISwingRawDecimalTextField(final TethysUICoreFactory<?> pFactory) {
@@ -926,8 +953,9 @@ public abstract class TethysUISwingDataTextField<T>
 
         /**
          * Constructor.
+         *
          * @param pFactory the GUI factory
-         * @param pLabel the label
+         * @param pLabel   the label
          */
         private TethysUISwingRawDecimalTextField(final TethysUICoreFactory<?> pFactory,
                                                  final JLabel pLabel) {
@@ -952,6 +980,7 @@ public abstract class TethysUISwingDataTextField<T>
 
     /**
      * SwingCurrencyTextField base class.
+     *
      * @param <T> the data type
      */
     protected abstract static class TethysUISwingCurrencyTextFieldBase<T extends OceanusMoney>
@@ -959,9 +988,10 @@ public abstract class TethysUISwingDataTextField<T>
             implements TethysUICurrencyEditField<T> {
         /**
          * Constructor.
-         * @param pFactory the GUI factory
+         *
+         * @param pFactory   the GUI factory
          * @param pConverter the converter
-         * @param pLabel the label
+         * @param pLabel     the label
          */
         TethysUISwingCurrencyTextFieldBase(final TethysUICoreFactory<?> pFactory,
                                            final TethysUICoreMoneyEditConverterBase<T> pConverter,
@@ -988,6 +1018,7 @@ public abstract class TethysUISwingDataTextField<T>
             implements TethysUIMoneyEditField {
         /**
          * Constructor.
+         *
          * @param pFactory the GUI factory
          */
         TethysUISwingMoneyTextField(final TethysUICoreFactory<?> pFactory) {
@@ -996,8 +1027,9 @@ public abstract class TethysUISwingDataTextField<T>
 
         /**
          * Constructor.
+         *
          * @param pFactory the GUI factory
-         * @param pLabel the label
+         * @param pLabel   the label
          */
         private TethysUISwingMoneyTextField(final TethysUICoreFactory<?> pFactory,
                                             final JLabel pLabel) {
@@ -1018,6 +1050,7 @@ public abstract class TethysUISwingDataTextField<T>
             implements TethysUIPriceEditField {
         /**
          * Constructor.
+         *
          * @param pFactory the GUI factory
          */
         TethysUISwingPriceTextField(final TethysUICoreFactory<?> pFactory) {
@@ -1026,8 +1059,9 @@ public abstract class TethysUISwingDataTextField<T>
 
         /**
          * Constructor.
+         *
          * @param pFactory the GUI factory
-         * @param pLabel the label
+         * @param pLabel   the label
          */
         private TethysUISwingPriceTextField(final TethysUICoreFactory<?> pFactory,
                                             final JLabel pLabel) {
@@ -1048,6 +1082,7 @@ public abstract class TethysUISwingDataTextField<T>
             implements TethysUIRateEditField {
         /**
          * Constructor.
+         *
          * @param pFactory the GUI factory
          */
         TethysUISwingRateTextField(final TethysUICoreFactory<?> pFactory) {
@@ -1056,8 +1091,9 @@ public abstract class TethysUISwingDataTextField<T>
 
         /**
          * Constructor.
+         *
          * @param pFactory the GUI factory
-         * @param pLabel the label
+         * @param pLabel   the label
          */
         private TethysUISwingRateTextField(final TethysUICoreFactory<?> pFactory,
                                            final JLabel pLabel) {
@@ -1078,6 +1114,7 @@ public abstract class TethysUISwingDataTextField<T>
             implements TethysUIUnitsEditField {
         /**
          * Constructor.
+         *
          * @param pFactory the GUI factory
          */
         TethysUISwingUnitsTextField(final TethysUICoreFactory<?> pFactory) {
@@ -1086,8 +1123,9 @@ public abstract class TethysUISwingDataTextField<T>
 
         /**
          * Constructor.
+         *
          * @param pFactory the GUI factory
-         * @param pLabel the label
+         * @param pLabel   the label
          */
         private TethysUISwingUnitsTextField(final TethysUICoreFactory<?> pFactory,
                                             final JLabel pLabel) {
@@ -1108,6 +1146,7 @@ public abstract class TethysUISwingDataTextField<T>
             implements TethysUIRatioEditField {
         /**
          * Constructor.
+         *
          * @param pFactory the GUI factory
          */
         TethysUISwingRatioTextField(final TethysUICoreFactory<?> pFactory) {
@@ -1116,8 +1155,9 @@ public abstract class TethysUISwingDataTextField<T>
 
         /**
          * Constructor.
+         *
          * @param pFactory the GUI factory
-         * @param pLabel the label
+         * @param pLabel   the label
          */
         private TethysUISwingRatioTextField(final TethysUICoreFactory<?> pFactory,
                                             final JLabel pLabel) {

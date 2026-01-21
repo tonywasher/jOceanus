@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,14 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.ui.dialog;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateConfig;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.ui.MetisAction;
@@ -31,11 +36,6 @@ import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
 import net.sourceforge.joceanus.moneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.moneywise.ui.base.MoneyWiseDialogTable;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateConfig;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.prometheus.ui.fieldset.PrometheusFieldSetTableTab.PrometheusFieldSetTable;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
@@ -70,9 +70,10 @@ public class MoneyWiseSecurityPriceTable
 
     /**
      * Constructor.
-     * @param pView the view
+     *
+     * @param pView    the view
      * @param pEditSet the editSet
-     * @param pError the error panel
+     * @param pError   the error panel
      */
     public MoneyWiseSecurityPriceTable(final MoneyWiseView pView,
                                        final PrometheusEditSet pEditSet,
@@ -155,9 +156,10 @@ public class MoneyWiseSecurityPriceTable
 
     /**
      * Add a new price for a security.
+     *
      * @param pSecurity the security
-     * @throws OceanusException on error
      * @return the price
+     * @throws OceanusException on error
      */
     public MoneyWiseSecurityPrice addNewPrice(final MoneyWiseSecurity pSecurity) throws OceanusException {
         /* Create the new price */
@@ -223,7 +225,8 @@ public class MoneyWiseSecurityPriceTable
 
     /**
      * Handle dateConfig.
-     * @param pRow the row
+     *
+     * @param pRow    the row
      * @param pConfig the dateConfig
      */
     private void handleDateConfig(final MoneyWiseSecurityPrice pRow,

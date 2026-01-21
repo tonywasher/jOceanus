@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Metis: Java Data Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,13 +13,13 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.metis.viewer;
 
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleLoader;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.data.MetisDataResource;
-import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
-import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -198,6 +198,7 @@ public enum MetisViewerResource
 
     /**
      * Constructor.
+     *
      * @param pKeyName the key name
      */
     MetisViewerResource(final String pKeyName) {
@@ -233,6 +234,7 @@ public enum MetisViewerResource
 
     /**
      * Build entry map.
+     *
      * @return the map
      */
     private static Map<MetisViewerStandardEntry, OceanusBundleId> buildEntryMap() {
@@ -249,6 +251,7 @@ public enum MetisViewerResource
 
     /**
      * Obtain key for stdEntry.
+     *
      * @param pEntry the entry
      * @return the resource key
      */

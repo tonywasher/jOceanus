@@ -1,19 +1,19 @@
-/*******************************************************************************
+/*
  * Themis: Java Project Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package net.sourceforge.joceanus.themis.xanalysis.parser.node;
 
 import com.github.javaparser.ast.ArrayCreationLevel;
@@ -30,7 +30,7 @@ import com.github.javaparser.ast.expr.Name;
 import com.github.javaparser.ast.expr.SimpleName;
 import com.github.javaparser.ast.stmt.CatchClause;
 import com.github.javaparser.ast.stmt.SwitchEntry;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisId;
 import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisParserDef;
 
@@ -113,6 +113,7 @@ public enum ThemisXAnalysisNode
 
     /**
      * Constructor.
+     *
      * @param pTester the test method
      */
     ThemisXAnalysisNode(final Predicate<Node> pTester) {
@@ -121,8 +122,9 @@ public enum ThemisXAnalysisNode
 
     /**
      * Determine type of node.
+     *
      * @param pParser the parser
-     * @param pNode the node
+     * @param pNode   the node
      * @return the nodeType
      * @throws OceanusException on error
      */

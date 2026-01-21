@@ -23,7 +23,7 @@ module net.sourceforge.joceanus.prometheus.sheet.odf {
     requires java.xml;
 
     /* Oceanus */
-    requires net.sourceforge.joceanus.oceanus;
+    requires io.github.tonywasher.joceanus.oceanus;
     requires net.sourceforge.joceanus.prometheus.sheet.api;
 
     /* Services provided */

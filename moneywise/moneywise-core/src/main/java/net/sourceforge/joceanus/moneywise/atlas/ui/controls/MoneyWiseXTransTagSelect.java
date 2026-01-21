@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,13 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.atlas.ui.controls;
 
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTransTagBucket;
@@ -23,10 +27,6 @@ import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseX
 import net.sourceforge.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter;
 import net.sourceforge.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter.MoneyWiseXAnalysisTagFilter;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIConstant;
@@ -87,6 +87,7 @@ public class MoneyWiseXTransTagSelect
 
     /**
      * Constructor.
+     *
      * @param pFactory the GUI factory
      */
     protected MoneyWiseXTransTagSelect(final TethysUIFactory<?> pFactory) {
@@ -172,6 +173,7 @@ public class MoneyWiseXTransTagSelect
 
     /**
      * Set analysis.
+     *
      * @param pAnalysis the analysis.
      */
     public void setAnalysis(final MoneyWiseXAnalysis pAnalysis) {
@@ -279,6 +281,7 @@ public class MoneyWiseXTransTagSelect
 
         /**
          * Constructor.
+         *
          * @param pState state to copy from
          */
         private MoneyWiseTagState(final MoneyWiseTagState pState) {
@@ -290,6 +293,7 @@ public class MoneyWiseXTransTagSelect
 
         /**
          * Obtain the TransactionTag.
+         *
          * @return the Tag
          */
         private MoneyWiseXAnalysisTransTagBucket getTag() {
@@ -298,6 +302,7 @@ public class MoneyWiseXTransTagSelect
 
         /**
          * Obtain the dateRange.
+         *
          * @return the dateRange
          */
         private OceanusDateRange getDateRange() {
@@ -306,6 +311,7 @@ public class MoneyWiseXTransTagSelect
 
         /**
          * Obtain the Filter.
+         *
          * @return the Filter
          */
         private MoneyWiseXAnalysisTagFilter getFilter() {
@@ -314,6 +320,7 @@ public class MoneyWiseXTransTagSelect
 
         /**
          * Set new Tag.
+         *
          * @param pTag the Transaction Tag
          * @return true/false did a change occur
          */
@@ -329,6 +336,7 @@ public class MoneyWiseXTransTagSelect
 
         /**
          * Set the Tag.
+         *
          * @param pTag the Tag
          */
         private void setTheTag(final MoneyWiseXAnalysisTransTagBucket pTag) {
@@ -344,6 +352,7 @@ public class MoneyWiseXTransTagSelect
 
         /**
          * Set the dateRange.
+         *
          * @param pRange the dateRange
          */
         private void setDateRange(final OceanusDateRange pRange) {

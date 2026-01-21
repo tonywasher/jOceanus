@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Prometheus: Application Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,21 +13,21 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.prometheus.views;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.metis.toolkit.MetisToolkit;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerErrorList;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerExceptionWrapper;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerStandardEntry;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
-import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValidator.PrometheusDataValidatorFactory;
 import net.sourceforge.joceanus.prometheus.database.PrometheusDataStore;
@@ -87,6 +87,7 @@ public abstract class PrometheusDataControl
 
     /**
      * Constructor for default control.
+     *
      * @param pToolkit the toolkit
      */
     protected PrometheusDataControl(final PrometheusToolkit pToolkit) {
@@ -112,6 +113,7 @@ public abstract class PrometheusDataControl
 
     /**
      * Set the validator factory.
+     *
      * @param pFactory the validator factory
      */
     public void setValidatorFactory(final PrometheusDataValidatorFactory pFactory) {
@@ -120,6 +122,7 @@ public abstract class PrometheusDataControl
 
     /**
      * Obtain the validator factory.
+     *
      * @return the validator factory
      */
     public PrometheusDataValidatorFactory getValidatorFactory() {
@@ -128,6 +131,7 @@ public abstract class PrometheusDataControl
 
     /**
      * Record new DataSet.
+     *
      * @param pData the new DataSet
      */
     public void setData(final PrometheusDataSet pData) {
@@ -156,6 +160,7 @@ public abstract class PrometheusDataControl
 
     /**
      * Obtain current DataSet.
+     *
      * @return the current DataSet
      */
     public PrometheusDataSet getData() {
@@ -164,6 +169,7 @@ public abstract class PrometheusDataControl
 
     /**
      * Derive update list.
+     *
      * @throws OceanusException on error
      */
     public void deriveUpdates() throws OceanusException {
@@ -177,6 +183,7 @@ public abstract class PrometheusDataControl
 
     /**
      * Obtain current Updates.
+     *
      * @return the current Updates
      */
     public PrometheusDataSet getUpdates() {
@@ -185,6 +192,7 @@ public abstract class PrometheusDataControl
 
     /**
      * Add new Error.
+     *
      * @param pError the new Error
      */
     public void addError(final OceanusException pError) {
@@ -200,6 +208,7 @@ public abstract class PrometheusDataControl
 
     /**
      * Obtain current error.
+     *
      * @return the current Error
      */
     public MetisViewerErrorList getErrors() {
@@ -208,6 +217,7 @@ public abstract class PrometheusDataControl
 
     /**
      * Obtain toolkit.
+     *
      * @return the toolkit
      */
     public PrometheusToolkit getToolkit() {
@@ -216,6 +226,7 @@ public abstract class PrometheusDataControl
 
     /**
      * Obtain DataFormatter.
+     *
      * @return the DataFormatter
      */
     public OceanusDataFormatter getDataFormatter() {
@@ -224,6 +235,7 @@ public abstract class PrometheusDataControl
 
     /**
      * Obtain SecurityManager.
+     *
      * @return the SecurityManager
      */
     public PrometheusSecurityPasswordManager getPasswordManager() {
@@ -232,6 +244,7 @@ public abstract class PrometheusDataControl
 
     /**
      * Obtain PreferenceManager.
+     *
      * @return the PreferenceManager
      */
     public PrometheusPreferenceManager getPreferenceManager() {
@@ -240,6 +253,7 @@ public abstract class PrometheusDataControl
 
     /**
      * Obtain ViewerManager.
+     *
      * @return the ViewerManager
      */
     public MetisViewerManager getViewerManager() {
@@ -248,6 +262,7 @@ public abstract class PrometheusDataControl
 
     /**
      * Obtain GuiFactory.
+     *
      * @return the GuiFactory
      */
     public TethysUIFactory<?> getGuiFactory() {
@@ -286,6 +301,7 @@ public abstract class PrometheusDataControl
 
     /**
      * Get viewer Entry.
+     *
      * @param pId the id of the entry
      * @return the Viewer Entry
      */
@@ -295,18 +311,21 @@ public abstract class PrometheusDataControl
 
     /**
      * Obtain SpreadSheet object.
+     *
      * @return SpreadSheet object
      */
     public abstract PrometheusSpreadSheet getSpreadSheet();
 
     /**
      * Obtain the database name.
+     *
      * @return the name
      */
     public abstract String getDatabaseName();
 
     /**
      * Obtain Database object.
+     *
      * @return database object
      * @throws OceanusException on error
      */
@@ -314,6 +333,7 @@ public abstract class PrometheusDataControl
 
     /**
      * Obtain Null Database object.
+     *
      * @return database object
      * @throws OceanusException on error
      */
@@ -321,12 +341,14 @@ public abstract class PrometheusDataControl
 
     /**
      * Obtain DataSet object.
+     *
      * @return dataSet object
      */
     public abstract PrometheusDataSet getNewData();
 
     /**
      * Analyse the data in the view.
+     *
      * @param bPreserve preserve any error
      * @return success true/false
      */
@@ -393,6 +415,7 @@ public abstract class PrometheusDataControl
 
     /**
      * Create new profile.
+     *
      * @param pTask the name of the task
      * @return the new profile
      */
@@ -402,6 +425,7 @@ public abstract class PrometheusDataControl
 
     /**
      * Obtain the active profile.
+     *
      * @return the active profile
      */
     public OceanusProfile getActiveProfile() {
@@ -410,6 +434,7 @@ public abstract class PrometheusDataControl
 
     /**
      * Obtain the active task.
+     *
      * @return the active task
      */
     public OceanusProfile getActiveTask() {

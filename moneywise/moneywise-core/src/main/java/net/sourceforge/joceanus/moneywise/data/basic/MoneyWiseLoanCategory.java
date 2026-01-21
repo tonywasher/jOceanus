@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,10 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.data.basic;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.data.MetisDataResource;
@@ -27,7 +28,6 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseLoanCategoryType
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseLoanCategoryType.MoneyWiseLoanCategoryTypeList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
@@ -66,7 +66,8 @@ public final class MoneyWiseLoanCategory
 
     /**
      * Copy Constructor.
-     * @param pList the list
+     *
+     * @param pList     the list
      * @param pCategory The Category to copy
      */
     MoneyWiseLoanCategory(final MoneyWiseLoanCategoryList pList,
@@ -77,7 +78,8 @@ public final class MoneyWiseLoanCategory
 
     /**
      * Values constructor.
-     * @param pList the List to add to
+     *
+     * @param pList   the List to add to
      * @param pValues the values constructor
      * @throws OceanusException on error
      */
@@ -97,6 +99,7 @@ public final class MoneyWiseLoanCategory
 
     /**
      * Edit Constructor.
+     *
      * @param pList the list
      */
     public MoneyWiseLoanCategory(final MoneyWiseLoanCategoryList pList) {
@@ -140,6 +143,7 @@ public final class MoneyWiseLoanCategory
 
     /**
      * Set account type value.
+     *
      * @param pValue the value
      */
     private void setValueType(final MoneyWiseLoanCategoryType pValue) {
@@ -148,6 +152,7 @@ public final class MoneyWiseLoanCategory
 
     /**
      * Set account type id.
+     *
      * @param pValue the value
      */
     private void setValueType(final Integer pValue) {
@@ -156,6 +161,7 @@ public final class MoneyWiseLoanCategory
 
     /**
      * Set account type name.
+     *
      * @param pValue the value
      */
     private void setValueType(final String pValue) {
@@ -164,6 +170,7 @@ public final class MoneyWiseLoanCategory
 
     /**
      * Is this loan category the required class.
+     *
      * @param pClass the required category class.
      * @return true/false
      */
@@ -179,6 +186,7 @@ public final class MoneyWiseLoanCategory
 
     /**
      * Set defaults.
+     *
      * @param pParent the parent
      * @throws OceanusException on error
      */
@@ -215,6 +223,7 @@ public final class MoneyWiseLoanCategory
 
     /**
      * Update base category from an edited category.
+     *
      * @param pCategory the edited category
      * @return whether changes have been made
      */
@@ -258,6 +267,7 @@ public final class MoneyWiseLoanCategory
 
         /**
          * Construct an empty CORE Category list.
+         *
          * @param pData the DataSet for the list
          */
         protected MoneyWiseLoanCategoryList(final MoneyWiseDataSet pData) {
@@ -266,6 +276,7 @@ public final class MoneyWiseLoanCategory
 
         /**
          * Constructor for a cloned List.
+         *
          * @param pSource the source List
          */
         protected MoneyWiseLoanCategoryList(final MoneyWiseLoanCategoryList pSource) {
@@ -289,6 +300,7 @@ public final class MoneyWiseLoanCategory
 
         /**
          * Obtain editSet.
+         *
          * @return the editSet
          */
         public PrometheusEditSet getEditSet() {
@@ -304,6 +316,7 @@ public final class MoneyWiseLoanCategory
 
         /**
          * Derive Edit list.
+         *
          * @param pEditSet the editSet
          * @return the edit list
          * @throws OceanusException on error
@@ -343,6 +356,7 @@ public final class MoneyWiseLoanCategory
 
         /**
          * Add a new item to the core list.
+         *
          * @param pCategory item
          * @return the newly added item
          */
@@ -360,6 +374,7 @@ public final class MoneyWiseLoanCategory
 
         /**
          * Add a new item to the edit list.
+         *
          * @return the new item
          */
         @Override

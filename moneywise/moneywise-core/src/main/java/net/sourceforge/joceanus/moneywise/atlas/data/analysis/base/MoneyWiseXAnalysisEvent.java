@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,14 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.atlas.data.analysis.base;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetDirection;
@@ -27,11 +32,6 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransTag;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 
 import java.util.ArrayList;
@@ -148,8 +148,9 @@ public class MoneyWiseXAnalysisEvent
 
     /**
      * Determine the id of a non-transaction event.
+     *
      * @param pEventType the eventType
-     * @param pDate the date
+     * @param pDate      the date
      * @return the id
      */
     private static Integer determineId(final MoneyWiseXAnalysisEventType pEventType,
@@ -848,6 +849,7 @@ public class MoneyWiseXAnalysisEvent
 
     /**
      * Obtain EventInfo.
+     *
      * @param pInfoClass the infoClass
      * @return the Info
      */
@@ -859,22 +861,38 @@ public class MoneyWiseXAnalysisEvent
 
         /* Obtain the relevant info */
         switch (pInfoClass) {
-            case TAXCREDIT:           return theTransaction.getTaxCredit();
-            case EMPLOYEENATINS:      return theTransaction.getEmployeeNatIns();
-            case EMPLOYERNATINS:      return theTransaction.getEmployerNatIns();
-            case DEEMEDBENEFIT:       return theTransaction.getDeemedBenefit();
-            case WITHHELD:            return theTransaction.getWithheld();
-            case ACCOUNTDELTAUNITS:   return theTransaction.getAccountDeltaUnits();
-            case PARTNERDELTAUNITS:   return theTransaction.getPartnerDeltaUnits();
-            case DILUTION:            return theTransaction.getDilution();
-            case PRICE:               return theTransaction.getPrice();
-            case RETURNEDCASH:        return theTransaction.getReturnedCash();
-            case RETURNEDCASHACCOUNT: return theTransaction.getReturnedCashAccount();
-            case PARTNERAMOUNT:       return theTransaction.getPartnerAmount();
-            case REFERENCE:           return theTransaction.getReference();
-            case COMMENTS:            return theTransaction.getComments();
-            case TRANSTAG:            return theTransaction.getTransactionTags();
-            default:                  return null;
+            case TAXCREDIT:
+                return theTransaction.getTaxCredit();
+            case EMPLOYEENATINS:
+                return theTransaction.getEmployeeNatIns();
+            case EMPLOYERNATINS:
+                return theTransaction.getEmployerNatIns();
+            case DEEMEDBENEFIT:
+                return theTransaction.getDeemedBenefit();
+            case WITHHELD:
+                return theTransaction.getWithheld();
+            case ACCOUNTDELTAUNITS:
+                return theTransaction.getAccountDeltaUnits();
+            case PARTNERDELTAUNITS:
+                return theTransaction.getPartnerDeltaUnits();
+            case DILUTION:
+                return theTransaction.getDilution();
+            case PRICE:
+                return theTransaction.getPrice();
+            case RETURNEDCASH:
+                return theTransaction.getReturnedCash();
+            case RETURNEDCASHACCOUNT:
+                return theTransaction.getReturnedCashAccount();
+            case PARTNERAMOUNT:
+                return theTransaction.getPartnerAmount();
+            case REFERENCE:
+                return theTransaction.getReference();
+            case COMMENTS:
+                return theTransaction.getComments();
+            case TRANSTAG:
+                return theTransaction.getTransactionTags();
+            default:
+                return null;
         }
     }
 }

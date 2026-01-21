@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,25 +13,26 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.atlas.data.analysis.base;
 
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataMap;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataObjectFormat;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 
 import java.util.EnumMap;
 import java.util.Map;
 
 /**
  * Values for a bucket.
+ *
  * @param <T> the values class
  * @param <E> the enum class
  */
@@ -49,6 +50,7 @@ public abstract class MoneyWiseXAnalysisValues<T extends MoneyWiseXAnalysisValue
 
     /**
      * Constructor.
+     *
      * @param pClass the Enum class
      */
     protected MoneyWiseXAnalysisValues(final Class<E> pClass) {
@@ -58,6 +60,7 @@ public abstract class MoneyWiseXAnalysisValues<T extends MoneyWiseXAnalysisValue
 
     /**
      * Constructor.
+     *
      * @param pSource the source values
      */
     protected MoneyWiseXAnalysisValues(final T pSource) {
@@ -86,6 +89,7 @@ public abstract class MoneyWiseXAnalysisValues<T extends MoneyWiseXAnalysisValue
 
     /**
      * Obtain EnumClass.
+     *
      * @return the class.
      */
     protected Class<E> getEnumClass() {
@@ -94,6 +98,7 @@ public abstract class MoneyWiseXAnalysisValues<T extends MoneyWiseXAnalysisValue
 
     /**
      * Obtain new snapShot.
+     *
      * @return the snapShot.
      */
     protected abstract T newSnapShot();
@@ -105,6 +110,7 @@ public abstract class MoneyWiseXAnalysisValues<T extends MoneyWiseXAnalysisValue
 
     /**
      * Adjust to base values.
+     *
      * @param pBaseValues the base values.
      */
     public void adjustToBaseValues(final T pBaseValues) {
@@ -112,8 +118,9 @@ public abstract class MoneyWiseXAnalysisValues<T extends MoneyWiseXAnalysisValue
 
     /**
      * Obtain delta value.
+     *
      * @param pPrevious the previous values.
-     * @param pAttr the attribute
+     * @param pAttr     the attribute
      * @return the delta
      */
     protected OceanusDecimal getDeltaValue(final T pPrevious,
@@ -130,8 +137,9 @@ public abstract class MoneyWiseXAnalysisValues<T extends MoneyWiseXAnalysisValue
 
     /**
      * Obtain delta money value.
+     *
      * @param pPrevious the previous values.
-     * @param pAttr the attribute
+     * @param pAttr     the attribute
      * @return the delta
      */
     protected OceanusMoney getDeltaMoneyValue(final T pPrevious,
@@ -150,8 +158,9 @@ public abstract class MoneyWiseXAnalysisValues<T extends MoneyWiseXAnalysisValue
 
     /**
      * Obtain delta units value.
+     *
      * @param pPrevious the previous values.
-     * @param pAttr the attribute
+     * @param pAttr     the attribute
      * @return the delta
      */
     protected OceanusUnits getDeltaUnitsValue(final T pPrevious,
@@ -170,6 +179,7 @@ public abstract class MoneyWiseXAnalysisValues<T extends MoneyWiseXAnalysisValue
 
     /**
      * Adjust money value relative to base.
+     *
      * @param pBase the base values.
      * @param pAttr the attribute to reBase.
      */
@@ -191,7 +201,8 @@ public abstract class MoneyWiseXAnalysisValues<T extends MoneyWiseXAnalysisValue
 
     /**
      * Set Value.
-     * @param pAttr the attribute
+     *
+     * @param pAttr  the attribute
      * @param pValue the value of the attribute
      */
     public void setValue(final E pAttr,
@@ -202,8 +213,9 @@ public abstract class MoneyWiseXAnalysisValues<T extends MoneyWiseXAnalysisValue
 
     /**
      * Obtain an attribute value.
-     * @param <X> the data type
-     * @param pAttr the attribute
+     *
+     * @param <X>    the data type
+     * @param pAttr  the attribute
      * @param pClass the class of the attribute
      * @return the value of the attribute or null
      */
@@ -215,6 +227,7 @@ public abstract class MoneyWiseXAnalysisValues<T extends MoneyWiseXAnalysisValue
 
     /**
      * Obtain an attribute value.
+     *
      * @param pAttr the attribute
      * @return the value of the attribute or null
      */
@@ -225,6 +238,7 @@ public abstract class MoneyWiseXAnalysisValues<T extends MoneyWiseXAnalysisValue
 
     /**
      * Obtain a decimal attribute value.
+     *
      * @param pAttr the attribute
      * @return the value of the attribute or null
      */
@@ -235,6 +249,7 @@ public abstract class MoneyWiseXAnalysisValues<T extends MoneyWiseXAnalysisValue
 
     /**
      * Obtain a units attribute value.
+     *
      * @param pAttr the attribute
      * @return the value of the attribute or null
      */
@@ -245,6 +260,7 @@ public abstract class MoneyWiseXAnalysisValues<T extends MoneyWiseXAnalysisValue
 
     /**
      * Obtain a price attribute value.
+     *
      * @param pAttr the attribute
      * @return the value of the attribute or null
      */
@@ -255,6 +271,7 @@ public abstract class MoneyWiseXAnalysisValues<T extends MoneyWiseXAnalysisValue
 
     /**
      * Obtain a money attribute value.
+     *
      * @param pAttr the attribute
      * @return the value of the attribute or null
      */
@@ -265,6 +282,7 @@ public abstract class MoneyWiseXAnalysisValues<T extends MoneyWiseXAnalysisValue
 
     /**
      * Obtain a rate attribute value.
+     *
      * @param pAttr the attribute
      * @return the value of the attribute or null
      */
@@ -275,6 +293,7 @@ public abstract class MoneyWiseXAnalysisValues<T extends MoneyWiseXAnalysisValue
 
     /**
      * Obtain a ratio attribute value.
+     *
      * @param pAttr the attribute
      * @return the value of the attribute or null
      */
@@ -285,6 +304,7 @@ public abstract class MoneyWiseXAnalysisValues<T extends MoneyWiseXAnalysisValue
 
     /**
      * Obtain a date attribute value.
+     *
      * @param pAttr the attribute
      * @return the value of the attribute or null
      */
@@ -295,6 +315,7 @@ public abstract class MoneyWiseXAnalysisValues<T extends MoneyWiseXAnalysisValue
 
     /**
      * Obtain an integer attribute value.
+     *
      * @param pAttr the attribute
      * @return the value of the attribute or null
      */
@@ -305,8 +326,9 @@ public abstract class MoneyWiseXAnalysisValues<T extends MoneyWiseXAnalysisValue
 
     /**
      * Obtain an enum attribute value.
-     * @param <V> the enum type
-     * @param pAttr the attribute
+     *
+     * @param <V>    the enum type
+     * @param pAttr  the attribute
      * @param pClass the Class of the enum
      * @return the value of the attribute or null
      */

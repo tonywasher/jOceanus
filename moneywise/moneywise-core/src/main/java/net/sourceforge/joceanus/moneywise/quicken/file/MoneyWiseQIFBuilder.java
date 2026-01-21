@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,11 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.quicken.file;
 
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCash;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDeposit;
@@ -33,8 +35,6 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryCla
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
 import net.sourceforge.joceanus.moneywise.quicken.definitions.MoneyWiseQIFType;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -107,8 +107,9 @@ public class MoneyWiseQIFBuilder {
 
     /**
      * Constructor.
-     * @param pFile the QIF File
-     * @param pData the data
+     *
+     * @param pFile     the QIF File
+     * @param pData     the data
      * @param pAnalysis the analysis
      */
     protected MoneyWiseQIFBuilder(final MoneyWiseQIFFile pFile,
@@ -136,6 +137,7 @@ public class MoneyWiseQIFBuilder {
 
     /**
      * Obtain the file.
+     *
      * @return the file
      */
     protected MoneyWiseQIFFile getFile() {
@@ -144,6 +146,7 @@ public class MoneyWiseQIFBuilder {
 
     /**
      * Obtain the tax category.
+     *
      * @return the category
      */
     protected MoneyWiseQIFEventCategory getTaxCategory() {
@@ -152,6 +155,7 @@ public class MoneyWiseQIFBuilder {
 
     /**
      * Obtain the tax payee.
+     *
      * @return the payee
      */
     protected MoneyWiseQIFPayee getTaxMan() {
@@ -160,6 +164,7 @@ public class MoneyWiseQIFBuilder {
 
     /**
      * Process event.
+     *
      * @param pTrans the transaction
      */
     protected void processEvent(final MoneyWiseTransaction pTrans) {
@@ -190,9 +195,10 @@ public class MoneyWiseQIFBuilder {
 
     /**
      * Process opening balance.
-     * @param pDeposit the deposit
+     *
+     * @param pDeposit   the deposit
      * @param pStartDate the start date
-     * @param pBalance the opening balance
+     * @param pBalance   the opening balance
      */
     protected void processBalance(final MoneyWiseDeposit pDeposit,
                                   final OceanusDate pStartDate,
@@ -222,9 +228,10 @@ public class MoneyWiseQIFBuilder {
 
     /**
      * Process debit payee event.
-     * @param pPayee the payee
+     *
+     * @param pPayee  the payee
      * @param pCredit the credit account
-     * @param pTrans the transaction
+     * @param pTrans  the transaction
      */
     protected void processDebitPayee(final MoneyWisePayee pPayee,
                                      final MoneyWiseTransAsset pCredit,
@@ -258,6 +265,7 @@ public class MoneyWiseQIFBuilder {
 
     /**
      * Process credit payee event.
+     *
      * @param pPayee the payee
      * @param pDebit the debit account
      * @param pTrans the transaction
@@ -294,9 +302,10 @@ public class MoneyWiseQIFBuilder {
 
     /**
      * Process transfer event.
-     * @param pDebit the debit account
+     *
+     * @param pDebit  the debit account
      * @param pCredit the credit account
-     * @param pTrans the transaction
+     * @param pTrans  the transaction
      */
     protected void processTransfer(final MoneyWiseTransAsset pDebit,
                                    final MoneyWiseTransAsset pCredit,
@@ -379,6 +388,7 @@ public class MoneyWiseQIFBuilder {
 
     /**
      * Does the transaction have extra detail.
+     *
      * @param pTrans the transaction
      * @return true/false
      */
@@ -397,9 +407,10 @@ public class MoneyWiseQIFBuilder {
 
     /**
      * Process standard income.
-     * @param pPayee the payee
+     *
+     * @param pPayee  the payee
      * @param pCredit the credit account
-     * @param pTrans the transaction
+     * @param pTrans  the transaction
      */
     protected void processStandardIncome(final MoneyWisePayee pPayee,
                                          final MoneyWiseTransAsset pCredit,
@@ -428,9 +439,10 @@ public class MoneyWiseQIFBuilder {
 
     /**
      * Process detailed income.
-     * @param pPayee the payee
+     *
+     * @param pPayee  the payee
      * @param pCredit the credit account
-     * @param pTrans the transaction
+     * @param pTrans  the transaction
      */
     protected void processDetailedIncome(final MoneyWisePayee pPayee,
                                          final MoneyWiseTransAsset pCredit,
@@ -531,6 +543,7 @@ public class MoneyWiseQIFBuilder {
 
     /**
      * Process standard expense.
+     *
      * @param pPayee the payee
      * @param pDebit the debit account
      * @param pTrans the transaction
@@ -566,6 +579,7 @@ public class MoneyWiseQIFBuilder {
 
     /**
      * Process detailed expense.
+     *
      * @param pPayee the payee
      * @param pDebit the debit account
      * @param pTrans the expense
@@ -644,9 +658,10 @@ public class MoneyWiseQIFBuilder {
 
     /**
      * Process standard transfer.
-     * @param pDebit the debit account
+     *
+     * @param pDebit  the debit account
      * @param pCredit the credit account
-     * @param pTrans the transaction
+     * @param pTrans  the transaction
      */
     protected void processStandardTransfer(final MoneyWiseTransAsset pDebit,
                                            final MoneyWiseTransAsset pCredit,
@@ -690,6 +705,7 @@ public class MoneyWiseQIFBuilder {
 
     /**
      * Build xferFrom payee line.
+     *
      * @param pPartner the Transfer Partner
      * @return the line
      */
@@ -711,6 +727,7 @@ public class MoneyWiseQIFBuilder {
 
     /**
      * Build xferFrom payee line.
+     *
      * @param pPartner the Transfer Partner
      * @return the line
      */
@@ -732,9 +749,10 @@ public class MoneyWiseQIFBuilder {
 
     /**
      * Process interest.
-     * @param pDebit the debit account
+     *
+     * @param pDebit  the debit account
      * @param pCredit the credit account
-     * @param pTrans the transaction
+     * @param pTrans  the transaction
      */
     protected void processInterest(final MoneyWiseTransAsset pDebit,
                                    final MoneyWiseTransAsset pCredit,
@@ -859,9 +877,10 @@ public class MoneyWiseQIFBuilder {
 
     /**
      * Process cashBack.
-     * @param pDebit the debit account
+     *
+     * @param pDebit  the debit account
      * @param pCredit the credit account
-     * @param pTrans the transaction
+     * @param pTrans  the transaction
      */
     protected void processCashBack(final MoneyWiseTransAsset pDebit,
                                    final MoneyWiseTransAsset pCredit,
@@ -947,8 +966,9 @@ public class MoneyWiseQIFBuilder {
 
     /**
      * Process cash recovery.
+     *
      * @param pPayee the payee
-     * @param pCash the cash account
+     * @param pCash  the cash account
      * @param pTrans the transaction
      */
     protected void processCashRecovery(final MoneyWisePayee pPayee,
@@ -985,8 +1005,9 @@ public class MoneyWiseQIFBuilder {
 
     /**
      * Process cash payment.
+     *
      * @param pPayee the payee
-     * @param pCash the cash account
+     * @param pCash  the cash account
      * @param pTrans the transaction
      */
     protected void processCashPayment(final MoneyWisePayee pPayee,
@@ -1023,7 +1044,8 @@ public class MoneyWiseQIFBuilder {
 
     /**
      * Process cash expense.
-     * @param pCash the cash account
+     *
+     * @param pCash  the cash account
      * @param pDebit the debit account
      * @param pTrans the transaction
      */
@@ -1058,9 +1080,10 @@ public class MoneyWiseQIFBuilder {
 
     /**
      * Process cash receipt.
-     * @param pCash the cash account
+     *
+     * @param pCash   the cash account
      * @param pCredit the credit account
-     * @param pTrans the transaction
+     * @param pTrans  the transaction
      */
     protected void processCashReceipt(final MoneyWiseCash pCash,
                                       final MoneyWiseTransAsset pCredit,
@@ -1089,6 +1112,7 @@ public class MoneyWiseQIFBuilder {
 
     /**
      * Obtain classes for transaction.
+     *
      * @param pTrans the transaction
      * @return the class list (or null)
      */

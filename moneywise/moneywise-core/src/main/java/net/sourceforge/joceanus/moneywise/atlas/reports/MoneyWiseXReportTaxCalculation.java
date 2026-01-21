@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,10 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.atlas.reports;
 
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.report.MetisReportBase;
 import net.sourceforge.joceanus.metis.report.MetisReportHTMLBuilder;
 import net.sourceforge.joceanus.metis.report.MetisReportHTMLBuilder.MetisHTMLTable;
@@ -31,7 +32,6 @@ import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxDueBucket;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxDueBucket.MoneyWiseTaxBandBucket;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxResource;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxYear;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -79,6 +79,7 @@ public class MoneyWiseXReportTaxCalculation
 
     /**
      * Constructor.
+     *
      * @param pManager the Report Manager
      */
     MoneyWiseXReportTaxCalculation(final MetisReportManager<MoneyWiseXAnalysisFilter<?, ?>> pManager) {
@@ -89,6 +90,7 @@ public class MoneyWiseXReportTaxCalculation
 
     /**
      * Build a web output of the taxation report.
+     *
      * @param pAnalysis the analysis
      * @return Web output
      */
@@ -142,7 +144,8 @@ public class MoneyWiseXReportTaxCalculation
 
     /**
      * Build a standard tax report element.
-     * @param pParent the parent table
+     *
+     * @param pParent  the parent table
      * @param pSummary the tax summary
      */
     public void makeTaxReport(final MetisHTMLTable pParent,

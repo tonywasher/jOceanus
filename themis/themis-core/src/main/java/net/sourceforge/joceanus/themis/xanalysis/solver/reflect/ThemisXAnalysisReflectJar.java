@@ -17,7 +17,7 @@
 package net.sourceforge.joceanus.themis.xanalysis.solver.reflect;
 
 import com.github.javaparser.ast.body.BodyDeclaration;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.exc.ThemisDataException;
 import net.sourceforge.joceanus.themis.xanalysis.parser.ThemisXAnalysisParser;
 import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisChar;

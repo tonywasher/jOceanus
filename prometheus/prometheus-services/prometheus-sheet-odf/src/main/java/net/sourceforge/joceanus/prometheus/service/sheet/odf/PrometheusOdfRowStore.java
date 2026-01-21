@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Prometheus: Application Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,11 +13,11 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.prometheus.service.sheet.odf;
 
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCell;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCellPosition;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetRow;
@@ -75,6 +75,7 @@ class PrometheusOdfRowStore {
 
     /**
      * ReadOnly Constructor.
+     *
      * @param pSheet the owning sheet.
      * @throws OceanusException on error
      */
@@ -89,10 +90,11 @@ class PrometheusOdfRowStore {
 
     /**
      * Mutable Constructor.
-     * @param pSheet the owning sheet.
+     *
+     * @param pSheet   the owning sheet.
      * @param pNumRows the initial number of rows
      * @param pNumCols the initial number of columns
-      */
+     */
     PrometheusOdfRowStore(final PrometheusOdfSheetCore pSheet,
                           final int pNumRows,
                           final int pNumCols) {
@@ -108,6 +110,7 @@ class PrometheusOdfRowStore {
 
     /**
      * Obtain OasisSheet.
+     *
      * @return the row.
      */
     PrometheusOdfSheetCore getSheet() {
@@ -116,6 +119,7 @@ class PrometheusOdfRowStore {
 
     /**
      * Obtain Row count.
+     *
      * @return the row count.
      */
     int getRowCount() {
@@ -124,6 +128,7 @@ class PrometheusOdfRowStore {
 
     /**
      * Obtain Cell count.
+     *
      * @return the cell count.
      */
     int getCellCount() {
@@ -132,6 +137,7 @@ class PrometheusOdfRowStore {
 
     /**
      * Process a row Element.
+     *
      * @param pRow the row to process
      * @throws OceanusException on error
      */
@@ -139,8 +145,8 @@ class PrometheusOdfRowStore {
         /* Determine the number of repeated columns */
         final String myRepeatStr = theParser.getAttribute(pRow, PrometheusOdfTableItem.ROWREPEAT);
         int myRepeat = myRepeatStr == null
-                       ? 1
-                       : Integer.parseInt(myRepeatStr);
+                ? 1
+                : Integer.parseInt(myRepeatStr);
 
         /* Parse the values */
         final Boolean myHidden = parseRowHidden(pRow);
@@ -156,10 +162,11 @@ class PrometheusOdfRowStore {
             theHiddens[iIndex] = myHidden;
             theRows[iIndex] = myCells;
         }
-     }
+    }
 
     /**
      * Add additional rows to table.
+     *
      * @param pXtraRows the number of rows to add.
      */
     private void addAdditionalRows(final int pXtraRows) {
@@ -167,13 +174,14 @@ class PrometheusOdfRowStore {
         theNumRows += pXtraRows;
 
         /* Determine the expansion length */
-        final int myLen = (((theNumRows + 1) / ROW_EXPAND) + 1)  * ROW_EXPAND;
+        final int myLen = (((theNumRows + 1) / ROW_EXPAND) + 1) * ROW_EXPAND;
         theHiddens = Arrays.copyOf(theHiddens, myLen);
         theRows = Arrays.copyOf(theRows, myLen);
     }
 
     /**
      * Add additional columns to table.
+     *
      * @param pXtraCols the number of columns to add.
      */
     void addAdditionalCols(final int pXtraCols) {
@@ -187,7 +195,8 @@ class PrometheusOdfRowStore {
 
     /**
      * Obtain a readOnly row by its index.
-     * @param pSheet the owning sheet
+     *
+     * @param pSheet    the owning sheet
      * @param pRowIndex the index of the row.
      * @return the row
      */
@@ -210,9 +219,10 @@ class PrometheusOdfRowStore {
 
     /**
      * Obtain an iterator of non-null rows for the range.
-     * @param pSheet the sheet for the rows
+     *
+     * @param pSheet    the sheet for the rows
      * @param pFirstRow the index of the first row.
-     * @param pLastRow the index of the last row.
+     * @param pLastRow  the index of the last row.
      * @return the iterator
      */
     ListIterator<PrometheusSheetRow> iteratorForRange(final PrometheusOdfSheet pSheet,
@@ -237,9 +247,10 @@ class PrometheusOdfRowStore {
 
     /**
      * Obtain an iterator of non-null cells for the range.
-     * @param pRow the row for the cell
+     *
+     * @param pRow        the row for the cell
      * @param pFirstIndex the index of the first cell.
-     * @param pLastIndex the index of the last cell.
+     * @param pLastIndex  the index of the last cell.
      * @return the iterator
      */
     ListIterator<PrometheusSheetCell> iteratorForRange(final PrometheusOdfRow pRow,
@@ -252,7 +263,8 @@ class PrometheusOdfRowStore {
 
     /**
      * Obtain a mutable row by its index, creating row if it does not exist.
-     * @param pSheet the owning sheet
+     *
+     * @param pSheet    the owning sheet
      * @param pRowIndex the index of the row.
      * @return the row
      */
@@ -286,7 +298,8 @@ class PrometheusOdfRowStore {
 
     /**
      * Obtain a readOnly cell by its index.
-     * @param pRow the row containing the cell.
+     *
+     * @param pRow       the row containing the cell.
      * @param pCellIndex the index of the cell.
      * @return the row
      */
@@ -301,7 +314,8 @@ class PrometheusOdfRowStore {
 
     /**
      * Obtain a mutable cell by its index.
-     * @param pRow the row containing the cell.
+     *
+     * @param pRow       the row containing the cell.
      * @param pCellIndex the index of the cell.
      * @return the row
      */
@@ -316,6 +330,7 @@ class PrometheusOdfRowStore {
 
     /**
      * Obtain the index of the max valued cell.
+     *
      * @param pRow the row containing the cell.
      * @return the index
      */
@@ -329,9 +344,10 @@ class PrometheusOdfRowStore {
 
     /**
      * Apply validation.
+     *
      * @param pValidation the validation name
-     * @param pFirstCell the first cell
-     * @param pLastCell the last cell
+     * @param pFirstCell  the first cell
+     * @param pLastCell   the last cell
      */
     void applyValidation(final String pValidation,
                          final PrometheusSheetCellPosition pFirstCell,
@@ -359,6 +375,7 @@ class PrometheusOdfRowStore {
 
     /**
      * Get hidden flag at index.
+     *
      * @param pIndex the index
      * @return the value
      */
@@ -368,7 +385,8 @@ class PrometheusOdfRowStore {
 
     /**
      * Set hidden flag at index.
-     * @param pIndex the index
+     *
+     * @param pIndex  the index
      * @param pHidden true/false
      */
     void setHiddenAtIndex(final int pIndex,
@@ -378,18 +396,20 @@ class PrometheusOdfRowStore {
 
     /**
      * Format object value.
+     *
      * @param pValue the value
      * @return the formatted value
      */
     String formatValue(final Object pValue) {
-         return theFormatter.formatObject(pValue);
+        return theFormatter.formatObject(pValue);
     }
 
     /**
      * Parse object value.
-     * @param <T> the value type
+     *
+     * @param <T>     the value type
      * @param pSource the source value
-     * @param pClass the value type class
+     * @param pClass  the value type class
      * @return the formatted value
      */
     <T> T parseValue(final String pSource,
@@ -399,21 +419,23 @@ class PrometheusOdfRowStore {
 
     /**
      * Parse object value.
-     * @param <T> the value type
-     * @param pSource the source value
+     *
+     * @param <T>       the value type
+     * @param pSource   the source value
      * @param pCurrCode the currency code
-     * @param pClass the value type class
+     * @param pClass    the value type class
      * @return the formatted value
      */
     <T> T parseValue(final Double pSource,
                      final String pCurrCode,
                      final Class<T> pClass) {
-         return theFormatter.parseValue(pSource, pCurrCode, pClass);
+        return theFormatter.parseValue(pSource, pCurrCode, pClass);
     }
 
     /**
      * Ensure and determine the cell style.
-     * @param pCell the cell to style
+     *
+     * @param pCell  the cell to style
      * @param pValue the cell value
      */
     void setCellStyle(final Element pCell,
@@ -424,7 +446,8 @@ class PrometheusOdfRowStore {
 
     /**
      * Ensure and determine the alternate cell style.
-     * @param pCell the cell to style
+     *
+     * @param pCell  the cell to style
      * @param pValue the cell value
      */
     void setAlternateCellStyle(final Element pCell,
@@ -435,6 +458,7 @@ class PrometheusOdfRowStore {
 
     /**
      * Process Sheet children.
+     *
      * @param pTable the table element
      */
     void populateSheetChildren(final Element pTable) {
@@ -459,8 +483,9 @@ class PrometheusOdfRowStore {
 
     /**
      * Populate Row value.
+     *
      * @param pElement the element
-     * @param pIndex the column index
+     * @param pIndex   the column index
      */
     private void populateRow(final Element pElement,
                              final int pIndex) {
@@ -479,6 +504,7 @@ class PrometheusOdfRowStore {
 
     /**
      * Obtain repeat count for index.
+     *
      * @param pIndex the index to start at
      * @return the repeat count
      */
@@ -506,6 +532,7 @@ class PrometheusOdfRowStore {
 
     /**
      * parse Row hidden value.
+     *
      * @param pElement the element
      * @return the hidden indication
      */
@@ -513,14 +540,15 @@ class PrometheusOdfRowStore {
         /* Determine whether the column is hidden */
         final String myHidden = theParser.getAttribute(pElement, PrometheusOdfTableItem.VISIBILITY);
         return PrometheusOdfValue.COLLAPSE.getValue().equals(myHidden)
-               ? Boolean.TRUE
-               : null;
+                ? Boolean.TRUE
+                : null;
     }
 
     /**
      * parse Row cells.
+     *
      * @param pElement the element
-     * @param pIndex the index
+     * @param pIndex   the index
      * @return the Cells
      * @throws OceanusException on error
      */

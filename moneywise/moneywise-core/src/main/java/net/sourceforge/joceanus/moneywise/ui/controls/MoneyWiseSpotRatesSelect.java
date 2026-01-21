@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,21 +13,21 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.ui.controls;
 
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.ui.MetisIcon;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.moneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIArrowIconId;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
@@ -121,8 +121,9 @@ public class MoneyWiseSpotRatesSelect
 
     /**
      * Constructor.
+     *
      * @param pFactory the GUI factory
-     * @param pView the data view
+     * @param pView    the data view
      */
     public MoneyWiseSpotRatesSelect(final TethysUIFactory<?> pFactory,
                                     final MoneyWiseView pView) {
@@ -205,6 +206,7 @@ public class MoneyWiseSpotRatesSelect
 
     /**
      * Get the selected date.
+     *
      * @return the date
      */
     public OceanusDate getDate() {
@@ -231,6 +233,7 @@ public class MoneyWiseSpotRatesSelect
 
     /**
      * Set the range for the date box.
+     *
      * @param pRange the Range to set
      */
     private void setRange(final OceanusDateRange pRange) {
@@ -280,6 +283,7 @@ public class MoneyWiseSpotRatesSelect
 
     /**
      * Set Adjacent dates.
+     *
      * @param pPrev the previous Date
      * @param pNext the next Date
      */
@@ -327,6 +331,7 @@ public class MoneyWiseSpotRatesSelect
 
         /**
          * Constructor.
+         *
          * @param pState state to copy from
          */
         private MoneyWiseSpotRatesState(final MoneyWiseSpotRatesState pState) {
@@ -341,6 +346,7 @@ public class MoneyWiseSpotRatesSelect
 
         /**
          * Get the selected date.
+         *
          * @return the date
          */
         private OceanusDate getDate() {
@@ -349,6 +355,7 @@ public class MoneyWiseSpotRatesSelect
 
         /**
          * Get the next date.
+         *
          * @return the date
          */
         private OceanusDate getNextDate() {
@@ -357,6 +364,7 @@ public class MoneyWiseSpotRatesSelect
 
         /**
          * Get the previous date.
+         *
          * @return the date
          */
         private OceanusDate getPrevDate() {
@@ -365,6 +373,7 @@ public class MoneyWiseSpotRatesSelect
 
         /**
          * Set new Date.
+         *
          * @param pButton the Button with the new date
          * @return true/false did a change occur
          */
@@ -398,6 +407,7 @@ public class MoneyWiseSpotRatesSelect
 
         /**
          * Set Adjacent dates.
+         *
          * @param pPrev the previous Date
          * @param pNext the next Date
          */

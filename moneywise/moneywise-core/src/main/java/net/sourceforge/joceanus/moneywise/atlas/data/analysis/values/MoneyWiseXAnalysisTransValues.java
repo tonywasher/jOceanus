@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,13 +13,13 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.atlas.data.analysis.values;
 
-import java.util.Currency;
-
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisValues;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+
+import java.util.Currency;
 
 /**
  * CategoryValues class.
@@ -28,6 +28,7 @@ public final class MoneyWiseXAnalysisTransValues
         extends MoneyWiseXAnalysisValues<MoneyWiseXAnalysisTransValues, MoneyWiseXAnalysisTransAttr> {
     /**
      * Constructor.
+     *
      * @param pCurrency the reporting currency
      */
     public MoneyWiseXAnalysisTransValues(final Currency pCurrency) {
@@ -41,6 +42,7 @@ public final class MoneyWiseXAnalysisTransValues
 
     /**
      * Constructor.
+     *
      * @param pSource the source map.
      */
     public MoneyWiseXAnalysisTransValues(final MoneyWiseXAnalysisTransValues pSource) {
@@ -92,6 +94,7 @@ public final class MoneyWiseXAnalysisTransValues
 
     /**
      * Are the values?
+     *
      * @return true/false
      */
     public boolean isActive() {

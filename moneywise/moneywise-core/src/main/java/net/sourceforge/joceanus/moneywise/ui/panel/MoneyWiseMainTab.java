@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,30 +13,30 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.ui.panel;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEvent;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.metis.help.MetisHelpModule;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseIOException;
+import net.sourceforge.joceanus.moneywise.help.MoneyWiseHelp;
+import net.sourceforge.joceanus.moneywise.lethe.ui.controls.MoneyWiseAnalysisSelect.MoneyWiseStatementSelect;
 import net.sourceforge.joceanus.moneywise.lethe.ui.panel.MoneyWiseReportTab;
+import net.sourceforge.joceanus.moneywise.lethe.ui.panel.MoneyWiseTransactionTable.MoneyWiseStatementPanel;
 import net.sourceforge.joceanus.moneywise.tax.uk.MoneyWiseUKTaxYearCache;
+import net.sourceforge.joceanus.moneywise.threads.MoneyWiseThreadId;
 import net.sourceforge.joceanus.moneywise.threads.MoneyWiseThreadLoadArchive;
 import net.sourceforge.joceanus.moneywise.threads.MoneyWiseThreadWriteQIF;
-import net.sourceforge.joceanus.moneywise.lethe.ui.controls.MoneyWiseAnalysisSelect.MoneyWiseStatementSelect;
-import net.sourceforge.joceanus.moneywise.lethe.ui.panel.MoneyWiseTransactionTable.MoneyWiseStatementPanel;
-import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
-import net.sourceforge.joceanus.moneywise.help.MoneyWiseHelp;
 import net.sourceforge.joceanus.moneywise.ui.MoneyWiseGoToId;
 import net.sourceforge.joceanus.moneywise.ui.MoneyWiseUIResource;
-import net.sourceforge.joceanus.moneywise.threads.MoneyWiseThreadId;
+import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
 import net.sourceforge.joceanus.prometheus.toolkit.PrometheusToolkit;
 import net.sourceforge.joceanus.prometheus.ui.PrometheusGoToEvent;
 import net.sourceforge.joceanus.prometheus.ui.panel.PrometheusMainWindow;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.event.OceanusEvent;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.api.dialog.TethysUIAboutBox;
@@ -106,6 +106,7 @@ public class MoneyWiseMainTab
 
     /**
      * Constructor.
+     *
      * @param pFactory the factory
      * @throws OceanusException on error
      */
@@ -194,6 +195,7 @@ public class MoneyWiseMainTab
 
     /**
      * setChildListeners.
+     *
      * @param pRegistrar the registrar
      */
     private void setChildListeners(final OceanusEventRegistrar<PrometheusDataEvent> pRegistrar) {
@@ -203,6 +205,7 @@ public class MoneyWiseMainTab
 
     /**
      * Add Data Menu items.
+     *
      * @param pMenu the menu
      */
     @Override
@@ -230,6 +233,7 @@ public class MoneyWiseMainTab
 
     /**
      * Has this set of panels got the session focus?
+     *
      * @return true/false
      */
     public final boolean hasSession() {
@@ -264,6 +268,7 @@ public class MoneyWiseMainTab
 
     /**
      * Select a Statement.
+     *
      * @param pSelect the statement request
      */
     private void selectStatement(final MoneyWiseStatementSelect pSelect) {
@@ -276,6 +281,7 @@ public class MoneyWiseMainTab
 
     /**
      * Select maintenance.
+     *
      * @param pEvent the action request
      */
     private void selectMaintenance(final PrometheusGoToEvent<MoneyWiseGoToId> pEvent) {
@@ -288,6 +294,7 @@ public class MoneyWiseMainTab
 
     /**
      * Goto the specific tab.
+     *
      * @param pTabName the tab name
      */
     private void gotoNamedTab(final String pTabName) {
@@ -379,12 +386,12 @@ public class MoneyWiseMainTab
 
     /**
      * handle GoTo Event.
+     *
      * @param pEvent the event
      */
     private void handleGoToEvent(final OceanusEvent<PrometheusDataEvent> pEvent) {
         /* Access details */
-        @SuppressWarnings("unchecked")
-        final PrometheusGoToEvent<MoneyWiseGoToId> myEvent = pEvent.getDetails(PrometheusGoToEvent.class);
+        @SuppressWarnings("unchecked") final PrometheusGoToEvent<MoneyWiseGoToId> myEvent = pEvent.getDetails(PrometheusGoToEvent.class);
 
         /* Access event and obtain details */
         switch (myEvent.getId()) {

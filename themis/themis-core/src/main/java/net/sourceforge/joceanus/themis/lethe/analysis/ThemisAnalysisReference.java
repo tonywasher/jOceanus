@@ -1,22 +1,22 @@
-/*******************************************************************************
+/*
  * Themis: Java Project Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package net.sourceforge.joceanus.themis.lethe.analysis;
 
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.lethe.analysis.ThemisAnalysisDataMap.ThemisAnalysisDataType;
 import net.sourceforge.joceanus.themis.lethe.analysis.ThemisAnalysisGeneric.ThemisAnalysisGenericBase;
 import net.sourceforge.joceanus.themis.lethe.analysis.ThemisAnalysisGeneric.ThemisAnalysisGenericRef;
@@ -42,9 +42,10 @@ public class ThemisAnalysisReference {
 
     /**
      * Constructor.
+     *
      * @param pDataType the dataType
-     * @param pGeneric the generic
-     * @param pArray the array
+     * @param pGeneric  the generic
+     * @param pArray    the array
      */
     ThemisAnalysisReference(final ThemisAnalysisDataType pDataType,
                             final ThemisAnalysisGeneric pGeneric,
@@ -57,6 +58,7 @@ public class ThemisAnalysisReference {
 
     /**
      * Obtain the dataType.
+     *
      * @return the dataType
      */
     ThemisAnalysisDataType getDataType() {
@@ -65,10 +67,11 @@ public class ThemisAnalysisReference {
 
     /**
      * Resolve the generic reference.
+     *
      * @param pParser the parser
      * @throws OceanusException on error
      */
-    void resolveGeneric(final ThemisAnalysisParser pParser) throws OceanusException  {
+    void resolveGeneric(final ThemisAnalysisParser pParser) throws OceanusException {
         /* Resolve any generic base instance */
         if (theGeneric instanceof ThemisAnalysisGenericBase myBase) {
             theGeneric = new ThemisAnalysisGenericRef(pParser, myBase);
@@ -77,6 +80,7 @@ public class ThemisAnalysisReference {
 
     /**
      * Update the dataType.
+     *
      * @param pType the updated type
      */
     void updateDataType(final ThemisAnalysisDataType pType) {

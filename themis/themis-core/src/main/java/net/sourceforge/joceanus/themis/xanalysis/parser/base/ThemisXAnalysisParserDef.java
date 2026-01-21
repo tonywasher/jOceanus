@@ -1,19 +1,19 @@
-/*******************************************************************************
+/*
  * Themis: Java Project Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package net.sourceforge.joceanus.themis.xanalysis.parser.base;
 
 import com.github.javaparser.ast.Node;
@@ -24,7 +24,7 @@ import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.modules.ModuleDirective;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.type.Type;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisClassInstance;
 import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisDeclarationInstance;
 import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
@@ -44,6 +44,7 @@ import java.util.List;
 public interface ThemisXAnalysisParserDef {
     /**
      * Process the file as javaCode.
+     *
      * @return the parsed compilation unit
      * @throws OceanusException on error
      */
@@ -51,6 +52,7 @@ public interface ThemisXAnalysisParserDef {
 
     /**
      * Process the file as a module-info instance.
+     *
      * @param pInfoFile the module-info file
      * @return the parsed moduleInfo
      * @throws OceanusException on error
@@ -59,26 +61,30 @@ public interface ThemisXAnalysisParserDef {
 
     /**
      * Set the current package.
+     *
      * @param pPackage the package
      */
     void setCurrentPackage(String pPackage);
 
     /**
      * Set the current file.
+     *
      * @param pFile the file
      */
     void setCurrentFile(File pFile);
 
     /**
      * Obtain the classList.
+     *
      * @return the classList
      */
     List<ThemisXAnalysisClassInstance> getClasses();
 
     /**
      * Build exception.
+     *
      * @param pMessage the message
-     * @param pNode the failing node
+     * @param pNode    the failing node
      * @return the built exception
      */
     OceanusException buildException(String pMessage,
@@ -86,6 +92,7 @@ public interface ThemisXAnalysisParserDef {
 
     /**
      * Check the package name.
+     *
      * @param pPackage the package name
      * @throws OceanusException on error
      */
@@ -93,6 +100,7 @@ public interface ThemisXAnalysisParserDef {
 
     /**
      * Register Instance.
+     *
      * @param pInstance the instance
      * @return the parent node
      * @throws OceanusException on error
@@ -101,6 +109,7 @@ public interface ThemisXAnalysisParserDef {
 
     /**
      * Register Class.
+     *
      * @param pClass the class
      * @return the class name
      */
@@ -108,6 +117,7 @@ public interface ThemisXAnalysisParserDef {
 
     /**
      * Parse a declaration.
+     *
      * @param pDecl the declaration
      * @return the parsed declaration
      * @throws OceanusException on error
@@ -116,6 +126,7 @@ public interface ThemisXAnalysisParserDef {
 
     /**
      * parse a list of declarations.
+     *
      * @param pDeclList the list of Declarations
      * @return the list of parsed declarations
      * @throws OceanusException on error
@@ -137,6 +148,7 @@ public interface ThemisXAnalysisParserDef {
 
     /**
      * Parse a node.
+     *
      * @param pNode the node
      * @return the parsed node
      * @throws OceanusException on error
@@ -145,6 +157,7 @@ public interface ThemisXAnalysisParserDef {
 
     /**
      * parse a list of nodes.
+     *
      * @param pNodeList the list of Nodes
      * @return the list of parsed nodes
      * @throws OceanusException on error
@@ -166,6 +179,7 @@ public interface ThemisXAnalysisParserDef {
 
     /**
      * parse a list of modifiers.
+     *
      * @param pNodeList the list of Modifiers
      * @return the list of parsed modifiers
      * @throws OceanusException on error
@@ -174,6 +188,7 @@ public interface ThemisXAnalysisParserDef {
 
     /**
      * Parse a type.
+     *
      * @param pType the type
      * @return the parsed type
      * @throws OceanusException on error
@@ -182,6 +197,7 @@ public interface ThemisXAnalysisParserDef {
 
     /**
      * parse a list of types.
+     *
      * @param pTypeList the list of Types
      * @return the list of parsed types
      * @throws OceanusException on error
@@ -203,6 +219,7 @@ public interface ThemisXAnalysisParserDef {
 
     /**
      * Parse a statement.
+     *
      * @param pStatement the statement
      * @return the parsed statement
      * @throws OceanusException on error
@@ -211,6 +228,7 @@ public interface ThemisXAnalysisParserDef {
 
     /**
      * parse a list of statements.
+     *
      * @param pStatementList the list of Statements
      * @return the list of parsed statements
      * @throws OceanusException on error
@@ -232,6 +250,7 @@ public interface ThemisXAnalysisParserDef {
 
     /**
      * Parse an expression.
+     *
      * @param pExpression the expression
      * @return the parsed expression
      * @throws OceanusException on error
@@ -240,6 +259,7 @@ public interface ThemisXAnalysisParserDef {
 
     /**
      * parse a list of expressions.
+     *
      * @param pExprList the list of Expressions
      * @return the list of parsed expressions
      * @throws OceanusException on error
@@ -261,6 +281,7 @@ public interface ThemisXAnalysisParserDef {
 
     /**
      * Parse a module.
+     *
      * @param pDeclaration the module declaration/directive
      * @return the parsed declaration/directive
      * @throws OceanusException on error
@@ -269,6 +290,7 @@ public interface ThemisXAnalysisParserDef {
 
     /**
      * parse a list of module directives.
+     *
      * @param pDirList the list of Directives
      * @return the list of parsed directives
      * @throws OceanusException on error

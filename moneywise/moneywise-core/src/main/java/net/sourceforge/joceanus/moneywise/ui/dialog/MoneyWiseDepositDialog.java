@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,13 +13,12 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.ui.dialog;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
@@ -36,16 +35,13 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency.MoneyWi
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseDepositCategoryClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.moneywise.ui.MoneyWiseIcon;
-import net.sourceforge.joceanus.moneywise.ui.base.MoneyWiseAssetTable;
 import net.sourceforge.joceanus.moneywise.ui.MoneyWiseUIResource;
+import net.sourceforge.joceanus.moneywise.ui.base.MoneyWiseAssetTable;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.prometheus.ui.fieldset.PrometheusFieldSet;
 import net.sourceforge.joceanus.prometheus.ui.fieldset.PrometheusFieldSetEvent;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.tethys.api.control.TethysUIControl.TethysUIIconMapSet;
 import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.tethys.api.field.TethysUIDataEditField.TethysUICharArrayEditField;
@@ -59,6 +55,10 @@ import net.sourceforge.joceanus.tethys.api.field.TethysUIFieldFactory;
 import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollItem;
 import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollMenu;
 import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollSubMenu;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Panel to display/edit/create a Deposit.
@@ -87,10 +87,11 @@ public class MoneyWiseDepositDialog
 
     /**
      * Constructor.
+     *
      * @param pFactory the GUI factory
-     * @param pView the data view
+     * @param pView    the data view
      * @param pEditSet the edit set
-     * @param pOwner the owning table
+     * @param pOwner   the owning table
      */
     public MoneyWiseDepositDialog(final TethysUIFactory<?> pFactory,
                                   final MoneyWiseView pView,
@@ -125,6 +126,7 @@ public class MoneyWiseDepositDialog
 
     /**
      * Build Main subPanel.
+     *
      * @param pFactory the GUI factory
      */
     private void buildMainPanel(final TethysUIFactory<?> pFactory) {
@@ -157,10 +159,11 @@ public class MoneyWiseDepositDialog
         /* Configure validation checks */
         myName.setValidator(this::isValidName);
         myDesc.setValidator(this::isValidDesc);
-     }
+    }
 
     /**
      * Build account subPanel.
+     *
      * @param pFactory the GUI factory
      */
     private void buildAccountPanel(final TethysUIFactory<?> pFactory) {
@@ -193,6 +196,7 @@ public class MoneyWiseDepositDialog
 
     /**
      * Build Notes subPanel.
+     *
      * @param pFactory the GUI factory
      */
     private void buildNotesPanel(final TethysUIFactory<?> pFactory) {
@@ -354,7 +358,8 @@ public class MoneyWiseDepositDialog
 
     /**
      * Build the category type menu for an item.
-     * @param pMenu the menu
+     *
+     * @param pMenu    the menu
      * @param pDeposit the deposit to build for
      */
     public void buildCategoryMenu(final TethysUIScrollMenu<MoneyWiseAssetCategory> pMenu,
@@ -405,7 +410,8 @@ public class MoneyWiseDepositDialog
 
     /**
      * Build the parent menu for an item.
-     * @param pMenu the menu
+     *
+     * @param pMenu    the menu
      * @param pDeposit the deposit to build for
      */
     public void buildParentMenu(final TethysUIScrollMenu<MoneyWisePayee> pMenu,
@@ -451,7 +457,8 @@ public class MoneyWiseDepositDialog
 
     /**
      * Build the currency menu for an item.
-     * @param pMenu the menu
+     *
+     * @param pMenu    the menu
      * @param pDeposit the deposit to build for
      */
     public void buildCurrencyMenu(final TethysUIScrollMenu<MoneyWiseCurrency> pMenu,

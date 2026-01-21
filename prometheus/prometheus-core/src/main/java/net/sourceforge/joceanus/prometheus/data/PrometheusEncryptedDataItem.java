@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Prometheus: Application Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,16 +13,16 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.prometheus.data;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionedSet;
 import net.sourceforge.joceanus.metis.list.MetisListKey;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataKeySet.PrometheusDataKeySetList;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet.PrometheusCryptographyDataType;
 import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
@@ -31,6 +31,7 @@ import java.util.Iterator;
 
 /**
  * Encrypted Data Item and List.
+ *
  * @author Tony Washer
  */
 public abstract class PrometheusEncryptedDataItem
@@ -55,8 +56,9 @@ public abstract class PrometheusEncryptedDataItem
     /**
      * Standard Constructor. This creates a null encryption generator. This will be overridden when
      * a DataKeySet is assigned to the item.
+     *
      * @param pList the list that this item is associated with
-     * @param pId the Id of the new item (or 0 if not yet known)
+     * @param pId   the Id of the new item (or 0 if not yet known)
      */
     protected PrometheusEncryptedDataItem(final PrometheusEncryptedList<?> pList,
                                           final Integer pId) {
@@ -65,7 +67,8 @@ public abstract class PrometheusEncryptedDataItem
 
     /**
      * Copy Constructor. This picks up the generator from the source item.
-     * @param pList the list that this item is associated with
+     *
+     * @param pList   the list that this item is associated with
      * @param pSource the source item
      */
     protected PrometheusEncryptedDataItem(final PrometheusEncryptedList<?> pList,
@@ -76,7 +79,8 @@ public abstract class PrometheusEncryptedDataItem
     /**
      * Values Constructor. This creates a null encryption generator. This will be overridden when a
      * ControlKey is assigned to the item.
-     * @param pList the list that this item is associated with
+     *
+     * @param pList   the list that this item is associated with
      * @param pValues the data values
      * @throws OceanusException on error
      */
@@ -108,6 +112,7 @@ public abstract class PrometheusEncryptedDataItem
 
     /**
      * Get the DataKeySet for this item.
+     *
      * @return the DataKeySet
      */
     public final PrometheusDataKeySet getDataKeySet() {
@@ -116,6 +121,7 @@ public abstract class PrometheusEncryptedDataItem
 
     /**
      * Get the DataKeySetId for this item.
+     *
      * @return the DataKeySetId
      */
     public final Integer getDataKeySetId() {
@@ -127,6 +133,7 @@ public abstract class PrometheusEncryptedDataItem
 
     /**
      * Set the DataKeySet for this item.
+     *
      * @param pSet the dataKeySet
      */
     private void setValueDataKeySet(final PrometheusDataKeySet pSet) {
@@ -135,6 +142,7 @@ public abstract class PrometheusEncryptedDataItem
 
     /**
      * Set the KeySet id for this item.
+     *
      * @param pId the keySet id
      */
     private void setValueDataKeySet(final Integer pId) {
@@ -143,6 +151,7 @@ public abstract class PrometheusEncryptedDataItem
 
     /**
      * Get the Encryptor.
+     *
      * @return the encryptor
      */
     public PrometheusEncryptor getEncryptor() {
@@ -157,6 +166,7 @@ public abstract class PrometheusEncryptedDataItem
 
     /**
      * Set DataKeySet.
+     *
      * @param pKeySet the DataKeySet
      */
     protected final void setDataKeySet(final PrometheusDataKeySet pKeySet) {
@@ -172,6 +182,7 @@ public abstract class PrometheusEncryptedDataItem
 
     /**
      * Set DataKeySet id.
+     *
      * @param pKeySetId the KeySet Id
      * @throws OceanusException on error
      */
@@ -186,8 +197,9 @@ public abstract class PrometheusEncryptedDataItem
 
     /**
      * Set encrypted value.
+     *
      * @param pFieldId the fieldId to set
-     * @param pValue the value to set
+     * @param pValue   the value to set
      * @throws OceanusException on error
      */
     protected final void setEncryptedValue(final MetisDataFieldId pFieldId,
@@ -212,9 +224,10 @@ public abstract class PrometheusEncryptedDataItem
 
     /**
      * Set encrypted value.
-     * @param pFieldId the fieldId to set
+     *
+     * @param pFieldId   the fieldId to set
      * @param pEncrypted the encrypted value to set
-      * @throws OceanusException on error
+     * @throws OceanusException on error
      */
     protected final void setEncryptedValue(final MetisDataFieldId pFieldId,
                                            final byte[] pEncrypted) throws OceanusException {
@@ -228,9 +241,10 @@ public abstract class PrometheusEncryptedDataItem
 
     /**
      * Set encrypted value.
-     * @param pFieldId the fieldId to set
+     *
+     * @param pFieldId   the fieldId to set
      * @param pEncrypted the encrypted value to set
-     * @param pClazz the class to decrypt to
+     * @param pClazz     the class to decrypt to
      * @throws OceanusException on error
      */
     protected final void setEncryptedValue(final MetisDataFieldId pFieldId,
@@ -246,8 +260,9 @@ public abstract class PrometheusEncryptedDataItem
 
     /**
      * Determine whether two ValuePair objects differ.
+     *
      * @param pCurr The current Pair
-     * @param pNew The new Pair
+     * @param pNew  The new Pair
      * @return <code>true</code> if the objects differ, <code>false</code> otherwise
      */
     public static MetisDataDifference getDifference(final PrometheusEncryptedPair pCurr,
@@ -277,8 +292,9 @@ public abstract class PrometheusEncryptedDataItem
 
     /**
      * Adopt security for all encrypted values.
+     *
      * @param pKeySet the new KeySet
-     * @param pBase the base item
+     * @param pBase   the base item
      * @throws OceanusException on error
      */
     protected void adoptSecurity(final PrometheusDataKeySet pKeySet,
@@ -295,6 +311,7 @@ public abstract class PrometheusEncryptedDataItem
 
     /**
      * Initialise security for all encrypted values.
+     *
      * @param pKeySet the new KeySet
      * @throws OceanusException on error
      */
@@ -308,6 +325,7 @@ public abstract class PrometheusEncryptedDataItem
 
     /**
      * Update security for all encrypted values.
+     *
      * @param pKeySet the new KeySet
      * @throws OceanusException on error
      */
@@ -329,6 +347,7 @@ public abstract class PrometheusEncryptedDataItem
 
     /**
      * Encrypted DataList.
+     *
      * @param <T> the item type
      */
     public abstract static class PrometheusEncryptedList<T extends PrometheusEncryptedDataItem>
@@ -342,9 +361,10 @@ public abstract class PrometheusEncryptedDataItem
 
         /**
          * Construct an empty CORE encrypted list.
+         *
          * @param pBaseClass the class of the underlying object
-         * @param pData the DataSet for the list
-         * @param pItemType the item type
+         * @param pData      the DataSet for the list
+         * @param pItemType  the item type
          */
         protected PrometheusEncryptedList(final Class<T> pBaseClass,
                                           final PrometheusDataSet pData,
@@ -354,10 +374,11 @@ public abstract class PrometheusEncryptedDataItem
 
         /**
          * Construct a generic encrypted list.
+         *
          * @param pBaseClass the class of the underlying object
-         * @param pData the DataSet for the list
-         * @param pItemType the list type
-         * @param pStyle the style of the list
+         * @param pData      the DataSet for the list
+         * @param pItemType  the list type
+         * @param pStyle     the style of the list
          */
         protected PrometheusEncryptedList(final Class<T> pBaseClass,
                                           final PrometheusDataSet pData,
@@ -368,6 +389,7 @@ public abstract class PrometheusEncryptedDataItem
 
         /**
          * Constructor for a cloned List.
+         *
          * @param pSource the source List
          */
         protected PrometheusEncryptedList(final PrometheusEncryptedList<T> pSource) {
@@ -376,6 +398,7 @@ public abstract class PrometheusEncryptedDataItem
 
         /**
          * Get the active controlKey.
+         *
          * @return the active controlKey
          */
         private PrometheusControlKey getControlKey() {
@@ -387,6 +410,7 @@ public abstract class PrometheusEncryptedDataItem
 
         /**
          * Obtain the DataKeySet to use.
+         *
          * @return the DataKeySet
          */
         private PrometheusDataKeySet getNextDataKeySet() {
@@ -398,7 +422,8 @@ public abstract class PrometheusEncryptedDataItem
 
         /**
          * Update Security for items in the list.
-         * @param pReport the report
+         *
+         * @param pReport  the report
          * @param pControl the control key to apply
          * @throws OceanusException on error
          */
@@ -429,8 +454,9 @@ public abstract class PrometheusEncryptedDataItem
         /**
          * Adopt security from underlying list. If a match for the item is found in the underlying
          * list, its security is adopted. If no match is found then the security is initialised.
+         *
          * @param pReport the report
-         * @param pBase The base list to adopt from
+         * @param pBase   The base list to adopt from
          * @throws OceanusException on error
          */
         protected void adoptSecurity(final TethysUIThreadStatusReport pReport,

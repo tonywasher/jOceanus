@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,10 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.data.basic;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.data.MetisDataResource;
@@ -27,7 +28,6 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCashCategoryType
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCashCategoryType.MoneyWiseCashCategoryTypeList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
@@ -66,7 +66,8 @@ public final class MoneyWiseCashCategory
 
     /**
      * Copy Constructor.
-     * @param pList the list
+     *
+     * @param pList     the list
      * @param pCategory The Category to copy
      */
     MoneyWiseCashCategory(final MoneyWiseCashCategoryList pList,
@@ -77,7 +78,8 @@ public final class MoneyWiseCashCategory
 
     /**
      * Values constructor.
-     * @param pList the List to add to
+     *
+     * @param pList   the List to add to
      * @param pValues the values constructor
      * @throws OceanusException on error
      */
@@ -97,6 +99,7 @@ public final class MoneyWiseCashCategory
 
     /**
      * Edit Constructor.
+     *
      * @param pList the list
      */
     public MoneyWiseCashCategory(final MoneyWiseCashCategoryList pList) {
@@ -139,6 +142,7 @@ public final class MoneyWiseCashCategory
 
     /**
      * Set category type value.
+     *
      * @param pValue the value
      */
     private void setValueType(final MoneyWiseCashCategoryType pValue) {
@@ -147,6 +151,7 @@ public final class MoneyWiseCashCategory
 
     /**
      * Set category type id.
+     *
      * @param pValue the value
      */
     private void setValueType(final Integer pValue) {
@@ -155,6 +160,7 @@ public final class MoneyWiseCashCategory
 
     /**
      * Set category type name.
+     *
      * @param pValue the value
      */
     private void setValueType(final String pValue) {
@@ -163,6 +169,7 @@ public final class MoneyWiseCashCategory
 
     /**
      * Is this cash category the required class.
+     *
      * @param pClass the required category class.
      * @return true/false
      */
@@ -178,6 +185,7 @@ public final class MoneyWiseCashCategory
 
     /**
      * Set defaults.
+     *
      * @param pParent the parent
      * @throws OceanusException on error
      */
@@ -214,6 +222,7 @@ public final class MoneyWiseCashCategory
 
     /**
      * Update base category from an edited category.
+     *
      * @param pCategory the edited category
      * @return whether changes have been made
      */
@@ -257,6 +266,7 @@ public final class MoneyWiseCashCategory
 
         /**
          * Construct an empty CORE Category list.
+         *
          * @param pData the DataSet for the list
          */
         protected MoneyWiseCashCategoryList(final MoneyWiseDataSet pData) {
@@ -265,6 +275,7 @@ public final class MoneyWiseCashCategory
 
         /**
          * Constructor for a cloned List.
+         *
          * @param pSource the source List
          */
         protected MoneyWiseCashCategoryList(final MoneyWiseCashCategoryList pSource) {
@@ -288,6 +299,7 @@ public final class MoneyWiseCashCategory
 
         /**
          * Obtain editSet.
+         *
          * @return the editSet
          */
         public PrometheusEditSet getEditSet() {
@@ -303,6 +315,7 @@ public final class MoneyWiseCashCategory
 
         /**
          * Derive Edit list.
+         *
          * @param pEditSet the editSet
          * @return the edit list
          * @throws OceanusException on error
@@ -342,6 +355,7 @@ public final class MoneyWiseCashCategory
 
         /**
          * Add a new item to the core list.
+         *
          * @param pCategory item
          * @return the newly added item
          */
@@ -359,6 +373,7 @@ public final class MoneyWiseCashCategory
 
         /**
          * Add a new item to the edit list.
+         *
          * @return the new item
          */
         @Override

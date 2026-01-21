@@ -1,27 +1,27 @@
-/*******************************************************************************
- * Tethys: Java Utilities
- * Copyright 2012-2026 Tony Washer
+/*
+ * Tethys: GUI Utilities
+ * Copyright 2012-2026. Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package net.sourceforge.joceanus.tethys.core.factory;
 
-import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
-import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
-import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
+import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIProgram;
@@ -36,6 +36,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Core factory.
+ *
  * @param <C> the color
  */
 public abstract class TethysUICoreFactory<C>
@@ -47,7 +48,8 @@ public abstract class TethysUICoreFactory<C>
     public interface TethysUIParentComponent {
         /**
          * Set child visibility.
-         * @param pChild the child
+         *
+         * @param pChild   the child
          * @param pVisible the visibility
          */
         void setChildVisible(TethysUIComponent pChild,
@@ -96,6 +98,7 @@ public abstract class TethysUICoreFactory<C>
 
     /**
      * Constructor.
+     *
      * @param pProgram the program definitions
      */
     protected TethysUICoreFactory(final TethysUIProgram pProgram) {
@@ -140,6 +143,7 @@ public abstract class TethysUICoreFactory<C>
 
     /**
      * Obtain the next id.
+     *
      * @return the next id
      */
     public Integer getNextId() {
@@ -180,7 +184,8 @@ public abstract class TethysUICoreFactory<C>
 
     /**
      * Set visibility of node.
-     * @param pNode the node
+     *
+     * @param pNode    the node
      * @param pVisible true/false
      */
     public void setNodeVisible(final TethysUIComponent pNode,
@@ -194,8 +199,9 @@ public abstract class TethysUICoreFactory<C>
 
     /**
      * Register Child.
+     *
      * @param pParent the parent
-     * @param pChild the child node
+     * @param pChild  the child node
      */
     public void registerChild(final TethysUIParentComponent pParent,
                               final TethysUIComponent pChild) {
@@ -204,6 +210,7 @@ public abstract class TethysUICoreFactory<C>
 
     /**
      * DeRegister Child.
+     *
      * @param pChild the child node
      */
     public void deRegisterChild(final TethysUIComponent pChild) {
@@ -217,6 +224,7 @@ public abstract class TethysUICoreFactory<C>
 
     /**
      * fire event.
+     *
      * @param pEvent the event
      */
     protected void fireEvent(final TethysUIEvent pEvent) {

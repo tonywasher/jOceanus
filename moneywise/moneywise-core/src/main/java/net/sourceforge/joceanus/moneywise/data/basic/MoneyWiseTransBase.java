@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,12 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.data.basic;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
@@ -28,9 +31,6 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePortfolio.MoneyWis
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding.MoneyWiseSecurityHoldingMap;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataList.PrometheusDataListSet;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
@@ -42,6 +42,7 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusEncryptedValues;
 
 /**
  * Transaction data type.
+ *
  * @author Tony Washer
  */
 public abstract class MoneyWiseTransBase
@@ -90,7 +91,8 @@ public abstract class MoneyWiseTransBase
 
     /**
      * Copy Constructor.
-     * @param pList the event list
+     *
+     * @param pList  the event list
      * @param pTrans The Transaction to copy
      */
     protected MoneyWiseTransBase(final MoneyWiseTransBaseList<?> pList,
@@ -101,6 +103,7 @@ public abstract class MoneyWiseTransBase
 
     /**
      * Edit constructor.
+     *
      * @param pList the list
      */
     protected MoneyWiseTransBase(final MoneyWiseTransBaseList<?> pList) {
@@ -111,7 +114,8 @@ public abstract class MoneyWiseTransBase
 
     /**
      * Values constructor.
-     * @param pList the List to add to
+     *
+     * @param pList   the List to add to
      * @param pValues the values constructor
      * @throws OceanusException on error
      */
@@ -265,6 +269,7 @@ public abstract class MoneyWiseTransBase
 
     /**
      * Obtain category.
+     *
      * @return the category
      */
     public final MoneyWiseTransCategory getCategory() {
@@ -273,6 +278,7 @@ public abstract class MoneyWiseTransBase
 
     /**
      * Obtain CategoryId.
+     *
      * @return the categoryId
      */
     public Integer getCategoryId() {
@@ -284,6 +290,7 @@ public abstract class MoneyWiseTransBase
 
     /**
      * Obtain categoryName.
+     *
      * @return the categoryName
      */
     public String getCategoryName() {
@@ -295,6 +302,7 @@ public abstract class MoneyWiseTransBase
 
     /**
      * Obtain EventCategoryClass.
+     *
      * @return the eventCategoryClass
      */
     public MoneyWiseTransCategoryClass getCategoryClass() {
@@ -306,6 +314,7 @@ public abstract class MoneyWiseTransBase
 
     /**
      * Obtain Amount.
+     *
      * @return the amount
      */
     public OceanusMoney getAmount() {
@@ -314,6 +323,7 @@ public abstract class MoneyWiseTransBase
 
     /**
      * Obtain Encrypted amount.
+     *
      * @return the bytes
      */
     public byte[] getAmountBytes() {
@@ -322,6 +332,7 @@ public abstract class MoneyWiseTransBase
 
     /**
      * Obtain Encrypted Amount Field.
+     *
      * @return the Field
      */
     protected PrometheusEncryptedPair getAmountField() {
@@ -330,6 +341,7 @@ public abstract class MoneyWiseTransBase
 
     /**
      * Obtain Account asset.
+     *
      * @return the account
      */
     public MoneyWiseTransAsset getAccount() {
@@ -338,6 +350,7 @@ public abstract class MoneyWiseTransBase
 
     /**
      * Obtain AccountId.
+     *
      * @return the accountId
      */
     public Long getAccountId() {
@@ -349,6 +362,7 @@ public abstract class MoneyWiseTransBase
 
     /**
      * Obtain Partner asset.
+     *
      * @return the partner
      */
     public MoneyWiseTransAsset getPartner() {
@@ -357,6 +371,7 @@ public abstract class MoneyWiseTransBase
 
     /**
      * Obtain PartnerId.
+     *
      * @return the partnerId
      */
     public Long getPartnerId() {
@@ -368,6 +383,7 @@ public abstract class MoneyWiseTransBase
 
     /**
      * Obtain Direction.
+     *
      * @return the direction
      */
     public MoneyWiseAssetDirection getDirection() {
@@ -376,6 +392,7 @@ public abstract class MoneyWiseTransBase
 
     /**
      * Obtain Reconciled State.
+     *
      * @return the reconciled state
      */
     public Boolean isReconciled() {
@@ -384,6 +401,7 @@ public abstract class MoneyWiseTransBase
 
     /**
      * Set category value.
+     *
      * @param pValue the value
      */
     private void setValueCategory(final MoneyWiseTransCategory pValue) {
@@ -392,6 +410,7 @@ public abstract class MoneyWiseTransBase
 
     /**
      * Set category id.
+     *
      * @param pId the id
      */
     private void setValueCategory(final Integer pId) {
@@ -400,6 +419,7 @@ public abstract class MoneyWiseTransBase
 
     /**
      * Set category name.
+     *
      * @param pName the name
      */
     private void setValueCategory(final String pName) {
@@ -408,6 +428,7 @@ public abstract class MoneyWiseTransBase
 
     /**
      * Set description value.
+     *
      * @param pValue the value
      * @throws OceanusException on error
      */
@@ -417,6 +438,7 @@ public abstract class MoneyWiseTransBase
 
     /**
      * Set amount value.
+     *
      * @param pBytes the value
      * @throws OceanusException on error
      */
@@ -426,6 +448,7 @@ public abstract class MoneyWiseTransBase
 
     /**
      * Set amount value.
+     *
      * @param pValue the value
      */
     protected final void setValueAmount(final PrometheusEncryptedPair pValue) {
@@ -434,6 +457,7 @@ public abstract class MoneyWiseTransBase
 
     /**
      * Set amount value.
+     *
      * @param pValue the value
      */
     private void setValueAmount(final String pValue) {
@@ -442,6 +466,7 @@ public abstract class MoneyWiseTransBase
 
     /**
      * Set account value.
+     *
      * @param pValue the value
      */
     protected final void setValueAccount(final MoneyWiseTransAsset pValue) {
@@ -450,6 +475,7 @@ public abstract class MoneyWiseTransBase
 
     /**
      * Set debit name.
+     *
      * @param pName the name
      */
     private void setValueAccount(final String pName) {
@@ -458,6 +484,7 @@ public abstract class MoneyWiseTransBase
 
     /**
      * Set debit id.
+     *
      * @param pId the value
      */
     private void setValueAccount(final Long pId) {
@@ -466,6 +493,7 @@ public abstract class MoneyWiseTransBase
 
     /**
      * Set partner value.
+     *
      * @param pValue the value
      */
     protected final void setValuePartner(final MoneyWiseTransAsset pValue) {
@@ -474,6 +502,7 @@ public abstract class MoneyWiseTransBase
 
     /**
      * Set partner id.
+     *
      * @param pId the id
      */
     private void setValuePartner(final Long pId) {
@@ -482,6 +511,7 @@ public abstract class MoneyWiseTransBase
 
     /**
      * Set partner name.
+     *
      * @param pName the name
      */
     private void setValuePartner(final String pName) {
@@ -490,6 +520,7 @@ public abstract class MoneyWiseTransBase
 
     /**
      * Set direction state.
+     *
      * @param pValue the value
      */
     protected final void setValueDirection(final MoneyWiseAssetDirection pValue) {
@@ -498,6 +529,7 @@ public abstract class MoneyWiseTransBase
 
     /**
      * Set direction state.
+     *
      * @param pValue the value
      */
     private void setValueDirection(final Boolean pValue) {
@@ -509,6 +541,7 @@ public abstract class MoneyWiseTransBase
 
     /**
      * Set direction state.
+     *
      * @param pValue the value
      */
     private void setValueDirection(final String pValue) {
@@ -518,6 +551,7 @@ public abstract class MoneyWiseTransBase
 
     /**
      * Set reconciled state.
+     *
      * @param pValue the value
      */
     protected final void setValueReconciled(final Boolean pValue) {
@@ -536,6 +570,7 @@ public abstract class MoneyWiseTransBase
 
     /**
      * Obtain portfolio for transaction.
+     *
      * @return the portfolio (or null)
      */
     public MoneyWisePortfolio getPortfolio() {
@@ -557,6 +592,7 @@ public abstract class MoneyWiseTransBase
 
     /**
      * Compare this event to another to establish sort order.
+     *
      * @param pThat The Event to compare to
      * @return (-1,0,1) depending of whether this object is before, equal, or after the passed
      * object in the sort order
@@ -607,6 +643,7 @@ public abstract class MoneyWiseTransBase
 
     /**
      * Is this event category the required class.
+     *
      * @param pClass the required category class.
      * @return true/false
      */
@@ -617,6 +654,7 @@ public abstract class MoneyWiseTransBase
 
     /**
      * Determines whether an event is a dividend re-investment.
+     *
      * @return dividend re-investment true/false
      */
     public boolean isDividendReInvestment() {
@@ -630,6 +668,7 @@ public abstract class MoneyWiseTransBase
 
     /**
      * Determines whether an event is an interest payment.
+     *
      * @return interest true/false
      */
     public boolean isInterest() {
@@ -641,6 +680,7 @@ public abstract class MoneyWiseTransBase
 
     /**
      * Determines whether an event is a dividend payment.
+     *
      * @return dividend true/false
      */
     public boolean isDividend() {
@@ -651,6 +691,7 @@ public abstract class MoneyWiseTransBase
 
     /**
      * Determines whether an event needs a zero amount.
+     *
      * @return true/false
      */
     public boolean needsNullAmount() {
@@ -661,6 +702,7 @@ public abstract class MoneyWiseTransBase
 
     /**
      * Determines whether we can switch direction.
+     *
      * @return true/false
      */
     public boolean canSwitchDirection() {
@@ -669,6 +711,7 @@ public abstract class MoneyWiseTransBase
 
     /**
      * Set a new account.
+     *
      * @param pAccount the account
      */
     public void setAccount(final MoneyWiseTransAsset pAccount) {
@@ -678,6 +721,7 @@ public abstract class MoneyWiseTransBase
 
     /**
      * Set a new partner.
+     *
      * @param pPartner the partner
      */
     public void setPartner(final MoneyWiseTransAsset pPartner) {
@@ -687,6 +731,7 @@ public abstract class MoneyWiseTransBase
 
     /**
      * Set a direction.
+     *
      * @param pDirection the direction
      */
     public void setDirection(final MoneyWiseAssetDirection pDirection) {
@@ -698,11 +743,12 @@ public abstract class MoneyWiseTransBase
      * Switch direction.
      */
     public void switchDirection() {
-         setValueDirection(getDirection().reverse());
+        setValueDirection(getDirection().reverse());
     }
 
     /**
      * Flip assets.
+     *
      * @throws OceanusException on error
      */
     public void flipAssets() throws OceanusException {
@@ -716,6 +762,7 @@ public abstract class MoneyWiseTransBase
 
     /**
      * Set a new category.
+     *
      * @param pCategory the category
      */
     public void setCategory(final MoneyWiseTransCategory pCategory) {
@@ -724,6 +771,7 @@ public abstract class MoneyWiseTransBase
 
     /**
      * Set a new amount.
+     *
      * @param pAmount the amount
      * @throws OceanusException on error
      */
@@ -733,6 +781,7 @@ public abstract class MoneyWiseTransBase
 
     /**
      * Set a reconciled indication.
+     *
      * @param pReconciled the reconciled state
      */
     public void setReconciled(final Boolean pReconciled) {
@@ -751,7 +800,8 @@ public abstract class MoneyWiseTransBase
 
     /**
      * Resolve transAsset.
-     * @param pData the dataSet
+     *
+     * @param pData  the dataSet
      * @param pOwner the owning object
      * @param pField the fieldId
      * @throws OceanusException on error
@@ -771,7 +821,8 @@ public abstract class MoneyWiseTransBase
 
     /**
      * Resolve transAsset.
-     * @param pData the dataSet
+     *
+     * @param pData  the dataSet
      * @param pValue the value to convert
      * @return the asset
      * @throws OceanusException on error
@@ -795,14 +846,15 @@ public abstract class MoneyWiseTransBase
 
     /**
      * Resolve transAsset.
+     *
      * @param pData the owning dataSet
-     * @param pId the item id
+     * @param pId   the item id
      * @return the asset
      * @throws OceanusException on error
      */
     private static MoneyWiseTransAsset resolveTransAsset(final PrometheusDataListSet pData,
                                                          final Long pId) throws OceanusException {
-         /* Access the assetType */
+        /* Access the assetType */
         final MoneyWiseAssetType myAssetType = MoneyWiseAssetType.getAssetType(pId);
 
         /* If the name is a security holding */
@@ -826,6 +878,7 @@ public abstract class MoneyWiseTransBase
 
     /**
      * Resolve transAsset.
+     *
      * @param pData the owning dataSet
      * @param pName the item name
      * @return the asset
@@ -856,6 +909,7 @@ public abstract class MoneyWiseTransBase
 
     /**
      * Update base transaction from an edited transaction.
+     *
      * @param pTrans the edited transaction
      */
     protected void applyBasicChanges(final MoneyWiseTransBase pTrans) {
@@ -892,6 +946,7 @@ public abstract class MoneyWiseTransBase
 
     /**
      * The Event List class.
+     *
      * @param <T> the dataType
      */
     public abstract static class MoneyWiseTransBaseList<T extends MoneyWiseTransBase>
@@ -905,8 +960,9 @@ public abstract class MoneyWiseTransBase
 
         /**
          * Construct an empty CORE Event list.
-         * @param pData the DataSet for the list
-         * @param pClass the class of the item
+         *
+         * @param pData     the DataSet for the list
+         * @param pClass    the class of the item
          * @param pItemType the item type
          */
         protected MoneyWiseTransBaseList(final MoneyWiseDataSet pData,
@@ -918,6 +974,7 @@ public abstract class MoneyWiseTransBase
 
         /**
          * Constructor for a cloned List.
+         *
          * @param pSource the source List
          */
         protected MoneyWiseTransBaseList(final MoneyWiseTransBaseList<T> pSource) {

@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,25 +13,25 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.atlas.ui.controls;
 
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateResource;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.ui.MetisIcon;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalysisManager;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisAttribute;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
-import net.sourceforge.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalysisManager;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisType;
 import net.sourceforge.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter;
 import net.sourceforge.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter.MoneyWiseXAnalysisAllFilter;
 import net.sourceforge.joceanus.moneywise.ui.MoneyWiseAnalysisColumnSet;
 import net.sourceforge.joceanus.moneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateResource;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIArrowIconId;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
@@ -279,10 +279,11 @@ public class MoneyWiseXAnalysisSelect
 
     /**
      * Constructor.
-     * @param pFactory the GUI factory
-     * @param pView the view
+     *
+     * @param pFactory     the GUI factory
+     * @param pView        the view
      * @param pAnalysisMgr the analysis manager
-     * @param pNewButton the new button
+     * @param pNewButton   the new button
      */
     public MoneyWiseXAnalysisSelect(final TethysUIFactory<?> pFactory,
                                     final MoneyWiseView pView,
@@ -414,6 +415,7 @@ public class MoneyWiseXAnalysisSelect
 
     /**
      * Obtain the DateDayRange.
+     *
      * @return the range.
      */
     public OceanusDateRange getRange() {
@@ -422,6 +424,7 @@ public class MoneyWiseXAnalysisSelect
 
     /**
      * Obtain the analysis.
+     *
      * @return the range.
      */
     public MoneyWiseXAnalysis getAnalysis() {
@@ -430,6 +433,7 @@ public class MoneyWiseXAnalysisSelect
 
     /**
      * Obtain the Filter.
+     *
      * @return the filter.
      */
     public MoneyWiseXAnalysisFilter<?, ?> getFilter() {
@@ -438,6 +442,7 @@ public class MoneyWiseXAnalysisSelect
 
     /**
      * Obtain the ColumnSet.
+     *
      * @return the columnSet.
      */
     public MoneyWiseAnalysisColumnSet getColumns() {
@@ -446,6 +451,7 @@ public class MoneyWiseXAnalysisSelect
 
     /**
      * Are we showing columns?
+     *
      * @return true/false.
      */
     public boolean showColumns() {
@@ -454,7 +460,8 @@ public class MoneyWiseXAnalysisSelect
 
     /**
      * Create control panel.
-     * @param pFactory the GUI factory
+     *
+     * @param pFactory   the GUI factory
      * @param pNewButton the new button
      * @return the panel
      */
@@ -490,6 +497,7 @@ public class MoneyWiseXAnalysisSelect
 
     /**
      * Create filter detail panel.
+     *
      * @param pFactory the GUI factory
      * @return the panel
      */
@@ -515,6 +523,7 @@ public class MoneyWiseXAnalysisSelect
 
     /**
      * Create filter select panel.
+     *
      * @param pFactory the GUI factory
      * @return the panel
      */
@@ -561,6 +570,7 @@ public class MoneyWiseXAnalysisSelect
 
     /**
      * Select Statement.
+     *
      * @param pSelect the selection
      */
     public void selectStatement(final MoneyWiseXStatementSelect pSelect) {
@@ -711,6 +721,7 @@ public class MoneyWiseXAnalysisSelect
 
     /**
      * Is there any filter available?
+     *
      * @return true/false
      */
     private boolean isAvailable() {
@@ -906,6 +917,7 @@ public class MoneyWiseXAnalysisSelect
 
     /**
      * Apply Filter.
+     *
      * @param pFilter the filter
      */
     private void applyFilter(final MoneyWiseXAnalysisFilter<?, ?> pFilter) {
@@ -953,6 +965,7 @@ public class MoneyWiseXAnalysisSelect
 
     /**
      * Set RangeSelect visibility.
+     *
      * @param pVisible the visibility setting
      */
     private void setRangeVisibility(final boolean pVisible) {
@@ -965,6 +978,7 @@ public class MoneyWiseXAnalysisSelect
 
     /**
      * Set FilterSelect visibility.
+     *
      * @param pVisible the visibility setting
      */
     private void setFilterVisibility(final boolean pVisible) {
@@ -1095,6 +1109,7 @@ public class MoneyWiseXAnalysisSelect
 
         /**
          * Constructor.
+         *
          * @param pState state to copy from
          */
         private MoneyWiseAnalysisState(final MoneyWiseAnalysisState pState) {
@@ -1108,6 +1123,7 @@ public class MoneyWiseXAnalysisSelect
 
         /**
          * Obtain the DateDayRange.
+         *
          * @return the range.
          */
         private OceanusDateRange getRange() {
@@ -1116,6 +1132,7 @@ public class MoneyWiseXAnalysisSelect
 
         /**
          * Obtain the AnalysisType.
+         *
          * @return the analysis type.
          */
         private MoneyWiseXAnalysisType getType() {
@@ -1124,6 +1141,7 @@ public class MoneyWiseXAnalysisSelect
 
         /**
          * Obtain the BucketType.
+         *
          * @return the bucket type.
          */
         private MoneyWiseXAnalysisAttribute getBucket() {
@@ -1132,6 +1150,7 @@ public class MoneyWiseXAnalysisSelect
 
         /**
          * Obtain the Columns.
+         *
          * @return the columns.
          */
         private MoneyWiseAnalysisColumnSet getColumns() {
@@ -1140,6 +1159,7 @@ public class MoneyWiseXAnalysisSelect
 
         /**
          * Obtain the Filter.
+         *
          * @return the filter.
          */
         private MoneyWiseXAnalysisFilter<?, ?> getFilter() {
@@ -1148,6 +1168,7 @@ public class MoneyWiseXAnalysisSelect
 
         /**
          * Are we showing columns?
+         *
          * @return true/false.
          */
         private boolean showColumns() {
@@ -1156,6 +1177,7 @@ public class MoneyWiseXAnalysisSelect
 
         /**
          * Determine selection from panels.
+         *
          * @param pFilter selection panel
          */
         private void determineState(final MoneyWiseXAnalysisFilterSelection pFilter) {
@@ -1170,6 +1192,7 @@ public class MoneyWiseXAnalysisSelect
 
         /**
          * Set new Range from select panel.
+         *
          * @param pSelect the selection panel
          * @return true/false did a change occur
          */
@@ -1185,6 +1208,7 @@ public class MoneyWiseXAnalysisSelect
 
         /**
          * Set new analysis type.
+         *
          * @param pType the analysis type
          * @return true/false did a change occur
          */
@@ -1198,6 +1222,7 @@ public class MoneyWiseXAnalysisSelect
 
         /**
          * Set new bucket type.
+         *
          * @param pBucket the bucket type
          * @return true/false did a change occur
          */
@@ -1216,6 +1241,7 @@ public class MoneyWiseXAnalysisSelect
 
         /**
          * Set new column set.
+         *
          * @param pColumnSet the column set
          * @return true/false did a change occur
          */
@@ -1234,6 +1260,7 @@ public class MoneyWiseXAnalysisSelect
 
         /**
          * Set filter.
+         *
          * @param pFilter the filter
          */
         private void setFilter(final MoneyWiseXAnalysisFilter<?, ?> pFilter) {
@@ -1258,6 +1285,7 @@ public class MoneyWiseXAnalysisSelect
 
         /**
          * Show Columns.
+         *
          * @param pShow true/false
          */
         private void showColumns(final boolean pShow) {
@@ -1290,8 +1318,9 @@ public class MoneyWiseXAnalysisSelect
 
         /**
          * Constructor.
+         *
          * @param pRangeSelect the range selection
-         * @param pFilter the analysis filter
+         * @param pFilter      the analysis filter
          */
         public MoneyWiseXStatementSelect(final TethysUIDateRangeSelector pRangeSelect,
                                          final MoneyWiseXAnalysisFilter<?, ?> pFilter) {
@@ -1302,6 +1331,7 @@ public class MoneyWiseXAnalysisSelect
 
         /**
          * Obtain the RangeSelection.
+         *
          * @return the filter
          */
         public TethysUIDateRangeSelector getRangeSelect() {
@@ -1310,6 +1340,7 @@ public class MoneyWiseXAnalysisSelect
 
         /**
          * Obtain the Filter.
+         *
          * @return the filter
          */
         public MoneyWiseXAnalysisFilter<?, ?> getFilter() {

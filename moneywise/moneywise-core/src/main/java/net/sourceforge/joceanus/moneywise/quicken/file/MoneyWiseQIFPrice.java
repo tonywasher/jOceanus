@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,14 +13,14 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.quicken.file;
 
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice;
 import net.sourceforge.joceanus.moneywise.quicken.definitions.MoneyWiseQIFType;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -73,9 +73,10 @@ public class MoneyWiseQIFPrice
 
     /**
      * Constructor.
-     * @param pFile the QIF File
+     *
+     * @param pFile     the QIF File
      * @param pSecurity the security
-     * @param pPrice the price
+     * @param pPrice    the price
      */
     protected MoneyWiseQIFPrice(final MoneyWiseQIFFile pFile,
                                 final MoneyWiseQIFSecurity pSecurity,
@@ -90,9 +91,10 @@ public class MoneyWiseQIFPrice
 
     /**
      * Constructor.
-     * @param pFile the QIF File
+     *
+     * @param pFile      the QIF File
      * @param pFormatter the Data Formatter
-     * @param pLine the line
+     * @param pLine      the line
      */
     private MoneyWiseQIFPrice(final MoneyWiseQIFFile pFile,
                               final OceanusDataFormatter pFormatter,
@@ -119,9 +121,10 @@ public class MoneyWiseQIFPrice
 
     /**
      * Constructor.
-     * @param pFile the QIF File
+     *
+     * @param pFile      the QIF File
      * @param pFormatter the Data Formatter
-     * @param pLines the lines
+     * @param pLines     the lines
      */
     protected MoneyWiseQIFPrice(final MoneyWiseQIFFile pFile,
                                 final OceanusDataFormatter pFormatter,
@@ -147,6 +150,7 @@ public class MoneyWiseQIFPrice
 
     /**
      * Obtain the security.
+     *
      * @return the security
      */
     public MoneyWiseQIFSecurity getSecurity() {
@@ -155,6 +159,7 @@ public class MoneyWiseQIFPrice
 
     /**
      * Obtain the date.
+     *
      * @return the date
      */
     public OceanusDate getDate() {
@@ -163,6 +168,7 @@ public class MoneyWiseQIFPrice
 
     /**
      * Obtain the price.
+     *
      * @return the security
      */
     public OceanusPrice getPrice() {
@@ -171,6 +177,7 @@ public class MoneyWiseQIFPrice
 
     /**
      * Obtain iterator for list.
+     *
      * @return the iterator
      */
     public Iterator<MoneyWiseQIFPrice> priceIterator() {
@@ -179,8 +186,9 @@ public class MoneyWiseQIFPrice
 
     /**
      * Format record.
+     *
      * @param pFormatter the formatter
-     * @param pBuilder the string builder
+     * @param pBuilder   the string builder
      */
     protected void formatRecord(final OceanusDataFormatter pFormatter,
                                 final StringBuilder pBuilder) {

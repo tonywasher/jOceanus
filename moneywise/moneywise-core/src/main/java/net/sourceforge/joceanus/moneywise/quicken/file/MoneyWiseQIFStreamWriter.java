@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,8 +13,11 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.quicken.file;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.moneywise.exc.MoneyWiseIOException;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -22,9 +25,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
-
-import net.sourceforge.joceanus.moneywise.exc.MoneyWiseIOException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * Wrapper for stream writer.
@@ -38,6 +38,7 @@ public class MoneyWiseQIFStreamWriter
 
     /**
      * Constructor.
+     *
      * @param pFile the file to write to
      * @throws IOException on error
      */
@@ -50,6 +51,7 @@ public class MoneyWiseQIFStreamWriter
 
     /**
      * Write a string.
+     *
      * @param pValue the string to write
      * @throws OceanusException on error
      */

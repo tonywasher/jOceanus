@@ -1,20 +1,23 @@
-/*******************************************************************************
+/*
  * Tethys: GUI Utilities
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package net.sourceforge.joceanus.tethys.api.base;
+
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,9 +26,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
-
-import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
-import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 
 /**
  * Program Definitions.
@@ -83,6 +83,7 @@ public abstract class TethysUIProgram {
 
     /**
      * Constructor.
+     *
      * @param pProperties the inputStream of the properties
      */
     protected TethysUIProgram(final InputStream pProperties) {
@@ -107,6 +108,7 @@ public abstract class TethysUIProgram {
 
     /**
      * Load the values.
+     *
      * @param pProperties the properties
      */
     private void loadValues(final Properties pProperties) {
@@ -125,6 +127,7 @@ public abstract class TethysUIProgram {
 
     /**
      * Obtain the dimensions (width, height) of the panel.
+     *
      * @return the width/height (or null for default)
      */
     public int[] getPanelDimensions() {
@@ -133,6 +136,7 @@ public abstract class TethysUIProgram {
 
     /**
      * Does the panel use a slider status?
+     *
      * @return true/false
      */
     public boolean useSliderStatus() {
@@ -141,12 +145,14 @@ public abstract class TethysUIProgram {
 
     /**
      * Obtain the program iconIds.
+     *
      * @return the icon Ids.
      */
     public abstract TethysUIIconId[] getIcons();
 
     /**
      * Obtain the splash iconId.
+     *
      * @return the iconId.
      */
     public TethysUIIconId getSplash() {
@@ -155,6 +161,7 @@ public abstract class TethysUIProgram {
 
     /**
      * Obtain program name.
+     *
      * @return the name.
      */
     public String getName() {
@@ -163,6 +170,7 @@ public abstract class TethysUIProgram {
 
     /**
      * Obtain program version.
+     *
      * @return the version.
      */
     public String getVersion() {
@@ -171,6 +179,7 @@ public abstract class TethysUIProgram {
 
     /**
      * Obtain program revision.
+     *
      * @return the revision.
      */
     public String getRevision() {
@@ -179,6 +188,7 @@ public abstract class TethysUIProgram {
 
     /**
      * Obtain program copyright.
+     *
      * @return the copyright.
      */
     public String getCopyright() {
@@ -187,6 +197,7 @@ public abstract class TethysUIProgram {
 
     /**
      * Obtain program build date.
+     *
      * @return the build date.
      */
     public String getBuiltOn() {
@@ -195,6 +206,7 @@ public abstract class TethysUIProgram {
 
     /**
      * Obtain iterator for the dependencies.
+     *
      * @return the iterator.
      */
     public Iterator<Entry<String, String>> dependencyIterator() {

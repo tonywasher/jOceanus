@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Prometheus: Application Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,11 +13,11 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.prometheus.service.sheet.odf;
 
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetSheet;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetView;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetWorkBook;
@@ -69,6 +69,7 @@ public class PrometheusOdfWorkBook
 
     /**
      * Constructor.
+     *
      * @param pInput the input stream
      * @throws OceanusException on error
      */
@@ -96,6 +97,7 @@ public class PrometheusOdfWorkBook
 
     /**
      * Constructor.
+     *
      * @throws OceanusException on error
      */
     PrometheusOdfWorkBook() throws OceanusException {
@@ -129,6 +131,7 @@ public class PrometheusOdfWorkBook
 
     /**
      * Obtain the parser.
+     *
      * @return the parser
      */
     PrometheusOdfParser getParser() {
@@ -137,6 +140,7 @@ public class PrometheusOdfWorkBook
 
     /**
      * Obtain the styler.
+     *
      * @return the styler
      */
     PrometheusOdfStyler getStyler() {
@@ -145,6 +149,7 @@ public class PrometheusOdfWorkBook
 
     /**
      * Obtain the data formatter.
+     *
      * @return the formatter
      */
     OceanusDataFormatter getFormatter() {

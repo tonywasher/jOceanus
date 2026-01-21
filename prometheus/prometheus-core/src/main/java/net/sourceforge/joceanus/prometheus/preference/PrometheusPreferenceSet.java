@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Prometheus: Application Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,19 +13,19 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.prometheus.preference;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 import net.sourceforge.joceanus.metis.preference.MetisPreferenceKey;
 import net.sourceforge.joceanus.metis.preference.MetisPreferenceSet;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
 
 /**
  * Prometheus PreferenceSet.
  */
 public abstract class PrometheusPreferenceSet
-    extends MetisPreferenceSet {
+        extends MetisPreferenceSet {
     /**
      * The Security Manager.
      */
@@ -33,8 +33,9 @@ public abstract class PrometheusPreferenceSet
 
     /**
      * Constructor.
+     *
      * @param pManager the preference manager
-     * @param pId the Id
+     * @param pId      the Id
      * @throws OceanusException on error
      */
     protected PrometheusPreferenceSet(final PrometheusPreferenceManager pManager,
@@ -44,8 +45,9 @@ public abstract class PrometheusPreferenceSet
 
     /**
      * Constructor.
+     *
      * @param pManager the preference manager
-     * @param pName the name
+     * @param pName    the name
      * @throws OceanusException on error
      */
     protected PrometheusPreferenceSet(final PrometheusPreferenceManager pManager,
@@ -61,6 +63,7 @@ public abstract class PrometheusPreferenceSet
 
     /**
      * Obtain the security.
+     *
      * @return the security
      * @throws OceanusException on error
      */
@@ -73,6 +76,7 @@ public abstract class PrometheusPreferenceSet
 
     /**
      * Define new ByteArray preference.
+     *
      * @param pKey the key for the preference
      * @return the preference item
      */
@@ -89,6 +93,7 @@ public abstract class PrometheusPreferenceSet
 
     /**
      * Define new CharArray preference.
+     *
      * @param pKey the key for the preference
      * @return the preference item
      * @throws OceanusException on error
@@ -106,6 +111,7 @@ public abstract class PrometheusPreferenceSet
 
     /**
      * Obtain ByteArray preference.
+     *
      * @param pKey the key of the preference
      * @return the ByteArray preference
      */
@@ -131,6 +137,7 @@ public abstract class PrometheusPreferenceSet
 
     /**
      * Obtain ByteArray value.
+     *
      * @param pKey the key of the preference
      * @return the ByteArray value
      */
@@ -144,6 +151,7 @@ public abstract class PrometheusPreferenceSet
 
     /**
      * Obtain CharArray preference.
+     *
      * @param pKey the key of the preference
      * @return the CharArray preference
      */
@@ -169,6 +177,7 @@ public abstract class PrometheusPreferenceSet
 
     /**
      * Obtain CharArray value.
+     *
      * @param pKey the key of the preference
      * @return the CharArray value
      */
@@ -187,6 +196,7 @@ public abstract class PrometheusPreferenceSet
             extends MetisPreferenceItem {
         /**
          * Constructor.
+         *
          * @param pSet the preference Set
          * @param pKey the key of the preference
          */
@@ -212,6 +222,7 @@ public abstract class PrometheusPreferenceSet
 
         /**
          * Set value.
+         *
          * @param pNewValue the new value
          */
         public void setValue(final byte[] pNewValue) {
@@ -231,6 +242,7 @@ public abstract class PrometheusPreferenceSet
             extends MetisPreferenceItem {
         /**
          * Constructor.
+         *
          * @param pSet the preference Set
          * @param pKey the key of the preference
          * @throws OceanusException on error
@@ -268,6 +280,7 @@ public abstract class PrometheusPreferenceSet
 
         /**
          * Set value.
+         *
          * @param pNewValue the new value
          */
         public void setValue(final char[] pNewValue) {

@@ -26,7 +26,7 @@ module net.sourceforge.joceanus.themis.core {
     /* Oceanus */
     requires net.sourceforge.joceanus.metis;
     requires net.sourceforge.joceanus.tethys.core;
-    requires net.sourceforge.joceanus.oceanus;
+    requires io.github.tonywasher.joceanus.oceanus;
     requires com.github.javaparser.core;
 
     /* Exports */

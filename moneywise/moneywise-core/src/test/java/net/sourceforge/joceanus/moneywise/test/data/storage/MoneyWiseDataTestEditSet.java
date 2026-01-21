@@ -1,6 +1,6 @@
-/* *****************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,10 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.test.data.storage;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldDef;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldSetDef;
 import net.sourceforge.joceanus.metis.list.MetisListKey;
@@ -40,7 +41,6 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTaxBasis;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryType;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoType;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataList;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataList.PrometheusListStyle;
@@ -59,6 +59,7 @@ public class MoneyWiseDataTestEditSet {
 
     /**
      * Constructor.
+     *
      * @param pDataSet the dataSet
      */
     public MoneyWiseDataTestEditSet(final MoneyWiseDataSet pDataSet) {
@@ -67,6 +68,7 @@ public class MoneyWiseDataTestEditSet {
 
     /**
      * Check separate editSets.
+     *
      * @param pView the view
      * @throws OceanusException on error
      */
@@ -101,6 +103,7 @@ public class MoneyWiseDataTestEditSet {
 
     /**
      * Check combined editSets.
+     *
      * @param pView the view
      * @throws OceanusException on error
      */
@@ -120,10 +123,11 @@ public class MoneyWiseDataTestEditSet {
 
     /**
      * Populate editSet for statics.
+     *
      * @param pEditSet the editSet
      * @throws OceanusException on error
      */
-    void populateStaticsEditSet(final PrometheusEditSet pEditSet) throws OceanusException  {
+    void populateStaticsEditSet(final PrometheusEditSet pEditSet) throws OceanusException {
         /* Register account types */
         final PrometheusEditEntry<MoneyWiseDepositCategoryType> myDepCats = pEditSet.registerType(MoneyWiseStaticDataType.DEPOSITTYPE);
         myDepCats.setDataList(theDataSet.getDepositCategoryTypes().deriveList(PrometheusListStyle.EDIT));
@@ -153,10 +157,11 @@ public class MoneyWiseDataTestEditSet {
 
     /**
      * Populate editSet for categories.
+     *
      * @param pEditSet the editSet
      * @throws OceanusException on error
      */
-    void populateCategoryEditSet(final PrometheusEditSet pEditSet) throws OceanusException  {
+    void populateCategoryEditSet(final PrometheusEditSet pEditSet) throws OceanusException {
         /* Register category types */
         pEditSet.registerType(MoneyWiseBasicDataType.TRANSTAG);
         theDataSet.getTransactionTags().deriveEditList(pEditSet);
@@ -174,10 +179,11 @@ public class MoneyWiseDataTestEditSet {
 
     /**
      * Populate editSet for accounts.
+     *
      * @param pEditSet the editSet
      * @throws OceanusException on error
      */
-    void populateAccountEditSet(final PrometheusEditSet pEditSet) throws OceanusException  {
+    void populateAccountEditSet(final PrometheusEditSet pEditSet) throws OceanusException {
         /* Register and derive payee types */
         pEditSet.registerType(MoneyWiseBasicDataType.PAYEE);
         pEditSet.registerType(MoneyWiseBasicDataType.PAYEEINFO);
@@ -215,10 +221,11 @@ public class MoneyWiseDataTestEditSet {
 
     /**
      * Populate editSet for transactions.
+     *
      * @param pEditSet the editSet
      * @throws OceanusException on error
      */
-    void populateTransEditSet(final PrometheusEditSet pEditSet) throws OceanusException  {
+    void populateTransEditSet(final PrometheusEditSet pEditSet) throws OceanusException {
         /* Register and derive transactions */
         pEditSet.registerType(MoneyWiseBasicDataType.TRANSACTION);
         pEditSet.registerType(MoneyWiseBasicDataType.TRANSACTIONINFO);
@@ -229,6 +236,7 @@ public class MoneyWiseDataTestEditSet {
 
     /**
      * Validate editSet.
+     *
      * @param pEditSet the editSet
      */
     void validateEditSet(final PrometheusEditSet pEditSet) {
@@ -244,7 +252,8 @@ public class MoneyWiseDataTestEditSet {
 
     /**
      * Validate list in editSet.
-     * @param pList the list
+     *
+     * @param pList    the list
      * @param pEditSet the editSet
      */
     void validateListInEditSet(final PrometheusDataList<?> pList,
@@ -260,7 +269,8 @@ public class MoneyWiseDataTestEditSet {
 
     /**
      * Validate item in editSet.
-     * @param pItem the item
+     *
+     * @param pItem    the item
      * @param pEditSet the editSet
      */
     void validateItemInEditSet(final PrometheusDataItem pItem,
@@ -291,7 +301,8 @@ public class MoneyWiseDataTestEditSet {
 
     /**
      * Validate item in editSet.
-     * @param pItem the item
+     *
+     * @param pItem    the item
      * @param pEditSet the editSet
      */
     void validateReferencedItemInEditSet(final PrometheusDataItem pItem,

@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Prometheus: Application Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,16 +13,16 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.prometheus.data;
 
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.data.MetisDataResource;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldDef;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldSetDef;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldVersionedDef;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionValues;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -36,6 +36,7 @@ import java.util.Map.Entry;
 
 /**
  * Arguments class for DataItem.
+ *
  * @author Tony Washer
  */
 public class PrometheusDataValues {
@@ -46,6 +47,7 @@ public class PrometheusDataValues {
     public interface PrometheusInfoSetItem {
         /**
          * Obtain infoSet.
+         *
          * @return the infoSet
          */
         PrometheusDataInfoSet<?> getInfoSet();
@@ -57,12 +59,14 @@ public class PrometheusDataValues {
     public interface PrometheusGroupedItem {
         /**
          * Is the item a child.
+         *
          * @return true/false
          */
         boolean isChild();
 
         /**
          * Obtain the child iterator.
+         *
          * @return the iterator
          */
         Iterator<? extends PrometheusDataItem> childIterator();
@@ -120,7 +124,8 @@ public class PrometheusDataValues {
 
     /**
      * Constructor.
-     * @param pItem the Item to obtain values from
+     *
+     * @param pItem     the Item to obtain values from
      * @param pItemName the item name
      */
     protected PrometheusDataValues(final PrometheusDataItem pItem,
@@ -218,8 +223,9 @@ public class PrometheusDataValues {
 
     /**
      * Constructor.
+     *
      * @param pOwner the Owner of the DataInfo Item
-     * @param pInfo the values of the DataInfo Item
+     * @param pInfo  the values of the DataInfo Item
      */
     private PrometheusDataValues(final PrometheusDataItem pOwner,
                                  final PrometheusInfoItem pInfo) {
@@ -251,8 +257,9 @@ public class PrometheusDataValues {
 
     /**
      * Constructor.
+     *
      * @param pElement the Item to obtain values from
-     * @param pFields the field definitions
+     * @param pFields  the field definitions
      */
     public PrometheusDataValues(final Element pElement,
                                 final MetisFieldSetDef pFields) {
@@ -261,8 +268,9 @@ public class PrometheusDataValues {
 
     /**
      * Constructor.
-     * @param pElement the Item to obtain values from
-     * @param pFields the field definitions
+     *
+     * @param pElement  the Item to obtain values from
+     * @param pFields   the field definitions
      * @param pItemName the item name
      */
     protected PrometheusDataValues(final Element pElement,
@@ -343,6 +351,7 @@ public class PrometheusDataValues {
 
     /**
      * Constructor.
+     *
      * @param pName the Item type
      */
     public PrometheusDataValues(final String pName) {
@@ -359,6 +368,7 @@ public class PrometheusDataValues {
 
     /**
      * Constructor.
+     *
      * @param pItem the Item to obtain values from
      */
     public PrometheusDataValues(final PrometheusDataItem pItem) {
@@ -367,6 +377,7 @@ public class PrometheusDataValues {
 
     /**
      * Obtain Item Type.
+     *
      * @return the Item Type
      */
     public final String getItemType() {
@@ -375,6 +386,7 @@ public class PrometheusDataValues {
 
     /**
      * Obtain Field iterator.
+     *
      * @return the Field iterator
      */
     public final Iterator<Entry<MetisDataFieldId, Object>> fieldIterator() {
@@ -383,6 +395,7 @@ public class PrometheusDataValues {
 
     /**
      * Does this item have InfoItems?
+     *
      * @return true/false
      */
     public final boolean hasInfoItems() {
@@ -391,6 +404,7 @@ public class PrometheusDataValues {
 
     /**
      * Obtain InfoItems iterator.
+     *
      * @return the iterator
      */
     public final Iterator<PrometheusInfoItem> infoIterator() {
@@ -399,6 +413,7 @@ public class PrometheusDataValues {
 
     /**
      * Does this item have children?
+     *
      * @return true/false
      */
     public final boolean hasChildren() {
@@ -407,6 +422,7 @@ public class PrometheusDataValues {
 
     /**
      * Obtain Child iterator.
+     *
      * @return the iterator
      */
     public final Iterator<PrometheusDataValues> childIterator() {
@@ -415,6 +431,7 @@ public class PrometheusDataValues {
 
     /**
      * Add value.
+     *
      * @param pField the Field definition
      * @param pValue the field value
      */
@@ -429,6 +446,7 @@ public class PrometheusDataValues {
 
     /**
      * Obtain value.
+     *
      * @param pField the Field definition
      * @return the field value
      */
@@ -439,9 +457,10 @@ public class PrometheusDataValues {
 
     /**
      * Obtain value of specified class.
+     *
      * @param pField the Field definition
      * @param pClass the class
-     * @param <T> the item type
+     * @param <T>    the item type
      * @return the field value
      */
     public <T> T getValue(final MetisDataFieldId pField,
@@ -452,6 +471,7 @@ public class PrometheusDataValues {
 
     /**
      * Obtain id from element.
+     *
      * @param pElement the element.
      * @return the id
      */
@@ -465,8 +485,9 @@ public class PrometheusDataValues {
 
     /**
      * Obtain child element with given name.
+     *
      * @param pParent the parent element
-     * @param pName the element name
+     * @param pName   the element name
      * @return the element
      */
     private static Element getChild(final Element pParent,
@@ -487,9 +508,10 @@ public class PrometheusDataValues {
 
     /**
      * Create XML element for item.
-     * @param pDocument the document to hold the item.
+     *
+     * @param pDocument  the document to hold the item.
      * @param pFormatter the data formatter
-     * @param pStoreIds do we include IDs in XML
+     * @param pStoreIds  do we include IDs in XML
      * @return the new element
      */
     protected Element createXML(final Document pDocument,
@@ -587,6 +609,7 @@ public class PrometheusDataValues {
 
         /**
          * Constructor.
+         *
          * @param pInfo the info Item
          */
         private PrometheusInfoItem(final PrometheusDataInfoItem pInfo) {
@@ -603,6 +626,7 @@ public class PrometheusDataValues {
 
         /**
          * Constructor.
+         *
          * @param pElement the XML element
          */
         private PrometheusInfoItem(final Element pElement) {
@@ -614,6 +638,7 @@ public class PrometheusDataValues {
 
         /**
          * Obtain name of item.
+         *
          * @return the name
          */
         public String getName() {
@@ -622,6 +647,7 @@ public class PrometheusDataValues {
 
         /**
          * Obtain id of item.
+         *
          * @return the id
          */
         public Integer getId() {
@@ -630,6 +656,7 @@ public class PrometheusDataValues {
 
         /**
          * Obtain value of item.
+         *
          * @return the value
          */
         public Object getValue() {
@@ -675,6 +702,7 @@ public class PrometheusDataValues {
 
         /**
          * Obtain DataValues.
+         *
          * @param pOwner the owner
          * @return the dataValues
          */

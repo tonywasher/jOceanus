@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Prometheus: Application Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,13 +13,13 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.prometheus.maps;
 
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.metis.list.MetisListKey;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
 
@@ -66,7 +66,8 @@ public class PrometheusMapsFieldInstance
 
     /**
      * Constructor.
-     * @param pKey the listKey
+     *
+     * @param pKey     the listKey
      * @param pFieldId the fieldId
      */
     PrometheusMapsFieldInstance(final MetisListKey pKey,
@@ -76,8 +77,9 @@ public class PrometheusMapsFieldInstance
 
     /**
      * Constructor.
-     * @param pKey the listKey
-     * @param pFieldId the fieldId
+     *
+     * @param pKey       the listKey
+     * @param pFieldId   the fieldId
      * @param pAllowNull do we allow null value?
      */
     PrometheusMapsFieldInstance(final MetisListKey pKey,
@@ -88,9 +90,10 @@ public class PrometheusMapsFieldInstance
 
     /**
      * Constructor.
-     * @param pKey the listKey
+     *
+     * @param pKey     the listKey
      * @param pFieldId the fieldId
-     * @param pFilter the filter
+     * @param pFilter  the filter
      */
     PrometheusMapsFieldInstance(final MetisListKey pKey,
                                 final MetisDataFieldId pFieldId,
@@ -100,9 +103,10 @@ public class PrometheusMapsFieldInstance
 
     /**
      * Constructor.
-     * @param pKey the listKey
-     * @param pFieldId the fieldId
-     * @param pFilter the filter
+     *
+     * @param pKey       the listKey
+     * @param pFieldId   the fieldId
+     * @param pFilter    the filter
      * @param pAllowNull do we allow null value?
      */
     PrometheusMapsFieldInstance(final MetisListKey pKey,
@@ -117,6 +121,7 @@ public class PrometheusMapsFieldInstance
 
     /**
      * Constructor.
+     *
      * @param pSource the source fieldMap
      */
     PrometheusMapsFieldInstance(final PrometheusMapsFieldInstance pSource) {
@@ -138,6 +143,7 @@ public class PrometheusMapsFieldInstance
 
     /**
      * Obtain the listKey.
+     *
      * @return the listKey
      */
     MetisListKey getListKey() {
@@ -146,6 +152,7 @@ public class PrometheusMapsFieldInstance
 
     /**
      * Obtain the fieldId.
+     *
      * @return the fieldId
      */
     MetisDataFieldId getFieldId() {
@@ -154,6 +161,7 @@ public class PrometheusMapsFieldInstance
 
     /**
      * add item to map.
+     *
      * @param pItem the item
      */
     void addItemToMap(final PrometheusDataItem pItem) {
@@ -169,6 +177,7 @@ public class PrometheusMapsFieldInstance
 
     /**
      * Is the key duplicate?
+     *
      * @param pItem the item
      * @return true/false
      */
@@ -184,6 +193,7 @@ public class PrometheusMapsFieldInstance
 
     /**
      * Find item in map.
+     *
      * @param pKey the key
      * @return the item
      */

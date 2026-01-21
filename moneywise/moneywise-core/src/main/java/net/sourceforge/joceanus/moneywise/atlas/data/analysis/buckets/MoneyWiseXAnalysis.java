@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,15 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets;
 
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.metis.preference.MetisPreferenceManager;
@@ -46,16 +52,11 @@ import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxAnalysis;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxYear;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxYearCache;
 import net.sourceforge.joceanus.moneywise.tax.uk.MoneyWiseUKTaxYearCache;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
-import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
-import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 
 /**
  * Data Analysis.
+ *
  * @author Tony Washer
  */
 public class MoneyWiseXAnalysis
@@ -198,8 +199,9 @@ public class MoneyWiseXAnalysis
 
     /**
      * Constructor for a full analysis.
-     * @param pEditSet the editSet to analyse events for
-     * @param pCursor the cursor
+     *
+     * @param pEditSet       the editSet to analyse events for
+     * @param pCursor        the cursor
      * @param pPreferenceMgr the preference manager
      */
     public MoneyWiseXAnalysis(final PrometheusEditSet pEditSet,
@@ -235,6 +237,7 @@ public class MoneyWiseXAnalysis
 
     /**
      * Constructor for a dated analysis.
+     *
      * @param pBase the base analysis
      * @param pDate the date for the analysis
      */
@@ -271,7 +274,8 @@ public class MoneyWiseXAnalysis
 
     /**
      * Constructor for a ranged analysis.
-     * @param pBase the base analysis
+     *
+     * @param pBase  the base analysis
      * @param pRange the range for the analysis
      */
     public MoneyWiseXAnalysis(final MoneyWiseXAnalysis pBase,
@@ -312,6 +316,7 @@ public class MoneyWiseXAnalysis
 
     /**
      * Is the analysis manager idle?
+     *
      * @return true/false
      */
     public boolean isIdle() {
@@ -330,6 +335,7 @@ public class MoneyWiseXAnalysis
 
     /**
      * Do we have a foreign currency?
+     *
      * @return true/false
      */
     public Boolean haveForeignCurrency() {
@@ -338,6 +344,7 @@ public class MoneyWiseXAnalysis
 
     /**
      * Do we have active securities?
+     *
      * @return true/false
      */
     public Boolean haveActiveSecurities() {
@@ -346,6 +353,7 @@ public class MoneyWiseXAnalysis
 
     /**
      * Obtain the editSet.
+     *
      * @return the editSet
      */
     public PrometheusEditSet getEditSet() {
@@ -354,6 +362,7 @@ public class MoneyWiseXAnalysis
 
     /**
      * Obtain the events.
+     *
      * @return the events
      */
     public MoneyWiseXAnalysisEventList getEvents() {
@@ -362,6 +371,7 @@ public class MoneyWiseXAnalysis
 
     /**
      * Set the events.
+     *
      * @param pEvents the events
      */
     public void setEvents(final MoneyWiseXAnalysisEventList pEvents) {
@@ -370,6 +380,7 @@ public class MoneyWiseXAnalysis
 
     /**
      * Obtain the cursor.
+     *
      * @return the cursor
      */
     public MoneyWiseXAnalysisCursor getCursor() {
@@ -378,6 +389,7 @@ public class MoneyWiseXAnalysis
 
     /**
      * Obtain the data.
+     *
      * @return the data
      */
     public MoneyWiseDataSet getData() {
@@ -386,6 +398,7 @@ public class MoneyWiseXAnalysis
 
     /**
      * Obtain the currency.
+     *
      * @return the currency
      */
     private MoneyWiseTaxYearCache getTaxYearCache() {
@@ -394,6 +407,7 @@ public class MoneyWiseXAnalysis
 
     /**
      * Obtain the currency.
+     *
      * @return the currency
      */
     public MoneyWiseCurrency getCurrency() {
@@ -402,6 +416,7 @@ public class MoneyWiseXAnalysis
 
     /**
      * Obtain the preference manager.
+     *
      * @return the data
      */
     public MetisPreferenceManager getPreferenceMgr() {
@@ -410,6 +425,7 @@ public class MoneyWiseXAnalysis
 
     /**
      * Obtain the date range.
+     *
      * @return the date range
      */
     public OceanusDateRange getDateRange() {
@@ -418,6 +434,7 @@ public class MoneyWiseXAnalysis
 
     /**
      * Is this a ranged analysis?
+     *
      * @return true/false
      */
     public boolean isRangedAnalysis() {
@@ -426,6 +443,7 @@ public class MoneyWiseXAnalysis
 
     /**
      * Obtain the deposit buckets list.
+     *
      * @return the list
      */
     public MoneyWiseXAnalysisDepositBucketList getDeposits() {
@@ -434,6 +452,7 @@ public class MoneyWiseXAnalysis
 
     /**
      * Obtain the cash buckets list.
+     *
      * @return the list
      */
     public MoneyWiseXAnalysisCashBucketList getCash() {
@@ -442,6 +461,7 @@ public class MoneyWiseXAnalysis
 
     /**
      * Obtain the loan buckets list.
+     *
      * @return the list
      */
     public MoneyWiseXAnalysisLoanBucketList getLoans() {
@@ -450,6 +470,7 @@ public class MoneyWiseXAnalysis
 
     /**
      * Obtain the portfolio buckets list.
+     *
      * @return the list
      */
     public MoneyWiseXAnalysisPortfolioBucketList getPortfolios() {
@@ -458,6 +479,7 @@ public class MoneyWiseXAnalysis
 
     /**
      * Obtain the payee buckets list.
+     *
      * @return the list
      */
     public MoneyWiseXAnalysisPayeeBucketList getPayees() {
@@ -466,6 +488,7 @@ public class MoneyWiseXAnalysis
 
     /**
      * Obtain the deposit categories list.
+     *
      * @return the list
      */
     public MoneyWiseXAnalysisDepositCategoryBucketList getDepositCategories() {
@@ -474,6 +497,7 @@ public class MoneyWiseXAnalysis
 
     /**
      * Obtain the cash categories list.
+     *
      * @return the list
      */
     public MoneyWiseXAnalysisCashCategoryBucketList getCashCategories() {
@@ -482,6 +506,7 @@ public class MoneyWiseXAnalysis
 
     /**
      * Obtain the loan categories list.
+     *
      * @return the list
      */
     public MoneyWiseXAnalysisLoanCategoryBucketList getLoanCategories() {
@@ -490,6 +515,7 @@ public class MoneyWiseXAnalysis
 
     /**
      * Obtain the transaction categories list.
+     *
      * @return the list
      */
     public MoneyWiseXAnalysisTransCategoryBucketList getTransCategories() {
@@ -498,6 +524,7 @@ public class MoneyWiseXAnalysis
 
     /**
      * Obtain the transactionTag list.
+     *
      * @return the list
      */
     public MoneyWiseXAnalysisTransTagBucketList getTransactionTags() {
@@ -506,6 +533,7 @@ public class MoneyWiseXAnalysis
 
     /**
      * Obtain the tax basis list.
+     *
      * @return the list
      */
     public MoneyWiseXAnalysisTaxBasisBucketList getTaxBasis() {
@@ -514,6 +542,7 @@ public class MoneyWiseXAnalysis
 
     /**
      * Obtain the tax analysis.
+     *
      * @return the analysis
      */
     public MoneyWiseTaxAnalysis getTaxAnalysis() {

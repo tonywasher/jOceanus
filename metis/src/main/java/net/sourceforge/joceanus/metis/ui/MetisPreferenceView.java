@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Metis: Java Data Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,20 +13,20 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.metis.ui;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEvent;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
 import net.sourceforge.joceanus.metis.preference.MetisPreferenceEvent;
 import net.sourceforge.joceanus.metis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.metis.preference.MetisPreferenceResource;
 import net.sourceforge.joceanus.metis.preference.MetisPreferenceSet;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.event.OceanusEvent;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
-import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
-import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIGenericWrapper;
@@ -128,7 +128,8 @@ public class MetisPreferenceView
 
     /**
      * Constructor.
-     * @param pFactory the GUI factory
+     *
+     * @param pFactory       the GUI factory
      * @param pPreferenceMgr the preference manager
      */
     public MetisPreferenceView(final TethysUIFactory<?> pFactory,
@@ -231,6 +232,7 @@ public class MetisPreferenceView
 
     /**
      * handle new propertySet event.
+     *
      * @param pEvent the event
      */
     private void handleNewPropertySet(final OceanusEvent<MetisPreferenceEvent> pEvent) {
@@ -246,6 +248,7 @@ public class MetisPreferenceView
 
     /**
      * RegisterSet.
+     *
      * @param pSet the set to register
      */
     private void registerSet(final MetisPreferenceSet pSet) {
@@ -268,8 +271,9 @@ public class MetisPreferenceView
 
     /**
      * Create view for preference.
+     *
      * @param pFactory the gui factory
-     * @param pSet the set to register
+     * @param pSet     the set to register
      * @return the view
      */
     protected MetisPreferenceSetView createView(final TethysUIFactory<?> pFactory,
@@ -291,16 +295,18 @@ public class MetisPreferenceView
 
     /**
      * Does the panel have unsaved updates?
+     *
      * @return true/false
      */
     public boolean hasUpdates() {
         final MetisPreferenceSetView myView = theProperties.getActiveCard();
         return (myView != null)
-               && myView.hasChanges();
+                && myView.hasChanges();
     }
 
     /**
      * Has this set of panels got the session focus?
+     *
      * @return true/false
      */
     public boolean hasSession() {
@@ -347,11 +353,11 @@ public class MetisPreferenceView
         /* Enable selection */
         final MetisPreferenceSetView myView = theProperties.getActiveCard();
         theSelectButton.setEnabled((myView != null)
-                                   && !myView.hasChanges());
+                && !myView.hasChanges());
 
         /* Show/Hide the buttons */
         theButtons.setVisible((myView != null)
-                              && myView.hasChanges());
+                && myView.hasChanges());
     }
 
     /**

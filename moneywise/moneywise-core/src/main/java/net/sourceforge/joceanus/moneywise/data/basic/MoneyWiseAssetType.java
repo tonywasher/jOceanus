@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,11 +13,11 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.data.basic;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * Enumeration of Asset Types.
@@ -115,6 +115,7 @@ public enum MoneyWiseAssetType {
 
     /**
      * Constructor.
+     *
      * @param uId the Id
      */
     MoneyWiseAssetType(final int uId) {
@@ -123,6 +124,7 @@ public enum MoneyWiseAssetType {
 
     /**
      * Obtain class Id.
+     *
      * @return the Id
      */
     public int getId() {
@@ -131,7 +133,8 @@ public enum MoneyWiseAssetType {
 
     /**
      * Obtain the external id.
-     * @param pType the asset type
+     *
+     * @param pType   the asset type
      * @param pBaseId the id
      * @return the external id
      */
@@ -143,9 +146,10 @@ public enum MoneyWiseAssetType {
 
     /**
      * Obtain the external id.
-     * @param pType the asset type
+     *
+     * @param pType    the asset type
      * @param pMajorId the major id
-     * @param pBaseId the id
+     * @param pBaseId  the id
      * @return the external id
      */
     public static long createExternalId(final MoneyWiseAssetType pType,
@@ -159,7 +163,8 @@ public enum MoneyWiseAssetType {
 
     /**
      * Obtain the alternate external id.
-     * @param pType the asset type
+     *
+     * @param pType       the asset type
      * @param pExternalId the id
      * @return the external id
      */
@@ -174,6 +179,7 @@ public enum MoneyWiseAssetType {
 
     /**
      * Obtain the base id.
+     *
      * @param pId the id
      * @return the base id
      */
@@ -184,6 +190,7 @@ public enum MoneyWiseAssetType {
 
     /**
      * Obtain the qualifying id.
+     *
      * @param pId the id
      * @return the base id
      */
@@ -193,6 +200,7 @@ public enum MoneyWiseAssetType {
 
     /**
      * Obtain the assetType.
+     *
      * @param pId the id
      * @return the assetType
      * @throws OceanusException on error
@@ -216,6 +224,7 @@ public enum MoneyWiseAssetType {
 
     /**
      * get value from id.
+     *
      * @param id the id value
      * @return the corresponding enum object
      * @throws OceanusException on error
@@ -231,6 +240,7 @@ public enum MoneyWiseAssetType {
 
     /**
      * Determine whether this is a valued asset.
+     *
      * @return true/false
      */
     public boolean isValued() {
@@ -251,6 +261,7 @@ public enum MoneyWiseAssetType {
 
     /**
      * Determine whether this is a base account.
+     *
      * @return true/false
      */
     public boolean isBaseAccount() {
@@ -271,6 +282,7 @@ public enum MoneyWiseAssetType {
 
     /**
      * Determine whether this is an asset.
+     *
      * @return true/false
      */
     public boolean isAsset() {
@@ -291,6 +303,7 @@ public enum MoneyWiseAssetType {
 
     /**
      * Determine whether this is a deposit.
+     *
      * @return true/false
      */
     public boolean isDeposit() {
@@ -299,6 +312,7 @@ public enum MoneyWiseAssetType {
 
     /**
      * Determine whether this is a loan.
+     *
      * @return true/false
      */
     public boolean isLoan() {
@@ -307,6 +321,7 @@ public enum MoneyWiseAssetType {
 
     /**
      * Determine whether this is a security.
+     *
      * @return true/false
      */
     public boolean isSecurity() {
@@ -315,6 +330,7 @@ public enum MoneyWiseAssetType {
 
     /**
      * Determine whether this is a securityHolding.
+     *
      * @return true/false
      */
     public boolean isSecurityHolding() {
@@ -323,6 +339,7 @@ public enum MoneyWiseAssetType {
 
     /**
      * Determine whether this is a portfolio.
+     *
      * @return true/false
      */
     public boolean isPortfolio() {
@@ -331,6 +348,7 @@ public enum MoneyWiseAssetType {
 
     /**
      * Determine whether this is a payee.
+     *
      * @return true/false
      */
     public boolean isPayee() {
@@ -339,6 +357,7 @@ public enum MoneyWiseAssetType {
 
     /**
      * Determine whether this is a cash.
+     *
      * @return true/false
      */
     public boolean isCash() {
@@ -347,6 +366,7 @@ public enum MoneyWiseAssetType {
 
     /**
      * Determine whether this is an autoExpense.
+     *
      * @return true/false
      */
     public boolean isAutoExpense() {

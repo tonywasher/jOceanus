@@ -1,35 +1,35 @@
-/*******************************************************************************
- * Tethys: Java Utilities
- * Copyright 2012-2026 Tony Washer
+/*
+ * Tethys: GUI Utilities
+ * Copyright 2012-2026. Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package net.sourceforge.joceanus.tethys.core.chart;
+
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimalFormatter;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
+import net.sourceforge.joceanus.tethys.api.chart.TethysUIPieChart;
+import net.sourceforge.joceanus.tethys.core.base.TethysUICoreComponent;
+import net.sourceforge.joceanus.tethys.core.factory.TethysUICoreFactory;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimalFormatter;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
-import net.sourceforge.joceanus.tethys.api.chart.TethysUIPieChart;
-import net.sourceforge.joceanus.tethys.core.base.TethysUICoreComponent;
-import net.sourceforge.joceanus.tethys.core.factory.TethysUICoreFactory;
 
 /**
  * Pie Chart.
@@ -64,6 +64,7 @@ public abstract class TethysUICorePieChart
 
     /**
      * Constructor.
+     *
      * @param pFactory the Gui factory
      */
     protected TethysUICorePieChart(final TethysUICoreFactory<?> pFactory) {
@@ -112,6 +113,7 @@ public abstract class TethysUICorePieChart
 
     /**
      * Add chart section.
+     *
      * @param pSection the section to add
      */
     protected void createSlice(final TethysUIPieChartSection pSection) {
@@ -128,6 +130,7 @@ public abstract class TethysUICorePieChart
 
     /**
      * Obtain tooltip for sectionName.
+     *
      * @param pName the section name
      * @return the tooltip
      */
@@ -142,6 +145,7 @@ public abstract class TethysUICorePieChart
 
     /**
      * handle selection.
+     *
      * @param pName the section name
      */
     protected void selectSection(final String pName) {
@@ -166,6 +170,7 @@ public abstract class TethysUICorePieChart
 
         /**
          * Constructor.
+         *
          * @param pTitle the title
          */
         TethysUICorePieChartData(final String pTitle) {
@@ -214,8 +219,9 @@ public abstract class TethysUICorePieChart
 
         /**
          * Constructor.
-         * @param pName the name
-         * @param pValue the value
+         *
+         * @param pName   the name
+         * @param pValue  the value
          * @param pSource the source
          */
         private TethysUICorePieChartSection(final String pName,

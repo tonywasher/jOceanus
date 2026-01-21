@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Metis: Java Data Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,19 +13,19 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.metis.preference;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerManager;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
-import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
-import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -35,6 +35,7 @@ import java.util.Map;
 
 /**
  * Manager class for preference sets.
+ *
  * @author Tony Washer
  */
 public class MetisPreferenceManager
@@ -71,6 +72,7 @@ public class MetisPreferenceManager
 
     /**
      * Constructor.
+     *
      * @param pViewer the viewer manager
      * @throws OceanusException on error
      */
@@ -97,6 +99,7 @@ public class MetisPreferenceManager
 
     /**
      * Obtain the viewer manager.
+     *
      * @return the viewer manager
      */
     protected MetisViewerManager getViewer() {
@@ -105,6 +108,7 @@ public class MetisPreferenceManager
 
     /**
      * Obtain the collection of preference sets.
+     *
      * @return the preference sets
      */
     public Collection<MetisPreferenceSet> getPreferenceSets() {
@@ -113,7 +117,8 @@ public class MetisPreferenceManager
 
     /**
      * Obtain the preference set for the calling class.
-     * @param <X> the preference set type
+     *
+     * @param <X>    the preference set type
      * @param pClazz the class of the preference set
      * @return the relevant preferenceSet
      */
@@ -137,8 +142,9 @@ public class MetisPreferenceManager
 
     /**
      * Create a new preferenceSet.
-     * @param <X> the preference set type
-     * @param pName the name of the preference set
+     *
+     * @param <X>    the preference set type
+     * @param pName  the name of the preference set
      * @param pClazz the class of the preference set
      * @return the new preferenceSet
      */
@@ -165,11 +171,11 @@ public class MetisPreferenceManager
             return mySet;
 
         } catch (IllegalAccessException
-                | InstantiationException
-                | NoSuchMethodException
-                | SecurityException
-                | IllegalArgumentException
-                | InvocationTargetException e) {
+                 | InstantiationException
+                 | NoSuchMethodException
+                 | SecurityException
+                 | IllegalArgumentException
+                 | InvocationTargetException e) {
             LOGGER.error(ERROR_LOAD, e);
             return null;
         }

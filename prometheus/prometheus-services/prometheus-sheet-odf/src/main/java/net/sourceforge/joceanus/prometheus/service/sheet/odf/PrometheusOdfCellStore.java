@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Prometheus: Application Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,17 +13,17 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.prometheus.service.sheet.odf;
 
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCell;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCellAddress;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCellPosition;
@@ -113,9 +113,10 @@ class PrometheusOdfCellStore {
 
     /**
      * ReadOnly Constructor.
-     * @param pRow the owning row.
+     *
+     * @param pRow      the owning row.
      * @param pRowIndex the row index
-     * @param pElement the row element
+     * @param pElement  the row element
      * @throws OceanusException on error
      */
     PrometheusOdfCellStore(final PrometheusOdfRowStore pRow,
@@ -137,13 +138,14 @@ class PrometheusOdfCellStore {
 
     /**
      * Mutable Constructor.
-     * @param pRow the owning row.
+     *
+     * @param pRow      the owning row.
      * @param pRowIndex the row index
      * @param pNumCells the initial number of cells
      */
     PrometheusOdfCellStore(final PrometheusOdfRowStore pRow,
                            final int pRowIndex,
-                           final int pNumCells)  {
+                           final int pNumCells) {
         /* Store details */
         theOasisRow = pRow;
         theSheet = theOasisRow.getSheet();
@@ -160,9 +162,10 @@ class PrometheusOdfCellStore {
 
     /**
      * Obtain an iterator of non-null cells for the range.
-     * @param pRow the row for the cell
+     *
+     * @param pRow       the row for the cell
      * @param pFirstCell the index of the first cell.
-     * @param pLastCell the index of the last cell.
+     * @param pLastCell  the index of the last cell.
      * @return the iterator
      */
     ListIterator<PrometheusSheetCell> iteratorForRange(final PrometheusOdfRow pRow,
@@ -176,8 +179,8 @@ class PrometheusOdfCellStore {
         for (int iIndex = pFirstCell; iIndex <= myBound; iIndex++) {
             /* Only return a cell if a value is present */
             final Object myValue = isReadOnly
-                                   ? getElementAtIndex(iIndex)
-                                   : getValueAtIndex(iIndex);
+                    ? getElementAtIndex(iIndex)
+                    : getValueAtIndex(iIndex);
             if (myValue != null) {
                 myList.add(new PrometheusOdfCell(this, pRow, iIndex, true));
             }
@@ -189,7 +192,8 @@ class PrometheusOdfCellStore {
 
     /**
      * Obtain a readOnly cell by its index.
-     * @param pRow the row for the cell
+     *
+     * @param pRow       the row for the cell
      * @param pCellIndex the index of the cell.
      * @return the column
      */
@@ -202,16 +206,17 @@ class PrometheusOdfCellStore {
 
         /* Only return a cell if a value is present */
         final Object myValue = isReadOnly
-                               ? getElementAtIndex(pCellIndex)
-                               : getValueAtIndex(pCellIndex);
+                ? getElementAtIndex(pCellIndex)
+                : getValueAtIndex(pCellIndex);
         return myValue == null
-               ? null
-               : new PrometheusOdfCell(this, pRow, pCellIndex, true);
+                ? null
+                : new PrometheusOdfCell(this, pRow, pCellIndex, true);
     }
 
     /**
      * Obtain a mutable cell by its index.
-     * @param pRow the row for the cell
+     *
+     * @param pRow       the row for the cell
      * @param pCellIndex the index of the cell.
      * @return the column
      */
@@ -225,6 +230,7 @@ class PrometheusOdfCellStore {
 
     /**
      * Obtain the index of the max valued cell.
+     *
      * @return the index
      */
     int getMaxValuedIndex() {
@@ -233,6 +239,7 @@ class PrometheusOdfCellStore {
 
     /**
      * Add additional cells to table.
+     *
      * @param pXtraCells the number of cells to add.
      */
     void addAdditionalCells(final int pXtraCells) {
@@ -241,9 +248,10 @@ class PrometheusOdfCellStore {
 
     /**
      * Apply validation.
+     *
      * @param pValidation the validation name
-     * @param pFirstCol the first column
-     * @param pLastCol the last column
+     * @param pFirstCol   the first column
+     * @param pLastCol    the last column
      */
     void applyValidation(final String pValidation,
                          final int pFirstCol,
@@ -258,17 +266,19 @@ class PrometheusOdfCellStore {
 
     /**
      * Get value at index.
+     *
      * @param pIndex the index
      * @return the value
      */
     private PrometheusCellElement getElementAtIndex(final int pIndex) {
         return pIndex < 0 || pIndex >= theElements.length
-               ? null
-               : theElements[pIndex];
+                ? null
+                : theElements[pIndex];
     }
 
     /**
      * Get value at index.
+     *
      * @param pIndex the index
      * @return the value
      */
@@ -280,28 +290,31 @@ class PrometheusOdfCellStore {
 
     /**
      * Get alternate at index.
+     *
      * @param pIndex the index
      * @return the alternate flag
      */
     private Boolean getAlternateAtIndex(final int pIndex) {
         return pIndex < 0 || pIndex >= theAlternates.length
-               ? null
-               : theAlternates[pIndex];
+                ? null
+                : theAlternates[pIndex];
     }
 
     /**
      * Get validation at index.
+     *
      * @param pIndex the index
      * @return the validation
      */
     private String getValidationAtIndex(final int pIndex) {
         return pIndex < 0 || pIndex >= theAlternates.length
-               ? null
-               : theValidations[pIndex];
+                ? null
+                : theValidations[pIndex];
     }
 
     /**
      * Access the value as Boolean.
+     *
      * @param pIndex the index
      * @return the boolean
      */
@@ -309,17 +322,18 @@ class PrometheusOdfCellStore {
         if (isReadOnly) {
             final PrometheusCellElement myElement = getElementAtIndex(pIndex);
             return myElement == null
-                   ? null
-                   : myElement.getBooleanValue();
+                    ? null
+                    : myElement.getBooleanValue();
         }
         final Object myValue = getValueAtIndex(pIndex);
         return myValue instanceof Boolean b
-               ? b
-               : null;
+                ? b
+                : null;
     }
 
     /**
      * Access the value as Date.
+     *
      * @param pIndex the index
      * @return the date
      */
@@ -327,17 +341,18 @@ class PrometheusOdfCellStore {
         if (isReadOnly) {
             final PrometheusCellElement myElement = getElementAtIndex(pIndex);
             return myElement == null
-                   ? null
-                   : myElement.getDateValue();
+                    ? null
+                    : myElement.getDateValue();
         }
         final Object myValue = getValueAtIndex(pIndex);
         return myValue instanceof OceanusDate d
-               ? d
-               : null;
+                ? d
+                : null;
     }
 
     /**
      * Access the value as Integer.
+     *
      * @param pIndex the index
      * @return the integer
      * @throws OceanusException on error
@@ -346,17 +361,18 @@ class PrometheusOdfCellStore {
         if (isReadOnly) {
             final PrometheusCellElement myElement = getElementAtIndex(pIndex);
             return myElement == null
-                   ? null
-                   : myElement.getIntegerValue();
+                    ? null
+                    : myElement.getIntegerValue();
         }
         final Object myValue = getValueAtIndex(pIndex);
         return myValue instanceof Integer i
-               ? i
-               : null;
+                ? i
+                : null;
     }
 
     /**
      * Access the value as Long.
+     *
      * @param pIndex the index
      * @return the long
      * @throws OceanusException on error
@@ -365,17 +381,18 @@ class PrometheusOdfCellStore {
         if (isReadOnly) {
             final PrometheusCellElement myElement = getElementAtIndex(pIndex);
             return myElement == null
-                   ? null
-                   : myElement.getLongValue();
+                    ? null
+                    : myElement.getLongValue();
         }
         final Object myValue = getValueAtIndex(pIndex);
         return myValue instanceof Long l
-               ? l
-               : null;
+                ? l
+                : null;
     }
 
     /**
      * Access the value as Rate.
+     *
      * @param pIndex the index
      * @return the rate
      * @throws OceanusException on error
@@ -384,17 +401,18 @@ class PrometheusOdfCellStore {
         if (isReadOnly) {
             final PrometheusCellElement myElement = getElementAtIndex(pIndex);
             return myElement == null
-                   ? null
-                   : myElement.getRateValue();
+                    ? null
+                    : myElement.getRateValue();
         }
         final Object myValue = getValueAtIndex(pIndex);
         return myValue instanceof OceanusRate r
-               ? r
-               : null;
+                ? r
+                : null;
     }
 
     /**
      * Access the value as Units.
+     *
      * @param pIndex the index
      * @return the units
      * @throws OceanusException on error
@@ -403,17 +421,18 @@ class PrometheusOdfCellStore {
         if (isReadOnly) {
             final PrometheusCellElement myElement = getElementAtIndex(pIndex);
             return myElement == null
-                   ? null
-                   : myElement.getUnitsValue();
+                    ? null
+                    : myElement.getUnitsValue();
         }
         final Object myValue = getValueAtIndex(pIndex);
         return myValue instanceof OceanusUnits u
-               ? u
-               : null;
+                ? u
+                : null;
     }
 
     /**
      * Access the value as Ratio.
+     *
      * @param pIndex the index
      * @return the ratio
      * @throws OceanusException on error
@@ -422,17 +441,18 @@ class PrometheusOdfCellStore {
         if (isReadOnly) {
             final PrometheusCellElement myElement = getElementAtIndex(pIndex);
             return myElement == null
-                   ? null
-                   : myElement.getRatioValue();
+                    ? null
+                    : myElement.getRatioValue();
         }
         final Object myValue = getValueAtIndex(pIndex);
         return myValue instanceof OceanusRatio r
-               ? r
-               : null;
+                ? r
+                : null;
     }
 
     /**
      * Access the value as Money.
+     *
      * @param pIndex the index
      * @return the rate
      * @throws OceanusException on error
@@ -441,17 +461,18 @@ class PrometheusOdfCellStore {
         if (isReadOnly) {
             final PrometheusCellElement myElement = getElementAtIndex(pIndex);
             return myElement == null
-                   ? null
-                   : myElement.getMoneyValue();
+                    ? null
+                    : myElement.getMoneyValue();
         }
         final Object myValue = getValueAtIndex(pIndex);
         return myValue instanceof OceanusMoney m
-               ? m
-               : null;
+                ? m
+                : null;
     }
 
     /**
      * Access the value as Price.
+     *
      * @param pIndex the index
      * @return the price
      * @throws OceanusException on error
@@ -460,17 +481,18 @@ class PrometheusOdfCellStore {
         if (isReadOnly) {
             final PrometheusCellElement myElement = getElementAtIndex(pIndex);
             return myElement == null
-                   ? null
-                   : myElement.getPriceValue();
+                    ? null
+                    : myElement.getPriceValue();
         }
         final Object myValue = getValueAtIndex(pIndex);
         return myValue instanceof OceanusPrice p
-               ? p
-               : null;
+                ? p
+                : null;
     }
 
     /**
      * Access the value as String.
+     *
      * @param pIndex the index
      * @return the string
      */
@@ -478,21 +500,22 @@ class PrometheusOdfCellStore {
         if (isReadOnly) {
             final PrometheusCellElement myElement = getElementAtIndex(pIndex);
             return myElement == null
-                   ? null
-                   : myElement.getStringValue();
+                    ? null
+                    : myElement.getStringValue();
         }
         final Object myValue = getValueAtIndex(pIndex);
         if (myValue == null) {
             return null;
         } else {
             return myValue instanceof String s
-                   ? s
-                   : theOasisRow.formatValue(myValue);
+                    ? s
+                    : theOasisRow.formatValue(myValue);
         }
     }
 
     /**
      * Set value at index.
+     *
      * @param pValue the value
      * @param pIndex the index
      */
@@ -508,6 +531,7 @@ class PrometheusOdfCellStore {
 
     /**
      * Set alternate value at index.
+     *
      * @param pValue the value
      * @param pIndex the index
      */
@@ -523,8 +547,9 @@ class PrometheusOdfCellStore {
 
     /**
      * Set validation at index.
+     *
      * @param pValidation the validation
-     * @param pIndex the index
+     * @param pIndex      the index
      */
     private void setValidationAtIndex(final String pValidation,
                                       final int pIndex) {
@@ -537,6 +562,7 @@ class PrometheusOdfCellStore {
 
     /**
      * Adjust for index.
+     *
      * @param pIndex the index
      */
     private void ensureIndex(final int pIndex) {
@@ -560,8 +586,9 @@ class PrometheusOdfCellStore {
 
     /**
      * Set element at index.
+     *
      * @param pElement the element
-     * @param pIndex the index
+     * @param pIndex   the index
      */
     private void setElementAtIndex(final PrometheusCellElement pElement,
                                    final int pIndex) {
@@ -573,7 +600,7 @@ class PrometheusOdfCellStore {
         /* Expand the elements array if required */
         if (pIndex >= theElements.length) {
             /* Determine the expansion length */
-            final int myLen = (((pIndex + 1) / CELL_EXPAND) + 1)  * CELL_EXPAND;
+            final int myLen = (((pIndex + 1) / CELL_EXPAND) + 1) * CELL_EXPAND;
             theElements = Arrays.copyOf(theElements, myLen);
         }
 
@@ -589,6 +616,7 @@ class PrometheusOdfCellStore {
 
     /**
      * Process Row children.
+     *
      * @param pRow the row element
      * @throws OceanusException on error
      */
@@ -605,6 +633,7 @@ class PrometheusOdfCellStore {
 
     /**
      * Process a cell Element.
+     *
      * @param pCell the cell to process
      * @throws OceanusException on error
      */
@@ -612,8 +641,8 @@ class PrometheusOdfCellStore {
         /* Determine the number of repeated cells */
         final String myRepeatStr = theParser.getAttribute(pCell, PrometheusOdfTableItem.COLUMNREPEAT);
         int myRepeat = myRepeatStr == null
-                        ? 1
-                        : Integer.parseInt(myRepeatStr);
+                ? 1
+                : Integer.parseInt(myRepeatStr);
 
         /* Parse the value */
         final PrometheusCellElement myValue = parseCellElement(pCell, theNumCells);
@@ -634,6 +663,7 @@ class PrometheusOdfCellStore {
 
     /**
      * Populate Row children.
+     *
      * @param pRow the row element
      */
     void populateRowChildren(final Element pRow) {
@@ -664,9 +694,10 @@ class PrometheusOdfCellStore {
 
     /**
      * Populate value.
+     *
      * @param pElement the element
-     * @param pIndex the index
-     * @param pValue the boolean
+     * @param pIndex   the index
+     * @param pValue   the boolean
      */
     private void populateValue(final Element pElement,
                                final int pIndex,
@@ -689,8 +720,9 @@ class PrometheusOdfCellStore {
 
     /**
      * Populate Boolean value.
+     *
      * @param pElement the element
-     * @param pValue the boolean
+     * @param pValue   the boolean
      */
     private void populateBoolean(final Element pElement,
                                  final Boolean pValue) {
@@ -702,8 +734,9 @@ class PrometheusOdfCellStore {
 
     /**
      * Populate Date value.
+     *
      * @param pElement the element
-     * @param pValue the date
+     * @param pValue   the date
      */
     private void populateDate(final Element pElement,
                               final OceanusDate pValue) {
@@ -715,8 +748,9 @@ class PrometheusOdfCellStore {
 
     /**
      * Populate Number value.
+     *
      * @param pElement the element
-     * @param pValue the number
+     * @param pValue   the number
      */
     private void populateNumber(final Element pElement,
                                 final Number pValue) {
@@ -728,9 +762,10 @@ class PrometheusOdfCellStore {
 
     /**
      * Populate String value.
+     *
      * @param pElement the element
-     * @param pIndex the index
-     * @param pValue the string
+     * @param pIndex   the index
+     * @param pValue   the string
      */
     private void populateString(final Element pElement,
                                 final int pIndex,
@@ -750,9 +785,10 @@ class PrometheusOdfCellStore {
 
     /**
      * Populate Monetary value.
+     *
      * @param pElement the element
-     * @param pIndex the index
-     * @param pValue the string
+     * @param pIndex   the index
+     * @param pValue   the string
      */
     private void populateMonetary(final Element pElement,
                                   final int pIndex,
@@ -774,16 +810,17 @@ class PrometheusOdfCellStore {
 
     /**
      * Populate Decimal value.
+     *
      * @param pElement the element
-     * @param pValue the string
+     * @param pValue   the string
      */
     private void populateDecimal(final Element pElement,
                                  final OceanusDecimal pValue) {
         /* Set value type and value */
         theParser.setAttribute(pElement, PrometheusOdfOfficeItem.VALUETYPE,
                 pValue instanceof OceanusRate
-                                        ? PrometheusOdfValue.PERCENTAGE
-                                        : PrometheusOdfValue.FLOAT);
+                        ? PrometheusOdfValue.PERCENTAGE
+                        : PrometheusOdfValue.FLOAT);
         theParser.setAttribute(pElement, PrometheusOdfOfficeItem.VALUE, pValue.doubleValue());
         setTextContent(pElement, theOasisRow.formatValue(pValue));
         theOasisRow.setCellStyle(pElement, pValue);
@@ -791,8 +828,9 @@ class PrometheusOdfCellStore {
 
     /**
      * Populate Number value.
+     *
      * @param pElement the element
-     * @param pValue the date
+     * @param pValue   the date
      */
     private void setTextContent(final Element pElement,
                                 final String pValue) {
@@ -804,6 +842,7 @@ class PrometheusOdfCellStore {
 
     /**
      * Obtain repeat count for index.
+     *
      * @param pIndex the index to start at
      * @return the repeat count
      */
@@ -828,22 +867,23 @@ class PrometheusOdfCellStore {
 
             /* Test for equality */
             if (!Objects.equals(myValue, nextValue)
-                || !Objects.equals(myAlt, nextAlt)
-                || !Objects.equals(myValid, nextValid)) {
+                    || !Objects.equals(myAlt, nextAlt)
+                    || !Objects.equals(myValid, nextValid)) {
                 return i - pIndex;
             }
         }
 
         /* All remaining values are equal */
         return myValue == null
-               ? theNumCells - pIndex
-               : theValues.length - pIndex;
+                ? theNumCells - pIndex
+                : theValues.length - pIndex;
     }
 
     /**
      * parse Cell element.
+     *
      * @param pElement the element
-     * @param pIndex the index
+     * @param pIndex   the index
      * @return the Cell
      * @throws OceanusException on error
      */
@@ -885,10 +925,11 @@ class PrometheusOdfCellStore {
 
     /**
      * Parse a value.
-     * @param <T> the value type to parse
-     * @param pIndex the index of the cell
+     *
+     * @param <T>     the value type to parse
+     * @param pIndex  the index of the cell
      * @param pSource the string to parse.
-     * @param pClass the value type class.
+     * @param pClass  the value type class.
      * @return the parsed value
      * @throws OceanusException on error
      */
@@ -907,11 +948,12 @@ class PrometheusOdfCellStore {
 
     /**
      * Parse a currency value.
-     * @param <T> the value type to parse
-     * @param pIndex the index of the cell
-     * @param pSource the double value.
+     *
+     * @param <T>       the value type to parse
+     * @param pIndex    the index of the cell
+     * @param pSource   the double value.
      * @param pCurrCode the currency code.
-     * @param pClass the value type class.
+     * @param pClass    the value type class.
      * @return the parsed value
      * @throws OceanusException on error
      */
@@ -953,9 +995,9 @@ class PrometheusOdfCellStore {
 
         /* Check the arrays */
         return isReadOnly
-               ? Arrays.equals(theElements, myThat.theElements)
-               : Arrays.equals(theValues, myThat.theValues)
-                       && Arrays.equals(theAlternates, myThat.theAlternates);
+                ? Arrays.equals(theElements, myThat.theElements)
+                : Arrays.equals(theValues, myThat.theValues)
+                && Arrays.equals(theAlternates, myThat.theAlternates);
     }
 
     @Override
@@ -1011,9 +1053,10 @@ class PrometheusOdfCellStore {
 
         /**
          * Constructor.
+         *
          * @param pStore the store
          * @param pIndex the index
-         * @param pType the type
+         * @param pType  the type
          * @param pValue the value
          */
         private PrometheusCellElement(final PrometheusOdfCellStore pStore,
@@ -1025,10 +1068,11 @@ class PrometheusOdfCellStore {
 
         /**
          * Constructor.
+         *
          * @param pStore the store
          * @param pIndex the index
-         * @param pType the type
-         * @param pText the text
+         * @param pType  the type
+         * @param pText  the text
          * @param pValue the value
          */
         private PrometheusCellElement(final PrometheusOdfCellStore pStore,
@@ -1041,11 +1085,12 @@ class PrometheusOdfCellStore {
 
         /**
          * Constructor.
-         * @param pStore the store
-         * @param pIndex the index
-         * @param pType the type
-         * @param pText the text
-         * @param pValue the value
+         *
+         * @param pStore    the store
+         * @param pIndex    the index
+         * @param pType     the type
+         * @param pText     the text
+         * @param pValue    the value
          * @param pCurrency the currency
          */
         private PrometheusCellElement(final PrometheusOdfCellStore pStore,
@@ -1064,6 +1109,7 @@ class PrometheusOdfCellStore {
 
         /**
          * Is the Element null?
+         *
          * @return true/false
          */
         boolean isNull() {
@@ -1072,48 +1118,53 @@ class PrometheusOdfCellStore {
 
         /**
          * Access the value as Boolean.
+         *
          * @return the boolean
          */
         Boolean getBooleanValue() {
             return PrometheusOdfValue.BOOLEAN.equals(theValueType)
-                   ? (Boolean) theValue
-                   : null;
+                    ? (Boolean) theValue
+                    : null;
         }
 
         /**
          * Access the value as Date.
+         *
          * @return the date
          */
         OceanusDate getDateValue() {
             return PrometheusOdfValue.DATE.equals(theValueType)
-                   ? (OceanusDate) theValue
-                   : null;
+                    ? (OceanusDate) theValue
+                    : null;
         }
 
         /**
          * Access the value as Integer.
+         *
          * @return the integer
          * @throws OceanusException on error
          */
         Integer getIntegerValue() throws OceanusException {
             return PrometheusOdfValue.FLOAT.equals(theValueType)
-                   ? theStore.parseValue(theIndex, (String) theValue, Double.class).intValue()
-                   : null;
+                    ? theStore.parseValue(theIndex, (String) theValue, Double.class).intValue()
+                    : null;
         }
 
         /**
          * Access the value as Long.
+         *
          * @return the long
          * @throws OceanusException on error
          */
         Long getLongValue() throws OceanusException {
             return PrometheusOdfValue.FLOAT.equals(theValueType)
-                   ? theStore.parseValue(theIndex, (String) theValue, Double.class).longValue()
-                   : null;
+                    ? theStore.parseValue(theIndex, (String) theValue, Double.class).longValue()
+                    : null;
         }
 
         /**
          * Access the value as Rate.
+         *
          * @return the rate
          * @throws OceanusException on error
          */
@@ -1130,28 +1181,31 @@ class PrometheusOdfCellStore {
 
         /**
          * Access the value as Units.
+         *
          * @return the units
          * @throws OceanusException on error
          */
         OceanusUnits getUnitsValue() throws OceanusException {
             return PrometheusOdfValue.FLOAT.equals(theValueType)
-                   ? theStore.parseValue(theIndex, (String) theValue, OceanusUnits.class)
-                : null;
+                    ? theStore.parseValue(theIndex, (String) theValue, OceanusUnits.class)
+                    : null;
         }
 
         /**
          * Access the value as Ratio.
+         *
          * @return the ratio
          * @throws OceanusException on error
          */
         OceanusRatio getRatioValue() throws OceanusException {
             return PrometheusOdfValue.FLOAT.equals(theValueType)
-                   ? theStore.parseValue(theIndex, (String) theValue, OceanusRatio.class)
-                   : null;
+                    ? theStore.parseValue(theIndex, (String) theValue, OceanusRatio.class)
+                    : null;
         }
 
         /**
          * Access the value as Money.
+         *
          * @return the money
          * @throws OceanusException on error
          */
@@ -1168,6 +1222,7 @@ class PrometheusOdfCellStore {
 
         /**
          * Access the value as Price.
+         *
          * @return the price
          * @throws OceanusException on error
          */
@@ -1184,8 +1239,9 @@ class PrometheusOdfCellStore {
 
         /**
          * Access the value as String.
+         *
          * @return the string
-          */
+         */
         String getStringValue() {
             switch (theValueType) {
                 case STRING:

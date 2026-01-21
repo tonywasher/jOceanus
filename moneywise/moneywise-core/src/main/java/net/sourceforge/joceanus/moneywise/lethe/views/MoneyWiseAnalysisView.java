@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,18 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.lethe.views;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
+import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
@@ -33,15 +42,6 @@ import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnal
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisManager;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseViewResource;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
-import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
-import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
-import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditEntry;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
@@ -118,7 +118,8 @@ public class MoneyWiseAnalysisView
 
     /**
      * Constructor.
-     * @param pView the view
+     *
+     * @param pView    the view
      * @param pEditSet the edit set
      */
     public MoneyWiseAnalysisView(final MoneyWiseView pView,
@@ -152,6 +153,7 @@ public class MoneyWiseAnalysisView
 
     /**
      * Obtain the active analysis.
+     *
      * @return the active analysis
      */
     public MoneyWiseAnalysis getAnalysis() {
@@ -160,6 +162,7 @@ public class MoneyWiseAnalysisView
 
     /**
      * Obtain the editSet.
+     *
      * @return the editSet
      */
     private PrometheusEditSet getEditSet() {
@@ -168,6 +171,7 @@ public class MoneyWiseAnalysisView
 
     /**
      * Obtain the transaction list.
+     *
      * @return the transaction list
      */
     public MoneyWiseTransactionList getTransactions() {
@@ -176,6 +180,7 @@ public class MoneyWiseAnalysisView
 
     /**
      * Obtain the range.
+     *
      * @return the range
      */
     public OceanusDateRange getRange() {
@@ -221,6 +226,7 @@ public class MoneyWiseAnalysisView
 
     /**
      * Set the selected date range.
+     *
      * @param pRange the date range
      */
     public void setRange(final OceanusDateRange pRange) {
@@ -257,6 +263,7 @@ public class MoneyWiseAnalysisView
             extends MoneyWiseTransactionList {
         /**
          * Constructor.
+         *
          * @param pSource the source transaction list
          * @throws OceanusException on error
          */

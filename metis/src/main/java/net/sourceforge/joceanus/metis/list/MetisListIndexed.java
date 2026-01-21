@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Metis: Java Data Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,14 +13,14 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.metis.list;
 
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataIndexedItem;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -32,6 +32,7 @@ import java.util.Map;
 
 /**
  * Indexed List.
+ *
  * @param <T> the item type
  */
 public class MetisListIndexed<T extends MetisDataIndexedItem>
@@ -105,6 +106,7 @@ public class MetisListIndexed<T extends MetisDataIndexedItem>
 
     /**
      * Obtain the idMap.
+     *
      * @return the map
      */
     protected Map<Integer, T> getIdMap() {
@@ -113,6 +115,7 @@ public class MetisListIndexed<T extends MetisDataIndexedItem>
 
     /**
      * Copy the idMap.
+     *
      * @return the copy of the map
      */
     public Map<Integer, T> copyIdMap() {
@@ -126,6 +129,7 @@ public class MetisListIndexed<T extends MetisDataIndexedItem>
 
     /**
      * Set the comparator.
+     *
      * @param pComparator the comparator
      */
     public void setComparator(final Comparator<T> pComparator) {
@@ -134,6 +138,7 @@ public class MetisListIndexed<T extends MetisDataIndexedItem>
 
     /**
      * Obtain the comparator.
+     *
      * @return the comparator
      */
     public Comparator<T> getComparator() {
@@ -142,6 +147,7 @@ public class MetisListIndexed<T extends MetisDataIndexedItem>
 
     /**
      * Obtain the next Id.
+     *
      * @return the next Id
      */
     public Integer getNextId() {
@@ -150,6 +156,7 @@ public class MetisListIndexed<T extends MetisDataIndexedItem>
 
     /**
      * Allocate the next Id.
+     *
      * @return the next allocated Id
      */
     public Integer allocateNextId() {
@@ -198,6 +205,7 @@ public class MetisListIndexed<T extends MetisDataIndexedItem>
 
     /**
      * Remove item from the list.
+     *
      * @param pItem the item to remove
      */
     public void removeFromList(final T pItem) {
@@ -206,6 +214,7 @@ public class MetisListIndexed<T extends MetisDataIndexedItem>
 
     /**
      * Remove item from the list.
+     *
      * @param pId the id of the item to remove
      */
     public void removeById(final Integer pId) {
@@ -235,6 +244,7 @@ public class MetisListIndexed<T extends MetisDataIndexedItem>
 
     /**
      * Obtain item by Id.
+     *
      * @param pId the id
      * @return the item or null
      */
@@ -244,6 +254,7 @@ public class MetisListIndexed<T extends MetisDataIndexedItem>
 
     /**
      * Determine whether an item is in the list.
+     *
      * @param pItem the item
      * @return true/false
      */
@@ -253,6 +264,7 @@ public class MetisListIndexed<T extends MetisDataIndexedItem>
 
     /**
      * Is ID present in list?
+     *
      * @param pId the id to lookup
      * @return true/false
      */
@@ -269,6 +281,7 @@ public class MetisListIndexed<T extends MetisDataIndexedItem>
 
     /**
      * Obtain the index of the item.
+     *
      * @param pItem the item
      * @return the index or -1 if not present
      */
@@ -278,6 +291,7 @@ public class MetisListIndexed<T extends MetisDataIndexedItem>
 
     /**
      * Obtain the item at the index.
+     *
      * @param pIndex the index of the item
      * @return the item
      */
@@ -287,6 +301,7 @@ public class MetisListIndexed<T extends MetisDataIndexedItem>
 
     /**
      * Remove the item at the index.
+     *
      * @param pIndex the index of the item
      * @return the item that was removed
      */
@@ -298,7 +313,8 @@ public class MetisListIndexed<T extends MetisDataIndexedItem>
 
     /**
      * Insert the item at the index.
-     * @param pItem the item to insert
+     *
+     * @param pItem  the item to insert
      * @param pIndex the index to insert at
      */
     public void insertAtIndex(final T pItem,
@@ -323,6 +339,7 @@ public class MetisListIndexed<T extends MetisDataIndexedItem>
 
     /**
      * Obtain a list iterator.
+     *
      * @return the iterator
      */
     public ListIterator<T> listIterator() {
@@ -331,6 +348,7 @@ public class MetisListIndexed<T extends MetisDataIndexedItem>
 
     /**
      * Obtain a reverse list iterator.
+     *
      * @return the iterator
      */
     public Iterator<T> reverseIterator() {
@@ -353,6 +371,7 @@ public class MetisListIndexed<T extends MetisDataIndexedItem>
 
     /**
      * Check the Id.
+     *
      * @param pId the id
      */
     protected void checkId(final Integer pId) {

@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,10 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.data.statics;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.metis.data.MetisDataResource;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
@@ -24,7 +25,6 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
 import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataClass;
 import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataItem;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * PortfolioType data type.
@@ -49,7 +49,8 @@ public class MoneyWisePortfolioType
 
     /**
      * Copy Constructor.
-     * @param pList The list to associate the PortfolioType with
+     *
+     * @param pList     The list to associate the PortfolioType with
      * @param pPortType The PortfolioType to copy
      */
     protected MoneyWisePortfolioType(final MoneyWisePortfolioTypeList pList,
@@ -59,6 +60,7 @@ public class MoneyWisePortfolioType
 
     /**
      * Basic constructor.
+     *
      * @param pList The list to associate the PortfolioType with
      * @param pName Name of PortfolioType
      * @throws OceanusException on error
@@ -70,7 +72,8 @@ public class MoneyWisePortfolioType
 
     /**
      * Basic constructor.
-     * @param pList The list to associate the PortfolioType with
+     *
+     * @param pList  The list to associate the PortfolioType with
      * @param pClass Class of PortfolioType
      * @throws OceanusException on error
      */
@@ -81,7 +84,8 @@ public class MoneyWisePortfolioType
 
     /**
      * Values constructor.
-     * @param pList The list to associate the item with
+     *
+     * @param pList   The list to associate the item with
      * @param pValues the values
      * @throws OceanusException on error
      */
@@ -97,6 +101,7 @@ public class MoneyWisePortfolioType
 
     /**
      * Return the SecurityTypeClass of the SecurityType.
+     *
      * @return the class
      */
     public MoneyWisePortfolioClass getPortfolioClass() {
@@ -125,6 +130,7 @@ public class MoneyWisePortfolioType
 
         /**
          * Construct an empty CORE portfolioType list.
+         *
          * @param pData the DataSet for the list
          */
         public MoneyWisePortfolioTypeList(final PrometheusDataSet pData) {
@@ -133,6 +139,7 @@ public class MoneyWisePortfolioType
 
         /**
          * Constructor for a cloned List.
+         *
          * @param pSource the source List
          */
         private MoneyWisePortfolioTypeList(final MoneyWisePortfolioTypeList pSource) {
@@ -185,6 +192,7 @@ public class MoneyWisePortfolioType
 
         /**
          * Obtain the type of the item.
+         *
          * @return the type of the item
          */
         public String itemType() {
@@ -193,6 +201,7 @@ public class MoneyWisePortfolioType
 
         /**
          * Add a PortfolioType to the list.
+         *
          * @param pPortType the Name of the portfolio type
          * @return the new type
          * @throws OceanusException on error

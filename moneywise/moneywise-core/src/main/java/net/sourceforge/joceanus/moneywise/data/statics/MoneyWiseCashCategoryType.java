@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,10 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.data.statics;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.metis.data.MetisDataResource;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
@@ -24,10 +25,10 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
 import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataClass;
 import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataItem;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * AccountCategoryType data type.
+ *
  * @author Tony Washer
  */
 public class MoneyWiseCashCategoryType
@@ -49,7 +50,8 @@ public class MoneyWiseCashCategoryType
 
     /**
      * Copy Constructor.
-     * @param pList The list to associate the Cash Category Type with
+     *
+     * @param pList    The list to associate the Cash Category Type with
      * @param pCatType The Cash Category Type to copy
      */
     protected MoneyWiseCashCategoryType(final MoneyWiseCashCategoryTypeList pList,
@@ -59,6 +61,7 @@ public class MoneyWiseCashCategoryType
 
     /**
      * Basic constructor.
+     *
      * @param pList The list to associate the Cash Category Type with
      * @param pName Name of Cash Category Type
      * @throws OceanusException on error
@@ -70,7 +73,8 @@ public class MoneyWiseCashCategoryType
 
     /**
      * Basic constructor.
-     * @param pList The list to associate the Cash Category Type with
+     *
+     * @param pList  The list to associate the Cash Category Type with
      * @param pClass Class of Cash Category Type
      * @throws OceanusException on error
      */
@@ -81,7 +85,8 @@ public class MoneyWiseCashCategoryType
 
     /**
      * Values constructor.
-     * @param pList The list to associate the item with
+     *
+     * @param pList   The list to associate the item with
      * @param pValues the values
      * @throws OceanusException on error
      */
@@ -97,6 +102,7 @@ public class MoneyWiseCashCategoryType
 
     /**
      * Return the Cash class of the CashCategoryType.
+     *
      * @return the class
      */
     public MoneyWiseCashCategoryClass getCashClass() {
@@ -105,6 +111,7 @@ public class MoneyWiseCashCategoryType
 
     /**
      * Determine whether the CashCategoryType is the required class.
+     *
      * @param pClass the desired class
      * @return <code>true</code> if the cash category type is the required class, <code>false</code>
      * otherwise.
@@ -135,6 +142,7 @@ public class MoneyWiseCashCategoryType
 
         /**
          * Construct an empty CORE account category list.
+         *
          * @param pData the DataSet for the list
          */
         public MoneyWiseCashCategoryTypeList(final PrometheusDataSet pData) {
@@ -143,6 +151,7 @@ public class MoneyWiseCashCategoryType
 
         /**
          * Constructor for a cloned List.
+         *
          * @param pSource the source List
          */
         private MoneyWiseCashCategoryTypeList(final MoneyWiseCashCategoryTypeList pSource) {
@@ -195,6 +204,7 @@ public class MoneyWiseCashCategoryType
 
         /**
          * Obtain the type of the item.
+         *
          * @return the type of the item
          */
         public String itemType() {
@@ -203,6 +213,7 @@ public class MoneyWiseCashCategoryType
 
         /**
          * Add a CashCategoryType to the list.
+         *
          * @param pCatType the Name of the cash category type
          * @return the new type
          * @throws OceanusException on error

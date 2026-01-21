@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Prometheus: Application Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,15 +13,15 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.prometheus.data;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldDef;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldSetDef;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldVersionedDef;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionValues;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 import java.util.Iterator;
 
@@ -32,6 +32,7 @@ public class PrometheusEncryptedValues
         extends MetisFieldVersionValues {
     /**
      * Constructor.
+     *
      * @param pItem the associated item
      */
     public PrometheusEncryptedValues(final PrometheusEncryptedDataItem pItem) {
@@ -64,6 +65,7 @@ public class PrometheusEncryptedValues
 
     /**
      * Obtain the encrypted bytes.
+     *
      * @param pFieldId the fieldId
      * @return the encrypted bytes
      */
@@ -75,6 +77,7 @@ public class PrometheusEncryptedValues
 
     /**
      * Obtain the encrypted bytes.
+     *
      * @param pField the field
      * @return the encrypted bytes
      */
@@ -90,6 +93,7 @@ public class PrometheusEncryptedValues
 
     /**
      * Obtain the encrypted pair.
+     *
      * @param pFieldId the fieldId
      * @return the encrypted pair
      */
@@ -101,6 +105,7 @@ public class PrometheusEncryptedValues
 
     /**
      * Obtain the encrypted pair.
+     *
      * @param pField the field
      * @return the encrypted pair
      */
@@ -142,6 +147,7 @@ public class PrometheusEncryptedValues
 
     /**
      * Update security for the values.
+     *
      * @throws OceanusException on error
      */
     public void updateSecurity() throws OceanusException {
@@ -168,6 +174,7 @@ public class PrometheusEncryptedValues
 
     /**
      * Adopt security for the values.
+     *
      * @param pBaseValues the base values
      * @throws OceanusException on error
      */

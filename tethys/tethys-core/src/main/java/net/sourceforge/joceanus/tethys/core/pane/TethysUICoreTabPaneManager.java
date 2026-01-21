@@ -1,23 +1,23 @@
-/*******************************************************************************
- * Tethys: Java Utilities
- * Copyright 2012-2026 Tony Washer
+/*
+ * Tethys: GUI Utilities
+ * Copyright 2012-2026. Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package net.sourceforge.joceanus.tethys.core.pane;
 
-import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.api.pane.TethysUITabPaneManager;
 import net.sourceforge.joceanus.tethys.core.base.TethysUICoreComponent;
@@ -61,6 +61,7 @@ public abstract class TethysUICoreTabPaneManager
 
     /**
      * Constructor.
+     *
      * @param pFactory the factory
      */
     protected TethysUICoreTabPaneManager(final TethysUICoreFactory<?> pFactory) {
@@ -133,6 +134,7 @@ public abstract class TethysUICoreTabPaneManager
 
     /**
      * Notify of selection.
+     *
      * @param pItem the item that has been selected
      */
     protected void notifySelection(final Object pItem) {
@@ -167,6 +169,7 @@ public abstract class TethysUICoreTabPaneManager
 
     /**
      * Enable/disable the pane.
+     *
      * @param pEnabled true/false
      */
     protected abstract void enablePane(boolean pEnabled);
@@ -213,6 +216,7 @@ public abstract class TethysUICoreTabPaneManager
 
         /**
          * Constructor.
+         *
          * @param pPane the containing pane
          * @param pName the name of the tab
          */
@@ -308,6 +312,7 @@ public abstract class TethysUICoreTabPaneManager
 
         /**
          * Enable/disable the tab.
+         *
          * @param pEnabled true/false
          */
         protected abstract void enableTab(boolean pEnabled);
@@ -331,6 +336,7 @@ public abstract class TethysUICoreTabPaneManager
 
         /**
          * Count previous visible items.
+         *
          * @return the count
          */
         public int countPreviousVisibleSiblings() {

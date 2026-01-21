@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Prometheus: Application Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,14 +13,14 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.prometheus.ui;
 
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.metis.ui.MetisIcon;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.prometheus.views.PrometheusUIEvent;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.button.TethysUIButton;
 import net.sourceforge.joceanus.tethys.api.button.TethysUIButtonFactory;
@@ -38,30 +38,35 @@ public class PrometheusItemEditActions
     public interface PrometheusItemEditParent {
         /**
          * Is the item editable?
+         *
          * @return true/false
          */
         boolean isEditable();
 
         /**
          * Is the item deletable?
+         *
          * @return true/false
          */
         boolean isDeletable();
 
         /**
          * Does the parent have updates.
+         *
          * @return true/false
          */
         boolean hasUpdates();
 
         /**
          * Does the parent have errors.
+         *
          * @return true/false
          */
         boolean hasErrors();
 
         /**
          * Is the parent new.
+         *
          * @return true/false
          */
         boolean isNew();
@@ -104,8 +109,9 @@ public class PrometheusItemEditActions
 
     /**
      * Constructor.
+     *
      * @param pFactory the GUI factory
-     * @param pParent the parent
+     * @param pParent  the parent
      */
     public PrometheusItemEditActions(final TethysUIFactory<?> pFactory,
                                      final PrometheusItemEditParent pParent) {

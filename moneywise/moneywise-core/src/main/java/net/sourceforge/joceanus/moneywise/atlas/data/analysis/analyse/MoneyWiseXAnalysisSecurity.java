@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,13 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.atlas.data.analysis.analyse;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioBucket.MoneyWiseXAnalysisPortfolioBucketList;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisSecurityBucket;
@@ -30,10 +34,6 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseSecurityClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseLogicException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
 
 /**
  * Security analysis.
@@ -138,7 +138,7 @@ public class MoneyWiseXAnalysisSecurity {
      * Constructor.
      *
      * @param pAnalyser the event analyser
-     * @param pTrans the transAnalyser
+     * @param pTrans    the transAnalyser
      * @throws OceanusException on error
      */
     MoneyWiseXAnalysisSecurity(final MoneyWiseXAnalysisEventAnalyser pAnalyser,
@@ -174,6 +174,7 @@ public class MoneyWiseXAnalysisSecurity {
 
     /**
      * Obtain the trans analyser.
+     *
      * @return the transAnalyser
      */
     MoneyWiseXAnalysisTransAnalyser getTransAnalyser() {
@@ -182,6 +183,7 @@ public class MoneyWiseXAnalysisSecurity {
 
     /**
      * Obtain the xferIn analyser.
+     *
      * @return the xferInAnalyser
      */
     MoneyWiseXAnalysisXferIn getXferInAnalyser() {
@@ -191,7 +193,7 @@ public class MoneyWiseXAnalysisSecurity {
     /**
      * Process a debit security transaction.
      *
-     * @param pTrans  the transaction
+     * @param pTrans the transaction
      * @throws OceanusException on error
      */
     void processDebitSecurity(final MoneyWiseXAnalysisTransaction pTrans) throws OceanusException {
@@ -231,7 +233,7 @@ public class MoneyWiseXAnalysisSecurity {
     /**
      * Process a credit security transaction.
      *
-     * @param pTrans  the transaction
+     * @param pTrans the transaction
      * @throws OceanusException on error
      */
     void processCreditSecurity(final MoneyWiseXAnalysisTransaction pTrans) throws OceanusException {
@@ -297,6 +299,7 @@ public class MoneyWiseXAnalysisSecurity {
 
     /**
      * adjust Asset Valuation.
+     *
      * @param pAsset the asset
      */
     void adjustAssetValuation(final MoneyWiseXAnalysisSecurityBucket pAsset) {
@@ -312,8 +315,9 @@ public class MoneyWiseXAnalysisSecurity {
 
     /**
      * Adjust for Standard Gains.
+     *
      * @param pSource the source security holding
-     * @param pGains the gains
+     * @param pGains  the gains
      */
     void adjustStandardGain(final MoneyWiseSecurityHolding pSource,
                             final OceanusMoney pGains) {

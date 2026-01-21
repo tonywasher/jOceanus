@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,18 +13,18 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets;
 
-import java.util.Iterator;
-
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCash;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCashCategory;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+
+import java.util.Iterator;
 
 /**
  * The Cash Bucket class.
@@ -50,8 +50,9 @@ public final class MoneyWiseXAnalysisCashBucket
 
     /**
      * Constructor.
+     *
      * @param pAnalysis the analysis
-     * @param pCash the cash account
+     * @param pCash     the cash account
      */
     private MoneyWiseXAnalysisCashBucket(final MoneyWiseXAnalysis pAnalysis,
                                          final MoneyWiseCash pCash) {
@@ -64,8 +65,9 @@ public final class MoneyWiseXAnalysisCashBucket
 
     /**
      * Constructor.
+     *
      * @param pAnalysis the analysis
-     * @param pBase the underlying bucket
+     * @param pBase     the underlying bucket
      */
     private MoneyWiseXAnalysisCashBucket(final MoneyWiseXAnalysis pAnalysis,
                                          final MoneyWiseXAnalysisCashBucket pBase) {
@@ -78,9 +80,10 @@ public final class MoneyWiseXAnalysisCashBucket
 
     /**
      * Constructor.
+     *
      * @param pAnalysis the analysis
-     * @param pBase the underlying bucket
-     * @param pDate the date for the bucket
+     * @param pBase     the underlying bucket
+     * @param pDate     the date for the bucket
      */
     private MoneyWiseXAnalysisCashBucket(final MoneyWiseXAnalysis pAnalysis,
                                          final MoneyWiseXAnalysisCashBucket pBase,
@@ -94,9 +97,10 @@ public final class MoneyWiseXAnalysisCashBucket
 
     /**
      * Constructor.
+     *
      * @param pAnalysis the analysis
-     * @param pBase the underlying bucket
-     * @param pRange the range for the bucket
+     * @param pBase     the underlying bucket
+     * @param pRange    the range for the bucket
      */
     private MoneyWiseXAnalysisCashBucket(final MoneyWiseXAnalysis pAnalysis,
                                          final MoneyWiseXAnalysisCashBucket pBase,
@@ -115,6 +119,7 @@ public final class MoneyWiseXAnalysisCashBucket
 
     /**
      * Obtain the cash category.
+     *
      * @return the cash category
      */
     public MoneyWiseCashCategory getCategory() {
@@ -138,6 +143,7 @@ public final class MoneyWiseXAnalysisCashBucket
 
         /**
          * Construct a top-level List.
+         *
          * @param pAnalysis the analysis
          */
         MoneyWiseXAnalysisCashBucketList(final MoneyWiseXAnalysis pAnalysis) {
@@ -147,9 +153,10 @@ public final class MoneyWiseXAnalysisCashBucket
 
         /**
          * Construct a dated List.
+         *
          * @param pAnalysis the analysis
-         * @param pBase the base list
-         * @param pDate the Date
+         * @param pBase     the base list
+         * @param pDate     the Date
          */
         MoneyWiseXAnalysisCashBucketList(final MoneyWiseXAnalysis pAnalysis,
                                          final MoneyWiseXAnalysisCashBucketList pBase,
@@ -163,9 +170,10 @@ public final class MoneyWiseXAnalysisCashBucket
 
         /**
          * Construct a ranged List.
+         *
          * @param pAnalysis the analysis
-         * @param pBase the base list
-         * @param pRange the Date Range
+         * @param pBase     the base list
+         * @param pRange    the Date Range
          */
         MoneyWiseXAnalysisCashBucketList(final MoneyWiseXAnalysis pAnalysis,
                                          final MoneyWiseXAnalysisCashBucketList pBase,
@@ -184,6 +192,7 @@ public final class MoneyWiseXAnalysisCashBucket
 
         /**
          * Obtain the matching CashBucket.
+         *
          * @param pCash the cash
          * @return the matching bucket
          */
@@ -197,6 +206,7 @@ public final class MoneyWiseXAnalysisCashBucket
 
         /**
          * Obtain the default Cash.
+         *
          * @return the bucket
          */
         public MoneyWiseXAnalysisCashBucket getDefaultCash() {
@@ -208,6 +218,7 @@ public final class MoneyWiseXAnalysisCashBucket
 
         /**
          * Obtain the default Cash for the category.
+         *
          * @param pCategory the category
          * @return the bucket
          */

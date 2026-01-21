@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,15 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.data.validate;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetBase.MoneyWiseAssetBaseList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetDirection;
@@ -35,12 +41,6 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransCategory.Mone
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction.MoneyWiseTransactionList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
-import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 
 import java.util.Currency;
@@ -48,6 +48,7 @@ import java.util.Iterator;
 
 /**
  * Transaction builder.
+ *
  * @author Tony Washer
  */
 public class MoneyWiseValidateTransDefaults {
@@ -73,6 +74,7 @@ public class MoneyWiseValidateTransDefaults {
 
     /**
      * Constructor.
+     *
      * @param pValidator the validator
      */
     public MoneyWiseValidateTransDefaults(final MoneyWiseValidateTransaction pValidator) {
@@ -81,6 +83,7 @@ public class MoneyWiseValidateTransDefaults {
 
     /**
      * Obtain range.
+     *
      * @return the date range
      */
     public OceanusDateRange getRange() {
@@ -89,6 +92,7 @@ public class MoneyWiseValidateTransDefaults {
 
     /**
      * Set range.
+     *
      * @param pRange the date range
      */
     public void setRange(final OceanusDateRange pRange) {
@@ -97,6 +101,7 @@ public class MoneyWiseValidateTransDefaults {
 
     /**
      * autoCorrect transaction after change.
+     *
      * @param pTrans the transaction
      * @throws OceanusException on error
      */
@@ -157,6 +162,7 @@ public class MoneyWiseValidateTransDefaults {
 
     /**
      * Build empty transaction.
+     *
      * @return the new transaction
      */
     private MoneyWiseTransaction newTransaction() {
@@ -166,6 +172,7 @@ public class MoneyWiseValidateTransDefaults {
 
     /**
      * Build default transaction.
+     *
      * @param pKey the key to base the new transaction around (or null)
      * @return the new transaction (or null if no possible transaction)
      */
@@ -203,6 +210,7 @@ public class MoneyWiseValidateTransDefaults {
 
     /**
      * Build standard details.
+     *
      * @param pTrans the transaction to build
      * @throws OceanusException on error
      */
@@ -231,6 +239,7 @@ public class MoneyWiseValidateTransDefaults {
 
     /**
      * Build default transaction.
+     *
      * @return the valid transaction (or null)
      * @throws OceanusException on error
      */
@@ -246,6 +255,7 @@ public class MoneyWiseValidateTransDefaults {
 
     /**
      * Build default transaction for payee.
+     *
      * @param pPayee the payee to build for
      * @return the valid transaction (or null)
      * @throws OceanusException on error
@@ -293,6 +303,7 @@ public class MoneyWiseValidateTransDefaults {
 
     /**
      * Build default transaction for category.
+     *
      * @param pCategory the category to build for
      * @return the valid transaction (or null)
      * @throws OceanusException on error
@@ -335,6 +346,7 @@ public class MoneyWiseValidateTransDefaults {
 
     /**
      * Build default transaction for Deposit/Loan/Cash.
+     *
      * @param pAccount the Deposit/Loan/Cash to build for
      * @return the valid transaction (or null)
      * @throws OceanusException on error
@@ -377,6 +389,7 @@ public class MoneyWiseValidateTransDefaults {
 
     /**
      * Build default transaction for securityHolding.
+     *
      * @param pHolding the SecurityHolding to build for
      * @return the valid transaction (or null)
      * @throws OceanusException on error
@@ -416,6 +429,7 @@ public class MoneyWiseValidateTransDefaults {
 
     /**
      * Obtain default account for category.
+     *
      * @param pCategory the category
      * @return the default account
      */
@@ -445,6 +459,7 @@ public class MoneyWiseValidateTransDefaults {
 
     /**
      * Obtain default category.
+     *
      * @return the default category
      */
     private MoneyWiseTransCategory getDefaultCategory() {
@@ -463,6 +478,7 @@ public class MoneyWiseValidateTransDefaults {
 
     /**
      * Obtain default category.
+     *
      * @param pType the category type
      * @return the default category
      */
@@ -508,6 +524,7 @@ public class MoneyWiseValidateTransDefaults {
 
     /**
      * Obtain default category for account.
+     *
      * @param pAccount the account
      * @return the default category
      */
@@ -538,7 +555,8 @@ public class MoneyWiseValidateTransDefaults {
 
     /**
      * Obtain default partner for account and category.
-     * @param pAccount the account
+     *
+     * @param pAccount  the account
      * @param pCategory the category
      * @return the default partner
      */
@@ -574,8 +592,9 @@ public class MoneyWiseValidateTransDefaults {
 
     /**
      * Obtain the default account from an asset list.
-     * @param <X> the Asset type
-     * @param pList the list to select from
+     *
+     * @param <X>       the Asset type
+     * @param pList     the list to select from
      * @param pCategory the category
      * @return the default partner or null
      */
@@ -603,9 +622,10 @@ public class MoneyWiseValidateTransDefaults {
 
     /**
      * Obtain the default partner from an asset list.
-     * @param <X> the Asset type
-     * @param pList the list to select from
-     * @param pAccount the account
+     *
+     * @param <X>       the Asset type
+     * @param pList     the list to select from
+     * @param pAccount  the account
      * @param pCategory the category
      * @return the default partner or null
      */
@@ -634,6 +654,7 @@ public class MoneyWiseValidateTransDefaults {
 
     /**
      * Obtain the default security holding from the security map.
+     *
      * @param pCategory the category
      * @return the default partner
      */
@@ -673,7 +694,8 @@ public class MoneyWiseValidateTransDefaults {
 
     /**
      * Obtain the default partner security holding from the security map.
-     * @param pAccount the account
+     *
+     * @param pAccount  the account
      * @param pCategory the category
      * @return the default partner
      */

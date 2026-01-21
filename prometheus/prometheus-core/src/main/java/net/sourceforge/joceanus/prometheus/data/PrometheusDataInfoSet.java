@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Prometheus: Application Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,17 +13,17 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.prometheus.data;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.data.MetisDataEditState;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.data.MetisDataState;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoItem.PrometheusDataInfoList;
 import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataItem.PrometheusStaticList;
 
@@ -37,8 +37,9 @@ import java.util.function.Consumer;
 
 /**
  * Representation of an information set extension of a DataItem.
- * @author Tony Washer
+ *
  * @param <T> the data type
+ * @author Tony Washer
  */
 public abstract class PrometheusDataInfoSet<T extends PrometheusDataInfoItem>
         implements MetisFieldItem, Iterable<T> {
@@ -83,7 +84,8 @@ public abstract class PrometheusDataInfoSet<T extends PrometheusDataInfoItem>
 
     /**
      * Constructor.
-     * @param pOwner the Owner to which this Set belongs
+     *
+     * @param pOwner    the Owner to which this Set belongs
      * @param pTypeList the infoTypeList for the set
      * @param pInfoList the infoList for the set
      */
@@ -107,6 +109,7 @@ public abstract class PrometheusDataInfoSet<T extends PrometheusDataInfoItem>
 
     /**
      * Obtain owner.
+     *
      * @return the owner
      */
     public PrometheusDataItem getOwner() {
@@ -115,6 +118,7 @@ public abstract class PrometheusDataInfoSet<T extends PrometheusDataInfoItem>
 
     /**
      * Obtain values.
+     *
      * @return the values
      */
     private Map<PrometheusDataInfoClass, PrometheusDataInfoItem> getValues() {
@@ -123,12 +127,14 @@ public abstract class PrometheusDataInfoSet<T extends PrometheusDataInfoItem>
 
     /**
      * Obtain class iterator for the underlying infoClasses.
+     *
      * @return the Iterator
      */
     public abstract Iterator<PrometheusDataInfoClass> classIterator();
 
     /**
      * Clone the dataInfoSet.
+     *
      * @param pSource the InfoSet to clone
      */
     @SuppressWarnings("unchecked")
@@ -156,9 +162,10 @@ public abstract class PrometheusDataInfoSet<T extends PrometheusDataInfoItem>
 
     /**
      * Obtain the value for the infoClass.
-     * @param <X> the infoClass
+     *
+     * @param <X>        the infoClass
      * @param pInfoClass the Info Class
-     * @param pClass the Value Class
+     * @param pClass     the Value Class
      * @return the value
      */
     public <X> X getValue(final PrometheusDataInfoClass pInfoClass,
@@ -182,6 +189,7 @@ public abstract class PrometheusDataInfoSet<T extends PrometheusDataInfoItem>
 
     /**
      * Obtain the list iterator for the infoClass.
+     *
      * @param pInfoClass the Info Class
      * @return the iterator
      */
@@ -202,6 +210,7 @@ public abstract class PrometheusDataInfoSet<T extends PrometheusDataInfoItem>
 
     /**
      * Is there active values for the infoClass?
+     *
      * @param pInfoClass the info class
      * @return true/false
      */
@@ -220,6 +229,7 @@ public abstract class PrometheusDataInfoSet<T extends PrometheusDataInfoItem>
 
     /**
      * Obtain the field value for the infoClass.
+     *
      * @param pInfoClass the Info Class
      * @return the value
      */
@@ -243,6 +253,7 @@ public abstract class PrometheusDataInfoSet<T extends PrometheusDataInfoItem>
 
     /**
      * Obtain the field value for the infoClass.
+     *
      * @param pInfoClass the Info Class
      * @return the value
      */
@@ -259,8 +270,9 @@ public abstract class PrometheusDataInfoSet<T extends PrometheusDataInfoItem>
 
     /**
      * link the value for the infoClass.
+     *
      * @param pInfoClass the Info Class
-     * @param pLink the link value
+     * @param pLink      the link value
      * @throws OceanusException on error
      */
     public void linkValue(final PrometheusDataInfoClass pInfoClass,
@@ -311,8 +323,9 @@ public abstract class PrometheusDataInfoSet<T extends PrometheusDataInfoItem>
 
     /**
      * set the list value for the infoClass.
+     *
      * @param pInfoClass the Info Class
-     * @param pLinks the links value
+     * @param pLinks     the links value
      * @throws OceanusException on error
      */
     public void setListValue(final PrometheusDataInfoClass pInfoClass,
@@ -359,6 +372,7 @@ public abstract class PrometheusDataInfoSet<T extends PrometheusDataInfoItem>
 
     /**
      * Obtain the infoLinkSet for the infoClass.
+     *
      * @param pInfoClass the Info Class
      * @return the value
      */
@@ -376,6 +390,7 @@ public abstract class PrometheusDataInfoSet<T extends PrometheusDataInfoItem>
 
     /**
      * Determine whether a particular field has changed in this edit view.
+     *
      * @param pInfoClass the class to test
      * @return <code>true/false</code>
      */
@@ -404,8 +419,9 @@ public abstract class PrometheusDataInfoSet<T extends PrometheusDataInfoItem>
 
     /**
      * Set the value for the infoClass.
+     *
      * @param pInfoClass the Info Class
-     * @param pValue the Value
+     * @param pValue     the Value
      * @throws OceanusException on error
      */
     public void setValue(final PrometheusDataInfoClass pInfoClass,
@@ -467,6 +483,7 @@ public abstract class PrometheusDataInfoSet<T extends PrometheusDataInfoItem>
 
     /**
      * Register Info.
+     *
      * @param pInfo the info to register
      * @throws OceanusException on error
      */
@@ -506,6 +523,7 @@ public abstract class PrometheusDataInfoSet<T extends PrometheusDataInfoItem>
 
     /**
      * deRegister Info.
+     *
      * @param pInfo the info to deRegister
      */
     public void deRegisterInfo(final T pInfo) {
@@ -536,6 +554,7 @@ public abstract class PrometheusDataInfoSet<T extends PrometheusDataInfoItem>
 
     /**
      * deRegister Info.
+     *
      * @param pInfo the info to deRegister
      */
     public void rewindInfoLinkSet(final T pInfo) {
@@ -562,6 +581,7 @@ public abstract class PrometheusDataInfoSet<T extends PrometheusDataInfoItem>
 
     /**
      * wipe information regarding the infoClass.
+     *
      * @param pInfoClass the Info Class
      */
     public void wipeInfo(final PrometheusDataInfoClass pInfoClass) {
@@ -618,6 +638,7 @@ public abstract class PrometheusDataInfoSet<T extends PrometheusDataInfoItem>
 
     /**
      * Determine whether the set has changes.
+     *
      * @return <code>true/false</code>
      */
     @SuppressWarnings("unchecked")
@@ -702,6 +723,7 @@ public abstract class PrometheusDataInfoSet<T extends PrometheusDataInfoItem>
 
     /**
      * Check for history.
+     *
      * @return <code>true</code> if changes were made, <code>false</code> otherwise
      */
     @SuppressWarnings("unchecked")
@@ -734,6 +756,7 @@ public abstract class PrometheusDataInfoSet<T extends PrometheusDataInfoItem>
 
     /**
      * Set values as deleted/restored.
+     *
      * @param bDeleted <code>true/false</code>
      */
     public void setDeleted(final boolean bDeleted) {
@@ -792,6 +815,7 @@ public abstract class PrometheusDataInfoSet<T extends PrometheusDataInfoItem>
 
     /**
      * Get the EditState for this item.
+     *
      * @return the EditState
      */
     public MetisDataEditState getEditState() {
@@ -810,6 +834,7 @@ public abstract class PrometheusDataInfoSet<T extends PrometheusDataInfoItem>
 
     /**
      * Get the State for this infoSet.
+     *
      * @return the State
      */
     public MetisDataState getState() {
@@ -849,6 +874,7 @@ public abstract class PrometheusDataInfoSet<T extends PrometheusDataInfoItem>
 
     /**
      * Is the infoSet empty?
+     *
      * @return true/false.
      */
     public boolean isEmpty() {
@@ -948,6 +974,7 @@ public abstract class PrometheusDataInfoSet<T extends PrometheusDataInfoItem>
 
     /**
      * Obtain the field for the infoSet class.
+     *
      * @param pClass the class
      * @return the field
      */

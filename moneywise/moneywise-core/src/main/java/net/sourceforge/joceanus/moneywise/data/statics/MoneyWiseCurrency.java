@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,18 +13,18 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.data.statics;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.data.MetisDataResource;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionValues;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionedSet;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
@@ -35,6 +35,7 @@ import java.util.Currency;
 
 /**
  * AssetCurrency data type.
+ *
  * @author Tony Washer
  */
 public class MoneyWiseCurrency
@@ -63,7 +64,8 @@ public class MoneyWiseCurrency
 
     /**
      * Copy Constructor.
-     * @param pList The list to associate the Account Currency with
+     *
+     * @param pList     The list to associate the Account Currency with
      * @param pCurrency The Account Currency to copy
      */
     protected MoneyWiseCurrency(final MoneyWiseCurrencyList pList,
@@ -73,6 +75,7 @@ public class MoneyWiseCurrency
 
     /**
      * Basic constructor.
+     *
      * @param pList The list to associate the Account Currency with
      * @param pName Name of Account Currency
      * @throws OceanusException on error
@@ -87,7 +90,8 @@ public class MoneyWiseCurrency
 
     /**
      * Basic constructor.
-     * @param pList The list to associate the Account Currency with
+     *
+     * @param pList  The list to associate the Account Currency with
      * @param pClass Class of Account Currency
      * @throws OceanusException on error
      */
@@ -101,7 +105,8 @@ public class MoneyWiseCurrency
 
     /**
      * Values constructor.
-     * @param pList The list to associate the item with
+     *
+     * @param pList   The list to associate the item with
      * @param pValues the values
      * @throws OceanusException on error
      */
@@ -139,14 +144,16 @@ public class MoneyWiseCurrency
 
     /**
      * Is this the reporting currency.
+     *
      * @return true/false
      */
     public Boolean isReporting() {
         return getValues().getValue(MoneyWiseStaticResource.CURRENCY_REPORTING, Boolean.class);
-   }
+    }
 
     /**
      * Set reporting indication.
+     *
      * @param pValue the value
      */
     private void setValueReporting(final Boolean pValue) {
@@ -155,6 +162,7 @@ public class MoneyWiseCurrency
 
     /**
      * Return the Currency class of the AccountCurrency.
+     *
      * @return the class
      */
     public MoneyWiseCurrencyClass getCurrencyClass() {
@@ -173,6 +181,7 @@ public class MoneyWiseCurrency
 
     /**
      * Return the Currency of the AccountCurrency.
+     *
      * @return the currency
      */
     public Currency getCurrency() {
@@ -210,6 +219,7 @@ public class MoneyWiseCurrency
 
     /**
      * Set reporting indication.
+     *
      * @param pReporting the new indication
      */
     public void setReporting(final Boolean pReporting) {
@@ -253,6 +263,7 @@ public class MoneyWiseCurrency
 
         /**
          * Construct an empty CORE account currency list.
+         *
          * @param pData the DataSet for the list
          */
         public MoneyWiseCurrencyList(final PrometheusDataSet pData) {
@@ -261,6 +272,7 @@ public class MoneyWiseCurrency
 
         /**
          * Constructor for a cloned List.
+         *
          * @param pSource the source List
          */
         private MoneyWiseCurrencyList(final MoneyWiseCurrencyList pSource) {
@@ -318,6 +330,7 @@ public class MoneyWiseCurrency
 
         /**
          * Obtain the type of the item.
+         *
          * @return the type of the item
          */
         public String itemType() {
@@ -326,6 +339,7 @@ public class MoneyWiseCurrency
 
         /**
          * Add an AccountCurrency to the list.
+         *
          * @param pCurrency the Name of the account currency
          * @return the new currency
          * @throws OceanusException on error
@@ -396,6 +410,7 @@ public class MoneyWiseCurrency
 
         /**
          * find a currency in the list.
+         *
          * @param pCurrency the currency to find
          * @return The currency
          */
@@ -407,6 +422,7 @@ public class MoneyWiseCurrency
 
         /**
          * Find the reporting currency.
+         *
          * @return The reporting currency
          */
         public MoneyWiseCurrency findReporting() {
@@ -437,6 +453,7 @@ public class MoneyWiseCurrency
 
         /**
          * Set reporting currency.
+         *
          * @param pCurrency the new reporting currency.
          */
         public void setReportingCurrency(final MoneyWiseCurrency pCurrency) {
@@ -531,6 +548,7 @@ public class MoneyWiseCurrency
 
         /**
          * find reporting currency.
+         *
          * @return the reporting currency
          */
         public MoneyWiseCurrency getReporting() {
@@ -539,6 +557,7 @@ public class MoneyWiseCurrency
 
         /**
          * Check validity of report count.
+         *
          * @return true/false
          */
         public boolean validReportCount() {

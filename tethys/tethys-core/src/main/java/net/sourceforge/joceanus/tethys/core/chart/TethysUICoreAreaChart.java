@@ -1,35 +1,35 @@
-/*******************************************************************************
- * Tethys: Java Utilities
- * Copyright 2012-2026 Tony Washer
+/*
+ * Tethys: GUI Utilities
+ * Copyright 2012-2026. Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package net.sourceforge.joceanus.tethys.core.chart;
+
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimalFormatter;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
+import net.sourceforge.joceanus.tethys.api.chart.TethysUIAreaChart;
+import net.sourceforge.joceanus.tethys.core.base.TethysUICoreComponent;
+import net.sourceforge.joceanus.tethys.core.factory.TethysUICoreFactory;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimalFormatter;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
-import net.sourceforge.joceanus.tethys.api.chart.TethysUIAreaChart;
-import net.sourceforge.joceanus.tethys.core.base.TethysUICoreComponent;
-import net.sourceforge.joceanus.tethys.core.factory.TethysUICoreFactory;
 
 /**
  * Area Chart.
@@ -69,6 +69,7 @@ public abstract class TethysUICoreAreaChart
 
     /**
      * Constructor.
+     *
      * @param pFactory the Gui Factory
      */
     protected TethysUICoreAreaChart(final TethysUICoreFactory<?> pFactory) {
@@ -93,6 +94,7 @@ public abstract class TethysUICoreAreaChart
 
     /**
      * Obtain the formatter.
+     *
      * @return the formatter
      */
     protected OceanusDecimalFormatter getFormatter() {
@@ -132,7 +134,8 @@ public abstract class TethysUICoreAreaChart
 
     /**
      * Add chart point.
-     * @param pName the name of the series
+     *
+     * @param pName  the name of the series
      * @param pPoint the point to add
      */
     protected abstract void createPoint(String pName,
@@ -140,17 +143,19 @@ public abstract class TethysUICoreAreaChart
 
     /**
      * Obtain tooltip for series.
-     * @param pName the series name
+     *
+     * @param pName  the series name
      * @param pValue the value
      * @return the tooltip
      */
     protected String getToolTip(final String pName,
                                 final OceanusMoney pValue) {
-        return pName  + " = " + theFormatter.formatMoney(pValue);
+        return pName + " = " + theFormatter.formatMoney(pValue);
     }
 
     /**
      * handle selection.
+     *
      * @param pName the series name
      */
     protected void selectSeries(final String pName) {
@@ -195,6 +200,7 @@ public abstract class TethysUICoreAreaChart
 
         /**
          * Constructor.
+         *
          * @param pTitle the title
          */
         TethysUICoreAreaChartData(final String pTitle) {
@@ -203,7 +209,8 @@ public abstract class TethysUICoreAreaChart
 
         /**
          * Constructor.
-         * @param pTitle the title
+         *
+         * @param pTitle      the title
          * @param pXAxisLabel the XAxis label
          * @param pYAxisLabel the YAxis label
          */
@@ -282,7 +289,8 @@ public abstract class TethysUICoreAreaChart
 
         /**
          * Constructor.
-         * @param pName the name
+         *
+         * @param pName   the name
          * @param pSource the source
          */
         TethysUICoreAreaChartSeries(final String pName,
@@ -336,9 +344,10 @@ public abstract class TethysUICoreAreaChart
 
         /**
          * Constructor.
+         *
          * @param pSeries the series
-         * @param pDate the date
-         * @param pValue the value
+         * @param pDate   the date
+         * @param pValue  the value
          */
         TethysUICoreAreaChartDataPoint(final TethysUIAreaChartSeries pSeries,
                                        final OceanusDate pDate,

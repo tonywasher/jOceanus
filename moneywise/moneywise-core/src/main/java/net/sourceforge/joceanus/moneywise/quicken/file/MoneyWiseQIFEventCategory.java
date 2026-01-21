@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,14 +13,14 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.quicken.file;
 
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
 import net.sourceforge.joceanus.moneywise.quicken.definitions.MoneyWiseQCategoryLineType;
 import net.sourceforge.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFStringLine;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 
 import java.util.List;
 
@@ -52,7 +52,8 @@ public class MoneyWiseQIFEventCategory
 
     /**
      * Constructor.
-     * @param pFile the QIF File
+     *
+     * @param pFile     the QIF File
      * @param pCategory the Event Category
      */
     public MoneyWiseQIFEventCategory(final MoneyWiseQIFFile pFile,
@@ -82,7 +83,8 @@ public class MoneyWiseQIFEventCategory
 
     /**
      * Constructor.
-     * @param pFile the QIF File
+     *
+     * @param pFile  the QIF File
      * @param pLines the data lines
      */
     protected MoneyWiseQIFEventCategory(final MoneyWiseQIFFile pFile,
@@ -141,6 +143,7 @@ public class MoneyWiseQIFEventCategory
 
     /**
      * Obtain the Name.
+     *
      * @return the Name
      */
     public String getName() {
@@ -149,6 +152,7 @@ public class MoneyWiseQIFEventCategory
 
     /**
      * Obtain the Description.
+     *
      * @return the description
      */
     public String getDesc() {
@@ -157,6 +161,7 @@ public class MoneyWiseQIFEventCategory
 
     /**
      * Is the Category an income category.
+     *
      * @return true/false
      */
     public boolean isIncome() {
@@ -165,6 +170,7 @@ public class MoneyWiseQIFEventCategory
 
     /**
      * Is the Category an expense category.
+     *
      * @return true/false
      */
     public boolean isExpense() {
@@ -183,6 +189,7 @@ public class MoneyWiseQIFEventCategory
             extends MoneyWiseQIFStringLine<MoneyWiseQCategoryLineType> {
         /**
          * Constructor.
+         *
          * @param pName the Name
          */
         protected MoneyWiseQIFCategoryNameLine(final String pName) {
@@ -197,6 +204,7 @@ public class MoneyWiseQIFEventCategory
 
         /**
          * Obtain name.
+         *
          * @return the name
          */
         public String getName() {
@@ -211,6 +219,7 @@ public class MoneyWiseQIFEventCategory
             extends MoneyWiseQIFStringLine<MoneyWiseQCategoryLineType> {
         /**
          * Constructor.
+         *
          * @param pDesc the Description
          */
         protected MoneyWiseQIFCategoryDescLine(final String pDesc) {
@@ -225,6 +234,7 @@ public class MoneyWiseQIFEventCategory
 
         /**
          * Obtain description.
+         *
          * @return the description
          */
         public String getDescription() {

@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,14 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets;
 
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataList;
@@ -34,11 +39,6 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee.MoneyWisePayeeList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePayeeClass;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 
 import java.util.Currency;
@@ -98,8 +98,9 @@ public final class MoneyWiseXAnalysisPayeeBucket
 
     /**
      * Constructor.
+     *
      * @param pAnalysis the analysis
-     * @param pPayee the payee
+     * @param pPayee    the payee
      */
     private MoneyWiseXAnalysisPayeeBucket(final MoneyWiseXAnalysis pAnalysis,
                                           final MoneyWisePayee pPayee) {
@@ -122,9 +123,10 @@ public final class MoneyWiseXAnalysisPayeeBucket
 
     /**
      * Constructor.
+     *
      * @param pAnalysis the analysis
-     * @param pBase the underlying bucket
-     * @param pDate the date for the bucket
+     * @param pBase     the underlying bucket
+     * @param pDate     the date for the bucket
      */
     private MoneyWiseXAnalysisPayeeBucket(final MoneyWiseXAnalysis pAnalysis,
                                           final MoneyWiseXAnalysisPayeeBucket pBase,
@@ -143,9 +145,10 @@ public final class MoneyWiseXAnalysisPayeeBucket
 
     /**
      * Constructor.
+     *
      * @param pAnalysis the analysis
-     * @param pBase the underlying bucket
-     * @param pRange the range for the bucket
+     * @param pBase     the underlying bucket
+     * @param pRange    the range for the bucket
      */
     private MoneyWiseXAnalysisPayeeBucket(final MoneyWiseXAnalysis pAnalysis,
                                           final MoneyWiseXAnalysisPayeeBucket pBase,
@@ -179,6 +182,7 @@ public final class MoneyWiseXAnalysisPayeeBucket
 
     /**
      * Obtain the name.
+     *
      * @return the name
      */
     public String getName() {
@@ -189,6 +193,7 @@ public final class MoneyWiseXAnalysisPayeeBucket
 
     /**
      * Obtain the payee.
+     *
      * @return the payee account
      */
     public MoneyWisePayee getPayee() {
@@ -207,6 +212,7 @@ public final class MoneyWiseXAnalysisPayeeBucket
 
     /**
      * Is this bucket idle?
+     *
      * @return true/false
      */
     public boolean isIdle() {
@@ -215,6 +221,7 @@ public final class MoneyWiseXAnalysisPayeeBucket
 
     /**
      * Obtain the analysis.
+     *
      * @return the analysis
      */
     MoneyWiseXAnalysis getAnalysis() {
@@ -223,6 +230,7 @@ public final class MoneyWiseXAnalysisPayeeBucket
 
     /**
      * Obtain date range.
+     *
      * @return the range
      */
     public OceanusDateRange getDateRange() {
@@ -231,6 +239,7 @@ public final class MoneyWiseXAnalysisPayeeBucket
 
     /**
      * Obtain the value map.
+     *
      * @return the value map
      */
     public MoneyWiseXAnalysisPayeeValues getValues() {
@@ -239,6 +248,7 @@ public final class MoneyWiseXAnalysisPayeeBucket
 
     /**
      * Obtain the base value map.
+     *
      * @return the base value map
      */
     public MoneyWiseXAnalysisPayeeValues getBaseValues() {
@@ -247,6 +257,7 @@ public final class MoneyWiseXAnalysisPayeeBucket
 
     /**
      * Obtain values for event.
+     *
      * @param pEvent the event
      * @return the values (or null)
      */
@@ -257,6 +268,7 @@ public final class MoneyWiseXAnalysisPayeeBucket
 
     /**
      * Obtain previous values for event.
+     *
      * @param pEvent the event
      * @return the values (or null)
      */
@@ -266,8 +278,9 @@ public final class MoneyWiseXAnalysisPayeeBucket
 
     /**
      * Obtain delta for event.
+     *
      * @param pEvent the event
-     * @param pAttr the attribute
+     * @param pAttr  the attribute
      * @return the delta (or null)
      */
     public OceanusDecimal getDeltaForEvent(final MoneyWiseXAnalysisEvent pEvent,
@@ -278,6 +291,7 @@ public final class MoneyWiseXAnalysisPayeeBucket
 
     /**
      * Obtain the history map.
+     *
      * @return the history map
      */
     private MoneyWiseXAnalysisHistory<MoneyWiseXAnalysisPayeeValues, MoneyWiseXAnalysisPayeeAttr> getHistoryMap() {
@@ -286,7 +300,8 @@ public final class MoneyWiseXAnalysisPayeeBucket
 
     /**
      * Set Attribute.
-     * @param pAttr the attribute
+     *
+     * @param pAttr  the attribute
      * @param pValue the value of the attribute
      */
     void setValue(final MoneyWiseXAnalysisPayeeAttr pAttr,
@@ -297,6 +312,7 @@ public final class MoneyWiseXAnalysisPayeeBucket
 
     /**
      * Get an attribute value.
+     *
      * @param pAttr the attribute
      * @return the value to set
      */
@@ -312,6 +328,7 @@ public final class MoneyWiseXAnalysisPayeeBucket
 
     /**
      * Obtain an attribute value.
+     *
      * @param pAttr the attribute
      * @return the value of the attribute or null
      */
@@ -322,7 +339,8 @@ public final class MoneyWiseXAnalysisPayeeBucket
 
     /**
      * Adjust counter.
-     * @param pAttr the attribute
+     *
+     * @param pAttr  the attribute
      * @param pDelta the delta
      */
     void adjustCounter(final MoneyWiseXAnalysisPayeeAttr pAttr,
@@ -341,6 +359,7 @@ public final class MoneyWiseXAnalysisPayeeBucket
 
     /**
      * Add income value.
+     *
      * @param pValue the value to add
      */
     public void addIncome(final OceanusMoney pValue) {
@@ -352,6 +371,7 @@ public final class MoneyWiseXAnalysisPayeeBucket
 
     /**
      * Subtract income value.
+     *
      * @param pValue the value to subtract
      */
     public void subtractIncome(final OceanusMoney pValue) {
@@ -365,6 +385,7 @@ public final class MoneyWiseXAnalysisPayeeBucket
 
     /**
      * Add expense value.
+     *
      * @param pValue the value to add
      */
     public void addExpense(final OceanusMoney pValue) {
@@ -376,6 +397,7 @@ public final class MoneyWiseXAnalysisPayeeBucket
 
     /**
      * Subtract expense value.
+     *
      * @param pValue the value to subtract
      */
     public void subtractExpense(final OceanusMoney pValue) {
@@ -389,6 +411,7 @@ public final class MoneyWiseXAnalysisPayeeBucket
 
     /**
      * Add bucket to totals.
+     *
      * @param pSource the bucket to add
      */
     void addValues(final MoneyWiseXAnalysisPayeeBucket pSource) {
@@ -463,6 +486,7 @@ public final class MoneyWiseXAnalysisPayeeBucket
 
         /**
          * Construct a top-level List.
+         *
          * @param pAnalysis the analysis
          */
         MoneyWiseXAnalysisPayeeBucketList(final MoneyWiseXAnalysis pAnalysis) {
@@ -476,9 +500,10 @@ public final class MoneyWiseXAnalysisPayeeBucket
 
         /**
          * Construct a dated List.
+         *
          * @param pAnalysis the analysis
-         * @param pBase the base list
-         * @param pDate the Date
+         * @param pBase     the base list
+         * @param pDate     the Date
          */
         MoneyWiseXAnalysisPayeeBucketList(final MoneyWiseXAnalysis pAnalysis,
                                           final MoneyWiseXAnalysisPayeeBucketList pBase,
@@ -504,9 +529,10 @@ public final class MoneyWiseXAnalysisPayeeBucket
 
         /**
          * Construct a ranged List.
+         *
          * @param pAnalysis the analysis
-         * @param pBase the base list
-         * @param pRange the Date Range
+         * @param pBase     the base list
+         * @param pRange    the Date Range
          */
         MoneyWiseXAnalysisPayeeBucketList(final MoneyWiseXAnalysis pAnalysis,
                                           final MoneyWiseXAnalysisPayeeBucketList pBase,
@@ -548,6 +574,7 @@ public final class MoneyWiseXAnalysisPayeeBucket
 
         /**
          * Obtain item by id.
+         *
          * @param pId the id to lookup
          * @return the item (or null if not present)
          */
@@ -558,6 +585,7 @@ public final class MoneyWiseXAnalysisPayeeBucket
 
         /**
          * Obtain the analysis.
+         *
          * @return the analysis
          */
         MoneyWiseXAnalysis getAnalysis() {
@@ -566,6 +594,7 @@ public final class MoneyWiseXAnalysisPayeeBucket
 
         /**
          * Obtain the Totals.
+         *
          * @return the totals
          */
         public MoneyWiseXAnalysisPayeeBucket getTotals() {
@@ -574,6 +603,7 @@ public final class MoneyWiseXAnalysisPayeeBucket
 
         /**
          * Allocate the Totals PayeeBucket.
+         *
          * @return the bucket
          */
         private MoneyWiseXAnalysisPayeeBucket allocateTotalsBucket() {
@@ -583,6 +613,7 @@ public final class MoneyWiseXAnalysisPayeeBucket
 
         /**
          * Obtain the PayeeBucket for a given payee.
+         *
          * @param pPayee the payee
          * @return the bucket
          */
@@ -613,6 +644,7 @@ public final class MoneyWiseXAnalysisPayeeBucket
 
         /**
          * Obtain the PayeeBucket for a given payee class.
+         *
          * @param pClass the account category class
          * @return the bucket
          */
@@ -626,6 +658,7 @@ public final class MoneyWiseXAnalysisPayeeBucket
 
         /**
          * Obtain the matching PayeeBucket.
+         *
          * @param pPayee the payee
          * @return the matching bucket
          */
@@ -639,6 +672,7 @@ public final class MoneyWiseXAnalysisPayeeBucket
 
         /**
          * Obtain the default PayeeBucket.
+         *
          * @return the default bucket
          */
         public MoneyWiseXAnalysisPayeeBucket getDefaultPayee() {

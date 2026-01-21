@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,29 +13,25 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.lethe.ui.controls;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDepositCategory;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseDepositCategoryClass;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisDepositBucket;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisDepositBucket.MoneyWiseAnalysisDepositBucketList;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisDepositCategoryBucket;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisDepositCategoryBucket.MoneyWiseAnalysisDepositCategoryBucketList;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDepositCategory;
-import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseDepositCategoryClass;
 import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter;
 import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisDepositFilter;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIConstant;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
@@ -48,6 +44,10 @@ import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollItem;
 import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollMenu;
 import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollSubMenu;
 import net.sourceforge.joceanus.tethys.api.pane.TethysUIBoxPaneManager;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Deposit Analysis Selection.
@@ -116,6 +116,7 @@ public class MoneyWiseDepositAnalysisSelect
 
     /**
      * Constructor.
+     *
      * @param pFactory the GUI factory
      */
     protected MoneyWiseDepositAnalysisSelect(final TethysUIFactory<?> pFactory) {
@@ -212,6 +213,7 @@ public class MoneyWiseDepositAnalysisSelect
 
     /**
      * Set analysis.
+     *
      * @param pAnalysis the analysis.
      */
     public void setAnalysis(final MoneyWiseAnalysis pAnalysis) {
@@ -255,6 +257,7 @@ public class MoneyWiseDepositAnalysisSelect
 
     /**
      * Obtain the default Deposit for the category.
+     *
      * @param pCategory the category
      * @return the bucket
      */
@@ -402,6 +405,7 @@ public class MoneyWiseDepositAnalysisSelect
 
         /**
          * Constructor.
+         *
          * @param pState state to copy from
          */
         private MoneyWiseDepositState(final MoneyWiseDepositState pState) {
@@ -414,6 +418,7 @@ public class MoneyWiseDepositAnalysisSelect
 
         /**
          * Obtain the Deposit Bucket.
+         *
          * @return the Deposit
          */
         private MoneyWiseAnalysisDepositBucket getDeposit() {
@@ -422,6 +427,7 @@ public class MoneyWiseDepositAnalysisSelect
 
         /**
          * Obtain the Category.
+         *
          * @return the category
          */
         private MoneyWiseDepositCategory getCategory() {
@@ -430,6 +436,7 @@ public class MoneyWiseDepositAnalysisSelect
 
         /**
          * Obtain the dateRange.
+         *
          * @return the dateRange
          */
         private OceanusDateRange getDateRange() {
@@ -438,6 +445,7 @@ public class MoneyWiseDepositAnalysisSelect
 
         /**
          * Obtain the Filter.
+         *
          * @return the filter
          */
         private MoneyWiseAnalysisDepositFilter getFilter() {
@@ -446,6 +454,7 @@ public class MoneyWiseDepositAnalysisSelect
 
         /**
          * Set new Deposit.
+         *
          * @param pDeposit the Deposit
          * @return true/false did a change occur
          */
@@ -461,6 +470,7 @@ public class MoneyWiseDepositAnalysisSelect
 
         /**
          * Set the Deposit.
+         *
          * @param pDeposit the Deposit
          */
         private void setTheDeposit(final MoneyWiseAnalysisDepositBucket pDeposit) {
@@ -473,8 +483,9 @@ public class MoneyWiseDepositAnalysisSelect
 
         /**
          * Set the Deposit.
+         *
          * @param pCategory the category
-         * @param pDeposit the Deposit
+         * @param pDeposit  the Deposit
          */
         private void setTheDeposit(final MoneyWiseDepositCategory pCategory,
                                    final MoneyWiseAnalysisDepositBucket pDeposit) {
@@ -493,6 +504,7 @@ public class MoneyWiseDepositAnalysisSelect
 
         /**
          * Set new Category.
+         *
          * @param pCategory the Category
          * @return true/false did a change occur
          */
@@ -507,6 +519,7 @@ public class MoneyWiseDepositAnalysisSelect
 
         /**
          * Set the dateRange.
+         *
          * @param pRange the dateRange
          */
         private void setDateRange(final OceanusDateRange pRange) {

@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Prometheus: Application Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,16 +13,16 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.prometheus.database;
 
-import net.sourceforge.joceanus.prometheus.exc.PrometheusIOException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
+import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet.PrometheusCryptographyDataType;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
-import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
-import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
+import net.sourceforge.joceanus.prometheus.exc.PrometheusIOException;
 import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 
 import java.sql.Connection;
@@ -96,8 +96,9 @@ public abstract class PrometheusDataStore {
 
     /**
      * Construct a new Database class.
+     *
      * @param pDatabase the database
-     * @param pConfig the config
+     * @param pConfig   the config
      * @throws OceanusException on error
      */
     protected PrometheusDataStore(final String pDatabase,
@@ -156,6 +157,7 @@ public abstract class PrometheusDataStore {
 
     /**
      * Construct a new Database class.
+     *
      * @param pConfig the config
      * @throws OceanusException on error
      */
@@ -208,6 +210,7 @@ public abstract class PrometheusDataStore {
 
     /**
      * Obtain the database name.
+     *
      * @return the name
      */
     public String getName() {
@@ -216,6 +219,7 @@ public abstract class PrometheusDataStore {
 
     /**
      * Execute the statement outside a transaction.
+     *
      * @param pStatement the statement
      * @throws OceanusException on error
      */
@@ -233,6 +237,7 @@ public abstract class PrometheusDataStore {
 
     /**
      * Create new sheet of required type.
+     *
      * @param pListType the list type
      * @return the new sheet
      */
@@ -254,6 +259,7 @@ public abstract class PrometheusDataStore {
 
     /**
      * Obtain the Driver.
+     *
      * @return the driver
      */
     protected PrometheusJDBCDriver getDriver() {
@@ -262,6 +268,7 @@ public abstract class PrometheusDataStore {
 
     /**
      * Access the connection.
+     *
      * @return the connection
      */
     protected Connection getConn() {
@@ -270,6 +277,7 @@ public abstract class PrometheusDataStore {
 
     /**
      * Add a table.
+     *
      * @param pTable the Table to add
      */
     protected void addTable(final PrometheusTableDataItem<?> pTable) {
@@ -312,8 +320,9 @@ public abstract class PrometheusDataStore {
 
     /**
      * Load data from the database.
+     *
      * @param pReport the report
-     * @param pData the new DataSet
+     * @param pData   the new DataSet
      * @throws OceanusException on error
      */
     public void loadDatabase(final TethysUIThreadStatusReport pReport,
@@ -341,8 +350,9 @@ public abstract class PrometheusDataStore {
 
     /**
      * Update data into database.
+     *
      * @param pReport the report
-     * @param pData the data
+     * @param pData   the data
      * @throws OceanusException on error
      */
     public void updateDatabase(final TethysUIThreadStatusReport pReport,
@@ -413,7 +423,8 @@ public abstract class PrometheusDataStore {
 
     /**
      * Create database.
-     * @param pReport the report
+     *
+     * @param pReport   the report
      * @param pDatabase the database to create
      * @throws OceanusException on error
      */
@@ -437,6 +448,7 @@ public abstract class PrometheusDataStore {
 
     /**
      * Create tables.
+     *
      * @param pReport the report
      * @throws OceanusException on error
      */
@@ -472,6 +484,7 @@ public abstract class PrometheusDataStore {
 
     /**
      * Drop tables.
+     *
      * @param pReport the report
      * @throws OceanusException on error
      */
@@ -501,6 +514,7 @@ public abstract class PrometheusDataStore {
 
     /**
      * Purge tables.
+     *
      * @param pReport the report
      * @throws OceanusException on error
      */

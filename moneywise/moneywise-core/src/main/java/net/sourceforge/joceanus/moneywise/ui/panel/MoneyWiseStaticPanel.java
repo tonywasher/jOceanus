@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,15 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.ui.panel;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEvent;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
+import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.metis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoType.MoneyWiseAccountInfoTypeList;
@@ -32,12 +38,6 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryTyp
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoType.MoneyWiseTransInfoTypeList;
 import net.sourceforge.joceanus.moneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.event.OceanusEvent;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
-import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataItem.PrometheusStaticList;
 import net.sourceforge.joceanus.prometheus.ui.PrometheusActionButtons;
@@ -248,6 +248,7 @@ public class MoneyWiseStaticPanel
 
     /**
      * Has this set of tables got updates?
+     *
      * @return true/false
      */
     public boolean hasUpdates() {
@@ -257,6 +258,7 @@ public class MoneyWiseStaticPanel
 
     /**
      * Has this set of panels got the session focus?
+     *
      * @return true/false
      */
     public boolean hasSession() {
@@ -266,6 +268,7 @@ public class MoneyWiseStaticPanel
 
     /**
      * Has this set of tables got errors?
+     *
      * @return true/false
      */
     public boolean hasErrors() {
@@ -275,6 +278,7 @@ public class MoneyWiseStaticPanel
 
     /**
      * Refresh views/controls after a load/update of underlying data.
+     *
      * @throws OceanusException on error
      */
     public void refreshData() throws OceanusException {
@@ -334,10 +338,11 @@ public class MoneyWiseStaticPanel
 
     /**
      * Add static panel.
-     * @param pItemType the type of the list
+     *
+     * @param pItemType  the type of the list
      * @param pListClass the class of the list
-     * @param <L> the list type
-     * @param <T> the data type
+     * @param <L>        the list type
+     * @param <T>        the data type
      */
     private <L extends PrometheusStaticList<T>, T extends PrometheusStaticDataItem> void addStatic(final MoneyWiseStaticDataType pItemType,
                                                                                                    final Class<L> pListClass) {
@@ -363,6 +368,7 @@ public class MoneyWiseStaticPanel
 
     /**
      * Select static data.
+     *
      * @param pStatic the static data to select
      */
     public void selectStatic(final PrometheusStaticDataItem pStatic) {
@@ -382,6 +388,7 @@ public class MoneyWiseStaticPanel
 
     /**
      * Set Selection.
+     *
      * @param pName the name that is selected
      */
     private void setSelection(final String pName) {
@@ -450,6 +457,7 @@ public class MoneyWiseStaticPanel
 
     /**
      * Handle action buttons.
+     *
      * @param pEvent the event
      */
     private void handleActionButtons(final OceanusEvent<PrometheusUIEvent> pEvent) {
@@ -477,6 +485,7 @@ public class MoneyWiseStaticPanel
 
     /**
      * Show disabled.
+     *
      * @param pShow true/false
      */
     public void showDisabled(final boolean pShow) {
@@ -498,6 +507,7 @@ public class MoneyWiseStaticPanel
 
     /**
      * is the current table editing?
+     *
      * @return true/false
      */
     private boolean isEditing() {

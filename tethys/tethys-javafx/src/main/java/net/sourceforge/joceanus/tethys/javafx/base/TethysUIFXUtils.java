@@ -1,21 +1,22 @@
-/*******************************************************************************
+/*
  * Tethys: GUI Utilities
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package net.sourceforge.joceanus.tethys.javafx.base;
 
+import io.github.tonywasher.joceanus.oceanus.convert.OceanusDataConverter;
 import javafx.geometry.Bounds;
 import javafx.geometry.Dimension2D;
 import javafx.geometry.Insets;
@@ -35,7 +36,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Window;
-import net.sourceforge.joceanus.oceanus.convert.OceanusDataConverter;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIIconId;
 
 import java.util.List;
@@ -82,6 +82,7 @@ public final class TethysUIFXUtils {
 
     /**
      * format a colour as a hexadecimal string.
+     *
      * @param pValue the long value
      * @return the string
      */
@@ -97,8 +98,9 @@ public final class TethysUIFXUtils {
 
     /**
      * format a colour part.
+     *
      * @param pBuilder the string builder
-     * @param pValue the value
+     * @param pValue   the value
      */
     private static void appendColorPart(final StringBuilder pBuilder,
                                         final double pValue) {
@@ -125,9 +127,10 @@ public final class TethysUIFXUtils {
 
     /**
      * Create titled/padded border around pane.
-     * @param pTitle the title
+     *
+     * @param pTitle   the title
      * @param pPadding the padding
-     * @param pNode the node
+     * @param pNode    the node
      * @return the titled pane
      */
     static Pane getBorderedPane(final String pTitle,
@@ -183,9 +186,10 @@ public final class TethysUIFXUtils {
 
     /**
      * Obtain display point for dialog.
-     * @param pAnchor the anchor node
+     *
+     * @param pAnchor   the anchor node
      * @param pLocation the preferred location relative to node
-     * @param pSize the size of the dialog
+     * @param pSize     the size of the dialog
      * @return the (adjusted) rectangle
      */
     public static Point2D obtainDisplayPoint(final Node pAnchor,
@@ -208,9 +212,10 @@ public final class TethysUIFXUtils {
 
     /**
      * Obtain display point for dialog.
+     *
      * @param pAnchor the anchor node
-     * @param pSide the preferred side to display on
-     * @param pSize the size of the dialog
+     * @param pSide   the preferred side to display on
+     * @param pSize   the size of the dialog
      * @return the (adjusted) rectangle
      */
     public static Point2D obtainDisplayPoint(final Node pAnchor,
@@ -233,6 +238,7 @@ public final class TethysUIFXUtils {
 
     /**
      * Obtain the screen that best contains the anchor node.
+     *
      * @param pAnchor the anchor node.
      * @return the relevant screen
      */
@@ -274,6 +280,7 @@ public final class TethysUIFXUtils {
 
     /**
      * Obtain the fully-qualified node origin.
+     *
      * @param pNode the node.
      * @return the origin
      */
@@ -304,7 +311,8 @@ public final class TethysUIFXUtils {
 
     /**
      * Obtain the fully-qualified node location.
-     * @param pAnchor the node.
+     *
+     * @param pAnchor   the node.
      * @param pLocation the location relative to the n
      * @return the origin
      */
@@ -320,6 +328,7 @@ public final class TethysUIFXUtils {
 
     /**
      * Calculate the intersection of bounds and screen.
+     *
      * @param pBounds the bounds.
      * @param pScreen the screen
      * @return the intersection
@@ -343,6 +352,7 @@ public final class TethysUIFXUtils {
 
     /**
      * Adjust display location to fit on screen.
+     *
      * @param pSource the proposed location
      * @param pScreen the screen
      * @return the (adjusted) location
@@ -386,9 +396,10 @@ public final class TethysUIFXUtils {
 
     /**
      * Adjust display location to fit at side of node.
+     *
      * @param pSource the proposed location
      * @param pAnchor the anchor node
-     * @param pSide the preferred side to display on
+     * @param pSide   the preferred side to display on
      * @param pScreen the screen
      * @return the (adjusted) location
      */
@@ -445,6 +456,7 @@ public final class TethysUIFXUtils {
 
     /**
      * Obtain the raw icon.
+     *
      * @param pId the icon Id
      * @return the icon
      */
@@ -456,6 +468,7 @@ public final class TethysUIFXUtils {
 
     /**
      * Obtain raw icons.
+     *
      * @param pIds the icon Id
      * @return the icon
      */
@@ -469,7 +482,8 @@ public final class TethysUIFXUtils {
 
     /**
      * Obtain the reSized icon.
-     * @param pId the icon Id
+     *
+     * @param pId   the icon Id
      * @param pSize the new size for the icon
      * @return the icon
      */

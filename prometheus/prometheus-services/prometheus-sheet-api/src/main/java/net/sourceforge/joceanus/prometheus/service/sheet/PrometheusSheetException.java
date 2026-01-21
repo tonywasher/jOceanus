@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Prometheus: Application Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,10 +13,10 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.prometheus.service.sheet;
 
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 
 /**
  * Sheet Exception.
@@ -30,6 +30,7 @@ public class PrometheusSheetException
 
     /**
      * Create a new Exception object based on an object, a string and an underlying exception.
+     *
      * @param o the object
      * @param s the description of the exception
      * @param e the underlying exception
@@ -42,6 +43,7 @@ public class PrometheusSheetException
 
     /**
      * Create a new Exception object based on an object and a string.
+     *
      * @param o the data object
      * @param s the description of the exception
      */
@@ -52,6 +54,7 @@ public class PrometheusSheetException
 
     /**
      * Create a new Exception object based on a string and an underlying exception.
+     *
      * @param s the description of the exception
      * @param e the underlying exception
      */
@@ -62,6 +65,7 @@ public class PrometheusSheetException
 
     /**
      * Create a new Exception object based on a string.
+     *
      * @param s the description of the exception
      */
     public PrometheusSheetException(final String s) {

@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Prometheus: Application Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,18 +13,18 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.prometheus.preference;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.metis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerManager;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * Prometheus Preference Manager.
  */
 public class PrometheusPreferenceManager
-    extends MetisPreferenceManager {
+        extends MetisPreferenceManager {
     /**
      * The Security Manager.
      */
@@ -32,6 +32,7 @@ public class PrometheusPreferenceManager
 
     /**
      * Constructor.
+     *
      * @param pViewer the viewer manager
      * @throws OceanusException on error
      */
@@ -41,6 +42,7 @@ public class PrometheusPreferenceManager
 
     /**
      * Obtain the security manager.
+     *
      * @return the security manager
      * @throws OceanusException on error
      */

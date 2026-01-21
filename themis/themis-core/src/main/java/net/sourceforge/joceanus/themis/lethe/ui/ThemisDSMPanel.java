@@ -1,26 +1,22 @@
-/*******************************************************************************
+/*
  * Themis: Java Project Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package net.sourceforge.joceanus.themis.lethe.ui;
 
-import java.io.File;
-import java.util.prefs.BackingStoreException;
-import java.util.prefs.Preferences;
-
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.api.button.TethysUIButton;
 import net.sourceforge.joceanus.tethys.api.button.TethysUIButtonFactory;
@@ -47,11 +43,15 @@ import net.sourceforge.joceanus.themis.lethe.dsm.ThemisDSMReport;
 import net.sourceforge.joceanus.themis.lethe.statistics.ThemisStatsParser;
 import net.sourceforge.joceanus.themis.lethe.statistics.ThemisStatsProject;
 
+import java.io.File;
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
+
 /**
  * DSMPanel.
  */
 public class ThemisDSMPanel
-    implements TethysUIMainPanel {
+        implements TethysUIMainPanel {
     /**
      * The GUI Factory.
      */
@@ -139,6 +139,7 @@ public class ThemisDSMPanel
 
     /**
      * Constructor.
+     *
      * @param pFactory the GuiFactory
      * @throws OceanusException on error
      */
@@ -282,13 +283,14 @@ public class ThemisDSMPanel
 
     /**
      * Handle the new project.
+     *
      * @param pProjectDir the new project directory
      */
     private void handleNewProject(final File pProjectDir) {
         /* Parse the project*/
         theError = null;
-        final ThemisDSMProject myProject  = new ThemisDSMProject(pProjectDir);
-        if (myProject.getError()  != null) {
+        final ThemisDSMProject myProject = new ThemisDSMProject(pProjectDir);
+        if (myProject.getError() != null) {
             theError = myProject.getError();
 
         } else if (myProject.hasModules()) {
@@ -315,6 +317,7 @@ public class ThemisDSMPanel
 
     /**
      * Handle the new project.
+     *
      * @param pProjectDir the new project directory
      */
     private void handleNewStats(final File pProjectDir) {
@@ -340,6 +343,7 @@ public class ThemisDSMPanel
 
     /**
      * Process new module.
+     *
      * @param pModule the new Module
      */
     private void processNewModule(final ThemisDSMModule pModule) {
@@ -379,6 +383,7 @@ public class ThemisDSMPanel
 
     /**
      * Process new module.
+     *
      * @param pPackage the new fromPackage
      */
     private void processNewFrom(final ThemisDSMPackage pPackage) {
@@ -417,6 +422,7 @@ public class ThemisDSMPanel
 
     /**
      * Process new toPackage.
+     *
      * @param pPackage the new toPackage
      */
     private void processNewTo(final ThemisDSMPackage pPackage) {
@@ -445,6 +451,7 @@ public class ThemisDSMPanel
 
     /**
      * Process the reference.
+     *
      * @param pReference the reference
      */
     private void processReference(final String pReference) {
@@ -466,6 +473,7 @@ public class ThemisDSMPanel
 
     /**
      * Obtain the default location.
+     *
      * @return the default location
      */
     private File getDefaultLocation() {
@@ -476,6 +484,7 @@ public class ThemisDSMPanel
 
     /**
      * Store the default location.
+     *
      * @param pLocation the default location
      */
     private void storeDefaultLocation(final File pLocation) {
@@ -491,6 +500,7 @@ public class ThemisDSMPanel
 
     /**
      * Derive handle for node.
+     *
      * @return the class name
      */
     private Preferences deriveHandle() {

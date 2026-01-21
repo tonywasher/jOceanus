@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,11 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.archive;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetDirection;
@@ -34,8 +36,6 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction.MoneyWiseTransactionList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
 
@@ -153,7 +153,8 @@ public final class MoneyWiseArchiveCache {
 
     /**
      * Constructor.
-      * @param pData the dataSet
+     *
+     * @param pData the dataSet
      */
     MoneyWiseArchiveCache(final MoneyWiseDataSet pData) {
         /* Store lists */
@@ -175,6 +176,7 @@ public final class MoneyWiseArchiveCache {
 
     /**
      * Set lastEvent.
+     *
      * @param pLastEvent the last event date
      */
     void setLastEvent(final OceanusDate pLastEvent) {
@@ -183,6 +185,7 @@ public final class MoneyWiseArchiveCache {
 
     /**
      * Check valid date.
+     *
      * @param pDate the date
      * @return true/false
      */
@@ -192,6 +195,7 @@ public final class MoneyWiseArchiveCache {
 
     /**
      * Did we hit the event limit?
+     *
      * @return true/false
      */
     boolean hitEventLimit() {
@@ -200,6 +204,7 @@ public final class MoneyWiseArchiveCache {
 
     /**
      * Add a year to the front of the list.
+     *
      * @param pName the range name
      */
     void addYear(final String pName) {
@@ -209,6 +214,7 @@ public final class MoneyWiseArchiveCache {
 
     /**
      * Get the iterator.
+     *
      * @return the iterator
      */
     ListIterator<MoneyWiseArchiveYear> getIterator() {
@@ -217,6 +223,7 @@ public final class MoneyWiseArchiveCache {
 
     /**
      * Obtain the reverse iterator of the years.
+     *
      * @return the iterator.
      */
     ListIterator<MoneyWiseArchiveYear> reverseIterator() {
@@ -225,6 +232,7 @@ public final class MoneyWiseArchiveCache {
 
     /**
      * Get the number of years.
+     *
      * @return the number of years
      */
     int getNumYears() {
@@ -233,7 +241,8 @@ public final class MoneyWiseArchiveCache {
 
     /**
      * Build transaction.
-     * @param pAmount the amount
+     *
+     * @param pAmount     the amount
      * @param pReconciled is the transaction reconciled?
      * @return the new transaction
      * @throws OceanusException on error
@@ -271,6 +280,7 @@ public final class MoneyWiseArchiveCache {
 
     /**
      * Is the debit reversed?
+     *
      * @return true/false
      */
     boolean isDebitReversed() {
@@ -279,6 +289,7 @@ public final class MoneyWiseArchiveCache {
 
     /**
      * Is the transaction recursive?
+     *
      * @return true/false
      */
     boolean isRecursive() {
@@ -287,6 +298,7 @@ public final class MoneyWiseArchiveCache {
 
     /**
      * should we filter this transaction?
+     *
      * @param pTrans the transaction
      * @return true/false
      */
@@ -298,6 +310,7 @@ public final class MoneyWiseArchiveCache {
 
     /**
      * Should we filter this asset?
+     *
      * @param pTrans the transaction values
      * @param pAsset the asset
      * @return true/false
@@ -318,17 +331,18 @@ public final class MoneyWiseArchiveCache {
 
     /**
      * Resolve Values.
-     * @param pDate the date of the transaction
-     * @param pDebit the name of the debit object
-     * @param pCredit the name of the credit object
+     *
+     * @param pDate     the date of the transaction
+     * @param pDebit    the name of the debit object
+     * @param pCredit   the name of the credit object
      * @param pCategory the name of the category object
      * @return continue true/false
      * @throws OceanusException on error
      */
     boolean resolveValues(final OceanusDate pDate,
-                                   final String pDebit,
-                                    final String pCredit,
-                                    final String pCategory) throws OceanusException {
+                          final String pDebit,
+                          final String pCredit,
+                          final String pCategory) throws OceanusException {
         /* If the Date is null */
         if (pDate == null) {
             /* Resolve child values */
@@ -371,8 +385,9 @@ public final class MoneyWiseArchiveCache {
 
     /**
      * Resolve Child Values.
-     * @param pDebit the name of the debit object
-     * @param pCredit the name of the credit object
+     *
+     * @param pDebit    the name of the debit object
+     * @param pCredit   the name of the credit object
      * @param pCategory the name of the category object
      * @throws OceanusException on error
      */
@@ -412,6 +427,7 @@ public final class MoneyWiseArchiveCache {
 
     /**
      * Resolve assets.
+     *
      * @throws OceanusException on error
      */
     private void resolveAssets() throws OceanusException {
@@ -513,8 +529,9 @@ public final class MoneyWiseArchiveCache {
 
     /**
      * Check resolution.
-     * @param pDebit the name of the debit object
-     * @param pCredit the name of the credit object
+     *
+     * @param pDebit    the name of the debit object
+     * @param pCredit   the name of the credit object
      * @param pCategory the name of the category object
      * @throws OceanusException on error
      */
@@ -539,6 +556,7 @@ public final class MoneyWiseArchiveCache {
 
     /**
      * Declare asset.
+     *
      * @param pAsset the asset to declare.
      * @throws OceanusException on error
      */
@@ -557,6 +575,7 @@ public final class MoneyWiseArchiveCache {
 
     /**
      * Declare category.
+     *
      * @param pCategory the category to declare.
      * @throws OceanusException on error
      */
@@ -575,7 +594,8 @@ public final class MoneyWiseArchiveCache {
 
     /**
      * Declare security holding.
-     * @param pSecurity the security.
+     *
+     * @param pSecurity  the security.
      * @param pPortfolio the portfolio
      * @throws OceanusException on error
      */
@@ -595,8 +615,9 @@ public final class MoneyWiseArchiveCache {
 
     /**
      * Declare alias holding.
-     * @param pName the security holding name
-     * @param pAlias the alias name.
+     *
+     * @param pName      the security holding name
+     * @param pAlias     the alias name.
      * @param pPortfolio the portfolio
      * @throws OceanusException on error
      */
@@ -615,6 +636,7 @@ public final class MoneyWiseArchiveCache {
 
     /**
      * Resolve security holdings.
+     *
      * @param pData the dataSet
      */
     void resolveSecurityHoldings(final MoneyWiseDataSet pData) {
@@ -640,7 +662,8 @@ public final class MoneyWiseArchiveCache {
 
     /**
      * Process portfolio transfer.
-     * @param pData the dataSet
+     *
+     * @param pData   the dataSet
      * @param pSource the source asset
      * @param pTarget the target asset
      * @throws OceanusException on error
@@ -658,16 +681,16 @@ public final class MoneyWiseArchiveCache {
         /* Loop through the name map */
         for (Entry<String, Object> myEntry : theNameMap.entrySet()) {
             /* If this is a security holding definition */
-             final Object myValue = myEntry.getValue();
+            final Object myValue = myEntry.getValue();
             if (myValue instanceof MoneyWiseSecurityHolding myHolding) {
                 /* If this holding needs updating */
-               if (pSource.equals(myHolding) || pSource.equals(myHolding.getPortfolio())) {
+                if (pSource.equals(myHolding) || pSource.equals(myHolding.getPortfolio())) {
                     /* Change the holding */
                     myHolding = myMap.declareHolding(myPortfolio, myHolding.getSecurity());
 
                     /* Replace definition in map */
                     myEntry.setValue(myHolding);
-               }
+                }
             }
         }
     }
@@ -688,7 +711,8 @@ public final class MoneyWiseArchiveCache {
 
         /**
          * Constructor.
-         * @param pSecurity the security
+         *
+         * @param pSecurity  the security
          * @param pPortfolio the portfolio
          */
         private MoneyWiseSecurityHoldingDef(final MoneyWiseSecurity pSecurity,
@@ -700,6 +724,7 @@ public final class MoneyWiseArchiveCache {
 
         /**
          * Obtain security.
+         *
          * @return the security
          */
         public MoneyWiseSecurity getSecurity() {
@@ -708,6 +733,7 @@ public final class MoneyWiseArchiveCache {
 
         /**
          * Obtain portfolio.
+         *
          * @return the portfolio
          */
         public String getPortfolio() {

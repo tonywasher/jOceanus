@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Prometheus: Application Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,13 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.prometheus.security;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.convert.OceanusDataConverter;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory.GordianFactoryLock;
@@ -28,10 +32,6 @@ import net.sourceforge.joceanus.gordianknot.api.lock.GordianKeySetLock;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianLock;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianLockFactory;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.convert.OceanusDataConverter;
-import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
-import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 import net.sourceforge.joceanus.prometheus.exc.PrometheusDataException;
 import net.sourceforge.joceanus.prometheus.exc.PrometheusSecurityException;
 
@@ -92,7 +92,8 @@ public class PrometheusSecurityPasswordCache {
 
     /**
      * Constructor.
-     * @param pManager the password manager
+     *
+     * @param pManager  the password manager
      * @param pLockSpec the passwordLockSpec
      * @throws OceanusException on error
      */
@@ -120,7 +121,8 @@ public class PrometheusSecurityPasswordCache {
 
     /**
      * Add resolved factoryLock to cache.
-     * @param pFactory the resolved FactoryLock
+     *
+     * @param pFactory  the resolved FactoryLock
      * @param pPassword the password
      * @throws OceanusException on error
      */
@@ -151,7 +153,8 @@ public class PrometheusSecurityPasswordCache {
 
     /**
      * Add resolved keySetLock to cache.
-     * @param pKeySet the resolved keySetLock
+     *
+     * @param pKeySet   the resolved keySetLock
      * @param pPassword the password
      * @throws OceanusException on error
      */
@@ -181,7 +184,8 @@ public class PrometheusSecurityPasswordCache {
 
     /**
      * Add resolved keyPairLock to cache.
-     * @param pKeyPair the resolved keyPairLock
+     *
+     * @param pKeyPair  the resolved keyPairLock
      * @param pPassword the password
      * @throws OceanusException on error
      */
@@ -211,6 +215,7 @@ public class PrometheusSecurityPasswordCache {
 
     /**
      * LookUp previously resolved Factory.
+     *
      * @param pLockBytes the LockBytes to search for
      * @return the previous factoryLock if found, otherwise null
      */
@@ -230,6 +235,7 @@ public class PrometheusSecurityPasswordCache {
 
     /**
      * LookUp previously resolved keySet.
+     *
      * @param pLockBytes the LockBytes to search for
      * @return the previous keySetLock if found, otherwise null
      */
@@ -249,8 +255,9 @@ public class PrometheusSecurityPasswordCache {
 
     /**
      * LookUp previously resolved keyPair.
+     *
      * @param pLockBytes the LockBytes to search for
-     * @param pKeyPair the keyPair
+     * @param pKeyPair   the keyPair
      * @return the previous keySetLock if found, otherwise null
      */
     GordianKeyPairLock lookUpResolvedKeyPairLock(final byte[] pLockBytes,
@@ -271,6 +278,7 @@ public class PrometheusSecurityPasswordCache {
 
     /**
      * LookUp previously resolved Password.
+     *
      * @param pReference the Reference to search for
      * @return the encrypted password
      * @throws OceanusException on error
@@ -294,6 +302,7 @@ public class PrometheusSecurityPasswordCache {
 
     /**
      * Attempt known passwords for factory lock.
+     *
      * @param pLockBytes the lockBytes to attempt passwords for
      * @return the new FactoryLock if successful, otherwise null
      */
@@ -317,8 +326,9 @@ public class PrometheusSecurityPasswordCache {
 
     /**
      * Attempt the cached password against the passed lock.
+     *
      * @param pLockBytes the Lock to test against
-     * @param pPassword the encrypted password
+     * @param pPassword  the encrypted password
      * @return the new FactoryLock if successful, otherwise null
      */
     private GordianFactoryLock attemptPasswordForFactoryLock(final byte[] pLockBytes,
@@ -336,7 +346,7 @@ public class PrometheusSecurityPasswordCache {
 
             /* Catch Exceptions */
         } catch (GordianException
-                | OceanusException e) {
+                 | OceanusException e) {
             LOGGER.error(PASSWORD_FAIL, e);
             return null;
 
@@ -356,6 +366,7 @@ public class PrometheusSecurityPasswordCache {
 
     /**
      * Attempt known passwords for keySet lock.
+     *
      * @param pLockBytes the lockBytes to attempt passwords for
      * @return the new keySetLock if successful, otherwise null
      */
@@ -379,8 +390,9 @@ public class PrometheusSecurityPasswordCache {
 
     /**
      * Attempt the cached password against the passed lock.
+     *
      * @param pLockBytes the Lock to test against
-     * @param pPassword the encrypted password
+     * @param pPassword  the encrypted password
      * @return the new keySetLock if successful, otherwise null
      */
     private GordianKeySetLock attemptPasswordForKeySetLock(final byte[] pLockBytes,
@@ -398,7 +410,7 @@ public class PrometheusSecurityPasswordCache {
 
             /* Catch Exceptions */
         } catch (GordianException
-                | OceanusException e) {
+                 | OceanusException e) {
             LOGGER.error(PASSWORD_FAIL, e);
             return null;
 
@@ -418,8 +430,9 @@ public class PrometheusSecurityPasswordCache {
 
     /**
      * Attempt known passwords for keyPair lock.
+     *
      * @param pLockBytes the lockBytes to attempt passwords for
-     * @param pKeyPair the keyPair
+     * @param pKeyPair   the keyPair
      * @return the new keyPairLock if successful, otherwise null
      */
     GordianKeyPairLock attemptKnownPasswordsForKeyPairLock(final byte[] pLockBytes,
@@ -443,9 +456,10 @@ public class PrometheusSecurityPasswordCache {
 
     /**
      * Attempt the cached password against the passed lock.
+     *
      * @param pLockBytes the Lock to test against
-     * @param pKeyPair the keyPair
-     * @param pPassword the encrypted password
+     * @param pKeyPair   the keyPair
+     * @param pPassword  the encrypted password
      * @return the new keyPairLock if successful, otherwise null
      */
     private GordianKeyPairLock attemptPasswordForKeyPairLock(final byte[] pLockBytes,
@@ -464,7 +478,7 @@ public class PrometheusSecurityPasswordCache {
 
             /* Catch Exceptions */
         } catch (GordianException
-                | OceanusException e) {
+                 | OceanusException e) {
             LOGGER.error(PASSWORD_FAIL, e);
             return null;
 
@@ -484,7 +498,8 @@ public class PrometheusSecurityPasswordCache {
 
     /**
      * Create a factoryLock with a previously used password.
-     * @param pFactory the new factory
+     *
+     * @param pFactory  the new factory
      * @param pPassword the encrypted password
      * @return the new factoryLock
      * @throws OceanusException on error
@@ -522,7 +537,8 @@ public class PrometheusSecurityPasswordCache {
 
     /**
      * Create a keySetLock with a previously used password.
-     * @param pKeySet the new keySet
+     *
+     * @param pKeySet   the new keySet
      * @param pPassword the encrypted password
      * @return the new factoryLock
      * @throws OceanusException on error
@@ -560,7 +576,8 @@ public class PrometheusSecurityPasswordCache {
 
     /**
      * Create a zipLock with a previously used password.
-     * @param pKeyPair the keyPair
+     *
+     * @param pKeyPair  the keyPair
      * @param pPassword the encrypted password
      * @return the new PasswordHash
      * @throws OceanusException on error
@@ -594,6 +611,7 @@ public class PrometheusSecurityPasswordCache {
 
     /**
      * The lockCache.
+     *
      * @param <T> the locked object
      *
      */
@@ -610,7 +628,8 @@ public class PrometheusSecurityPasswordCache {
 
         /**
          * Constructor.
-         * @param pLock the Lock
+         *
+         * @param pLock     the Lock
          * @param pPassword the encrypted password
          */
         PrometheusLockCache(final GordianLock<T> pLock,
@@ -621,6 +640,7 @@ public class PrometheusSecurityPasswordCache {
 
         /**
          * Obtain the lock.
+         *
          * @return the Lock
          */
         GordianLock<T> getLock() {
@@ -629,6 +649,7 @@ public class PrometheusSecurityPasswordCache {
 
         /**
          * Obtain the encrypted password.
+         *
          * @return the password
          */
         ByteBuffer getPassword() {

@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Metis: Java Data Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,11 +13,11 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.metis.field;
 
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,7 +70,7 @@ public class MetisFieldValidation
         final int mySize = theErrors.size();
         if (mySize != 1) {
             return mySize
-                   + " Errors";
+                    + " Errors";
         }
         final MetisFieldError myError = theErrors.get(0);
         return myError.formatError();
@@ -78,6 +78,7 @@ public class MetisFieldValidation
 
     /**
      * Do we have any errors?
+     *
      * @return true/false
      */
     public boolean hasErrors() {
@@ -86,17 +87,19 @@ public class MetisFieldValidation
 
     /**
      * Get the first error in the list.
+     *
      * @return the first error or <code>null</code>
      */
     public MetisFieldError getFirst() {
         return theErrors.isEmpty()
-                                   ? null
-                                   : theErrors.get(0);
+                ? null
+                : theErrors.get(0);
     }
 
     /**
      * add error to the list.
-     * @param pText the text for the error
+     *
+     * @param pText  the text for the error
      * @param pField the field for the error
      */
     public void addError(final String pText,
@@ -115,6 +118,7 @@ public class MetisFieldValidation
 
     /**
      * Determine whether there are any errors for a particular field.
+     *
      * @param pField - the field
      * @return <code>true</code> if there are any errors <code>false</code> otherwise
      */
@@ -131,6 +135,7 @@ public class MetisFieldValidation
 
     /**
      * Get the error details for a particular field.
+     *
      * @param pField - the field
      * @return the error text
      */
@@ -160,6 +165,7 @@ public class MetisFieldValidation
 
     /**
      * Count the errors for this field.
+     *
      * @param pField - the field number to check
      * @return the error count
      */
@@ -182,6 +188,7 @@ public class MetisFieldValidation
 
     /**
      * Get the error text for fields outside a set of fields.
+     *
      * @param aFields the set of fields
      * @return the error text
      */
@@ -225,15 +232,16 @@ public class MetisFieldValidation
 
     /**
      * Add error text.
+     *
      * @param pBuilder the string builder
-     * @param pError new error text
+     * @param pError   new error text
      */
     private static void addErrorText(final StringBuilder pBuilder,
                                      final String pError) {
         /* Add relevant prefix */
         pBuilder.append((pBuilder.isEmpty())
-                                                 ? "<html>"
-                                                 : "<br>");
+                ? "<html>"
+                : "<br>");
 
         /* Add error text */
         pBuilder.append(pError);
@@ -241,6 +249,7 @@ public class MetisFieldValidation
 
     /**
      * End error text.
+     *
      * @param pErrors the error builder
      */
     public void endErrors(final StringBuilder pErrors) {
@@ -272,6 +281,7 @@ public class MetisFieldValidation
 
         /**
          * Constructor for the error.
+         *
          * @param pError the error text
          * @param pField the field
          */
@@ -283,6 +293,7 @@ public class MetisFieldValidation
 
         /**
          * Get the text for the error.
+         *
          * @return the text
          */
         public String getError() {
@@ -291,6 +302,7 @@ public class MetisFieldValidation
 
         /**
          * Get the field for the error.
+         *
          * @return the field
          */
         public MetisDataFieldId getField() {
@@ -299,12 +311,13 @@ public class MetisFieldValidation
 
         /**
          * Format the error.
+         *
          * @return the formatted error
          */
         private String formatError() {
             return theField.getId()
-                   + ": "
-                   + theError;
+                    + ": "
+                    + theError;
         }
     }
 }

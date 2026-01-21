@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Prometheus: Application Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,21 +13,21 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.prometheus.data;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateFormatter;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimalParser;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.metis.list.MetisListKey;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateFormatter;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimalParser;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.exc.PrometheusDataException;
 import net.sourceforge.joceanus.prometheus.exc.PrometheusLogicException;
 
@@ -35,6 +35,7 @@ import java.util.Date;
 
 /**
  * Representation of an information extension of a DataItem.
+ *
  * @author Tony Washer
  */
 public abstract class PrometheusDataInfoItem
@@ -76,6 +77,7 @@ public abstract class PrometheusDataInfoItem
 
     /**
      * Copy Constructor.
+     *
      * @param pList the list
      * @param pInfo The Info to copy
      */
@@ -87,6 +89,7 @@ public abstract class PrometheusDataInfoItem
 
     /**
      * Edit Constructor.
+     *
      * @param pList the list
      */
     protected PrometheusDataInfoItem(final PrometheusDataInfoList<?> pList) {
@@ -96,11 +99,12 @@ public abstract class PrometheusDataInfoItem
 
     /**
      * Secure constructor.
-     * @param pList the list
-     * @param uId the id
-     * @param uKeySetId the keySet id
+     *
+     * @param pList       the list
+     * @param uId         the id
+     * @param uKeySetId   the keySet id
      * @param uInfoTypeId the info id
-     * @param uOwnerId the owner id
+     * @param uOwnerId    the owner id
      * @throws OceanusException on error
      */
     protected PrometheusDataInfoItem(final PrometheusDataInfoList<?> pList,
@@ -121,10 +125,11 @@ public abstract class PrometheusDataInfoItem
 
     /**
      * Basic constructor.
-     * @param pList the list
-     * @param uId the id
+     *
+     * @param pList     the list
+     * @param uId       the id
      * @param pInfoType the info type
-     * @param pOwner the owner
+     * @param pOwner    the owner
      */
     protected PrometheusDataInfoItem(final PrometheusDataInfoList<?> pList,
                                      final Integer uId,
@@ -140,7 +145,8 @@ public abstract class PrometheusDataInfoItem
 
     /**
      * Basic constructor.
-     * @param pList the list
+     *
+     * @param pList   the list
      * @param pValues the values
      * @throws OceanusException on error
      */
@@ -215,18 +221,21 @@ public abstract class PrometheusDataInfoItem
 
     /**
      * Obtain InfoType.
+     *
      * @return the InfoTypeId
      */
     public abstract PrometheusStaticDataItem getInfoType();
 
     /**
      * Obtain InfoClass.
+     *
      * @return the InfoClass
      */
     public abstract PrometheusDataInfoClass getInfoClass();
 
     /**
      * Obtain InfoTypeId.
+     *
      * @return the InfoTypeId
      */
     public Integer getInfoTypeId() {
@@ -235,12 +244,14 @@ public abstract class PrometheusDataInfoItem
 
     /**
      * Obtain Owner.
+     *
      * @return the Owner
      */
     public abstract PrometheusDataItem getOwner();
 
     /**
      * Obtain OwnerId.
+     *
      * @return the OwnerId
      */
     public Integer getOwnerId() {
@@ -249,7 +260,8 @@ public abstract class PrometheusDataInfoItem
 
     /**
      * Obtain Link.
-     * @param <X> the link type
+     *
+     * @param <X>    the link type
      * @param pClass the class of the link
      * @return the Link
      */
@@ -259,6 +271,7 @@ public abstract class PrometheusDataInfoItem
 
     /**
      * Get Link name.
+     *
      * @return the link name
      */
     public String getLinkName() {
@@ -267,6 +280,7 @@ public abstract class PrometheusDataInfoItem
 
     /**
      * Obtain Link.
+     *
      * @return the Link
      */
     protected PrometheusDataItem getLink() {
@@ -275,7 +289,8 @@ public abstract class PrometheusDataInfoItem
 
     /**
      * Obtain Value as object.
-     * @param <X> the object type
+     *
+     * @param <X>    the object type
      * @param pClass the object class
      * @return the Value
      */
@@ -285,6 +300,7 @@ public abstract class PrometheusDataInfoItem
 
     /**
      * Obtain Value as underlying object.
+     *
      * @return the Value
      */
     public PrometheusEncryptedPair getField() {
@@ -293,6 +309,7 @@ public abstract class PrometheusDataInfoItem
 
     /**
      * Obtain Encrypted Bytes.
+     *
      * @return the Bytes
      */
     public byte[] getValueBytes() {
@@ -301,9 +318,10 @@ public abstract class PrometheusDataInfoItem
 
     /**
      * Obtain Value as object.
-     * @param <X> the object type
+     *
+     * @param <X>       the object type
      * @param pValueSet the valueSet
-     * @param pClass the object class
+     * @param pClass    the object class
      * @return the Value
      */
     public static <X> X getValue(final PrometheusEncryptedValues pValueSet,
@@ -315,6 +333,7 @@ public abstract class PrometheusDataInfoItem
 
     /**
      * Obtain Value as encrypted field.
+     *
      * @param pValueSet the valueSet
      * @return the Value
      */
@@ -327,6 +346,7 @@ public abstract class PrometheusDataInfoItem
 
     /**
      * Set InfoType.
+     *
      * @param pValue the info Type
      */
     protected final void setValueInfoType(final PrometheusStaticDataItem pValue) {
@@ -335,6 +355,7 @@ public abstract class PrometheusDataInfoItem
 
     /**
      * Set InfoType Id.
+     *
      * @param pId the info Type id
      */
     protected final void setValueInfoType(final Integer pId) {
@@ -343,6 +364,7 @@ public abstract class PrometheusDataInfoItem
 
     /**
      * Set InfoType Name.
+     *
      * @param pName the info Type name
      */
     protected final void setValueInfoType(final String pName) {
@@ -351,6 +373,7 @@ public abstract class PrometheusDataInfoItem
 
     /**
      * Set Owner.
+     *
      * @param pValue the owner
      */
     protected final void setValueOwner(final PrometheusDataItem pValue) {
@@ -359,6 +382,7 @@ public abstract class PrometheusDataInfoItem
 
     /**
      * Set Owner id.
+     *
      * @param pId the owner id
      */
     protected final void setValueOwner(final Integer pId) {
@@ -367,6 +391,7 @@ public abstract class PrometheusDataInfoItem
 
     /**
      * Set Owner name.
+     *
      * @param pName the owner name
      */
     protected final void setValueOwner(final String pName) {
@@ -375,6 +400,7 @@ public abstract class PrometheusDataInfoItem
 
     /**
      * Set Value.
+     *
      * @param pValue the value
      * @throws OceanusException on error
      */
@@ -385,6 +411,7 @@ public abstract class PrometheusDataInfoItem
 
     /**
      * Set value.
+     *
      * @param pValue the value
      */
     protected void setValueValue(final PrometheusEncryptedPair pValue) {
@@ -395,7 +422,8 @@ public abstract class PrometheusDataInfoItem
 
     /**
      * Set Object Value.
-     * @param <X> the object type
+     *
+     * @param <X>    the object type
      * @param pBytes the value
      * @param pClass the object class
      * @throws OceanusException on error
@@ -407,6 +435,7 @@ public abstract class PrometheusDataInfoItem
 
     /**
      * Set link.
+     *
      * @param pLink the link
      */
     protected void setValueLink(final PrometheusDataItem pLink) {
@@ -417,6 +446,7 @@ public abstract class PrometheusDataInfoItem
 
     /**
      * Set link id.
+     *
      * @param pId the linkId
      */
     private void setValueLink(final Integer pId) {
@@ -426,6 +456,7 @@ public abstract class PrometheusDataInfoItem
 
     /**
      * Set link id.
+     *
      * @param pId the linkId
      */
     private void setValueLink(final Long pId) {
@@ -435,6 +466,7 @@ public abstract class PrometheusDataInfoItem
 
     /**
      * Set link name.
+     *
      * @param pName the linkName
      */
     protected void setValueLink(final String pName) {
@@ -461,6 +493,7 @@ public abstract class PrometheusDataInfoItem
 
     /**
      * Set Value.
+     *
      * @param pValue the Value
      * @throws OceanusException on error
      */
@@ -523,8 +556,9 @@ public abstract class PrometheusDataInfoItem
 
     /**
      * Set Date Value.
+     *
      * @param pFormatter the date formatter
-     * @param pValue the Value
+     * @param pValue     the Value
      * @return is value valid true/false
      * @throws OceanusException on error
      */
@@ -553,8 +587,9 @@ public abstract class PrometheusDataInfoItem
 
     /**
      * Set Integer Value.
+     *
      * @param pFormatter the data formatter
-     * @param pValue the Value
+     * @param pValue     the Value
      * @return is value valid true/false
      * @throws OceanusException on error
      */
@@ -580,6 +615,7 @@ public abstract class PrometheusDataInfoItem
 
     /**
      * Set Link Value.
+     *
      * @param pValue the Value
      * @return is value valid true/false
      * @throws OceanusException on error
@@ -611,6 +647,7 @@ public abstract class PrometheusDataInfoItem
 
     /**
      * Set Link Value.
+     *
      * @param pValue the Value
      * @return is value valid true/false
      * @throws OceanusException on error
@@ -642,6 +679,7 @@ public abstract class PrometheusDataInfoItem
 
     /**
      * Set String Value.
+     *
      * @param pValue the Value
      * @return is value valid true/false
      * @throws OceanusException on error
@@ -660,6 +698,7 @@ public abstract class PrometheusDataInfoItem
 
     /**
      * Set CharArray Value.
+     *
      * @param pValue the Value
      * @return is value valid true/false
      * @throws OceanusException on error
@@ -681,8 +720,9 @@ public abstract class PrometheusDataInfoItem
 
     /**
      * Set Money Value.
+     *
      * @param pParser the parser
-     * @param pValue the Value
+     * @param pValue  the Value
      * @return is value valid true/false
      * @throws OceanusException on error
      */
@@ -704,8 +744,9 @@ public abstract class PrometheusDataInfoItem
 
     /**
      * Set Rate Value.
+     *
      * @param pParser the parser
-     * @param pValue the Value
+     * @param pValue  the Value
      * @return is value valid true/false
      * @throws OceanusException on error
      */
@@ -727,8 +768,9 @@ public abstract class PrometheusDataInfoItem
 
     /**
      * Set Ratio Value.
+     *
      * @param pParser the parser
-     * @param pValue the Value
+     * @param pValue  the Value
      * @return is value valid true/false
      * @throws OceanusException on error
      */
@@ -750,8 +792,9 @@ public abstract class PrometheusDataInfoItem
 
     /**
      * Set Units Value.
+     *
      * @param pParser the parser
-     * @param pValue the Value
+     * @param pValue  the Value
      * @return is value valid true/false
      * @throws OceanusException on error
      */
@@ -773,8 +816,9 @@ public abstract class PrometheusDataInfoItem
 
     /**
      * Set Price Value.
+     *
      * @param pParser the parser
-     * @param pValue the Value
+     * @param pValue  the Value
      * @return is value valid true/false
      * @throws OceanusException on error
      */
@@ -825,6 +869,7 @@ public abstract class PrometheusDataInfoItem
 
     /**
      * List class for DataInfo.
+     *
      * @param <T> the DataType
      */
     public abstract static class PrometheusDataInfoList<T extends PrometheusDataInfoItem>
@@ -838,10 +883,11 @@ public abstract class PrometheusDataInfoItem
 
         /**
          * Construct a generic data info list.
+         *
          * @param pBaseClass the class of the underlying object
-         * @param pData the dataSet
-         * @param pItemType the list type
-         * @param pStyle the style of the list
+         * @param pData      the dataSet
+         * @param pItemType  the list type
+         * @param pStyle     the style of the list
          */
         protected PrometheusDataInfoList(final Class<T> pBaseClass,
                                          final PrometheusDataSet pData,
@@ -852,6 +898,7 @@ public abstract class PrometheusDataInfoItem
 
         /**
          * Constructor for a cloned List.
+         *
          * @param pSource the source List
          */
         protected PrometheusDataInfoList(final PrometheusDataInfoList<T> pSource) {
@@ -868,7 +915,8 @@ public abstract class PrometheusDataInfoItem
 
         /**
          * Add new item to the list.
-         * @param pOwner the owner
+         *
+         * @param pOwner    the owner
          * @param pInfoType the information
          * @return the new info item
          */
@@ -877,10 +925,11 @@ public abstract class PrometheusDataInfoItem
 
         /**
          * Add an info Item to the list.
-         * @param pId the Id
-         * @param pOwner the owner
+         *
+         * @param pId        the Id
+         * @param pOwner     the owner
          * @param pInfoClass the infoClass
-         * @param pValue the value
+         * @param pValue     the value
          * @throws OceanusException on error
          */
         public abstract void addInfoItem(Integer pId,

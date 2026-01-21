@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Prometheus: Application Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,12 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.prometheus.data;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory.GordianFactoryLock;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.metis.data.MetisDataFieldValue;
@@ -25,9 +28,6 @@ import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionedItem;
 import net.sourceforge.joceanus.metis.list.MetisListKey;
 import net.sourceforge.joceanus.metis.toolkit.MetisToolkit;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
-import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.prometheus.data.PrometheusControlData.PrometheusControlDataList;
 import net.sourceforge.joceanus.prometheus.data.PrometheusControlKey.PrometheusControlKeyList;
 import net.sourceforge.joceanus.prometheus.data.PrometheusControlKeySet.PrometheusControlKeySetList;
@@ -144,6 +144,7 @@ public abstract class PrometheusDataSet
 
     /**
      * Constructor for new empty DataSet.
+     *
      * @param pToolkit the toolkit set
      */
     protected PrometheusDataSet(final PrometheusToolkit pToolkit) {
@@ -172,6 +173,7 @@ public abstract class PrometheusDataSet
 
     /**
      * Constructor for a cloned DataSet.
+     *
      * @param pSource the source DataSet
      */
     protected PrometheusDataSet(final PrometheusDataSet pSource) {
@@ -202,6 +204,7 @@ public abstract class PrometheusDataSet
 
     /**
      * Obtain the data formatter.
+     *
      * @return the formatter
      */
     public OceanusDataFormatter getDataFormatter() {
@@ -210,6 +213,7 @@ public abstract class PrometheusDataSet
 
     /**
      * Set the validator factory.
+     *
      * @param pFactory the validator factory
      */
     public void setValidatorFactory(final PrometheusDataValidatorFactory pFactory) {
@@ -218,6 +222,7 @@ public abstract class PrometheusDataSet
 
     /**
      * Obtain a validator fot=r the itemType.
+     *
      * @param pItemType the itemType
      * @return the validator.
      */
@@ -230,6 +235,7 @@ public abstract class PrometheusDataSet
 
     /**
      * Get Password Manager.
+     *
      * @return the password manager
      */
     public PrometheusSecurityPasswordManager getPasswordMgr() {
@@ -238,6 +244,7 @@ public abstract class PrometheusDataSet
 
     /**
      * Get ControlKeys.
+     *
      * @return the controlKeys
      */
     public PrometheusControlKeyList getControlKeys() {
@@ -246,6 +253,7 @@ public abstract class PrometheusDataSet
 
     /**
      * Get ControlKeySets.
+     *
      * @return the controlKeySets
      */
     public PrometheusControlKeySetList getControlKeySets() {
@@ -254,6 +262,7 @@ public abstract class PrometheusDataSet
 
     /**
      * Get DataKeySets.
+     *
      * @return the dataKeySets
      */
     public PrometheusDataKeySetList getDataKeySets() {
@@ -262,6 +271,7 @@ public abstract class PrometheusDataSet
 
     /**
      * Get ControlData.
+     *
      * @return the controlData
      */
     public PrometheusControlDataList getControlData() {
@@ -270,6 +280,7 @@ public abstract class PrometheusDataSet
 
     /**
      * Get Version.
+     *
      * @return the version
      */
     public int getVersion() {
@@ -278,6 +289,7 @@ public abstract class PrometheusDataSet
 
     /**
      * Get Number of activeKeySets.
+     *
      * @return the # active KeySets
      */
     public int getNumActiveKeySets() {
@@ -286,6 +298,7 @@ public abstract class PrometheusDataSet
 
     /**
      * Get KeySetSpec.
+     *
      * @return the keySetSpec
      */
     public GordianKeySetSpec getKeySetSpec() {
@@ -294,6 +307,7 @@ public abstract class PrometheusDataSet
 
     /**
      * Get List Map.
+     *
      * @return the list map
      */
     protected Map<MetisListKey, PrometheusDataList<?>> getListMap() {
@@ -307,6 +321,7 @@ public abstract class PrometheusDataSet
 
     /**
      * Construct a Clone for a DataSet.
+     *
      * @return the extract
      * @throws OceanusException on error
      */
@@ -314,6 +329,7 @@ public abstract class PrometheusDataSet
 
     /**
      * Create new list of required type.
+     *
      * @param pListType the list type
      * @return the new list
      */
@@ -335,6 +351,7 @@ public abstract class PrometheusDataSet
 
     /**
      * Build an empty clone dataSet.
+     *
      * @param pSource the source DataSet
      * @throws OceanusException on error
      */
@@ -355,6 +372,7 @@ public abstract class PrometheusDataSet
 
     /**
      * Construct a Clone for a DataSet.
+     *
      * @param pSource the source DataSet
      * @throws OceanusException on error
      */
@@ -379,6 +397,7 @@ public abstract class PrometheusDataSet
 
     /**
      * Construct an update extract for a FinanceData Set.
+     *
      * @return the extract
      * @throws OceanusException on error
      */
@@ -386,6 +405,7 @@ public abstract class PrometheusDataSet
 
     /**
      * Construct an update extract for a DataSet.
+     *
      * @param pSource the source of the extract
      * @throws OceanusException on error
      */
@@ -415,8 +435,9 @@ public abstract class PrometheusDataSet
      * items that differ between the two DataSets. Items that are in the new list, but not in the
      * old list will be viewed as inserted. Items that are in the old list but not in the new list
      * will be viewed as deleted. Items that are in both list but differ will be viewed as changed
+     *
      * @param pReport the report
-     * @param pOld The old list to extract from
+     * @param pOld    The old list to extract from
      * @return the difference set
      * @throws OceanusException on error
      */
@@ -428,9 +449,10 @@ public abstract class PrometheusDataSet
      * items that differ between the two DataSets. Items that are in the new list, but not in the
      * old list will be viewed as inserted. Items that are in the old list but not in the new list
      * will be viewed as deleted. Items that are in both list but differ will be viewed as changed
+     *
      * @param pReport the report
-     * @param pNew The new list to compare
-     * @param pOld The old list to compare
+     * @param pNew    The new list to compare
+     * @param pOld    The old list to compare
      * @throws OceanusException on error
      */
     protected void deriveDifferences(final TethysUIThreadStatusReport pReport,
@@ -464,8 +486,9 @@ public abstract class PrometheusDataSet
 
     /**
      * ReBase this data set against an earlier version.
+     *
      * @param pReport the report
-     * @param pOld The old data to reBase against
+     * @param pOld    The old data to reBase against
      * @throws OceanusException on error
      */
     public void reBase(final TethysUIThreadStatusReport pReport,
@@ -504,8 +527,9 @@ public abstract class PrometheusDataSet
 
     /**
      * Add DataList to list of lists.
+     *
      * @param pListType the list type
-     * @param pList the list to add
+     * @param pList     the list to add
      */
     protected void addList(final MetisListKey pListType,
                            final PrometheusDataList<?> pList) {
@@ -532,6 +556,7 @@ public abstract class PrometheusDataSet
 
     /**
      * Obtain debug value for list.
+     *
      * @param pListType the list type
      * @return true/false
      */
@@ -548,7 +573,8 @@ public abstract class PrometheusDataSet
 
     /**
      * Obtain DataList for an list class.
-     * @param <L> the List type
+     *
+     * @param <L>        the List type
      * @param pListClass the class of the list
      * @return the list of items
      */
@@ -571,6 +597,7 @@ public abstract class PrometheusDataSet
 
     /**
      * Set Version.
+     *
      * @param pVersion the version
      */
     public void setVersion(final int pVersion) {
@@ -589,6 +616,7 @@ public abstract class PrometheusDataSet
 
     /**
      * Rewind items to the required version.
+     *
      * @param pVersion the version to rewind to
      */
     public void rewindToVersion(final int pVersion) {
@@ -653,6 +681,7 @@ public abstract class PrometheusDataSet
 
     /**
      * Determine whether a DataSet has entries.
+     *
      * @return <code>true</code> if the DataSet has entries
      */
     public boolean isEmpty() {
@@ -673,6 +702,7 @@ public abstract class PrometheusDataSet
 
     /**
      * Determine whether the Data-set has updates.
+     *
      * @return <code>true</code> if the Data-set has updates, <code>false</code> if not
      */
     public boolean hasUpdates() {
@@ -693,6 +723,7 @@ public abstract class PrometheusDataSet
 
     /**
      * Get the control record.
+     *
      * @return the control record
      */
     public PrometheusControlData getControl() {
@@ -702,6 +733,7 @@ public abstract class PrometheusDataSet
 
     /**
      * Get the active control key.
+     *
      * @return the control key
      */
     public PrometheusControlKey getControlKey() {
@@ -714,8 +746,9 @@ public abstract class PrometheusDataSet
 
     /**
      * Initialise Security from database (if present).
+     *
      * @param pReport the report
-     * @param pBase the database data
+     * @param pBase   the database data
      * @throws OceanusException on error
      */
     public void initialiseSecurity(final TethysUIThreadStatusReport pReport,
@@ -758,6 +791,7 @@ public abstract class PrometheusDataSet
 
     /**
      * Renew Security.
+     *
      * @param pReport the report
      * @throws OceanusException on error
      */
@@ -784,6 +818,7 @@ public abstract class PrometheusDataSet
 
     /**
      * Check Security for incomplete security operations.
+     *
      * @param pReport the report
      * @throws OceanusException on error
      */
@@ -804,6 +839,7 @@ public abstract class PrometheusDataSet
 
     /**
      * Update Security.
+     *
      * @param pReport the report
      * @throws OceanusException on error
      */
@@ -835,6 +871,7 @@ public abstract class PrometheusDataSet
 
     /**
      * Get the Password Hash.
+     *
      * @return the password hash
      * @throws OceanusException on error
      */
@@ -850,6 +887,7 @@ public abstract class PrometheusDataSet
 
     /**
      * Update data with a new password.
+     *
      * @param pReport the report
      * @param pSource the source of the data
      * @throws OceanusException on error
@@ -894,6 +932,7 @@ public abstract class PrometheusDataSet
 
     /**
      * Obtain list iterator.
+     *
      * @return the iterator
      */
     public Iterator<PrometheusDataList<?>> iterator() {
@@ -902,6 +941,7 @@ public abstract class PrometheusDataSet
 
     /**
      * Obtain list iterator.
+     *
      * @return the iterator
      */
     public Iterator<Entry<MetisListKey, PrometheusDataList<?>>> entryIterator() {
@@ -910,6 +950,7 @@ public abstract class PrometheusDataSet
 
     /**
      * Obtain listKey iterator.
+     *
      * @return the iterator
      */
     public Iterator<MetisListKey> keyIterator() {
@@ -963,6 +1004,7 @@ public abstract class PrometheusDataSet
 
         /**
          * Constructor.
+         *
          * @param pKey the key
          */
         PrometheusCryptographyDataType(final Integer pKey) {

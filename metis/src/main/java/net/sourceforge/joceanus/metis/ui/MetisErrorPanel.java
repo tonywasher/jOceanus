@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Metis: Java Data Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,18 +13,18 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.metis.ui;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerErrorList;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerExceptionWrapper;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerStandardEntry;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.button.TethysUIButton;
 import net.sourceforge.joceanus.tethys.api.control.TethysUILabel;
@@ -78,9 +78,10 @@ public class MetisErrorPanel
 
     /**
      * Constructor.
-     * @param pFactory the GUI factory
+     *
+     * @param pFactory   the GUI factory
      * @param pViewerMgr the Viewer manager
-     * @param pParent the parent viewer entry
+     * @param pParent    the parent viewer entry
      */
     public MetisErrorPanel(final TethysUIFactory<?> pFactory,
                            final MetisViewerManager pViewerMgr,
@@ -138,6 +139,7 @@ public class MetisErrorPanel
 
     /**
      * Do we have an error?
+     *
      * @return true/false
      */
     public boolean hasError() {
@@ -146,6 +148,7 @@ public class MetisErrorPanel
 
     /**
      * Set error indication for window.
+     *
      * @param pException the exception
      */
     public void addError(final OceanusException pException) {
@@ -167,6 +170,7 @@ public class MetisErrorPanel
 
     /**
      * Show validation error.
+     *
      * @param pError the error message
      */
     public void showValidateError(final String pError) {
@@ -179,6 +183,7 @@ public class MetisErrorPanel
 
     /**
      * Set error text for window.
+     *
      * @param pText the text
      */
     private void setErrorText(final String pText) {
@@ -191,6 +196,7 @@ public class MetisErrorPanel
 
     /**
      * Set error list.
+     *
      * @param pExceptions the error list
      */
     public void setErrors(final MetisViewerErrorList pExceptions) {

@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,10 +13,11 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.data.builder;
 
-import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCash;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCashCategory;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
@@ -24,8 +25,7 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrencyClass;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
 
 /**
  * Cash Builder.
@@ -68,6 +68,7 @@ public class MoneyWiseCashBuilder {
 
     /**
      * Constructor.
+     *
      * @param pDataSet the dataSet
      */
     public MoneyWiseCashBuilder(final MoneyWiseDataSet pDataSet) {
@@ -78,6 +79,7 @@ public class MoneyWiseCashBuilder {
 
     /**
      * Set Name.
+     *
      * @param pName the name of the loan.
      * @return the builder
      */
@@ -88,6 +90,7 @@ public class MoneyWiseCashBuilder {
 
     /**
      * Set the cashCategory.
+     *
      * @param pCategory the category of the cash.
      * @return the builder
      */
@@ -98,6 +101,7 @@ public class MoneyWiseCashBuilder {
 
     /**
      * Set the cashCategory.
+     *
      * @param pCategory the category of the cash.
      * @return the builder
      */
@@ -107,8 +111,9 @@ public class MoneyWiseCashBuilder {
 
     /**
      * Set the autoExpense.
+     *
      * @param pCategory the category.
-     * @param pPayee the payee
+     * @param pPayee    the payee
      * @return the builder
      */
     public MoneyWiseCashBuilder autoExpense(final MoneyWiseTransCategory pCategory,
@@ -120,8 +125,9 @@ public class MoneyWiseCashBuilder {
 
     /**
      * Set the autoExpense.
+     *
      * @param pCategory the category.
-     * @param pPayee the payee
+     * @param pPayee    the payee
      * @return the builder
      */
     public MoneyWiseCashBuilder autoExpense(final String pCategory,
@@ -133,6 +139,7 @@ public class MoneyWiseCashBuilder {
 
     /**
      * Set the currency.
+     *
      * @param pCurrency the currency of the cash.
      * @return the builder
      */
@@ -143,6 +150,7 @@ public class MoneyWiseCashBuilder {
 
     /**
      * Set the currency.
+     *
      * @param pCurrency the currency of the cash.
      * @return the builder
      */
@@ -159,6 +167,7 @@ public class MoneyWiseCashBuilder {
 
     /**
      * Obtain the reporting currency.
+     *
      * @return the currency
      */
     private MoneyWiseCurrency lookupReportingCurrency() {
@@ -167,6 +176,7 @@ public class MoneyWiseCashBuilder {
 
     /**
      * Set the openingBalance.
+     *
      * @param pOpening the opening Balance
      * @return the builder
      */
@@ -177,6 +187,7 @@ public class MoneyWiseCashBuilder {
 
     /**
      * Set the openingBalance.
+     *
      * @param pOpening the opening Balance
      * @return the builder
      */
@@ -186,6 +197,7 @@ public class MoneyWiseCashBuilder {
 
     /**
      * Build the cash.
+     *
      * @return the new cash
      * @throws OceanusException on error
      */

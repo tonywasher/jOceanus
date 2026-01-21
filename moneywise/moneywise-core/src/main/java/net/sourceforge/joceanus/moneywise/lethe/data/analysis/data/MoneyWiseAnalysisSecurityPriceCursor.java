@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,21 +13,21 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.lethe.data.analysis.data;
 
-import java.util.Currency;
-import java.util.HashMap;
-import java.util.ListIterator;
-import java.util.Map;
-
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurity;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice.MoneyWiseSecurityPriceDataMap;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInstanceMap;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
+
+import java.util.Currency;
+import java.util.HashMap;
+import java.util.ListIterator;
+import java.util.Map;
 
 /**
  * Quick access to dated security Prices on an analysis pass.
@@ -45,6 +45,7 @@ public class MoneyWiseAnalysisSecurityPriceCursor {
 
     /**
      * Constructor.
+     *
      * @param pData the dataSet
      */
     protected MoneyWiseAnalysisSecurityPriceCursor(final MoneyWiseDataSet pData) {
@@ -57,8 +58,9 @@ public class MoneyWiseAnalysisSecurityPriceCursor {
 
     /**
      * Obtain price for security and date.
+     *
      * @param pSecurity the security
-     * @param pDate the date
+     * @param pDate     the date
      * @return the security price
      */
     public OceanusPrice getSecurityPrice(final MoneyWiseSecurity pSecurity,
@@ -70,6 +72,7 @@ public class MoneyWiseAnalysisSecurityPriceCursor {
 
     /**
      * Obtain security cursor.
+     *
      * @param pSecurity the security
      * @return the cursor
      */
@@ -114,6 +117,7 @@ public class MoneyWiseAnalysisSecurityPriceCursor {
 
         /**
          * Constructor.
+         *
          * @param pSecurity the security
          */
         private MoneyWiseSecurityCursor(final MoneyWiseSecurity pSecurity) {
@@ -149,6 +153,7 @@ public class MoneyWiseAnalysisSecurityPriceCursor {
 
         /**
          * Obtain security price for date.
+         *
          * @param pDate the date
          * @return the security price
          */

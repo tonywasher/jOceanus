@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,18 +13,18 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.quicken.file;
 
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.moneywise.quicken.definitions.MoneyWiseQLineType;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -32,6 +32,7 @@ import java.util.List;
 
 /**
  * A standard event line in the QIF file.
+ *
  * @param <T> the line type
  */
 public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
@@ -67,22 +68,25 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
 
     /**
      * Obtain line type.
+     *
      * @return the line type
      */
     public abstract T getLineType();
 
     /**
      * Format the data.
+     *
      * @param pFormatter the data formatter
-     * @param pBuilder the string builder
+     * @param pBuilder   the string builder
      */
     protected abstract void formatData(OceanusDataFormatter pFormatter,
                                        StringBuilder pBuilder);
 
     /**
      * Format lines.
+     *
      * @param pFormatter the data formatter
-     * @param pBuilder the string builder
+     * @param pBuilder   the string builder
      */
     protected void formatLine(final OceanusDataFormatter pFormatter,
                               final StringBuilder pBuilder) {
@@ -123,6 +127,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
 
     /**
      * The String line.
+     *
      * @param <X> the line type
      */
     protected abstract static class MoneyWiseQIFStringLine<X extends MoneyWiseQLineType>
@@ -134,6 +139,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
 
         /**
          * Constructor.
+         *
          * @param pValue the Value
          */
         protected MoneyWiseQIFStringLine(final String pValue) {
@@ -148,6 +154,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
 
         /**
          * Obtain Value.
+         *
          * @return the value
          */
         protected String getValue() {
@@ -197,6 +204,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
 
     /**
      * The Money line.
+     *
      * @param <X> the line type
      */
     protected abstract static class MoneyWiseQIFMoneyLine<X extends MoneyWiseQLineType>
@@ -208,6 +216,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
 
         /**
          * Constructor.
+         *
          * @param pMoney the Money
          */
         protected MoneyWiseQIFMoneyLine(final OceanusMoney pMoney) {
@@ -222,6 +231,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
 
         /**
          * Obtain Money.
+         *
          * @return the money
          */
         protected OceanusMoney getMoney() {
@@ -274,6 +284,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
 
     /**
      * The Date line.
+     *
      * @param <X> the line type
      */
     protected abstract static class MoneyWiseQIFDateLine<X extends MoneyWiseQLineType>
@@ -285,6 +296,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
 
         /**
          * Constructor.
+         *
          * @param pDate the Date
          */
         protected MoneyWiseQIFDateLine(final OceanusDate pDate) {
@@ -299,6 +311,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
 
         /**
          * Obtain Date.
+         *
          * @return the date
          */
         public OceanusDate getDate() {
@@ -348,6 +361,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
 
     /**
      * The Flag line.
+     *
      * @param <X> the line type
      */
     protected abstract static class MoneyWiseQIFFlagLine<X extends MoneyWiseQLineType>
@@ -359,6 +373,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
 
         /**
          * Constructor.
+         *
          * @param pSet is the flag set?
          */
         protected MoneyWiseQIFFlagLine(final Boolean pSet) {
@@ -373,6 +388,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
 
         /**
          * Obtain Cleared status.
+         *
          * @return true/false
          */
         protected Boolean isSet() {
@@ -415,12 +431,14 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
 
     /**
      * The Cleared line.
+     *
      * @param <X> the line type
      */
     protected abstract static class MoneyWiseQIFClearedLine<X extends MoneyWiseQLineType>
             extends MoneyWiseQIFFlagLine<X> {
         /**
          * Constructor.
+         *
          * @param pSet is the flag set?
          */
         protected MoneyWiseQIFClearedLine(final Boolean pSet) {
@@ -430,6 +448,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
 
         /**
          * Obtain Cleared status.
+         *
          * @return true/false
          */
         public Boolean isCleared() {
@@ -449,6 +468,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
 
     /**
      * The Price line.
+     *
      * @param <X> the line type
      */
     protected abstract static class MoneyWiseQIFPriceLine<X extends MoneyWiseQLineType>
@@ -460,6 +480,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
 
         /**
          * Constructor.
+         *
          * @param pPrice the Price
          */
         protected MoneyWiseQIFPriceLine(final OceanusPrice pPrice) {
@@ -474,6 +495,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
 
         /**
          * Obtain price.
+         *
          * @return the price
          */
         protected OceanusPrice getPrice() {
@@ -526,6 +548,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
 
     /**
      * The Units line.
+     *
      * @param <X> the line type
      */
     protected abstract static class MoneyWiseQIFUnitsLine<X extends MoneyWiseQLineType>
@@ -537,6 +560,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
 
         /**
          * Constructor.
+         *
          * @param pUnits the Units
          */
         protected MoneyWiseQIFUnitsLine(final OceanusUnits pUnits) {
@@ -551,6 +575,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
 
         /**
          * Obtain units.
+         *
          * @return the units
          */
         protected OceanusUnits getUnits() {
@@ -600,6 +625,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
 
     /**
      * The Rate line.
+     *
      * @param <X> the line type
      */
     protected abstract static class MoneyWiseQIFRateLine<X extends MoneyWiseQLineType>
@@ -611,6 +637,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
 
         /**
          * Constructor.
+         *
          * @param pPercent the percentage
          */
         protected MoneyWiseQIFRateLine(final OceanusRate pPercent) {
@@ -625,6 +652,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
 
         /**
          * Obtain rate.
+         *
          * @return the rate
          */
         protected OceanusRate getRate() {
@@ -674,6 +702,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
 
     /**
      * The Ratio line.
+     *
      * @param <X> the line type
      */
     protected abstract static class MoneyWiseQIFRatioLine<X extends MoneyWiseQLineType>
@@ -685,6 +714,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
 
         /**
          * Constructor.
+         *
          * @param pRatio the Ratio
          */
         protected MoneyWiseQIFRatioLine(final OceanusRatio pRatio) {
@@ -699,6 +729,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
 
         /**
          * Obtain ratio.
+         *
          * @return the ratio
          */
         protected OceanusRatio getRatio() {
@@ -748,6 +779,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
 
     /**
      * The Security line.
+     *
      * @param <X> the line type
      */
     public abstract static class MoneyWiseQIFSecurityLine<X extends MoneyWiseQLineType>
@@ -759,6 +791,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
 
         /**
          * Constructor.
+         *
          * @param pSecurity the Security
          */
         protected MoneyWiseQIFSecurityLine(final MoneyWiseQIFSecurity pSecurity) {
@@ -773,6 +806,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
 
         /**
          * Obtain account.
+         *
          * @return the account
          */
         public MoneyWiseQIFSecurity getSecurity() {
@@ -822,6 +856,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
 
     /**
      * The Account line.
+     *
      * @param <X> the line type
      */
     public abstract static class MoneyWiseQIFXferAccountLine<X extends MoneyWiseQLineType>
@@ -838,6 +873,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
 
         /**
          * Constructor.
+         *
          * @param pAccount the Account
          */
         protected MoneyWiseQIFXferAccountLine(final MoneyWiseQIFAccount pAccount) {
@@ -846,6 +882,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
 
         /**
          * Constructor.
+         *
          * @param pAccount the Account
          * @param pClasses the classes
          */
@@ -863,6 +900,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
 
         /**
          * Obtain account.
+         *
          * @return the account
          */
         public MoneyWiseQIFAccount getAccount() {
@@ -871,6 +909,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
 
         /**
          * Obtain class list.
+         *
          * @return the class list
          */
         public List<MoneyWiseQIFClass> getClassList() {
@@ -906,6 +945,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
 
         /**
          * Parse account line.
+         *
          * @param pFile the QIF File definitions
          * @param pLine the line.
          * @return the account name (or null)
@@ -946,6 +986,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
 
         /**
          * Parse account classes.
+         *
          * @param pFile the QIF File
          * @param pLine the line.
          * @return the account name (or null)
@@ -1034,6 +1075,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
 
     /**
      * The Payee line.
+     *
      * @param <X> the line type
      */
     public abstract static class MoneyWiseQIFPayeeLine<X extends MoneyWiseQLineType>
@@ -1045,6 +1087,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
 
         /**
          * Constructor.
+         *
          * @param pPayee the Payee
          */
         protected MoneyWiseQIFPayeeLine(final MoneyWiseQIFPayee pPayee) {
@@ -1059,6 +1102,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
 
         /**
          * Obtain payee.
+         *
          * @return the payee
          */
         public MoneyWiseQIFPayee getPayee() {
@@ -1108,6 +1152,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
 
     /**
      * The Event Category line.
+     *
      * @param <X> the line type
      */
     public abstract static class MoneyWiseQIFCategoryLine<X extends MoneyWiseQLineType>
@@ -1124,6 +1169,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
 
         /**
          * Constructor.
+         *
          * @param pCategory the Event Category
          */
         protected MoneyWiseQIFCategoryLine(final MoneyWiseQIFEventCategory pCategory) {
@@ -1132,8 +1178,9 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
 
         /**
          * Constructor.
+         *
          * @param pCategory the Event Category
-         * @param pClasses the classes
+         * @param pClasses  the classes
          */
         protected MoneyWiseQIFCategoryLine(final MoneyWiseQIFEventCategory pCategory,
                                            final List<MoneyWiseQIFClass> pClasses) {
@@ -1149,6 +1196,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
 
         /**
          * Obtain event category.
+         *
          * @return the event category
          */
         public MoneyWiseQIFEventCategory getEventCategory() {
@@ -1157,6 +1205,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
 
         /**
          * Obtain class list.
+         *
          * @return the class list
          */
         public List<MoneyWiseQIFClass> getClassList() {
@@ -1190,6 +1239,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
 
         /**
          * Parse category line.
+         *
          * @param pFile the QIF File
          * @param pLine the line.
          * @return the account name (or null)
@@ -1226,6 +1276,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
 
         /**
          * Parse category classes.
+         *
          * @param pFile the QIF File
          * @param pLine the line.
          * @return the account name (or null)
@@ -1314,6 +1365,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
 
     /**
      * The Event Category line.
+     *
      * @param <X> the line type
      */
     public abstract static class MoneyWiseQIFCategoryAccountLine<X extends MoneyWiseQLineType>
@@ -1335,8 +1387,9 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
 
         /**
          * Constructor.
+         *
          * @param pCategory the Event Category
-         * @param pAccount the Account
+         * @param pAccount  the Account
          */
         protected MoneyWiseQIFCategoryAccountLine(final MoneyWiseQIFEventCategory pCategory,
                                                   final MoneyWiseQIFAccount pAccount) {
@@ -1345,9 +1398,10 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
 
         /**
          * Constructor.
+         *
          * @param pCategory the Event Category
-         * @param pAccount the Account
-         * @param pClasses the classes
+         * @param pAccount  the Account
+         * @param pClasses  the classes
          */
         protected MoneyWiseQIFCategoryAccountLine(final MoneyWiseQIFEventCategory pCategory,
                                                   final MoneyWiseQIFAccount pAccount,
@@ -1360,6 +1414,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
 
         /**
          * Obtain event category.
+         *
          * @return the event category
          */
         public MoneyWiseQIFEventCategory getEventCategory() {
@@ -1368,6 +1423,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
 
         /**
          * Obtain account.
+         *
          * @return the account
          */
         public MoneyWiseQIFAccount getAccount() {
@@ -1376,6 +1432,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
 
         /**
          * Obtain class list.
+         *
          * @return the class list
          */
         public List<MoneyWiseQIFClass> getClassList() {

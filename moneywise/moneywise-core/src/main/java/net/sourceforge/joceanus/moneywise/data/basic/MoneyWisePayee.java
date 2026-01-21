@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,11 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.data.basic;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.data.MetisDataEditState;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
@@ -33,8 +35,6 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePayeeType.MoneyW
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseLogicException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInstanceMap;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataMapItem;
@@ -94,7 +94,8 @@ public class MoneyWisePayee
 
     /**
      * Copy Constructor.
-     * @param pList the list
+     *
+     * @param pList  the list
      * @param pPayee The Payee to copy
      */
     protected MoneyWisePayee(final MoneyWisePayeeList pList,
@@ -126,7 +127,8 @@ public class MoneyWisePayee
 
     /**
      * Values constructor.
-     * @param pList the List to add to
+     *
+     * @param pList   the List to add to
      * @param pValues the values constructor
      * @throws OceanusException on error
      */
@@ -143,6 +145,7 @@ public class MoneyWisePayee
 
     /**
      * Edit Constructor.
+     *
      * @param pList the list
      */
     public MoneyWisePayee(final MoneyWisePayeeList pList) {
@@ -182,6 +185,7 @@ public class MoneyWisePayee
 
     /**
      * Obtain fieldValue for infoSet.
+     *
      * @param pFieldId the fieldId
      * @return the value
      */
@@ -191,6 +195,7 @@ public class MoneyWisePayee
 
     /**
      * Obtain WebSite.
+     *
      * @return the webSite
      */
     public char[] getWebSite() {
@@ -201,6 +206,7 @@ public class MoneyWisePayee
 
     /**
      * Obtain CustNo.
+     *
      * @return the customer #
      */
     public char[] getCustNo() {
@@ -211,6 +217,7 @@ public class MoneyWisePayee
 
     /**
      * Obtain UserId.
+     *
      * @return the userId
      */
     public char[] getUserId() {
@@ -221,6 +228,7 @@ public class MoneyWisePayee
 
     /**
      * Obtain Password.
+     *
      * @return the password
      */
     public char[] getPassword() {
@@ -231,6 +239,7 @@ public class MoneyWisePayee
 
     /**
      * Obtain SortCode.
+     *
      * @return the sort code
      */
     public char[] getSortCode() {
@@ -241,6 +250,7 @@ public class MoneyWisePayee
 
     /**
      * Obtain Reference.
+     *
      * @return the reference
      */
     public char[] getReference() {
@@ -251,6 +261,7 @@ public class MoneyWisePayee
 
     /**
      * Obtain Account.
+     *
      * @return the account
      */
     public char[] getAccount() {
@@ -261,6 +272,7 @@ public class MoneyWisePayee
 
     /**
      * Obtain Notes.
+     *
      * @return the notes
      */
     public char[] getNotes() {
@@ -276,6 +288,7 @@ public class MoneyWisePayee
 
     /**
      * Obtain categoryId.
+     *
      * @return the categoryTypeId
      */
     public Integer getCategoryId() {
@@ -287,6 +300,7 @@ public class MoneyWisePayee
 
     /**
      * Obtain categoryName.
+     *
      * @return the categoryName
      */
     public String getCategoryName() {
@@ -298,6 +312,7 @@ public class MoneyWisePayee
 
     /**
      * Obtain categoryClass.
+     *
      * @return the categoryClass
      */
     public MoneyWisePayeeClass getCategoryClass() {
@@ -429,6 +444,7 @@ public class MoneyWisePayee
 
     /**
      * Is this payee the required class.
+     *
      * @param pClass the required payee class.
      * @return true/false
      */
@@ -439,6 +455,7 @@ public class MoneyWisePayee
 
     /**
      * Is the category hidden?
+     *
      * @return true/false
      */
     @Override
@@ -450,10 +467,11 @@ public class MoneyWisePayee
 
     /**
      * Set defaults.
+     *
      * @throws OceanusException on error
      */
     public void setDefaults() throws OceanusException {
-         getList().getValidator().setDefaults(this);
+        getList().getValidator().setDefaults(this);
     }
 
     @Override
@@ -493,6 +511,7 @@ public class MoneyWisePayee
 
     /**
      * Set a new WebSite.
+     *
      * @param pWebSite the new webSite
      * @throws OceanusException on error
      */
@@ -502,6 +521,7 @@ public class MoneyWisePayee
 
     /**
      * Set a new CustNo.
+     *
      * @param pCustNo the new custNo
      * @throws OceanusException on error
      */
@@ -511,6 +531,7 @@ public class MoneyWisePayee
 
     /**
      * Set a new UserId.
+     *
      * @param pUserId the new userId
      * @throws OceanusException on error
      */
@@ -520,6 +541,7 @@ public class MoneyWisePayee
 
     /**
      * Set a new Password.
+     *
      * @param pPassword the new password
      * @throws OceanusException on error
      */
@@ -529,6 +551,7 @@ public class MoneyWisePayee
 
     /**
      * Set a new SortCode.
+     *
      * @param pSortCode the new sort code
      * @throws OceanusException on error
      */
@@ -538,6 +561,7 @@ public class MoneyWisePayee
 
     /**
      * Set a new Account.
+     *
      * @param pAccount the new account
      * @throws OceanusException on error
      */
@@ -547,6 +571,7 @@ public class MoneyWisePayee
 
     /**
      * Set a new Reference.
+     *
      * @param pReference the new reference
      * @throws OceanusException on error
      */
@@ -556,6 +581,7 @@ public class MoneyWisePayee
 
     /**
      * Set a new Notes.
+     *
      * @param pNotes the new notes
      * @throws OceanusException on error
      */
@@ -565,8 +591,9 @@ public class MoneyWisePayee
 
     /**
      * Set an infoSet value.
+     *
      * @param pInfoClass the class of info to set
-     * @param pValue the value to set
+     * @param pValue     the value to set
      * @throws OceanusException on error
      */
     private void setInfoSetValue(final MoneyWiseAccountInfoClass pInfoClass,
@@ -601,6 +628,7 @@ public class MoneyWisePayee
 
     /**
      * Update base payee from an edited payee.
+     *
      * @param pPayee the edited payee
      * @return whether changes have been made
      */
@@ -657,6 +685,7 @@ public class MoneyWisePayee
 
         /**
          * Construct an empty CORE Payee list.
+         *
          * @param pData the DataSet for the list
          */
         public MoneyWisePayeeList(final MoneyWiseDataSet pData) {
@@ -665,6 +694,7 @@ public class MoneyWisePayee
 
         /**
          * Constructor for a cloned List.
+         *
          * @param pSource the source List
          */
         protected MoneyWisePayeeList(final MoneyWisePayeeList pSource) {
@@ -693,6 +723,7 @@ public class MoneyWisePayee
 
         /**
          * Obtain the payeeInfoList.
+         *
          * @return the payee info list
          */
         public MoneyWisePayeeInfoList getPayeeInfo() {
@@ -704,6 +735,7 @@ public class MoneyWisePayee
 
         /**
          * Obtain the accountInfoTypeList.
+         *
          * @return the account info type list
          */
         public MoneyWiseAccountInfoTypeList getActInfoTypes() {
@@ -724,6 +756,7 @@ public class MoneyWisePayee
 
         /**
          * Derive Edit list.
+         *
          * @param pEditSet the editSet
          * @return the edit list
          * @throws OceanusException on error
@@ -789,6 +822,7 @@ public class MoneyWisePayee
 
         /**
          * Add a new item to the core list.
+         *
          * @param pPayee item
          * @return the newly added item
          */
@@ -806,6 +840,7 @@ public class MoneyWisePayee
 
         /**
          * Add a new item to the edit list.
+         *
          * @return the new item
          */
         @Override
@@ -817,6 +852,7 @@ public class MoneyWisePayee
 
         /**
          * Obtain the first payee for the specified class.
+         *
          * @param pClass the payee class
          * @return the payee
          */
@@ -927,6 +963,7 @@ public class MoneyWisePayee
 
         /**
          * Obtain the underlying map.
+         *
          * @return the underlying map
          */
         public MoneyWiseAssetDataMap getUnderlyingMap() {
@@ -935,6 +972,7 @@ public class MoneyWisePayee
 
         /**
          * Obtain the underlying map.
+         *
          * @return the underlying map
          */
         private Map<Integer, MoneyWisePayee> getPayeeMap() {
@@ -943,6 +981,7 @@ public class MoneyWisePayee
 
         /**
          * Obtain the underlying map.
+         *
          * @return the underlying map
          */
         private Map<Integer, Integer> getPayeeCountMap() {
@@ -983,6 +1022,7 @@ public class MoneyWisePayee
 
         /**
          * find item by name.
+         *
          * @param pName the name to look up
          * @return the matching item
          */
@@ -995,6 +1035,7 @@ public class MoneyWisePayee
 
         /**
          * Check validity of name.
+         *
          * @param pName the name to look up
          * @return true/false
          */
@@ -1004,6 +1045,7 @@ public class MoneyWisePayee
 
         /**
          * Check availability of name.
+         *
          * @param pName the key to look up
          * @return true/false
          */
@@ -1013,6 +1055,7 @@ public class MoneyWisePayee
 
         /**
          * find singular item.
+         *
          * @param pClass the class to look up
          * @return the matching item
          */
@@ -1022,6 +1065,7 @@ public class MoneyWisePayee
 
         /**
          * Check validity of singular count.
+         *
          * @param pClass the class to look up
          * @return true/false
          */

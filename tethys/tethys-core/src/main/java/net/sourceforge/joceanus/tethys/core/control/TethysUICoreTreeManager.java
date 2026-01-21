@@ -1,37 +1,38 @@
-/*******************************************************************************
- * Tethys: Java Utilities
- * Copyright 2012-2026 Tony Washer
+/*
+ * Tethys: GUI Utilities
+ * Copyright 2012-2026. Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package net.sourceforge.joceanus.tethys.core.control;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
-import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIIcon;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIIconId;
-import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.api.control.TethysUITreeManager;
 import net.sourceforge.joceanus.tethys.core.base.TethysUICoreComponent;
 import net.sourceforge.joceanus.tethys.core.factory.TethysUICoreFactory;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Tree Manager.
+ *
  * @param <T> the item type
  */
 public abstract class TethysUICoreTreeManager<T>
@@ -89,6 +90,7 @@ public abstract class TethysUICoreTreeManager<T>
 
     /**
      * Constructor.
+     *
      * @param pFactory the GUI factory
      */
     protected TethysUICoreTreeManager(final TethysUICoreFactory<?> pFactory) {
@@ -111,8 +113,9 @@ public abstract class TethysUICoreTreeManager<T>
 
     /**
      * Fire event.
+     *
      * @param pEventId the actionId
-     * @param pValue the relevant value
+     * @param pValue   the relevant value
      */
     protected void fireEvent(final TethysUIEvent pEventId,
                              final Object pValue) {
@@ -121,6 +124,7 @@ public abstract class TethysUICoreTreeManager<T>
 
     /**
      * Set the root node.
+     *
      * @param pRoot the root node
      */
     protected void setRoot(final TethysUICoreTreeItem<T> pRoot) {
@@ -170,6 +174,7 @@ public abstract class TethysUICoreTreeManager<T>
 
     /**
      * Register item.
+     *
      * @param pItem the item to register
      */
     protected void registerItem(final TethysUICoreTreeItem<T> pItem) {
@@ -187,6 +192,7 @@ public abstract class TethysUICoreTreeManager<T>
 
     /**
      * DeRegister item.
+     *
      * @param pItem the item to deRegister
      */
     protected void deRegisterItem(final TethysUITreeItem<T> pItem) {
@@ -209,10 +215,11 @@ public abstract class TethysUICoreTreeManager<T>
 
     /**
      * TreeItem class.
+     *
      * @param <T> the data type
      */
     public abstract static class TethysUICoreTreeItem<T>
-        implements TethysUITreeItem<T> {
+            implements TethysUITreeItem<T> {
         /**
          * The unique name of this item.
          */
@@ -265,6 +272,7 @@ public abstract class TethysUICoreTreeManager<T>
 
         /**
          * Constructor for root item.
+         *
          * @param pTree the tree
          */
         protected TethysUICoreTreeItem(final TethysUICoreTreeManager<T> pTree) {
@@ -279,10 +287,11 @@ public abstract class TethysUICoreTreeManager<T>
 
         /**
          * Constructor.
-         * @param pTree the tree
+         *
+         * @param pTree   the tree
          * @param pParent the parent
-         * @param pName the unique name of the item
-         * @param pItem the contained item
+         * @param pName   the unique name of the item
+         * @param pItem   the contained item
          */
         protected TethysUICoreTreeItem(final TethysUICoreTreeManager<T> pTree,
                                        final TethysUICoreTreeItem<T> pParent,
@@ -395,6 +404,7 @@ public abstract class TethysUICoreTreeManager<T>
 
         /**
          * Attach as particular child.
+         *
          * @param pChildNo the child #
          */
         protected abstract void attachAsChildNo(int pChildNo);

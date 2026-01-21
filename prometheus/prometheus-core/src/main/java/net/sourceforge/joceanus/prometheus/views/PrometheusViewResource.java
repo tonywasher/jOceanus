@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Prometheus: Application Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,12 +13,12 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.prometheus.views;
 
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleLoader;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerResource;
-import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
-import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
 
 import java.util.EnumMap;
@@ -82,6 +82,7 @@ public enum PrometheusViewResource implements OceanusBundleId {
 
     /**
      * Constructor.
+     *
      * @param pKeyName the key name
      */
     PrometheusViewResource(final String pKeyName) {
@@ -112,6 +113,7 @@ public enum PrometheusViewResource implements OceanusBundleId {
 
     /**
      * Build entry map.
+     *
      * @return the map
      */
     private static Map<PrometheusViewerEntryId, OceanusBundleId> buildEntryMap() {
@@ -131,6 +133,7 @@ public enum PrometheusViewResource implements OceanusBundleId {
 
     /**
      * Obtain key for stdEntry.
+     *
      * @param pEntry the entry
      * @return the resource key
      */

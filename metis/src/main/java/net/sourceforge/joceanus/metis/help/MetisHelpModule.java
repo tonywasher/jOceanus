@@ -1,28 +1,28 @@
-/*******************************************************************************
+/*
  * Metis: Java Data Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package net.sourceforge.joceanus.metis.help;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusResourceId;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusResourceLoader;
+import net.sourceforge.joceanus.tethys.api.control.TethysUIHTMLManager.TethysUIStyleSheetId;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.resource.OceanusResourceId;
-import net.sourceforge.joceanus.oceanus.resource.OceanusResourceLoader;
-import net.sourceforge.joceanus.tethys.api.control.TethysUIHTMLManager.TethysUIStyleSheetId;
 
 /**
  * The help module that is implemented by each Help System.
@@ -71,6 +71,7 @@ public abstract class MetisHelpModule {
 
     /**
      * Constructor.
+     *
      * @param pTitle the title
      */
     protected MetisHelpModule(final String pTitle) {
@@ -83,6 +84,7 @@ public abstract class MetisHelpModule {
 
     /**
      * Set the initial name.
+     *
      * @param pInitial the initial name
      */
     public void setInitialName(final String pInitial) {
@@ -91,6 +93,7 @@ public abstract class MetisHelpModule {
 
     /**
      * Obtain the initial name.
+     *
      * @return the initial name
      */
     protected String getInitialName() {
@@ -99,6 +102,7 @@ public abstract class MetisHelpModule {
 
     /**
      * Obtain the title.
+     *
      * @return the title
      */
     protected String getTitle() {
@@ -107,6 +111,7 @@ public abstract class MetisHelpModule {
 
     /**
      * Obtain the CSS.
+     *
      * @return the CSS
      */
     protected TethysUIStyleSheetId getCSS() {
@@ -115,6 +120,7 @@ public abstract class MetisHelpModule {
 
     /**
      * Obtain the help entries.
+     *
      * @return the help entries
      */
     public List<MetisHelpEntry> getHelpEntries() {
@@ -123,6 +129,7 @@ public abstract class MetisHelpModule {
 
     /**
      * Add root entry.
+     *
      * @param pEntry the entry
      * @return the HelpEntry
      */
@@ -133,8 +140,9 @@ public abstract class MetisHelpModule {
 
     /**
      * Define Standard Help entry.
-     * @param <K> the type of the key
-     * @param pName the name
+     *
+     * @param <K>     the type of the key
+     * @param pName   the name
      * @param pHelpId the helpId
      * @return the HelpEntry
      */
@@ -145,9 +153,10 @@ public abstract class MetisHelpModule {
 
     /**
      * Define Titled Help entry.
-     * @param <K> the type of the key
-     * @param pName the name
-     * @param pTitle the title
+     *
+     * @param <K>     the type of the key
+     * @param pName   the name
+     * @param pTitle  the title
      * @param pHelpId the helpId
      * @return the HelpEntry
      */
@@ -159,6 +168,7 @@ public abstract class MetisHelpModule {
 
     /**
      * Define Contents Help entry.
+     *
      * @param pName the name
      * @return the HelpEntry
      */
@@ -168,7 +178,8 @@ public abstract class MetisHelpModule {
 
     /**
      * Define Contents Help entry.
-     * @param pName the name
+     *
+     * @param pName  the name
      * @param pTitle the title
      * @return the HelpEntry
      */
@@ -179,6 +190,7 @@ public abstract class MetisHelpModule {
 
     /**
      * Load Help entries from the file system.
+     *
      * @throws OceanusException on error
      */
     protected void loadHelpPages() throws OceanusException {
@@ -187,7 +199,8 @@ public abstract class MetisHelpModule {
 
     /**
      * Load CSS.
-     * @param <K> the keyType
+     *
+     * @param <K>  the keyType
      * @param pKey the styleSheetKey
      * @throws OceanusException on error
      */
@@ -197,6 +210,7 @@ public abstract class MetisHelpModule {
 
     /**
      * Load Help entries from the file system.
+     *
      * @param pEntries the Help Entries
      * @throws OceanusException on error
      */

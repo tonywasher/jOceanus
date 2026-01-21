@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,11 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.test.data.xdoc;
 
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEvent;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEventList;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEventType;
@@ -31,8 +33,6 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurity;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.moneywise.test.data.trans.MoneyWiseDataTestCase;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -86,8 +86,9 @@ public class MoneyWiseDataXDocSecurity {
 
     /**
      * Constructor.
-     * @param pReport the report
-     * @param pTest the test case
+     *
+     * @param pReport  the report
+     * @param pTest    the test case
      * @param pParents the parents list
      */
     MoneyWiseDataXDocSecurity(final MoneyWiseDataXDocReport pReport,
@@ -184,8 +185,9 @@ public class MoneyWiseDataXDocSecurity {
 
     /**
      * create main holding headers.
+     *
      * @param pPortfolio the portfolio bucket
-     * @param pForeign are there foreign assets?
+     * @param pForeign   are there foreign assets?
      * @return the number of header cells
      */
     int createMainHoldingHeaders(final MoneyWiseXAnalysisPortfolioBucket pPortfolio,
@@ -223,6 +225,7 @@ public class MoneyWiseDataXDocSecurity {
 
     /**
      * create foreign holding headers.
+     *
      * @param pPortfolio the portfolio bucket
      */
     void createForeignHoldingHeaders(final MoneyWiseXAnalysisPortfolioBucket pPortfolio) {
@@ -243,8 +246,9 @@ public class MoneyWiseDataXDocSecurity {
 
     /**
      * update holding asset row for event.
+     *
      * @param pPortfolio the portfolio bucket
-     * @param pEvent the event
+     * @param pEvent     the event
      * @return isNonEmpty true/false
      */
     boolean updateHoldingAssetRow(final MoneyWiseXAnalysisPortfolioBucket pPortfolio,
@@ -287,6 +291,7 @@ public class MoneyWiseDataXDocSecurity {
 
     /**
      * Are there any foreign assets?
+     *
      * @param pPortfolio the portfolio bucket
      * @return true/false
      */
@@ -333,6 +338,7 @@ public class MoneyWiseDataXDocSecurity {
 
     /**
      * Format Holding history.
+     *
      * @param pHolding the security holding bucket
      */
     private void createHoldingHistory(final MoneyWiseXAnalysisSecurityBucket pHolding) {

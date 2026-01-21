@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,10 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets;
 
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
@@ -25,7 +26,6 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCash;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCashCategory;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 
 import java.util.Iterator;
 import java.util.List;
@@ -59,6 +59,7 @@ public final class MoneyWiseXAnalysisCashCategoryBucket
 
     /**
      * Constructor.
+     *
      * @param pCurrency the currency
      * @param pCategory the account category
      */
@@ -92,6 +93,7 @@ public final class MoneyWiseXAnalysisCashCategoryBucket
 
     /**
      * Is the bucket active?
+     *
      * @return true/false
      */
     public boolean isActive() {
@@ -100,6 +102,7 @@ public final class MoneyWiseXAnalysisCashCategoryBucket
 
     /**
      * Update active flag for Cash Bucket.
+     *
      * @param pBucket the Cash bucket
      */
     void updateActive(final MoneyWiseXAnalysisCashBucket pBucket) {
@@ -108,6 +111,7 @@ public final class MoneyWiseXAnalysisCashCategoryBucket
 
     /**
      * Update active flag for Cash Category Bucket.
+     *
      * @param pBucket the Cash category bucket
      */
     void updateActive(final MoneyWiseXAnalysisCashCategoryBucket pBucket) {
@@ -159,6 +163,7 @@ public final class MoneyWiseXAnalysisCashCategoryBucket
 
         /**
          * Construct a top-level List.
+         *
          * @param pAnalysis the analysis
          */
         MoneyWiseXAnalysisCashCategoryBucketList(final MoneyWiseXAnalysis pAnalysis) {
@@ -187,6 +192,7 @@ public final class MoneyWiseXAnalysisCashCategoryBucket
 
         /**
          * Obtain item by id.
+         *
          * @param pId the id to lookup
          * @return the item (or null if not present)
          */
@@ -197,6 +203,7 @@ public final class MoneyWiseXAnalysisCashCategoryBucket
 
         /**
          * Do we have a foreign currency?
+         *
          * @return true/false
          */
         public Boolean haveForeignCurrency() {
@@ -205,6 +212,7 @@ public final class MoneyWiseXAnalysisCashCategoryBucket
 
         /**
          * Obtain the Analysis.
+         *
          * @return the analysis
          */
         public MoneyWiseXAnalysis getAnalysis() {
@@ -213,6 +221,7 @@ public final class MoneyWiseXAnalysisCashCategoryBucket
 
         /**
          * Obtain the Totals.
+         *
          * @return the totals
          */
         public MoneyWiseXAnalysisCashCategoryBucket getTotals() {
@@ -221,6 +230,7 @@ public final class MoneyWiseXAnalysisCashCategoryBucket
 
         /**
          * Allocate the Totals CategoryBucket.
+         *
          * @return the bucket
          */
         private MoneyWiseXAnalysisCashCategoryBucket allocateTotalsBucket() {
@@ -230,6 +240,7 @@ public final class MoneyWiseXAnalysisCashCategoryBucket
 
         /**
          * Obtain the CashCategoryBucket for a given category.
+         *
          * @param pCategory the category
          * @return the bucket
          */
@@ -252,6 +263,7 @@ public final class MoneyWiseXAnalysisCashCategoryBucket
 
         /**
          * Analyse cash accounts.
+         *
          * @param pCash the cash account buckets
          */
         public void analyseCash(final MoneyWiseXAnalysisCashBucketList pCash) {
@@ -282,6 +294,7 @@ public final class MoneyWiseXAnalysisCashCategoryBucket
 
         /**
          * Build categories.
+         *
          * @param pCash the cash account buckets
          */
         public void buildCategories(final MoneyWiseXAnalysisCashBucketList pCash) {

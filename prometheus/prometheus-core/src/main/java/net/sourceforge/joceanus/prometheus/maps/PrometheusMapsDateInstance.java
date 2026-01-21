@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Prometheus: Application Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,15 +13,15 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.prometheus.maps;
 
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.metis.list.MetisListKey;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
 
@@ -75,9 +75,10 @@ public class PrometheusMapsDateInstance
 
     /**
      * Constructor.
-     * @param pListKey the listKey
-     * @param pOwnerId the ownerFieldId
-     * @param pDateId the date fieldId
+     *
+     * @param pListKey   the listKey
+     * @param pOwnerId   the ownerFieldId
+     * @param pDateId    the date fieldId
      * @param pAllowNull do we allow null value?
      */
     PrometheusMapsDateInstance(final MetisListKey pListKey,
@@ -93,6 +94,7 @@ public class PrometheusMapsDateInstance
 
     /**
      * Constructor.
+     *
      * @param pSource the source map
      */
     PrometheusMapsDateInstance(final PrometheusMapsDateInstance pSource) {
@@ -115,6 +117,7 @@ public class PrometheusMapsDateInstance
 
     /**
      * Obtain the listKey.
+     *
      * @return the listKey
      */
     MetisListKey getListKey() {
@@ -123,6 +126,7 @@ public class PrometheusMapsDateInstance
 
     /**
      * Obtain the ownerId.
+     *
      * @return the ownerId
      */
     MetisDataFieldId getOwnerId() {
@@ -131,6 +135,7 @@ public class PrometheusMapsDateInstance
 
     /**
      * Obtain the dateId.
+     *
      * @return the dateId
      */
     MetisDataFieldId getDateId() {
@@ -139,6 +144,7 @@ public class PrometheusMapsDateInstance
 
     /**
      * Obtain the map.
+     *
      * @return the fieldId
      */
     Map<PrometheusDataItem, PrometheusMapsFieldInstance> getMap() {
@@ -147,6 +153,7 @@ public class PrometheusMapsDateInstance
 
     /**
      * add item to map.
+     *
      * @param pItem the item
      */
     void addItemToMap(final PrometheusDataItem pItem) {
@@ -163,6 +170,7 @@ public class PrometheusMapsDateInstance
 
     /**
      * Is the date duplicate?
+     *
      * @param pItem the item
      * @return true/false
      */
@@ -184,8 +192,9 @@ public class PrometheusMapsDateInstance
 
     /**
      * Is the date available?
+     *
      * @param pOwner the owner
-     * @param pDate the date
+     * @param pDate  the date
      * @return true/false
      */
     boolean isDateAvailable(final PrometheusDataItem pOwner,

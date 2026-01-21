@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Prometheus: Application Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,18 +13,18 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.prometheus.service.sheet;
 
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.convert.OceanusDataConverter;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.convert.OceanusDataConverter;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 
 /**
  * Class representing a cell within a sheet or a view.
@@ -52,7 +52,8 @@ public abstract class PrometheusSheetCell {
 
     /**
      * Constructor.
-     * @param pRow the row for the cell
+     *
+     * @param pRow      the row for the cell
      * @param pColIndex the column index
      * @param pReadOnly is the cell readOnly?
      */
@@ -68,6 +69,7 @@ public abstract class PrometheusSheetCell {
 
     /**
      * Obtain the underlying sheet.
+     *
      * @return the underlying sheet
      */
     public PrometheusSheetSheet getSheet() {
@@ -76,6 +78,7 @@ public abstract class PrometheusSheetCell {
 
     /**
      * Obtain the underlying row.
+     *
      * @return the underlying row
      */
     public PrometheusSheetRow getRow() {
@@ -84,6 +87,7 @@ public abstract class PrometheusSheetCell {
 
     /**
      * Obtain the underlying view.
+     *
      * @return the underlying view
      */
     public PrometheusSheetView getView() {
@@ -92,6 +96,7 @@ public abstract class PrometheusSheetCell {
 
     /**
      * Obtain the cell position.
+     *
      * @return position
      */
     public PrometheusSheetCellPosition getPosition() {
@@ -100,6 +105,7 @@ public abstract class PrometheusSheetCell {
 
     /**
      * Is the cell readOnly?
+     *
      * @return true/false
      */
     public boolean isReadOnly() {
@@ -108,6 +114,7 @@ public abstract class PrometheusSheetCell {
 
     /**
      * Obtain the cell index.
+     *
      * @return the index
      */
     public int getCellIndex() {
@@ -116,12 +123,14 @@ public abstract class PrometheusSheetCell {
 
     /**
      * Obtain boolean value of the cell.
+     *
      * @return the boolean value
      */
     public abstract Boolean getBoolean();
 
     /**
      * Obtain date value of the cell.
+     *
      * @return the date value
      * @throws OceanusException on error
      */
@@ -129,6 +138,7 @@ public abstract class PrometheusSheetCell {
 
     /**
      * Obtain integer value of the cell.
+     *
      * @return the integer value
      * @throws OceanusException on error
      */
@@ -136,6 +146,7 @@ public abstract class PrometheusSheetCell {
 
     /**
      * Obtain long value of the cell.
+     *
      * @return the long value
      * @throws OceanusException on error
      */
@@ -143,6 +154,7 @@ public abstract class PrometheusSheetCell {
 
     /**
      * Obtain long value of the cell.
+     *
      * @return the long value
      * @throws OceanusException on error
      */
@@ -157,6 +169,7 @@ public abstract class PrometheusSheetCell {
 
     /**
      * Obtain money value of the cell.
+     *
      * @return the money value
      * @throws OceanusException on error
      */
@@ -164,6 +177,7 @@ public abstract class PrometheusSheetCell {
 
     /**
      * Obtain price value of the cell.
+     *
      * @return the price value
      * @throws OceanusException on error
      */
@@ -171,6 +185,7 @@ public abstract class PrometheusSheetCell {
 
     /**
      * Obtain rate value of the cell.
+     *
      * @return the rate value
      * @throws OceanusException on error
      */
@@ -178,6 +193,7 @@ public abstract class PrometheusSheetCell {
 
     /**
      * Obtain units value of the cell.
+     *
      * @return the units value
      * @throws OceanusException on error
      */
@@ -185,6 +201,7 @@ public abstract class PrometheusSheetCell {
 
     /**
      * Obtain ratio value of the cell.
+     *
      * @return the ratio value
      * @throws OceanusException on error
      */
@@ -192,35 +209,39 @@ public abstract class PrometheusSheetCell {
 
     /**
      * Obtain string value of the cell.
+     *
      * @return the string value
      */
     public abstract String getString();
 
     /**
      * Obtain byte array value of the cell.
+     *
      * @return the byte array value
      */
     public byte[] getBytes() {
         final String myValue = getString();
         return myValue == null
-                               ? null
-                               : OceanusDataConverter.base64ToByteArray(myValue);
+                ? null
+                : OceanusDataConverter.base64ToByteArray(myValue);
     }
 
     /**
      * Obtain char array value of the cell.
+     *
      * @return the char array value
      * @throws OceanusException on error
      */
     public char[] getCharArray() throws OceanusException {
         final byte[] myValue = getBytes();
         return myValue == null
-                               ? null
-                               : OceanusDataConverter.bytesToCharArray(myValue);
+                ? null
+                : OceanusDataConverter.bytesToCharArray(myValue);
     }
 
     /**
      * Set null value for the cell.
+     *
      * @throws OceanusException on error
      */
     public void setNull() throws OceanusException {
@@ -232,12 +253,14 @@ public abstract class PrometheusSheetCell {
 
     /**
      * Set null value for the cell.
+     *
      * @throws OceanusException on error
      */
     protected abstract void setNullValue() throws OceanusException;
 
     /**
      * Set boolean value of the cell.
+     *
      * @param pValue the integer value
      * @throws OceanusException on error
      */
@@ -247,7 +270,7 @@ public abstract class PrometheusSheetCell {
             return;
         }
 
-         /* Handle null values */
+        /* Handle null values */
         if (pValue == null) {
             setNullValue();
         } else {
@@ -257,6 +280,7 @@ public abstract class PrometheusSheetCell {
 
     /**
      * Set non-null boolean value of the cell.
+     *
      * @param pValue the integer value
      * @throws OceanusException on error
      */
@@ -264,6 +288,7 @@ public abstract class PrometheusSheetCell {
 
     /**
      * Set date value of the cell.
+     *
      * @param pValue the date value
      * @throws OceanusException on error
      */
@@ -283,6 +308,7 @@ public abstract class PrometheusSheetCell {
 
     /**
      * Set non-null date value of the cell.
+     *
      * @param pValue the integer value
      * @throws OceanusException on error
      */
@@ -290,6 +316,7 @@ public abstract class PrometheusSheetCell {
 
     /**
      * Set integer value of the cell.
+     *
      * @param pValue the integer value
      * @throws OceanusException on error
      */
@@ -309,6 +336,7 @@ public abstract class PrometheusSheetCell {
 
     /**
      * Set non-null integer value of the cell.
+     *
      * @param pValue the integer value
      * @throws OceanusException on error
      */
@@ -316,6 +344,7 @@ public abstract class PrometheusSheetCell {
 
     /**
      * Set long value of the cell.
+     *
      * @param pValue the integer value
      * @throws OceanusException on error
      */
@@ -335,6 +364,7 @@ public abstract class PrometheusSheetCell {
 
     /**
      * Set long value of the cell.
+     *
      * @param pValue the integer value
      * @throws OceanusException on error
      */
@@ -354,6 +384,7 @@ public abstract class PrometheusSheetCell {
 
     /**
      * Set non-null long value of the cell.
+     *
      * @param pValue the long value
      * @throws OceanusException on error
      */
@@ -361,6 +392,7 @@ public abstract class PrometheusSheetCell {
 
     /**
      * Set string value of the cell.
+     *
      * @param pValue the string value
      * @throws OceanusException on error
      */
@@ -380,6 +412,7 @@ public abstract class PrometheusSheetCell {
 
     /**
      * Set non-null string value of the cell.
+     *
      * @param pValue the string value
      * @throws OceanusException on error
      */
@@ -387,6 +420,7 @@ public abstract class PrometheusSheetCell {
 
     /**
      * Set decimal value of the cell.
+     *
      * @param pValue the decimal value
      * @throws OceanusException on error
      */
@@ -406,6 +440,7 @@ public abstract class PrometheusSheetCell {
 
     /**
      * Set non-null decimal value of the cell.
+     *
      * @param pValue the decimal value
      * @throws OceanusException on error
      */
@@ -413,6 +448,7 @@ public abstract class PrometheusSheetCell {
 
     /**
      * Set monetary value of the cell.
+     *
      * @param pValue the monetary value
      * @throws OceanusException on error
      */
@@ -432,6 +468,7 @@ public abstract class PrometheusSheetCell {
 
     /**
      * Set non-null monetary value of the cell.
+     *
      * @param pValue the monetary value
      * @throws OceanusException on error
      */
@@ -439,6 +476,7 @@ public abstract class PrometheusSheetCell {
 
     /**
      * Set header value of the cell.
+     *
      * @param pValue the string value
      * @throws OceanusException on error
      */
@@ -454,6 +492,7 @@ public abstract class PrometheusSheetCell {
 
     /**
      * Set non-null header value of the cell.
+     *
      * @param pValue the header value
      * @throws OceanusException on error
      */
@@ -461,6 +500,7 @@ public abstract class PrometheusSheetCell {
 
     /**
      * Set byte array value of the cell.
+     *
      * @param pValue the byte array value
      * @throws OceanusException on error
      */
@@ -480,6 +520,7 @@ public abstract class PrometheusSheetCell {
 
     /**
      * Set char array value of the cell.
+     *
      * @param pValue the byte array value
      * @throws OceanusException on error
      */
@@ -500,6 +541,7 @@ public abstract class PrometheusSheetCell {
 
     /**
      * Obtain the required CellStyle.
+     *
      * @param pValue the value
      * @return the required CellStyle
      */

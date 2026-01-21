@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Prometheus: Application Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,15 +13,15 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.prometheus.maps;
 
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.data.MetisDataType;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.metis.list.MetisListKey;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoClass;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
@@ -68,6 +68,7 @@ public class PrometheusMapsCtl
 
     /**
      * Constructor.
+     *
      * @param pDeconstruct the deconstruct processor
      */
     public PrometheusMapsCtl(final Function<Object, List<PrometheusDataItem>> pDeconstruct) {
@@ -89,6 +90,7 @@ public class PrometheusMapsCtl
 
     /**
      * Obtain the touch map.
+     *
      * @return the touch map
      */
     private PrometheusMapsTouchCtl getTouchMap() {
@@ -97,6 +99,7 @@ public class PrometheusMapsCtl
 
     /**
      * Obtain the instance map.
+     *
      * @return the instance map
      */
     private PrometheusMapsInstanceCtl getInstanceMap() {
@@ -105,6 +108,7 @@ public class PrometheusMapsCtl
 
     /**
      * Declare fieldId map.
+     *
      * @param pListKey the listKey
      * @param pFieldId the fieldId
      */
@@ -115,9 +119,10 @@ public class PrometheusMapsCtl
 
     /**
      * Declare fieldId map.
+     *
      * @param pListKey the listKey
      * @param pFieldId the fieldId
-     * @param pFilter the filter
+     * @param pFilter  the filter
      */
     public void declareFieldIdMap(final MetisListKey pListKey,
                                   final MetisDataFieldId pFieldId,
@@ -127,8 +132,9 @@ public class PrometheusMapsCtl
 
     /**
      * Declare shared fieldId map.
-     * @param pListKey the listKey
-     * @param pFieldId the fieldId
+     *
+     * @param pListKey   the listKey
+     * @param pFieldId   the fieldId
      * @param pSharedKey the shared listKey
      */
     public void declareFieldIdMap(final MetisListKey pListKey,
@@ -139,9 +145,10 @@ public class PrometheusMapsCtl
 
     /**
      * Declare dateId map.
+     *
      * @param pListKey the listKey
      * @param pOwnerId the ownerId
-     * @param pDateId the dateId
+     * @param pDateId  the dateId
      */
     public void declareDateIdMap(final MetisListKey pListKey,
                                  final MetisDataFieldId pOwnerId,
@@ -151,9 +158,10 @@ public class PrometheusMapsCtl
 
     /**
      * Declare dateId map.
-     * @param pListKey the listKey
-     * @param pOwnerId the ownerId
-     * @param pDateId the dateId
+     *
+     * @param pListKey   the listKey
+     * @param pOwnerId   the ownerId
+     * @param pDateId    the dateId
      * @param pAllowNull do we allow null value?
      */
     public void declareDateIdMap(final MetisListKey pListKey,
@@ -173,6 +181,7 @@ public class PrometheusMapsCtl
 
     /**
      * Adjust for DataSet.
+     *
      * @param pDataSet the dataSet
      */
     public void adjustForDataSet(final PrometheusDataSet pDataSet) {
@@ -187,6 +196,7 @@ public class PrometheusMapsCtl
 
     /**
      * Adjust for EditSet.
+     *
      * @param pEditSet the editSet
      */
     public void adjustForEditSet(final PrometheusEditSet pEditSet) {
@@ -202,6 +212,7 @@ public class PrometheusMapsCtl
 
     /**
      * Adjust for DataList.
+     *
      * @param pDataList the dataList
      */
     void adjustForDataList(final PrometheusDataList<?> pDataList) {
@@ -216,6 +227,7 @@ public class PrometheusMapsCtl
 
     /**
      * Adjust for DataItem.
+     *
      * @param pItem the dataItem
      */
     void adjustForDataItem(final PrometheusDataItem pItem) {
@@ -232,6 +244,7 @@ public class PrometheusMapsCtl
 
     /**
      * Adjust for DataItem.
+     *
      * @param pItem the dataItem
      */
     void adjustForStandardItemTouches(final PrometheusDataItem pItem) {
@@ -260,6 +273,7 @@ public class PrometheusMapsCtl
 
     /**
      * Adjust for DataInfoItem.
+     *
      * @param pInfo the dataInfoItem
      */
     void adjustForDataInfoItemTouches(final PrometheusDataInfoItem pInfo) {

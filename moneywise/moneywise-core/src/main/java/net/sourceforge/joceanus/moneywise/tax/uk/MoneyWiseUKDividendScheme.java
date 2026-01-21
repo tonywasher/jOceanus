@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,15 +13,15 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.tax.uk;
 
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxResource;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -48,6 +48,7 @@ public abstract class MoneyWiseUKDividendScheme
 
     /**
      * Constructor.
+     *
      * @param pReliefAvailable Is tax relief available?
      */
     protected MoneyWiseUKDividendScheme(final Boolean pReliefAvailable) {
@@ -56,6 +57,7 @@ public abstract class MoneyWiseUKDividendScheme
 
     /**
      * Obtain theTaxCredit rate for dividend.
+     *
      * @param pTaxYear the taxYear
      * @return the taxCredit rate
      */
@@ -103,6 +105,7 @@ public abstract class MoneyWiseUKDividendScheme
 
     /**
      * Obtain the base rate.
+     *
      * @return the base rate
      */
     protected OceanusRate getBaseRate() {
@@ -111,6 +114,7 @@ public abstract class MoneyWiseUKDividendScheme
 
     /**
      * Obtain the higher rate.
+     *
      * @return the higher rate
      */
     protected OceanusRate getHigherRate() {
@@ -119,6 +123,7 @@ public abstract class MoneyWiseUKDividendScheme
 
     /**
      * Obtain the additional rate.
+     *
      * @return the additional rate
      */
     protected OceanusRate getAdditionalRate() {
@@ -235,7 +240,8 @@ public abstract class MoneyWiseUKDividendScheme
 
         /**
          * Constructor.
-         * @param pRate the base rate
+         *
+         * @param pRate            the base rate
          * @param pReliefAvailable Is tax relief available?
          */
         protected MoneyWiseUKDividendBaseRateScheme(final OceanusRate pRate,
@@ -246,6 +252,7 @@ public abstract class MoneyWiseUKDividendScheme
 
         /**
          * Constructor.
+         *
          * @param pRate the base rate
          */
         protected MoneyWiseUKDividendBaseRateScheme(final OceanusRate pRate) {
@@ -292,7 +299,8 @@ public abstract class MoneyWiseUKDividendScheme
 
         /**
          * Constructor.
-         * @param pRate the base rate
+         *
+         * @param pRate     the base rate
          * @param pHighRate the higher rate
          */
         protected MoneyWiseUKDividendHigherRateScheme(final OceanusRate pRate,
@@ -302,8 +310,9 @@ public abstract class MoneyWiseUKDividendScheme
 
         /**
          * Constructor.
-         * @param pRate the base rate
-         * @param pHighRate the higher rate
+         *
+         * @param pRate            the base rate
+         * @param pHighRate        the higher rate
          * @param pReliefAvailable Is tax relief available?
          */
         protected MoneyWiseUKDividendHigherRateScheme(final OceanusRate pRate,
@@ -336,7 +345,8 @@ public abstract class MoneyWiseUKDividendScheme
 
         /**
          * Constructor.
-         * @param pRate the base rate
+         *
+         * @param pRate       the base rate
          * @param pHigherRate the higher rate
          */
         protected MoneyWiseUKDividendLoHigherRateScheme(final OceanusRate pRate,
@@ -374,9 +384,10 @@ public abstract class MoneyWiseUKDividendScheme
 
         /**
          * Constructor.
-         * @param pRate the base rate
+         *
+         * @param pRate     the base rate
          * @param pHighRate the higher rate
-         * @param pAddRate the additional rate
+         * @param pAddRate  the additional rate
          */
         protected MoneyWiseUKDividendAdditionalRateScheme(final OceanusRate pRate,
                                                           final OceanusRate pHighRate,
@@ -386,9 +397,10 @@ public abstract class MoneyWiseUKDividendScheme
 
         /**
          * Constructor.
-         * @param pRate the base rate
-         * @param pHighRate the higher rate
-         * @param pAddRate the additional rate
+         *
+         * @param pRate            the base rate
+         * @param pHighRate        the higher rate
+         * @param pAddRate         the additional rate
          * @param pReliefAvailable Is tax relief available?
          */
         protected MoneyWiseUKDividendAdditionalRateScheme(final OceanusRate pRate,

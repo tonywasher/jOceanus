@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Metis: Java Data Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,16 +13,16 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.metis.http;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimalParser;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.exc.MetisDataException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimalParser;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,6 +35,7 @@ import java.util.Map;
 
 /**
  * Client to query YQL.
+ *
  * @author Tony Washer
  */
 public class MetisHTTPYQLClient
@@ -136,6 +137,7 @@ public class MetisHTTPYQLClient
 
     /**
      * Constructor.
+     *
      * @param pFormatter the data formatter
      */
     public MetisHTTPYQLClient(final OceanusDataFormatter pFormatter) {
@@ -145,7 +147,8 @@ public class MetisHTTPYQLClient
 
     /**
      * Obtain price for individual security.
-     * @param pSymbol the security symbol
+     *
+     * @param pSymbol   the security symbol
      * @param pCurrency the currency for the price
      * @return the price
      * @throws OceanusException on error
@@ -199,7 +202,8 @@ public class MetisHTTPYQLClient
 
     /**
      * Obtain price for individual security.
-     * @param pSymbols the security symbols
+     *
+     * @param pSymbols  the security symbols
      * @param pCurrency the currency for the price
      * @return the price
      * @throws OceanusException on error
@@ -274,8 +278,9 @@ public class MetisHTTPYQLClient
 
     /**
      * Obtain exchange rate for currency pair.
+     *
      * @param pFrom the from currency
-     * @param pTo the to currency
+     * @param pTo   the to currency
      * @return the price
      * @throws OceanusException on error
      */
@@ -306,8 +311,8 @@ public class MetisHTTPYQLClient
 
             /* return parsed rate if possible */
             return (myRate != null)
-                                    ? new OceanusRatio(myRate)
-                                    : null;
+                    ? new OceanusRatio(myRate)
+                    : null;
 
         } catch (JSONException e) {
             /* Notify of failure */
@@ -317,7 +322,8 @@ public class MetisHTTPYQLClient
 
     /**
      * Obtain exchange rate for currency pairs.
-     * @param pFrom the from currency
+     *
+     * @param pFrom   the from currency
      * @param pToList the list of to currencies
      * @return the price
      * @throws OceanusException on error

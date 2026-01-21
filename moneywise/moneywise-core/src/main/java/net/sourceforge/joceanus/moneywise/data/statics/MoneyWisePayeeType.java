@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,11 +13,10 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.data.statics;
 
-import java.util.Iterator;
-
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.metis.data.MetisDataResource;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
@@ -26,7 +25,8 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
 import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataClass;
 import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataItem;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+
+import java.util.Iterator;
 
 /**
  * PayeeType data type.
@@ -51,7 +51,8 @@ public class MoneyWisePayeeType
 
     /**
      * Copy Constructor.
-     * @param pList The list to associate the PayeeType with
+     *
+     * @param pList      The list to associate the PayeeType with
      * @param pPayeeType The Payee Type to copy
      */
     protected MoneyWisePayeeType(final MoneyWisePayeeTypeList pList,
@@ -61,6 +62,7 @@ public class MoneyWisePayeeType
 
     /**
      * Basic constructor.
+     *
      * @param pList The list to associate the PayeeType with
      * @param pName Name of PayeeType
      * @throws OceanusException on error
@@ -72,7 +74,8 @@ public class MoneyWisePayeeType
 
     /**
      * Basic constructor.
-     * @param pList The list to associate the PayeeType with
+     *
+     * @param pList  The list to associate the PayeeType with
      * @param pClass Class of PayeeType
      * @throws OceanusException on error
      */
@@ -83,7 +86,8 @@ public class MoneyWisePayeeType
 
     /**
      * Values constructor.
-     * @param pList The list to associate the item with
+     *
+     * @param pList   The list to associate the item with
      * @param pValues the values
      * @throws OceanusException on error
      */
@@ -99,6 +103,7 @@ public class MoneyWisePayeeType
 
     /**
      * Return the PayeeTypeClass of the PayeeType.
+     *
      * @return the class
      */
     public MoneyWisePayeeClass getPayeeClass() {
@@ -127,6 +132,7 @@ public class MoneyWisePayeeType
 
         /**
          * Construct an empty CORE payeeType list.
+         *
          * @param pData the DataSet for the list
          */
         public MoneyWisePayeeTypeList(final PrometheusDataSet pData) {
@@ -135,6 +141,7 @@ public class MoneyWisePayeeType
 
         /**
          * Constructor for a cloned List.
+         *
          * @param pSource the source List
          */
         private MoneyWisePayeeTypeList(final MoneyWisePayeeTypeList pSource) {
@@ -187,6 +194,7 @@ public class MoneyWisePayeeType
 
         /**
          * Obtain the type of the item.
+         *
          * @return the type of the item
          */
         public String itemType() {
@@ -195,6 +203,7 @@ public class MoneyWisePayeeType
 
         /**
          * Add a PayeeType to the list.
+         *
          * @param pPayeeType the Name of the account category type
          * @return the new type
          * @throws OceanusException on error
@@ -252,6 +261,7 @@ public class MoneyWisePayeeType
 
         /**
          * Obtain payee type for new payee account.
+         *
          * @return the payee type
          */
         public MoneyWisePayeeType getDefaultPayeeType() {

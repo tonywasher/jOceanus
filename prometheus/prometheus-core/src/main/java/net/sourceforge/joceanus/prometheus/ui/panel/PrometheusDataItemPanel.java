@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Prometheus: Application Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,17 +13,17 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.prometheus.ui.panel;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionValues;
 import net.sourceforge.joceanus.metis.list.MetisListKey;
 import net.sourceforge.joceanus.metis.ui.MetisErrorPanel;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataList;
 import net.sourceforge.joceanus.prometheus.data.PrometheusTableItem;
@@ -46,6 +46,7 @@ import net.sourceforge.joceanus.tethys.api.pane.TethysUIBorderPaneManager;
 
 /**
  * Class to enable display/editing of and individual dataItem.
+ *
  * @param <T> the item type
  * @param <G> the goto id type
  */
@@ -153,9 +154,10 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
 
     /**
      * Constructor.
+     *
      * @param pFactory the GUI factory
      * @param pEditSet the edit set
-     * @param pError the error panel
+     * @param pError   the error panel
      */
     @SuppressWarnings("unchecked")
     protected PrometheusDataItemPanel(final TethysUIFactory<?> pFactory,
@@ -212,6 +214,7 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
 
     /**
      * Obtain the factory.
+     *
      * @return the factory
      */
     protected TethysUIFactory<?> getFactory() {
@@ -237,6 +240,7 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
 
     /**
      * Obtain the formatter.
+     *
      * @return the formatter
      */
     protected OceanusDataFormatter getFormatter() {
@@ -245,6 +249,7 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
 
     /**
      * Obtain the field Set.
+     *
      * @return the FieldSet
      */
     protected PrometheusFieldSet<T> getFieldSet() {
@@ -253,6 +258,7 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
 
     /**
      * Obtain the Update Set.
+     *
      * @return the UpdateSet
      */
     protected PrometheusEditSet getEditSet() {
@@ -261,6 +267,7 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
 
     /**
      * Obtain the item.
+     *
      * @return the item
      */
     protected T getItem() {
@@ -269,6 +276,7 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
 
     /**
      * Obtain the selected item.
+     *
      * @return the selected item
      */
     public T getSelectedItem() {
@@ -277,6 +285,7 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
 
     /**
      * Obtain the edit version.
+     *
      * @return the edit version
      */
     protected int getEditVersion() {
@@ -285,6 +294,7 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
 
     /**
      * Is the active item deleted.
+     *
      * @return true/false
      */
     public boolean isItemDeleted() {
@@ -299,6 +309,7 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
 
     /**
      * Obtain the base Values.
+     *
      * @return the values
      */
     protected MetisFieldVersionValues getBaseValues() {
@@ -307,6 +318,7 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
 
     /**
      * Set editable item.
+     *
      * @param isEditable true/false
      */
     public void setEditable(final boolean isEditable) {
@@ -360,6 +372,7 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
 
     /**
      * Set readOnly item.
+     *
      * @param pItem the item
      */
     public void setItem(final T pItem) {
@@ -376,6 +389,7 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
 
     /**
      * Set new item.
+     *
      * @param pItem the item
      */
     public void setNewItem(final T pItem) {
@@ -410,12 +424,14 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
 
     /**
      * Adjust Editable Fields.
+     *
      * @param isEditable is the item editable?
      */
     protected abstract void adjustFields(boolean isEditable);
 
     /**
      * Update the field.
+     *
      * @param pUpdate the update
      * @throws OceanusException on error
      */
@@ -423,10 +439,11 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
 
     /**
      * Obtain the list for a class in base updateSet.
-     * @param <L> the list type
-     * @param <X> the object type
+     *
+     * @param <L>       the list type
+     * @param <X>       the object type
      * @param pDataType the data type
-     * @param pClass the list class
+     * @param pClass    the list class
      * @return the list
      */
     public <L extends PrometheusDataList<X>, X extends PrometheusDataItem> L getDataList(final MetisListKey pDataType,
@@ -437,6 +454,7 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
 
     /**
      * Are we editing?
+     *
      * @return true/false
      */
     public boolean isEditing() {
@@ -559,6 +577,7 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
 
     /**
      * Process goTo request.
+     *
      * @param pEvent the goTo request event
      */
     private void processGoToRequest(final PrometheusGoToEvent<?> pEvent) {
@@ -567,13 +586,15 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
 
     /**
      * Build goTo menu.
+     *
      * @param pMenu the menu to build
      */
     protected abstract void buildGoToMenu(TethysUIScrollMenu<TethysUIGenericWrapper> pMenu);
 
     /**
      * Create a GoTo event.
-     * @param pGoToId the Id of the event
+     *
+     * @param pGoToId  the Id of the event
      * @param pDetails the details of the event
      * @return the action event
      */
@@ -591,6 +612,7 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
 
     /**
      * Update item.
+     *
      * @param pUpdate the update
      */
     private void updateItem(final PrometheusFieldSetEvent pUpdate) {

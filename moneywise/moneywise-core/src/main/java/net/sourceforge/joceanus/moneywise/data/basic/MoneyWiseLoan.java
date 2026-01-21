@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,12 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.data.basic;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.data.MetisDataEditState;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
@@ -35,9 +38,6 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseLoanCategoryClas
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseLogicException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataMapItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
@@ -94,6 +94,7 @@ public class MoneyWiseLoan
 
     /**
      * Copy Constructor.
+     *
      * @param pList the list
      * @param pLoan The Loan to copy
      */
@@ -126,7 +127,8 @@ public class MoneyWiseLoan
 
     /**
      * Values constructor.
-     * @param pList the List to add to
+     *
+     * @param pList   the List to add to
      * @param pValues the values constructor
      * @throws OceanusException on error
      */
@@ -143,6 +145,7 @@ public class MoneyWiseLoan
 
     /**
      * Edit Constructor.
+     *
      * @param pList the list
      */
     public MoneyWiseLoan(final MoneyWiseLoanList pList) {
@@ -188,6 +191,7 @@ public class MoneyWiseLoan
 
     /**
      * Obtain fieldValue for infoSet.
+     *
      * @param pFieldId the fieldId
      * @return the value
      */
@@ -197,6 +201,7 @@ public class MoneyWiseLoan
 
     /**
      * Obtain SortCode.
+     *
      * @return the sort code
      */
     public char[] getSortCode() {
@@ -207,6 +212,7 @@ public class MoneyWiseLoan
 
     /**
      * Obtain Reference.
+     *
      * @return the reference
      */
     public char[] getReference() {
@@ -217,6 +223,7 @@ public class MoneyWiseLoan
 
     /**
      * Obtain Account.
+     *
      * @return the account
      */
     public char[] getAccount() {
@@ -227,6 +234,7 @@ public class MoneyWiseLoan
 
     /**
      * Obtain Notes.
+     *
      * @return the notes
      */
     public char[] getNotes() {
@@ -249,6 +257,7 @@ public class MoneyWiseLoan
 
     /**
      * Obtain CategoryId.
+     *
      * @return the categoryId
      */
     public Integer getCategoryId() {
@@ -260,6 +269,7 @@ public class MoneyWiseLoan
 
     /**
      * Obtain CategoryName.
+     *
      * @return the categoryName
      */
     public String getCategoryName() {
@@ -271,6 +281,7 @@ public class MoneyWiseLoan
 
     /**
      * Obtain AccountCategoryClass.
+     *
      * @return the actCategoryClass
      */
     public MoneyWiseLoanCategoryClass getCategoryClass() {
@@ -408,6 +419,7 @@ public class MoneyWiseLoan
 
     /**
      * Is this payee the required class.
+     *
      * @param pClass the required payee class.
      * @return true/false
      */
@@ -418,6 +430,7 @@ public class MoneyWiseLoan
 
     /**
      * Set defaults.
+     *
      * @throws OceanusException on error
      */
     public void setDefaults() throws OceanusException {
@@ -426,6 +439,7 @@ public class MoneyWiseLoan
 
     /**
      * adjust values after change.
+     *
      * @throws OceanusException on error
      */
     public void autoCorrect() throws OceanusException {
@@ -475,6 +489,7 @@ public class MoneyWiseLoan
 
     /**
      * Set a new SortCode.
+     *
      * @param pSortCode the new sort code
      * @throws OceanusException on error
      */
@@ -484,6 +499,7 @@ public class MoneyWiseLoan
 
     /**
      * Set a new Account.
+     *
      * @param pAccount the new account
      * @throws OceanusException on error
      */
@@ -493,6 +509,7 @@ public class MoneyWiseLoan
 
     /**
      * Set a new Reference.
+     *
      * @param pReference the new reference
      * @throws OceanusException on error
      */
@@ -502,6 +519,7 @@ public class MoneyWiseLoan
 
     /**
      * Set a new Notes.
+     *
      * @param pNotes the new notes
      * @throws OceanusException on error
      */
@@ -511,6 +529,7 @@ public class MoneyWiseLoan
 
     /**
      * Set a new opening balance.
+     *
      * @param pBalance the new opening balance
      * @throws OceanusException on error
      */
@@ -520,8 +539,9 @@ public class MoneyWiseLoan
 
     /**
      * Set an infoSet value.
+     *
      * @param pInfoClass the class of info to set
-     * @param pValue the value to set
+     * @param pValue     the value to set
      * @throws OceanusException on error
      */
     private void setInfoSetValue(final MoneyWiseAccountInfoClass pInfoClass,
@@ -556,6 +576,7 @@ public class MoneyWiseLoan
 
     /**
      * Update base loan from an edited loan.
+     *
      * @param pLoan the edited loan
      * @return whether changes have been made
      */
@@ -612,6 +633,7 @@ public class MoneyWiseLoan
 
         /**
          * Construct an empty CORE list.
+         *
          * @param pData the DataSet for the list
          */
         public MoneyWiseLoanList(final MoneyWiseDataSet pData) {
@@ -620,6 +642,7 @@ public class MoneyWiseLoan
 
         /**
          * Constructor for a cloned List.
+         *
          * @param pSource the source List
          */
         protected MoneyWiseLoanList(final MoneyWiseLoanList pSource) {
@@ -646,8 +669,9 @@ public class MoneyWiseLoan
             return (MoneyWiseLoanDataMap) super.getDataMap();
         }
 
-            /**
+        /**
          * Obtain the depositInfoList.
+         *
          * @return the deposit info list
          */
         public MoneyWiseLoanInfoList getLoanInfo() {
@@ -659,6 +683,7 @@ public class MoneyWiseLoan
 
         /**
          * Obtain the accountInfoTypeList.
+         *
          * @return the account info type list
          */
         public MoneyWiseAccountInfoTypeList getActInfoTypes() {
@@ -679,6 +704,7 @@ public class MoneyWiseLoan
 
         /**
          * Derive Edit list.
+         *
          * @param pEditSet the editSet
          * @return the edit list
          * @throws OceanusException on error
@@ -795,6 +821,7 @@ public class MoneyWiseLoan
 
         /**
          * Ensure Map based on the payee list.
+         *
          * @param pPayees the payee list
          */
         private void ensureMap(final MoneyWisePayeeList pPayees) {
@@ -838,6 +865,7 @@ public class MoneyWiseLoan
 
         /**
          * Constructor.
+         *
          * @param pPayees the payee list
          */
         protected MoneyWiseLoanDataMap(final MoneyWisePayeeList pPayees) {
@@ -856,6 +884,7 @@ public class MoneyWiseLoan
 
         /**
          * Obtain the underlying map.
+         *
          * @return the underlying map
          */
         private MoneyWiseAssetDataMap getUnderlyingMap() {
@@ -875,6 +904,7 @@ public class MoneyWiseLoan
 
         /**
          * find item by name.
+         *
          * @param pName the name to look up
          * @return the matching item
          */
@@ -887,6 +917,7 @@ public class MoneyWiseLoan
 
         /**
          * Check validity of name.
+         *
          * @param pName the name to look up
          * @return true/false
          */
@@ -896,6 +927,7 @@ public class MoneyWiseLoan
 
         /**
          * Check availability of name.
+         *
          * @param pName the key to look up
          * @return true/false
          */

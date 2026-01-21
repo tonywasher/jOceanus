@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Metis: Java Data Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,13 +13,13 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.metis.report;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.exc.MetisIOException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -245,6 +245,7 @@ public class MetisReportHTMLBuilder {
 
     /**
      * Constructor.
+     *
      * @param pFormatter the formatter
      * @throws OceanusException on error
      */
@@ -268,6 +269,7 @@ public class MetisReportHTMLBuilder {
 
     /**
      * Obtain the data formatter.
+     *
      * @return the formatter
      */
     public OceanusDataFormatter getDataFormatter() {
@@ -276,6 +278,7 @@ public class MetisReportHTMLBuilder {
 
     /**
      * Obtain the document.
+     *
      * @return the document
      */
     public Document getDocument() {
@@ -284,6 +287,7 @@ public class MetisReportHTMLBuilder {
 
     /**
      * Create and append a standard empty cell.
+     *
      * @param pControl the table control
      */
     public void makeValueCell(final MetisHTMLTable pControl) {
@@ -292,6 +296,7 @@ public class MetisReportHTMLBuilder {
 
     /**
      * Create and append a standard empty total cell.
+     *
      * @param pControl the table control
      */
     public void makeTotalCell(final MetisHTMLTable pControl) {
@@ -300,6 +305,7 @@ public class MetisReportHTMLBuilder {
 
     /**
      * Create and append a standard empty title cell.
+     *
      * @param pControl the table control
      */
     public void makeTitleCell(final MetisHTMLTable pControl) {
@@ -308,8 +314,9 @@ public class MetisReportHTMLBuilder {
 
     /**
      * Create and append a standard cell with value.
+     *
      * @param pControl the table control
-     * @param pValue the value
+     * @param pValue   the value
      */
     public void makeValueCell(final MetisHTMLTable pControl,
                               final Object pValue) {
@@ -319,8 +326,9 @@ public class MetisReportHTMLBuilder {
 
     /**
      * Create and append a standard cell with value spanning 2 columns.
+     *
      * @param pControl the table control
-     * @param pValue the value
+     * @param pValue   the value
      */
     public void makeStretchedValueCell(final MetisHTMLTable pControl,
                                        final Object pValue) {
@@ -331,8 +339,9 @@ public class MetisReportHTMLBuilder {
 
     /**
      * Create and append a total cell with value.
+     *
      * @param pControl the table control
-     * @param pValue the value
+     * @param pValue   the value
      */
     public void makeTotalCell(final MetisHTMLTable pControl,
                               final Object pValue) {
@@ -342,8 +351,9 @@ public class MetisReportHTMLBuilder {
 
     /**
      * Create and append a standard total cell with value spanning 2 columns.
+     *
      * @param pControl the table control
-     * @param pValue the value
+     * @param pValue   the value
      */
     public void makeStretchedTotalCell(final MetisHTMLTable pControl,
                                        final Object pValue) {
@@ -354,8 +364,9 @@ public class MetisReportHTMLBuilder {
 
     /**
      * Create and append a title cell.
+     *
      * @param pControl the table control
-     * @param pTitle the title
+     * @param pTitle   the title
      */
     public void makeTitleCell(final MetisHTMLTable pControl,
                               final String pTitle) {
@@ -365,8 +376,9 @@ public class MetisReportHTMLBuilder {
 
     /**
      * Create and append a standard title cell with title spanning 2 columns.
+     *
      * @param pControl the table control
-     * @param pTitle the title
+     * @param pTitle   the title
      */
     public void makeStretchedTitleCell(final MetisHTMLTable pControl,
                                        final String pTitle) {
@@ -377,8 +389,9 @@ public class MetisReportHTMLBuilder {
 
     /**
      * Make Table link cell.
+     *
      * @param pControl the table control
-     * @param pLink the link table name
+     * @param pLink    the link table name
      */
     public void makeTableLinkCell(final MetisHTMLTable pControl,
                                   final String pLink) {
@@ -387,16 +400,17 @@ public class MetisReportHTMLBuilder {
 
     /**
      * Make Table link cell.
+     *
      * @param pControl the table control
-     * @param pLink the link table name
-     * @param pName the link table display name
+     * @param pLink    the link table name
+     * @param pName    the link table display name
      */
     public void makeTableLinkCell(final MetisHTMLTable pControl,
                                   final String pLink,
                                   final String pName) {
         /* Determine the id of the link */
         final String myId = REF_ID
-                            + pLink;
+                + pLink;
 
         /* Create the header */
         final Text myHeader = theDocument.createTextNode(PFX_OPEN);
@@ -409,7 +423,7 @@ public class MetisReportHTMLBuilder {
         myLink.setIdAttribute(ATTR_ID, true);
         myLink.setAttribute(ATTR_NAME, myId);
         myLink.setAttribute(ATTR_HREF, REF_TAB
-                                       + pLink);
+                + pLink);
         myLink.setTextContent(pName);
         myCell.appendChild(myHeader);
         myCell.appendChild(myLink);
@@ -417,8 +431,9 @@ public class MetisReportHTMLBuilder {
 
     /**
      * Make Delayed Table link cell.
+     *
      * @param pControl the table control
-     * @param pLink the link table name
+     * @param pLink    the link table name
      */
     public void makeDelayLinkCell(final MetisHTMLTable pControl,
                                   final String pLink) {
@@ -427,16 +442,17 @@ public class MetisReportHTMLBuilder {
 
     /**
      * Make Delayed Table link cell.
+     *
      * @param pControl the table control
-     * @param pLink the link table name
-     * @param pName the link table display name
+     * @param pLink    the link table name
+     * @param pName    the link table display name
      */
     public void makeDelayLinkCell(final MetisHTMLTable pControl,
                                   final String pLink,
                                   final String pName) {
         /* Determine the id of the link */
         final String myId = REF_ID
-                            + pLink;
+                + pLink;
 
         /* Create the header */
         final Text myHeader = theDocument.createTextNode(PFX_COLLAPSED);
@@ -449,7 +465,7 @@ public class MetisReportHTMLBuilder {
         myLink.setIdAttribute(ATTR_ID, true);
         myLink.setAttribute(ATTR_NAME, myId);
         myLink.setAttribute(ATTR_HREF, REF_DELAY
-                                       + pLink);
+                + pLink);
         myLink.setTextContent(pName);
         myCell.appendChild(myHeader);
         myCell.appendChild(myLink);
@@ -457,8 +473,9 @@ public class MetisReportHTMLBuilder {
 
     /**
      * Make Filter link cell.
+     *
      * @param pControl the table control
-     * @param pLink the link table name
+     * @param pLink    the link table name
      */
     public void makeFilterLinkCell(final MetisHTMLTable pControl,
                                    final String pLink) {
@@ -467,9 +484,10 @@ public class MetisReportHTMLBuilder {
 
     /**
      * Make Table link cell.
+     *
      * @param pControl the table control
-     * @param pLink the link table name
-     * @param pName the link table display name
+     * @param pLink    the link table name
+     * @param pName    the link table display name
      */
     public void makeFilterLinkCell(final MetisHTMLTable pControl,
                                    final String pLink,
@@ -478,16 +496,17 @@ public class MetisReportHTMLBuilder {
         final Element myLink = theDocument.createElement(ELEMENT_LINK);
         myLink.setAttribute(ATTR_CLASS, CLASS_LINKVALUE);
         myLink.setAttribute(ATTR_HREF, REF_FILTER
-                                       + pLink);
+                + pLink);
         myLink.setTextContent(pName);
         myCell.appendChild(myLink);
     }
 
     /**
      * Make Table link cell.
+     *
      * @param pControl the table control
-     * @param pLink the link table name
-     * @param pValue the link table display value
+     * @param pLink    the link table name
+     * @param pValue   the link table display value
      */
     public void makeFilterLinkCell(final MetisHTMLTable pControl,
                                    final String pLink,
@@ -496,14 +515,15 @@ public class MetisReportHTMLBuilder {
         myCell.setAttribute(ATTR_CLASS, CLASS_LINKOBJECT);
         final Element myLink = theDocument.createElement(ELEMENT_LINK);
         myLink.setAttribute(ATTR_HREF, REF_FILTER
-                                       + pLink);
+                + pLink);
         setCellValue(myLink, pValue);
         myCell.appendChild(myLink);
     }
 
     /**
      * Set a cell value.
-     * @param pCell the cell to set the value for
+     *
+     * @param pCell  the cell to set the value for
      * @param pValue the value for the cell
      */
     private void setCellValue(final Element pCell,
@@ -534,7 +554,8 @@ public class MetisReportHTMLBuilder {
 
     /**
      * Set a cell title.
-     * @param pCell the cell to set the value for
+     *
+     * @param pCell  the cell to set the value for
      * @param pTitle the title for the cell
      */
     private static void setCellTitle(final Element pCell,
@@ -546,6 +567,7 @@ public class MetisReportHTMLBuilder {
 
     /**
      * Start a table header row.
+     *
      * @param pControl the table control
      */
     public void startHdrRow(final MetisHTMLTable pControl) {
@@ -555,6 +577,7 @@ public class MetisReportHTMLBuilder {
 
     /**
      * Start a table data row.
+     *
      * @param pControl the table control
      */
     public void startRow(final MetisHTMLTable pControl) {
@@ -564,6 +587,7 @@ public class MetisReportHTMLBuilder {
 
     /**
      * Start a table total row.
+     *
      * @param pControl the table control
      */
     public void startTotalRow(final MetisHTMLTable pControl) {
@@ -573,6 +597,7 @@ public class MetisReportHTMLBuilder {
 
     /**
      * Start Report.
+     *
      * @return the body
      */
     public Element startReport() {
@@ -589,7 +614,8 @@ public class MetisReportHTMLBuilder {
 
     /**
      * Make title.
-     * @param pBody the document body
+     *
+     * @param pBody  the document body
      * @param pTitle the title
      */
     public void makeTitle(final Element pBody,
@@ -602,7 +628,8 @@ public class MetisReportHTMLBuilder {
 
     /**
      * Make two line title.
-     * @param pBody the document body
+     *
+     * @param pBody   the document body
      * @param pTitle1 the first title
      * @param pTitle2 the second title
      */
@@ -622,7 +649,8 @@ public class MetisReportHTMLBuilder {
 
     /**
      * Make subtitle.
-     * @param pBody the document body
+     *
+     * @param pBody  the document body
      * @param pTitle the title
      */
     public void makeSubTitle(final Element pBody,
@@ -635,6 +663,7 @@ public class MetisReportHTMLBuilder {
 
     /**
      * Start Table.
+     *
      * @param pBody the document body
      * @return the table control
      */
@@ -650,6 +679,7 @@ public class MetisReportHTMLBuilder {
 
     /**
      * Create an embedded table.
+     *
      * @param pParent the parent element
      * @return the new table
      */
@@ -665,6 +695,7 @@ public class MetisReportHTMLBuilder {
 
     /**
      * Embed a table into the document.
+     *
      * @param pTable the table to embed
      * @param pTitle the title of the table
      */
@@ -678,7 +709,7 @@ public class MetisReportHTMLBuilder {
         /* Create the row */
         final Element myRow = theDocument.createElement(ELEMENT_ROW);
         myRow.setAttribute(ATTR_ID, REF_TAB
-                                    + pTitle);
+                + pTitle);
         myRow.setIdAttribute(ATTR_ID, true);
         final Element myCell = theDocument.createElement(ELEMENT_CELL);
         myRow.appendChild(myCell);
@@ -699,6 +730,7 @@ public class MetisReportHTMLBuilder {
 
     /**
      * Embed a table into the document.
+     *
      * @param pTable the table to embed
      */
     public void embedTable(final MetisHTMLTable pTable) {
@@ -719,13 +751,14 @@ public class MetisReportHTMLBuilder {
 
     /**
      * Obtain the row that a link is in.
+     *
      * @param pTitle the title of the link
      * @return the row that contains the link
      */
     protected Element getLinkRow(final String pTitle) {
         /* Determine the id of the link */
         final String myId = REF_ID
-                            + pTitle;
+                + pTitle;
 
         /* Locate the cell element */
         final Element myLink = theDocument.getElementById(myId);
@@ -734,18 +767,19 @@ public class MetisReportHTMLBuilder {
 
         /* Update the link to be a table reference */
         myLink.setAttribute(ATTR_HREF, REF_TAB
-                                       + pTitle);
+                + pTitle);
 
         /* Cast result to element */
         return myParent instanceof Element myElement
-                                             ? myElement
-                                             : null;
+                ? myElement
+                : null;
     }
 
     /**
      * Set prefix for owning link.
+     *
      * @param pOwner the owning link
-     * @param pOpen is the link open true/false
+     * @param pOpen  is the link open true/false
      */
     void setPrefix(final Node pOwner,
                    final boolean pOpen) {
@@ -804,7 +838,8 @@ public class MetisReportHTMLBuilder {
 
         /**
          * Constructor.
-         * @param pTable the table element
+         *
+         * @param pTable  the table element
          * @param pParent the parent table.
          */
         private MetisHTMLTable(final Element pTable,
@@ -817,6 +852,7 @@ public class MetisReportHTMLBuilder {
 
         /**
          * Constructor.
+         *
          * @param pTable the table element
          */
         private MetisHTMLTable(final Element pTable) {
@@ -828,6 +864,7 @@ public class MetisReportHTMLBuilder {
 
         /**
          * Obtain the table header.
+         *
          * @return the header
          */
         private Element getTableHeader() {
@@ -848,6 +885,7 @@ public class MetisReportHTMLBuilder {
 
         /**
          * Obtain the table body.
+         *
          * @return the body
          */
         private Element getTableBody() {
@@ -862,6 +900,7 @@ public class MetisReportHTMLBuilder {
 
         /**
          * Obtain the number of columns.
+         *
          * @return the number of columns
          */
         private int getNumCols() {
@@ -870,6 +909,7 @@ public class MetisReportHTMLBuilder {
 
         /**
          * Obtain the parent table.
+         *
          * @return the parent
          */
         private MetisHTMLTable getParent() {
@@ -878,6 +918,7 @@ public class MetisReportHTMLBuilder {
 
         /**
          * Obtain the table.
+         *
          * @return the table
          */
         private Element getTable() {
@@ -886,6 +927,7 @@ public class MetisReportHTMLBuilder {
 
         /**
          * Obtain the next class name.
+         *
          * @return the next class name.
          */
         private String getNextRowClass() {
@@ -894,12 +936,13 @@ public class MetisReportHTMLBuilder {
 
             /* Return the class name */
             return wasOdd
-                          ? theClass.getOddClass()
-                          : theClass.getEvenClass();
+                    ? theClass.getOddClass()
+                    : theClass.getEvenClass();
         }
 
         /**
          * Obtain the next table name.
+         *
          * @return the next class.
          */
         private TableClass getNextTableClass() {
@@ -925,20 +968,21 @@ public class MetisReportHTMLBuilder {
 
         /**
          * Create a new row.
+         *
          * @param bHdr use header rather than body (true/false)
          */
         private void createNewRow(final boolean bHdr) {
             /* Determine the parent */
             final Element myParent = bHdr
-                                          ? getTableHeader()
-                                          : getTableBody();
+                    ? getTableHeader()
+                    : getTableBody();
 
             /* Create the row */
             theRow = theDocument.createElement(ELEMENT_ROW);
             myParent.appendChild(theRow);
             theRow.setAttribute(ATTR_CLASS, bHdr
-                                                 ? CLASS_TOTROW
-                                                 : getNextRowClass());
+                    ? CLASS_TOTROW
+                    : getNextRowClass());
 
             /* Adjust # of columns */
             numCols = 0;
@@ -946,14 +990,15 @@ public class MetisReportHTMLBuilder {
 
         /**
          * Create a new cell in the current row.
+         *
          * @param bTotal create total cell (true/false)
          * @return the new cell
          */
         private Element createNewCell(final boolean bTotal) {
             /* Determine the cell type */
             final String myCellType = bTotal
-                                             ? ELEMENT_TOTAL
-                                             : ELEMENT_CELL;
+                    ? ELEMENT_TOTAL
+                    : ELEMENT_CELL;
 
             /* Adjust column # */
             numCols++;
@@ -990,6 +1035,7 @@ public class MetisReportHTMLBuilder {
 
         /**
          * Obtain the odd class name.
+         *
          * @return the class name
          */
         private String getOddClass() {
@@ -1007,6 +1053,7 @@ public class MetisReportHTMLBuilder {
 
         /**
          * Obtain the even class name.
+         *
          * @return the class name
          */
         private String getEvenClass() {
@@ -1024,6 +1071,7 @@ public class MetisReportHTMLBuilder {
 
         /**
          * Obtain the embedded TableClass.
+         *
          * @return the class name
          */
         private TableClass getNextClass() {

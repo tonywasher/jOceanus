@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Prometheus: Application Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,12 +13,12 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.prometheus.maps;
 
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.maps.PrometheusMapsInstanceElement.PrometheusMapsInstanceElementItem;
 import net.sourceforge.joceanus.prometheus.maps.PrometheusMapsInstanceElement.PrometheusMapsInstanceElementList;
@@ -58,8 +58,8 @@ public abstract class PrometheusMapsBaseInstance
 
     @Override
     public MetisFieldSetDef getDataFieldSet() {
-            return FIELD_DEFS;
-        }
+        return FIELD_DEFS;
+    }
 
     @Override
     public String formatObject(final OceanusDataFormatter pFormatter) {
@@ -68,6 +68,7 @@ public abstract class PrometheusMapsBaseInstance
 
     /**
      * Obtain the map.
+     *
      * @return the map
      */
     private Map<Object, PrometheusMapsInstanceElement> getMap() {
@@ -76,7 +77,8 @@ public abstract class PrometheusMapsBaseInstance
 
     /**
      * add item to map.
-     * @param pKey the key for the item
+     *
+     * @param pKey  the key for the item
      * @param pItem the item
      */
     void addItemToMap(final Object pKey,
@@ -91,6 +93,7 @@ public abstract class PrometheusMapsBaseInstance
 
     /**
      * Is the key duplicate?
+     *
      * @param pKey the key
      * @return true/false
      */
@@ -100,6 +103,7 @@ public abstract class PrometheusMapsBaseInstance
 
     /**
      * Is the key available?
+     *
      * @param pKey the key
      * @return true/false
      */
@@ -109,6 +113,7 @@ public abstract class PrometheusMapsBaseInstance
 
     /**
      * Obtain the item for the key.
+     *
      * @param pKey the key
      * @return the item
      */

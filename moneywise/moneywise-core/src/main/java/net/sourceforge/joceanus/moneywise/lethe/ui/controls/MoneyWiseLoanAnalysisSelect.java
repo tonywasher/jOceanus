@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,29 +13,25 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.lethe.ui.controls;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseLoanCategory;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseLoanCategoryClass;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisLoanBucket;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisLoanBucket.MoneyWiseAnalysisLoanBucketList;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisLoanCategoryBucket;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisLoanCategoryBucket.MoneyWiseAnalysisLoanCategoryBucketList;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseLoanCategory;
-import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseLoanCategoryClass;
 import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter;
 import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisLoanFilter;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIConstant;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
@@ -48,6 +44,10 @@ import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollItem;
 import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollMenu;
 import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollSubMenu;
 import net.sourceforge.joceanus.tethys.api.pane.TethysUIBoxPaneManager;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Loan Analysis Selection.
@@ -116,6 +116,7 @@ public class MoneyWiseLoanAnalysisSelect
 
     /**
      * Constructor.
+     *
      * @param pFactory the GUI factory
      */
     protected MoneyWiseLoanAnalysisSelect(final TethysUIFactory<?> pFactory) {
@@ -212,6 +213,7 @@ public class MoneyWiseLoanAnalysisSelect
 
     /**
      * Set analysis.
+     *
      * @param pAnalysis the analysis.
      */
     public void setAnalysis(final MoneyWiseAnalysis pAnalysis) {
@@ -255,6 +257,7 @@ public class MoneyWiseLoanAnalysisSelect
 
     /**
      * Obtain the default Loan for the category.
+     *
      * @param pCategory the category
      * @return the bucket
      */
@@ -409,6 +412,7 @@ public class MoneyWiseLoanAnalysisSelect
 
         /**
          * Constructor.
+         *
          * @param pState state to copy from
          */
         private MoneyWiseLoanState(final MoneyWiseLoanState pState) {
@@ -421,6 +425,7 @@ public class MoneyWiseLoanAnalysisSelect
 
         /**
          * Obtain the Loan Bucket.
+         *
          * @return the Loan
          */
         private MoneyWiseAnalysisLoanBucket getLoan() {
@@ -429,6 +434,7 @@ public class MoneyWiseLoanAnalysisSelect
 
         /**
          * Obtain the Category.
+         *
          * @return the category
          */
         private MoneyWiseLoanCategory getCategory() {
@@ -437,6 +443,7 @@ public class MoneyWiseLoanAnalysisSelect
 
         /**
          * Obtain the dateRange.
+         *
          * @return the dateRange
          */
         private OceanusDateRange getDateRange() {
@@ -445,6 +452,7 @@ public class MoneyWiseLoanAnalysisSelect
 
         /**
          * Obtain the Filter.
+         *
          * @return the filter
          */
         private MoneyWiseAnalysisLoanFilter getFilter() {
@@ -453,6 +461,7 @@ public class MoneyWiseLoanAnalysisSelect
 
         /**
          * Set new Loan Account.
+         *
          * @param pLoan the Loan Account
          * @return true/false did a change occur
          */
@@ -468,6 +477,7 @@ public class MoneyWiseLoanAnalysisSelect
 
         /**
          * Set the Loan.
+         *
          * @param pLoan the Loan
          */
         private void setTheLoan(final MoneyWiseAnalysisLoanBucket pLoan) {
@@ -480,8 +490,9 @@ public class MoneyWiseLoanAnalysisSelect
 
         /**
          * Set the Loan.
+         *
          * @param pCategory the category
-         * @param pLoan the Loan
+         * @param pLoan     the Loan
          */
         private void setTheLoan(final MoneyWiseLoanCategory pCategory,
                                 final MoneyWiseAnalysisLoanBucket pLoan) {
@@ -500,6 +511,7 @@ public class MoneyWiseLoanAnalysisSelect
 
         /**
          * Set new Category.
+         *
          * @param pCategory the Category
          * @return true/false did a change occur
          */
@@ -514,6 +526,7 @@ public class MoneyWiseLoanAnalysisSelect
 
         /**
          * Set the dateRange.
+         *
          * @param pRange the dateRange
          */
         private void setDateRange(final OceanusDateRange pRange) {

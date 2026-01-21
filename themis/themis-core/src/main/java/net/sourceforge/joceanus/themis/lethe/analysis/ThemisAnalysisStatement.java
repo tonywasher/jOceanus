@@ -1,22 +1,22 @@
-/*******************************************************************************
+/*
  * Themis: Java Project Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package net.sourceforge.joceanus.themis.lethe.analysis;
 
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.exc.ThemisDataException;
 
 import java.util.Deque;
@@ -26,13 +26,14 @@ import java.util.Iterator;
  * Statements.
  */
 public class ThemisAnalysisStatement
-    implements ThemisAnalysisProcessed {
+        implements ThemisAnalysisProcessed {
     /**
      * StatementHolder interface.
      */
     public interface ThemisAnalysisStatementHolder {
         /**
          * Obtain statement iterator.
+         *
          * @return the iterator
          */
         Iterator<ThemisAnalysisStatement> statementIterator();
@@ -50,8 +51,9 @@ public class ThemisAnalysisStatement
 
     /**
      * Constructor.
+     *
      * @param pParser the parser
-     * @param pLine the line
+     * @param pLine   the line
      * @throws OceanusException on error
      */
     ThemisAnalysisStatement(final ThemisAnalysisParser pParser,
@@ -61,9 +63,10 @@ public class ThemisAnalysisStatement
 
     /**
      * Constructor.
-     * @param pParser the parser
+     *
+     * @param pParser  the parser
      * @param pControl the control
-     * @param pLine the line
+     * @param pLine    the line
      * @throws OceanusException on error
      */
     ThemisAnalysisStatement(final ThemisAnalysisParser pParser,
@@ -75,6 +78,7 @@ public class ThemisAnalysisStatement
 
     /**
      * Constructor.
+     *
      * @param pEmbedded the embedded block
      * @throws OceanusException on error
      */
@@ -84,7 +88,8 @@ public class ThemisAnalysisStatement
 
     /**
      * Constructor.
-     * @param pControl the control keyword
+     *
+     * @param pControl  the control keyword
      * @param pEmbedded the embedded block
      * @throws OceanusException on error
      */
@@ -96,6 +101,7 @@ public class ThemisAnalysisStatement
 
     /**
      * Constructor.
+     *
      * @param pParams the parameters
      */
     ThemisAnalysisStatement(final Deque<ThemisAnalysisElement> pParams) {
@@ -104,6 +110,7 @@ public class ThemisAnalysisStatement
 
     /**
      * Constructor.
+     *
      * @param pStack the stack
      */
     ThemisAnalysisStatement(final ThemisAnalysisStack pStack) {
@@ -112,8 +119,9 @@ public class ThemisAnalysisStatement
 
     /**
      * Constructor.
+     *
      * @param pControl the control
-     * @param pParams the parameters
+     * @param pParams  the parameters
      */
     ThemisAnalysisStatement(final ThemisAnalysisKeyWord pControl,
                             final Deque<ThemisAnalysisElement> pParams) {
@@ -123,8 +131,9 @@ public class ThemisAnalysisStatement
 
     /**
      * Constructor.
+     *
      * @param pControl the control keyword
-     * @param pStack the stack
+     * @param pStack   the stack
      */
     ThemisAnalysisStatement(final ThemisAnalysisKeyWord pControl,
                             final ThemisAnalysisStack pStack) {
@@ -134,6 +143,7 @@ public class ThemisAnalysisStatement
 
     /**
      * Test for separator.
+     *
      * @throws OceanusException on error
      */
     void checkSeparator() throws OceanusException {
@@ -151,6 +161,7 @@ public class ThemisAnalysisStatement
 
     /**
      * Are there null parameters?
+     *
      * @return true/false
      */
     public boolean nullParameters() {
@@ -159,6 +170,7 @@ public class ThemisAnalysisStatement
 
     /**
      * Obtain the embedded statement (if any).
+     *
      * @return the embedded statement (or null)
      */
     public ThemisAnalysisElement getEmbedded() {

@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,27 +13,25 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.ui.controls;
 
-import java.util.Iterator;
-
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.ui.MetisIcon;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePortfolio;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisManager;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisPortfolioBucket;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisPortfolioBucket.MoneyWiseAnalysisPortfolioBucketList;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePortfolio;
 import net.sourceforge.joceanus.moneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIArrowIconId;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIConstant;
@@ -49,6 +47,8 @@ import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollItem;
 import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollMenu;
 import net.sourceforge.joceanus.tethys.api.pane.TethysUIBoxPaneManager;
+
+import java.util.Iterator;
 
 /**
  * SpotPrice selection panel.
@@ -157,8 +157,9 @@ public class MoneyWiseSpotPricesSelect
 
     /**
      * Constructor.
+     *
      * @param pFactory the GUI factory
-     * @param pView the data view
+     * @param pView    the data view
      */
     public MoneyWiseSpotPricesSelect(final TethysUIFactory<?> pFactory,
                                      final MoneyWiseView pView) {
@@ -253,6 +254,7 @@ public class MoneyWiseSpotPricesSelect
 
     /**
      * Get the selected date.
+     *
      * @return the date
      */
     public OceanusDate getDate() {
@@ -261,6 +263,7 @@ public class MoneyWiseSpotPricesSelect
 
     /**
      * Get the selected portfolio.
+     *
      * @return the portfolio
      */
     public final MoneyWisePortfolio getPortfolio() {
@@ -272,6 +275,7 @@ public class MoneyWiseSpotPricesSelect
 
     /**
      * Do we show closed accounts?.
+     *
      * @return the date
      */
     public boolean getShowClosed() {
@@ -314,6 +318,7 @@ public class MoneyWiseSpotPricesSelect
 
     /**
      * Set the range for the date box.
+     *
      * @param pRange the Range to set
      */
     public final void setRange(final OceanusDateRange pRange) {
@@ -365,6 +370,7 @@ public class MoneyWiseSpotPricesSelect
 
     /**
      * Set Adjacent dates.
+     *
      * @param pPrev the previous Date
      * @param pNext the next Date
      */
@@ -481,6 +487,7 @@ public class MoneyWiseSpotPricesSelect
 
         /**
          * Constructor.
+         *
          * @param pState state to copy from
          */
         private MoneyWiseSpotPricesState(final MoneyWiseSpotPricesState pState) {
@@ -497,6 +504,7 @@ public class MoneyWiseSpotPricesSelect
 
         /**
          * Get the portfolio.
+         *
          * @return the portfolio
          */
         private MoneyWiseAnalysisPortfolioBucket getPortfolio() {
@@ -505,6 +513,7 @@ public class MoneyWiseSpotPricesSelect
 
         /**
          * Get the selected date.
+         *
          * @return the date
          */
         private OceanusDate getDate() {
@@ -513,6 +522,7 @@ public class MoneyWiseSpotPricesSelect
 
         /**
          * Get the next date.
+         *
          * @return the date
          */
         private OceanusDate getNextDate() {
@@ -521,6 +531,7 @@ public class MoneyWiseSpotPricesSelect
 
         /**
          * Get the previous date.
+         *
          * @return the date
          */
         private OceanusDate getPrevDate() {
@@ -529,6 +540,7 @@ public class MoneyWiseSpotPricesSelect
 
         /**
          * Get the showClosed flag.
+         *
          * @return the showClosed
          */
         private boolean showClosed() {
@@ -537,6 +549,7 @@ public class MoneyWiseSpotPricesSelect
 
         /**
          * Set new Portfolio.
+         *
          * @param pPortfolio the Portfolio
          * @return true/false did a change occur
          */
@@ -551,6 +564,7 @@ public class MoneyWiseSpotPricesSelect
 
         /**
          * Set new Date.
+         *
          * @param pButton the Button with the new date
          * @return true/false did a change occur
          */
@@ -584,6 +598,7 @@ public class MoneyWiseSpotPricesSelect
 
         /**
          * Set showClosed.
+         *
          * @param pShowClosed true/false
          */
         private void setShowClosed(final boolean pShowClosed) {
@@ -594,6 +609,7 @@ public class MoneyWiseSpotPricesSelect
 
         /**
          * Set Adjacent dates.
+         *
          * @param pPrev the previous Date
          * @param pNext the next Date
          */

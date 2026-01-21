@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,15 +13,15 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.test.data.xdoc;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseIOException;
 import net.sourceforge.joceanus.moneywise.test.data.trans.MoneyWiseDataTestCase;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -107,6 +107,7 @@ public class MoneyWiseDataXDocReport {
 
     /**
      * Constructor.
+     *
      * @throws OceanusException on error
      */
     public MoneyWiseDataXDocReport() throws OceanusException {
@@ -139,6 +140,7 @@ public class MoneyWiseDataXDocReport {
 
     /**
      * Start Report.
+     *
      * @param pTest the testcase
      */
     public void startReport(final MoneyWiseDataTestCase pTest) {
@@ -175,6 +177,7 @@ public class MoneyWiseDataXDocReport {
 
     /**
      * Create New section.
+     *
      * @param pTitle the title
      */
     void newSection(final String pTitle) {
@@ -185,6 +188,7 @@ public class MoneyWiseDataXDocReport {
 
     /**
      * Add paragraph.
+     *
      * @param pText the text
      */
     void addParagraph(final String pText) {
@@ -195,7 +199,8 @@ public class MoneyWiseDataXDocReport {
 
     /**
      * Create New detail for table.
-     * @param pGroup the group
+     *
+     * @param pGroup   the group
      * @param pSummary the summary
      */
     void newDetail(final String pGroup,
@@ -212,7 +217,8 @@ public class MoneyWiseDataXDocReport {
 
     /**
      * Create New open detail for table.
-     * @param pGroup the group
+     *
+     * @param pGroup   the group
      * @param pSummary the summary
      */
     void newOpenDetail(final String pGroup,
@@ -223,7 +229,8 @@ public class MoneyWiseDataXDocReport {
 
     /**
      * Create New subDetail for table.
-     * @param pGroup the group
+     *
+     * @param pGroup   the group
      * @param pSummary the summary
      */
     void newSubDetail(final String pGroup,
@@ -239,7 +246,8 @@ public class MoneyWiseDataXDocReport {
 
     /**
      * Create New open subDetail for table.
-     * @param pGroup the group
+     *
+     * @param pGroup   the group
      * @param pSummary the summary
      */
     void newOpenSubDetail(final String pGroup,
@@ -289,6 +297,7 @@ public class MoneyWiseDataXDocReport {
 
     /**
      * newColumnSpanHeader.
+     *
      * @param pSpan the columns to span
      */
     void newColSpanHeader(final int pSpan) {
@@ -300,6 +309,7 @@ public class MoneyWiseDataXDocReport {
 
     /**
      * newRowSpanHeader.
+     *
      * @param pSpan the rows to span
      */
     void newRowSpanHeader(final int pSpan) {
@@ -319,6 +329,7 @@ public class MoneyWiseDataXDocReport {
 
     /**
      * newColumnSpanCell.
+     *
      * @param pSpan the columns to span
      */
     void newColumnSpanCell(final int pSpan) {
@@ -330,6 +341,7 @@ public class MoneyWiseDataXDocReport {
 
     /**
      * newBoldSpanCell.
+     *
      * @param pSpan the columns to span
      */
     void newBoldSpanCell(final int pSpan) {
@@ -342,6 +354,7 @@ public class MoneyWiseDataXDocReport {
 
     /**
      * Set a split cell value.
+     *
      * @param pValue the value for the cell
      */
     void setSplitCellValue(final String pValue) {
@@ -358,6 +371,7 @@ public class MoneyWiseDataXDocReport {
 
     /**
      * Set a cell value.
+     *
      * @param pValue the value for the cell
      */
     void setCellValue(final String pValue) {
@@ -366,6 +380,7 @@ public class MoneyWiseDataXDocReport {
 
     /**
      * Set a cell value.
+     *
      * @param pValue the value for the cell
      */
     void setCellValue(final OceanusDate pValue) {
@@ -374,6 +389,7 @@ public class MoneyWiseDataXDocReport {
 
     /**
      * Set a cell value.
+     *
      * @param pValue the value for the cell
      */
     void setCellValue(final OceanusDecimal pValue) {
@@ -384,7 +400,7 @@ public class MoneyWiseDataXDocReport {
         if (pValue == null || pValue.isZero()) {
             myValue = null;
 
-        /* Switch class if negative */
+            /* Switch class if negative */
         } else if (!pValue.isPositive()) {
             myClass = "negValue";
         }
@@ -400,6 +416,7 @@ public class MoneyWiseDataXDocReport {
 
     /**
      * Format XML.
+     *
      * @return the formatted XML
      * @throws OceanusException on error
      */

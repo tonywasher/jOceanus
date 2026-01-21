@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,16 +13,16 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.data.builder;
 
-import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDeposit;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDepositRate;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
+import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
 
 /**
  * DepositRate Builder.
@@ -55,6 +55,7 @@ public class MoneyWiseDepositRateBuilder {
 
     /**
      * Constructor.
+     *
      * @param pDataSet the dataSet
      */
     MoneyWiseDepositRateBuilder(final MoneyWiseDataSet pDataSet) {
@@ -64,6 +65,7 @@ public class MoneyWiseDepositRateBuilder {
 
     /**
      * Set Deposit.
+     *
      * @param pDeposit the deposit.
      * @return the builder
      */
@@ -74,6 +76,7 @@ public class MoneyWiseDepositRateBuilder {
 
     /**
      * Set Deposit.
+     *
      * @param pDeposit the deposit.
      * @return the builder
      */
@@ -83,6 +86,7 @@ public class MoneyWiseDepositRateBuilder {
 
     /**
      * Set the rate.
+     *
      * @param pRate the rate.
      * @return the builder
      */
@@ -93,6 +97,7 @@ public class MoneyWiseDepositRateBuilder {
 
     /**
      * Set the rate.
+     *
      * @param pRate the rate.
      * @return the builder
      */
@@ -102,6 +107,7 @@ public class MoneyWiseDepositRateBuilder {
 
     /**
      * Set the bonus.
+     *
      * @param pBonus the bonus.
      * @return the builder
      */
@@ -112,6 +118,7 @@ public class MoneyWiseDepositRateBuilder {
 
     /**
      * Set the bonus.
+     *
      * @param pBonus the bonus.
      * @return the builder
      */
@@ -121,6 +128,7 @@ public class MoneyWiseDepositRateBuilder {
 
     /**
      * Set the endDate.
+     *
      * @param pEndDate the endDate of the rate.
      * @return the builder
      */
@@ -131,6 +139,7 @@ public class MoneyWiseDepositRateBuilder {
 
     /**
      * Set the endDate.
+     *
      * @param pEndDate the Date of the rate.
      * @return the builder
      */
@@ -140,6 +149,7 @@ public class MoneyWiseDepositRateBuilder {
 
     /**
      * Build the Rate.
+     *
      * @return the new Rate
      * @throws OceanusException on error
      */

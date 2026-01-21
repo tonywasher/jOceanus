@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,18 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.lethe.data.analysis.analyse;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.metis.preference.MetisPreferenceManager;
@@ -63,15 +72,6 @@ import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnal
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisSecurityAttr;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisSecurityValues;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseCashType;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
-import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 
 import java.util.Currency;
@@ -81,6 +81,7 @@ import java.util.Objects;
 
 /**
  * Class to analyse transactions.
+ *
  * @author Tony Washer
  */
 public class MoneyWiseAnalysisTransAnalyser
@@ -189,8 +190,9 @@ public class MoneyWiseAnalysisTransAnalyser
 
     /**
      * Constructor for a complete set of accounts.
-     * @param pTask the profiled task
-     * @param pEditSet the EditSet to analyse
+     *
+     * @param pTask          the profiled task
+     * @param pEditSet       the EditSet to analyse
      * @param pPreferenceMgr the preference manager
      * @throws OceanusException on error
      */
@@ -255,6 +257,7 @@ public class MoneyWiseAnalysisTransAnalyser
 
     /**
      * Obtain statePension bucket.
+     *
      * @param pData the dataSet
      * @return the statePension bucket
      */
@@ -286,6 +289,7 @@ public class MoneyWiseAnalysisTransAnalyser
 
     /**
      * Obtain the analysis.
+     *
      * @return the analysis
      */
     public MoneyWiseAnalysis getAnalysis() {
@@ -294,6 +298,7 @@ public class MoneyWiseAnalysisTransAnalyser
 
     /**
      * Mark active accounts.
+     *
      * @throws OceanusException on error
      */
     public void postProcessAnalysis() throws OceanusException {
@@ -315,6 +320,7 @@ public class MoneyWiseAnalysisTransAnalyser
 
     /**
      * Process a transaction.
+     *
      * @param pTrans the transaction to process
      * @throws OceanusException on error
      */
@@ -485,7 +491,8 @@ public class MoneyWiseAnalysisTransAnalyser
 
     /**
      * Process a debit security transaction.
-     * @param pDebit the debit security
+     *
+     * @param pDebit  the debit security
      * @param pCredit the credit account
      * @throws OceanusException on error
      */
@@ -533,7 +540,8 @@ public class MoneyWiseAnalysisTransAnalyser
 
     /**
      * Process a debit+credit security transaction.
-     * @param pDebit the debit security
+     *
+     * @param pDebit  the debit security
      * @param pCredit the credit security
      * @throws OceanusException on error
      */
@@ -576,7 +584,8 @@ public class MoneyWiseAnalysisTransAnalyser
 
     /**
      * Process a credit security transaction.
-     * @param pDebit the debit account
+     *
+     * @param pDebit  the debit account
      * @param pCredit the credit security holding
      * @throws OceanusException on error
      */
@@ -612,6 +621,7 @@ public class MoneyWiseAnalysisTransAnalyser
      * Process a transaction that is a portfolio transfer.
      * <p>
      * This capital event relates only to both Debit and credit accounts.
+     *
      * @param pSource the source portfolio
      * @param pTarget the target portfolio
      */
@@ -651,6 +661,7 @@ public class MoneyWiseAnalysisTransAnalyser
 
     /**
      * Process a portfolio transfer.
+     *
      * @param pSource the source holding
      * @param pTarget the target holding
      */
@@ -733,6 +744,7 @@ public class MoneyWiseAnalysisTransAnalyser
      * Process a transaction that is a portfolio transfer.
      * <p>
      * This capital event relates only to both Debit and credit accounts.
+     *
      * @param pSource the source holding
      * @param pTarget the target portfolio
      */
@@ -762,6 +774,7 @@ public class MoneyWiseAnalysisTransAnalyser
      * Process a transaction that is a stock split.
      * <p>
      * This capital event relates only to the Debit Account since the credit account is the same.
+     *
      * @param pHolding the security holding
      */
     private void processUnitsAdjust(final MoneyWiseSecurityHolding pHolding) {
@@ -782,7 +795,8 @@ public class MoneyWiseAnalysisTransAnalyser
      * Process a transaction that is a transfer into capital (also StockRightTaken).
      * <p>
      * This capital event relates only to the Credit Account.
-     * @param pDebit the debit account
+     *
+     * @param pDebit  the debit account
      * @param pCredit the credit security holding
      */
     private void processTransferIn(final MoneyWiseAssetBase pDebit,
@@ -817,6 +831,7 @@ public class MoneyWiseAnalysisTransAnalyser
 
     /**
      * Process the credit side of a transfer in transaction.
+     *
      * @param pHolding the credit holding
      */
     private void processCreditXferIn(final MoneyWiseSecurityHolding pHolding) {
@@ -887,8 +902,9 @@ public class MoneyWiseAnalysisTransAnalyser
      * <p>
      * This capital event relates to the only to Debit account, although the Credit account may be
      * identical to the credit account in which case the dividend is re-invested
+     *
      * @param pHolding the debit security holding
-     * @param pCredit the credit account
+     * @param pCredit  the credit account
      */
     private void processDividend(final MoneyWiseSecurityHolding pHolding,
                                  final MoneyWiseTransAsset pCredit) {
@@ -981,8 +997,9 @@ public class MoneyWiseAnalysisTransAnalyser
      * Process a transaction that is a transfer from capital.
      * <p>
      * This capital event relates only to the Debit Account
+     *
      * @param pHolding the debit holding
-     * @param pCredit the credit account
+     * @param pCredit  the credit account
      */
     private void processTransferOut(final MoneyWiseSecurityHolding pHolding,
                                     final MoneyWiseAssetBase pCredit) {
@@ -1007,6 +1024,7 @@ public class MoneyWiseAnalysisTransAnalyser
      * Process the debit side of a transfer out transaction.
      * <p>
      * This capital event relates only to the Debit Account
+     *
      * @param pHolding the debit holding
      */
     private void processDebitXferOut(final MoneyWiseSecurityHolding pHolding) {
@@ -1162,7 +1180,8 @@ public class MoneyWiseAnalysisTransAnalyser
      * Process a transaction that is a exchange between two capital accounts.
      * <p>
      * This represent a transfer out from the debit account and a transfer in to the credit account
-     * @param pDebit the debit holding
+     *
+     * @param pDebit  the debit holding
      * @param pCredit the credit holding
      */
     private void processStockXchange(final MoneyWiseSecurityHolding pDebit,
@@ -1178,8 +1197,9 @@ public class MoneyWiseAnalysisTransAnalyser
      * Process a transaction that is a chargeable gain.
      * <p>
      * This capital event relates only to the Debit Asset
+     *
      * @param pHolding the debit security holding
-     * @param pCredit the credit account
+     * @param pCredit  the credit account
      */
     private void processChargeableGain(final MoneyWiseSecurityHolding pHolding,
                                        final MoneyWiseAssetBase pCredit) {
@@ -1281,7 +1301,8 @@ public class MoneyWiseAnalysisTransAnalyser
      * Process a transaction that is Stock DeMerger.
      * <p>
      * This capital event relates to both the Credit and Debit accounts
-     * @param pDebit the debit account
+     *
+     * @param pDebit  the debit account
      * @param pCredit the credit account
      */
     private void processStockDeMerger(final MoneyWiseSecurityHolding pDebit,
@@ -1380,7 +1401,8 @@ public class MoneyWiseAnalysisTransAnalyser
      * <p>
      * This can be accomplished using a cash portion (to a ThirdParty account) and these workings
      * are split out.
-     * @param pDebit the debit holding
+     *
+     * @param pDebit  the debit holding
      * @param pCredit the credit holding
      */
     private void processStockTakeover(final MoneyWiseSecurityHolding pDebit,
@@ -1403,7 +1425,8 @@ public class MoneyWiseAnalysisTransAnalyser
      * Process a transaction that is a StockOnlyTakeover.
      * <p>
      * This capital event relates to both the Credit and Debit accounts
-     * @param pDebit the debit holding
+     *
+     * @param pDebit  the debit holding
      * @param pCredit the credit holding
      */
     private void processStockOnlyTakeOver(final MoneyWiseSecurityHolding pDebit,
@@ -1518,7 +1541,8 @@ public class MoneyWiseAnalysisTransAnalyser
      * <p>
      * This capital event relates to both the Credit and Debit accounts. In particular it makes
      * reference to the CashTakeOver aspect of the debit account
-     * @param pDebit the debit holding
+     *
+     * @param pDebit  the debit holding
      * @param pCredit the credit holding
      */
     private void processStockAndCashTakeOver(final MoneyWiseSecurityHolding pDebit,
@@ -1698,6 +1722,7 @@ public class MoneyWiseAnalysisTransAnalyser
 
     /**
      * Obtain Account bucket for asset.
+     *
      * @param pAsset the asset
      * @return the bucket
      */

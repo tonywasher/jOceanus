@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Prometheus: Application Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,11 +13,11 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.prometheus.service.sheet.odf;
 
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCellPosition;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCellRange;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCellStyleType;
@@ -88,8 +88,9 @@ class PrometheusOdfSheetCore {
 
     /**
      * ReadOnly Constructor.
-     * @param pStore the table store
-     * @param pIndex the index
+     *
+     * @param pStore   the table store
+     * @param pIndex   the index
      * @param pElement the Sheet element.
      * @throws OceanusException on error
      */
@@ -120,8 +121,9 @@ class PrometheusOdfSheetCore {
 
     /**
      * Mutable Constructor.
-     * @param pStore the table store
-     * @param pIndex the index
+     *
+     * @param pStore   the table store
+     * @param pIndex   the index
      * @param pNumRows the initial number of rows
      * @param pNumCols the initial number of columns
      * @param pElement the Sheet element.
@@ -152,6 +154,7 @@ class PrometheusOdfSheetCore {
 
     /**
      * Obtain the name.
+     *
      * @return the name
      */
     String getName() {
@@ -160,6 +163,7 @@ class PrometheusOdfSheetCore {
 
     /**
      * Obtain the parser.
+     *
      * @return the parser
      */
     PrometheusOdfParser getParser() {
@@ -168,6 +172,7 @@ class PrometheusOdfSheetCore {
 
     /**
      * Obtain the formatter.
+     *
      * @return the formatter
      */
     OceanusDataFormatter getFormatter() {
@@ -176,6 +181,7 @@ class PrometheusOdfSheetCore {
 
     /**
      * Obtain the formatter.
+     *
      * @return the formatter
      */
     int getRowCount() {
@@ -184,6 +190,7 @@ class PrometheusOdfSheetCore {
 
     /**
      * Process Sheet Node.
+     *
      * @param pNode the node
      * @throws OceanusException on error
      */
@@ -197,10 +204,10 @@ class PrometheusOdfSheetCore {
 
                 /* else if this is a column element */
             } else if (theParser.isElementOfType(myNode, PrometheusOdfTableItem.COLUMN)) {
-               /* Add column to list */
-               theColumns.processColumn((Element) myNode);
+                /* Add column to list */
+                theColumns.processColumn((Element) myNode);
 
-               /* If this is a node that contains groups */
+                /* If this is a node that contains groups */
             } else if (theParser.isElementOfType(myNode, PrometheusOdfTableItem.ROWGROUP, PrometheusOdfTableItem.COLUMNGROUP,
                     PrometheusOdfTableItem.HDRROWS, PrometheusOdfTableItem.HDRCOLUMNS,
                     PrometheusOdfTableItem.ROWS, PrometheusOdfTableItem.COLUMNS)) {
@@ -212,6 +219,7 @@ class PrometheusOdfSheetCore {
 
     /**
      * Is the sheet hidden?
+     *
      * @return true/false
      */
     boolean isHidden() {
@@ -220,6 +228,7 @@ class PrometheusOdfSheetCore {
 
     /**
      * Set the sheet hidden status.
+     *
      * @param pHidden true/false
      */
     void setHidden(final boolean pHidden) {
@@ -228,6 +237,7 @@ class PrometheusOdfSheetCore {
 
     /**
      * Add additional columns to rows.
+     *
      * @param pXtraCols the number of columns to add.
      */
     void addAdditionalCols(final int pXtraCols) {
@@ -238,6 +248,7 @@ class PrometheusOdfSheetCore {
 
     /**
      * Obtain a readOnly sheet.
+     *
      * @return the sheet
      */
     PrometheusOdfSheet getReadOnlySheet() {
@@ -246,6 +257,7 @@ class PrometheusOdfSheetCore {
 
     /**
      * Obtain a mutable sheet.
+     *
      * @return the sheet
      */
     PrometheusOdfSheet getMutableSheet() {
@@ -254,7 +266,8 @@ class PrometheusOdfSheetCore {
 
     /**
      * Obtain a readOnly row by its index.
-     * @param pSheet the owning sheet
+     *
+     * @param pSheet    the owning sheet
      * @param pRowIndex the index of the row.
      * @return the row
      */
@@ -265,9 +278,10 @@ class PrometheusOdfSheetCore {
 
     /**
      * Obtain an iterator of non-null rows for the range.
-     * @param pSheet the sheet for the rows
+     *
+     * @param pSheet    the sheet for the rows
      * @param pFirstRow the index of the first row.
-     * @param pLastRow the index of the last row.
+     * @param pLastRow  the index of the last row.
      * @return the iterator
      */
     ListIterator<PrometheusSheetRow> iteratorForRange(final PrometheusOdfSheet pSheet,
@@ -278,7 +292,8 @@ class PrometheusOdfSheetCore {
 
     /**
      * Obtain a mutable row by its index, creating row if it does not exist.
-     * @param pSheet the owning sheet
+     *
+     * @param pSheet    the owning sheet
      * @param pRowIndex the index of the row.
      * @return the row
      */
@@ -289,7 +304,8 @@ class PrometheusOdfSheetCore {
 
     /**
      * Obtain a readOnly column by its index.
-     * @param pSheet the owning sheet
+     *
+     * @param pSheet    the owning sheet
      * @param pColIndex the index of the row.
      * @return the column
      */
@@ -300,7 +316,8 @@ class PrometheusOdfSheetCore {
 
     /**
      * Obtain a mutable column by its index, creating column if it does not exist.
-     * @param pSheet the owning sheet
+     *
+     * @param pSheet    the owning sheet
      * @param pColIndex the index of the column.
      * @return the column
      */
@@ -311,8 +328,9 @@ class PrometheusOdfSheetCore {
 
     /**
      * Set the column style for the column.
+     *
      * @param pColumn the column
-     * @param pStyle the style
+     * @param pStyle  the style
      */
     void setColumnStyle(final Element pColumn,
                         final PrometheusSheetCellStyleType pStyle) {
@@ -321,8 +339,9 @@ class PrometheusOdfSheetCore {
 
     /**
      * Set the default style for the column.
+     *
      * @param pColumn the column index
-     * @param pStyle the style
+     * @param pStyle  the style
      */
     void setDefaultCellStyle(final Element pColumn,
                              final PrometheusSheetCellStyleType pStyle) {
@@ -332,7 +351,8 @@ class PrometheusOdfSheetCore {
 
     /**
      * Set cell style.
-     * @param pCell the cell to style
+     *
+     * @param pCell  the cell to style
      * @param pValue the cell value
      */
     void setCellStyle(final Element pCell,
@@ -343,7 +363,8 @@ class PrometheusOdfSheetCore {
 
     /**
      * Set alternate cell style.
-     * @param pCell the cell to style
+     *
+     * @param pCell  the cell to style
      * @param pValue the cell value
      */
     void setAlternateCellStyle(final Element pCell,
@@ -354,7 +375,8 @@ class PrometheusOdfSheetCore {
 
     /**
      * Declare the named range.
-     * @param pName the name of the range
+     *
+     * @param pName  the name of the range
      * @param pRange the range to declare
      * @throws OceanusException on error
      */
@@ -365,8 +387,9 @@ class PrometheusOdfSheetCore {
 
     /**
      * Apply Data Validation.
-     * @param pFirstCell the the first cell in the range
-     * @param pLastCell the last cell in the range
+     *
+     * @param pFirstCell  the the first cell in the range
+     * @param pLastCell   the last cell in the range
      * @param pValidRange the name of the validation range
      */
     void applyDataValidation(final PrometheusSheetCellPosition pFirstCell,
@@ -377,9 +400,10 @@ class PrometheusOdfSheetCore {
 
     /**
      * Apply validation.
+     *
      * @param pValidation the validation name
-     * @param pFirstCell the first cell
-     * @param pLastCell the last cell
+     * @param pFirstCell  the first cell
+     * @param pLastCell   the last cell
      */
     void applyValidation(final String pValidation,
                          final PrometheusSheetCellPosition pFirstCell,
@@ -389,6 +413,7 @@ class PrometheusOdfSheetCore {
 
     /**
      * Apply Data Filter.
+     *
      * @param pRange the range
      */
     void applyDataFilter(final PrometheusSheetCellRange pRange) {
@@ -406,7 +431,7 @@ class PrometheusOdfSheetCore {
         /* Set the style */
         theParser.setAttribute(theElement, PrometheusOdfTableItem.STYLENAME,
                 isHidden
-                    ? PrometheusOdfStyler.STYLE_HIDDENTABLE
-                    : PrometheusOdfStyler.STYLE_TABLE);
+                        ? PrometheusOdfStyler.STYLE_HIDDENTABLE
+                        : PrometheusOdfStyler.STYLE_TABLE);
     }
 }

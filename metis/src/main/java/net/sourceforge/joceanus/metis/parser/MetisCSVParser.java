@@ -1,30 +1,30 @@
-/*******************************************************************************
+/*
  * Metis: Java Data Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package net.sourceforge.joceanus.metis.parser;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateFormatter;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimalParser;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.exc.MetisDataException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateFormatter;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimalParser;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -81,8 +81,9 @@ public abstract class MetisCSVParser {
 
     /**
      * Constructor.
+     *
      * @param pFormatter the formatter
-     * @param pHeaders the expected headers
+     * @param pHeaders   the expected headers
      */
     protected MetisCSVParser(final OceanusDataFormatter pFormatter,
                              final String[] pHeaders) {
@@ -97,6 +98,7 @@ public abstract class MetisCSVParser {
 
     /**
      * Parse a date value.
+     *
      * @param pInput the input string
      * @return the parsed date
      * @throws OceanusException on error
@@ -111,6 +113,7 @@ public abstract class MetisCSVParser {
 
     /**
      * Parse a decimal value.
+     *
      * @param pInput the input string
      * @return the parsed decimal
      * @throws OceanusException on error
@@ -125,6 +128,7 @@ public abstract class MetisCSVParser {
 
     /**
      * Parse a money.
+     *
      * @param pInput the input string
      * @return the parsed money
      * @throws OceanusException on error
@@ -139,6 +143,7 @@ public abstract class MetisCSVParser {
 
     /**
      * Parse a rate.
+     *
      * @param pInput the input string
      * @return the parsed rate
      * @throws OceanusException on error
@@ -153,6 +158,7 @@ public abstract class MetisCSVParser {
 
     /**
      * Set the Date format.
+     *
      * @param pFormat the format
      */
     protected void setDateFormat(final String pFormat) {
@@ -161,6 +167,7 @@ public abstract class MetisCSVParser {
 
     /**
      * Set the Decimal size.
+     *
      * @param pSize the size
      */
     protected void setDecimalSize(final int pSize) {
@@ -169,6 +176,7 @@ public abstract class MetisCSVParser {
 
     /**
      * Parse file.
+     *
      * @param pInput the input file
      * @throws OceanusException on error
      */
@@ -183,7 +191,7 @@ public abstract class MetisCSVParser {
         /* Protect against exceptions */
         try (BufferedReader myReader = Files.newBufferedReader(pInput, StandardCharsets.UTF_8)) {
             /* Loop through the file */
-            for (;;) {
+            for (; ; ) {
                 /* Read next line and exit on EOF */
                 final String myLine = myReader.readLine();
                 if (myLine == null) {
@@ -217,6 +225,7 @@ public abstract class MetisCSVParser {
 
     /**
      * process line.
+     *
      * @param pFields the fields
      * @throws OceanusException on error
      */
@@ -241,6 +250,7 @@ public abstract class MetisCSVParser {
 
     /**
      * Process the fields.
+     *
      * @param pFields the fields
      * @throws OceanusException on error
      */
@@ -248,6 +258,7 @@ public abstract class MetisCSVParser {
 
     /**
      * Parse the line.
+     *
      * @param pLine the line to parse
      * @return the list of fields
      */
@@ -311,6 +322,7 @@ public abstract class MetisCSVParser {
 
     /**
      * Count quotes.
+     *
      * @param pBuilder the string builder
      * @return the # of quotes
      */
@@ -332,6 +344,7 @@ public abstract class MetisCSVParser {
 
     /**
      * Check Field Count.
+     *
      * @param pFields the fields
      * @throws OceanusException on error
      */
@@ -344,6 +357,7 @@ public abstract class MetisCSVParser {
 
     /**
      * Check Headers.
+     *
      * @param pFields the fields
      * @throws OceanusException on error
      */

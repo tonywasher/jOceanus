@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Metis: Java Data Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,19 +13,19 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.metis.toolkit;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
+import net.sourceforge.joceanus.metis.exc.MetisIOException;
 
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
-import net.sourceforge.joceanus.metis.exc.MetisIOException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
-import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 
 /**
  * Safe File Create.
@@ -78,6 +78,7 @@ public class MetisSafeFileManager {
 
     /**
      * Constructor.
+     *
      * @param pFileName the file name
      */
     public MetisSafeFileManager(final File pFileName) {
@@ -90,6 +91,7 @@ public class MetisSafeFileManager {
 
     /**
      * Set the number of backups.
+     *
      * @param pNumBackups the number of backups
      */
     public void setNumBackups(final int pNumBackups) {
@@ -98,6 +100,7 @@ public class MetisSafeFileManager {
 
     /**
      * Commit file.
+     *
      * @throws OceanusException on error
      */
     public void commitFile() throws OceanusException {
@@ -124,6 +127,7 @@ public class MetisSafeFileManager {
 
     /**
      * Cleanup file.
+     *
      * @throws OceanusException on error
      */
     private void cleanUp() throws OceanusException {
@@ -161,6 +165,7 @@ public class MetisSafeFileManager {
 
     /**
      * Cleanup backup file.
+     *
      * @param pIndex the backup index
      * @throws OceanusException on error
      */
@@ -188,6 +193,7 @@ public class MetisSafeFileManager {
 
     /**
      * Delete file.
+     *
      * @param pFile the file to delete
      * @throws OceanusException on error
      */
@@ -202,6 +208,7 @@ public class MetisSafeFileManager {
 
     /**
      * Rename file.
+     *
      * @param pSource the file to rename
      * @param pTarget the target file
      * @throws OceanusException on error
@@ -219,6 +226,7 @@ public class MetisSafeFileManager {
 
     /**
      * Obtain name of backup file.
+     *
      * @param pIndex the index number
      * @return the backup name
      */
@@ -228,16 +236,18 @@ public class MetisSafeFileManager {
 
     /**
      * Obtain name of commit file.
+     *
      * @return the commit file name
      */
     private File getCommitFile() {
         return theNumBackups == 0
-            ? new File(thePathName, theBaseName + theExtension + COMMIT_EXT)
-            : new File(thePathName, theBaseName + theExtension + CHAR_DOT + theNumBackups + COMMITX_EXT);
+                ? new File(thePathName, theBaseName + theExtension + COMMIT_EXT)
+                : new File(thePathName, theBaseName + theExtension + CHAR_DOT + theNumBackups + COMMITX_EXT);
     }
 
     /**
      * Obtain name of temporary file to write to.
+     *
      * @return the temporary name
      */
     public File getFileToWriteTo() {
@@ -246,6 +256,7 @@ public class MetisSafeFileManager {
 
     /**
      * Obtain standard name.
+     *
      * @return the standard name
      */
     public File getRealFile() {
@@ -254,6 +265,7 @@ public class MetisSafeFileManager {
 
     /**
      * Strip the last extension.
+     *
      * @param pName the name
      * @return the stripped name
      */
@@ -264,6 +276,7 @@ public class MetisSafeFileManager {
 
     /**
      * Obtain the number of backups.
+     *
      * @param pName the name
      * @return the number of backups
      */
@@ -275,6 +288,7 @@ public class MetisSafeFileManager {
 
     /**
      * ClearUp directory.
+     *
      * @param pDirectory the directory to clean
      */
     public static void clearDirectory(final File pDirectory) {

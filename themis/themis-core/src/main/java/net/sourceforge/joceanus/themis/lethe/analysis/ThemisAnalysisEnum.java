@@ -1,29 +1,29 @@
-/*******************************************************************************
+/*
  * Themis: Java Project Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package net.sourceforge.joceanus.themis.lethe.analysis;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.themis.lethe.analysis.ThemisAnalysisFile.ThemisAnalysisObject;
+import net.sourceforge.joceanus.themis.lethe.analysis.ThemisAnalysisGeneric.ThemisAnalysisGenericBase;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
-
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.lethe.analysis.ThemisAnalysisFile.ThemisAnalysisObject;
-import net.sourceforge.joceanus.themis.lethe.analysis.ThemisAnalysisGeneric.ThemisAnalysisGenericBase;
 
 /**
  * Enum representation.
@@ -72,8 +72,9 @@ public class ThemisAnalysisEnum
 
     /**
      * Constructor.
+     *
      * @param pParser the parser
-     * @param pLine the initial enum line
+     * @param pLine   the initial enum line
      * @throws OceanusException on error
      */
     ThemisAnalysisEnum(final ThemisAnalysisParser pParser,
@@ -88,7 +89,7 @@ public class ThemisAnalysisEnum
 
         /* If this is a local enum */
         if (!(myParent instanceof ThemisAnalysisObject)
-                &&  (!(myParent instanceof ThemisAnalysisFile))) {
+                && (!(myParent instanceof ThemisAnalysisFile))) {
             final int myId = myParentDataMap.getLocalId(theShortName);
             theFullName = myParent.determineFullChildName(myId + theShortName);
 
@@ -129,6 +130,7 @@ public class ThemisAnalysisEnum
 
     /**
      * perform initial processing pass.
+     *
      * @param pParser the parser
      * @throws OceanusException on error
      */
@@ -153,8 +155,8 @@ public class ThemisAnalysisEnum
             /* Process embedded classes/languageConstructs */
             if (!processed) {
                 processed = pParser.processClass(myLine)
-                     || pParser.processLanguage(myLine)
-                     || pParser.processBlocks(myLine);
+                        || pParser.processLanguage(myLine)
+                        || pParser.processBlocks(myLine);
             }
 
             /* If we haven't processed yet */
@@ -169,7 +171,7 @@ public class ThemisAnalysisEnum
      * process the enumValue.
      *
      * @param pParser the parser
-     * @param pLine the line
+     * @param pLine   the line
      * @return continue to look for eNums true/false
      * @throws OceanusException on error
      */
@@ -231,6 +233,7 @@ public class ThemisAnalysisEnum
 
     /**
      * Obtain the number of enums.
+     *
      * @return the number of enums
      */
     public int getNumEnums() {

@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Prometheus: Application Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,12 +13,12 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.prometheus.views;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.metis.list.MetisListKey;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataList;
 
@@ -27,6 +27,7 @@ import java.util.List;
 
 /**
  * Update entry items.
+ *
  * @param <T> the data type
  */
 public final class PrometheusEditEntry<T extends PrometheusDataItem>
@@ -43,6 +44,7 @@ public final class PrometheusEditEntry<T extends PrometheusDataItem>
 
     /**
      * Constructor.
+     *
      * @param pDataType the dataType
      */
     PrometheusEditEntry(final MetisListKey pDataType) {
@@ -60,6 +62,7 @@ public final class PrometheusEditEntry<T extends PrometheusDataItem>
 
     /**
      * Obtain the name of the entry.
+     *
      * @return the name
      */
     public String getName() {
@@ -73,6 +76,7 @@ public final class PrometheusEditEntry<T extends PrometheusDataItem>
 
     /**
      * Obtain the list for the entry.
+     *
      * @return the list
      */
     public PrometheusDataList<T> getDataList() {
@@ -81,6 +85,7 @@ public final class PrometheusEditEntry<T extends PrometheusDataItem>
 
     /**
      * Is this entry related to this dataType.
+     *
      * @param pDataType the dataType to compare
      * @return true/false
      */
@@ -90,6 +95,7 @@ public final class PrometheusEditEntry<T extends PrometheusDataItem>
 
     /**
      * Set the Data list.
+     *
      * @param pDataList the DataList
      */
     public void setDataList(final PrometheusDataList<T> pDataList) {
@@ -98,6 +104,7 @@ public final class PrometheusEditEntry<T extends PrometheusDataItem>
 
     /**
      * Prepare changes in an edit view back into the core data.
+     *
      * @throws OceanusException on error
      */
     public void prepareChanges() throws OceanusException {

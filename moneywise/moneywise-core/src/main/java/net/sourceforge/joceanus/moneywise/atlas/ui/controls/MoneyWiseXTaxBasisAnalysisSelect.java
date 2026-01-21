@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,13 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.atlas.ui.controls;
 
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisBucketResource;
@@ -25,10 +29,6 @@ import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseX
 import net.sourceforge.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter;
 import net.sourceforge.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter.MoneyWiseXAnalysisTaxBasisFilter;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIConstant;
@@ -111,6 +111,7 @@ public class MoneyWiseXTaxBasisAnalysisSelect
 
     /**
      * Constructor.
+     *
      * @param pFactory the GUI factory
      */
     protected MoneyWiseXTaxBasisAnalysisSelect(final TethysUIFactory<?> pFactory) {
@@ -206,6 +207,7 @@ public class MoneyWiseXTaxBasisAnalysisSelect
 
     /**
      * Set analysis.
+     *
      * @param pAnalysis the analysis.
      */
     public void setAnalysis(final MoneyWiseXAnalysis pAnalysis) {
@@ -364,6 +366,7 @@ public class MoneyWiseXTaxBasisAnalysisSelect
 
         /**
          * Constructor.
+         *
          * @param pState state to copy from
          */
         private MoneyWiseTaxBasisState(final MoneyWiseTaxBasisState pState) {
@@ -376,6 +379,7 @@ public class MoneyWiseXTaxBasisAnalysisSelect
 
         /**
          * Obtain the TaxBasis Bucket.
+         *
          * @return the Basis
          */
         private MoneyWiseXAnalysisTaxBasisBucket getTaxBasis() {
@@ -384,6 +388,7 @@ public class MoneyWiseXTaxBasisAnalysisSelect
 
         /**
          * Obtain the Account Bucket.
+         *
          * @return the Account
          */
         private MoneyWiseXAnalysisTaxBasisAccountBucket getAccount() {
@@ -392,6 +397,7 @@ public class MoneyWiseXTaxBasisAnalysisSelect
 
         /**
          * Obtain the dateRange.
+         *
          * @return the dateRange
          */
         private OceanusDateRange getDateRange() {
@@ -400,6 +406,7 @@ public class MoneyWiseXTaxBasisAnalysisSelect
 
         /**
          * Obtain the Filter.
+         *
          * @return the Filter
          */
         private MoneyWiseXAnalysisTaxBasisFilter getFilter() {
@@ -408,6 +415,7 @@ public class MoneyWiseXTaxBasisAnalysisSelect
 
         /**
          * Set new TaxBasis.
+         *
          * @param pTaxBasis the TaxBasis
          * @return true/false did a change occur
          */
@@ -422,6 +430,7 @@ public class MoneyWiseXTaxBasisAnalysisSelect
 
         /**
          * Set the TaxBasis.
+         *
          * @param pTaxBasis the TaxBasis
          */
         private void setTheTaxBasis(final MoneyWiseXAnalysisTaxBasisBucket pTaxBasis) {
@@ -445,6 +454,7 @@ public class MoneyWiseXTaxBasisAnalysisSelect
 
         /**
          * Set the dateRange.
+         *
          * @param pRange the dateRange
          */
         private void setDateRange(final OceanusDateRange pRange) {

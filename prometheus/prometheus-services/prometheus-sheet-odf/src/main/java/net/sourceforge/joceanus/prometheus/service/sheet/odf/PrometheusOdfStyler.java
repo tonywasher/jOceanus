@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Prometheus: Application Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,20 +13,19 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.prometheus.service.sheet.odf;
+
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimalParser;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
+import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCellStyleType;
+import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetFormats;
+import org.w3c.dom.Element;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import org.w3c.dom.Element;
-
-import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCellStyleType;
-import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetFormats;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimalParser;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
 
 /**
  * Odf Styles.
@@ -100,6 +99,7 @@ public class PrometheusOdfStyler {
 
     /**
      * Constructor.
+     *
      * @param pParser the parser.
      */
     PrometheusOdfStyler(final PrometheusOdfParser pParser) {
@@ -117,6 +117,7 @@ public class PrometheusOdfStyler {
 
     /**
      * Obtain the required CellStyle.
+     *
      * @param pType the CellStyleType
      * @return the required CellStyle name
      */
@@ -166,6 +167,7 @@ public class PrometheusOdfStyler {
 
     /**
      * Obtain the required CellStyle.
+     *
      * @param pValue the Cell Value
      * @return the required CellStyle
      */
@@ -217,6 +219,7 @@ public class PrometheusOdfStyler {
 
     /**
      * Obtain the required alternate CellStyle.
+     *
      * @param pValue the Cell Value
      * @return the required CellStyle
      */
@@ -281,6 +284,7 @@ public class PrometheusOdfStyler {
 
     /**
      * Obtain data style name.
+     *
      * @param pStyle the style type
      * @return the name of the style
      */
@@ -291,6 +295,7 @@ public class PrometheusOdfStyler {
 
     /**
      * Obtain column style name.
+     *
      * @param pType the style type
      * @return the name of the style
      */
@@ -301,6 +306,7 @@ public class PrometheusOdfStyler {
 
     /**
      * Obtain column width.
+     *
      * @param pWidth the character width
      * @return the name of the style
      */
@@ -311,9 +317,10 @@ public class PrometheusOdfStyler {
 
     /**
      * Define a numeric CellStyle.
+     *
      * @param pStyleName the style name
-     * @param pValue the value
-     * @param pType the style type
+     * @param pValue     the value
+     * @param pType      the style type
      */
     private void createNumericStyle(final String pStyleName,
                                     final Object pValue,
@@ -346,6 +353,7 @@ public class PrometheusOdfStyler {
 
     /**
      * Define a Date Style.
+     *
      * @param pStyleName the style name
      */
     private void createDateStyle(final String pStyleName) {
@@ -383,6 +391,7 @@ public class PrometheusOdfStyler {
 
     /**
      * Define a Boolean Style.
+     *
      * @param pStyleName the style name
      */
     private void createBooleanStyle(final String pStyleName) {
@@ -402,6 +411,7 @@ public class PrometheusOdfStyler {
 
     /**
      * Define an Integer Style.
+     *
      * @param pStyleName the style name
      */
     private void createIntegerStyle(final String pStyleName) {
@@ -419,8 +429,9 @@ public class PrometheusOdfStyler {
 
     /**
      * Define a Decimal Style.
+     *
      * @param pStyleName the style name
-     * @param pValue the value
+     * @param pValue     the value
      */
     private void createDecimalStyle(final String pStyleName,
                                     final OceanusDecimal pValue) {
@@ -439,8 +450,9 @@ public class PrometheusOdfStyler {
 
     /**
      * Define a rateStyle.
+     *
      * @param pStyleName the style name
-     * @param pValue the value
+     * @param pValue     the value
      */
     private void createRateStyle(final String pStyleName,
                                  final OceanusRate pValue) {
@@ -464,8 +476,9 @@ public class PrometheusOdfStyler {
 
     /**
      * Define a priceStyle.
+     *
      * @param pStyleName the style name
-     * @param pValue the value
+     * @param pValue     the value
      */
     private void createMoneyStyle(final String pStyleName,
                                   final OceanusMoney pValue) {
@@ -496,14 +509,15 @@ public class PrometheusOdfStyler {
 
     /**
      * Define a currency subStyle.
+     *
      * @param pStyleName the style name
-     * @param pValue the value
-     * @param pNegative is this the negative form
+     * @param pValue     the value
+     * @param pNegative  is this the negative form
      * @return the
      */
     private String createCurrencyStyle(final String pStyleName,
                                        final OceanusMoney pValue,
-                                        final boolean pNegative) {
+                                       final boolean pNegative) {
         /* Determine the prefix */
         final String myPrefix = pNegative ? "n" : "p";
         final String myName = myPrefix + pStyleName;
@@ -661,6 +675,7 @@ public class PrometheusOdfStyler {
 
     /**
      * Obtain alignment for a cell.
+     *
      * @param pType the cell type
      * @return the alignment
      */
@@ -679,6 +694,7 @@ public class PrometheusOdfStyler {
 
     /**
      * Obtain font for a cell.
+     *
      * @param pType the cell type
      * @return the font
      */

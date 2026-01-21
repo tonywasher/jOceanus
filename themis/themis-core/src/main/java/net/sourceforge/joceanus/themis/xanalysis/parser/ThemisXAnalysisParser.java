@@ -1,19 +1,19 @@
-/*******************************************************************************
+/*
  * Themis: Java Project Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package net.sourceforge.joceanus.themis.xanalysis.parser;
 
 import com.github.javaparser.JavaParser;
@@ -30,7 +30,7 @@ import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.modules.ModuleDeclaration;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.type.Type;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.exc.ThemisDataException;
 import net.sourceforge.joceanus.themis.exc.ThemisIOException;
 import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisChar;
@@ -116,6 +116,7 @@ public class ThemisXAnalysisParser
 
     /**
      * Constructor.
+     *
      * @param pLocation the project location
      */
     public ThemisXAnalysisParser(final File pLocation) {
@@ -145,6 +146,7 @@ public class ThemisXAnalysisParser
 
     /**
      * Obtain the project.
+     *
      * @return the project
      */
     public ThemisXAnalysisProject getProject() {
@@ -153,6 +155,7 @@ public class ThemisXAnalysisParser
 
     /**
      * Obtain the error.
+     *
      * @return the error
      */
     public OceanusException getError() {
@@ -171,7 +174,7 @@ public class ThemisXAnalysisParser
         /* Access the parser */
         final ParserConfiguration myConfig = theParser.getParserConfiguration();
         myConfig.setLanguageLevel(ParserConfiguration.LanguageLevel.JAVA_21);
-   }
+    }
 
     @Override
     public void setCurrentPackage(final String pPackage) {
@@ -201,6 +204,7 @@ public class ThemisXAnalysisParser
 
     /**
      * Deregister instance.
+     *
      * @param pInstance the instance to deRegister
      */
     private void deRegisterInstance(final ThemisXAnalysisInstance pInstance) {
@@ -292,10 +296,10 @@ public class ThemisXAnalysisParser
         final Position myPos = pNode.getBegin().orElse(null);
         final String myLocation = pNode.getClass().getCanonicalName()
                 + (myPos == null ? "" : ThemisXAnalysisChar.PARENTHESIS_OPEN
-                                          + myPos.line
-                                          + ThemisXAnalysisChar.COLON
-                                          + myPos.column
-                                          + ThemisXAnalysisChar.PARENTHESIS_CLOSE);
+                + myPos.line
+                + ThemisXAnalysisChar.COLON
+                + myPos.column
+                + ThemisXAnalysisChar.PARENTHESIS_CLOSE);
 
         /* Build full error message */
         final String myMsg = pMessage
@@ -310,6 +314,7 @@ public class ThemisXAnalysisParser
 
     /**
      * Check the package name.
+     *
      * @param pPackage the package name
      * @throws OceanusException on error
      */

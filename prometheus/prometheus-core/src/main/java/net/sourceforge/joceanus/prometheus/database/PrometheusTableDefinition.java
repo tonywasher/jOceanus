@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Prometheus: Application Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,19 +13,19 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.prometheus.database;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.gordianknot.util.GordianUtilities;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.database.PrometheusColumnDefinition.PrometheusBinaryColumn;
 import net.sourceforge.joceanus.prometheus.database.PrometheusColumnDefinition.PrometheusBooleanColumn;
 import net.sourceforge.joceanus.prometheus.database.PrometheusColumnDefinition.PrometheusDateColumn;
@@ -111,8 +111,9 @@ public class PrometheusTableDefinition {
 
     /**
      * Constructor.
+     *
      * @param pDriver the driver
-     * @param pName the table name
+     * @param pName   the table name
      */
     protected PrometheusTableDefinition(final PrometheusJDBCDriver pDriver,
                                         final String pName) {
@@ -135,6 +136,7 @@ public class PrometheusTableDefinition {
 
     /**
      * Obtain the table name.
+     *
      * @return the table name
      */
     protected String getTableName() {
@@ -143,6 +145,7 @@ public class PrometheusTableDefinition {
 
     /**
      * Obtain the column map.
+     *
      * @return the map
      */
     protected Map<MetisDataFieldId, PrometheusColumnDefinition> getMap() {
@@ -151,6 +154,7 @@ public class PrometheusTableDefinition {
 
     /**
      * Is the table indexed.
+     *
      * @return true/false
      */
     protected boolean isIndexed() {
@@ -159,6 +163,7 @@ public class PrometheusTableDefinition {
 
     /**
      * Column Definitions array.
+     *
      * @return the columns
      */
     protected List<PrometheusColumnDefinition> getColumns() {
@@ -167,6 +172,7 @@ public class PrometheusTableDefinition {
 
     /**
      * Sort List.
+     *
      * @return the sort list
      */
     protected List<PrometheusColumnDefinition> getSortList() {
@@ -175,6 +181,7 @@ public class PrometheusTableDefinition {
 
     /**
      * Obtain the driver.
+     *
      * @return the driver
      */
     protected PrometheusJDBCDriver getDriver() {
@@ -190,7 +197,8 @@ public class PrometheusTableDefinition {
 
     /**
      * Add a reference column.
-     * @param pId the column id
+     *
+     * @param pId  the column id
      * @param pRef the reference table
      * @return the reference column
      */
@@ -206,7 +214,8 @@ public class PrometheusTableDefinition {
 
     /**
      * Add a reference column, which can be null.
-     * @param pId the column id
+     *
+     * @param pId  the column id
      * @param pRef the reference table
      * @return the reference column
      */
@@ -219,6 +228,7 @@ public class PrometheusTableDefinition {
 
     /**
      * Add an integer column.
+     *
      * @param pId the column id
      * @return the integer column
      */
@@ -233,6 +243,7 @@ public class PrometheusTableDefinition {
 
     /**
      * Add an integer column, which can be null.
+     *
      * @param pId the column id
      * @return the integer column
      */
@@ -244,6 +255,7 @@ public class PrometheusTableDefinition {
 
     /**
      * Add a long column.
+     *
      * @param pId the column id
      * @return the long column
      */
@@ -258,6 +270,7 @@ public class PrometheusTableDefinition {
 
     /**
      * Add a long column, which can be null.
+     *
      * @param pId the column id
      * @return the long column
      */
@@ -269,6 +282,7 @@ public class PrometheusTableDefinition {
 
     /**
      * Add a boolean column.
+     *
      * @param pId the column id
      * @return the boolean column
      */
@@ -283,6 +297,7 @@ public class PrometheusTableDefinition {
 
     /**
      * Add a boolean column, which can be null.
+     *
      * @param pId the column id
      * @return the boolean column
      */
@@ -294,6 +309,7 @@ public class PrometheusTableDefinition {
 
     /**
      * Add a date column.
+     *
      * @param pId the column id
      * @return the date column
      */
@@ -308,6 +324,7 @@ public class PrometheusTableDefinition {
 
     /**
      * Add a date column, which can be null.
+     *
      * @param pId the column id
      * @return the date column
      */
@@ -319,6 +336,7 @@ public class PrometheusTableDefinition {
 
     /**
      * Add a money column.
+     *
      * @param pId the column id
      * @return the money column
      */
@@ -333,6 +351,7 @@ public class PrometheusTableDefinition {
 
     /**
      * Add a money column, which can be null.
+     *
      * @param pId the column id
      * @return the money column
      */
@@ -344,6 +363,7 @@ public class PrometheusTableDefinition {
 
     /**
      * Add a rate column.
+     *
      * @param pId the column id
      * @return the rate column
      */
@@ -358,6 +378,7 @@ public class PrometheusTableDefinition {
 
     /**
      * Add a rate column, which can be null.
+     *
      * @param pId the column id
      * @return the rate column
      */
@@ -369,6 +390,7 @@ public class PrometheusTableDefinition {
 
     /**
      * Add a rate column.
+     *
      * @param pId the column id
      * @return the rate column
      */
@@ -383,6 +405,7 @@ public class PrometheusTableDefinition {
 
     /**
      * Add a rate column, which can be null.
+     *
      * @param pId the column id
      * @return the rate column
      */
@@ -394,7 +417,8 @@ public class PrometheusTableDefinition {
 
     /**
      * Add a binary column.
-     * @param pId the column id
+     *
+     * @param pId     the column id
      * @param pLength the underlying (character) length
      * @return the binary column
      */
@@ -410,7 +434,8 @@ public class PrometheusTableDefinition {
 
     /**
      * Add a binary column, which can be null.
-     * @param pId the column id
+     *
+     * @param pId     the column id
      * @param pLength the underlying (character) length
      * @return the binary column
      */
@@ -423,7 +448,8 @@ public class PrometheusTableDefinition {
 
     /**
      * Add an encrypted column.
-     * @param pId the column id
+     *
+     * @param pId     the column id
      * @param pLength the underlying (character) length
      * @return the binary column
      */
@@ -439,7 +465,8 @@ public class PrometheusTableDefinition {
 
     /**
      * Add an encrypted column, which can be null.
-     * @param pId the column id
+     *
+     * @param pId     the column id
      * @param pLength the underlying (character) length
      * @return the binary column
      */
@@ -452,7 +479,8 @@ public class PrometheusTableDefinition {
 
     /**
      * Add a string column.
-     * @param pId the column id
+     *
+     * @param pId     the column id
      * @param pLength the character length
      * @return the binary column
      */
@@ -468,7 +496,8 @@ public class PrometheusTableDefinition {
 
     /**
      * Add a string column, which can be null.
-     * @param pId the column id
+     *
+     * @param pId     the column id
      * @param pLength the character length
      * @return the binary column
      */
@@ -481,6 +510,7 @@ public class PrometheusTableDefinition {
 
     /**
      * Locate reference.
+     *
      * @param pTables the list of defined tables
      */
     protected void resolveReferences(final List<PrometheusTableDataItem<?>> pTables) {
@@ -496,6 +526,7 @@ public class PrometheusTableDefinition {
 
     /**
      * Load results.
+     *
      * @param pResults the result set
      * @throws SQLException on error
      */
@@ -516,6 +547,7 @@ public class PrometheusTableDefinition {
 
     /**
      * Build column error string.
+     *
      * @param pCol the column definition.
      * @return the error string
      */
@@ -525,8 +557,9 @@ public class PrometheusTableDefinition {
 
     /**
      * Insert values.
+     *
      * @param pStmt the statement
-     * @throws SQLException on error
+     * @throws SQLException     on error
      * @throws OceanusException on error
      */
     protected void insertValues(final PreparedStatement pStmt) throws SQLException, OceanusException {
@@ -552,6 +585,7 @@ public class PrometheusTableDefinition {
 
     /**
      * Update values.
+     *
      * @param pStmt the statement
      * @throws SQLException on error
      */
@@ -599,6 +633,7 @@ public class PrometheusTableDefinition {
 
     /**
      * Get Integer value for column.
+     *
      * @param pId the column id
      * @return the integer value
      * @throws OceanusException on error
@@ -619,6 +654,7 @@ public class PrometheusTableDefinition {
 
     /**
      * Get Long value for column.
+     *
      * @param pId the column id
      * @return the long value
      * @throws OceanusException on error
@@ -639,6 +675,7 @@ public class PrometheusTableDefinition {
 
     /**
      * Get Date value for column.
+     *
      * @param pId the column id
      * @return the Date value
      * @throws OceanusException on error
@@ -659,6 +696,7 @@ public class PrometheusTableDefinition {
 
     /**
      * Get Boolean value for column.
+     *
      * @param pId the column id
      * @return the boolean value
      * @throws OceanusException on error
@@ -679,6 +717,7 @@ public class PrometheusTableDefinition {
 
     /**
      * Get String value for column.
+     *
      * @param pId the column id
      * @return the String value
      * @throws OceanusException on error
@@ -699,7 +738,8 @@ public class PrometheusTableDefinition {
 
     /**
      * Get Money value for column.
-     * @param pId the column id
+     *
+     * @param pId        the column id
      * @param pFormatter the data formatter
      * @return the Money value
      * @throws OceanusException on error
@@ -721,7 +761,8 @@ public class PrometheusTableDefinition {
 
     /**
      * Get Price value for column.
-     * @param pId the column id
+     *
+     * @param pId        the column id
      * @param pFormatter the data formatter
      * @return the price value
      * @throws OceanusException on error
@@ -743,7 +784,8 @@ public class PrometheusTableDefinition {
 
     /**
      * Get Rate value for column.
-     * @param pId the column id
+     *
+     * @param pId        the column id
      * @param pFormatter the data formatter
      * @return the rate value
      * @throws OceanusException on error
@@ -765,7 +807,8 @@ public class PrometheusTableDefinition {
 
     /**
      * Get Units value for column.
-     * @param pId the column id
+     *
+     * @param pId        the column id
      * @param pFormatter the data formatter
      * @return the Units value
      * @throws OceanusException on error
@@ -787,7 +830,8 @@ public class PrometheusTableDefinition {
 
     /**
      * Get Ratio value for column.
-     * @param pId the column id
+     *
+     * @param pId        the column id
      * @param pFormatter the data formatter
      * @return the Ratio value
      * @throws OceanusException on error
@@ -809,6 +853,7 @@ public class PrometheusTableDefinition {
 
     /**
      * Get Binary value for column.
+     *
      * @param pId the column id
      * @return the binary value
      * @throws OceanusException on error
@@ -829,7 +874,8 @@ public class PrometheusTableDefinition {
 
     /**
      * Set Integer value for column.
-     * @param pId the column id
+     *
+     * @param pId    the column id
      * @param pValue the value
      * @throws OceanusException on error
      */
@@ -850,7 +896,8 @@ public class PrometheusTableDefinition {
 
     /**
      * Set Long value for column.
-     * @param pId the column id
+     *
+     * @param pId    the column id
      * @param pValue the value
      * @throws OceanusException on error
      */
@@ -871,7 +918,8 @@ public class PrometheusTableDefinition {
 
     /**
      * Set Boolean value for column.
-     * @param pId the column id
+     *
+     * @param pId    the column id
      * @param pValue the value
      * @throws OceanusException on error
      */
@@ -892,7 +940,8 @@ public class PrometheusTableDefinition {
 
     /**
      * Set Date value for column.
-     * @param pId the column id
+     *
+     * @param pId    the column id
      * @param pValue the value
      * @throws OceanusException on error
      */
@@ -913,7 +962,8 @@ public class PrometheusTableDefinition {
 
     /**
      * Set String value for column.
-     * @param pId the column id
+     *
+     * @param pId    the column id
      * @param pValue the value
      * @throws OceanusException on error
      */
@@ -934,7 +984,8 @@ public class PrometheusTableDefinition {
 
     /**
      * Set Binary value for column.
-     * @param pId the column id
+     *
+     * @param pId    the column id
      * @param pValue the value
      * @throws OceanusException on error
      */
@@ -955,7 +1006,8 @@ public class PrometheusTableDefinition {
 
     /**
      * Set Money value for column.
-     * @param pId the column id
+     *
+     * @param pId    the column id
      * @param pValue the value
      * @throws OceanusException on error
      */
@@ -976,7 +1028,8 @@ public class PrometheusTableDefinition {
 
     /**
      * Set Rate value for column.
-     * @param pId the column id
+     *
+     * @param pId    the column id
      * @param pValue the value
      * @throws OceanusException on error
      */
@@ -997,7 +1050,8 @@ public class PrometheusTableDefinition {
 
     /**
      * Set Ratio value for column.
-     * @param pId the column id
+     *
+     * @param pId    the column id
      * @param pValue the value
      * @throws OceanusException on error
      */
@@ -1018,6 +1072,7 @@ public class PrometheusTableDefinition {
 
     /**
      * Locate column for id.
+     *
      * @param pId the id of the column
      * @return the column
      * @throws OceanusException on error
@@ -1037,6 +1092,7 @@ public class PrometheusTableDefinition {
 
     /**
      * Build the create table string for the table.
+     *
      * @return the SQL string
      */
     protected String getCreateTableString() {
@@ -1070,6 +1126,7 @@ public class PrometheusTableDefinition {
 
     /**
      * Build the create index string for the table.
+     *
      * @return the SQL string
      */
     protected String getCreateIndexString() {
@@ -1118,6 +1175,7 @@ public class PrometheusTableDefinition {
 
     /**
      * Build the drop table string for the table.
+     *
      * @return the SQL string
      */
     protected String getDropTableString() {
@@ -1133,6 +1191,7 @@ public class PrometheusTableDefinition {
 
     /**
      * Build the drop index string for the table.
+     *
      * @return the SQL string
      */
     protected String getDropIndexString() {
@@ -1161,6 +1220,7 @@ public class PrometheusTableDefinition {
 
     /**
      * Build the load string for a list of columns.
+     *
      * @return the SQL string
      */
     protected String getLoadString() {
@@ -1216,7 +1276,8 @@ public class PrometheusTableDefinition {
 
     /**
      * Build the Join string for the list of columns.
-     * @param pChar the character for this table
+     *
+     * @param pChar   the character for this table
      * @param pOffset the join offset
      * @return the SQL string
      */
@@ -1240,7 +1301,8 @@ public class PrometheusTableDefinition {
 
     /**
      * Build the Order string for the list of columns.
-     * @param pChar the character for this table
+     *
+     * @param pChar   the character for this table
      * @param pOffset the join offset
      * @return the SQL string
      */
@@ -1296,6 +1358,7 @@ public class PrometheusTableDefinition {
 
     /**
      * Build the insert string for a list of columns.
+     *
      * @return the SQL string
      */
     protected String getInsertString() {
@@ -1336,6 +1399,7 @@ public class PrometheusTableDefinition {
 
     /**
      * Build the update string for a list of columns.
+     *
      * @return the SQL string
      * @throws OceanusException on error
      */
@@ -1398,6 +1462,7 @@ public class PrometheusTableDefinition {
 
     /**
      * Build the delete string for a table.
+     *
      * @return the SQL string
      */
     protected String getDeleteString() {
@@ -1415,7 +1480,7 @@ public class PrometheusTableDefinition {
 
         /* Build the rest of the command */
         addQuoteIfAllowed(myBuilder);
-       myBuilder.append(myId.getColumnName());
+        myBuilder.append(myId.getColumnName());
         addQuoteIfAllowed(myBuilder);
         myBuilder.append("=?");
         return myBuilder.toString();
@@ -1423,6 +1488,7 @@ public class PrometheusTableDefinition {
 
     /**
      * Build the purge string for a table.
+     *
      * @return the SQL string
      */
     protected String getPurgeString() {
@@ -1438,6 +1504,7 @@ public class PrometheusTableDefinition {
 
     /**
      * Build the count string for a table.
+     *
      * @return the SQL string
      */
     protected String getCountString() {
@@ -1453,6 +1520,7 @@ public class PrometheusTableDefinition {
 
     /**
      * Add quote if necessary.
+     *
      * @param pBuilder the builder
      */
     void addQuoteIfAllowed(final StringBuilder pBuilder) {

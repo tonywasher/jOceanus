@@ -1,25 +1,23 @@
-/*******************************************************************************
- * Tethys: Java Utilities
- * Copyright 2012-2026 Tony Washer
+/*
+ * Tethys: GUI Utilities
+ * Copyright 2012-2026. Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package net.sourceforge.joceanus.tethys.test.ui;
 
-import java.time.Month;
-
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.chart.TethysUIAreaChart;
 import net.sourceforge.joceanus.tethys.api.chart.TethysUIAreaChart.TethysUIAreaChartData;
@@ -27,6 +25,8 @@ import net.sourceforge.joceanus.tethys.api.chart.TethysUIAreaChart.TethysUIAreaC
 import net.sourceforge.joceanus.tethys.api.chart.TethysUIChartFactory;
 import net.sourceforge.joceanus.tethys.api.control.TethysUITextArea;
 import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
+
+import java.time.Month;
 
 /**
  * AreaChart Test Example.
@@ -61,7 +61,7 @@ public class TethysTestAreaChart {
      * Area Values.
      */
     private static final int[] AREA_VALUES = {
-        567, 612, 800, 780, 167, 212, 100, 280
+            567, 612, 800, 780, 167, 212, 100, 280
     };
 
     /**
@@ -71,7 +71,8 @@ public class TethysTestAreaChart {
 
     /**
      * Constructor.
-     * @param pFactory the factory
+     *
+     * @param pFactory  the factory
      * @param pTextArea the text area
      */
     TethysTestAreaChart(final TethysUIFactory<?> pFactory,
@@ -92,6 +93,7 @@ public class TethysTestAreaChart {
 
     /**
      * Obtain the component.
+     *
      * @return the component
      */
     public TethysUIComponent getComponent() {
@@ -100,6 +102,7 @@ public class TethysTestAreaChart {
 
     /**
      * Create Test Area Data.
+     *
      * @param pData the dataSet
      */
     private static void createTestAreaData(final TethysUIAreaChartData pData) {

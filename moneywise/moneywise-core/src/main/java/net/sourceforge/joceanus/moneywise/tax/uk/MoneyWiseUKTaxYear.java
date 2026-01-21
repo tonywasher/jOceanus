@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,20 +13,20 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.tax.uk;
 
-import java.time.Month;
-
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusFiscalYear;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.metis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxResource;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxSource;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxYear;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.date.OceanusFiscalYear;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
+
+import java.time.Month;
 
 /**
  * The UK Tax Year.
@@ -91,12 +91,13 @@ public class MoneyWiseUKTaxYear
 
     /**
      * Constructor.
-     * @param pDate the tax year end
+     *
+     * @param pDate       the tax year end
      * @param pAllowances the allowances
-     * @param pTaxBands the standard tax bands
-     * @param pInterest the interest scheme
-     * @param pDividend the dividend scheme
-     * @param pCapital the capital gains scheme
+     * @param pTaxBands   the standard tax bands
+     * @param pInterest   the interest scheme
+     * @param pDividend   the dividend scheme
+     * @param pCapital    the capital gains scheme
      */
     protected MoneyWiseUKTaxYear(final int pDate,
                                  final MoneyWiseUKBasicAllowance pAllowances,
@@ -117,6 +118,7 @@ public class MoneyWiseUKTaxYear
 
     /**
      * Obtain the Allowances.
+     *
      * @return the allowances
      */
     public MoneyWiseUKBasicAllowance getAllowances() {
@@ -125,6 +127,7 @@ public class MoneyWiseUKTaxYear
 
     /**
      * Obtain the Standard taxBands.
+     *
      * @return the tax bands
      */
     public MoneyWiseUKTaxBands getTaxBands() {
@@ -133,6 +136,7 @@ public class MoneyWiseUKTaxYear
 
     /**
      * Obtain the Interest TaxScheme.
+     *
      * @return the tax scheme
      */
     private MoneyWiseUKInterestScheme getInterestScheme() {
@@ -141,6 +145,7 @@ public class MoneyWiseUKTaxYear
 
     /**
      * Obtain the Dividend TaxScheme.
+     *
      * @return the tax scheme
      */
     private MoneyWiseUKDividendScheme getDividendScheme() {
@@ -149,6 +154,7 @@ public class MoneyWiseUKTaxYear
 
     /**
      * Obtain the Capital TaxScheme.
+     *
      * @return the tax scheme
      */
     private MoneyWiseUKCapitalScheme getCapitalScheme() {
@@ -157,6 +163,7 @@ public class MoneyWiseUKTaxYear
 
     /**
      * Determine the taxYear end.
+     *
      * @param pYear the taxYear as an integer
      * @return the amount
      */

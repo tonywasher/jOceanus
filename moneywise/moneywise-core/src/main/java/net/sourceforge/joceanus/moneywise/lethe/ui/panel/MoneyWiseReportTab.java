@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,15 +13,20 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.lethe.ui.panel;
 
-import org.w3c.dom.Document;
-
-import net.sourceforge.joceanus.metis.ui.MetisErrorPanel;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEvent;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
+import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.metis.report.MetisReportEvent;
 import net.sourceforge.joceanus.metis.report.MetisReportHTMLBuilder;
 import net.sourceforge.joceanus.metis.report.MetisReportManager;
+import net.sourceforge.joceanus.metis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
@@ -31,23 +36,16 @@ import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnal
 import net.sourceforge.joceanus.moneywise.lethe.reports.MoneyWiseReportBuilder;
 import net.sourceforge.joceanus.moneywise.lethe.reports.MoneyWiseReportStyleSheet;
 import net.sourceforge.joceanus.moneywise.lethe.reports.MoneyWiseReportType;
-import net.sourceforge.joceanus.moneywise.ui.MoneyWiseGoToId;
-import net.sourceforge.joceanus.moneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.moneywise.lethe.ui.controls.MoneyWiseAnalysisSelect.MoneyWiseStatementSelect;
 import net.sourceforge.joceanus.moneywise.lethe.ui.controls.MoneyWiseReportSelect;
 import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter;
 import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisSecurityFilter;
+import net.sourceforge.joceanus.moneywise.ui.MoneyWiseGoToId;
+import net.sourceforge.joceanus.moneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
 import net.sourceforge.joceanus.prometheus.ui.PrometheusGoToEvent;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.prometheus.views.PrometheusViewerEntryId;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
-import net.sourceforge.joceanus.oceanus.event.OceanusEvent;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
-import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.api.button.TethysUIDateRangeSelector;
@@ -56,6 +54,7 @@ import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.tethys.api.pane.TethysUIBorderPaneManager;
 import net.sourceforge.joceanus.tethys.api.pane.TethysUIPaneFactory;
 import net.sourceforge.joceanus.tethys.api.pane.TethysUIScrollPaneManager;
+import org.w3c.dom.Document;
 
 /**
  * Report panel.
@@ -114,6 +113,7 @@ public class MoneyWiseReportTab
 
     /**
      * Constructor for Report Window.
+     *
      * @param pView the data view
      * @throws OceanusException on error
      */
@@ -240,6 +240,7 @@ public class MoneyWiseReportTab
 
     /**
      * Build the report.
+     *
      * @throws OceanusException on error
      */
     private void buildReport() throws OceanusException {
@@ -295,6 +296,7 @@ public class MoneyWiseReportTab
 
     /**
      * handleGoToRequest.
+     *
      * @param pEvent the event
      */
     private void handleGoToRequest(final OceanusEvent<MetisReportEvent> pEvent) {

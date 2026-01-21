@@ -1,33 +1,34 @@
-/*******************************************************************************
+/*
  * Tethys: GUI Utilities
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package net.sourceforge.joceanus.tethys.swing.thread;
 
-import java.util.List;
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.ExecutionException;
-import javax.swing.SwingWorker;
-
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.tethys.api.thread.TethysUIThread;
 import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadStatusManager;
 import net.sourceforge.joceanus.tethys.core.thread.TethysUICoreThreadStatus;
 
+import javax.swing.SwingWorker;
+import java.util.List;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
+
 /**
  * javaFX Thread wrapper.
+ *
  * @param <T> the thread result
  */
 public class TethysUISwingThread<T>
@@ -59,8 +60,9 @@ public class TethysUISwingThread<T>
 
     /**
      * Constructor.
+     *
      * @param pManager the thread manager
-     * @param pThread the thread to wrap
+     * @param pThread  the thread to wrap
      */
     protected TethysUISwingThread(final TethysUISwingThreadManager pManager,
                                   final TethysUIThread<T> pThread) {
@@ -72,6 +74,7 @@ public class TethysUISwingThread<T>
 
     /**
      * obtain the task name.
+     *
      * @return the task name
      */
     protected String getTaskName() {
@@ -93,6 +96,7 @@ public class TethysUISwingThread<T>
 
     /**
      * Process the result.
+     *
      * @throws OceanusException on error
      */
     protected void processResult() throws OceanusException {
@@ -102,6 +106,7 @@ public class TethysUISwingThread<T>
 
     /**
      * Publish the status.
+     *
      * @param pStatus the status
      */
     protected void publishStatus(final TethysUICoreThreadStatus pStatus) {

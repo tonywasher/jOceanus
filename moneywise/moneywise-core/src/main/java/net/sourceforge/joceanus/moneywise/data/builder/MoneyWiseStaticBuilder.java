@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,11 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.data.builder;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoType;
@@ -50,8 +52,6 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryTyp
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoType;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoType.MoneyWiseTransInfoTypeList;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 
 import java.util.Currency;
 
@@ -66,6 +66,7 @@ public class MoneyWiseStaticBuilder {
 
     /**
      * Constructor.
+     *
      * @param pDataSet the dataSet
      */
     public MoneyWiseStaticBuilder(final MoneyWiseDataSet pDataSet) {
@@ -74,8 +75,9 @@ public class MoneyWiseStaticBuilder {
 
     /**
      * build basic Static.
-     * @throws OceanusException on error
+     *
      * @return the builder
+     * @throws OceanusException on error
      */
     public MoneyWiseStaticBuilder buildBasic() throws OceanusException {
         return buildBasic(OceanusMoney.getDefaultCurrency());
@@ -83,9 +85,10 @@ public class MoneyWiseStaticBuilder {
 
     /**
      * build basic Static.
+     *
      * @param pDefault the default currency
-     * @throws OceanusException on error
      * @return the builder
+     * @throws OceanusException on error
      */
     public MoneyWiseStaticBuilder buildBasic(final MoneyWiseCurrencyClass pDefault) throws OceanusException {
         return buildBasic(pDefault.getCurrency());
@@ -93,9 +96,10 @@ public class MoneyWiseStaticBuilder {
 
     /**
      * build basic Static.
+     *
      * @param pDefault the default currency
-     * @throws OceanusException on error
      * @return the builder
+     * @throws OceanusException on error
      */
     public MoneyWiseStaticBuilder buildBasic(final Currency pDefault) throws OceanusException {
         /* Create reporting currency */
@@ -119,6 +123,7 @@ public class MoneyWiseStaticBuilder {
 
     /**
      * build payeeTypes.
+     *
      * @throws OceanusException on error
      */
     private void buildPayeeTypes() throws OceanusException {
@@ -132,6 +137,7 @@ public class MoneyWiseStaticBuilder {
 
     /**
      * Obtain the payeeType.
+     *
      * @param pType the class of the payeeType.
      * @return the payeeType
      */
@@ -141,6 +147,7 @@ public class MoneyWiseStaticBuilder {
 
     /**
      * build securityTypes.
+     *
      * @throws OceanusException on error
      */
     private void buildSecurityTypes() throws OceanusException {
@@ -154,6 +161,7 @@ public class MoneyWiseStaticBuilder {
 
     /**
      * Obtain the securityType.
+     *
      * @param pType the class of the security.
      * @return the securityType
      */
@@ -163,6 +171,7 @@ public class MoneyWiseStaticBuilder {
 
     /**
      * build portfolioTypes.
+     *
      * @throws OceanusException on error
      */
     private void buildPortfolioTypes() throws OceanusException {
@@ -176,6 +185,7 @@ public class MoneyWiseStaticBuilder {
 
     /**
      * Obtain the portfolioType.
+     *
      * @param pType the class of the portfolioType.
      * @return the portfolioType
      */
@@ -185,6 +195,7 @@ public class MoneyWiseStaticBuilder {
 
     /**
      * build depositCategories.
+     *
      * @throws OceanusException on error
      */
     private void buildDepositCategories() throws OceanusException {
@@ -198,6 +209,7 @@ public class MoneyWiseStaticBuilder {
 
     /**
      * Obtain the depositCategoryType.
+     *
      * @param pType the class of the categoryType.
      * @return the depositCategoryType
      */
@@ -207,6 +219,7 @@ public class MoneyWiseStaticBuilder {
 
     /**
      * build cashCategories.
+     *
      * @throws OceanusException on error
      */
     private void buildCashCategories() throws OceanusException {
@@ -220,6 +233,7 @@ public class MoneyWiseStaticBuilder {
 
     /**
      * Obtain the cashCategoryType.
+     *
      * @param pType the class of the categoryType.
      * @return the cashCategoryType
      */
@@ -229,6 +243,7 @@ public class MoneyWiseStaticBuilder {
 
     /**
      * build loanCategories.
+     *
      * @throws OceanusException on error
      */
     private void buildLoanCategories() throws OceanusException {
@@ -242,6 +257,7 @@ public class MoneyWiseStaticBuilder {
 
     /**
      * Obtain the loanCategoryType.
+     *
      * @param pType the class of the categoryType.
      * @return the loanCategoryType
      */
@@ -251,6 +267,7 @@ public class MoneyWiseStaticBuilder {
 
     /**
      * build taxBases.
+     *
      * @throws OceanusException on error
      */
     private void buildTaxBases() throws OceanusException {
@@ -264,6 +281,7 @@ public class MoneyWiseStaticBuilder {
 
     /**
      * Obtain the taxBasis.
+     *
      * @param pBasis the class of the taxBasis.
      * @return the taxBasis
      */
@@ -273,6 +291,7 @@ public class MoneyWiseStaticBuilder {
 
     /**
      * build transactionCategories.
+     *
      * @throws OceanusException on error
      */
     private void buildTransCategories() throws OceanusException {
@@ -286,6 +305,7 @@ public class MoneyWiseStaticBuilder {
 
     /**
      * Obtain the transCategoryType.
+     *
      * @param pType the class of the categoryType.
      * @return the transCategoryType
      */
@@ -295,6 +315,7 @@ public class MoneyWiseStaticBuilder {
 
     /**
      * build AccountInfo.
+     *
      * @throws OceanusException on error
      */
     private void buildAccountInfo() throws OceanusException {
@@ -308,6 +329,7 @@ public class MoneyWiseStaticBuilder {
 
     /**
      * Obtain the accountInfo.
+     *
      * @param pInfo the class of the accountInfo.
      * @return the accountInfo
      */
@@ -317,6 +339,7 @@ public class MoneyWiseStaticBuilder {
 
     /**
      * build TransInfo.
+     *
      * @throws OceanusException on error
      */
     private void buildTransInfo() throws OceanusException {
@@ -330,6 +353,7 @@ public class MoneyWiseStaticBuilder {
 
     /**
      * Obtain the transactionInfo.
+     *
      * @param pInfo the class of the transInfo.
      * @return the transInfo
      */
@@ -339,6 +363,7 @@ public class MoneyWiseStaticBuilder {
 
     /**
      * add currency.
+     *
      * @param pCurrency the currency class
      * @return the new currency
      * @throws OceanusException on error
@@ -352,6 +377,7 @@ public class MoneyWiseStaticBuilder {
 
     /**
      * add currency.
+     *
      * @param pCurrency the currency
      * @return the new currency
      * @throws OceanusException on error
@@ -367,6 +393,7 @@ public class MoneyWiseStaticBuilder {
 
     /**
      * Obtain the currency.
+     *
      * @param pCurr the class of the accountInfo.
      * @return the currency
      */

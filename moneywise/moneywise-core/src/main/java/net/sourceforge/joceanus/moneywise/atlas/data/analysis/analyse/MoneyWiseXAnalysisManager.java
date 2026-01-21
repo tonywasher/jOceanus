@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,20 +13,20 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.atlas.data.analysis.analyse;
 
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataMap;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisBucketResource;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
 
 import java.util.HashMap;
@@ -36,7 +36,7 @@ import java.util.Map;
  * Analysis manager.
  */
 public class MoneyWiseXAnalysisManager
-        implements OceanusEventProvider<PrometheusDataEvent>,  MetisFieldItem, MetisDataMap<OceanusDateRange, MoneyWiseXAnalysis> {
+        implements OceanusEventProvider<PrometheusDataEvent>, MetisFieldItem, MetisDataMap<OceanusDateRange, MoneyWiseXAnalysis> {
     /**
      * Local Report fields.
      */
@@ -66,6 +66,7 @@ public class MoneyWiseXAnalysisManager
 
     /**
      * Constructor.
+     *
      * @param pAnalysis the new analysis
      */
     public MoneyWiseXAnalysisManager(final MoneyWiseXAnalysis pAnalysis) {
@@ -101,6 +102,7 @@ public class MoneyWiseXAnalysisManager
 
     /**
      * Is the analysis manager idle?
+     *
      * @return true/false
      */
     public boolean isIdle() {
@@ -109,6 +111,7 @@ public class MoneyWiseXAnalysisManager
 
     /**
      * Set analysis.
+     *
      * @param pAnalysis the analysis
      */
     public void setAnalysis(final MoneyWiseXAnalysis pAnalysis) {
@@ -122,6 +125,7 @@ public class MoneyWiseXAnalysisManager
 
     /**
      * Obtain the base analysis.
+     *
      * @return the base analysis
      */
     public MoneyWiseXAnalysis getAnalysis() {
@@ -130,6 +134,7 @@ public class MoneyWiseXAnalysisManager
 
     /**
      * Do we have a foreign currency?
+     *
      * @return true/false
      */
     public Boolean haveForeignCurrency() {
@@ -138,6 +143,7 @@ public class MoneyWiseXAnalysisManager
 
     /**
      * Do we have active securities?
+     *
      * @return true/false
      */
     public Boolean haveActiveSecurities() {
@@ -146,6 +152,7 @@ public class MoneyWiseXAnalysisManager
 
     /**
      * Obtain an analysis for a date.
+     *
      * @param pDate the date for the analysis.
      * @return the analysis
      */
@@ -169,6 +176,7 @@ public class MoneyWiseXAnalysisManager
 
     /**
      * Obtain an analysis for a range.
+     *
      * @param pRange the date range for the analysis.
      * @return the analysis
      */

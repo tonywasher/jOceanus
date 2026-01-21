@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,15 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.ui.base;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataNamedItem;
 import net.sourceforge.joceanus.metis.list.MetisListKey;
@@ -23,12 +29,6 @@ import net.sourceforge.joceanus.metis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
-import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
-import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoClass;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues.PrometheusInfoSetItem;
@@ -51,6 +51,7 @@ import java.util.Iterator;
 
 /**
  * MoneyWise Base Table.
+ *
  * @param <T> the data type
  */
 public abstract class MoneyWiseBaseTable<T extends PrometheusDataItem>
@@ -167,9 +168,10 @@ public abstract class MoneyWiseBaseTable<T extends PrometheusDataItem>
 
     /**
      * Constructor.
-     * @param pView the view
-     * @param pEditSet the editSet
-     * @param pError the error panel
+     *
+     * @param pView     the view
+     * @param pEditSet  the editSet
+     * @param pError    the error panel
      * @param pDataType the dataType
      */
     protected MoneyWiseBaseTable(final MoneyWiseView pView,
@@ -216,6 +218,7 @@ public abstract class MoneyWiseBaseTable<T extends PrometheusDataItem>
 
     /**
      * Declare item panel.
+     *
      * @param pPanel the item panel
      */
     protected void declareItemPanel(final MoneyWiseItemPanel<T> pPanel) {
@@ -238,6 +241,7 @@ public abstract class MoneyWiseBaseTable<T extends PrometheusDataItem>
 
     /**
      * Obtain the error panel.
+     *
      * @return the error panel
      */
     public MetisErrorPanel getErrorPanel() {
@@ -246,6 +250,7 @@ public abstract class MoneyWiseBaseTable<T extends PrometheusDataItem>
 
     /**
      * Set the table enabled status.
+     *
      * @param pEnabled true/false
      */
     public void setTableEnabled(final boolean pEnabled) {
@@ -254,6 +259,7 @@ public abstract class MoneyWiseBaseTable<T extends PrometheusDataItem>
 
     /**
      * Obtain the item type.
+     *
      * @return the item type
      */
     public MetisListKey getItemType() {
@@ -262,6 +268,7 @@ public abstract class MoneyWiseBaseTable<T extends PrometheusDataItem>
 
     /**
      * Obtain the view.
+     *
      * @return the view
      */
     protected MoneyWiseView getView() {
@@ -270,6 +277,7 @@ public abstract class MoneyWiseBaseTable<T extends PrometheusDataItem>
 
     /**
      * Obtain the table.
+     *
      * @return the table
      */
     protected TethysUITableManager<MetisDataFieldId, T> getTable() {
@@ -278,6 +286,7 @@ public abstract class MoneyWiseBaseTable<T extends PrometheusDataItem>
 
     /**
      * Obtain the editSet.
+     *
      * @return the set
      */
     protected PrometheusEditSet getEditSet() {
@@ -286,6 +295,7 @@ public abstract class MoneyWiseBaseTable<T extends PrometheusDataItem>
 
     /**
      * Obtain the editEntry.
+     *
      * @return the entry
      */
     protected PrometheusEditEntry<T> getEditEntry() {
@@ -294,6 +304,7 @@ public abstract class MoneyWiseBaseTable<T extends PrometheusDataItem>
 
     /**
      * Refresh data.
+     *
      * @throws OceanusException on error
      */
     protected abstract void refreshData() throws OceanusException;
@@ -307,6 +318,7 @@ public abstract class MoneyWiseBaseTable<T extends PrometheusDataItem>
 
     /**
      * Is the table editing?
+     *
      * @return true/false
      */
     public boolean isEditing() {
@@ -315,6 +327,7 @@ public abstract class MoneyWiseBaseTable<T extends PrometheusDataItem>
 
     /**
      * Determine Focus.
+     *
      * @param pEntry the master data entry
      */
     public void determineFocus(final MetisViewerEntry pEntry) {
@@ -341,7 +354,8 @@ public abstract class MoneyWiseBaseTable<T extends PrometheusDataItem>
 
     /**
      * Delete row.
-     * @param pRow the row
+     *
+     * @param pRow   the row
      * @param pValue the value (ignored)
      * @throws OceanusException on error
      */
@@ -359,6 +373,7 @@ public abstract class MoneyWiseBaseTable<T extends PrometheusDataItem>
 
     /**
      * Select an item.
+     *
      * @param pItem the item
      */
     protected void selectItem(final T pItem) {
@@ -367,10 +382,11 @@ public abstract class MoneyWiseBaseTable<T extends PrometheusDataItem>
 
     /**
      * Update value.
-     * @param <V> the value type
+     *
+     * @param <V>       the value type
      * @param pOnCommit the update function
-     * @param pRow the row to update
-     * @param pValue the value
+     * @param pRow      the row to update
+     * @param pValue    the value
      * @throws OceanusException on error
      */
     protected <V> void updateField(final TethysUIOnCellCommit<T, V> pOnCommit,
@@ -406,6 +422,7 @@ public abstract class MoneyWiseBaseTable<T extends PrometheusDataItem>
 
     /**
      * Set the error.
+     *
      * @param pError the error
      */
     protected void setError(final OceanusException pError) {
@@ -422,6 +439,7 @@ public abstract class MoneyWiseBaseTable<T extends PrometheusDataItem>
 
     /**
      * Does the panel have updates?
+     *
      * @return true/false
      */
     public boolean hasUpdates() {
@@ -430,6 +448,7 @@ public abstract class MoneyWiseBaseTable<T extends PrometheusDataItem>
 
     /**
      * Does the panel have a session?
+     *
      * @return true/false
      */
     public boolean hasSession() {
@@ -438,6 +457,7 @@ public abstract class MoneyWiseBaseTable<T extends PrometheusDataItem>
 
     /**
      * Does the panel have errors?
+     *
      * @return true/false
      */
     public boolean hasErrors() {
@@ -446,6 +466,7 @@ public abstract class MoneyWiseBaseTable<T extends PrometheusDataItem>
 
     /**
      * Are we in the middle of an item edit?
+     *
      * @return true/false
      */
     protected boolean isItemEditing() {
@@ -492,6 +513,7 @@ public abstract class MoneyWiseBaseTable<T extends PrometheusDataItem>
 
     /**
      * isFiltered?
+     *
      * @param pRow the row
      * @return true/false
      */
@@ -501,8 +523,9 @@ public abstract class MoneyWiseBaseTable<T extends PrometheusDataItem>
 
     /**
      * is Valid name?
+     *
      * @param pNewName the new name
-     * @param pRow the row
+     * @param pRow     the row
      * @return error message or null
      */
     public String isValidName(final String pNewName,
@@ -547,9 +570,10 @@ public abstract class MoneyWiseBaseTable<T extends PrometheusDataItem>
 
     /**
      * is name a match?
+     *
      * @param pNewName the new name
-     * @param pRow the row
-     * @param pCheck the item to check against
+     * @param pRow     the row
+     * @param pCheck   the item to check against
      * @return true/false
      */
     protected boolean isDuplicateName(final String pNewName,
@@ -561,7 +585,8 @@ public abstract class MoneyWiseBaseTable<T extends PrometheusDataItem>
 
     /**
      * Obtain the nameSpace iterator.
-      * @return the iterator
+     *
+     * @return the iterator
      */
     protected Iterator<PrometheusDataItem> nameSpaceIterator() {
         return new MoneyWiseNameSpaceIterator(theEditSet, theItemType);
@@ -569,6 +594,7 @@ public abstract class MoneyWiseBaseTable<T extends PrometheusDataItem>
 
     /**
      * Obtain the string of illegal name characters.
+     *
      * @return the invalid characters
      */
     protected String getInvalidNameChars() {
@@ -577,8 +603,9 @@ public abstract class MoneyWiseBaseTable<T extends PrometheusDataItem>
 
     /**
      * is Valid description?
+     *
      * @param pNewDesc the new description
-     * @param pRow the row
+     * @param pRow     the row
      * @return error message or null
      */
     protected String isValidDesc(final String pNewDesc,
@@ -595,6 +622,7 @@ public abstract class MoneyWiseBaseTable<T extends PrometheusDataItem>
 
     /**
      * Show validation error.
+     *
      * @param pError the error message
      */
     public void showValidateError(final String pError) {
@@ -603,6 +631,7 @@ public abstract class MoneyWiseBaseTable<T extends PrometheusDataItem>
 
     /**
      * Check edit state.
+     *
      * @param pState the new state
      */
     private void handleEditState(final Boolean pState) {
@@ -612,6 +641,7 @@ public abstract class MoneyWiseBaseTable<T extends PrometheusDataItem>
 
     /**
      * build CSV representation of Model.
+     *
      * @return the CSV text
      */
     private String createCSV() {
@@ -666,6 +696,7 @@ public abstract class MoneyWiseBaseTable<T extends PrometheusDataItem>
 
     /**
      * Write CSV to file.
+     *
      * @param pFactory the gui factory
      */
     public void writeCSVToFile(final TethysUIFactory<?> pFactory) {
@@ -688,6 +719,7 @@ public abstract class MoneyWiseBaseTable<T extends PrometheusDataItem>
 
     /**
      * Write CSV to file.
+     *
      * @param pFile the file to write to
      * @param pData the data to write
      * @throws OceanusException on error

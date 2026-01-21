@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Prometheus: Application Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,10 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.prometheus.security;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory.GordianFactoryLock;
@@ -29,7 +30,6 @@ import net.sourceforge.joceanus.gordianknot.api.lock.GordianLockFactory;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
 import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipLock;
 import net.sourceforge.joceanus.gordianknot.util.GordianGenerator;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.prometheus.exc.PrometheusDataException;
 import net.sourceforge.joceanus.prometheus.exc.PrometheusLogicException;
 import net.sourceforge.joceanus.prometheus.exc.PrometheusSecurityException;
@@ -75,8 +75,9 @@ public class PrometheusSecurityPasswordManager {
 
     /**
      * Constructor.
+     *
      * @param pFactory the factory
-     * @param pDialog the dialog controller
+     * @param pDialog  the dialog controller
      * @throws OceanusException on error
      */
     public PrometheusSecurityPasswordManager(final GordianFactory pFactory,
@@ -86,9 +87,10 @@ public class PrometheusSecurityPasswordManager {
 
     /**
      * Constructor.
-     * @param pFactory the factory
+     *
+     * @param pFactory  the factory
      * @param pLockSpec the lockSpec
-     * @param pDialog the dialog controller
+     * @param pDialog   the dialog controller
      * @throws OceanusException on error
      */
     public PrometheusSecurityPasswordManager(final GordianFactory pFactory,
@@ -106,6 +108,7 @@ public class PrometheusSecurityPasswordManager {
 
     /**
      * Obtain the security factory.
+     *
      * @return the factory
      */
     public GordianFactory getSecurityFactory() {
@@ -114,6 +117,7 @@ public class PrometheusSecurityPasswordManager {
 
     /**
      * Obtain the lockSpec.
+     *
      * @return the lockSpec
      */
     public GordianPasswordLockSpec getLockSpec() {
@@ -122,6 +126,7 @@ public class PrometheusSecurityPasswordManager {
 
     /**
      * Set the dialog controller.
+     *
      * @param pDialog the controller
      */
     public void setDialogController(final PrometheusSecurityDialogController pDialog) {
@@ -130,6 +135,7 @@ public class PrometheusSecurityPasswordManager {
 
     /**
      * Create a new factoryLock.
+     *
      * @param pSource the description of the secured resource
      * @return the factoryLock
      * @throws OceanusException on error
@@ -147,8 +153,9 @@ public class PrometheusSecurityPasswordManager {
 
     /**
      * Create a new factoryLock.
+     *
      * @param pFactory the factory to lock
-     * @param pSource the description of the secured resource
+     * @param pSource  the description of the secured resource
      * @return the factoryLock
      * @throws OceanusException on error
      */
@@ -159,8 +166,9 @@ public class PrometheusSecurityPasswordManager {
 
     /**
      * Resolve the factoryLock bytes.
+     *
      * @param pLockBytes the lock bytes to resolve
-     * @param pSource the description of the secured resource
+     * @param pSource    the description of the secured resource
      * @return the factoryLock
      * @throws OceanusException on error
      */
@@ -185,6 +193,7 @@ public class PrometheusSecurityPasswordManager {
 
     /**
      * obtain new locked factory (same password).
+     *
      * @param pReference the reference to clone password from
      * @return the similar factoryLock
      * @throws OceanusException on error
@@ -208,6 +217,7 @@ public class PrometheusSecurityPasswordManager {
 
     /**
      * Create a new keySetLock.
+     *
      * @param pSource the description of the secured resource
      * @return the keySetLock
      * @throws OceanusException on error
@@ -225,6 +235,7 @@ public class PrometheusSecurityPasswordManager {
 
     /**
      * Create a new keySetLock.
+     *
      * @param pKeySet the keySet to lock
      * @param pSource the description of the secured resource
      * @return the keySetLock
@@ -237,8 +248,9 @@ public class PrometheusSecurityPasswordManager {
 
     /**
      * Resolve the keySetLock bytes.
+     *
      * @param pLockBytes the lock bytes to resolve
-     * @param pSource the description of the secured resource
+     * @param pSource    the description of the secured resource
      * @return the keySetLock
      * @throws OceanusException on error
      */
@@ -263,6 +275,7 @@ public class PrometheusSecurityPasswordManager {
 
     /**
      * obtain new locked keySet (same password).
+     *
      * @param pReference the reference to clone password from
      * @return the similar keySetLock
      * @throws OceanusException on error
@@ -286,8 +299,9 @@ public class PrometheusSecurityPasswordManager {
 
     /**
      * Create a new keyPairLock.
+     *
      * @param pKeyPair the keyPair
-     * @param pSource the description of the secured resource
+     * @param pSource  the description of the secured resource
      * @return the keyPairLock
      * @throws OceanusException on error
      */
@@ -298,9 +312,10 @@ public class PrometheusSecurityPasswordManager {
 
     /**
      * Resolve the keyPairLock.
+     *
      * @param pLockBytes the LockBytes to resolve
-     * @param pKeyPair the keyPair
-     * @param pSource the description of the secured resource
+     * @param pKeyPair   the keyPair
+     * @param pSource    the description of the secured resource
      * @return the keyPairLock
      * @throws OceanusException on error
      */
@@ -326,7 +341,8 @@ public class PrometheusSecurityPasswordManager {
 
     /**
      * obtain similar (same password) zipLock.
-     * @param pKeyPair the keyPair
+     *
+     * @param pKeyPair   the keyPair
      * @param pReference the reference to clone password from
      * @return the similar keyPairLock
      * @throws OceanusException on error
@@ -342,8 +358,9 @@ public class PrometheusSecurityPasswordManager {
 
     /**
      * Resolve the zipLock.
+     *
      * @param pZipLock the hash bytes to resolve
-     * @param pSource the description of the secured resource
+     * @param pSource  the description of the secured resource
      * @throws OceanusException on error
      */
     public void resolveZipLock(final GordianZipLock pZipLock,
@@ -363,8 +380,9 @@ public class PrometheusSecurityPasswordManager {
 
     /**
      * Resolve a keySet ZipLock.
+     *
      * @param pZipLock the zipLock
-     * @param pSource the description of the secured resource
+     * @param pSource  the description of the secured resource
      * @throws OceanusException on error
      */
     private void resolveKeySetZipLock(final GordianZipLock pZipLock,
@@ -389,8 +407,9 @@ public class PrometheusSecurityPasswordManager {
 
     /**
      * Resolve a factory ZipLock.
+     *
      * @param pZipLock the zipLock
-     * @param pSource the description of the secured resource
+     * @param pSource  the description of the secured resource
      * @throws OceanusException on error
      */
     private void resolveFactoryZipLock(final GordianZipLock pZipLock,
@@ -415,9 +434,10 @@ public class PrometheusSecurityPasswordManager {
 
     /**
      * Request password.
-     * @param pSource the description of the secured resource
+     *
+     * @param pSource      the description of the secured resource
      * @param pNeedConfirm do we need confirmation
-     * @param pProcessor the password processor
+     * @param pProcessor   the password processor
      * @return the keySetHash
      * @throws OceanusException on error
      */
@@ -487,9 +507,10 @@ public class PrometheusSecurityPasswordManager {
     public interface PrometheusProcessPassword {
         /**
          * Process password.
+         *
          * @param pPassword the password
          * @return the result
-         * @throws OceanusException on error
+         * @throws OceanusException               on error
          * @throws GordianBadCredentialsException if password does not match
          */
         Object processPassword(char[] pPassword) throws OceanusException;
@@ -497,7 +518,8 @@ public class PrometheusSecurityPasswordManager {
 
     /**
      * Create new factoryLock.
-     * @param pFactory the factory
+     *
+     * @param pFactory  the factory
      * @param pPassword the password
      * @return the new lock
      * @throws OceanusException on error
@@ -517,8 +539,9 @@ public class PrometheusSecurityPasswordManager {
 
     /**
      * Resolve password for factoryLock.
+     *
      * @param pLockBytes the lock bytes
-     * @param pPassword the password
+     * @param pPassword  the password
      * @return the resolved lock
      * @throws OceanusException on error
      */
@@ -537,7 +560,8 @@ public class PrometheusSecurityPasswordManager {
 
     /**
      * Create new keySetLock.
-     * @param pKeySet the keySet
+     *
+     * @param pKeySet   the keySet
      * @param pPassword the password
      * @return the new lock
      * @throws OceanusException on error
@@ -557,8 +581,9 @@ public class PrometheusSecurityPasswordManager {
 
     /**
      * Resolve password for keySetLock.
+     *
      * @param pLockBytes the lock bytes
-     * @param pPassword the password
+     * @param pPassword  the password
      * @return the resolved lock
      * @throws OceanusException on error
      */
@@ -577,7 +602,8 @@ public class PrometheusSecurityPasswordManager {
 
     /**
      * Create new keyPairLock.
-     * @param pKeyPair the keyPair
+     *
+     * @param pKeyPair  the keyPair
      * @param pPassword the password
      * @return the new lock
      * @throws OceanusException on error
@@ -597,9 +623,10 @@ public class PrometheusSecurityPasswordManager {
 
     /**
      * Resolve password for keyPairLock.
+     *
      * @param pLockBytes the lock bytes
-     * @param pKeyPair the keyPair
-     * @param pPassword the password
+     * @param pKeyPair   the keyPair
+     * @param pPassword  the password
      * @return the resolved lock
      * @throws OceanusException on error
      */
@@ -668,6 +695,7 @@ public class PrometheusSecurityPasswordManager {
 
         /**
          * Constructor.
+         *
          * @param pFlag the flag
          */
         PrometheusPassCheck(final int pFlag) {
@@ -676,6 +704,7 @@ public class PrometheusSecurityPasswordManager {
 
         /**
          * Obtain the flag.
+         *
          * @return the flag
          */
         private int getFlag() {
@@ -684,6 +713,7 @@ public class PrometheusSecurityPasswordManager {
 
         /**
          * Check password.
+         *
          * @param pPassword the password
          * @return the error message (or null)
          */
@@ -716,6 +746,7 @@ public class PrometheusSecurityPasswordManager {
 
         /**
          * Obtain expected result.
+         *
          * @return the expected result
          */
         private static int getExpectedResult() {

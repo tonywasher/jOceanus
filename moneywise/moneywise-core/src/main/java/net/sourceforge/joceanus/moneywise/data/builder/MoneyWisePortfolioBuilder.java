@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,10 +13,10 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.data.builder;
 
-import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePortfolio;
@@ -24,7 +24,7 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrencyClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePortfolioClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePortfolioType;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
 
 /**
  * Portfolio Builder.
@@ -57,6 +57,7 @@ public class MoneyWisePortfolioBuilder {
 
     /**
      * Constructor.
+     *
      * @param pDataSet the dataSet
      */
     public MoneyWisePortfolioBuilder(final MoneyWiseDataSet pDataSet) {
@@ -67,6 +68,7 @@ public class MoneyWisePortfolioBuilder {
 
     /**
      * Set Name.
+     *
      * @param pName the name of the portfolio.
      * @return the builder
      */
@@ -77,6 +79,7 @@ public class MoneyWisePortfolioBuilder {
 
     /**
      * Set Parent.
+     *
      * @param pParent the parent.
      * @return the builder
      */
@@ -87,6 +90,7 @@ public class MoneyWisePortfolioBuilder {
 
     /**
      * Set Parent.
+     *
      * @param pParent the parent.
      * @return the builder
      */
@@ -96,6 +100,7 @@ public class MoneyWisePortfolioBuilder {
 
     /**
      * Set the portfolioType.
+     *
      * @param pType the type of the portfolio.
      * @return the builder
      */
@@ -106,6 +111,7 @@ public class MoneyWisePortfolioBuilder {
 
     /**
      * Set the portfolioType.
+     *
      * @param pType the type of the portfolio.
      * @return the builder
      */
@@ -115,6 +121,7 @@ public class MoneyWisePortfolioBuilder {
 
     /**
      * Set the currency.
+     *
      * @param pCurrency the currency of the loan.
      * @return the builder
      */
@@ -125,6 +132,7 @@ public class MoneyWisePortfolioBuilder {
 
     /**
      * Set the currency.
+     *
      * @param pCurrency the currency of the cash.
      * @return the builder
      */
@@ -141,6 +149,7 @@ public class MoneyWisePortfolioBuilder {
 
     /**
      * Obtain the reporting currency.
+     *
      * @return the currency
      */
     private MoneyWiseCurrency lookupReportingCurrency() {
@@ -149,6 +158,7 @@ public class MoneyWisePortfolioBuilder {
 
     /**
      * Build the portfolio.
+     *
      * @return the new Portfolio
      * @throws OceanusException on error
      */

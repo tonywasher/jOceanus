@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,11 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.archive;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCashCategory;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCashCategory.MoneyWiseCashCategoryList;
@@ -27,8 +29,6 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseLoanCategory.Money
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseIOException;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseLogicException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCell;
@@ -40,6 +40,7 @@ import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 
 /**
  * Archive Loader for AccountCategory.
+ *
  * @author Tony Washer
  */
 public final class MoneyWiseArchiveAccountCategory {
@@ -65,9 +66,10 @@ public final class MoneyWiseArchiveAccountCategory {
 
     /**
      * Constructor.
-     * @param pReport the report
+     *
+     * @param pReport   the report
      * @param pWorkBook the workbook
-     * @param pData the data set to load into
+     * @param pData     the data set to load into
      */
     MoneyWiseArchiveAccountCategory(final TethysUIThreadStatusReport pReport,
                                     final PrometheusSheetWorkBook pWorkBook,
@@ -79,6 +81,7 @@ public final class MoneyWiseArchiveAccountCategory {
 
     /**
      * Load the AccountCategories from an archive.
+     *
      * @param pStage the stage
      * @throws OceanusException on error
      */
@@ -123,8 +126,9 @@ public final class MoneyWiseArchiveAccountCategory {
 
     /**
      * Process row into alternate form.
+     *
      * @param pView the spreadsheet view
-     * @param pRow the spreadsheet row
+     * @param pRow  the spreadsheet row
      * @throws OceanusException on error
      */
     private void processCategory(final PrometheusSheetView pView,
@@ -170,7 +174,7 @@ public final class MoneyWiseArchiveAccountCategory {
             /* If this is a cash category */
         } else if (myClass.equals(MoneyWiseBasicDataType.CASH.toString())) {
             /* Build data values */
-            final  PrometheusDataValues myValues = new  PrometheusDataValues(MoneyWiseCashCategory.OBJECT_NAME);
+            final PrometheusDataValues myValues = new PrometheusDataValues(MoneyWiseCashCategory.OBJECT_NAME);
             myValues.addValue(MoneyWiseStaticDataType.CASHTYPE, myCat);
             myValues.addValue(PrometheusDataResource.DATAGROUP_PARENT, myParent);
             myValues.addValue(PrometheusDataResource.DATAITEM_FIELD_NAME, myName);
@@ -182,7 +186,7 @@ public final class MoneyWiseArchiveAccountCategory {
             /* If this is a loan category */
         } else if (myClass.equals(MoneyWiseBasicDataType.LOAN.toString())) {
             /* Build data values */
-            final  PrometheusDataValues myValues = new  PrometheusDataValues(MoneyWiseLoanCategory.OBJECT_NAME);
+            final PrometheusDataValues myValues = new PrometheusDataValues(MoneyWiseLoanCategory.OBJECT_NAME);
             myValues.addValue(MoneyWiseStaticDataType.LOANTYPE, myCat);
             myValues.addValue(PrometheusDataResource.DATAGROUP_PARENT, myParent);
             myValues.addValue(PrometheusDataResource.DATAITEM_FIELD_NAME, myName);
@@ -198,6 +202,7 @@ public final class MoneyWiseArchiveAccountCategory {
 
     /**
      * Resolve category lists.
+     *
      * @throws OceanusException on error
      */
     private void resolveCategoryLists() throws OceanusException {

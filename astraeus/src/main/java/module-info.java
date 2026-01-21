@@ -20,7 +20,7 @@
  */
 module io.github.tonywasher.joceanus.astraeus {
     /* jOceanus */
-    requires net.sourceforge.joceanus.oceanus;
+    requires io.github.tonywasher.joceanus.oceanus;
 
     /* Exports */
     exports io.github.tonywasher.joceanus.astraeus.exc;

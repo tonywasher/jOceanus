@@ -1,45 +1,49 @@
-/*******************************************************************************
+/*
  * Tethys: GUI Utilities
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package net.sourceforge.joceanus.tethys.api.menu;
 
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
-import net.sourceforge.joceanus.tethys.api.base.TethysUIIcon;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIIcon;
 
 /**
  * ScrollMenu.
+ *
  * @param <T> the value type
  */
 public interface TethysUIScrollMenu<T>
         extends OceanusEventProvider<TethysUIEvent> {
     /**
      * Obtain the selected value.
+     *
      * @return the selected value
      */
     TethysUIScrollItem<T> getSelectedItem();
 
     /**
      * is the menu empty?
+     *
      * @return true/false
      */
     boolean isEmpty();
 
     /**
      * Set the number of items in the scrolling portion of the menu.
+     *
      * @param pMaxDisplayItems the maximum number of items to display
      * @throws IllegalArgumentException if pMaxDisplayItems is 0 or negative
      */
@@ -47,6 +51,7 @@ public interface TethysUIScrollMenu<T>
 
     /**
      * Set whether menu should auto-close on selection of a toggle item.
+     *
      * @param pCloseOnToggle true/false
      */
     void setCloseOnToggle(boolean pCloseOnToggle);
@@ -58,6 +63,7 @@ public interface TethysUIScrollMenu<T>
 
     /**
      * Add Element.
+     *
      * @param pValue the value
      * @return the item added
      */
@@ -65,8 +71,9 @@ public interface TethysUIScrollMenu<T>
 
     /**
      * Add Element.
+     *
      * @param pValue the value
-     * @param pName the display name
+     * @param pName  the display name
      * @return the item added
      */
     TethysUIScrollItem<T> addItem(T pValue,
@@ -74,7 +81,8 @@ public interface TethysUIScrollMenu<T>
 
     /**
      * Add Element.
-     * @param pValue the value
+     *
+     * @param pValue   the value
      * @param pGraphic the icon for the item
      * @return the item added
      */
@@ -83,6 +91,7 @@ public interface TethysUIScrollMenu<T>
 
     /**
      * Add Null Element.
+     *
      * @param pName the display name
      * @return the item added
      */
@@ -90,7 +99,8 @@ public interface TethysUIScrollMenu<T>
 
     /**
      * Add Null Element.
-     * @param pName the display name
+     *
+     * @param pName    the display name
      * @param pGraphic the icon for the item
      * @return the item added
      */
@@ -99,8 +109,9 @@ public interface TethysUIScrollMenu<T>
 
     /**
      * Add Element.
-     * @param pValue the value
-     * @param pName the display name
+     *
+     * @param pValue   the value
+     * @param pName    the display name
      * @param pGraphic the icon for the item
      * @return the item added
      */
@@ -110,6 +121,7 @@ public interface TethysUIScrollMenu<T>
 
     /**
      * Add subMenu.
+     *
      * @param pName the display name
      * @return the menu added
      */
@@ -117,7 +129,8 @@ public interface TethysUIScrollMenu<T>
 
     /**
      * Add subMenu.
-     * @param pName the display name
+     *
+     * @param pName    the display name
      * @param pGraphic the icon for the menu
      * @return the menu added
      */
@@ -126,6 +139,7 @@ public interface TethysUIScrollMenu<T>
 
     /**
      * Add New toggle item.
+     *
      * @param pItem the available item
      * @return the added item
      */
@@ -133,6 +147,7 @@ public interface TethysUIScrollMenu<T>
 
     /**
      * Add New toggle item.
+     *
      * @param pItem the available item
      * @param pName the display name
      * @return the added item

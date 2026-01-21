@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,16 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.atlas.reports;
 
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.report.MetisReportBase;
 import net.sourceforge.joceanus.metis.report.MetisReportHTMLBuilder;
 import net.sourceforge.joceanus.metis.report.MetisReportHTMLBuilder.MetisHTMLTable;
@@ -33,13 +40,6 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseCashType;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -97,6 +97,7 @@ public class MoneyWiseXReportCapitalGains
 
     /**
      * Constructor.
+     *
      * @param pManager the Report Manager
      */
     MoneyWiseXReportCapitalGains(final MetisReportManager<MoneyWiseXAnalysisFilter<?, ?>> pManager) {
@@ -108,6 +109,7 @@ public class MoneyWiseXReportCapitalGains
 
     /**
      * Set the security bucket.
+     *
      * @param pSecurity the security bucket
      */
     protected void setSecurity(final MoneyWiseXAnalysisSecurityBucket pSecurity) {
@@ -173,7 +175,8 @@ public class MoneyWiseXReportCapitalGains
 
     /**
      * Format the details.
-     * @param pEvent the event
+     *
+     * @param pEvent  the event
      * @param pValues the values for the transaction
      */
     private void formatTransaction(final MoneyWiseXAnalysisEvent pEvent,
@@ -210,6 +213,7 @@ public class MoneyWiseXReportCapitalGains
 
     /**
      * Format basic details of a transaction.
+     *
      * @param pEvent the event
      */
     private void formatBasicTransaction(final MoneyWiseXAnalysisEvent pEvent) {
@@ -222,6 +226,7 @@ public class MoneyWiseXReportCapitalGains
 
     /**
      * Check whether this is a debit transaction for the security.
+     *
      * @param pEvent the event
      * @return true/false
      */
@@ -235,6 +240,7 @@ public class MoneyWiseXReportCapitalGains
 
     /**
      * Check whether this is a credit transaction for the security.
+     *
      * @param pEvent the event
      * @return true/false
      */
@@ -259,7 +265,8 @@ public class MoneyWiseXReportCapitalGains
 
     /**
      * Format a value.
-     * @param pAttr the attribute
+     *
+     * @param pAttr  the attribute
      * @param pValue the value
      */
     private void formatValue(final MoneyWiseXAnalysisSecurityAttr pAttr,
@@ -275,10 +282,11 @@ public class MoneyWiseXReportCapitalGains
 
     /**
      * Format a division.
-     * @param pAttr the attribute
-     * @param pValue the value
+     *
+     * @param pAttr      the attribute
+     * @param pValue     the value
      * @param pNumerator the numerator
-     * @param pDivisor the divisor
+     * @param pDivisor   the divisor
      */
     private void formatDivision(final MoneyWiseXAnalysisSecurityAttr pAttr,
                                 final Object pValue,
@@ -296,8 +304,9 @@ public class MoneyWiseXReportCapitalGains
 
     /**
      * Format a division.
+     *
      * @param pNumerator the numerator
-     * @param pDivisor the divisor
+     * @param pDivisor   the divisor
      * @return the formatted division
      */
     private String formatDivision(final OceanusDecimal pNumerator,
@@ -307,10 +316,11 @@ public class MoneyWiseXReportCapitalGains
 
     /**
      * Format a valuation.
-     * @param pAttr the attribute
-     * @param pValue the value
-     * @param pUnits the units
-     * @param pPrice the price
+     *
+     * @param pAttr        the attribute
+     * @param pValue       the value
+     * @param pUnits       the units
+     * @param pPrice       the price
      * @param pXchangeRate the exchange rate
      */
     private void formatValuation(final MoneyWiseXAnalysisSecurityAttr pAttr,
@@ -330,8 +340,9 @@ public class MoneyWiseXReportCapitalGains
 
     /**
      * Format a valuation.
-     * @param pUnits the units
-     * @param pPrice the price
+     *
+     * @param pUnits       the units
+     * @param pPrice       the price
      * @param pXchangeRate the exchange rate
      * @return the formatted valuation
      */
@@ -351,9 +362,10 @@ public class MoneyWiseXReportCapitalGains
 
     /**
      * Format a multiplication.
-     * @param pAttr the attribute
-     * @param pValue the value
-     * @param pFirst the first item
+     *
+     * @param pAttr   the attribute
+     * @param pValue  the value
+     * @param pFirst  the first item
      * @param pSecond the second item
      */
     private void formatMultiplication(final MoneyWiseXAnalysisSecurityAttr pAttr,
@@ -372,7 +384,8 @@ public class MoneyWiseXReportCapitalGains
 
     /**
      * Format a multiplication.
-     * @param pFirst the first item
+     *
+     * @param pFirst  the first item
      * @param pSecond the second item
      * @return the formatted multiplication
      */
@@ -383,9 +396,10 @@ public class MoneyWiseXReportCapitalGains
 
     /**
      * Format an addition.
-     * @param pAttr the attribute
-     * @param pValue the value
-     * @param pFirst the first item
+     *
+     * @param pAttr   the attribute
+     * @param pValue  the value
+     * @param pFirst  the first item
      * @param pSecond the second item
      */
     private void formatAddition(final MoneyWiseXAnalysisSecurityAttr pAttr,
@@ -404,7 +418,8 @@ public class MoneyWiseXReportCapitalGains
 
     /**
      * Format an addition.
-     * @param pFirst the first item
+     *
+     * @param pFirst  the first item
      * @param pSecond the second item
      * @return the formatted addition
      */
@@ -415,9 +430,10 @@ public class MoneyWiseXReportCapitalGains
 
     /**
      * Format a subtraction.
-     * @param pAttr the attribute
-     * @param pValue the value
-     * @param pFirst the first item
+     *
+     * @param pAttr   the attribute
+     * @param pValue  the value
+     * @param pFirst  the first item
      * @param pSecond the second item
      */
     private void formatSubtraction(final MoneyWiseXAnalysisSecurityAttr pAttr,
@@ -436,7 +452,8 @@ public class MoneyWiseXReportCapitalGains
 
     /**
      * Format a subtraction.
-     * @param pFirst the first item
+     *
+     * @param pFirst  the first item
      * @param pSecond the second item
      * @return the formatted subtraction
      */
@@ -447,7 +464,8 @@ public class MoneyWiseXReportCapitalGains
 
     /**
      * Format a combination.
-     * @param pFirst the first item
+     *
+     * @param pFirst  the first item
      * @param pSecond the second item
      * @param pSymbol the symbol
      * @return the formatted combination
@@ -464,7 +482,8 @@ public class MoneyWiseXReportCapitalGains
 
     /**
      * Format a Transfer.
-     * @param pEvent the event
+     *
+     * @param pEvent  the event
      * @param pValues the values for the transaction
      */
     private void formatTransfer(final MoneyWiseXAnalysisEvent pEvent,
@@ -482,7 +501,8 @@ public class MoneyWiseXReportCapitalGains
 
     /**
      * Format a Dividend.
-     * @param pEvent the event
+     *
+     * @param pEvent  the event
      * @param pValues the values for the transaction
      */
     private void formatDividend(final MoneyWiseXAnalysisEvent pEvent,
@@ -499,7 +519,8 @@ public class MoneyWiseXReportCapitalGains
 
     /**
      * Format transfer money in.
-     * @param pEvent the event
+     *
+     * @param pEvent  the event
      * @param pValues the values for the transaction
      */
     private void formatTransferIn(final MoneyWiseXAnalysisEvent pEvent,
@@ -538,7 +559,8 @@ public class MoneyWiseXReportCapitalGains
 
     /**
      * Format transfer money out.
-     * @param pEvent the event
+     *
+     * @param pEvent  the event
      * @param pValues the values for the transaction
      */
     private void formatTransferOut(final MoneyWiseXAnalysisEvent pEvent,
@@ -613,7 +635,8 @@ public class MoneyWiseXReportCapitalGains
 
     /**
      * Format a Units Adjustment.
-     * @param pEvent the event
+     *
+     * @param pEvent  the event
      * @param pValues the values for the transaction
      */
     private void formatUnitsAdjust(final MoneyWiseXAnalysisEvent pEvent,
@@ -642,7 +665,8 @@ public class MoneyWiseXReportCapitalGains
 
     /**
      * Format a Stock DeMerger.
-     * @param pEvent the event
+     *
+     * @param pEvent  the event
      * @param pValues the values for the transaction
      */
     private void formatStockDeMerger(final MoneyWiseXAnalysisEvent pEvent,
@@ -660,7 +684,8 @@ public class MoneyWiseXReportCapitalGains
 
     /**
      * Format debit side of a Stock DeMerger.
-     * @param pEvent the event
+     *
+     * @param pEvent  the event
      * @param pValues the values for the transaction
      */
     private void formatDebitStockDeMerger(final MoneyWiseXAnalysisEvent pEvent,
@@ -702,7 +727,8 @@ public class MoneyWiseXReportCapitalGains
 
     /**
      * Format credit side of a Stock DeMerger.
-     * @param pEvent the event
+     *
+     * @param pEvent  the event
      * @param pValues the values for the transaction
      */
     private void formatCreditStockDeMerger(final MoneyWiseXAnalysisEvent pEvent,
@@ -723,7 +749,8 @@ public class MoneyWiseXReportCapitalGains
 
     /**
      * Format a Stock TakeOver.
-     * @param pEvent the event
+     *
+     * @param pEvent  the event
      * @param pValues the values for the transaction
      */
     private void formatStockTakeOver(final MoneyWiseXAnalysisEvent pEvent,
@@ -748,9 +775,10 @@ public class MoneyWiseXReportCapitalGains
 
     /**
      * Format a StockAndCash TakeOver.
-     * @param pEvent the event
+     *
+     * @param pEvent  the event
      * @param pValues the values for the transaction
-     * @param pCash the cash consideration
+     * @param pCash   the cash consideration
      */
     private void formatStockAndCashTakeOver(final MoneyWiseXAnalysisEvent pEvent,
                                             final MoneyWiseXAnalysisSecurityValues pValues,
@@ -765,9 +793,10 @@ public class MoneyWiseXReportCapitalGains
 
     /**
      * Format debit side of a StockAndCash TakeOver.
-     * @param pEvent the event
+     *
+     * @param pEvent  the event
      * @param pValues the values for the transaction
-     * @param pCash the cash consideration
+     * @param pCash   the cash consideration
      */
     private void formatDebitStockAndCashTakeOver(final MoneyWiseXAnalysisEvent pEvent,
                                                  final MoneyWiseXAnalysisSecurityValues pValues,
@@ -810,7 +839,8 @@ public class MoneyWiseXReportCapitalGains
 
     /**
      * Format credit side of a StockAndCash TakeOver.
-     * @param pEvent the event
+     *
+     * @param pEvent  the event
      * @param pValues the values for the transaction
      */
     private void formatCreditStockTakeOver(final MoneyWiseXAnalysisEvent pEvent,
@@ -837,7 +867,8 @@ public class MoneyWiseXReportCapitalGains
 
     /**
      * Format a Portfolio Xfer.
-     * @param pEvent the event
+     *
+     * @param pEvent  the event
      * @param pValues the values for the transaction
      */
     private void formatPortfolioXfer(final MoneyWiseXAnalysisEvent pEvent,

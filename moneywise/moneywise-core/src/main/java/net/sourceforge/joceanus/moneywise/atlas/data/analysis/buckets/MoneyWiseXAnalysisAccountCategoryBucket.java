@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,11 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets;
 
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldTableItem;
@@ -26,13 +28,12 @@ import net.sourceforge.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXA
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisSecurityValues;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 
 import java.util.Currency;
 
 /**
  * Account Category Bucket.
+ *
  * @param <T> the account data type
  * @param <C> the account category data type
  */
@@ -74,6 +75,7 @@ public abstract class MoneyWiseXAnalysisAccountCategoryBucket<T extends MoneyWis
 
     /**
      * Constructor.
+     *
      * @param pCurrency the currency
      */
     protected MoneyWiseXAnalysisAccountCategoryBucket(final MoneyWiseCurrency pCurrency) {
@@ -97,18 +99,21 @@ public abstract class MoneyWiseXAnalysisAccountCategoryBucket<T extends MoneyWis
 
     /**
      * Obtain the name.
+     *
      * @return the name
      */
     public abstract String getName();
 
     /**
      * Obtain the account category.
+     *
      * @return the account category
      */
     public abstract C getAccountCategory();
 
     /**
      * Obtain the values.
+     *
      * @return the values
      */
     public MoneyWiseXAnalysisAccountValues getValues() {
@@ -117,6 +122,7 @@ public abstract class MoneyWiseXAnalysisAccountCategoryBucket<T extends MoneyWis
 
     /**
      * Obtain the base values.
+     *
      * @return the base values
      */
     public MoneyWiseXAnalysisAccountValues getBaseValues() {
@@ -125,7 +131,8 @@ public abstract class MoneyWiseXAnalysisAccountCategoryBucket<T extends MoneyWis
 
     /**
      * Set Value.
-     * @param pAttr the attribute
+     *
+     * @param pAttr  the attribute
      * @param pValue the value of the attribute
      */
     protected void setValue(final MoneyWiseXAnalysisAccountAttr pAttr,
@@ -136,6 +143,7 @@ public abstract class MoneyWiseXAnalysisAccountCategoryBucket<T extends MoneyWis
 
     /**
      * Get an attribute value.
+     *
      * @param pAttr the attribute
      * @return the value to set
      */
@@ -151,6 +159,7 @@ public abstract class MoneyWiseXAnalysisAccountCategoryBucket<T extends MoneyWis
 
     /**
      * Obtain an attribute value.
+     *
      * @param pAttr the attribute
      * @return the value of the attribute or null
      */
@@ -161,6 +170,7 @@ public abstract class MoneyWiseXAnalysisAccountCategoryBucket<T extends MoneyWis
 
     /**
      * Does this category hold foreign currency accounts?
+     *
      * @return true/false
      */
     public Boolean hasForeignCurrency() {
@@ -185,6 +195,7 @@ public abstract class MoneyWiseXAnalysisAccountCategoryBucket<T extends MoneyWis
 
     /**
      * Add account category bucket to totals.
+     *
      * @param pBucket the underlying bucket
      */
     protected void addValues(final MoneyWiseXAnalysisAccountCategoryBucket<T, C> pBucket) {
@@ -197,6 +208,7 @@ public abstract class MoneyWiseXAnalysisAccountCategoryBucket<T extends MoneyWis
 
     /**
      * Add account bucket to totals.
+     *
      * @param pBucket the underlying bucket
      */
     protected void addValues(final MoneyWiseXAnalysisAccountBucket<T> pBucket) {
@@ -212,6 +224,7 @@ public abstract class MoneyWiseXAnalysisAccountCategoryBucket<T extends MoneyWis
 
     /**
      * Add portfolio bucket to totals.
+     *
      * @param pBucket the underlying bucket
      */
     protected void addValues(final MoneyWiseXAnalysisPortfolioBucket pBucket) {
@@ -224,6 +237,7 @@ public abstract class MoneyWiseXAnalysisAccountCategoryBucket<T extends MoneyWis
 
     /**
      * Add bucket to totals.
+     *
      * @param pTotals the totals
      * @param pSource the values to add
      */
@@ -237,6 +251,7 @@ public abstract class MoneyWiseXAnalysisAccountCategoryBucket<T extends MoneyWis
 
     /**
      * Add bucket to totals.
+     *
      * @param pTotals the totals
      * @param pSource the values to add
      */

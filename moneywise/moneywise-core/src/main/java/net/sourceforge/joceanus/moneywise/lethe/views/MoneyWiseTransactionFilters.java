@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,14 +13,12 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.lethe.views;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataList;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisCashBucket;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisCashBucket.MoneyWiseAnalysisCashBucketList;
@@ -41,7 +39,6 @@ import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnal
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisTransCategoryBucket.MoneyWiseAnalysisTransCategoryBucketList;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisTransTagBucket;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisTransTagBucket.MoneyWiseAnalysisTransTagBucketList;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction;
 import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisCashFilter;
 import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisDepositFilter;
 import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisLoanFilter;
@@ -51,7 +48,10 @@ import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.Mo
 import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisTagFilter;
 import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisTaxBasisFilter;
 import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisTransCategoryFilter;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * List of filters for a transaction within an analysis.
@@ -75,9 +75,10 @@ public class MoneyWiseTransactionFilters
 
     /**
      * Constructor.
-     * @param pAnalysis the analysis
+     *
+     * @param pAnalysis  the analysis
      * @param pDateRange the dateRange
-     * @param pTrans the transaction
+     * @param pTrans     the transaction
      */
     public MoneyWiseTransactionFilters(final MoneyWiseAnalysis pAnalysis,
                                        final OceanusDateRange pDateRange,
@@ -117,6 +118,7 @@ public class MoneyWiseTransactionFilters
 
     /**
      * Add relevant deposit filters.
+     *
      * @param pDeposits the deposit buckets
      */
     private void analyseDeposits(final MoneyWiseAnalysisDepositBucketList pDeposits) {
@@ -137,6 +139,7 @@ public class MoneyWiseTransactionFilters
 
     /**
      * Add relevant cash filters.
+     *
      * @param pCash the cash buckets
      */
     private void analyseCash(final MoneyWiseAnalysisCashBucketList pCash) {
@@ -157,6 +160,7 @@ public class MoneyWiseTransactionFilters
 
     /**
      * Add relevant loan filters.
+     *
      * @param pLoans the loan buckets
      */
     private void analyseLoans(final MoneyWiseAnalysisLoanBucketList pLoans) {
@@ -177,6 +181,7 @@ public class MoneyWiseTransactionFilters
 
     /**
      * Add relevant portfolio filters.
+     *
      * @param pPortfolios the portfolio buckets
      */
     private void analysePortfolios(final MoneyWiseAnalysisPortfolioBucketList pPortfolios) {
@@ -201,6 +206,7 @@ public class MoneyWiseTransactionFilters
 
     /**
      * Add relevant security filters.
+     *
      * @param pSecurities the security buckets
      */
     private void analyseSecurities(final MoneyWiseAnalysisSecurityBucketList pSecurities) {
@@ -221,6 +227,7 @@ public class MoneyWiseTransactionFilters
 
     /**
      * Add relevant payee filters.
+     *
      * @param pPayees the payee buckets
      */
     private void analysePayees(final MoneyWiseAnalysisPayeeBucketList pPayees) {
@@ -241,6 +248,7 @@ public class MoneyWiseTransactionFilters
 
     /**
      * Add relevant category filters.
+     *
      * @param pCategories the category buckets
      */
     private void analyseCategories(final MoneyWiseAnalysisTransCategoryBucketList pCategories) {
@@ -261,6 +269,7 @@ public class MoneyWiseTransactionFilters
 
     /**
      * Add relevant taxBasis filters.
+     *
      * @param pBases the taxBasis buckets
      */
     private void analyseTaxBasis(final MoneyWiseAnalysisTaxBasisBucketList pBases) {
@@ -281,6 +290,7 @@ public class MoneyWiseTransactionFilters
 
     /**
      * Add relevant transaction tag filters.
+     *
      * @param pTags the trqansactionTag buckets
      */
     private void analyseTags(final MoneyWiseAnalysisTransTagBucketList pTags) {

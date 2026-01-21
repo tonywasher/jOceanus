@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,11 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.data.basic;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.data.MetisDataEditState;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
@@ -40,8 +42,6 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseLogicException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInstanceMap;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataMapItem;
@@ -101,7 +101,8 @@ public class MoneyWisePortfolio
 
     /**
      * Copy Constructor.
-     * @param pList the list
+     *
+     * @param pList      the list
      * @param pPortfolio The Portfolio to copy
      */
     protected MoneyWisePortfolio(final MoneyWisePortfolioList pList,
@@ -133,7 +134,8 @@ public class MoneyWisePortfolio
 
     /**
      * Values constructor.
-     * @param pList the List to add to
+     *
+     * @param pList   the List to add to
      * @param pValues the values constructor
      * @throws OceanusException on error
      */
@@ -150,6 +152,7 @@ public class MoneyWisePortfolio
 
     /**
      * Edit Constructor.
+     *
      * @param pList the list
      */
     public MoneyWisePortfolio(final MoneyWisePortfolioList pList) {
@@ -195,6 +198,7 @@ public class MoneyWisePortfolio
 
     /**
      * Obtain fieldValue for infoSet.
+     *
      * @param pFieldId the fieldId
      * @return the value
      */
@@ -204,6 +208,7 @@ public class MoneyWisePortfolio
 
     /**
      * Obtain WebSite.
+     *
      * @return the webSite
      */
     public char[] getWebSite() {
@@ -214,6 +219,7 @@ public class MoneyWisePortfolio
 
     /**
      * Obtain CustNo.
+     *
      * @return the customer #
      */
     public char[] getCustNo() {
@@ -224,6 +230,7 @@ public class MoneyWisePortfolio
 
     /**
      * Obtain UserId.
+     *
      * @return the userId
      */
     public char[] getUserId() {
@@ -234,6 +241,7 @@ public class MoneyWisePortfolio
 
     /**
      * Obtain Password.
+     *
      * @return the password
      */
     public char[] getPassword() {
@@ -244,6 +252,7 @@ public class MoneyWisePortfolio
 
     /**
      * Obtain SortCode.
+     *
      * @return the sort code
      */
     public char[] getSortCode() {
@@ -254,6 +263,7 @@ public class MoneyWisePortfolio
 
     /**
      * Obtain Reference.
+     *
      * @return the reference
      */
     public char[] getReference() {
@@ -264,6 +274,7 @@ public class MoneyWisePortfolio
 
     /**
      * Obtain Account.
+     *
      * @return the account
      */
     public char[] getAccount() {
@@ -274,6 +285,7 @@ public class MoneyWisePortfolio
 
     /**
      * Obtain Notes.
+     *
      * @return the notes
      */
     public char[] getNotes() {
@@ -289,6 +301,7 @@ public class MoneyWisePortfolio
 
     /**
      * Obtain categoryId.
+     *
      * @return the categoryId
      */
     public Integer getCategoryId() {
@@ -300,6 +313,7 @@ public class MoneyWisePortfolio
 
     /**
      * Obtain categoryName.
+     *
      * @return the categoryName
      */
     public String getCategoryName() {
@@ -311,6 +325,7 @@ public class MoneyWisePortfolio
 
     /**
      * Obtain categoryClass.
+     *
      * @return the categoryClass
      */
     public MoneyWisePortfolioClass getCategoryClass() {
@@ -454,6 +469,7 @@ public class MoneyWisePortfolio
 
     /**
      * Is this portfolio the required class.
+     *
      * @param pClass the required portfolio class.
      * @return true/false
      */
@@ -470,6 +486,7 @@ public class MoneyWisePortfolio
 
     /**
      * Set defaults.
+     *
      * @throws OceanusException on error
      */
     public void setDefaults() throws OceanusException {
@@ -478,6 +495,7 @@ public class MoneyWisePortfolio
 
     /**
      * adjust values after change.
+     *
      * @throws OceanusException on error
      */
     public void autoCorrect() throws OceanusException {
@@ -527,6 +545,7 @@ public class MoneyWisePortfolio
 
     /**
      * Set a new WebSite.
+     *
      * @param pWebSite the new webSite
      * @throws OceanusException on error
      */
@@ -536,6 +555,7 @@ public class MoneyWisePortfolio
 
     /**
      * Set a new CustNo.
+     *
      * @param pCustNo the new custNo
      * @throws OceanusException on error
      */
@@ -545,6 +565,7 @@ public class MoneyWisePortfolio
 
     /**
      * Set a new UserId.
+     *
      * @param pUserId the new userId
      * @throws OceanusException on error
      */
@@ -554,6 +575,7 @@ public class MoneyWisePortfolio
 
     /**
      * Set a new Password.
+     *
      * @param pPassword the new password
      * @throws OceanusException on error
      */
@@ -563,6 +585,7 @@ public class MoneyWisePortfolio
 
     /**
      * Set a new SortCode.
+     *
      * @param pSortCode the new sort code
      * @throws OceanusException on error
      */
@@ -572,6 +595,7 @@ public class MoneyWisePortfolio
 
     /**
      * Set a new Account.
+     *
      * @param pAccount the new account
      * @throws OceanusException on error
      */
@@ -581,6 +605,7 @@ public class MoneyWisePortfolio
 
     /**
      * Set a new Reference.
+     *
      * @param pReference the new reference
      * @throws OceanusException on error
      */
@@ -590,6 +615,7 @@ public class MoneyWisePortfolio
 
     /**
      * Set a new Notes.
+     *
      * @param pNotes the new notes
      * @throws OceanusException on error
      */
@@ -599,8 +625,9 @@ public class MoneyWisePortfolio
 
     /**
      * Set an infoSet value.
+     *
      * @param pInfoClass the class of info to set
-     * @param pValue the value to set
+     * @param pValue     the value to set
      * @throws OceanusException on error
      */
     private void setInfoSetValue(final MoneyWiseAccountInfoClass pInfoClass,
@@ -663,6 +690,7 @@ public class MoneyWisePortfolio
 
     /**
      * Update base portfolio from an edited portfolio.
+     *
      * @param pPortfolio the edited portfolio
      * @return whether changes have been made
      */
@@ -731,6 +759,7 @@ public class MoneyWisePortfolio
 
         /**
          * Construct an empty CORE Portfolio list.
+         *
          * @param pData the DataSet for the list
          */
         public MoneyWisePortfolioList(final MoneyWiseDataSet pData) {
@@ -739,6 +768,7 @@ public class MoneyWisePortfolio
 
         /**
          * Constructor for a cloned List.
+         *
          * @param pSource the source List
          */
         protected MoneyWisePortfolioList(final MoneyWisePortfolioList pSource) {
@@ -767,6 +797,7 @@ public class MoneyWisePortfolio
 
         /**
          * Obtain the portfolioInfoList.
+         *
          * @return the portfolio info list
          */
         public MoneyWisePortfolioInfoList getPortfolioInfo() {
@@ -778,6 +809,7 @@ public class MoneyWisePortfolio
 
         /**
          * Obtain the accountInfoTypeList.
+         *
          * @return the account info type list
          */
         public MoneyWiseAccountInfoTypeList getActInfoTypes() {
@@ -791,6 +823,7 @@ public class MoneyWisePortfolio
 
         /**
          * Obtain security holdings map.
+         *
          * @return the holdings map
          */
         public MoneyWiseSecurityHoldingMap getSecurityHoldingsMap() {
@@ -811,6 +844,7 @@ public class MoneyWisePortfolio
 
         /**
          * Derive Edit list.
+         *
          * @param pEditSet the editSet
          * @return the edit list
          * @throws OceanusException on error
@@ -885,6 +919,7 @@ public class MoneyWisePortfolio
 
         /**
          * Add a new item to the core list.
+         *
          * @param pPortfolio item
          * @return the newly added item
          */
@@ -902,6 +937,7 @@ public class MoneyWisePortfolio
 
         /**
          * Add a new item to the edit list.
+         *
          * @return the new item
          */
         @Override
@@ -913,6 +949,7 @@ public class MoneyWisePortfolio
 
         /**
          * Obtain the first portfolio for the specified class.
+         *
          * @param pClass the portfolio class
          * @return the portfolio
          */
@@ -954,6 +991,7 @@ public class MoneyWisePortfolio
 
         /**
          * Ensure Map based on the payee list.
+         *
          * @param pPayees the payee list
          */
         private void ensureMap(final MoneyWisePayeeList pPayees) {
@@ -1009,6 +1047,7 @@ public class MoneyWisePortfolio
 
         /**
          * Constructor.
+         *
          * @param pPayees the payee list
          */
         protected MoneyWisePortfolioDataMap(final MoneyWisePayeeList pPayees) {
@@ -1032,6 +1071,7 @@ public class MoneyWisePortfolio
 
         /**
          * Obtain the underlying map.
+         *
          * @return the underlying map
          */
         private MoneyWiseAssetDataMap getUnderlyingMap() {
@@ -1040,6 +1080,7 @@ public class MoneyWisePortfolio
 
         /**
          * Obtain the underlying map.
+         *
          * @return the underlying map
          */
         private Map<Integer, MoneyWisePortfolio> getPortfolioMap() {
@@ -1048,6 +1089,7 @@ public class MoneyWisePortfolio
 
         /**
          * Obtain the underlying map.
+         *
          * @return the underlying map
          */
         private Map<Integer, Integer> getPortfolioCountMap() {
@@ -1085,6 +1127,7 @@ public class MoneyWisePortfolio
 
         /**
          * find item by name.
+         *
          * @param pName the name to look up
          * @return the matching item
          */
@@ -1097,6 +1140,7 @@ public class MoneyWisePortfolio
 
         /**
          * Check validity of name.
+         *
          * @param pName the name to look up
          * @return true/false
          */
@@ -1106,6 +1150,7 @@ public class MoneyWisePortfolio
 
         /**
          * Check availability of name.
+         *
          * @param pName the key to look up
          * @return true/false
          */
@@ -1115,6 +1160,7 @@ public class MoneyWisePortfolio
 
         /**
          * find singular item.
+         *
          * @param pClass the class to look up
          * @return the matching item
          */
@@ -1124,6 +1170,7 @@ public class MoneyWisePortfolio
 
         /**
          * Check validity of singular count.
+         *
          * @param pClass the class to look up
          * @return true/false
          */

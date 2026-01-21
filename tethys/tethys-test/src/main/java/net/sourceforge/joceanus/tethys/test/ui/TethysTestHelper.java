@@ -1,33 +1,26 @@
-/*******************************************************************************
- * Tethys: Java Utilities
- * Copyright 2012-2026 Tony Washer
+/*
+ * Tethys: GUI Utilities
+ * Copyright 2012-2026. Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package net.sourceforge.joceanus.tethys.test.ui;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.EnumMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIIconId;
 import net.sourceforge.joceanus.tethys.api.button.TethysUIButtonFactory;
 import net.sourceforge.joceanus.tethys.api.button.TethysUIScrollButtonManager;
@@ -35,6 +28,13 @@ import net.sourceforge.joceanus.tethys.api.control.TethysUIControl.TethysUIIconM
 import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollMenu;
 import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollSubMenu;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.EnumMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Helper functions for Scroll Examples.
@@ -92,6 +92,7 @@ public class TethysTestHelper {
 
     /**
      * Constructor.
+     *
      * @param pFactory the factpry
      */
     TethysTestHelper(final TethysUIFactory<?> pFactory) {
@@ -100,6 +101,7 @@ public class TethysTestHelper {
 
     /**
      * Build the context menu.
+     *
      * @param pMenu the menu to build
      */
     public void buildContextMenu(final TethysUIScrollMenu<String> pMenu) {
@@ -123,6 +125,7 @@ public class TethysTestHelper {
 
     /**
      * Add Menu Item for string.
+     *
      * @return the char Array password
      */
     public static char[] getPassword() {
@@ -131,7 +134,8 @@ public class TethysTestHelper {
 
     /**
      * Add Menu Item for string.
-     * @param pMenu the menu to add to
+     *
+     * @param pMenu  the menu to add to
      * @param pValue the value to add
      */
     private static void addMenuItem(final TethysUIScrollMenu<String> pMenu,
@@ -142,7 +146,8 @@ public class TethysTestHelper {
 
     /**
      * Add SubMenu for string.
-     * @param pMenu the menu to add to
+     *
+     * @param pMenu  the menu to add to
      * @param pValue the name to add
      * @return the subMenu
      */
@@ -154,7 +159,8 @@ public class TethysTestHelper {
 
     /**
      * Add SubMenu Item for string.
-     * @param pMenu the subMenu
+     *
+     * @param pMenu  the subMenu
      * @param pValue the value to add
      */
     private static void addSubMenuItem(final TethysUIScrollSubMenu<String> pMenu,
@@ -165,6 +171,7 @@ public class TethysTestHelper {
 
     /**
      * Create selected list.
+     *
      * @return the list
      */
     public List<TethysTestListId> buildSelectedList() {
@@ -179,6 +186,7 @@ public class TethysTestHelper {
 
     /**
      * Create selectable list.
+     *
      * @return the list
      */
     public Iterator<TethysTestListId> buildSelectableList() {
@@ -191,9 +199,10 @@ public class TethysTestHelper {
 
     /**
      * Build the simple IconMapSet.
-     * @param <K> the keyId type
+     *
+     * @param <K>        the keyId type
      * @param pFalseIcon the icon for the false state
-     * @param pTrueIcon the icon for the true state
+     * @param pTrueIcon  the icon for the true state
      * @return the new mapSet
      */
     public <K extends TethysUIIconId> TethysUIIconMapSet<Boolean> buildSimpleIconState(final K pFalseIcon,
@@ -208,9 +217,10 @@ public class TethysTestHelper {
 
     /**
      * Build the state IconState.
-     * @param <K> the keyId type
-     * @param pFalseIcon the icon for the false state
-     * @param pTrueIcon the icon for the true state
+     *
+     * @param <K>          the keyId type
+     * @param pFalseIcon   the icon for the false state
+     * @param pTrueIcon    the icon for the true state
      * @param pAltTrueIcon the icon for the true closed state
      * @return the map
      */
@@ -239,6 +249,7 @@ public class TethysTestHelper {
 
     /**
      * build State button.
+     *
      * @param pManager the button manager
      */
     public void buildStateButton(final TethysUIScrollButtonManager<TethysIconState> pManager) {
@@ -269,6 +280,7 @@ public class TethysTestHelper {
 
         /**
          * Constructor.
+         *
          * @param pDisplay the display string
          */
         TethysIconState(final String pDisplay) {

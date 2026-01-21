@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,16 +13,16 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.lethe.data.analysis.data;
 
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePortfolio;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisAccountAttr;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisAccountValues;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePortfolio;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 
 /**
  * The Portfolio Cash Bucket class.
@@ -36,7 +36,8 @@ public final class MoneyWiseAnalysisPortfolioCashBucket
 
     /**
      * Constructor.
-     * @param pAnalysis the analysis
+     *
+     * @param pAnalysis  the analysis
      * @param pPortfolio the portfolio
      */
     MoneyWiseAnalysisPortfolioCashBucket(final MoneyWiseAnalysis pAnalysis,
@@ -47,8 +48,9 @@ public final class MoneyWiseAnalysisPortfolioCashBucket
 
     /**
      * Constructor.
+     *
      * @param pAnalysis the analysis
-     * @param pBase the underlying bucket
+     * @param pBase     the underlying bucket
      */
     MoneyWiseAnalysisPortfolioCashBucket(final MoneyWiseAnalysis pAnalysis,
                                          final MoneyWiseAnalysisPortfolioCashBucket pBase) {
@@ -58,9 +60,10 @@ public final class MoneyWiseAnalysisPortfolioCashBucket
 
     /**
      * Constructor.
+     *
      * @param pAnalysis the analysis
-     * @param pBase the underlying bucket
-     * @param pDate the date for the bucket
+     * @param pBase     the underlying bucket
+     * @param pDate     the date for the bucket
      */
     MoneyWiseAnalysisPortfolioCashBucket(final MoneyWiseAnalysis pAnalysis,
                                          final MoneyWiseAnalysisPortfolioCashBucket pBase,
@@ -71,9 +74,10 @@ public final class MoneyWiseAnalysisPortfolioCashBucket
 
     /**
      * Constructor.
+     *
      * @param pAnalysis the analysis
-     * @param pBase the underlying bucket
-     * @param pRange the range for the bucket
+     * @param pBase     the underlying bucket
+     * @param pRange    the range for the bucket
      */
     MoneyWiseAnalysisPortfolioCashBucket(final MoneyWiseAnalysis pAnalysis,
                                          final MoneyWiseAnalysisPortfolioCashBucket pBase,
@@ -89,8 +93,9 @@ public final class MoneyWiseAnalysisPortfolioCashBucket
 
     /**
      * Adjust account for transfer.
+     *
      * @param pSource the source portfolio
-     * @param pTrans the transaction helper
+     * @param pTrans  the transaction helper
      */
     public void adjustForXfer(final MoneyWiseAnalysisPortfolioCashBucket pSource,
                               final MoneyWiseAnalysisTransactionHelper pTrans) {
@@ -111,6 +116,7 @@ public final class MoneyWiseAnalysisPortfolioCashBucket
 
     /**
      * Add Values.
+     *
      * @param pBucket the portfolio cash bucket
      */
     void addValues(final MoneyWiseAnalysisPortfolioCashBucket pBucket) {
@@ -123,6 +129,7 @@ public final class MoneyWiseAnalysisPortfolioCashBucket
 
     /**
      * Add bucket to totals.
+     *
      * @param pTotals the totals
      * @param pSource the values to add
      */

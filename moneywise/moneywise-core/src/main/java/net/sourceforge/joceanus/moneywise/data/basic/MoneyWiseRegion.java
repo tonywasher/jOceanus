@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,11 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.data.basic;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataNamedItem;
@@ -23,8 +25,6 @@ import net.sourceforge.joceanus.metis.data.MetisDataResource;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataValidator.MoneyWiseDataValidatorDefaults;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInstanceMap;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
@@ -67,7 +67,8 @@ public class MoneyWiseRegion
 
     /**
      * Copy Constructor.
-     * @param pList the list
+     *
+     * @param pList   the list
      * @param pRegion The region to copy
      */
     protected MoneyWiseRegion(final MoneyWiseRegionList pList,
@@ -78,7 +79,8 @@ public class MoneyWiseRegion
 
     /**
      * Values constructor.
-     * @param pList the List to add to
+     *
+     * @param pList   the List to add to
      * @param pValues the values constructor
      * @throws OceanusException on error
      */
@@ -114,6 +116,7 @@ public class MoneyWiseRegion
 
     /**
      * Edit Constructor.
+     *
      * @param pList the list
      */
     public MoneyWiseRegion(final MoneyWiseRegionList pList) {
@@ -157,6 +160,7 @@ public class MoneyWiseRegion
 
     /**
      * Obtain Encrypted name.
+     *
      * @return the bytes
      */
     public byte[] getNameBytes() {
@@ -165,6 +169,7 @@ public class MoneyWiseRegion
 
     /**
      * Obtain Encrypted Name Field.
+     *
      * @return the Field
      */
     private PrometheusEncryptedPair getNameField() {
@@ -173,6 +178,7 @@ public class MoneyWiseRegion
 
     /**
      * Obtain Description.
+     *
      * @return the description
      */
     public String getDesc() {
@@ -181,6 +187,7 @@ public class MoneyWiseRegion
 
     /**
      * Obtain Encrypted description.
+     *
      * @return the bytes
      */
     public byte[] getDescBytes() {
@@ -189,6 +196,7 @@ public class MoneyWiseRegion
 
     /**
      * Obtain Encrypted Description Field.
+     *
      * @return the Field
      */
     private PrometheusEncryptedPair getDescField() {
@@ -197,6 +205,7 @@ public class MoneyWiseRegion
 
     /**
      * Set name value.
+     *
      * @param pValue the value
      * @throws OceanusException on error
      */
@@ -206,6 +215,7 @@ public class MoneyWiseRegion
 
     /**
      * Set name value.
+     *
      * @param pBytes the value
      * @throws OceanusException on error
      */
@@ -215,6 +225,7 @@ public class MoneyWiseRegion
 
     /**
      * Set name value.
+     *
      * @param pValue the value
      */
     private void setValueName(final PrometheusEncryptedPair pValue) {
@@ -223,6 +234,7 @@ public class MoneyWiseRegion
 
     /**
      * Set description value.
+     *
      * @param pValue the value
      * @throws OceanusException on error
      */
@@ -232,6 +244,7 @@ public class MoneyWiseRegion
 
     /**
      * Set description value.
+     *
      * @param pBytes the value
      * @throws OceanusException on error
      */
@@ -241,6 +254,7 @@ public class MoneyWiseRegion
 
     /**
      * Set description value.
+     *
      * @param pValue the value
      */
     private void setValueDesc(final PrometheusEncryptedPair pValue) {
@@ -264,6 +278,7 @@ public class MoneyWiseRegion
 
     /**
      * Set defaults.
+     *
      * @throws OceanusException on error
      */
     public void setDefaults() throws OceanusException {
@@ -279,6 +294,7 @@ public class MoneyWiseRegion
 
     /**
      * Set a new tag name.
+     *
      * @param pName the new name
      * @throws OceanusException on error
      */
@@ -288,6 +304,7 @@ public class MoneyWiseRegion
 
     /**
      * Set a new description.
+     *
      * @param pDesc the description
      * @throws OceanusException on error
      */
@@ -297,6 +314,7 @@ public class MoneyWiseRegion
 
     /**
      * Update base tag from an edited tag.
+     *
      * @param pTag the edited tag
      * @return whether changes have been made
      */
@@ -353,6 +371,7 @@ public class MoneyWiseRegion
 
         /**
          * Constructor for a cloned List.
+         *
          * @param pSource the source List
          */
         protected MoneyWiseRegionList(final MoneyWiseRegionList pSource) {
@@ -399,6 +418,7 @@ public class MoneyWiseRegion
 
         /**
          * Derive Edit list.
+         *
          * @param pEditSet the editSet
          * @return the edit list
          */
@@ -433,6 +453,7 @@ public class MoneyWiseRegion
 
         /**
          * Add a new item to the core list.
+         *
          * @param pRegion item
          * @return the newly added item
          */
@@ -450,6 +471,7 @@ public class MoneyWiseRegion
 
         /**
          * Add a new item to the edit list.
+         *
          * @return the new item
          */
         @Override
@@ -505,6 +527,7 @@ public class MoneyWiseRegion
 
         /**
          * find item by name.
+         *
          * @param pName the name to look up
          * @return the matching item
          */
@@ -514,6 +537,7 @@ public class MoneyWiseRegion
 
         /**
          * Check validity of name.
+         *
          * @param pName the name to look up
          * @return true/false
          */
@@ -523,6 +547,7 @@ public class MoneyWiseRegion
 
         /**
          * Check availability of name.
+         *
          * @param pName the key to look up
          * @return true/false
          */

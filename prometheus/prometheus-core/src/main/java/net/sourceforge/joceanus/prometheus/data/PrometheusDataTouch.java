@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Prometheus: Application Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,13 +13,13 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.prometheus.data;
 
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataMap;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataObjectFormat;
 import net.sourceforge.joceanus.metis.list.MetisListKey;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataTouch.PrometheusTouchCounter;
 
 import java.util.HashMap;
@@ -56,6 +56,7 @@ public class PrometheusDataTouch
 
     /**
      * Constructor.
+     *
      * @param pSource the source map
      */
     protected void copyMap(final PrometheusDataTouch pSource) {
@@ -73,6 +74,7 @@ public class PrometheusDataTouch
 
     /**
      * Reset touches for a dataType.
+     *
      * @param pItemType the ItemType
      */
     public void resetTouches(final MetisListKey pItemType) {
@@ -81,6 +83,7 @@ public class PrometheusDataTouch
 
     /**
      * Touch an item.
+     *
      * @param pItemType the item type
      */
     public void touchItem(final MetisListKey pItemType) {
@@ -100,6 +103,7 @@ public class PrometheusDataTouch
 
     /**
      * Is the item touched by the ItemType?
+     *
      * @param pItemType the item type
      * @return true/false
      */
@@ -113,6 +117,7 @@ public class PrometheusDataTouch
 
     /**
      * Is the item active.
+     *
      * @return true/false
      */
     public boolean isActive() {
@@ -121,6 +126,7 @@ public class PrometheusDataTouch
 
     /**
      * Obtain item count.
+     *
      * @param pItemType the item type
      * @return the counter (or null)
      */
@@ -130,6 +136,7 @@ public class PrometheusDataTouch
 
     /**
      * Obtain iterator.
+     *
      * @return the iterator
      */
     public Iterator<PrometheusTouchCounter> iterator() {
@@ -153,6 +160,7 @@ public class PrometheusDataTouch
 
         /**
          * Constructor.
+         *
          * @param pItemType the item type
          */
         private PrometheusTouchCounter(final MetisListKey pItemType) {
@@ -167,6 +175,7 @@ public class PrometheusDataTouch
 
         /**
          * Obtain the item type.
+         *
          * @return the item type
          */
         public MetisListKey getItemType() {
@@ -175,6 +184,7 @@ public class PrometheusDataTouch
 
         /**
          * Obtain the touch count.
+         *
          * @return the touches
          */
         public int getTouches() {

@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,11 +13,10 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.ui.dialog;
 
-import java.util.Iterator;
-
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
@@ -33,13 +32,14 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.prometheus.ui.fieldset.PrometheusFieldSet;
 import net.sourceforge.joceanus.prometheus.ui.fieldset.PrometheusFieldSetEvent;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.tethys.api.field.TethysUIDataEditField.TethysUIScrollButtonField;
 import net.sourceforge.joceanus.tethys.api.field.TethysUIDataEditField.TethysUIStringEditField;
 import net.sourceforge.joceanus.tethys.api.field.TethysUIFieldFactory;
 import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollItem;
 import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollMenu;
+
+import java.util.Iterator;
 
 /**
  * Panel to display/edit/create a CashCategory.
@@ -48,9 +48,10 @@ public class MoneyWiseCashCategoryDialog
         extends MoneyWiseItemPanel<MoneyWiseCashCategory> {
     /**
      * Constructor.
+     *
      * @param pFactory the GUI factory
      * @param pEditSet the edit set
-     * @param pOwner the owning table
+     * @param pOwner   the owning table
      */
     public MoneyWiseCashCategoryDialog(final TethysUIFactory<?> pFactory,
                                        final PrometheusEditSet pEditSet,
@@ -171,7 +172,8 @@ public class MoneyWiseCashCategoryDialog
 
     /**
      * Build the category type menu for an item.
-     * @param pMenu the menu
+     *
+     * @param pMenu     the menu
      * @param pCategory the category to build for
      */
     public void buildCategoryTypeMenu(final TethysUIScrollMenu<MoneyWiseCashCategoryType> pMenu,
@@ -218,7 +220,8 @@ public class MoneyWiseCashCategoryDialog
 
     /**
      * Build the parent menu for an item.
-     * @param pMenu the menu
+     *
+     * @param pMenu     the menu
      * @param pCategory the category to build for
      */
     private static void buildParentMenu(final TethysUIScrollMenu<MoneyWiseCashCategory> pMenu,

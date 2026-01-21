@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,10 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.data.statics;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.metis.data.MetisDataResource;
 import net.sourceforge.joceanus.metis.data.MetisDataType;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
@@ -25,10 +26,10 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
 import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataClass;
 import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataItem;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * TransactionInfoType data type.
+ *
  * @author Tony Washer
  */
 public class MoneyWiseTransInfoType
@@ -60,6 +61,7 @@ public class MoneyWiseTransInfoType
 
     /**
      * Copy Constructor.
+     *
      * @param pList The list to associate the InfoType with
      * @param pType The InfoType to copy
      */
@@ -70,6 +72,7 @@ public class MoneyWiseTransInfoType
 
     /**
      * Basic Constructor.
+     *
      * @param pList The list to associate the EventInfoType with
      * @param pName Name of InfoType
      * @throws OceanusException on error
@@ -81,7 +84,8 @@ public class MoneyWiseTransInfoType
 
     /**
      * Basic Constructor.
-     * @param pList The list to associate the Info Type with
+     *
+     * @param pList  The list to associate the Info Type with
      * @param pClass Class of Info Type
      * @throws OceanusException on error
      */
@@ -92,7 +96,8 @@ public class MoneyWiseTransInfoType
 
     /**
      * Values constructor.
-     * @param pList The list to associate the item with
+     *
+     * @param pList   The list to associate the item with
      * @param pValues the values
      * @throws OceanusException on error
      */
@@ -108,6 +113,7 @@ public class MoneyWiseTransInfoType
 
     /**
      * Return the Info class of the InfoType.
+     *
      * @return the class
      */
     public MoneyWiseTransInfoClass getInfoClass() {
@@ -116,6 +122,7 @@ public class MoneyWiseTransInfoType
 
     /**
      * Return the Data Type of the EventInfoType.
+     *
      * @return the data type
      */
     public MetisDataType getDataType() {
@@ -124,6 +131,7 @@ public class MoneyWiseTransInfoType
 
     /**
      * is this a Link?
+     *
      * @return true/false
      */
     public boolean isLink() {
@@ -152,6 +160,7 @@ public class MoneyWiseTransInfoType
 
         /**
          * Construct an empty CORE Info list.
+         *
          * @param pData the DataSet for the list
          */
         public MoneyWiseTransInfoTypeList(final PrometheusDataSet pData) {
@@ -160,6 +169,7 @@ public class MoneyWiseTransInfoType
 
         /**
          * Constructor for a cloned List.
+         *
          * @param pSource the source List
          */
         private MoneyWiseTransInfoTypeList(final MoneyWiseTransInfoTypeList pSource) {
@@ -212,6 +222,7 @@ public class MoneyWiseTransInfoType
 
         /**
          * Obtain the type of the item.
+         *
          * @return the type of the item
          */
         public String itemType() {
@@ -220,6 +231,7 @@ public class MoneyWiseTransInfoType
 
         /**
          * Add an InfoType.
+         *
          * @param pType the Name of the InfoType
          * @return the new type
          * @throws OceanusException on error

@@ -1,33 +1,34 @@
-/*******************************************************************************
- * Tethys: Java Utilities
- * Copyright 2012-2026 Tony Washer
+/*
+ * Tethys: GUI Utilities
+ * Copyright 2012-2026. Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package net.sourceforge.joceanus.tethys.core.table;
 
-import java.util.function.Function;
-import java.util.function.Predicate;
-
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.api.field.TethysUIFieldType;
 import net.sourceforge.joceanus.tethys.api.table.TethysUITableColumn;
 
+import java.util.function.Function;
+import java.util.function.Predicate;
+
 /**
  * Column Definition.
+ *
  * @param <T> the data type
  * @param <C> the column identity
  * @param <R> the row type
@@ -101,9 +102,10 @@ public abstract class TethysUICoreTableColumn<T, C, R>
 
     /**
      * Constructor.
+     *
      * @param pTable the containing table
-     * @param pId the id of the column
-     * @param pType the type of the column
+     * @param pId    the id of the column
+     * @param pType  the type of the column
      */
     protected TethysUICoreTableColumn(final TethysUICoreTableManager<C, R> pTable,
                                       final C pId,
@@ -260,6 +262,7 @@ public abstract class TethysUICoreTableColumn<T, C, R>
 
     /**
      * Count previous visible items.
+     *
      * @return the count
      */
     protected int countPreviousVisibleSiblings() {
@@ -294,7 +297,8 @@ public abstract class TethysUICoreTableColumn<T, C, R>
 
     /**
      * process onCommit.
-     * @param pRow the row
+     *
+     * @param pRow   the row
      * @param pValue the value
      * @throws OceanusException on error
      */

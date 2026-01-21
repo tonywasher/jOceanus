@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Prometheus: Application Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,18 +13,18 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.prometheus.service.sheet.odf;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCell;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
 
 /**
  * Cell implementation.
@@ -38,9 +38,10 @@ public class PrometheusOdfCell
 
     /**
      * Constructor .
-     * @param pStore the cell storage
-     * @param pRow the row
-     * @param pIndex the index
+     *
+     * @param pStore    the cell storage
+     * @param pRow      the row
+     * @param pIndex    the index
      * @param pReadOnly is the cell readOnly?
      */
     PrometheusOdfCell(final PrometheusOdfCellStore pStore,
@@ -120,7 +121,7 @@ public class PrometheusOdfCell
     @Override
     protected void setDateValue(final OceanusDate pValue) {
         theStore.setValueAtIndex(pValue, getCellIndex());
-     }
+    }
 
     @Override
     protected void setIntegerValue(final Integer pValue) {
@@ -134,7 +135,7 @@ public class PrometheusOdfCell
 
     @Override
     protected void setStringValue(final String pValue) {
-             theStore.setValueAtIndex(pValue, getCellIndex());
+        theStore.setValueAtIndex(pValue, getCellIndex());
     }
 
     @Override

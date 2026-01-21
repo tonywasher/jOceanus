@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,15 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.data.basic;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateFormatter;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataList;
@@ -24,12 +30,6 @@ import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurity.MoneyWiseSecurityList;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateFormatter;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInstanceMap;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataMapItem;
@@ -50,6 +50,7 @@ import java.util.Map;
 
 /**
  * SecurityPrice data type.
+ *
  * @author Tony Washer
  */
 public class MoneyWiseSecurityPrice
@@ -85,7 +86,8 @@ public class MoneyWiseSecurityPrice
 
     /**
      * Copy Constructor.
-     * @param pList the list
+     *
+     * @param pList  the list
      * @param pPrice The Price
      */
     protected MoneyWiseSecurityPrice(final MoneyWiseSecurityPriceBaseList<? extends MoneyWiseSecurityPrice> pList,
@@ -96,6 +98,7 @@ public class MoneyWiseSecurityPrice
 
     /**
      * Edit Constructor.
+     *
      * @param pList the list
      */
     public MoneyWiseSecurityPrice(final MoneyWiseSecurityPriceBaseList<? extends MoneyWiseSecurityPrice> pList) {
@@ -105,7 +108,8 @@ public class MoneyWiseSecurityPrice
 
     /**
      * Values constructor.
-     * @param pList the List to add to
+     *
+     * @param pList   the List to add to
      * @param pValues the values constructor
      * @throws OceanusException on error
      */
@@ -207,6 +211,7 @@ public class MoneyWiseSecurityPrice
 
     /**
      * Obtain Price.
+     *
      * @return the price
      */
     public OceanusPrice getPrice() {
@@ -215,6 +220,7 @@ public class MoneyWiseSecurityPrice
 
     /**
      * Obtain Encrypted Price.
+     *
      * @return the Bytes
      */
     public byte[] getPriceBytes() {
@@ -223,6 +229,7 @@ public class MoneyWiseSecurityPrice
 
     /**
      * Obtain Encrypted Price Field.
+     *
      * @return the field
      */
     public PrometheusEncryptedPair getPriceField() {
@@ -231,6 +238,7 @@ public class MoneyWiseSecurityPrice
 
     /**
      * Obtain Date.
+     *
      * @return the date
      */
     public OceanusDate getDate() {
@@ -239,6 +247,7 @@ public class MoneyWiseSecurityPrice
 
     /**
      * Obtain Security.
+     *
      * @return the security
      */
     public MoneyWiseSecurity getSecurity() {
@@ -247,6 +256,7 @@ public class MoneyWiseSecurityPrice
 
     /**
      * Obtain SecurityId.
+     *
      * @return the securityId
      */
     public Integer getSecurityId() {
@@ -258,6 +268,7 @@ public class MoneyWiseSecurityPrice
 
     /**
      * Obtain SecurityName.
+     *
      * @return the securityName
      */
     public String getSecurityName() {
@@ -269,6 +280,7 @@ public class MoneyWiseSecurityPrice
 
     /**
      * Set the security.
+     *
      * @param pValue the security
      */
     private void setValueSecurity(final MoneyWiseSecurity pValue) {
@@ -277,6 +289,7 @@ public class MoneyWiseSecurityPrice
 
     /**
      * Set the security id.
+     *
      * @param pId the security id
      */
     private void setValueSecurity(final Integer pId) {
@@ -285,6 +298,7 @@ public class MoneyWiseSecurityPrice
 
     /**
      * Set the security name.
+     *
      * @param pName the security name
      */
     private void setValueSecurity(final String pName) {
@@ -293,6 +307,7 @@ public class MoneyWiseSecurityPrice
 
     /**
      * Set the price.
+     *
      * @param pValue the price
      * @throws OceanusException on error
      */
@@ -302,6 +317,7 @@ public class MoneyWiseSecurityPrice
 
     /**
      * Set the encrypted price.
+     *
      * @param pBytes the encrypted price
      * @throws OceanusException on error
      */
@@ -311,6 +327,7 @@ public class MoneyWiseSecurityPrice
 
     /**
      * Set the price.
+     *
      * @param pValue the price
      */
     private void setValuePrice(final String pValue) {
@@ -319,6 +336,7 @@ public class MoneyWiseSecurityPrice
 
     /**
      * Set the price.
+     *
      * @param pValue the price
      */
     public void setValuePrice(final PrometheusEncryptedPair pValue) {
@@ -327,6 +345,7 @@ public class MoneyWiseSecurityPrice
 
     /**
      * Set the date.
+     *
      * @param pValue the date
      */
     private void setValueDate(final OceanusDate pValue) {
@@ -384,6 +403,7 @@ public class MoneyWiseSecurityPrice
 
     /**
      * Resolve links in an editSet.
+     *
      * @param pEditSet the edit Set
      * @throws OceanusException on error
      */
@@ -395,6 +415,7 @@ public class MoneyWiseSecurityPrice
 
     /**
      * Set the security.
+     *
      * @param pValue the security
      */
     public void setSecurity(final MoneyWiseSecurity pValue) {
@@ -403,6 +424,7 @@ public class MoneyWiseSecurityPrice
 
     /**
      * Set a new price.
+     *
      * @param pPrice the price
      * @throws OceanusException on error
      */
@@ -412,6 +434,7 @@ public class MoneyWiseSecurityPrice
 
     /**
      * Set a new date.
+     *
      * @param pDate the new date
      */
     public void setDate(final OceanusDate pDate) {
@@ -464,6 +487,7 @@ public class MoneyWiseSecurityPrice
 
     /**
      * Price List.
+     *
      * @param <T> the data type
      */
     public abstract static class MoneyWiseSecurityPriceBaseList<T extends MoneyWiseSecurityPrice>
@@ -477,8 +501,9 @@ public class MoneyWiseSecurityPrice
 
         /**
          * Construct an empty CORE Price list.
-         * @param pData the DataSet for the list
-         * @param pClass the class of the item
+         *
+         * @param pData     the DataSet for the list
+         * @param pClass    the class of the item
          * @param pItemType the item type
          */
         protected MoneyWiseSecurityPriceBaseList(final MoneyWiseDataSet pData,
@@ -490,6 +515,7 @@ public class MoneyWiseSecurityPrice
 
         /**
          * Constructor for a cloned List.
+         *
          * @param pSource the source List
          */
         protected MoneyWiseSecurityPriceBaseList(final MoneyWiseSecurityPriceBaseList<T> pSource) {
@@ -520,6 +546,7 @@ public class MoneyWiseSecurityPrice
 
         /**
          * Construct an empty CORE price list.
+         *
          * @param pData the DataSet for the list
          */
         protected MoneyWiseSecurityPriceList(final MoneyWiseDataSet pData) {
@@ -528,6 +555,7 @@ public class MoneyWiseSecurityPrice
 
         /**
          * Constructor for a cloned List.
+         *
          * @param pSource the source List
          */
         private MoneyWiseSecurityPriceList(final MoneyWiseSecurityPriceList pSource) {
@@ -563,6 +591,7 @@ public class MoneyWiseSecurityPrice
 
         /**
          * Construct an edit extract of a Rate list.
+         *
          * @param pEditSet the editSet
          * @return the edit list
          * @throws OceanusException on error
@@ -593,6 +622,7 @@ public class MoneyWiseSecurityPrice
 
         /**
          * Add a new item to the core list.
+         *
          * @param pPrice item
          * @return the newly added item
          */
@@ -609,6 +639,7 @@ public class MoneyWiseSecurityPrice
 
         /**
          * Add a new item to the edit list.
+         *
          * @return the newly added item
          */
         @Override
@@ -688,6 +719,7 @@ public class MoneyWiseSecurityPrice
 
         /**
          * Obtain mapOfMaps.
+         *
          * @return the map
          */
         private Map<MoneyWiseSecurity, Map<OceanusDate, Integer>> getMapOfMaps() {
@@ -696,6 +728,7 @@ public class MoneyWiseSecurityPrice
 
         /**
          * Obtain mapOfPrices.
+         *
          * @return the map
          */
         private Map<MoneyWiseSecurity, MoneyWiseSecurityPriceList> getMapOfPrices() {
@@ -738,6 +771,7 @@ public class MoneyWiseSecurityPrice
 
         /**
          * Check validity of Price.
+         *
          * @param pItem the price
          * @return true/false
          */
@@ -757,8 +791,9 @@ public class MoneyWiseSecurityPrice
 
         /**
          * Check availability of date for a security.
+         *
          * @param pSecurity the security
-         * @param pDate the key to look up
+         * @param pDate     the key to look up
          * @return true/false
          */
         public boolean availableDate(final MoneyWiseSecurity pSecurity,
@@ -771,8 +806,9 @@ public class MoneyWiseSecurityPrice
 
         /**
          * Obtain price for date.
+         *
          * @param pSecurity the security
-         * @param pDate the date
+         * @param pDate     the date
          * @return the latest price for the date.
          */
         public OceanusPrice getPriceForDate(final MoneyWiseAssetBase pSecurity,
@@ -802,8 +838,9 @@ public class MoneyWiseSecurityPrice
 
         /**
          * Obtain prices for range.
+         *
          * @param pSecurity the security
-         * @param pRange the date range
+         * @param pRange    the date range
          * @return the two deep array of prices for the range.
          */
         public OceanusPrice[] getPricesForRange(final MoneyWiseSecurity pSecurity,
@@ -844,11 +881,12 @@ public class MoneyWiseSecurityPrice
 
             /* Return the prices */
             return new OceanusPrice[]
-                    { myFirst, myLatest };
+                    {myFirst, myLatest};
         }
 
         /**
          * Obtain priceList cursor.
+         *
          * @param pSecurity the security
          * @return the latest price for the date.
          */
@@ -889,6 +927,7 @@ public class MoneyWiseSecurityPrice
 
             /**
              * Constructor.
+             *
              * @param pSecurity the security
              */
             private MoneyWiseSecurityPriceList(final MoneyWiseSecurity pSecurity) {

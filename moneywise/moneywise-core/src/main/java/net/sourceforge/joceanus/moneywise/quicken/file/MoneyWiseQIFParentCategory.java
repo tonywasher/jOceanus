@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,11 +13,11 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.quicken.file;
 
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,6 +26,7 @@ import java.util.List;
 
 /**
  * Parent category registration.
+ *
  * @author Tony Washer
  */
 public class MoneyWiseQIFParentCategory
@@ -42,7 +43,8 @@ public class MoneyWiseQIFParentCategory
 
     /**
      * Constructor.
-     * @param pFile the file definition
+     *
+     * @param pFile   the file definition
      * @param pParent the parent category
      */
     protected MoneyWiseQIFParentCategory(final MoneyWiseQIFFile pFile,
@@ -52,6 +54,7 @@ public class MoneyWiseQIFParentCategory
 
     /**
      * Constructor.
+     *
      * @param pParent the parent category
      */
     protected MoneyWiseQIFParentCategory(final MoneyWiseQIFEventCategory pParent) {
@@ -69,6 +72,7 @@ public class MoneyWiseQIFParentCategory
 
     /**
      * Obtain number of children.
+     *
      * @return the number of children
      */
     protected int numChildren() {
@@ -77,6 +81,7 @@ public class MoneyWiseQIFParentCategory
 
     /**
      * Obtain the security.
+     *
      * @return the security
      */
     public MoneyWiseQIFEventCategory getParent() {
@@ -85,6 +90,7 @@ public class MoneyWiseQIFParentCategory
 
     /**
      * Obtain the children.
+     *
      * @return the children
      */
     public List<MoneyWiseQIFEventCategory> getChildren() {
@@ -93,6 +99,7 @@ public class MoneyWiseQIFParentCategory
 
     /**
      * Register child.
+     *
      * @param pChild the child
      */
     protected void registerChild(final MoneyWiseQIFEventCategory pChild) {
@@ -109,8 +116,9 @@ public class MoneyWiseQIFParentCategory
 
     /**
      * Format record.
+     *
      * @param pFormatter the data formatter
-     * @param pBuilder the string builder
+     * @param pBuilder   the string builder
      */
     public void formatRecord(final OceanusDataFormatter pFormatter,
                              final StringBuilder pBuilder) {

@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,18 +13,18 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.tax.uk;
 
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxBandSet;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxResource;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 
 import java.util.Iterator;
 
@@ -59,6 +59,7 @@ public class MoneyWiseUKIncomeScheme
 
     /**
      * Constructor.
+     *
      * @param pReliefAvailable Is tax relief available?
      */
     protected MoneyWiseUKIncomeScheme(final Boolean pReliefAvailable) {
@@ -67,6 +68,7 @@ public class MoneyWiseUKIncomeScheme
 
     /**
      * Is tax relief available?
+     *
      * @return true/false
      */
     public Boolean taxReliefAvailable() {
@@ -75,8 +77,9 @@ public class MoneyWiseUKIncomeScheme
 
     /**
      * Allocate the amount to the appropriate tax bands.
+     *
      * @param pConfig the taxConfig
-     * @param pBasis the taxBasis
+     * @param pBasis  the taxBasis
      * @param pAmount the amount to be allocated
      * @return the tax bands
      */
@@ -102,14 +105,15 @@ public class MoneyWiseUKIncomeScheme
 
     /**
      * Determine the taxBand set.
+     *
      * @param pConfig the taxConfig
-     * @param pBasis the taxBasis
+     * @param pBasis  the taxBasis
      * @param pAmount the amount to be allocated
      * @return the amount remaining
      */
     private MoneyWiseTaxBandSet determineTaxBands(final MoneyWiseUKTaxConfig pConfig,
-                                                   final MoneyWiseTaxClass pBasis,
-                                                   final OceanusMoney pAmount) {
+                                                  final MoneyWiseTaxClass pBasis,
+                                                  final OceanusMoney pAmount) {
         /* Create a new taxBand set */
         final MoneyWiseTaxBandSet myTaxBands = new MoneyWiseTaxBandSet();
         final OceanusMoney myRemaining = new OceanusMoney(pAmount);
@@ -147,8 +151,9 @@ public class MoneyWiseUKIncomeScheme
 
     /**
      * Obtain the taxBand iterator.
+     *
      * @param pConfig the taxConfig
-     * @param pBasis the taxBasis
+     * @param pBasis  the taxBasis
      * @return the iterator
      */
     protected Iterator<MoneyWiseTaxBand> taxBandIterator(final MoneyWiseUKTaxConfig pConfig,
@@ -158,6 +163,7 @@ public class MoneyWiseUKIncomeScheme
 
     /**
      * Obtain the taxFree amount.
+     *
      * @param pConfig the taxConfig
      * @param pAmount the amount that is to be adjusted
      * @return the amount remaining
@@ -170,6 +176,7 @@ public class MoneyWiseUKIncomeScheme
 
     /**
      * Adjust Allowances.
+     *
      * @param pConfig the taxConfig
      * @param pAmount the amount that is to be adjusted
      * @return the amount remaining
@@ -182,6 +189,7 @@ public class MoneyWiseUKIncomeScheme
 
     /**
      * Adjust TaxBands.
+     *
      * @param pConfig the taxConfig
      * @param pAmount the amount that is to be adjusted
      */
@@ -203,8 +211,9 @@ public class MoneyWiseUKIncomeScheme
 
     /**
      * Adjust For an allowance/band.
+     *
      * @param pAllowance the allowance
-     * @param pAmount the amount that is to be adjusted
+     * @param pAmount    the amount that is to be adjusted
      * @return the amount remaining
      */
     protected OceanusMoney adjustForAllowance(final OceanusMoney pAllowance,
@@ -231,7 +240,8 @@ public class MoneyWiseUKIncomeScheme
 
     /**
      * Obtain the amount of income that falls in a band.
-     * @param pBand the band
+     *
+     * @param pBand   the band
      * @param pAmount the amount available
      * @return the amount within the band
      */

@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,10 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.data.statics;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.metis.data.MetisDataResource;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
@@ -24,10 +25,10 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
 import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataClass;
 import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataItem;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * TaxBasis data type.
+ *
  * @author Tony Washer
  */
 public class MoneyWiseTaxBasis
@@ -49,7 +50,8 @@ public class MoneyWiseTaxBasis
 
     /**
      * Copy Constructor.
-     * @param pList The list to associate the Tax Basis with
+     *
+     * @param pList     The list to associate the Tax Basis with
      * @param pTaxBasis The Tax Basis to copy
      */
     protected MoneyWiseTaxBasis(final MoneyWiseTaxBasisList pList,
@@ -59,6 +61,7 @@ public class MoneyWiseTaxBasis
 
     /**
      * Basic Constructor.
+     *
      * @param pList The list to associate the Tax Basis with
      * @param pName Name of Tax Basis
      * @throws OceanusException on error
@@ -70,7 +73,8 @@ public class MoneyWiseTaxBasis
 
     /**
      * Basic constructor.
-     * @param pList The list to associate the Tax Basis with
+     *
+     * @param pList  The list to associate the Tax Basis with
      * @param pClass Class of Tax Basis
      * @throws OceanusException on error
      */
@@ -81,7 +85,8 @@ public class MoneyWiseTaxBasis
 
     /**
      * Values constructor.
-     * @param pList The list to associate the item with
+     *
+     * @param pList   The list to associate the item with
      * @param pValues the values
      * @throws OceanusException on error
      */
@@ -97,6 +102,7 @@ public class MoneyWiseTaxBasis
 
     /**
      * Return the Tax class of the Tax Basis.
+     *
      * @return the class
      */
     public MoneyWiseTaxClass getTaxClass() {
@@ -120,6 +126,7 @@ public class MoneyWiseTaxBasis
 
     /**
      * Determine whether we this is the tax paid category.
+     *
      * @return <code>true</code> if we should add tax credits to the total, <code>false</code>
      * otherwise.
      */
@@ -139,6 +146,7 @@ public class MoneyWiseTaxBasis
 
         /**
          * Construct an empty CORE tax bucket list.
+         *
          * @param pData the DataSet for the list
          */
         public MoneyWiseTaxBasisList(final PrometheusDataSet pData) {
@@ -147,6 +155,7 @@ public class MoneyWiseTaxBasis
 
         /**
          * Constructor for a cloned List.
+         *
          * @param pSource the source List
          */
         private MoneyWiseTaxBasisList(final MoneyWiseTaxBasisList pSource) {
@@ -182,6 +191,7 @@ public class MoneyWiseTaxBasis
 
         /**
          * Add a new item to the list.
+         *
          * @param pItem item to be added
          * @return the newly added item
          */
@@ -199,6 +209,7 @@ public class MoneyWiseTaxBasis
 
         /**
          * Create a new empty element in the edit list (null-operation).
+         *
          * @return the newly added item
          */
         @Override
@@ -208,6 +219,7 @@ public class MoneyWiseTaxBasis
 
         /**
          * Obtain the type of the item.
+         *
          * @return the type of the item
          */
         public String itemType() {
@@ -216,6 +228,7 @@ public class MoneyWiseTaxBasis
 
         /**
          * Add a TaxBasis.
+         *
          * @param pTaxBasis the Name of the tax basis
          * @return the new basis
          * @throws OceanusException on error

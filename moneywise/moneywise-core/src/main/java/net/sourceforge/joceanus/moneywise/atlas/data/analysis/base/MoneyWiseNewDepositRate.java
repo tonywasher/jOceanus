@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,22 +13,22 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.atlas.data.analysis.base;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.ListIterator;
-import java.util.Map;
-
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDeposit;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDepositRate;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDepositRate.MoneyWiseDepositRateList;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.ListIterator;
+import java.util.Map;
 
 /**
  * New format of DepositRate.
@@ -51,9 +51,10 @@ public class MoneyWiseNewDepositRate {
 
     /**
      * Constructor.
-     * @param pDate the date
+     *
+     * @param pDate    the date
      * @param pDeposit the deposit
-     * @param pRate the rate
+     * @param pRate    the rate
      */
     MoneyWiseNewDepositRate(final OceanusDate pDate,
                             final MoneyWiseDeposit pDeposit,
@@ -65,6 +66,7 @@ public class MoneyWiseNewDepositRate {
 
     /**
      * Obtain the date.
+     *
      * @return the date
      */
     public OceanusDate getDate() {
@@ -73,6 +75,7 @@ public class MoneyWiseNewDepositRate {
 
     /**
      * Obtain the deposit.
+     *
      * @return the deposit
      */
     public MoneyWiseDeposit getDeposit() {
@@ -81,6 +84,7 @@ public class MoneyWiseNewDepositRate {
 
     /**
      * Obtain the rate.
+     *
      * @return the rate
      */
     public OceanusRate getRate() {
@@ -94,6 +98,7 @@ public class MoneyWiseNewDepositRate {
             extends ArrayList<MoneyWiseNewDepositRate> {
         /**
          * Constructor.
+         *
          * @param pEditSet the editSet
          */
         public MoneyWiseNewDepositRateList(final PrometheusEditSet pEditSet) {

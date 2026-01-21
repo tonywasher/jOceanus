@@ -1,5 +1,23 @@
+/*
+ * MoneyWise: Finance Application
+ * Copyright 2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
 package net.sourceforge.joceanus.moneywise.test.data.trans;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
 import net.sourceforge.joceanus.moneywise.data.builder.MoneyWiseCashCategoryBuilder;
@@ -14,7 +32,6 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrencyClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseDepositCategoryClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseLoanCategoryClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 public class MoneyWiseDataTestCategories {
     /**
@@ -248,8 +265,10 @@ public class MoneyWiseDataTestCategories {
      * TagBuilder.
      */
     private final MoneyWiseTagBuilder theTagBuilder;
+
     /**
      * Constructor.
+     *
      * @param pDataSet the dataSet
      */
     MoneyWiseDataTestCategories(final MoneyWiseDataSet pDataSet) {
@@ -265,6 +284,7 @@ public class MoneyWiseDataTestCategories {
 
     /**
      * build basic.
+     *
      * @throws OceanusException on error
      */
     public void buildBasic() throws OceanusException {
@@ -284,6 +304,7 @@ public class MoneyWiseDataTestCategories {
 
     /**
      * build Static.
+     *
      * @throws OceanusException on error
      */
     private void buildStatic() throws OceanusException {
@@ -294,6 +315,7 @@ public class MoneyWiseDataTestCategories {
 
     /**
      * build Deposits.
+     *
      * @throws OceanusException on error
      */
     private void buildDeposits() throws OceanusException {
@@ -308,6 +330,7 @@ public class MoneyWiseDataTestCategories {
 
     /**
      * build Cash.
+     *
      * @throws OceanusException on error
      */
     private void buildCash() throws OceanusException {
@@ -318,6 +341,7 @@ public class MoneyWiseDataTestCategories {
 
     /**
      * build loans.
+     *
      * @throws OceanusException on error
      */
     private void buildLoans() throws OceanusException {
@@ -331,6 +355,7 @@ public class MoneyWiseDataTestCategories {
 
     /**
      * build Trans.
+     *
      * @throws OceanusException on error
      */
     private void buildTrans() throws OceanusException {
@@ -522,6 +547,7 @@ public class MoneyWiseDataTestCategories {
 
     /**
      * build regions.
+     *
      * @throws OceanusException on error
      */
     private void buildRegions() throws OceanusException {
@@ -536,6 +562,7 @@ public class MoneyWiseDataTestCategories {
 
     /**
      * build tags.
+     *
      * @throws OceanusException on error
      */
     private void buildTransactionTags() throws OceanusException {

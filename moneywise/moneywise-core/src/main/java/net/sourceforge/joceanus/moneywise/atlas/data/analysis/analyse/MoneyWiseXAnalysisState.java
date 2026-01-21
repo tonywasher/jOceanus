@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,14 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.atlas.data.analysis.analyse;
 
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseNewDepositRate;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseNewDepositRate.MoneyWiseNewDepositRateList;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEvent;
@@ -38,11 +43,6 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice.Mone
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction.MoneyWiseTransactionList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 
 import java.util.ArrayList;
@@ -154,6 +154,7 @@ public class MoneyWiseXAnalysisState
 
     /**
      * Constructor.
+     *
      * @param pEditSet the editSet
      */
     public MoneyWiseXAnalysisState(final PrometheusEditSet pEditSet) {
@@ -187,6 +188,7 @@ public class MoneyWiseXAnalysisState
 
     /**
      * Obtain the EventList.
+     *
      * @return the list
      */
     public MoneyWiseXAnalysisEventList getEventList() {
@@ -195,6 +197,7 @@ public class MoneyWiseXAnalysisState
 
     /**
      * Build next event.
+     *
      * @return the next event (or null)
      */
     public MoneyWiseXAnalysisEvent nextEvent() {
@@ -231,6 +234,7 @@ public class MoneyWiseXAnalysisState
 
     /**
      * determine next eventType.
+     *
      * @return the next eventTupe (or null)
      */
     private MoneyWiseXAnalysisEventType nextEventType() {
@@ -398,8 +402,9 @@ public class MoneyWiseXAnalysisState
 
     /**
      * Set new price for security as part of a transaction.
+     *
      * @param pSecurity the security
-     * @param pPrice the new price
+     * @param pPrice    the new price
      */
     public void setNewPriceViaTransaction(final MoneyWiseSecurity pSecurity,
                                           final OceanusPrice pPrice) {
@@ -408,6 +413,7 @@ public class MoneyWiseXAnalysisState
 
     /**
      * Obtain the pricedBuckets iterator for a security.
+     *
      * @param pSecurity the security
      * @return the iterator
      */
@@ -418,6 +424,7 @@ public class MoneyWiseXAnalysisState
 
     /**
      * Obtain the foreignBuckets iterator for a currency.
+     *
      * @param pCurrency the currency
      * @return the iterator
      */
@@ -468,6 +475,7 @@ public class MoneyWiseXAnalysisState
 
     /**
      * Build opening balances.
+     *
      * @param pType the data type
      */
     private void buildBalances(final MoneyWiseBasicDataType pType) {

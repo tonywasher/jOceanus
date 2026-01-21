@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,11 +13,14 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.lethe.data.analysis.data;
 
-import java.util.Currency;
-
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetDirection;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
@@ -28,11 +31,8 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
+
+import java.util.Currency;
 
 /**
  * Transaction Analysis Helper.
@@ -75,6 +75,7 @@ public class MoneyWiseAnalysisTransactionHelper {
 
     /**
      * Constructor.
+     *
      * @param pData the dataSet
      */
     public MoneyWiseAnalysisTransactionHelper(final MoneyWiseDataSet pData) {
@@ -88,6 +89,7 @@ public class MoneyWiseAnalysisTransactionHelper {
 
     /**
      * Obtain transaction.
+     *
      * @return the transaction
      */
     public MoneyWiseTransaction getTransaction() {
@@ -96,6 +98,7 @@ public class MoneyWiseAnalysisTransactionHelper {
 
     /**
      * Set the transaction.
+     *
      * @param pTrans the transaction.
      */
     public void setTransaction(final MoneyWiseTransaction pTrans) {
@@ -110,6 +113,7 @@ public class MoneyWiseAnalysisTransactionHelper {
 
     /**
      * Set the security (for PortfolioXfer).
+     *
      * @param pSecurity the security.
      */
     public void setSecurity(final MoneyWiseSecurity pSecurity) {
@@ -120,6 +124,7 @@ public class MoneyWiseAnalysisTransactionHelper {
 
     /**
      * Obtain date.
+     *
      * @return the date
      */
     public OceanusDate getDate() {
@@ -128,6 +133,7 @@ public class MoneyWiseAnalysisTransactionHelper {
 
     /**
      * Obtain account.
+     *
      * @return the account
      */
     public MoneyWiseTransAsset getAccount() {
@@ -136,6 +142,7 @@ public class MoneyWiseAnalysisTransactionHelper {
 
     /**
      * Obtain partner.
+     *
      * @return the partner
      */
     public MoneyWiseTransAsset getPartner() {
@@ -144,6 +151,7 @@ public class MoneyWiseAnalysisTransactionHelper {
 
     /**
      * Obtain direction.
+     *
      * @return the direction
      */
     public MoneyWiseAssetDirection getDirection() {
@@ -152,6 +160,7 @@ public class MoneyWiseAnalysisTransactionHelper {
 
     /**
      * Obtain debit asset.
+     *
      * @return the debit asset
      */
     public MoneyWiseTransAsset getDebitAsset() {
@@ -160,6 +169,7 @@ public class MoneyWiseAnalysisTransactionHelper {
 
     /**
      * Obtain credit asset.
+     *
      * @return the credit asset
      */
     public MoneyWiseTransAsset getCreditAsset() {
@@ -168,6 +178,7 @@ public class MoneyWiseAnalysisTransactionHelper {
 
     /**
      * Obtain the category.
+     *
      * @return the category
      */
     public MoneyWiseTransCategory getCategory() {
@@ -176,6 +187,7 @@ public class MoneyWiseAnalysisTransactionHelper {
 
     /**
      * Is this a particular category class?
+     *
      * @param pClass the category class
      * @return true/false
      */
@@ -185,6 +197,7 @@ public class MoneyWiseAnalysisTransactionHelper {
 
     /**
      * Obtain the category class.
+     *
      * @return the category class
      */
     public MoneyWiseTransCategoryClass getCategoryClass() {
@@ -193,6 +206,7 @@ public class MoneyWiseAnalysisTransactionHelper {
 
     /**
      * Obtain debit amount.
+     *
      * @return the debit amount.
      */
     public OceanusMoney getDebitAmount() {
@@ -201,6 +215,7 @@ public class MoneyWiseAnalysisTransactionHelper {
 
     /**
      * Obtain local amount.
+     *
      * @return the amount.
      */
     public OceanusMoney getLocalAmount() {
@@ -209,6 +224,7 @@ public class MoneyWiseAnalysisTransactionHelper {
 
     /**
      * Obtain credit amount.
+     *
      * @return the credit amount.
      */
     public OceanusMoney getCreditAmount() {
@@ -217,6 +233,7 @@ public class MoneyWiseAnalysisTransactionHelper {
 
     /**
      * Obtain local returnedCash.
+     *
      * @return the returnedCash.
      */
     public OceanusMoney getLocalReturnedCash() {
@@ -225,6 +242,7 @@ public class MoneyWiseAnalysisTransactionHelper {
 
     /**
      * Obtain returnedCash.
+     *
      * @return the returned cash.
      */
     public OceanusMoney getReturnedCash() {
@@ -233,6 +251,7 @@ public class MoneyWiseAnalysisTransactionHelper {
 
     /**
      * Obtain tax credit.
+     *
      * @return the tax credit.
      */
     public OceanusMoney getTaxCredit() {
@@ -241,6 +260,7 @@ public class MoneyWiseAnalysisTransactionHelper {
 
     /**
      * Obtain employer national insurance.
+     *
      * @return the national insurance.
      */
     public OceanusMoney getEmployerNatIns() {
@@ -249,6 +269,7 @@ public class MoneyWiseAnalysisTransactionHelper {
 
     /**
      * Obtain employee national insurance.
+     *
      * @return the national insurance.
      */
     public OceanusMoney getEmployeeNatIns() {
@@ -257,6 +278,7 @@ public class MoneyWiseAnalysisTransactionHelper {
 
     /**
      * Obtain benefit.
+     *
      * @return the benefit.
      */
     public OceanusMoney getDeemedBenefit() {
@@ -265,6 +287,7 @@ public class MoneyWiseAnalysisTransactionHelper {
 
     /**
      * Obtain withheld.
+     *
      * @return the withheld.
      */
     public OceanusMoney getWithheld() {
@@ -273,6 +296,7 @@ public class MoneyWiseAnalysisTransactionHelper {
 
     /**
      * Obtain returnedCash Account.
+     *
      * @return the returnedCash account
      */
     public MoneyWiseTransAsset getReturnedCashAccount() {
@@ -281,6 +305,7 @@ public class MoneyWiseAnalysisTransactionHelper {
 
     /**
      * Obtain debit units.
+     *
      * @return the debit units
      */
     public OceanusUnits getDebitUnits() {
@@ -296,6 +321,7 @@ public class MoneyWiseAnalysisTransactionHelper {
 
     /**
      * Obtain credit units.
+     *
      * @return the debit units
      */
     public OceanusUnits getCreditUnits() {
@@ -306,6 +332,7 @@ public class MoneyWiseAnalysisTransactionHelper {
 
     /**
      * Obtain account delta units.
+     *
      * @return the delta units
      */
     public OceanusUnits getAccountDeltaUnits() {
@@ -314,6 +341,7 @@ public class MoneyWiseAnalysisTransactionHelper {
 
     /**
      * Obtain partner delta units.
+     *
      * @return the delta units
      */
     public OceanusUnits getPartnerDeltaUnits() {
@@ -322,6 +350,7 @@ public class MoneyWiseAnalysisTransactionHelper {
 
     /**
      * Obtain dilution.
+     *
      * @return the dilution
      */
     public OceanusRatio getDilution() {
@@ -330,6 +359,7 @@ public class MoneyWiseAnalysisTransactionHelper {
 
     /**
      * Obtain debit price.
+     *
      * @return the debit price
      */
     public OceanusPrice getDebitPrice() {
@@ -338,6 +368,7 @@ public class MoneyWiseAnalysisTransactionHelper {
 
     /**
      * Obtain credit price.
+     *
      * @return the credit price
      */
     public OceanusPrice getCreditPrice() {
@@ -346,6 +377,7 @@ public class MoneyWiseAnalysisTransactionHelper {
 
     /**
      * Obtain debit exchangeRate.
+     *
      * @return the rate
      */
     public OceanusRatio getDebitExchangeRate() {
@@ -354,6 +386,7 @@ public class MoneyWiseAnalysisTransactionHelper {
 
     /**
      * Obtain credit exchangeRate.
+     *
      * @return the rate
      */
     public OceanusRatio getCreditExchangeRate() {
@@ -362,6 +395,7 @@ public class MoneyWiseAnalysisTransactionHelper {
 
     /**
      * Obtain returnedCash exchangeRate.
+     *
      * @return the rate
      */
     public OceanusRatio getReturnedCashExchangeRate() {
@@ -370,8 +404,9 @@ public class MoneyWiseAnalysisTransactionHelper {
 
     /**
      * Convert amount to reporting currency.
+     *
      * @param pCurrency the currency
-     * @param pDate the date for the conversion
+     * @param pDate     the date for the conversion
      * @return the reporting amount
      */
     protected OceanusRatio getExchangeRate(final MoneyWiseCurrency pCurrency,
@@ -552,6 +587,7 @@ public class MoneyWiseAnalysisTransactionHelper {
 
         /**
          * Obtain account.
+         *
          * @return the account
          */
         private MoneyWiseTransAsset getAccount() {
@@ -560,6 +596,7 @@ public class MoneyWiseAnalysisTransactionHelper {
 
         /**
          * Obtain partner.
+         *
          * @return the partner
          */
         private MoneyWiseTransAsset getPartner() {
@@ -568,6 +605,7 @@ public class MoneyWiseAnalysisTransactionHelper {
 
         /**
          * Obtain direction.
+         *
          * @return the direction
          */
         private MoneyWiseAssetDirection getDirection() {
@@ -576,6 +614,7 @@ public class MoneyWiseAnalysisTransactionHelper {
 
         /**
          * Obtain debit asset.
+         *
          * @return the debit asset
          */
         private MoneyWiseTransAsset getDebitAsset() {
@@ -586,6 +625,7 @@ public class MoneyWiseAnalysisTransactionHelper {
 
         /**
          * Obtain credit asset.
+         *
          * @return the credit asset
          */
         private MoneyWiseTransAsset getCreditAsset() {
@@ -596,6 +636,7 @@ public class MoneyWiseAnalysisTransactionHelper {
 
         /**
          * Obtain returnedCash account.
+         *
          * @return the returnedCash account
          */
         private MoneyWiseTransAsset getReturnedCashAccount() {
@@ -604,6 +645,7 @@ public class MoneyWiseAnalysisTransactionHelper {
 
         /**
          * Obtain category.
+         *
          * @return the category class
          */
         private MoneyWiseTransCategory getCategory() {
@@ -612,6 +654,7 @@ public class MoneyWiseAnalysisTransactionHelper {
 
         /**
          * Is this a particular category class?
+         *
          * @param pClass the category class
          * @return true/false
          */
@@ -621,6 +664,7 @@ public class MoneyWiseAnalysisTransactionHelper {
 
         /**
          * Obtain category class?
+         *
          * @return the category class
          */
         private MoneyWiseTransCategoryClass getCategoryClass() {
@@ -629,6 +673,7 @@ public class MoneyWiseAnalysisTransactionHelper {
 
         /**
          * Obtain debit amount.
+         *
          * @return the debit amount
          */
         private OceanusMoney getDebitAmount() {
@@ -643,6 +688,7 @@ public class MoneyWiseAnalysisTransactionHelper {
 
         /**
          * Obtain local debit amount.
+         *
          * @return the local debit amount
          */
         private OceanusMoney getLocalAmount() {
@@ -651,6 +697,7 @@ public class MoneyWiseAnalysisTransactionHelper {
 
         /**
          * Obtain credit amount.
+         *
          * @return the credit amount
          */
         private OceanusMoney getCreditAmount() {
@@ -665,6 +712,7 @@ public class MoneyWiseAnalysisTransactionHelper {
 
         /**
          * Obtain local returnedCash.
+         *
          * @return the local returnedCash
          */
         private OceanusMoney getLocalReturnedCash() {
@@ -673,6 +721,7 @@ public class MoneyWiseAnalysisTransactionHelper {
 
         /**
          * Obtain returnedCash.
+         *
          * @return the returnedCash
          */
         private OceanusMoney getReturnedCash() {
@@ -683,6 +732,7 @@ public class MoneyWiseAnalysisTransactionHelper {
 
         /**
          * Obtain debit price.
+         *
          * @return the debit price
          */
         private OceanusPrice getDebitPrice() {
@@ -693,6 +743,7 @@ public class MoneyWiseAnalysisTransactionHelper {
 
         /**
          * Obtain credit price.
+         *
          * @return the credit price
          */
         private OceanusPrice getCreditPrice() {
@@ -703,6 +754,7 @@ public class MoneyWiseAnalysisTransactionHelper {
 
         /**
          * Obtain debit exchangeRate.
+         *
          * @return the rate
          */
         private OceanusRatio getDebitExchangeRate() {
@@ -717,6 +769,7 @@ public class MoneyWiseAnalysisTransactionHelper {
 
         /**
          * Obtain credit exchangeRate.
+         *
          * @return the rate
          */
         private OceanusRatio getCreditExchangeRate() {
@@ -731,6 +784,7 @@ public class MoneyWiseAnalysisTransactionHelper {
 
         /**
          * Obtain thirdParty exchangeRate.
+         *
          * @return the rate
          */
         private OceanusRatio getReturnedCashExchangeRate() {
@@ -741,6 +795,7 @@ public class MoneyWiseAnalysisTransactionHelper {
 
         /**
          * Obtain taxCredit.
+         *
          * @return the tax credit
          */
         private OceanusMoney getTaxCredit() {
@@ -751,6 +806,7 @@ public class MoneyWiseAnalysisTransactionHelper {
 
         /**
          * Obtain employer natInsurance.
+         *
          * @return the national insurance
          */
         private OceanusMoney getEmployerNatIns() {
@@ -761,6 +817,7 @@ public class MoneyWiseAnalysisTransactionHelper {
 
         /**
          * Obtain employee natInsurance.
+         *
          * @return the national insurance
          */
         private OceanusMoney getEmployeeNatIns() {
@@ -771,6 +828,7 @@ public class MoneyWiseAnalysisTransactionHelper {
 
         /**
          * Obtain benefit.
+         *
          * @return the benefit
          */
         private OceanusMoney getBenefit() {
@@ -781,6 +839,7 @@ public class MoneyWiseAnalysisTransactionHelper {
 
         /**
          * Obtain donation.
+         *
          * @return the donation
          */
         private OceanusMoney getWithheld() {
@@ -791,6 +850,7 @@ public class MoneyWiseAnalysisTransactionHelper {
 
         /**
          * Obtain account delta units.
+         *
          * @return the delta units
          */
         private OceanusUnits getAccountDeltaUnits() {
@@ -799,6 +859,7 @@ public class MoneyWiseAnalysisTransactionHelper {
 
         /**
          * Obtain partner delta units.
+         *
          * @return the partner delta units
          */
         private OceanusUnits getPartnerDeltaUnits() {
@@ -807,6 +868,7 @@ public class MoneyWiseAnalysisTransactionHelper {
 
         /**
          * Obtain dilution.
+         *
          * @return the dilution
          */
         private OceanusRatio getDilution() {
@@ -860,9 +922,10 @@ public class MoneyWiseAnalysisTransactionHelper {
 
         /**
          * Constructor.
-         * @param pTrans the transaction detail
+         *
+         * @param pTrans    the transaction detail
          * @param pCurrency the foreign currency
-         * @param pAmount the amount
+         * @param pAmount   the amount
          */
         private ForeignAccountDetail(final TransactionDetail pTrans,
                                      final MoneyWiseCurrency pCurrency,
@@ -933,8 +996,9 @@ public class MoneyWiseAnalysisTransactionHelper {
 
         /**
          * Constructor.
+         *
          * @param pCurrency the foreign currency
-         * @param pAmount the amount
+         * @param pAmount   the amount
          */
         private ForeignPartnerDetail(final MoneyWiseCurrency pCurrency,
                                      final OceanusMoney pAmount) {

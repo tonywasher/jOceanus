@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Prometheus: Application Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,15 +13,15 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.prometheus.security;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
 import net.sourceforge.joceanus.gordianknot.util.GordianGenerator;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.prometheus.exc.PrometheusSecurityException;
 import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
 
@@ -37,6 +37,7 @@ public final class PrometheusSecurityGenerator {
 
     /**
      * Create a password Manager.
+     *
      * @param pGuiFactory the GUI Factory
      * @return the password Manager
      * @throws OceanusException on error
@@ -47,7 +48,8 @@ public final class PrometheusSecurityGenerator {
 
     /**
      * Create a password Manager.
-     * @param pGuiFactory the GUI Factory
+     *
+     * @param pGuiFactory      the GUI Factory
      * @param pSecurityFactory the securityFactory
      * @return the password Manager
      * @throws OceanusException on error
@@ -59,7 +61,8 @@ public final class PrometheusSecurityGenerator {
 
     /**
      * Create a password Manager.
-     * @param pGuiFactory the GUI Factory
+     *
+     * @param pGuiFactory  the GUI Factory
      * @param pFactoryType the factory type
      * @return the password Manager
      * @throws OceanusException on error
@@ -71,9 +74,10 @@ public final class PrometheusSecurityGenerator {
 
     /**
      * Create a password Manager.
-     * @param pGuiFactory the GUI Factory
+     *
+     * @param pGuiFactory  the GUI Factory
      * @param pFactoryType the factory type
-     * @param pLockSpec the passwordLockSpec
+     * @param pLockSpec    the passwordLockSpec
      * @return the password Manager
      * @throws OceanusException on error
      */
@@ -91,8 +95,9 @@ public final class PrometheusSecurityGenerator {
 
     /**
      * Create a password Manager.
-     * @param pGuiFactory the GUI Factory
-     * @param pFactoryType the factoryType
+     *
+     * @param pGuiFactory     the GUI Factory
+     * @param pFactoryType    the factoryType
      * @param pSecurityPhrase the security phrase
      * @return the password Manager
      * @throws OceanusException on error
@@ -105,9 +110,10 @@ public final class PrometheusSecurityGenerator {
 
     /**
      * Create a password Manager.
-     * @param pGuiFactory the GUI Factory
-     * @param pLockSpec the passwordLockSpec
-     * @param pFactoryType the factoryType
+     *
+     * @param pGuiFactory     the GUI Factory
+     * @param pLockSpec       the passwordLockSpec
+     * @param pFactoryType    the factoryType
      * @param pSecurityPhrase the security phrase
      * @return the password Manager
      * @throws OceanusException on error
@@ -127,9 +133,10 @@ public final class PrometheusSecurityGenerator {
 
     /**
      * Create a password Manager.
-     * @param pGuiFactory the GUI Factory
+     *
+     * @param pGuiFactory      the GUI Factory
      * @param pSecurityFactory the securityFactory
-     * @param pLockSpec the passwordLockSpec
+     * @param pLockSpec        the passwordLockSpec
      * @return the password Manager
      * @throws OceanusException on error
      */

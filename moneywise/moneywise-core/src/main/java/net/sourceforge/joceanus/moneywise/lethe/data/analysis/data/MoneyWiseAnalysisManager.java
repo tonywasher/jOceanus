@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,15 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.lethe.data.analysis.data;
 
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataMap;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
@@ -35,12 +41,6 @@ import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAn
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisSecurityAttr;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisTaxBasisAttr;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisTransAttr;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
-import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
-import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -89,6 +89,7 @@ public class MoneyWiseAnalysisManager
 
     /**
      * Constructor.
+     *
      * @param pAnalysis the new analysis
      */
     public MoneyWiseAnalysisManager(final MoneyWiseAnalysis pAnalysis) {
@@ -116,6 +117,7 @@ public class MoneyWiseAnalysisManager
 
     /**
      * Is the analysis manager idle?
+     *
      * @return true/false
      */
     public boolean isIdle() {
@@ -124,6 +126,7 @@ public class MoneyWiseAnalysisManager
 
     /**
      * Obtain the base analysis.
+     *
      * @return the base analysis
      */
     public MoneyWiseAnalysis getAnalysis() {
@@ -132,6 +135,7 @@ public class MoneyWiseAnalysisManager
 
     /**
      * Do we have a foreign currency?
+     *
      * @return true/false
      */
     public Boolean haveForeignCurrency() {
@@ -140,6 +144,7 @@ public class MoneyWiseAnalysisManager
 
     /**
      * Do we have active securities?
+     *
      * @return true/false
      */
     public Boolean haveActiveSecurities() {
@@ -148,6 +153,7 @@ public class MoneyWiseAnalysisManager
 
     /**
      * Obtain an analysis for a date.
+     *
      * @param pDate the date for the analysis.
      * @return the analysis
      */
@@ -175,6 +181,7 @@ public class MoneyWiseAnalysisManager
 
     /**
      * Obtain an analysis for a range.
+     *
      * @param pRange the date range for the analysis.
      * @return the analysis
      */
@@ -207,6 +214,7 @@ public class MoneyWiseAnalysisManager
 
     /**
      * Produce Totals for an analysis.
+     *
      * @param pAnalysis the analysis.
      */
     private void produceTotals(final MoneyWiseAnalysis pAnalysis) {
@@ -262,6 +270,7 @@ public class MoneyWiseAnalysisManager
 
     /**
      * Check totals for an analysis.
+     *
      * @param pAnalysis the analysis to check
      */
     private static void checkTotals(final MoneyWiseAnalysis pAnalysis) {

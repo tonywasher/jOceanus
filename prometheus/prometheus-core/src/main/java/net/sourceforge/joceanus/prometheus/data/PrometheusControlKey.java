@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Prometheus: Application Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,12 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.prometheus.data;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory.GordianFactoryLock;
 import net.sourceforge.joceanus.gordianknot.util.GordianUtilities;
@@ -24,9 +27,6 @@ import net.sourceforge.joceanus.metis.data.MetisDataResource;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionedSet;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.data.PrometheusControlKeySet.PrometheusControlKeySetList;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet.PrometheusCryptographyDataType;
 import net.sourceforge.joceanus.prometheus.exc.PrometheusDataException;
@@ -39,6 +39,7 @@ import java.util.List;
 /**
  * ControlKey definition and list. The Control Key represents the passwordHash that controls
  * securing of the dataKeys. It maintains a map of the associated DataKeys.
+ *
  * @author Tony Washer
  */
 public final class PrometheusControlKey
@@ -85,7 +86,8 @@ public final class PrometheusControlKey
 
     /**
      * Copy constructor.
-     * @param pList the List to add to
+     *
+     * @param pList   the List to add to
      * @param pSource the source key to copy
      */
     private PrometheusControlKey(final PrometheusControlKeyList pList,
@@ -96,7 +98,8 @@ public final class PrometheusControlKey
 
     /**
      * Values constructor.
-     * @param pList the List to add to
+     *
+     * @param pList   the List to add to
      * @param pValues the values constructor
      * @throws OceanusException on error
      */
@@ -147,6 +150,7 @@ public final class PrometheusControlKey
      * Constructor for a new ControlKey.
      * <p>
      * This will create a new DataKeySet with a new set of DataKeys.
+     *
      * @param pList the list to which to add the key to
      * @throws OceanusException on error
      */
@@ -184,6 +188,7 @@ public final class PrometheusControlKey
      * Constructor for a new ControlKey with the same password.
      * <p>
      * This will create a new DataKeySet with a new cloned set of DataKeys.
+     *
      * @param pKey the key to copy
      * @throws OceanusException on error
      */
@@ -223,8 +228,9 @@ public final class PrometheusControlKey
         return FIELD_DEFS;
     }
 
-   /**
+    /**
      * Obtain the dataKeySetCache.
+     *
      * @return the dataKeySets
      */
     private ControlKeySetCache getControlKeySets() {
@@ -233,6 +239,7 @@ public final class PrometheusControlKey
 
     /**
      * Get the LockBytes.
+     *
      * @return the hash bytes
      */
     public byte[] getLockBytes() {
@@ -241,6 +248,7 @@ public final class PrometheusControlKey
 
     /**
      * Get the factoryLock.
+     *
      * @return the factoryLock
      */
     public GordianFactoryLock getFactoryLock() {
@@ -249,6 +257,7 @@ public final class PrometheusControlKey
 
     /**
      * Get the securityFactory.
+     *
      * @return the securityFactory
      */
     public GordianFactory getSecurityFactory() {
@@ -258,6 +267,7 @@ public final class PrometheusControlKey
 
     /**
      * Get the CreationDate.
+     *
      * @return the creationDate
      */
     public OceanusDate getCreationDate() {
@@ -266,6 +276,7 @@ public final class PrometheusControlKey
 
     /**
      * Set the FactoryLock Bytes.
+     *
      * @param pValue the factoryLock bytes
      * @throws OceanusException on error
      */
@@ -275,6 +286,7 @@ public final class PrometheusControlKey
 
     /**
      * Set the FactoryLock.
+     *
      * @param pValue the factoryLock
      * @throws OceanusException on error
      */
@@ -284,6 +296,7 @@ public final class PrometheusControlKey
 
     /**
      * Set the CreationDate.
+     *
      * @param pValue the creationDate
      * @throws OceanusException on error
      */
@@ -303,6 +316,7 @@ public final class PrometheusControlKey
 
     /**
      * Obtain the next DataKeySet.
+     *
      * @return the next dataKeySet
      */
     PrometheusDataKeySet getNextDataKeySet() {
@@ -317,6 +331,7 @@ public final class PrometheusControlKey
 
     /**
      * Allocate a new ControlKeySet.
+     *
      * @param pData the DataSet
      * @throws OceanusException on error
      */
@@ -351,6 +366,7 @@ public final class PrometheusControlKey
 
     /**
      * Update factoryLock.
+     *
      * @param pSource the source of the data
      * @throws OceanusException on error
      */
@@ -376,6 +392,7 @@ public final class PrometheusControlKey
 
     /**
      * Register ControlKeySet.
+     *
      * @param pKeySet the ControlKeySet to register
      */
     void registerControlKeySet(final PrometheusControlKeySet pKeySet) {
@@ -395,6 +412,7 @@ public final class PrometheusControlKey
 
         /**
          * Construct an empty CORE ControlKey list.
+         *
          * @param pData the DataSet for the list
          */
         protected PrometheusControlKeyList(final PrometheusDataSet pData) {
@@ -403,7 +421,8 @@ public final class PrometheusControlKey
 
         /**
          * Construct an empty generic ControlKey list.
-         * @param pData the DataSet for the list
+         *
+         * @param pData  the DataSet for the list
          * @param pStyle the style of the list
          */
         protected PrometheusControlKeyList(final PrometheusDataSet pData,
@@ -413,6 +432,7 @@ public final class PrometheusControlKey
 
         /**
          * Constructor for a cloned List.
+         *
          * @param pSource the source List
          */
         private PrometheusControlKeyList(final PrometheusControlKeyList pSource) {
@@ -495,6 +515,7 @@ public final class PrometheusControlKey
 
         /**
          * Create a new ControlKey (with associated DataKeys).
+         *
          * @return the new item
          * @throws OceanusException on error
          */
@@ -509,6 +530,7 @@ public final class PrometheusControlKey
 
         /**
          * Add a cloned ControlKey (with associated DataKeys).
+         *
          * @param pSource the source key
          * @return the new item
          * @throws OceanusException on error
@@ -524,6 +546,7 @@ public final class PrometheusControlKey
 
         /**
          * Initialise Security from a DataBase for a SpreadSheet load.
+         *
          * @param pDatabase the DataSet for the Database
          * @throws OceanusException on error
          */
@@ -570,6 +593,7 @@ public final class PrometheusControlKey
 
         /**
          * Clone ControlKey from dataBase.
+         *
          * @param pControlKey the ControlKey to clone
          * @return the new control key
          * @throws OceanusException on error
@@ -661,6 +685,7 @@ public final class PrometheusControlKey
 
         /**
          * Register the KeySet.
+         *
          * @param pKeySet the KeySet to register
          */
         private void registerControlKeySet(final PrometheusControlKeySet pKeySet) {
@@ -678,6 +703,7 @@ public final class PrometheusControlKey
 
         /**
          * Get next DataKeySet.
+         *
          * @return the next KeySet
          */
         private PrometheusDataKeySet getNextDataKeySet() {
@@ -712,8 +738,9 @@ public final class PrometheusControlKey
 
         /**
          * Clone controlKeySet Cache from a DataBase.
+         *
          * @param pControlKey the ControlKey to clone
-         * @param pKeySets the ControlKeySetList
+         * @param pKeySets    the ControlKeySetList
          * @return the new ControlKeySetCache
          * @throws OceanusException on error
          */

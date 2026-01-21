@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,16 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.data.basic;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateFormatter;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataList;
@@ -27,13 +34,6 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency.MoneyWiseCurrencyList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticResource;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateFormatter;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInstanceMap;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataList;
@@ -90,6 +90,7 @@ public class MoneyWiseExchangeRate
 
     /**
      * Copy Constructor.
+     *
      * @param pList the list
      * @param pRate The Rate to copy
      */
@@ -101,6 +102,7 @@ public class MoneyWiseExchangeRate
 
     /**
      * Edit Constructor.
+     *
      * @param pList the list
      */
     public MoneyWiseExchangeRate(final MoneyWiseExchangeRateBaseList<? extends MoneyWiseExchangeRate> pList) {
@@ -109,7 +111,8 @@ public class MoneyWiseExchangeRate
 
     /**
      * Values constructor.
-     * @param pList the List to add to
+     *
+     * @param pList   the List to add to
      * @param pValues the values constructor
      * @throws OceanusException on error
      */
@@ -166,6 +169,7 @@ public class MoneyWiseExchangeRate
 
     /**
      * Edit Constructor.
+     *
      * @param pList the list
      */
     public MoneyWiseExchangeRate(final MoneyWiseExchangeRateList pList) {
@@ -221,6 +225,7 @@ public class MoneyWiseExchangeRate
 
     /**
      * Obtain Date.
+     *
      * @return the name
      */
     public OceanusDate getDate() {
@@ -229,6 +234,7 @@ public class MoneyWiseExchangeRate
 
     /**
      * Obtain From currency.
+     *
      * @return the currency
      */
     public MoneyWiseCurrency getFromCurrency() {
@@ -237,6 +243,7 @@ public class MoneyWiseExchangeRate
 
     /**
      * Obtain fromCurrencyId.
+     *
      * @return the fromCurrencyId
      */
     public Integer getFromCurrencyId() {
@@ -248,6 +255,7 @@ public class MoneyWiseExchangeRate
 
     /**
      * Obtain FromCurrencyName.
+     *
      * @return the fromCurrencyName
      */
     public String getFromCurrencyName() {
@@ -259,6 +267,7 @@ public class MoneyWiseExchangeRate
 
     /**
      * Obtain To currency.
+     *
      * @return the currency
      */
     public MoneyWiseCurrency getToCurrency() {
@@ -267,6 +276,7 @@ public class MoneyWiseExchangeRate
 
     /**
      * Obtain toCurrencyId.
+     *
      * @return the toCurrencyId
      */
     public Integer getToCurrencyId() {
@@ -278,6 +288,7 @@ public class MoneyWiseExchangeRate
 
     /**
      * Obtain ToCurrencyName.
+     *
      * @return the toCurrencyName
      */
     public String getToCurrencyName() {
@@ -289,6 +300,7 @@ public class MoneyWiseExchangeRate
 
     /**
      * Obtain ExchangeRate.
+     *
      * @return the rate
      */
     public OceanusRatio getExchangeRate() {
@@ -297,6 +309,7 @@ public class MoneyWiseExchangeRate
 
     /**
      * Obtain InverseRate.
+     *
      * @return the inverse rate
      */
     public OceanusRatio getInverseRate() {
@@ -308,6 +321,7 @@ public class MoneyWiseExchangeRate
 
     /**
      * Set date value.
+     *
      * @param pValue the value
      */
     private void setValueDate(final OceanusDate pValue) {
@@ -316,6 +330,7 @@ public class MoneyWiseExchangeRate
 
     /**
      * Set from currency value.
+     *
      * @param pValue the value
      */
     private void setValueFromCurrency(final MoneyWiseCurrency pValue) {
@@ -324,6 +339,7 @@ public class MoneyWiseExchangeRate
 
     /**
      * Set from currency value.
+     *
      * @param pValue the value
      */
     private void setValueFromCurrency(final Integer pValue) {
@@ -332,6 +348,7 @@ public class MoneyWiseExchangeRate
 
     /**
      * Set from currency value.
+     *
      * @param pValue the value
      */
     private void setValueFromCurrency(final String pValue) {
@@ -340,6 +357,7 @@ public class MoneyWiseExchangeRate
 
     /**
      * Set to currency value.
+     *
      * @param pValue the value
      */
     private void setValueToCurrency(final MoneyWiseCurrency pValue) {
@@ -348,6 +366,7 @@ public class MoneyWiseExchangeRate
 
     /**
      * Set to currency value.
+     *
      * @param pValue the value
      */
     private void setValueToCurrency(final Integer pValue) {
@@ -356,6 +375,7 @@ public class MoneyWiseExchangeRate
 
     /**
      * Set to currency value.
+     *
      * @param pValue the value
      */
     private void setValueToCurrency(final String pValue) {
@@ -364,6 +384,7 @@ public class MoneyWiseExchangeRate
 
     /**
      * Set exchange rate value.
+     *
      * @param pValue the value
      */
     protected void setValueExchangeRate(final OceanusRatio pValue) {
@@ -372,6 +393,7 @@ public class MoneyWiseExchangeRate
 
     /**
      * Set exchange rate value.
+     *
      * @param pValue the value
      */
     private void setValueExchangeRate(final String pValue) {
@@ -430,6 +452,7 @@ public class MoneyWiseExchangeRate
 
     /**
      * Set a new date.
+     *
      * @param pDate the new date
      */
     public void setDate(final OceanusDate pDate) {
@@ -438,6 +461,7 @@ public class MoneyWiseExchangeRate
 
     /**
      * Set a new from currency.
+     *
      * @param pCurrency the new from currency
      */
     public void setFromCurrency(final MoneyWiseCurrency pCurrency) {
@@ -446,6 +470,7 @@ public class MoneyWiseExchangeRate
 
     /**
      * Set a new to currency.
+     *
      * @param pCurrency the new to currency
      */
     public void setToCurrency(final MoneyWiseCurrency pCurrency) {
@@ -454,6 +479,7 @@ public class MoneyWiseExchangeRate
 
     /**
      * Set a new exchange rate.
+     *
      * @param pRate the new rate
      */
     public void setExchangeRate(final OceanusRatio pRate) {
@@ -469,6 +495,7 @@ public class MoneyWiseExchangeRate
 
     /**
      * Update base rate from an edited rate.
+     *
      * @param pRate the edited rate
      * @return whether changes have been made
      */
@@ -516,6 +543,7 @@ public class MoneyWiseExchangeRate
 
     /**
      * Price List.
+     *
      * @param <T> the data type
      */
     public abstract static class MoneyWiseExchangeRateBaseList<T extends MoneyWiseExchangeRate>
@@ -529,8 +557,9 @@ public class MoneyWiseExchangeRate
 
         /**
          * Construct an empty CORE Price list.
-         * @param pData the DataSet for the list
-         * @param pClass the class of the item
+         *
+         * @param pData     the DataSet for the list
+         * @param pClass    the class of the item
          * @param pItemType the item type
          */
         protected MoneyWiseExchangeRateBaseList(final MoneyWiseDataSet pData,
@@ -542,6 +571,7 @@ public class MoneyWiseExchangeRate
 
         /**
          * Constructor for a cloned List.
+         *
          * @param pSource the source List
          */
         protected MoneyWiseExchangeRateBaseList(final MoneyWiseExchangeRateBaseList<T> pSource) {
@@ -584,6 +614,7 @@ public class MoneyWiseExchangeRate
 
         /**
          * Construct an empty CORE ExchangeRate list.
+         *
          * @param pData the DataSet for the list
          */
         protected MoneyWiseExchangeRateList(final MoneyWiseDataSet pData) {
@@ -592,6 +623,7 @@ public class MoneyWiseExchangeRate
 
         /**
          * Constructor for a cloned List.
+         *
          * @param pSource the source List
          */
         protected MoneyWiseExchangeRateList(final MoneyWiseExchangeRateList pSource) {
@@ -605,6 +637,7 @@ public class MoneyWiseExchangeRate
 
         /**
          * Obtain reporting currency.
+         *
          * @return the reporting currency
          */
         public MoneyWiseCurrency getReportingCurrency() {
@@ -635,6 +668,7 @@ public class MoneyWiseExchangeRate
 
         /**
          * Add a new item to the core list.
+         *
          * @param pRate item
          * @return the newly added item
          */
@@ -652,6 +686,7 @@ public class MoneyWiseExchangeRate
 
         /**
          * Add a new item to the edit list.
+         *
          * @return the new item
          */
         @Override
@@ -682,9 +717,10 @@ public class MoneyWiseExchangeRate
 
         /**
          * Convert a monetary value to the currency.
-         * @param pValue the value to convert
+         *
+         * @param pValue    the value to convert
          * @param pCurrency the required currency
-         * @param pDate the date of the conversion
+         * @param pDate     the date of the conversion
          * @return the converted value
          */
         public OceanusMoney convertCurrency(final OceanusMoney pValue,
@@ -726,8 +762,9 @@ public class MoneyWiseExchangeRate
 
         /**
          * Find the exchange rate.
+         *
          * @param pCurrency the currency to find
-         * @param pDate the date to find the exchange rate for
+         * @param pDate     the date to find the exchange rate for
          * @return the exchange rate
          */
         private OceanusRatio findRate(final MoneyWiseCurrency pCurrency,
@@ -738,6 +775,7 @@ public class MoneyWiseExchangeRate
 
         /**
          * Set the default currency.
+         *
          * @param pCurrency the new default currency
          */
         public void setReportingCurrency(final MoneyWiseCurrency pCurrency) {
@@ -843,6 +881,7 @@ public class MoneyWiseExchangeRate
 
         /**
          * Obtain mapOfMaps.
+         *
          * @return the map
          */
         private Map<MoneyWiseCurrency, Map<OceanusDate, Integer>> getMapOfMaps() {
@@ -851,6 +890,7 @@ public class MoneyWiseExchangeRate
 
         /**
          * Obtain mapOfRates.
+         *
          * @return the map
          */
         private Map<MoneyWiseCurrency, MoneyWiseRateList> getMapOfRates() {
@@ -893,6 +933,7 @@ public class MoneyWiseExchangeRate
 
         /**
          * Check validity of Rate.
+         *
          * @param pItem the rate
          * @return true/false
          */
@@ -912,8 +953,9 @@ public class MoneyWiseExchangeRate
 
         /**
          * Check availability of date for a currency.
+         *
          * @param pCurrency the currency
-         * @param pDate the key to look up
+         * @param pDate     the key to look up
          * @return true/false
          */
         public boolean availableDate(final MoneyWiseCurrency pCurrency,
@@ -926,8 +968,9 @@ public class MoneyWiseExchangeRate
 
         /**
          * Obtain rate for date.
+         *
          * @param pCurrency the currency
-         * @param pDate the date
+         * @param pDate     the date
          * @return the latest rate for the date.
          */
         public OceanusRatio getRateForDate(final MoneyWiseCurrency pCurrency,
@@ -956,8 +999,9 @@ public class MoneyWiseExchangeRate
 
         /**
          * Obtain rates for range.
+         *
          * @param pCurrency the currency
-         * @param pRange the date range
+         * @param pRange    the date range
          * @return the two deep array of rates for the range.
          */
         public OceanusRatio[] getRatesForRange(final MoneyWiseCurrency pCurrency,
@@ -997,11 +1041,12 @@ public class MoneyWiseExchangeRate
 
             /* Return the rates */
             return new OceanusRatio[]
-                    { myFirst, myLatest };
+                    {myFirst, myLatest};
         }
 
         /**
          * Obtain rateList cursor.
+         *
          * @param pCurrency the currency
          * @return the latest rate for the date.
          */
@@ -1042,6 +1087,7 @@ public class MoneyWiseExchangeRate
 
             /**
              * Constructor.
+             *
              * @param pCurrency the currency
              */
             private MoneyWiseRateList(final MoneyWiseCurrency pCurrency) {

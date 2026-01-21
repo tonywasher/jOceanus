@@ -1,22 +1,22 @@
-/*******************************************************************************
+/*
  * Themis: Java Project Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package net.sourceforge.joceanus.themis.lethe.ui;
 
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.control.TethysUIHTMLManager;
 import net.sourceforge.joceanus.tethys.api.control.TethysUISplitTreeManager;
@@ -69,9 +69,9 @@ public class ThemisSourcePanel {
      * The Allowed File children.
      */
     private static final Class<?>[] FILE_CHILDREN = {
-        ThemisAnalysisClass.class,
-        ThemisAnalysisInterface.class,
-        ThemisAnalysisEnum.class
+            ThemisAnalysisClass.class,
+            ThemisAnalysisInterface.class,
+            ThemisAnalysisEnum.class
     };
 
     /**
@@ -148,6 +148,7 @@ public class ThemisSourcePanel {
 
     /**
      * Obtain the component.
+     *
      * @return the component
      */
     public TethysUIComponent getComponent() {
@@ -156,6 +157,7 @@ public class ThemisSourcePanel {
 
     /**
      * Get NextId.
+     *
      * @return the next id
      */
     static int getNextId() {
@@ -164,6 +166,7 @@ public class ThemisSourcePanel {
 
     /**
      * Initialise tree.
+     *
      * @param pProject the project
      */
     void initialiseTree(final ThemisAnalysisProject pProject) {
@@ -185,8 +188,9 @@ public class ThemisSourcePanel {
 
     /**
      * Create child entries tree.
+     *
      * @param pParent the parent
-     * @param pChild the child
+     * @param pChild  the child
      */
     void createChildEntries(final TethysUITreeItem<ThemisSourceEntry> pParent,
                             final ThemisAnalysisElement pChild) {
@@ -208,6 +212,7 @@ public class ThemisSourcePanel {
 
     /**
      * Derive list of children for an element.
+     *
      * @param pElement the project
      * @return the list of children
      */
@@ -225,19 +230,19 @@ public class ThemisSourcePanel {
             return allowedIterator(myFile, FILE_CHILDREN);
         }
         if (pElement instanceof ThemisAnalysisClass
-            || pElement instanceof ThemisAnalysisAnonClass
-            || pElement instanceof ThemisAnalysisInterface
-            || pElement instanceof ThemisAnalysisEnum) {
+                || pElement instanceof ThemisAnalysisAnonClass
+                || pElement instanceof ThemisAnalysisInterface
+                || pElement instanceof ThemisAnalysisEnum) {
             return allowedIterator((ThemisAnalysisObject) pElement, CLASS_CHILDREN);
         }
         if (pElement instanceof ThemisAnalysisMethod
-            || pElement instanceof ThemisAnalysisLambda
-            || pElement instanceof ThemisAnalysisBlock) {
+                || pElement instanceof ThemisAnalysisLambda
+                || pElement instanceof ThemisAnalysisBlock) {
             return allowedIterator((ThemisAnalysisContainer) pElement, CODE_CHILDREN);
         }
         if (pElement instanceof ThemisAnalysisFor
-            || pElement instanceof ThemisAnalysisWhile
-            || pElement instanceof ThemisAnalysisDoWhile) {
+                || pElement instanceof ThemisAnalysisWhile
+                || pElement instanceof ThemisAnalysisDoWhile) {
             return allowedIterator((ThemisAnalysisContainer) pElement, CODE_CHILDREN);
         }
         if (pElement instanceof ThemisAnalysisTry myTry) {
@@ -268,6 +273,7 @@ public class ThemisSourcePanel {
 
     /**
      * Derive list of children for a project.
+     *
      * @param pProject the project
      * @return the list of children
      */
@@ -277,6 +283,7 @@ public class ThemisSourcePanel {
 
     /**
      * Derive list of children for a module.
+     *
      * @param pModule the module
      * @return the list of children
      */
@@ -286,6 +293,7 @@ public class ThemisSourcePanel {
 
     /**
      * Derive list of children for a package.
+     *
      * @param pPackage the package
      * @return the list of children
      */
@@ -295,8 +303,9 @@ public class ThemisSourcePanel {
 
     /**
      * Derive list of children for a container.
+     *
      * @param pContainer the container
-     * @param pAllowed the allowed array.
+     * @param pAllowed   the allowed array.
      * @return the list of children
      */
     private static Iterator<ThemisAnalysisElement> allowedIterator(final ThemisAnalysisContainer pContainer,
@@ -306,6 +315,7 @@ public class ThemisSourcePanel {
 
     /**
      * Derive list of children for a try.
+     *
      * @param pTry the try
      * @return the list of children
      */
@@ -318,13 +328,14 @@ public class ThemisSourcePanel {
         }
         final ThemisAnalysisFinally myFinally = pTry.getFinally();
         if (myFinally != null) {
-            myIterator = new ThemisIteratorChain<>(myIterator,  Collections.singleton((ThemisAnalysisElement) myFinally).iterator());
+            myIterator = new ThemisIteratorChain<>(myIterator, Collections.singleton((ThemisAnalysisElement) myFinally).iterator());
         }
         return myIterator;
     }
 
     /**
      * Derive list of children for an if.
+     *
      * @param pIf the if
      * @return the list of children
      */
@@ -332,7 +343,7 @@ public class ThemisSourcePanel {
         Iterator<ThemisAnalysisElement> myIterator = pIf.getContents().stream().filter(e -> filterAllowed(e, CODE_CHILDREN)).iterator();
         ThemisAnalysisElse myElse = pIf.getElse();
         while (myElse != null) {
-            myIterator = new ThemisIteratorChain<>(myIterator,  Collections.singleton((ThemisAnalysisElement) myElse).iterator());
+            myIterator = new ThemisIteratorChain<>(myIterator, Collections.singleton((ThemisAnalysisElement) myElse).iterator());
             myElse = myElse.getElse();
         }
         return myIterator;
@@ -340,6 +351,7 @@ public class ThemisSourcePanel {
 
     /**
      * Derive list of children for a field.
+     *
      * @param pField the field
      * @return the list of children
      */
@@ -349,6 +361,7 @@ public class ThemisSourcePanel {
 
     /**
      * Derive list of children for a statement.
+     *
      * @param pStatement the statement
      * @return the list of children
      */
@@ -361,6 +374,7 @@ public class ThemisSourcePanel {
 
     /**
      * Filter allowed objects.
+     *
      * @param pElement the element
      * @param pAllowed the allowed array.
      * @return allowedd true/false

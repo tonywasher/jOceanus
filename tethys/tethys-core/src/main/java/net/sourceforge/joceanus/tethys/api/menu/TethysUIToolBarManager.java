@@ -1,26 +1,26 @@
-/*******************************************************************************
+/*
  * Tethys: GUI Utilities
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package net.sourceforge.joceanus.tethys.api.menu;
 
-import net.sourceforge.joceanus.oceanus.event.OceanusEvent.OceanusEventListener;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEvent.OceanusEventListener;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
-import net.sourceforge.joceanus.tethys.api.base.TethysUIIconId;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIIconId;
 
 /**
  * ToolBar Manager.
@@ -36,19 +36,22 @@ public interface TethysUIToolBarManager
 
     /**
      * Obtain icon size.
+     *
      * @return the size
      */
     int getIconSize();
 
     /**
      * Set the icon size.
+     *
      * @param pSize the size to set
      */
     void setIconSize(int pSize);
 
     /**
      * Set visible state for element.
-     * @param pId the id of the element
+     *
+     * @param pId      the id of the element
      * @param pVisible true/false
      */
     void setVisible(TethysUIToolBarId pId,
@@ -56,7 +59,8 @@ public interface TethysUIToolBarManager
 
     /**
      * Set enabled state for element.
-     * @param pId the id of the element
+     *
+     * @param pId      the id of the element
      * @param pEnabled true/false
      */
     void setEnabled(TethysUIToolBarId pId,
@@ -64,8 +68,9 @@ public interface TethysUIToolBarManager
 
     /**
      * Configure Icon.
-     * @param pId the IconId
-     * @param pText the item Text
+     *
+     * @param pId       the IconId
+     * @param pText     the item Text
      * @param pListener the item listener
      */
     void newIcon(TethysUIToolBarId pId,
@@ -74,6 +79,7 @@ public interface TethysUIToolBarManager
 
     /**
      * Add a new Icon element.
+     *
      * @param pId the id of the element
      * @return the new element
      */
@@ -86,6 +92,7 @@ public interface TethysUIToolBarManager
 
     /**
      * Look up icon.
+     *
      * @param pId the id of the element
      * @return the subMenu
      */
@@ -98,30 +105,35 @@ public interface TethysUIToolBarManager
             extends OceanusEventProvider<TethysUIEvent> {
         /**
          * Set text for icon.
+         *
          * @param pText the text
          */
         void setText(String pText);
 
         /**
          * Set toolTip for icon.
+         *
          * @param pTip the toolTip
          */
         void setToolTip(String pTip);
 
         /**
          * Obtain the id.
+         *
          * @return the id
          */
         TethysUIToolBarId getId();
 
         /**
          * Is the icon enabled?
+         *
          * @return true/false
          */
         boolean isEnabled();
 
         /**
          * Set the enabled state of the menu.
+         *
          * @param pEnabled true/false
          */
         void setEnabled(boolean pEnabled);

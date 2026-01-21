@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Metis: Java Data Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,11 +13,11 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.metis.field;
 
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
 
 /**
  * Simple class to convert a string into a FieldId.
@@ -31,6 +31,7 @@ public class MetisFieldSimpleId
 
     /**
      * Constructor.
+     *
      * @param pId the Id
      */
     public MetisFieldSimpleId(final String pId) {
@@ -44,13 +45,14 @@ public class MetisFieldSimpleId
 
     /**
      * Convert a resourceId to fieldId.
+     *
      * @param pId the resourceId
      * @return the fieldId
      */
     public static MetisDataFieldId convertResource(final OceanusBundleId pId) {
         return pId instanceof MetisDataFieldId myId
-                                               ? myId
-                                               : new MetisFieldSimpleId(pId.getValue());
+                ? myId
+                : new MetisFieldSimpleId(pId.getValue());
     }
 
     @Override

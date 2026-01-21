@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,10 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets;
 
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
@@ -25,7 +26,6 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDeposit;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDepositCategory;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 
 import java.util.Comparator;
 import java.util.Iterator;
@@ -60,6 +60,7 @@ public final class MoneyWiseXAnalysisDepositCategoryBucket
 
     /**
      * Constructor.
+     *
      * @param pCurrency the currency
      * @param pCategory the account category
      */
@@ -93,6 +94,7 @@ public final class MoneyWiseXAnalysisDepositCategoryBucket
 
     /**
      * Is the bucket active?
+     *
      * @return true/false
      */
     public boolean isActive() {
@@ -101,6 +103,7 @@ public final class MoneyWiseXAnalysisDepositCategoryBucket
 
     /**
      * Update active flag for Deposit Bucket.
+     *
      * @param pBucket the Deposit bucket
      */
     void updateActive(final MoneyWiseXAnalysisDepositBucket pBucket) {
@@ -109,6 +112,7 @@ public final class MoneyWiseXAnalysisDepositCategoryBucket
 
     /**
      * Update active flag for Deposit Category Bucket.
+     *
      * @param pBucket the Deposit category bucket
      */
     void updateActive(final MoneyWiseXAnalysisDepositCategoryBucket pBucket) {
@@ -160,6 +164,7 @@ public final class MoneyWiseXAnalysisDepositCategoryBucket
 
         /**
          * Construct a top-level List.
+         *
          * @param pAnalysis the analysis
          */
         MoneyWiseXAnalysisDepositCategoryBucketList(final MoneyWiseXAnalysis pAnalysis) {
@@ -188,6 +193,7 @@ public final class MoneyWiseXAnalysisDepositCategoryBucket
 
         /**
          * Obtain item by id.
+         *
          * @param pId the id to lookup
          * @return the item (or null if not present)
          */
@@ -198,6 +204,7 @@ public final class MoneyWiseXAnalysisDepositCategoryBucket
 
         /**
          * Obtain the Analysis.
+         *
          * @return the analysis
          */
         public MoneyWiseXAnalysis getAnalysis() {
@@ -206,6 +213,7 @@ public final class MoneyWiseXAnalysisDepositCategoryBucket
 
         /**
          * Obtain the Totals.
+         *
          * @return the totals
          */
         public MoneyWiseXAnalysisDepositCategoryBucket getTotals() {
@@ -214,6 +222,7 @@ public final class MoneyWiseXAnalysisDepositCategoryBucket
 
         /**
          * Do we have a foreign currency?
+         *
          * @return true/false
          */
         public Boolean haveForeignCurrency() {
@@ -222,6 +231,7 @@ public final class MoneyWiseXAnalysisDepositCategoryBucket
 
         /**
          * Allocate the Totals CategoryBucket.
+         *
          * @return the bucket
          */
         private MoneyWiseXAnalysisDepositCategoryBucket allocateTotalsBucket() {
@@ -231,6 +241,7 @@ public final class MoneyWiseXAnalysisDepositCategoryBucket
 
         /**
          * Obtain the DepositCategoryBucket for a given category.
+         *
          * @param pCategory the category
          * @return the bucket
          */
@@ -253,6 +264,7 @@ public final class MoneyWiseXAnalysisDepositCategoryBucket
 
         /**
          * Analyse deposit accounts.
+         *
          * @param pDeposits the deposit account buckets
          */
         public void analyseDeposits(final MoneyWiseXAnalysisDepositBucketList pDeposits) {
@@ -283,6 +295,7 @@ public final class MoneyWiseXAnalysisDepositCategoryBucket
 
         /**
          * Build categories.
+         *
          * @param pDeposits the deposit account buckets
          */
         public void buildCategories(final MoneyWiseXAnalysisDepositBucketList pDeposits) {

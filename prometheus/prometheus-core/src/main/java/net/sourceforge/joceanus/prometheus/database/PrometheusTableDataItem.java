@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Prometheus: Application Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,8 +13,21 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.prometheus.database;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.metis.data.MetisDataResource;
+import net.sourceforge.joceanus.metis.data.MetisDataState;
+import net.sourceforge.joceanus.metis.field.MetisFieldVersionValues;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataList;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
+import net.sourceforge.joceanus.prometheus.exc.PrometheusDataException;
+import net.sourceforge.joceanus.prometheus.exc.PrometheusIOException;
+import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -23,21 +36,9 @@ import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.ListIterator;
 
-import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.metis.data.MetisDataResource;
-import net.sourceforge.joceanus.metis.data.MetisDataState;
-import net.sourceforge.joceanus.metis.field.MetisFieldVersionValues;
-import net.sourceforge.joceanus.prometheus.exc.PrometheusDataException;
-import net.sourceforge.joceanus.prometheus.exc.PrometheusIOException;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataList;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
-
 /**
  * Database Table class. This controls should be extended for each DataType/Table.
+ *
  * @param <T> the DataType
  */
 public abstract class PrometheusTableDataItem<T extends PrometheusDataItem> {
@@ -78,8 +79,9 @@ public abstract class PrometheusTableDataItem<T extends PrometheusDataItem> {
 
     /**
      * Constructor.
+     *
      * @param pDatabase the database control
-     * @param pTable the table name
+     * @param pTable    the table name
      */
     protected PrometheusTableDataItem(final PrometheusDataStore pDatabase,
                                       final String pTable) {
@@ -91,6 +93,7 @@ public abstract class PrometheusTableDataItem<T extends PrometheusDataItem> {
 
     /**
      * Obtain database.
+     *
      * @return the database
      */
     protected PrometheusDataStore getDatabase() {
@@ -99,6 +102,7 @@ public abstract class PrometheusTableDataItem<T extends PrometheusDataItem> {
 
     /**
      * Obtain table definition.
+     *
      * @return the table definition
      */
     protected PrometheusTableDefinition getTableDef() {
@@ -107,6 +111,7 @@ public abstract class PrometheusTableDataItem<T extends PrometheusDataItem> {
 
     /**
      * Access the table name.
+     *
      * @return the table name
      */
     protected String getTableName() {
@@ -115,6 +120,7 @@ public abstract class PrometheusTableDataItem<T extends PrometheusDataItem> {
 
     /**
      * Access the table definition.
+     *
      * @return the table definition
      */
     protected PrometheusTableDefinition getDefinition() {
@@ -123,6 +129,7 @@ public abstract class PrometheusTableDataItem<T extends PrometheusDataItem> {
 
     /**
      * Close the result set and statement.
+     *
      * @throws SQLException on error
      */
     protected void closeStmt() throws SQLException {
@@ -138,6 +145,7 @@ public abstract class PrometheusTableDataItem<T extends PrometheusDataItem> {
 
     /**
      * Shift to next line in result set.
+     *
      * @return is there a next line
      * @throws SQLException on error
      */
@@ -147,6 +155,7 @@ public abstract class PrometheusTableDataItem<T extends PrometheusDataItem> {
 
     /**
      * Prepare the statement.
+     *
      * @param pStatement the statement to prepare
      * @throws SQLException on error
      */
@@ -156,6 +165,7 @@ public abstract class PrometheusTableDataItem<T extends PrometheusDataItem> {
 
     /**
      * Execute the prepared statement.
+     *
      * @throws SQLException on error
      */
     private void execute() throws SQLException {
@@ -165,6 +175,7 @@ public abstract class PrometheusTableDataItem<T extends PrometheusDataItem> {
 
     /**
      * Add to the batched statement.
+     *
      * @throws SQLException on error
      */
     private void addToBatch() throws SQLException {
@@ -175,6 +186,7 @@ public abstract class PrometheusTableDataItem<T extends PrometheusDataItem> {
 
     /**
      * Execute the batched statement.
+     *
      * @throws SQLException on error
      */
     private void executeBatch() throws SQLException {
@@ -186,6 +198,7 @@ public abstract class PrometheusTableDataItem<T extends PrometheusDataItem> {
 
     /**
      * Query the prepared statement.
+     *
      * @throws SQLException on error
      */
     private void executeQuery() throws SQLException {
@@ -195,6 +208,7 @@ public abstract class PrometheusTableDataItem<T extends PrometheusDataItem> {
 
     /**
      * Commit the update.
+     *
      * @throws SQLException on error
      */
     private void commit() throws SQLException {
@@ -203,6 +217,7 @@ public abstract class PrometheusTableDataItem<T extends PrometheusDataItem> {
 
     /**
      * Execute a statement.
+     *
      * @param pStatement the statement
      * @throws SQLException on error
      */
@@ -220,6 +235,7 @@ public abstract class PrometheusTableDataItem<T extends PrometheusDataItem> {
 
     /**
      * Count the number of items to be loaded.
+     *
      * @return the count of items
      * @throws SQLException on error
      */
@@ -244,12 +260,14 @@ public abstract class PrometheusTableDataItem<T extends PrometheusDataItem> {
 
     /**
      * Declare DataSet.
+     *
      * @param pData the Data set
      */
     protected abstract void declareData(PrometheusDataSet pData);
 
     /**
      * Set the list of items.
+     *
      * @param pList the list of items
      */
     protected void setList(final PrometheusDataList<T> pList) {
@@ -258,6 +276,7 @@ public abstract class PrometheusTableDataItem<T extends PrometheusDataItem> {
 
     /**
      * Obtain the list of items.
+     *
      * @return the list of items
      */
     protected PrometheusDataList<T> getList() {
@@ -266,6 +285,7 @@ public abstract class PrometheusTableDataItem<T extends PrometheusDataItem> {
 
     /**
      * Load an individual item from the result set.
+     *
      * @return the values for the row
      * @throws OceanusException on error
      */
@@ -273,7 +293,8 @@ public abstract class PrometheusTableDataItem<T extends PrometheusDataItem> {
 
     /**
      * Set a field value for an item.
-     * @param pItem the item to insert
+     *
+     * @param pItem  the item to insert
      * @param pField the field id
      * @throws OceanusException on error
      */
@@ -287,6 +308,7 @@ public abstract class PrometheusTableDataItem<T extends PrometheusDataItem> {
 
     /**
      * Post-Process on a load operation.
+     *
      * @throws OceanusException on error
      */
     protected void postProcessOnLoad() throws OceanusException {
@@ -296,8 +318,9 @@ public abstract class PrometheusTableDataItem<T extends PrometheusDataItem> {
 
     /**
      * Load items from the list into the table.
+     *
      * @param pReport the report
-     * @param pData the data
+     * @param pData   the data
      * @throws OceanusException on error
      */
     protected void loadItems(final TethysUIThreadStatusReport pReport,
@@ -343,6 +366,7 @@ public abstract class PrometheusTableDataItem<T extends PrometheusDataItem> {
 
     /**
      * Determine the count of items that are in a particular state.
+     *
      * @param pState the particular state
      * @return the count of items
      */
@@ -370,9 +394,10 @@ public abstract class PrometheusTableDataItem<T extends PrometheusDataItem> {
 
     /**
      * Insert new items from the list.
+     *
      * @param pReport the report
-     * @param pData the data
-     * @param pBatch the batch control
+     * @param pData   the data
+     * @param pBatch  the batch control
      * @throws OceanusException on error
      */
     protected void insertItems(final TethysUIThreadStatusReport pReport,
@@ -451,8 +476,9 @@ public abstract class PrometheusTableDataItem<T extends PrometheusDataItem> {
 
     /**
      * Update items from the list.
+     *
      * @param pReport the report
-     * @param pBatch the batch control
+     * @param pBatch  the batch control
      * @throws OceanusException on error
      */
     protected void updateItems(final TethysUIThreadStatusReport pReport,
@@ -518,6 +544,7 @@ public abstract class PrometheusTableDataItem<T extends PrometheusDataItem> {
 
     /**
      * Update the item.
+     *
      * @param pItem the item
      * @return Continue <code>true/false</code>
      * @throws OceanusException on error
@@ -553,8 +580,9 @@ public abstract class PrometheusTableDataItem<T extends PrometheusDataItem> {
 
     /**
      * Delete items from the list.
+     *
      * @param pReport the report
-     * @param pBatch the batch control
+     * @param pBatch  the batch control
      * @throws OceanusException on error
      */
     protected void deleteItems(final TethysUIThreadStatusReport pReport,
@@ -630,6 +658,7 @@ public abstract class PrometheusTableDataItem<T extends PrometheusDataItem> {
 
     /**
      * Create the table.
+     *
      * @throws OceanusException on error
      */
     protected void createTable() throws OceanusException {
@@ -653,6 +682,7 @@ public abstract class PrometheusTableDataItem<T extends PrometheusDataItem> {
 
     /**
      * Create the database.
+     *
      * @param pDatabase the database name
      * @throws OceanusException on error
      */
@@ -678,6 +708,7 @@ public abstract class PrometheusTableDataItem<T extends PrometheusDataItem> {
 
     /**
      * Drop the table.
+     *
      * @throws OceanusException on error
      */
     protected void dropTable() throws OceanusException {
@@ -701,6 +732,7 @@ public abstract class PrometheusTableDataItem<T extends PrometheusDataItem> {
 
     /**
      * Truncate the table.
+     *
      * @throws OceanusException on error
      */
     protected void purgeTable() throws OceanusException {
@@ -717,6 +749,7 @@ public abstract class PrometheusTableDataItem<T extends PrometheusDataItem> {
 
     /**
      * Obtain row values.
+     *
      * @param pName the name of the item
      * @return the row values.
      * @throws OceanusException on error

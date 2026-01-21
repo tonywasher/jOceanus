@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,15 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.quicken.file;
 
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateFormatter;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimalParser;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction;
 import net.sourceforge.joceanus.moneywise.quicken.definitions.MoneyWiseQEventLineType;
 import net.sourceforge.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFCategoryLine;
@@ -25,12 +31,6 @@ import net.sourceforge.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWis
 import net.sourceforge.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFPayeeLine;
 import net.sourceforge.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFStringLine;
 import net.sourceforge.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFXferAccountLine;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateFormatter;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimalParser;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 
 import java.util.List;
 import java.util.Objects;
@@ -52,7 +52,8 @@ public class MoneyWiseQIFEvent
 
     /**
      * Constructor.
-     * @param pFile the QIF File
+     *
+     * @param pFile  the QIF File
      * @param pTrans the transaction
      */
     protected MoneyWiseQIFEvent(final MoneyWiseQIFFile pFile,
@@ -83,7 +84,8 @@ public class MoneyWiseQIFEvent
 
     /**
      * Constructor for opening balance.
-     * @param pFile the QIF File
+     *
+     * @param pFile      the QIF File
      * @param pStartDate the start date
      */
     protected MoneyWiseQIFEvent(final MoneyWiseQIFFile pFile,
@@ -103,9 +105,10 @@ public class MoneyWiseQIFEvent
 
     /**
      * Constructor.
-     * @param pFile the QIF File
+     *
+     * @param pFile      the QIF File
      * @param pFormatter the Data Formatter
-     * @param pLines the data lines
+     * @param pLines     the data lines
      */
     protected MoneyWiseQIFEvent(final MoneyWiseQIFFile pFile,
                                 final OceanusDataFormatter pFormatter,
@@ -224,6 +227,7 @@ public class MoneyWiseQIFEvent
 
     /**
      * record reference.
+     *
      * @param pReference the reference
      */
     private void recordReference(final String pReference) {
@@ -233,6 +237,7 @@ public class MoneyWiseQIFEvent
 
     /**
      * record comment.
+     *
      * @param pComment the comment
      */
     private void recordComment(final String pComment) {
@@ -242,6 +247,7 @@ public class MoneyWiseQIFEvent
 
     /**
      * record payee.
+     *
      * @param pPayee the payee
      */
     protected void recordPayee(final MoneyWiseQIFPayee pPayee) {
@@ -251,6 +257,7 @@ public class MoneyWiseQIFEvent
 
     /**
      * record payee description.
+     *
      * @param pPayeeDesc the payee description
      */
     protected void recordPayee(final String pPayeeDesc) {
@@ -260,6 +267,7 @@ public class MoneyWiseQIFEvent
 
     /**
      * record amount.
+     *
      * @param pAmount the amount
      */
     protected void recordAmount(final OceanusMoney pAmount) {
@@ -269,6 +277,7 @@ public class MoneyWiseQIFEvent
 
     /**
      * record transfer account.
+     *
      * @param pAccount the account
      */
     protected void recordAccount(final MoneyWiseQIFAccount pAccount) {
@@ -278,6 +287,7 @@ public class MoneyWiseQIFEvent
 
     /**
      * record transfer account.
+     *
      * @param pAccount the account
      * @param pClasses the classes
      */
@@ -289,6 +299,7 @@ public class MoneyWiseQIFEvent
 
     /**
      * record category.
+     *
      * @param pCategory the category
      */
     protected void recordCategory(final MoneyWiseQIFEventCategory pCategory) {
@@ -298,8 +309,9 @@ public class MoneyWiseQIFEvent
 
     /**
      * record category.
+     *
      * @param pCategory the category
-     * @param pClasses the classes
+     * @param pClasses  the classes
      */
     protected void recordCategory(final MoneyWiseQIFEventCategory pCategory,
                                   final List<MoneyWiseQIFClass> pClasses) {
@@ -309,8 +321,9 @@ public class MoneyWiseQIFEvent
 
     /**
      * record new Split record for transfer.
+     *
      * @param pAccount the account
-     * @param pAmount the amount
+     * @param pAmount  the amount
      * @param pComment the comment
      */
     protected void recordSplitRecord(final MoneyWiseQIFAccount pAccount,
@@ -327,9 +340,10 @@ public class MoneyWiseQIFEvent
 
     /**
      * record new Split record for transfer.
+     *
      * @param pAccount the account
      * @param pClasses the classes
-     * @param pAmount the amount
+     * @param pAmount  the amount
      * @param pComment the comment
      */
     protected void recordSplitRecord(final MoneyWiseQIFAccount pAccount,
@@ -347,9 +361,10 @@ public class MoneyWiseQIFEvent
 
     /**
      * record new Split record for category.
+     *
      * @param pCategory the category
-     * @param pAmount the amount
-     * @param pComment the comment
+     * @param pAmount   the amount
+     * @param pComment  the comment
      */
     protected void recordSplitRecord(final MoneyWiseQIFEventCategory pCategory,
                                      final OceanusMoney pAmount,
@@ -365,10 +380,11 @@ public class MoneyWiseQIFEvent
 
     /**
      * record new Split record for category.
+     *
      * @param pCategory the category
-     * @param pClasses the classes
-     * @param pAmount the amount
-     * @param pComment the comment
+     * @param pClasses  the classes
+     * @param pAmount   the amount
+     * @param pComment  the comment
      */
     protected void recordSplitRecord(final MoneyWiseQIFEventCategory pCategory,
                                      final List<MoneyWiseQIFClass> pClasses,
@@ -406,6 +422,7 @@ public class MoneyWiseQIFEvent
             extends MoneyWiseQIFDateLine<MoneyWiseQEventLineType> {
         /**
          * Constructor.
+         *
          * @param pDate the Date
          */
         protected MoneyWiseQIFEventDateLine(final OceanusDate pDate) {
@@ -426,6 +443,7 @@ public class MoneyWiseQIFEvent
             extends MoneyWiseQIFStringLine<MoneyWiseQEventLineType> {
         /**
          * Constructor.
+         *
          * @param pRef the Reference
          */
         protected MoneyWiseQIFEventReferenceLine(final String pRef) {
@@ -440,6 +458,7 @@ public class MoneyWiseQIFEvent
 
         /**
          * Obtain Reference.
+         *
          * @return the reference
          */
         public String getReference() {
@@ -454,6 +473,7 @@ public class MoneyWiseQIFEvent
             extends MoneyWiseQIFStringLine<MoneyWiseQEventLineType> {
         /**
          * Constructor.
+         *
          * @param pComment the comment
          */
         protected MoneyWiseQIFEventCommentLine(final String pComment) {
@@ -468,6 +488,7 @@ public class MoneyWiseQIFEvent
 
         /**
          * Obtain Comment.
+         *
          * @return the comment
          */
         public String getComment() {
@@ -482,6 +503,7 @@ public class MoneyWiseQIFEvent
             extends MoneyWiseQIFClearedLine<MoneyWiseQEventLineType> {
         /**
          * Constructor.
+         *
          * @param pCleared is the event cleared?
          */
         protected MoneyWiseQIFEventClearedLine(final Boolean pCleared) {
@@ -502,6 +524,7 @@ public class MoneyWiseQIFEvent
             extends MoneyWiseQIFPayeeLine<MoneyWiseQEventLineType> {
         /**
          * Constructor.
+         *
          * @param pPayee the payee
          */
         protected MoneyWiseQIFEventPayeeLine(final MoneyWiseQIFPayee pPayee) {
@@ -522,6 +545,7 @@ public class MoneyWiseQIFEvent
             extends MoneyWiseQIFStringLine<MoneyWiseQEventLineType> {
         /**
          * Constructor.
+         *
          * @param pPayee the payee description
          */
         protected MoneyWiseQIFEventPayeeDescLine(final String pPayee) {
@@ -542,6 +566,7 @@ public class MoneyWiseQIFEvent
             extends MoneyWiseQIFMoneyLine<MoneyWiseQEventLineType> {
         /**
          * Constructor.
+         *
          * @param pAmount the amount
          */
         protected MoneyWiseQIFEventAmountLine(final OceanusMoney pAmount) {
@@ -556,6 +581,7 @@ public class MoneyWiseQIFEvent
 
         /**
          * Obtain Amount.
+         *
          * @return the amount
          */
         public OceanusMoney getAmount() {
@@ -570,6 +596,7 @@ public class MoneyWiseQIFEvent
             extends MoneyWiseQIFXferAccountLine<MoneyWiseQEventLineType> {
         /**
          * Constructor.
+         *
          * @param pAccount the account
          */
         protected MoneyWiseQIFEventAccountLine(final MoneyWiseQIFAccount pAccount) {
@@ -579,6 +606,7 @@ public class MoneyWiseQIFEvent
 
         /**
          * Constructor.
+         *
          * @param pAccount the account
          * @param pClasses the classes
          */
@@ -601,6 +629,7 @@ public class MoneyWiseQIFEvent
             extends MoneyWiseQIFCategoryLine<MoneyWiseQEventLineType> {
         /**
          * Constructor.
+         *
          * @param pCategory the category
          */
         protected MoneyWiseQIFEventCategoryLine(final MoneyWiseQIFEventCategory pCategory) {
@@ -610,8 +639,9 @@ public class MoneyWiseQIFEvent
 
         /**
          * Constructor.
+         *
          * @param pCategory the category
-         * @param pClasses the classes
+         * @param pClasses  the classes
          */
         protected MoneyWiseQIFEventCategoryLine(final MoneyWiseQIFEventCategory pCategory,
                                                 final List<MoneyWiseQIFClass> pClasses) {

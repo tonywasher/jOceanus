@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,12 +13,12 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.data.statics;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataClass;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * Enumeration of Security Type Classes.
@@ -145,7 +145,8 @@ public enum MoneyWiseSecurityClass
 
     /**
      * Constructor.
-     * @param uId the Id
+     *
+     * @param uId    the Id
      * @param uOrder the default order.
      */
     MoneyWiseSecurityClass(final int uId,
@@ -178,6 +179,7 @@ public enum MoneyWiseSecurityClass
 
     /**
      * get value from id.
+     *
      * @param id the id value
      * @return the corresponding enum object
      * @throws OceanusException on error
@@ -193,6 +195,7 @@ public enum MoneyWiseSecurityClass
 
     /**
      * Determine whether the SecurityType is a pension.
+     *
      * @return <code>true</code> if the security type is a pension, <code>false</code> otherwise.
      */
     public boolean isPension() {
@@ -208,6 +211,7 @@ public enum MoneyWiseSecurityClass
 
     /**
      * Determine whether the SecurityType is a dividend provider.
+     *
      * @return <code>true</code> if the security type is a dividend provider, <code>false</code>
      * otherwise.
      */
@@ -224,6 +228,7 @@ public enum MoneyWiseSecurityClass
 
     /**
      * Determine whether the SecurityType is shares.
+     *
      * @return <code>true</code> if the security type is shares, <code>false</code> otherwise.
      */
     public boolean isShares() {
@@ -232,6 +237,7 @@ public enum MoneyWiseSecurityClass
 
     /**
      * Determine whether the SecurityType is option.
+     *
      * @return <code>true</code> if the security type is option, <code>false</code> otherwise.
      */
     public boolean isOption() {
@@ -240,6 +246,7 @@ public enum MoneyWiseSecurityClass
 
     /**
      * Determine whether the SecurityType needs a symbol.
+     *
      * @return <code>true</code> if the security type needs a symbol, <code>false</code> otherwise.
      */
     public boolean needsSymbol() {
@@ -256,6 +263,7 @@ public enum MoneyWiseSecurityClass
 
     /**
      * Determine whether the SecurityType needs a region.
+     *
      * @return <code>true</code> if the security type needs a region, <code>false</code> otherwise.
      */
     public boolean needsRegion() {
@@ -271,6 +279,7 @@ public enum MoneyWiseSecurityClass
 
     /**
      * Determine whether the SecurityType needs market as a parent.
+     *
      * @return <code>true</code> if the security type needs market as a parent, <code>false</code>
      * otherwise.
      */
@@ -288,6 +297,7 @@ public enum MoneyWiseSecurityClass
 
     /**
      * Determine whether the SecurityType can be tax free.
+     *
      * @return <code>true</code> if the security type can be tax free, <code>false</code> otherwise.
      */
     public boolean canTaxFree() {
@@ -304,6 +314,7 @@ public enum MoneyWiseSecurityClass
 
     /**
      * Determine whether the SecurityType is subject to Capital Gains.
+     *
      * @return <code>true</code> if the security type is subject to Capital Gains,
      * <code>false</code> otherwise.
      */
@@ -321,6 +332,7 @@ public enum MoneyWiseSecurityClass
 
     /**
      * Determine whether the SecurityType is subject to Residential Gains.
+     *
      * @return <code>true</code> if the security type is subject to Residential Gains,
      * <code>false</code> otherwise.
      */
@@ -330,6 +342,7 @@ public enum MoneyWiseSecurityClass
 
     /**
      * Determine whether the SecurityType is subject to Chargeable Gains.
+     *
      * @return <code>true</code> if the security type is subject to Chargeable Gains,
      * <code>false</code> otherwise.
      */
@@ -339,6 +352,7 @@ public enum MoneyWiseSecurityClass
 
     /**
      * Determine whether the SecurityType is Capital.
+     *
      * @return <code>true</code> if the security type is Capital, <code>false</code> otherwise.
      */
     public boolean isCapital() {
@@ -355,6 +369,7 @@ public enum MoneyWiseSecurityClass
 
     /**
      * Determine whether the SecurityType is UnitTrust.
+     *
      * @return <code>true</code> if the security type is Capital, <code>false</code> otherwise.
      */
     public boolean isUnitTrust() {
@@ -369,6 +384,7 @@ public enum MoneyWiseSecurityClass
 
     /**
      * Is this a statePension?
+     *
      * @return <code>true</code> if the SecurityType is statePension, <code>false</code> otherwise.
      */
     public boolean isStatePension() {
@@ -377,6 +393,7 @@ public enum MoneyWiseSecurityClass
 
     /**
      * Is this a singular security?.
+     *
      * @return <code>true</code> if the SecurityType is singular, <code>false</code> otherwise.
      */
     public boolean isSingular() {
@@ -385,6 +402,7 @@ public enum MoneyWiseSecurityClass
 
     /**
      * Is this an autoUnits?
+     *
      * @return <code>true</code> if the SecurityType is an autoUnits, <code>false</code> otherwise.
      */
     public boolean isAutoUnits() {
@@ -401,6 +419,7 @@ public enum MoneyWiseSecurityClass
 
     /**
      * Obtain autoUnits.
+     *
      * @return the number of units for this security if active.
      */
     public int getAutoUnits() {

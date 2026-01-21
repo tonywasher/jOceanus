@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Prometheus: Application Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,10 +13,10 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.prometheus.service.sheet.odf;
 
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCellAddress;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCellPosition;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCellRange;
@@ -80,7 +80,8 @@ class PrometheusOdfTableStore {
 
     /**
      * Constructor.
-     * @param pBook the workBook.
+     *
+     * @param pBook        the workBook.
      * @param pSpreadSheet the spreadSheet element
      */
     PrometheusOdfTableStore(final PrometheusOdfWorkBook pBook,
@@ -98,6 +99,7 @@ class PrometheusOdfTableStore {
 
     /**
      * Obtain the workBook.
+     *
      * @return the WorkBook
      */
     PrometheusOdfWorkBook getWorkBook() {
@@ -116,7 +118,7 @@ class PrometheusOdfTableStore {
 
     /**
      * Build maps.
-      */
+     */
     void loadMaps() {
         buildSheetMap();
         buildRangeMap();
@@ -138,6 +140,7 @@ class PrometheusOdfTableStore {
 
     /**
      * Obtain existing sheet.
+     *
      * @param pName the name of the sheet
      * @return the sheet
      * @throws OceanusException on error
@@ -149,13 +152,14 @@ class PrometheusOdfTableStore {
             myCore = new PrometheusOdfSheetCore(this, theNumTables++, myElement);
         }
         return myCore == null
-               ? null
-               : ((PrometheusOdfSheetCore) myCore).getReadOnlySheet();
+                ? null
+                : ((PrometheusOdfSheetCore) myCore).getReadOnlySheet();
     }
 
     /**
      * Create a new sheet.
-     * @param pName the name of the sheet.
+     *
+     * @param pName    the name of the sheet.
      * @param pNumRows the initial number of rows
      * @param pNumCols the initial number of columns
      * @return the new sheet
@@ -204,6 +208,7 @@ class PrometheusOdfTableStore {
 
     /**
      * Obtain the range view.
+     *
      * @param pName the name of the view
      * @return the range
      * @throws OceanusException on error
@@ -235,7 +240,8 @@ class PrometheusOdfTableStore {
 
     /**
      * Declare the named range.
-     * @param pName the name of the range
+     *
+     * @param pName  the name of the range
      * @param pRange the range to declare
      * @throws OceanusException on error
      */
@@ -267,9 +273,10 @@ class PrometheusOdfTableStore {
 
     /**
      * Apply Data Validation.
-     * @param pSheet the workSheet containing the cells
-     * @param pFirstCell the the first cell in the range
-     * @param pLastCell the last cell in the range
+     *
+     * @param pSheet      the workSheet containing the cells
+     * @param pFirstCell  the the first cell in the range
+     * @param pLastCell   the last cell in the range
      * @param pValidRange the name of the validation range
      */
     void applyDataValidation(final PrometheusOdfSheetCore pSheet,
@@ -292,9 +299,10 @@ class PrometheusOdfTableStore {
 
     /**
      * Apply Data Validation.
-     * @param pSheet the workSheet containing the cells
+     *
+     * @param pSheet     the workSheet containing the cells
      * @param pFirstCell the the first cell in the range
-     * @param pLastCell the last cell in the range
+     * @param pLastCell  the last cell in the range
      * @param pValueList the value list
      */
     void applyDataValidation(final PrometheusOdfSheetCore pSheet,
@@ -331,6 +339,7 @@ class PrometheusOdfTableStore {
 
     /**
      * Create Data Constraint.
+     *
      * @param pConstraint the constraint list
      * @return the constraint
      */
@@ -367,6 +376,7 @@ class PrometheusOdfTableStore {
 
     /**
      * Apply Data Filter.
+     *
      * @param pRange the range
      */
     void applyDataFilter(final PrometheusSheetCellRange pRange) {

@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,10 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.test.data.xdoc;
 
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEvent;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioBucket;
@@ -27,7 +28,6 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePortfolio;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.moneywise.test.data.trans.MoneyWiseDataTestCase;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -70,9 +70,10 @@ public class MoneyWiseDataXDocPortfolio {
 
     /**
      * Constructor.
-     * @param pReport the report
-     * @param pTest the test case
-     * @param pParents the parents list
+     *
+     * @param pReport   the report
+     * @param pTest     the test case
+     * @param pParents  the parents list
      * @param pSecurity the security builder
      */
     MoneyWiseDataXDocPortfolio(final MoneyWiseDataXDocReport pReport,
@@ -156,6 +157,7 @@ public class MoneyWiseDataXDocPortfolio {
 
     /**
      * create main portfolio headers.
+     *
      * @param pForeign are there foreign assets?
      * @return the number of header cells
      */
@@ -228,6 +230,7 @@ public class MoneyWiseDataXDocPortfolio {
 
     /**
      * update portfolio asset row for event.
+     *
      * @param pEvent the event
      * @return isNonEmpty true/false
      */
@@ -278,6 +281,7 @@ public class MoneyWiseDataXDocPortfolio {
 
     /**
      * Are there any foreign assets?
+     *
      * @return true/false
      */
     boolean haveForeignAssets() {

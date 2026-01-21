@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,10 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.data.basic;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.data.MetisDataResource;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
@@ -27,7 +28,6 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoType;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoType.MoneyWiseAccountInfoTypeList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoClass;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
@@ -40,6 +40,7 @@ import java.util.Iterator;
 
 /**
  * Representation of an information extension of a cash account.
+ *
  * @author Tony Washer
  */
 public class MoneyWiseCashInfo
@@ -61,6 +62,7 @@ public class MoneyWiseCashInfo
 
     /**
      * Copy Constructor.
+     *
      * @param pList the list
      * @param pInfo The Info to copy
      */
@@ -72,6 +74,7 @@ public class MoneyWiseCashInfo
 
     /**
      * Edit Constructor.
+     *
      * @param pList the list
      * @param pCash the cash
      * @param pType the type
@@ -90,7 +93,8 @@ public class MoneyWiseCashInfo
 
     /**
      * Values constructor.
-     * @param pList the List to add to
+     *
+     * @param pList   the List to add to
      * @param pValues the values constructor
      * @throws OceanusException on error
      */
@@ -144,6 +148,7 @@ public class MoneyWiseCashInfo
 
     /**
      * Obtain Payee.
+     *
      * @return the Payee
      */
     public MoneyWisePayee getPayee() {
@@ -152,6 +157,7 @@ public class MoneyWiseCashInfo
 
     /**
      * Obtain EventCategory.
+     *
      * @return the EventCategory
      */
     public MoneyWiseTransCategory getEventCategory() {
@@ -212,6 +218,7 @@ public class MoneyWiseCashInfo
 
     /**
      * resolve editSet links.
+     *
      * @param pEditSet the edit set
      * @throws OceanusException on error
      */
@@ -226,6 +233,7 @@ public class MoneyWiseCashInfo
 
     /**
      * Resolve link reference.
+     *
      * @param pEditSet the edit set
      * @throws OceanusException on error
      */
@@ -263,6 +271,7 @@ public class MoneyWiseCashInfo
 
     /**
      * Update loanInfo from a loanInfo extract.
+     *
      * @param pInfo the changed loanInfo
      * @return whether changes have been made
      */
@@ -333,6 +342,7 @@ public class MoneyWiseCashInfo
 
         /**
          * Construct an empty CORE account list.
+         *
          * @param pData the DataSet for the list
          */
         protected MoneyWiseCashInfoList(final MoneyWiseDataSet pData) {
@@ -341,6 +351,7 @@ public class MoneyWiseCashInfo
 
         /**
          * Constructor for a cloned List.
+         *
          * @param pSource the source List
          */
         private MoneyWiseCashInfoList(final MoneyWiseCashInfoList pSource) {
@@ -369,6 +380,7 @@ public class MoneyWiseCashInfo
 
         /**
          * Set base list for Edit InfoList.
+         *
          * @param pBase the base list
          */
         protected void setBase(final MoneyWiseCashInfoList pBase) {
@@ -471,6 +483,7 @@ public class MoneyWiseCashInfo
 
         /**
          * Resolve ValueLinks.
+         *
          * @throws OceanusException on error
          */
         public void resolveValueLinks() throws OceanusException {

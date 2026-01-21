@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,10 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.test.data.xdoc;
 
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEvent;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEventList;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEventType;
@@ -24,7 +25,6 @@ import net.sourceforge.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXA
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisSecurityAttr;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee;
 import net.sourceforge.joceanus.moneywise.test.data.trans.MoneyWiseDataTestCase;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -169,6 +169,7 @@ public class MoneyWiseDataXDocAssets {
 
     /**
      * create asset analysis headers.
+     *
      * @return the number of columns
      */
     int createAssetHeaders() {
@@ -212,6 +213,7 @@ public class MoneyWiseDataXDocAssets {
 
     /**
      * Are there any foreign assets?
+     *
      * @return true/false
      */
     private boolean haveForeignAssets() {
@@ -223,6 +225,7 @@ public class MoneyWiseDataXDocAssets {
 
     /**
      * Obtain value delta.
+     *
      * @return the value delta
      */
     private OceanusMoney getValueDelta() {

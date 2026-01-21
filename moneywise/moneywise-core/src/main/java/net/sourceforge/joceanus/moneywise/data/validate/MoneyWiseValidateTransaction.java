@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,14 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.data.validate;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.field.MetisFieldRequired;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetDirection;
@@ -40,11 +45,6 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePortfolioClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseSecurityClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 
@@ -78,6 +78,7 @@ public class MoneyWiseValidateTransaction
 
     /**
      * Constructor.
+     *
      * @param pNewValidation true/false
      */
     MoneyWiseValidateTransaction(final boolean pNewValidation) {
@@ -94,6 +95,7 @@ public class MoneyWiseValidateTransaction
 
     /**
      * Obtain the editSet.
+     *
      * @return the editSet
      */
     PrometheusEditSet getEditSet() {
@@ -105,6 +107,7 @@ public class MoneyWiseValidateTransaction
 
     /**
      * Obtain the transInfoSet validator.
+     *
      * @return the validator
      */
     public MoneyWiseValidateTransInfoSet getInfoSetValidator() {
@@ -113,6 +116,7 @@ public class MoneyWiseValidateTransaction
 
     /**
      * Should we perform new validity checks?
+     *
      * @return true/false
      */
     public boolean newValidation() {
@@ -248,6 +252,7 @@ public class MoneyWiseValidateTransaction
 
     /**
      * Determines whether an event needs a zero amount.
+     *
      * @param pTrans the transaction
      * @return true/false
      */
@@ -590,6 +595,7 @@ public class MoneyWiseValidateTransaction
 
     /**
      * Check securityHolding.
+     *
      * @param pHolding the securityHolding
      * @return valid true/false
      */
@@ -610,6 +616,7 @@ public class MoneyWiseValidateTransaction
 
     /**
      * Check dividend.
+     *
      * @param pAccount the holding providing the dividend.
      * @param pPartner the partner
      * @return valid true/false
@@ -627,6 +634,7 @@ public class MoneyWiseValidateTransaction
 
     /**
      * Check TakeOver.
+     *
      * @param pAccount the holding being acted on.
      * @param pPartner the partner
      * @return valid true/false
@@ -659,6 +667,7 @@ public class MoneyWiseValidateTransaction
 
     /**
      * Check stock rights.
+     *
      * @param pAccount the account being transferred.
      * @param pPartner the partner
      * @return valid true/false
@@ -678,6 +687,7 @@ public class MoneyWiseValidateTransaction
 
     /**
      * Check cashBack.
+     *
      * @param pAccount the account providing cashBack.
      * @return valid true/false
      */
@@ -698,6 +708,7 @@ public class MoneyWiseValidateTransaction
 
     /**
      * Check loyalty bonus.
+     *
      * @param pAccount the account providing bonus.
      * @return valid true/false
      */
@@ -714,6 +725,7 @@ public class MoneyWiseValidateTransaction
 
     /**
      * Check loyalty bonus.
+     *
      * @param pAccount the account providing bonus.
      * @param pPartner the partner
      * @return valid true/false
@@ -733,6 +745,7 @@ public class MoneyWiseValidateTransaction
 
     /**
      * Check transfer.
+     *
      * @param pAccount the account being transferred.
      * @param pPartner the partner
      * @return valid true/false
@@ -768,6 +781,7 @@ public class MoneyWiseValidateTransaction
 
     /**
      * Check securityClosure.
+     *
      * @param pAccount the account being closed.
      * @param pPartner the partner
      * @return valid true/false
@@ -785,6 +799,7 @@ public class MoneyWiseValidateTransaction
 
     /**
      * Check portfolioXfer.
+     *
      * @param pAccount the account being transferred.
      * @param pPartner the partner
      * @return valid true/false
@@ -819,6 +834,7 @@ public class MoneyWiseValidateTransaction
 
     /**
      * Determine if an infoSet class is required.
+     *
      * @param pTrans the transaction
      * @param pClass the infoSet class
      * @return the status

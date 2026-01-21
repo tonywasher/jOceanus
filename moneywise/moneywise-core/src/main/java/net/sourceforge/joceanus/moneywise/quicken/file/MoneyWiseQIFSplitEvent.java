@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,19 +13,19 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.quicken.file;
 
-import java.util.List;
-
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
 import net.sourceforge.joceanus.moneywise.quicken.definitions.MoneyWiseQEventLineType;
 import net.sourceforge.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFCategoryLine;
 import net.sourceforge.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFMoneyLine;
 import net.sourceforge.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFRateLine;
 import net.sourceforge.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFStringLine;
 import net.sourceforge.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFXferAccountLine;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
+
+import java.util.List;
 
 /**
  * Split Event Record.
@@ -59,7 +59,8 @@ public class MoneyWiseQIFSplitEvent
 
     /**
      * Constructor.
-     * @param pFile the QIF File
+     *
+     * @param pFile     the QIF File
      * @param pCategory the category
      */
     protected MoneyWiseQIFSplitEvent(final MoneyWiseQIFFile pFile,
@@ -69,9 +70,10 @@ public class MoneyWiseQIFSplitEvent
 
     /**
      * Constructor.
-     * @param pFile the QIF File
+     *
+     * @param pFile     the QIF File
      * @param pCategory the category
-     * @param pClasses the classes
+     * @param pClasses  the classes
      */
     protected MoneyWiseQIFSplitEvent(final MoneyWiseQIFFile pFile,
                                      final MoneyWiseQIFEventCategory pCategory,
@@ -92,7 +94,8 @@ public class MoneyWiseQIFSplitEvent
 
     /**
      * Constructor.
-     * @param pFile the QIF File
+     *
+     * @param pFile    the QIF File
      * @param pAccount the transfer account
      */
     protected MoneyWiseQIFSplitEvent(final MoneyWiseQIFFile pFile,
@@ -103,7 +106,8 @@ public class MoneyWiseQIFSplitEvent
 
     /**
      * Constructor.
-     * @param pFile the QIF File
+     *
+     * @param pFile    the QIF File
      * @param pAccount the transfer account
      * @param pClasses the classes
      */
@@ -126,6 +130,7 @@ public class MoneyWiseQIFSplitEvent
 
     /**
      * Obtain the event category.
+     *
      * @return the event category.
      */
     public MoneyWiseQIFEventCategory getCategory() {
@@ -134,6 +139,7 @@ public class MoneyWiseQIFSplitEvent
 
     /**
      * Obtain the account.
+     *
      * @return the account.
      */
     public MoneyWiseQIFAccount getAccount() {
@@ -142,6 +148,7 @@ public class MoneyWiseQIFSplitEvent
 
     /**
      * Obtain the amount.
+     *
      * @return the amount.
      */
     public OceanusMoney getAmount() {
@@ -150,6 +157,7 @@ public class MoneyWiseQIFSplitEvent
 
     /**
      * Obtain the percentage.
+     *
      * @return the percentage.
      */
     public OceanusRate getPercentage() {
@@ -158,6 +166,7 @@ public class MoneyWiseQIFSplitEvent
 
     /**
      * Obtain the comment.
+     *
      * @return the comment.
      */
     public String getComment() {
@@ -166,6 +175,7 @@ public class MoneyWiseQIFSplitEvent
 
     /**
      * Set the split amount.
+     *
      * @param pAmount the amount
      */
     protected void setSplitAmount(final OceanusMoney pAmount) {
@@ -176,6 +186,7 @@ public class MoneyWiseQIFSplitEvent
 
     /**
      * Set the split percentage.
+     *
      * @param pPercent the percentage
      */
     protected void setSplitPercentage(final OceanusRate pPercent) {
@@ -186,6 +197,7 @@ public class MoneyWiseQIFSplitEvent
 
     /**
      * Set the split comment.
+     *
      * @param pComment the comment
      */
     protected void setSplitComment(final String pComment) {
@@ -201,6 +213,7 @@ public class MoneyWiseQIFSplitEvent
             extends MoneyWiseQIFXferAccountLine<MoneyWiseQEventLineType> {
         /**
          * Constructor.
+         *
          * @param pAccount the account
          */
         protected MoneyWiseQIFEventSplitAccountLine(final MoneyWiseQIFAccount pAccount) {
@@ -210,6 +223,7 @@ public class MoneyWiseQIFSplitEvent
 
         /**
          * Constructor.
+         *
          * @param pAccount the account
          * @param pClasses the classes
          */
@@ -232,6 +246,7 @@ public class MoneyWiseQIFSplitEvent
             extends MoneyWiseQIFCategoryLine<MoneyWiseQEventLineType> {
         /**
          * Constructor.
+         *
          * @param pCategory the category
          */
         protected MoneyWiseQIFEventSplitCategoryLine(final MoneyWiseQIFEventCategory pCategory) {
@@ -241,8 +256,9 @@ public class MoneyWiseQIFSplitEvent
 
         /**
          * Constructor.
+         *
          * @param pCategory the category
-         * @param pClasses the classes
+         * @param pClasses  the classes
          */
         protected MoneyWiseQIFEventSplitCategoryLine(final MoneyWiseQIFEventCategory pCategory,
                                                      final List<MoneyWiseQIFClass> pClasses) {
@@ -263,6 +279,7 @@ public class MoneyWiseQIFSplitEvent
             extends MoneyWiseQIFMoneyLine<MoneyWiseQEventLineType> {
         /**
          * Constructor.
+         *
          * @param pAmount the amount
          */
         protected MoneyWiseQIFEventSplitAmountLine(final OceanusMoney pAmount) {
@@ -272,6 +289,7 @@ public class MoneyWiseQIFSplitEvent
 
         /**
          * Obtain Amount.
+         *
          * @return the amount
          */
         public OceanusMoney getAmount() {
@@ -291,6 +309,7 @@ public class MoneyWiseQIFSplitEvent
             extends MoneyWiseQIFRateLine<MoneyWiseQEventLineType> {
         /**
          * Constructor.
+         *
          * @param pPercent the percentage
          */
         protected MoneyWiseQIFEventSplitPercentLine(final OceanusRate pPercent) {
@@ -300,6 +319,7 @@ public class MoneyWiseQIFSplitEvent
 
         /**
          * Obtain Percentage.
+         *
          * @return the percentage
          */
         public OceanusRate getPercentage() {
@@ -319,6 +339,7 @@ public class MoneyWiseQIFSplitEvent
             extends MoneyWiseQIFStringLine<MoneyWiseQEventLineType> {
         /**
          * Constructor.
+         *
          * @param pComment the comment
          */
         protected MoneyWiseQIFEventSplitCommentLine(final String pComment) {
@@ -333,6 +354,7 @@ public class MoneyWiseQIFSplitEvent
 
         /**
          * Obtain Comment.
+         *
          * @return the comment
          */
         public String getComment() {

@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,14 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets;
 
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataList;
@@ -37,11 +42,6 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryType;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 
 import java.util.Comparator;
@@ -108,6 +108,7 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
 
     /**
      * Constructor.
+     *
      * @param pAnalysis the analysis
      * @param pCategory the transaction category
      */
@@ -135,9 +136,10 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
 
     /**
      * Constructor.
+     *
      * @param pAnalysis the analysis
-     * @param pBase the underlying bucket
-     * @param pDate the date for the bucket
+     * @param pBase     the underlying bucket
+     * @param pDate     the date for the bucket
      */
     private MoneyWiseXAnalysisTransCategoryBucket(final MoneyWiseXAnalysis pAnalysis,
                                                   final MoneyWiseXAnalysisTransCategoryBucket pBase,
@@ -157,9 +159,10 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
 
     /**
      * Constructor.
+     *
      * @param pAnalysis the analysis
-     * @param pBase the underlying bucket
-     * @param pRange the range for the bucket
+     * @param pBase     the underlying bucket
+     * @param pRange    the range for the bucket
      */
     private MoneyWiseXAnalysisTransCategoryBucket(final MoneyWiseXAnalysis pAnalysis,
                                                   final MoneyWiseXAnalysisTransCategoryBucket pBase,
@@ -199,6 +202,7 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
 
     /**
      * Obtain the name.
+     *
      * @return the name
      */
     public String getName() {
@@ -214,6 +218,7 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
 
     /**
      * Obtain the transaction category.
+     *
      * @return the transaction category
      */
     public MoneyWiseTransCategory getTransactionCategory() {
@@ -222,6 +227,7 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
 
     /**
      * Obtain the transaction category type.
+     *
      * @return the transaction category type
      */
     public MoneyWiseTransCategoryType getTransactionCategoryType() {
@@ -230,6 +236,7 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
 
     /**
      * Is this bucket idle?
+     *
      * @return true/false
      */
     public boolean isIdle() {
@@ -238,6 +245,7 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
 
     /**
      * Obtain the value map.
+     *
      * @return the value map
      */
     public MoneyWiseXAnalysisTransValues getValues() {
@@ -246,6 +254,7 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
 
     /**
      * Obtain the base value map.
+     *
      * @return the base value map
      */
     public MoneyWiseXAnalysisTransValues getBaseValues() {
@@ -254,6 +263,7 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
 
     /**
      * Obtain values for event.
+     *
      * @param pEvent the event
      * @return the values (or null)
      */
@@ -264,6 +274,7 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
 
     /**
      * Obtain previous values for event.
+     *
      * @param pEvent the event
      * @return the values (or null)
      */
@@ -273,8 +284,9 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
 
     /**
      * Obtain delta for event.
+     *
      * @param pEvent the event
-     * @param pAttr the attribute
+     * @param pAttr  the attribute
      * @return the delta (or null)
      */
     public OceanusDecimal getDeltaForEvent(final MoneyWiseXAnalysisEvent pEvent,
@@ -285,6 +297,7 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
 
     /**
      * Obtain the history map.
+     *
      * @return the history map
      */
     private MoneyWiseXAnalysisHistory<MoneyWiseXAnalysisTransValues, MoneyWiseXAnalysisTransAttr> getHistoryMap() {
@@ -293,6 +306,7 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
 
     /**
      * Obtain the analysis.
+     *
      * @return the analysis
      */
     MoneyWiseXAnalysis getAnalysis() {
@@ -301,6 +315,7 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
 
     /**
      * Obtain date range.
+     *
      * @return the range
      */
     public OceanusDateRange getDateRange() {
@@ -309,7 +324,8 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
 
     /**
      * Set Attribute.
-     * @param pAttr the attribute
+     *
+     * @param pAttr  the attribute
      * @param pValue the value of the attribute
      */
     void setValue(final MoneyWiseXAnalysisTransAttr pAttr,
@@ -320,6 +336,7 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
 
     /**
      * Get an attribute value.
+     *
      * @param pAttr the attribute
      * @return the value to set
      */
@@ -335,6 +352,7 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
 
     /**
      * Obtain an attribute value.
+     *
      * @param pAttr the attribute
      * @return the value of the attribute or null
      */
@@ -345,7 +363,8 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
 
     /**
      * Adjust counter.
-     * @param pAttr the attribute
+     *
+     * @param pAttr  the attribute
      * @param pDelta the delta
      */
     void adjustCounter(final MoneyWiseXAnalysisTransAttr pAttr,
@@ -358,6 +377,7 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
 
     /**
      * Add income value.
+     *
      * @param pValue the value to add
      */
     public void addIncome(final OceanusMoney pValue) {
@@ -369,6 +389,7 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
 
     /**
      * Subtract income value.
+     *
      * @param pValue the value to subtract
      */
     public void subtractIncome(final OceanusMoney pValue) {
@@ -382,6 +403,7 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
 
     /**
      * Adjust account for delta.
+     *
      * @param pDelta the delta
      */
     public void adjustForDelta(final OceanusMoney pDelta) {
@@ -394,6 +416,7 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
 
     /**
      * Add expense value.
+     *
      * @param pValue the value to add
      */
     public void addExpense(final OceanusMoney pValue) {
@@ -405,6 +428,7 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
 
     /**
      * Subtract expense value.
+     *
      * @param pValue the value to subtract
      */
     public void subtractExpense(final OceanusMoney pValue) {
@@ -435,6 +459,7 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
 
     /**
      * Add bucket to totals.
+     *
      * @param pSource the bucket to add
      */
     void addValues(final MoneyWiseXAnalysisTransCategoryBucket pSource) {
@@ -496,8 +521,9 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
          */
         private final MoneyWiseXAnalysisTransCategoryBucket theTotals;
 
-         /**
+        /**
          * Construct a top-level List.
+         *
          * @param pAnalysis the analysis
          */
         MoneyWiseXAnalysisTransCategoryBucketList(final MoneyWiseXAnalysis pAnalysis) {
@@ -510,9 +536,10 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
 
         /**
          * Construct a dated List.
+         *
          * @param pAnalysis the analysis
-         * @param pBase the base list
-         * @param pDate the Date
+         * @param pBase     the base list
+         * @param pDate     the Date
          */
         MoneyWiseXAnalysisTransCategoryBucketList(final MoneyWiseXAnalysis pAnalysis,
                                                   final MoneyWiseXAnalysisTransCategoryBucketList pBase,
@@ -541,9 +568,10 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
 
         /**
          * Construct a ranged List.
+         *
          * @param pAnalysis the analysis
-         * @param pBase the base list
-         * @param pRange the Date Range
+         * @param pBase     the base list
+         * @param pRange    the Date Range
          */
         MoneyWiseXAnalysisTransCategoryBucketList(final MoneyWiseXAnalysis pAnalysis,
                                                   final MoneyWiseXAnalysisTransCategoryBucketList pBase,
@@ -588,6 +616,7 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
 
         /**
          * Obtain the analysis.
+         *
          * @return the analysis
          */
         MoneyWiseXAnalysis getAnalysis() {
@@ -596,6 +625,7 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
 
         /**
          * Obtain item by id.
+         *
          * @param pId the id to lookup
          * @return the item (or null if not present)
          */
@@ -606,6 +636,7 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
 
         /**
          * Obtain the Totals.
+         *
          * @return the totals bucket
          */
         public MoneyWiseXAnalysisTransCategoryBucket getTotals() {
@@ -614,6 +645,7 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
 
         /**
          * Allocate the Totals TransactionCategoryBucket.
+         *
          * @return the bucket
          */
         private MoneyWiseXAnalysisTransCategoryBucket allocateTotalsBucket() {
@@ -623,6 +655,7 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
 
         /**
          * Obtain the TransactionCategoryBucket for a given transaction infoClass.
+         *
          * @param pClass the transaction infoClass
          * @return the bucket
          */
@@ -639,6 +672,7 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
 
         /**
          * Obtain the TransactionCategoryBucket for a given transactionClass.
+         *
          * @param pClass the transaction infoClass
          * @return the bucket
          */
@@ -655,6 +689,7 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
 
         /**
          * Obtain the TransactionCategoryBucket for a given transaction category.
+         *
          * @param pCategory the transaction category
          * @return the bucket
          */
@@ -682,6 +717,7 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
 
         /**
          * Obtain the TransactionCategoryBucket for a given transaction category class.
+         *
          * @param pClass the transaction category class
          * @return the bucket
          */
@@ -696,6 +732,7 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
 
         /**
          * Obtain the matching CategoryBucket.
+         *
          * @param pCategory the category
          * @return the matching bucket
          */
@@ -709,6 +746,7 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
 
         /**
          * Obtain the default CategoryBucket.
+         *
          * @return the default bucket
          */
         public MoneyWiseXAnalysisTransCategoryBucket getDefaultCategory() {

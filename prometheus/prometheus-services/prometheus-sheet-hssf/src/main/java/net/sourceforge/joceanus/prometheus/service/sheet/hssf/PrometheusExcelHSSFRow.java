@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Prometheus: Application Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,10 +13,10 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.prometheus.service.sheet.hssf;
 
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCell;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetRow;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -45,8 +45,9 @@ public class PrometheusExcelHSSFRow
 
     /**
      * Constructor.
-     * @param pSheet the sheet for the row
-     * @param pRow the Excel Row
+     *
+     * @param pSheet    the sheet for the row
+     * @param pRow      the Excel Row
      * @param pRowIndex the RowIndex
      * @param pReadOnly is the row readOnly?
      */
@@ -62,6 +63,7 @@ public class PrometheusExcelHSSFRow
 
     /**
      * evaluate the formula for a cell.
+     *
      * @param pCell the cell to evaluate
      * @return the calculated value
      */
@@ -71,6 +73,7 @@ public class PrometheusExcelHSSFRow
 
     /**
      * Format the cell value.
+     *
      * @param pCell the cell to evaluate
      * @return the formatted value
      */
@@ -120,8 +123,8 @@ public class PrometheusExcelHSSFRow
         /* Access the cell */
         final HSSFCell myExcelCell = theExcelRow.getCell(pIndex, MissingCellPolicy.RETURN_BLANK_AS_NULL);
         return myExcelCell != null
-                                   ? new PrometheusExcelHSSFCell(this, myExcelCell, pIndex, true)
-                                   : null;
+                ? new PrometheusExcelHSSFCell(this, myExcelCell, pIndex, true)
+                : null;
     }
 
     @Override
@@ -164,7 +167,8 @@ public class PrometheusExcelHSSFRow
 
     /**
      * Set cell style.
-     * @param pCell the cell to style
+     *
+     * @param pCell  the cell to style
      * @param pValue the cell value
      */
     void setCellStyle(final PrometheusExcelHSSFCell pCell,
@@ -175,7 +179,8 @@ public class PrometheusExcelHSSFRow
 
     /**
      * Set alternate cell style.
-     * @param pCell the cell to style
+     *
+     * @param pCell  the cell to style
      * @param pValue the cell value
      */
     void setAlternateCellStyle(final PrometheusExcelHSSFCell pCell,
@@ -186,9 +191,10 @@ public class PrometheusExcelHSSFRow
 
     /**
      * Parse object value.
-     * @param <T> the value type
+     *
+     * @param <T>     the value type
      * @param pSource the source value
-     * @param pClass the value type class
+     * @param pClass  the value type class
      * @return the formatted value
      */
     protected <T> T parseValue(final String pSource,
@@ -199,9 +205,10 @@ public class PrometheusExcelHSSFRow
 
     /**
      * Parse object value.
-     * @param <T> the value type
+     *
+     * @param <T>     the value type
      * @param pSource the source value
-     * @param pClass the value type class
+     * @param pClass  the value type class
      * @return the formatted value
      */
     protected <T> T parseValue(final Double pSource,
@@ -212,10 +219,11 @@ public class PrometheusExcelHSSFRow
 
     /**
      * Parse object value.
-     * @param <T> the value type
-     * @param pSource the source value
+     *
+     * @param <T>       the value type
+     * @param pSource   the source value
      * @param pCurrCode the currency code
-     * @param pClass the value type class
+     * @param pClass    the value type class
      * @return the formatted value
      */
     protected <T> T parseValue(final Double pSource,

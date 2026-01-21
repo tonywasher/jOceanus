@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,14 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.data.validate;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.field.MetisFieldRequired;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetDirection;
@@ -37,11 +42,6 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseSecurityClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoClass;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.validate.PrometheusValidateInfoSet;
@@ -62,6 +62,7 @@ public class MoneyWiseValidateTransInfoSet
 
     /**
      * Constructor.
+     *
      * @param pNewValidation true/false
      */
     MoneyWiseValidateTransInfoSet(final boolean pNewValidation) {
@@ -158,6 +159,7 @@ public class MoneyWiseValidateTransInfoSet
 
     /**
      * Determine if an infoSet class is metaData.
+     *
      * @param pClass the infoSet class
      * @return the status
      */
@@ -178,6 +180,7 @@ public class MoneyWiseValidateTransInfoSet
 
     /**
      * Determine if a TaxCredit infoSet class is required.
+     *
      * @param pClass the category class
      * @return the status
      */
@@ -216,6 +219,7 @@ public class MoneyWiseValidateTransInfoSet
 
     /**
      * Determine if a Withheld amount is required.
+     *
      * @param pClass the category class
      * @return the status
      */
@@ -232,6 +236,7 @@ public class MoneyWiseValidateTransInfoSet
 
     /**
      * Determine if an AccountDeltaUnits infoSet class is required.
+     *
      * @param pClass the category class
      * @return the status
      */
@@ -276,6 +281,7 @@ public class MoneyWiseValidateTransInfoSet
 
     /**
      * Determine if an PartnerDeltaUnits infoSet class is required.
+     *
      * @param pClass the category class
      * @return the status
      */
@@ -314,6 +320,7 @@ public class MoneyWiseValidateTransInfoSet
 
     /**
      * Determine if a Dilution infoSet class is required.
+     *
      * @param pClass the category class
      * @return the status
      */
@@ -332,6 +339,7 @@ public class MoneyWiseValidateTransInfoSet
 
     /**
      * Determine if a ReturnedCash Account class is required.
+     *
      * @param pClass the category class
      * @return the status
      */
@@ -344,6 +352,7 @@ public class MoneyWiseValidateTransInfoSet
 
     /**
      * Determine if a ReturnedCash value is required.
+     *
      * @param pTransaction the transaction
      * @return the status
      */
@@ -356,6 +365,7 @@ public class MoneyWiseValidateTransInfoSet
 
     /**
      * Determine if a PartnerAmount infoSet class is required.
+     *
      * @param pCategory the category
      * @return the status
      */
@@ -382,6 +392,7 @@ public class MoneyWiseValidateTransInfoSet
 
     /**
      * Determine if an QualifyingYears infoSet class is required.
+     *
      * @param pCategory the category
      * @return the status
      */
@@ -398,6 +409,7 @@ public class MoneyWiseValidateTransInfoSet
 
     /**
      * Determine if an XchangeRate infoSet class is required.
+     *
      * @param pCategory the category
      * @return the status
      */
@@ -417,6 +429,7 @@ public class MoneyWiseValidateTransInfoSet
 
     /**
      * Determine if a price infoSet class is required.
+     *
      * @param pCategory the category
      * @return the status
      */
@@ -433,6 +446,7 @@ public class MoneyWiseValidateTransInfoSet
 
     /**
      * Determine if a Commission infoSet class is required.
+     *
      * @param pCategory the category
      * @return the status
      */
@@ -502,6 +516,7 @@ public class MoneyWiseValidateTransInfoSet
 
     /**
      * Validate the qualifyingYears.
+     *
      * @param pInfo the info
      */
     private void validateQualifyYears(final MoneyWiseTransInfo pInfo) {
@@ -515,6 +530,7 @@ public class MoneyWiseValidateTransInfoSet
 
     /**
      * Validate the taxCredit.
+     *
      * @param pInfo the info
      */
     private void validateTaxCredit(final MoneyWiseTransInfo pInfo) {
@@ -529,6 +545,7 @@ public class MoneyWiseValidateTransInfoSet
 
     /**
      * Validate the optional taxCredits.
+     *
      * @param pInfo the info
      */
     private void validateOptionalTaxCredit(final MoneyWiseTransInfo pInfo) {
@@ -545,6 +562,7 @@ public class MoneyWiseValidateTransInfoSet
 
     /**
      * Validate the partnerAmount.
+     *
      * @param pInfo the info
      */
     private void validatePartnerAmount(final MoneyWiseTransInfo pInfo) {
@@ -559,6 +577,7 @@ public class MoneyWiseValidateTransInfoSet
 
     /**
      * Validate the returnedCashAccount.
+     *
      * @param pInfo the info
      */
     private void validateReturnedCashAccount(final MoneyWiseTransInfo pInfo) {
@@ -571,6 +590,7 @@ public class MoneyWiseValidateTransInfoSet
 
     /**
      * Validate the returnedCash.
+     *
      * @param pInfo the info
      */
     private void validateReturnedCash(final MoneyWiseTransInfo pInfo) {
@@ -587,6 +607,7 @@ public class MoneyWiseValidateTransInfoSet
 
     /**
      * Validate the price.
+     *
      * @param pInfo the info
      */
     private void validatePrice(final MoneyWiseTransInfo pInfo) {
@@ -603,6 +624,7 @@ public class MoneyWiseValidateTransInfoSet
 
     /**
      * Validate the deltaUnits.
+     *
      * @param pInfo the info
      */
     private void validateDeltaUnits(final MoneyWiseTransInfo pInfo) {
@@ -625,6 +647,7 @@ public class MoneyWiseValidateTransInfoSet
 
     /**
      * Validate the info length.
+     *
      * @param pInfo the info
      */
     private void validateInfoLength(final MoneyWiseTransInfo pInfo) {
@@ -637,7 +660,8 @@ public class MoneyWiseValidateTransInfoSet
 
     /**
      * Determine if AccountDeltaUnits can/mustBe/mustNotBe positive.
-     * @param pDir the direction
+     *
+     * @param pDir   the direction
      * @param pClass the category class
      * @return the status
      */
@@ -663,7 +687,8 @@ public class MoneyWiseValidateTransInfoSet
 
     /**
      * Determine if PartnerDeltaUnits can/mustBe/mustNotBe positive.
-     * @param pDir the direction
+     *
+     * @param pDir   the direction
      * @param pClass the category class
      * @return the status
      */
@@ -719,6 +744,7 @@ public class MoneyWiseValidateTransInfoSet
 
     /**
      * Obtain default accountUnits.
+     *
      * @return the default deltaUnits
      */
     private OceanusUnits getDefaultAccountUnits() {
@@ -734,6 +760,7 @@ public class MoneyWiseValidateTransInfoSet
 
     /**
      * Obtain default partnerUnits.
+     *
      * @return the default deltaUnits
      */
     private OceanusUnits getDefaultPartnerUnits() {
@@ -749,6 +776,7 @@ public class MoneyWiseValidateTransInfoSet
 
     /**
      * Obtain default taxCredit.
+     *
      * @return the default taxCredit
      */
     private OceanusMoney getDefaultTaxCredit() {
@@ -762,6 +790,7 @@ public class MoneyWiseValidateTransInfoSet
 
     /**
      * Obtain default partnerAmount.
+     *
      * @return the default partnerAmount
      */
     private OceanusMoney getDefaultPartnerAmount() {
@@ -775,6 +804,7 @@ public class MoneyWiseValidateTransInfoSet
 
     /**
      * Obtain default account for ReturnedCashAccount.
+     *
      * @return the default returnedCashAccount
      */
     private MoneyWiseTransAsset getDefaultReturnedCashAccount() {
@@ -810,6 +840,7 @@ public class MoneyWiseValidateTransInfoSet
 
     /**
      * Obtain default returnedCash.
+     *
      * @return the default returnedCash
      */
     private OceanusMoney getDefaultReturnedCash() {
@@ -855,6 +886,7 @@ public class MoneyWiseValidateTransInfoSet
 
     /**
      * AutoCorrect accountDeltaUnits.
+     *
      * @throws OceanusException on error
      */
     private void autoCorrectAccountDeltaUnits() throws OceanusException {
@@ -867,7 +899,7 @@ public class MoneyWiseValidateTransInfoSet
 
         /* If the units are negative and must be positive or are positive and must be negative */
         if ((isRequired.mustExist() && !myUnits.isPositive())
-            || (isRequired.notAllowed() && myUnits.isPositive())) {
+                || (isRequired.notAllowed() && myUnits.isPositive())) {
             /* Reverse the sign */
             myUnits = new OceanusUnits(myUnits);
             myUnits.negate();
@@ -878,6 +910,7 @@ public class MoneyWiseValidateTransInfoSet
 
     /**
      * AutoCorrect partnerDeltaUnits.
+     *
      * @throws OceanusException on error
      */
     private void autoCorrectPartnerDeltaUnits() throws OceanusException {
@@ -900,6 +933,7 @@ public class MoneyWiseValidateTransInfoSet
 
     /**
      * AutoCorrect taxCredit.
+     *
      * @param pClass the InfoClass
      * @throws OceanusException on error
      */
@@ -918,6 +952,7 @@ public class MoneyWiseValidateTransInfoSet
 
     /**
      * AutoCorrect partnerAmount.
+     *
      * @throws OceanusException on error
      */
     private void autoCorrectPartnerAmount() throws OceanusException {
@@ -936,6 +971,7 @@ public class MoneyWiseValidateTransInfoSet
 
     /**
      * AutoCorrect returnedCash.
+     *
      * @throws OceanusException on error
      */
     private void autoCorrectReturnedCash() throws OceanusException {
@@ -955,6 +991,7 @@ public class MoneyWiseValidateTransInfoSet
 
     /**
      * AutoCorrect price.
+     *
      * @throws OceanusException on error
      */
     private void autoCorrectPrice() throws OceanusException {

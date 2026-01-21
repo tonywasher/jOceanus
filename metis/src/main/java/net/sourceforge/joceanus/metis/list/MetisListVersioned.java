@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Metis: Java Data Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,21 +13,22 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.metis.list;
 
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionValues;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionedItem;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 
 import java.util.Iterator;
 import java.util.Map;
 
 /**
  * Versioned List.
+ *
  * @param <T> the item type
  */
 public abstract class MetisListVersioned<T extends MetisFieldVersionedItem>
@@ -70,7 +71,8 @@ public abstract class MetisListVersioned<T extends MetisFieldVersionedItem>
 
     /**
      * Constructor.
-     * @param pListSet the listSet
+     *
+     * @param pListSet  the listSet
      * @param pItemType the itemType
      */
     protected MetisListVersioned(final MetisListSetVersioned pListSet,
@@ -81,6 +83,7 @@ public abstract class MetisListVersioned<T extends MetisFieldVersionedItem>
 
     /**
      * Access the event manager.
+     *
      * @return the event manager.
      */
     private OceanusEventManager<MetisListEvent> getEventManager() {
@@ -105,6 +108,7 @@ public abstract class MetisListVersioned<T extends MetisFieldVersionedItem>
 
     /**
      * Obtain the itemType.
+     *
      * @return the itemType
      */
     public MetisListKey getItemType() {
@@ -113,6 +117,7 @@ public abstract class MetisListVersioned<T extends MetisFieldVersionedItem>
 
     /**
      * Obtain the listSet.
+     *
      * @return the listSet
      */
     public MetisListSetVersioned getListSet() {
@@ -121,6 +126,7 @@ public abstract class MetisListVersioned<T extends MetisFieldVersionedItem>
 
     /**
      * Obtain the listStyle.
+     *
      * @return the listStyle
      */
     public MetisListStyle getStyle() {
@@ -129,6 +135,7 @@ public abstract class MetisListVersioned<T extends MetisFieldVersionedItem>
 
     /**
      * Set version.
+     *
      * @param pVersion the version
      */
     public void setVersion(final int pVersion) {
@@ -137,6 +144,7 @@ public abstract class MetisListVersioned<T extends MetisFieldVersionedItem>
 
     /**
      * Obtain the version.
+     *
      * @return the version
      */
     public int getVersion() {
@@ -145,6 +153,7 @@ public abstract class MetisListVersioned<T extends MetisFieldVersionedItem>
 
     /**
      * Condense history.
+     *
      * @param pNewVersion the new maximum version
      */
     public void condenseHistory(final int pNewVersion) {
@@ -174,6 +183,7 @@ public abstract class MetisListVersioned<T extends MetisFieldVersionedItem>
 
     /**
      * deriveChanges on version increment.
+     *
      * @return the changes
      */
     MetisListChange<T> deriveChangesOnIncrement() {
@@ -210,6 +220,7 @@ public abstract class MetisListVersioned<T extends MetisFieldVersionedItem>
 
     /**
      * Rewind items to the required version.
+     *
      * @param pVersion the version to rewind to
      */
     void rewindToVersion(final int pVersion) {
@@ -241,6 +252,7 @@ public abstract class MetisListVersioned<T extends MetisFieldVersionedItem>
      * sources. Items that are in this list, but not in the base list will be viewed as inserted.
      * Items that are in the base list but not in this list will be viewed as deleted. Items
      * that are in both lists but differ will be viewed as changed.
+     *
      * @param pBase The base list to re-base on
      * @return are there any changes
      */
@@ -299,6 +311,7 @@ public abstract class MetisListVersioned<T extends MetisFieldVersionedItem>
 
     /**
      * Derive updates.
+     *
      * @param pListSet the update listSet
      */
     protected void deriveUpdates(final MetisListSetVersioned pListSet) {
@@ -343,8 +356,9 @@ public abstract class MetisListVersioned<T extends MetisFieldVersionedItem>
      * items that differ between the two lists. Items that are in the new list, but not in the old
      * list will be viewed as inserted. Items that are in the old list but not in the new list will
      * be viewed as deleted. Items that are in both lists but differ will be viewed as changed
+     *
      * @param pListSet the difference listSet
-     * @param pOld The old list to compare to
+     * @param pOld     The old list to compare to
      */
     public void deriveDifferences(final MetisListSetVersioned pListSet,
                                   final MetisListVersioned<? extends MetisFieldVersionedItem> pOld) {
@@ -399,6 +413,7 @@ public abstract class MetisListVersioned<T extends MetisFieldVersionedItem>
 
     /**
      * NewItem creator.
+     *
      * @param pItem the item to base new item on
      * @return the new item
      */
@@ -406,6 +421,7 @@ public abstract class MetisListVersioned<T extends MetisFieldVersionedItem>
 
     /**
      * NewList creator.
+     *
      * @param pListSet the list set
      * @return the new list
      */
@@ -413,12 +429,13 @@ public abstract class MetisListVersioned<T extends MetisFieldVersionedItem>
 
     /**
      * Fire event.
+     *
      * @param pEvent the event
      */
     public void fireEvent(final MetisListChange<T> pEvent) {
         /* If the change is non-empty */
         if (MetisListEvent.REFRESH.equals(pEvent.getEventType())
-            || !pEvent.isEmpty()) {
+                || !pEvent.isEmpty()) {
             getEventManager().fireEvent(pEvent.getEventType(), pEvent);
         }
     }

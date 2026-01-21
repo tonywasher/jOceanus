@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Prometheus: Application Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,11 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.prometheus.data;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.data.MetisDataEditState;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.metis.data.MetisDataResource;
@@ -24,8 +26,6 @@ import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.metis.list.MetisListIndexed;
 import net.sourceforge.joceanus.metis.list.MetisListKey;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoItem.PrometheusDataInfoList;
 import net.sourceforge.joceanus.prometheus.data.PrometheusTableItem.PrometheusTableList;
 import net.sourceforge.joceanus.prometheus.exc.PrometheusDataException;
@@ -36,8 +36,9 @@ import java.util.Map;
 
 /**
  * Generic implementation of a DataList for DataItems.
- * @author Tony Washer
+ *
  * @param <T> the item type
+ * @author Tony Washer
  */
 public abstract class PrometheusDataList<T extends PrometheusDataItem>
         implements MetisFieldItem, MetisDataList<T>, PrometheusTableList<T> {
@@ -47,9 +48,10 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
     public interface PrometheusDataListSet {
         /**
          * Obtain the list for a class.
-         * @param <L> the list type
+         *
+         * @param <L>       the list type
          * @param pDataType the data type
-         * @param pClass the list class
+         * @param pClass    the list class
          * @return the list
          */
         <L extends PrometheusDataList<?>> L getDataList(MetisListKey pDataType,
@@ -57,6 +59,7 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
 
         /**
          * Does this list have the dataType?
+         *
          * @param pDataType the dataType
          * @return true/false
          */
@@ -135,10 +138,11 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
 
     /**
      * Construct a new object.
+     *
      * @param pBaseClass the class of the underlying object
-     * @param pDataSet the owning dataSet
-     * @param pItemType the item type
-     * @param pStyle the new {@link PrometheusListStyle}
+     * @param pDataSet   the owning dataSet
+     * @param pItemType  the item type
+     * @param pStyle     the new {@link PrometheusListStyle}
      */
     protected PrometheusDataList(final Class<T> pBaseClass,
                                  final PrometheusDataSet pDataSet,
@@ -156,6 +160,7 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
 
     /**
      * Construct a clone object.
+     *
      * @param pSource the list to clone
      */
     protected PrometheusDataList(final PrometheusDataList<T> pSource) {
@@ -170,6 +175,7 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
 
     /**
      * Obtain item fields.
+     *
      * @return the item fields
      */
     public abstract MetisFieldSetDef getItemFields();
@@ -214,6 +220,7 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
 
     /**
      * Obtain item by id.
+     *
      * @param pId the id to lookup
      * @return the item (or null if not present)
      */
@@ -223,6 +230,7 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
 
     /**
      * Should this list be included in DataXml?
+     *
      * @return true/false
      */
     public boolean includeDataXML() {
@@ -231,12 +239,14 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
 
     /**
      * Obtain List Name.
+     *
      * @return the ListName
      */
     public abstract String listName();
 
     /**
      * Get the style of the list.
+     *
      * @return the list style
      */
     public PrometheusListStyle getStyle() {
@@ -245,6 +255,7 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
 
     /**
      * Get the type of the list.
+     *
      * @return the item type
      */
     public MetisListKey getItemType() {
@@ -253,6 +264,7 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
 
     /**
      * Get the dataSet.
+     *
      * @return the dataSet
      */
     public PrometheusDataSet getDataSet() {
@@ -261,6 +273,7 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
 
     /**
      * Set the version.
+     *
      * @param pVersion the version
      */
     public void setVersion(final int pVersion) {
@@ -269,6 +282,7 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
 
     /**
      * Set the style of the list.
+     *
      * @param pStyle the list style
      */
     protected void setStyle(final PrometheusListStyle pStyle) {
@@ -277,6 +291,7 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
 
     /**
      * Get the EditState of the list.
+     *
      * @return the Edit State
      */
     public MetisDataEditState getEditState() {
@@ -285,6 +300,7 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
 
     /**
      * Get the Version of the list.
+     *
      * @return the Version
      */
     public int getVersion() {
@@ -293,6 +309,7 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
 
     /**
      * Get the Base of the list.
+     *
      * @return the Base list
      */
     public PrometheusDataList<?> getBaseList() {
@@ -301,6 +318,7 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
 
     /**
      * Obtain the DataMap.
+     *
      * @return the enumClass
      */
     protected PrometheusDataMapItem getDataMap() {
@@ -309,6 +327,7 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
 
     /**
      * Determine whether the list got any errors.
+     *
      * @return <code>true/false</code>
      */
     public boolean hasErrors() {
@@ -317,6 +336,7 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
 
     /**
      * Determine whether the list got any updates.
+     *
      * @return <code>true/false</code>
      */
     public boolean hasUpdates() {
@@ -326,6 +346,7 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
 
     /**
      * Determine whether the list is valid (or are there errors/non-validated changes).
+     *
      * @return <code>true/false</code>
      */
     public boolean isValid() {
@@ -340,6 +361,7 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
 
     /**
      * Set the base DataList.
+     *
      * @param pBase the list that this list is based upon
      */
     protected void setBase(final PrometheusDataList<? extends PrometheusDataItem> pBase) {
@@ -348,6 +370,7 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
 
     /**
      * Obtain a copy of the Id Map.
+     *
      * @return the Id map.
      */
     public Map<Integer, T> copyIdMap() {
@@ -356,6 +379,7 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
 
     /**
      * Obtain the validator.
+     *
      * @return the validator
      */
     public PrometheusDataValidator getValidator() {
@@ -367,6 +391,7 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
 
     /**
      * Obtain an empty list based on this list.
+     *
      * @param pStyle the style of the empty list
      * @return the list
      */
@@ -374,7 +399,8 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
 
     /**
      * Derive an cloned extract of the source list.
-     * @param pData the dataSet
+     *
+     * @param pData   the dataSet
      * @param pSource the source list
      * @throws OceanusException on error
      */
@@ -393,6 +419,7 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
 
     /**
      * Derive an extract of this list.
+     *
      * @param pStyle the Style of the extract
      * @return the derived list
      * @throws OceanusException on error
@@ -410,6 +437,7 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
 
     /**
      * Populate a list extract.
+     *
      * @param pList the list to populate
      * @throws OceanusException on error
      */
@@ -446,6 +474,7 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
 
     /**
      * Adjust links.
+     *
      * @throws OceanusException on error
      */
     public void resolveDataSetLinks() throws OceanusException {
@@ -465,8 +494,9 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
      * items that differ between the two lists. Items that are in the new list, but not in the old
      * list will be viewed as inserted. Items that are in the old list but not in the new list will
      * be viewed as deleted. Items that are in both list but differ will be viewed as changed
+     *
      * @param pDataSet the difference DataSet
-     * @param pOld The old list to compare to
+     * @param pOld     The old list to compare to
      * @return the difference list
      */
     public PrometheusDataList<T> deriveDifferences(final PrometheusDataSet pDataSet,
@@ -527,6 +557,7 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
      * sources. Items that are in this list, but not in the base list will be viewed as inserted.
      * Items that are in the base list but not in this list list will be viewed as deleted. Items
      * that are in both list but differ will be viewed as changed
+     *
      * @param pBase The base list to re-base on
      * @return are there any changes
      */
@@ -588,6 +619,7 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
 
     /**
      * Is the Id unique in this list.
+     *
      * @param uId the Id to check
      * @return Whether the id is unique <code>true/false</code>
      */
@@ -605,6 +637,7 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
 
     /**
      * Generate/Record new id for the item.
+     *
      * @param pItem the new item
      */
     protected void setNewId(final PrometheusDataItem pItem) {
@@ -638,6 +671,7 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
 
     /**
      * Set the EditState for the list (forcible on error/change).
+     *
      * @param pState the new {@link MetisDataEditState} (only ERROR/DIRTY)
      */
     public void setEditState(final MetisDataEditState pState) {
@@ -659,6 +693,7 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
 
     /**
      * Validate the data items.
+     *
      * @return the error list (or null if no errors)
      */
     public PrometheusDataErrorList validate() {
@@ -707,6 +742,7 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
 
     /**
      * Perform a validation on data load.
+     *
      * @throws OceanusException on error
      */
     public void validateOnLoad() throws OceanusException {
@@ -719,12 +755,14 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
 
     /**
      * Allocate the dataMap.
+     *
      * @return the dataMap
      */
     protected abstract PrometheusDataMapItem allocateDataMap();
 
     /**
      * Set map.
+     *
      * @param pMap the map
      */
     protected void setDataMap(final PrometheusDataMapItem pMap) {
@@ -766,6 +804,7 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
 
     /**
      * PostProcess a loaded list.
+     *
      * @throws OceanusException on error
      */
     public void postProcessOnLoad() throws OceanusException {
@@ -846,6 +885,7 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
 
     /**
      * Create a new element in the list copied from another element (to be over-written).
+     *
      * @param pElement - element to base new item on
      * @return the newly allocated item
      */
@@ -853,12 +893,14 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
 
     /**
      * Create a new empty element in the edit list (to be over-written).
+     *
      * @return the newly allocated item
      */
     public abstract T addNewItem();
 
     /**
      * Create a new element according to the DataValues.
+     *
      * @param pValues the data values
      * @return the newly allocated item
      * @throws OceanusException on error
@@ -867,6 +909,7 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
 
     /**
      * Locate an item by name (if possible).
+     *
      * @param pName the name of the item
      * @return the matching item
      */
@@ -876,6 +919,7 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
 
     /**
      * Rewind items to the required version.
+     *
      * @param pVersion the version to rewind to
      */
     public void rewindToVersion(final int pVersion) {
@@ -915,6 +959,7 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
 
     /**
      * Condense history.
+     *
      * @param pNewVersion the new maximum version
      */
     public void condenseHistory(final int pNewVersion) {

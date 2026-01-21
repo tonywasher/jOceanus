@@ -18,15 +18,15 @@
 /**
  * Oceanus Core.
  */
-module net.sourceforge.joceanus.oceanus {
+module io.github.tonywasher.joceanus.oceanus {
     /* Exports */
-    exports net.sourceforge.joceanus.oceanus.base;
-    exports net.sourceforge.joceanus.oceanus.convert;
-    exports net.sourceforge.joceanus.oceanus.date;
-    exports net.sourceforge.joceanus.oceanus.decimal;
-    exports net.sourceforge.joceanus.oceanus.event;
-    exports net.sourceforge.joceanus.oceanus.format;
-    exports net.sourceforge.joceanus.oceanus.logger;
-    exports net.sourceforge.joceanus.oceanus.profile;
-    exports net.sourceforge.joceanus.oceanus.resource;
+    exports io.github.tonywasher.joceanus.oceanus.base;
+    exports io.github.tonywasher.joceanus.oceanus.convert;
+    exports io.github.tonywasher.joceanus.oceanus.date;
+    exports io.github.tonywasher.joceanus.oceanus.decimal;
+    exports io.github.tonywasher.joceanus.oceanus.event;
+    exports io.github.tonywasher.joceanus.oceanus.format;
+    exports io.github.tonywasher.joceanus.oceanus.logger;
+    exports io.github.tonywasher.joceanus.oceanus.profile;
+    exports io.github.tonywasher.joceanus.oceanus.resource;
 }

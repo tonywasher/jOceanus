@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,18 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.lethe.data.analysis.data;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataList;
@@ -38,15 +47,6 @@ import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.base.MoneyWiseAnalysisHistory;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisSecurityAttr;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisSecurityValues;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 
 import java.util.Currency;
 import java.util.Iterator;
@@ -127,8 +127,9 @@ public final class MoneyWiseAnalysisSecurityBucket
 
     /**
      * Constructor.
+     *
      * @param pAnalysis the analysis
-     * @param pHolding the security holding
+     * @param pHolding  the security holding
      */
     MoneyWiseAnalysisSecurityBucket(final MoneyWiseAnalysis pAnalysis,
                                     final MoneyWiseSecurityHolding pHolding) {
@@ -164,8 +165,9 @@ public final class MoneyWiseAnalysisSecurityBucket
 
     /**
      * Constructor.
+     *
      * @param pAnalysis the analysis
-     * @param pBase the underlying bucket
+     * @param pBase     the underlying bucket
      */
     private MoneyWiseAnalysisSecurityBucket(final MoneyWiseAnalysis pAnalysis,
                                             final MoneyWiseAnalysisSecurityBucket pBase) {
@@ -188,9 +190,10 @@ public final class MoneyWiseAnalysisSecurityBucket
 
     /**
      * Constructor.
+     *
      * @param pAnalysis the analysis
-     * @param pBase the underlying bucket
-     * @param pDate the date for the bucket
+     * @param pBase     the underlying bucket
+     * @param pDate     the date for the bucket
      */
     private MoneyWiseAnalysisSecurityBucket(final MoneyWiseAnalysis pAnalysis,
                                             final MoneyWiseAnalysisSecurityBucket pBase,
@@ -214,9 +217,10 @@ public final class MoneyWiseAnalysisSecurityBucket
 
     /**
      * Constructor.
+     *
      * @param pAnalysis the analysis
-     * @param pBase the underlying bucket
-     * @param pRange the range for the bucket
+     * @param pBase     the underlying bucket
+     * @param pRange    the range for the bucket
      */
     private MoneyWiseAnalysisSecurityBucket(final MoneyWiseAnalysis pAnalysis,
                                             final MoneyWiseAnalysisSecurityBucket pBase,
@@ -255,6 +259,7 @@ public final class MoneyWiseAnalysisSecurityBucket
 
     /**
      * Obtain the name.
+     *
      * @return the name
      */
     public String getSecurityName() {
@@ -263,6 +268,7 @@ public final class MoneyWiseAnalysisSecurityBucket
 
     /**
      * Obtain the decorated name.
+     *
      * @return the decorated name
      */
     public String getDecoratedName() {
@@ -271,6 +277,7 @@ public final class MoneyWiseAnalysisSecurityBucket
 
     /**
      * Obtain the holding.
+     *
      * @return the holding
      */
     public MoneyWiseSecurityHolding getSecurityHolding() {
@@ -279,6 +286,7 @@ public final class MoneyWiseAnalysisSecurityBucket
 
     /**
      * Obtain the security.
+     *
      * @return the security
      */
     public MoneyWiseSecurity getSecurity() {
@@ -287,6 +295,7 @@ public final class MoneyWiseAnalysisSecurityBucket
 
     /**
      * Obtain the portfolio.
+     *
      * @return the portfolio
      */
     public MoneyWisePortfolio getPortfolio() {
@@ -295,6 +304,7 @@ public final class MoneyWiseAnalysisSecurityBucket
 
     /**
      * Obtain the currency.
+     *
      * @return the currency
      */
     public MoneyWiseCurrency getCurrency() {
@@ -303,6 +313,7 @@ public final class MoneyWiseAnalysisSecurityBucket
 
     /**
      * Is this a foreign currency?
+     *
      * @return true/false
      */
     public Boolean isForeignCurrency() {
@@ -316,6 +327,7 @@ public final class MoneyWiseAnalysisSecurityBucket
 
     /**
      * Obtain the security type.
+     *
      * @return the security type
      */
     public MoneyWiseSecurityType getSecurityType() {
@@ -324,6 +336,7 @@ public final class MoneyWiseAnalysisSecurityBucket
 
     /**
      * Is this bucket idle?
+     *
      * @return true/false
      */
     public Boolean isIdle() {
@@ -332,6 +345,7 @@ public final class MoneyWiseAnalysisSecurityBucket
 
     /**
      * Obtain the analysis.
+     *
      * @return the analysis
      */
     MoneyWiseAnalysis getAnalysis() {
@@ -340,6 +354,7 @@ public final class MoneyWiseAnalysisSecurityBucket
 
     /**
      * Obtain date range.
+     *
      * @return the range
      */
     public OceanusDateRange getDateRange() {
@@ -348,6 +363,7 @@ public final class MoneyWiseAnalysisSecurityBucket
 
     /**
      * Obtain the value map.
+     *
      * @return the value map
      */
     public MoneyWiseAnalysisSecurityValues getValues() {
@@ -356,6 +372,7 @@ public final class MoneyWiseAnalysisSecurityBucket
 
     /**
      * Obtain the base value map.
+     *
      * @return the base value map
      */
     public MoneyWiseAnalysisSecurityValues getBaseValues() {
@@ -364,6 +381,7 @@ public final class MoneyWiseAnalysisSecurityBucket
 
     /**
      * Obtain values for transaction.
+     *
      * @param pTrans the transaction
      * @return the values (or null)
      */
@@ -373,6 +391,7 @@ public final class MoneyWiseAnalysisSecurityBucket
 
     /**
      * Obtain previous values for transaction.
+     *
      * @param pTrans the transaction
      * @return the values (or null)
      */
@@ -382,8 +401,9 @@ public final class MoneyWiseAnalysisSecurityBucket
 
     /**
      * Obtain delta for transaction.
+     *
      * @param pTrans the transaction
-     * @param pAttr the attribute
+     * @param pAttr  the attribute
      * @return the delta (or null)
      */
     public OceanusDecimal getDeltaForTransaction(final MoneyWiseTransaction pTrans,
@@ -394,8 +414,9 @@ public final class MoneyWiseAnalysisSecurityBucket
 
     /**
      * Obtain money delta for transaction.
+     *
      * @param pTrans the transaction
-     * @param pAttr the attribute
+     * @param pAttr  the attribute
      * @return the delta (or null)
      */
     public OceanusMoney getMoneyDeltaForTransaction(final MoneyWiseTransaction pTrans,
@@ -406,8 +427,9 @@ public final class MoneyWiseAnalysisSecurityBucket
 
     /**
      * Obtain units delta for transaction.
+     *
      * @param pTrans the transaction
-     * @param pAttr the attribute
+     * @param pAttr  the attribute
      * @return the delta (or null)
      */
     public OceanusUnits getUnitsDeltaForTransaction(final MoneyWiseTransaction pTrans,
@@ -418,6 +440,7 @@ public final class MoneyWiseAnalysisSecurityBucket
 
     /**
      * Obtain the history map.
+     *
      * @return the history map
      */
     private MoneyWiseAnalysisHistory<MoneyWiseAnalysisSecurityValues, MoneyWiseAnalysisSecurityAttr> getHistoryMap() {
@@ -426,7 +449,8 @@ public final class MoneyWiseAnalysisSecurityBucket
 
     /**
      * Set Attribute.
-     * @param pAttr the attribute
+     *
+     * @param pAttr  the attribute
      * @param pValue the value of the attribute
      */
     public void setValue(final MoneyWiseAnalysisSecurityAttr pAttr,
@@ -437,6 +461,7 @@ public final class MoneyWiseAnalysisSecurityBucket
 
     /**
      * Get an attribute value.
+     *
      * @param pAttr the attribute
      * @return the value to set
      */
@@ -452,6 +477,7 @@ public final class MoneyWiseAnalysisSecurityBucket
 
     /**
      * Obtain an attribute value.
+     *
      * @param pAttr the attribute
      * @return the value of the attribute or null
      */
@@ -462,7 +488,8 @@ public final class MoneyWiseAnalysisSecurityBucket
 
     /**
      * Adjust counter.
-     * @param pAttr the attribute
+     *
+     * @param pAttr  the attribute
      * @param pDelta the delta
      */
     public void adjustCounter(final MoneyWiseAnalysisSecurityAttr pAttr,
@@ -475,7 +502,8 @@ public final class MoneyWiseAnalysisSecurityBucket
 
     /**
      * Adjust counter.
-     * @param pAttr the attribute
+     *
+     * @param pAttr  the attribute
      * @param pDelta the delta
      */
     public void adjustCounter(final MoneyWiseAnalysisSecurityAttr pAttr,
@@ -488,6 +516,7 @@ public final class MoneyWiseAnalysisSecurityBucket
 
     /**
      * Register the transaction.
+     *
      * @param pHelper the helper
      * @return the registered values
      */
@@ -498,6 +527,7 @@ public final class MoneyWiseAnalysisSecurityBucket
 
     /**
      * value the asset for a particular range.
+     *
      * @param pRange the range of valuation
      */
     private void valueAsset(final OceanusDateRange pRange) {
@@ -525,6 +555,7 @@ public final class MoneyWiseAnalysisSecurityBucket
 
     /**
      * value the foreign asset for a particular range.
+     *
      * @param pRange the range of valuation
      */
     private void valueForeignAsset(final OceanusDateRange pRange) {
@@ -616,6 +647,7 @@ public final class MoneyWiseAnalysisSecurityBucket
 
     /**
      * Analyse the bucket.
+     *
      * @param pRange the range of valuation
      */
     void analyseBucket(final OceanusDateRange pRange) {
@@ -704,6 +736,7 @@ public final class MoneyWiseAnalysisSecurityBucket
 
     /**
      * Adjust security for natInsurance payments.
+     *
      * @param pTrans the transaction causing the payments
      */
     public void adjustForNIPayments(final MoneyWiseAnalysisTransactionHelper pTrans) {
@@ -748,6 +781,7 @@ public final class MoneyWiseAnalysisSecurityBucket
 
     /**
      * Is the bucket active?
+     *
      * @return true/false
      */
     public boolean isActive() {
@@ -783,6 +817,7 @@ public final class MoneyWiseAnalysisSecurityBucket
 
         /**
          * Construct a top-level List.
+         *
          * @param pAnalysis the analysis
          */
         MoneyWiseAnalysisSecurityBucketList(final MoneyWiseAnalysis pAnalysis) {
@@ -793,8 +828,9 @@ public final class MoneyWiseAnalysisSecurityBucket
 
         /**
          * Construct a view List.
+         *
          * @param pAnalysis the analysis
-         * @param pBase the base list
+         * @param pBase     the base list
          */
         MoneyWiseAnalysisSecurityBucketList(final MoneyWiseAnalysis pAnalysis,
                                             final MoneyWiseAnalysisSecurityBucketList pBase) {
@@ -822,9 +858,10 @@ public final class MoneyWiseAnalysisSecurityBucket
 
         /**
          * Construct a dated List.
+         *
          * @param pAnalysis the analysis
-         * @param pBase the base list
-         * @param pDate the Date
+         * @param pBase     the base list
+         * @param pDate     the Date
          */
         MoneyWiseAnalysisSecurityBucketList(final MoneyWiseAnalysis pAnalysis,
                                             final MoneyWiseAnalysisSecurityBucketList pBase,
@@ -853,9 +890,10 @@ public final class MoneyWiseAnalysisSecurityBucket
 
         /**
          * Construct a ranged List.
+         *
          * @param pAnalysis the analysis
-         * @param pBase the base list
-         * @param pRange the Date Range
+         * @param pBase     the base list
+         * @param pRange    the Date Range
          */
         MoneyWiseAnalysisSecurityBucketList(final MoneyWiseAnalysis pAnalysis,
                                             final MoneyWiseAnalysisSecurityBucketList pBase,
@@ -897,6 +935,7 @@ public final class MoneyWiseAnalysisSecurityBucket
 
         /**
          * Obtain the analysis.
+         *
          * @return the analysis
          */
         MoneyWiseAnalysis getAnalysis() {
@@ -905,6 +944,7 @@ public final class MoneyWiseAnalysisSecurityBucket
 
         /**
          * Obtain item by id.
+         *
          * @param pId the id to lookup
          * @return the item (or null if not present)
          */
@@ -922,6 +962,7 @@ public final class MoneyWiseAnalysisSecurityBucket
 
         /**
          * Obtain the SecurityBucket for a given security holding.
+         *
          * @param pHolding the security holding
          * @return the bucket
          */
@@ -945,6 +986,7 @@ public final class MoneyWiseAnalysisSecurityBucket
 
         /**
          * Mark active securities.
+         *
          * @return true/false are there active securities?
          * @throws OceanusException on error
          */

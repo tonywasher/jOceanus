@@ -1,25 +1,25 @@
-/*******************************************************************************
- * Tethys: Java Utilities
- * Copyright 2012-2026 Tony Washer
+/*
+ * Tethys: GUI Utilities
+ * Copyright 2012-2026. Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package net.sourceforge.joceanus.tethys.test.ui;
 
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateFormatter;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateFormatter;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIAlignment;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
@@ -47,6 +47,7 @@ import java.util.Locale;
 /**
  * <p>
  * Provides a simple application that illustrates the features of TethysDate.
+ *
  * @author Tony Washer
  */
 public class TethysTestDate {
@@ -197,6 +198,7 @@ public class TethysTestDate {
 
     /**
      * Constructor.
+     *
      * @param pFactory the factory
      */
     TethysTestDate(final TethysUIFactory<?> pFactory) {
@@ -208,6 +210,7 @@ public class TethysTestDate {
 
     /**
      * Obtain the component.
+     *
      * @return the component
      */
     public TethysUIComponent getComponent() {
@@ -216,6 +219,7 @@ public class TethysTestDate {
 
     /**
      * Create the panel.
+     *
      * @return the panel
      */
     private TethysUIComponent makePanel() {
@@ -398,6 +402,7 @@ public class TethysTestDate {
 
     /**
      * Create the options panel.
+     *
      * @return the panel
      */
     private TethysUIBoxPaneManager makeOptionsPanel() {
@@ -447,9 +452,10 @@ public class TethysTestDate {
 
     /**
      * Convenience method to create a date from Year, Month, Day.
-     * @param pYear the year
+     *
+     * @param pYear  the year
      * @param pMonth the month
-     * @param pDay the day
+     * @param pDay   the day
      * @return the requested date
      */
     private static OceanusDate makeDate(final int pYear,
@@ -575,7 +581,8 @@ public class TethysTestDate {
 
         /**
          * Constructor.
-         * @param pDate the date
+         *
+         * @param pDate     the date
          * @param pComments the comments
          */
         DateItem(final OceanusDate pDate,
@@ -587,6 +594,7 @@ public class TethysTestDate {
 
         /**
          * Obtain the Date.
+         *
          * @return the name
          */
         public OceanusDate getDate() {
@@ -595,6 +603,7 @@ public class TethysTestDate {
 
         /**
          * Set the Date.
+         *
          * @param pDate the Date
          */
         public void setDate(final OceanusDate pDate) {
@@ -603,6 +612,7 @@ public class TethysTestDate {
 
         /**
          * Obtain the Comments.
+         *
          * @return the Comment
          */
         public String getComments() {
@@ -611,6 +621,7 @@ public class TethysTestDate {
 
         /**
          * Set the Comments.
+         *
          * @param pComments the Comments
          */
         public void setComments(final String pComments) {
@@ -675,6 +686,7 @@ public class TethysTestDate {
 
         /**
          * Constructor.
+         *
          * @param pLocale the locale
          */
         ShortLocale(final Locale pLocale) {
@@ -684,7 +696,8 @@ public class TethysTestDate {
 
         /**
          * Constructor.
-         * @param pLocale the locale
+         *
+         * @param pLocale         the locale
          * @param pShowNarrowDays true/false
          */
         ShortLocale(final Locale pLocale,
@@ -696,6 +709,7 @@ public class TethysTestDate {
 
         /**
          * Obtain locale value.
+         *
          * @return the locale
          */
         public Locale getLocale() {
@@ -704,6 +718,7 @@ public class TethysTestDate {
 
         /**
          * Show narrow days.
+         *
          * @return true/false
          */
         public boolean showNarrowDays() {

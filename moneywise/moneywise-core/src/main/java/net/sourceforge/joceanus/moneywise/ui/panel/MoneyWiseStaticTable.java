@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,17 +13,20 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.ui.panel;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.metis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.metis.ui.MetisAction;
+import net.sourceforge.joceanus.metis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.metis.ui.MetisIcon;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
-import net.sourceforge.joceanus.moneywise.ui.base.MoneyWiseBaseTable;
 import net.sourceforge.joceanus.moneywise.ui.MoneyWiseUIResource;
+import net.sourceforge.joceanus.moneywise.ui.base.MoneyWiseBaseTable;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataList.PrometheusListStyle;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
@@ -32,9 +35,6 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataItem.PrometheusStaticList;
 import net.sourceforge.joceanus.prometheus.ui.PrometheusIcon;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIGenericWrapper;
 import net.sourceforge.joceanus.tethys.api.button.TethysUIScrollButtonManager;
@@ -46,6 +46,7 @@ import net.sourceforge.joceanus.tethys.api.table.TethysUITableManager;
 
 /**
  * MoneyWise Static Table.
+ *
  * @param <L> the list type
  * @param <T> the data type
  */
@@ -83,10 +84,11 @@ public class MoneyWiseStaticTable<L extends PrometheusStaticList<T>, T extends P
 
     /**
      * Constructor.
-     * @param pView the view
-     * @param pEditSet the editSet
-     * @param pError the error panel
-     * @param pDataType the dataType
+     *
+     * @param pView      the view
+     * @param pEditSet   the editSet
+     * @param pError     the error panel
+     * @param pDataType  the dataType
      * @param pListClass the listClass
      */
     MoneyWiseStaticTable(final MoneyWiseView pView,
@@ -163,6 +165,7 @@ public class MoneyWiseStaticTable<L extends PrometheusStaticList<T>, T extends P
 
     /**
      * Obtain the new button.
+     *
      * @return the new Button
      */
     TethysUIScrollButtonManager<TethysUIGenericWrapper> getNewButton() {
@@ -243,6 +246,7 @@ public class MoneyWiseStaticTable<L extends PrometheusStaticList<T>, T extends P
 
     /**
      * Select static data.
+     *
      * @param pStatic the static data
      */
     @SuppressWarnings("unchecked")
@@ -252,6 +256,7 @@ public class MoneyWiseStaticTable<L extends PrometheusStaticList<T>, T extends P
 
     /**
      * Is the static table full?
+     *
      * @return true/false
      */
     boolean isFull() {
@@ -261,6 +266,7 @@ public class MoneyWiseStaticTable<L extends PrometheusStaticList<T>, T extends P
 
     /**
      * adjust showALL.
+     *
      * @param pShow show disabled entries
      */
     void setShowAll(final boolean pShow) {

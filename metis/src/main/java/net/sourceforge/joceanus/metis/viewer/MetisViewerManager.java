@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Metis: Java Data Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,12 +13,12 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.metis.viewer;
 
-import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -79,6 +79,7 @@ public class MetisViewerManager
 
     /**
      * Get root iterator.
+     *
      * @return the iterator
      */
     public Iterator<MetisViewerEntry> rootIterator() {
@@ -87,6 +88,7 @@ public class MetisViewerManager
 
     /**
      * Get focused entry.
+     *
      * @return the focused entry
      */
     protected MetisViewerEntry getFocus() {
@@ -95,6 +97,7 @@ public class MetisViewerManager
 
     /**
      * Set focused entry.
+     *
      * @param pEntry the entry to focus on
      */
     protected void setFocus(final MetisViewerEntry pEntry) {
@@ -108,8 +111,9 @@ public class MetisViewerManager
 
     /**
      * Fire event.
+     *
      * @param pEventId the eventId
-     * @param pValue the relevant value
+     * @param pValue   the relevant value
      */
     protected void fireEvent(final MetisViewerEvent pEventId,
                              final Object pValue) {
@@ -118,6 +122,7 @@ public class MetisViewerManager
 
     /**
      * Get NextId.
+     *
      * @return the next id
      */
     protected int getNextId() {
@@ -126,6 +131,7 @@ public class MetisViewerManager
 
     /**
      * Create a new root entry.
+     *
      * @param pName the name of the new entry
      * @return the new entry
      */
@@ -139,8 +145,9 @@ public class MetisViewerManager
 
     /**
      * Create a new entry under parent.
+     *
      * @param pParent the parent entry
-     * @param pName the name of the new entry
+     * @param pName   the name of the new entry
      * @return the new entry
      */
     public MetisViewerEntry newEntry(final MetisViewerEntry pParent,
@@ -166,6 +173,7 @@ public class MetisViewerManager
 
     /**
      * Obtain standard entry.
+     *
      * @param pEntry the standard entry id
      * @return the viewer entry
      */

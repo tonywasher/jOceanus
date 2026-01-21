@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,16 +13,16 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.tax.uk;
 
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseMarginalReduction;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxResource;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
 
 /**
  * Basic UK Tax Allowance.
@@ -66,10 +66,11 @@ public abstract class MoneyWiseUKBasicAllowance
 
     /**
      * Constructor.
-     * @param pAllowance the allowance
-     * @param pRentalAllowance the rental allowance
+     *
+     * @param pAllowance        the allowance
+     * @param pRentalAllowance  the rental allowance
      * @param pCapitalAllowance the capital allowance
-     * @param pReduction the marginal reduction
+     * @param pReduction        the marginal reduction
      */
     protected MoneyWiseUKBasicAllowance(final OceanusMoney pAllowance,
                                         final OceanusMoney pRentalAllowance,
@@ -83,8 +84,9 @@ public abstract class MoneyWiseUKBasicAllowance
 
     /**
      * Constructor.
-     * @param pAllowance the allowance
-     * @param pRentalAllowance the rental allowance
+     *
+     * @param pAllowance        the allowance
+     * @param pRentalAllowance  the rental allowance
      * @param pCapitalAllowance the capital allowance
      */
     protected MoneyWiseUKBasicAllowance(final OceanusMoney pAllowance,
@@ -95,6 +97,7 @@ public abstract class MoneyWiseUKBasicAllowance
 
     /**
      * Obtain the allowance.
+     *
      * @return the Allowance
      */
     protected OceanusMoney getAllowance() {
@@ -103,6 +106,7 @@ public abstract class MoneyWiseUKBasicAllowance
 
     /**
      * Obtain the rental allowance.
+     *
      * @return the Allowance
      */
     protected OceanusMoney getRentalAllowance() {
@@ -111,6 +115,7 @@ public abstract class MoneyWiseUKBasicAllowance
 
     /**
      * Obtain the capital allowance.
+     *
      * @return the Allowance
      */
     protected OceanusMoney getCapitalAllowance() {
@@ -119,6 +124,7 @@ public abstract class MoneyWiseUKBasicAllowance
 
     /**
      * Obtain the marginal reduction.
+     *
      * @return the Reduction
      */
     protected MoneyWiseMarginalReduction getMarginalReduction() {
@@ -127,6 +133,7 @@ public abstract class MoneyWiseUKBasicAllowance
 
     /**
      * Calculate the allowance.
+     *
      * @param pConfig the tax configuration
      * @return the calculated allowance
      */
@@ -136,6 +143,7 @@ public abstract class MoneyWiseUKBasicAllowance
 
     /**
      * Calculate the savings allowance.
+     *
      * @param pConfig the tax configuration
      * @return the savings allowance
      */
@@ -145,6 +153,7 @@ public abstract class MoneyWiseUKBasicAllowance
 
     /**
      * Calculate the dividend allowance.
+     *
      * @return the dividend allowance
      */
     protected OceanusMoney calculateDividendAllowance() {
@@ -153,7 +162,8 @@ public abstract class MoneyWiseUKBasicAllowance
 
     /**
      * Calculate the loSavings band.
-     * @param pConfig the tax configuration
+     *
+     * @param pConfig    the tax configuration
      * @param pLoSavings the low savings band
      * @return the loSavings band
      */
@@ -189,6 +199,7 @@ public abstract class MoneyWiseUKBasicAllowance
 
     /**
      * Obtain zero amount.
+     *
      * @return the zero amount
      */
     protected OceanusMoney getZeroAmount() {
@@ -200,6 +211,7 @@ public abstract class MoneyWiseUKBasicAllowance
 
     /**
      * Obtain the data fields.
+     *
      * @return the data fields
      */
     protected static MetisFieldSet<? extends MoneyWiseUKBasicAllowance> getBaseFieldSet() {

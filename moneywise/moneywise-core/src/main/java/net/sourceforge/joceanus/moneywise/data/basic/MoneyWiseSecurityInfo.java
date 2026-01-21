@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,19 +13,20 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.data.basic;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.data.MetisDataResource;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
-import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseRegion.MoneyWiseRegionList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurity.MoneyWiseSecurityList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoType;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoType.MoneyWiseAccountInfoTypeList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
+import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoClass;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
@@ -33,10 +34,10 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
 import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataItem;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * Representation of an information extension of a security.
+ *
  * @author Tony Washer
  */
 public class MoneyWiseSecurityInfo
@@ -58,6 +59,7 @@ public class MoneyWiseSecurityInfo
 
     /**
      * Copy Constructor.
+     *
      * @param pList the list
      * @param pInfo The Info to copy
      */
@@ -69,9 +71,10 @@ public class MoneyWiseSecurityInfo
 
     /**
      * Edit Constructor.
-     * @param pList the list
+     *
+     * @param pList     the list
      * @param pSecurity the security
-     * @param pType the type
+     * @param pType     the type
      */
     private MoneyWiseSecurityInfo(final MoneyWiseSecurityInfoList pList,
                                   final MoneyWiseSecurity pSecurity,
@@ -87,7 +90,8 @@ public class MoneyWiseSecurityInfo
 
     /**
      * Values constructor.
-     * @param pList the List to add to
+     *
+     * @param pList   the List to add to
      * @param pValues the values constructor
      * @throws OceanusException on error
      */
@@ -141,6 +145,7 @@ public class MoneyWiseSecurityInfo
 
     /**
      * Obtain Region.
+     *
      * @return the Region
      */
     public MoneyWiseRegion getRegion() {
@@ -149,6 +154,7 @@ public class MoneyWiseSecurityInfo
 
     /**
      * Obtain Security.
+     *
      * @return the Security
      */
     public MoneyWiseSecurity getSecurity() {
@@ -209,6 +215,7 @@ public class MoneyWiseSecurityInfo
 
     /**
      * resolve editSet links.
+     *
      * @param pEditSet the edit set
      * @throws OceanusException on error
      */
@@ -226,6 +233,7 @@ public class MoneyWiseSecurityInfo
 
     /**
      * Resolve link reference.
+     *
      * @param pEditSet the edit set
      * @throws OceanusException on error
      */
@@ -263,6 +271,7 @@ public class MoneyWiseSecurityInfo
 
     /**
      * Update securityInfo from a securityInfo extract.
+     *
      * @param pInfo the changed securityInfo
      * @return whether changes have been made
      */
@@ -318,6 +327,7 @@ public class MoneyWiseSecurityInfo
 
         /**
          * Construct an empty CORE info list.
+         *
          * @param pData the DataSet for the list
          */
         protected MoneyWiseSecurityInfoList(final MoneyWiseDataSet pData) {
@@ -326,6 +336,7 @@ public class MoneyWiseSecurityInfo
 
         /**
          * Constructor for a cloned List.
+         *
          * @param pSource the source List
          */
         private MoneyWiseSecurityInfoList(final MoneyWiseSecurityInfoList pSource) {
@@ -354,6 +365,7 @@ public class MoneyWiseSecurityInfo
 
         /**
          * Set base list for Edit InfoList.
+         *
          * @param pBase the base list
          */
         protected void setBase(final MoneyWiseSecurityInfoList pBase) {

@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Prometheus: Application Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,15 +13,15 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.prometheus.data;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataObjectFormat;
 import net.sourceforge.joceanus.metis.data.MetisDataState;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIConstant;
 
 import java.util.ArrayList;
@@ -30,8 +30,9 @@ import java.util.List;
 
 /**
  * Representation of a set of DataInfo links for a DataItem.
- * @author Tony Washer
+ *
  * @param <T> the data type
+ * @author Tony Washer
  */
 public class PrometheusDataInfoLinkSet<T extends PrometheusDataInfoItem>
         extends PrometheusDataInfoItem {
@@ -81,8 +82,9 @@ public class PrometheusDataInfoLinkSet<T extends PrometheusDataInfoItem>
 
     /**
      * Constructor.
-     * @param pList the infoList
-     * @param pOwner the set owner
+     *
+     * @param pList     the infoList
+     * @param pOwner    the set owner
      * @param pInfoType the info type
      */
     protected PrometheusDataInfoLinkSet(final PrometheusDataInfoList<T> pList,
@@ -103,8 +105,9 @@ public class PrometheusDataInfoLinkSet<T extends PrometheusDataInfoItem>
 
     /**
      * Constructor.
+     *
      * @param pList the infoList
-     * @param pSet the infoLinkSet to clone
+     * @param pSet  the infoLinkSet to clone
      */
     protected PrometheusDataInfoLinkSet(final PrometheusDataInfoList<T> pList,
                                         final PrometheusDataInfoLinkSet<T> pSet) {
@@ -152,6 +155,7 @@ public class PrometheusDataInfoLinkSet<T extends PrometheusDataInfoItem>
 
     /**
      * Obtain Active Links.
+     *
      * @return the Owner
      */
     public List<Object> getActive() {
@@ -162,6 +166,7 @@ public class PrometheusDataInfoLinkSet<T extends PrometheusDataInfoItem>
 
     /**
      * Obtain Active Links.
+     *
      * @return the Owner
      */
     private PrometheusDataList<T> getLinkSet() {
@@ -170,6 +175,7 @@ public class PrometheusDataInfoLinkSet<T extends PrometheusDataInfoItem>
 
     /**
      * Is the link list empty?
+     *
      * @return true/false
      */
     public boolean isEmpty() {
@@ -178,6 +184,7 @@ public class PrometheusDataInfoLinkSet<T extends PrometheusDataInfoItem>
 
     /**
      * Add link to Item.
+     *
      * @param pItem the item to link to
      */
     public void linkItem(final T pItem) {
@@ -191,6 +198,7 @@ public class PrometheusDataInfoLinkSet<T extends PrometheusDataInfoItem>
 
     /**
      * Remove link to Item.
+     *
      * @param pItem the item to unlink
      */
     public void unlinkItem(final T pItem) {
@@ -204,6 +212,7 @@ public class PrometheusDataInfoLinkSet<T extends PrometheusDataInfoItem>
 
     /**
      * Check whether an item is linked.
+     *
      * @param pItem the item to check
      * @return true/false
      */
@@ -213,6 +222,7 @@ public class PrometheusDataInfoLinkSet<T extends PrometheusDataInfoItem>
 
     /**
      * Obtain item linked to value.
+     *
      * @param pValue the value to check
      * @return true/false
      */
@@ -256,6 +266,7 @@ public class PrometheusDataInfoLinkSet<T extends PrometheusDataInfoItem>
 
     /**
      * Add/restore all required links.
+     *
      * @param pActive the active items
      * @throws OceanusException on error
      */
@@ -287,6 +298,7 @@ public class PrometheusDataInfoLinkSet<T extends PrometheusDataInfoItem>
 
     /**
      * Clear all unnecessary links.
+     *
      * @param pActive the active items
      */
     public void clearUnnecessaryLinks(final List<? extends PrometheusDataItem> pActive) {
@@ -337,6 +349,7 @@ public class PrometheusDataInfoLinkSet<T extends PrometheusDataInfoItem>
 
     /**
      * Determine whether any item has changed in this edit view.
+     *
      * @return <code>true/false</code>
      */
     public MetisDataDifference fieldChanged() {
@@ -430,6 +443,7 @@ public class PrometheusDataInfoLinkSet<T extends PrometheusDataInfoItem>
 
     /**
      * Get the State for this infoSet.
+     *
      * @return the State
      */
     @Override
@@ -455,6 +469,7 @@ public class PrometheusDataInfoLinkSet<T extends PrometheusDataInfoItem>
 
     /**
      * Is there active values for the infoClass?
+     *
      * @return true/false
      */
     public boolean isExisting() {
@@ -554,6 +569,7 @@ public class PrometheusDataInfoLinkSet<T extends PrometheusDataInfoItem>
 
     /**
      * Obtain an iterator through the list.
+     *
      * @return the iterator
      */
     public Iterator<T> iterator() {

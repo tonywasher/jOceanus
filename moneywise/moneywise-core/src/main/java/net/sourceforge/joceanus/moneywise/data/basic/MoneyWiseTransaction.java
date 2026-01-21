@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,19 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.data.basic;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateFormatter;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.data.MetisDataEditState;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
@@ -33,16 +43,6 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoType.MoneyWiseTransInfoTypeList;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseLogicException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateFormatter;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataList;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataMapItem;
@@ -58,6 +58,7 @@ import java.util.List;
 
 /**
  * New version of Event DataItem utilising EventInfo.
+ *
  * @author Tony Washer
  */
 public class MoneyWiseTransaction
@@ -115,7 +116,8 @@ public class MoneyWiseTransaction
 
     /**
      * Copy Constructor.
-     * @param pList the transaction list
+     *
+     * @param pList        the transaction list
      * @param pTransaction The Transaction to copy
      */
     public MoneyWiseTransaction(final MoneyWiseTransactionList pList,
@@ -147,6 +149,7 @@ public class MoneyWiseTransaction
 
     /**
      * Edit constructor.
+     *
      * @param pList the list
      */
     public MoneyWiseTransaction(final MoneyWiseTransactionList pList) {
@@ -160,7 +163,8 @@ public class MoneyWiseTransaction
 
     /**
      * Values constructor.
-     * @param pList the List to add to
+     *
+     * @param pList   the List to add to
      * @param pValues the values
      * @throws OceanusException on error
      */
@@ -215,6 +219,7 @@ public class MoneyWiseTransaction
 
     /**
      * Obtain Date.
+     *
      * @return the date
      */
     public OceanusDate getDate() {
@@ -223,6 +228,7 @@ public class MoneyWiseTransaction
 
     /**
      * Set date value.
+     *
      * @param pValue the value
      */
     private void setValueDate(final OceanusDate pValue) {
@@ -233,6 +239,7 @@ public class MoneyWiseTransaction
 
     /**
      * Obtain TaxYear.
+     *
      * @return the taxYear
      */
     public MoneyWiseTaxCredit getTaxYear() {
@@ -241,6 +248,7 @@ public class MoneyWiseTransaction
 
     /**
      * Set taxYear value.
+     *
      * @param pValue the value
      */
     private void setValueTaxYear(final MoneyWiseTaxCredit pValue) {
@@ -254,6 +262,7 @@ public class MoneyWiseTransaction
 
     /**
      * Obtain fieldValue for infoSet.
+     *
      * @param pFieldId the fieldId
      * @return the value
      */
@@ -263,6 +272,7 @@ public class MoneyWiseTransaction
 
     /**
      * Obtain Account Delta Units.
+     *
      * @return the Account Delta Units
      */
     public final OceanusUnits getAccountDeltaUnits() {
@@ -273,6 +283,7 @@ public class MoneyWiseTransaction
 
     /**
      * Obtain Partner Delta Units.
+     *
      * @return the Partner Delta Units
      */
     public final OceanusUnits getPartnerDeltaUnits() {
@@ -283,6 +294,7 @@ public class MoneyWiseTransaction
 
     /**
      * Obtain Tax Credit.
+     *
      * @return the Tax Credit
      */
     public final OceanusMoney getTaxCredit() {
@@ -293,6 +305,7 @@ public class MoneyWiseTransaction
 
     /**
      * Obtain Price.
+     *
      * @return the Price
      */
     public final OceanusPrice getPrice() {
@@ -303,6 +316,7 @@ public class MoneyWiseTransaction
 
     /**
      * Obtain Commission.
+     *
      * @return the Commission
      */
     public final OceanusMoney getCommission() {
@@ -313,6 +327,7 @@ public class MoneyWiseTransaction
 
     /**
      * Obtain Dilution.
+     *
      * @return the Dilution
      */
     public final OceanusRatio getDilution() {
@@ -323,6 +338,7 @@ public class MoneyWiseTransaction
 
     /**
      * Obtain Qualifying Years.
+     *
      * @return the Years
      */
     public final Integer getYears() {
@@ -333,6 +349,7 @@ public class MoneyWiseTransaction
 
     /**
      * Obtain Employer National Insurance.
+     *
      * @return the NatInsurance
      */
     public final OceanusMoney getEmployerNatIns() {
@@ -343,6 +360,7 @@ public class MoneyWiseTransaction
 
     /**
      * Obtain Employee National Insurance.
+     *
      * @return the NatInsurance
      */
     public final OceanusMoney getEmployeeNatIns() {
@@ -353,6 +371,7 @@ public class MoneyWiseTransaction
 
     /**
      * Obtain Deemed Benefit.
+     *
      * @return the Benefit
      */
     public final OceanusMoney getDeemedBenefit() {
@@ -363,6 +382,7 @@ public class MoneyWiseTransaction
 
     /**
      * Obtain Withheld amount.
+     *
      * @return the Withheld
      */
     public final OceanusMoney getWithheld() {
@@ -373,6 +393,7 @@ public class MoneyWiseTransaction
 
     /**
      * Obtain Reference.
+     *
      * @return the Reference
      */
     public final String getReference() {
@@ -383,6 +404,7 @@ public class MoneyWiseTransaction
 
     /**
      * Obtain Comments.
+     *
      * @return the Comments
      */
     public final String getComments() {
@@ -393,6 +415,7 @@ public class MoneyWiseTransaction
 
     /**
      * Obtain ReturnedCash Account.
+     *
      * @return the ReturnedCash
      */
     public final MoneyWiseTransAsset getReturnedCashAccount() {
@@ -403,6 +426,7 @@ public class MoneyWiseTransaction
 
     /**
      * Obtain Partner Amount.
+     *
      * @return the Partner Amount
      */
     public final OceanusMoney getPartnerAmount() {
@@ -413,6 +437,7 @@ public class MoneyWiseTransaction
 
     /**
      * Obtain ExchangeRate.
+     *
      * @return the ExchangeRate
      */
     public final OceanusRatio getExchangeRate() {
@@ -423,6 +448,7 @@ public class MoneyWiseTransaction
 
     /**
      * Obtain ReturnedCash.
+     *
      * @return the ReturnedCash
      */
     public final OceanusMoney getReturnedCash() {
@@ -433,6 +459,7 @@ public class MoneyWiseTransaction
 
     /**
      * Obtain the Transaction tagList.
+     *
      * @return the list of transaction tags
      */
     @SuppressWarnings("unchecked")
@@ -576,6 +603,7 @@ public class MoneyWiseTransaction
 
     /**
      * Compare this event to another to establish sort order.
+     *
      * @param pThat The Event to compare to
      * @return (-1,0,1) depending of whether this object is before, equal, or after the passed
      * object in the sort order
@@ -615,6 +643,7 @@ public class MoneyWiseTransaction
 
     /**
      * resolve editSet links.
+     *
      * @throws OceanusException on error
      */
     public void resolveEditSetLinks() throws OceanusException {
@@ -632,6 +661,7 @@ public class MoneyWiseTransaction
 
     /**
      * Calculate the tax credit for a transaction.
+     *
      * @return the calculated tax credit
      */
     public final OceanusMoney calculateTaxCredit() {
@@ -662,6 +692,7 @@ public class MoneyWiseTransaction
 
     /**
      * Set a new date.
+     *
      * @param pDate the new date
      */
     public void setDate(final OceanusDate pDate) {
@@ -672,6 +703,7 @@ public class MoneyWiseTransaction
 
     /**
      * Set a new AccountDeltaUnits.
+     *
      * @param pUnits the new units
      * @throws OceanusException on error
      */
@@ -681,6 +713,7 @@ public class MoneyWiseTransaction
 
     /**
      * Set a new PartnerDeltaUnits.
+     *
      * @param pUnits the new units
      * @throws OceanusException on error
      */
@@ -690,6 +723,7 @@ public class MoneyWiseTransaction
 
     /**
      * Set a new TaxCredit.
+     *
      * @param pCredit the new credit
      * @throws OceanusException on error
      */
@@ -699,6 +733,7 @@ public class MoneyWiseTransaction
 
     /**
      * Set a new Price.
+     *
      * @param pPrice the new price
      * @throws OceanusException on error
      */
@@ -708,6 +743,7 @@ public class MoneyWiseTransaction
 
     /**
      * Set a new Commission.
+     *
      * @param pCommission the new commission
      * @throws OceanusException on error
      */
@@ -717,6 +753,7 @@ public class MoneyWiseTransaction
 
     /**
      * Set a new Dilution.
+     *
      * @param pDilution the new dilution
      * @throws OceanusException on error
      */
@@ -726,6 +763,7 @@ public class MoneyWiseTransaction
 
     /**
      * Set a new Qualifying Years.
+     *
      * @param pYears the new years
      * @throws OceanusException on error
      */
@@ -735,6 +773,7 @@ public class MoneyWiseTransaction
 
     /**
      * Set a new Employer NatInsurance.
+     *
      * @param pNatIns the new insurance
      * @throws OceanusException on error
      */
@@ -744,6 +783,7 @@ public class MoneyWiseTransaction
 
     /**
      * Set a new Employee NatInsurance.
+     *
      * @param pNatIns the new insurance
      * @throws OceanusException on error
      */
@@ -753,6 +793,7 @@ public class MoneyWiseTransaction
 
     /**
      * Set a new deemed`Benefit.
+     *
      * @param pBenefit the new benefit
      * @throws OceanusException on error
      */
@@ -762,6 +803,7 @@ public class MoneyWiseTransaction
 
     /**
      * Set a new Withheld.
+     *
      * @param pWithheld the new withheld
      * @throws OceanusException on error
      */
@@ -771,6 +813,7 @@ public class MoneyWiseTransaction
 
     /**
      * Set a new Partner Amount.
+     *
      * @param pValue the new partner amount
      * @throws OceanusException on error
      */
@@ -780,6 +823,7 @@ public class MoneyWiseTransaction
 
     /**
      * Set a new ExchangeRate.
+     *
      * @param pRate the new rate
      * @throws OceanusException on error
      */
@@ -789,6 +833,7 @@ public class MoneyWiseTransaction
 
     /**
      * Set a new ReturnedCash.
+     *
      * @param pValue the new returned cash
      * @throws OceanusException on error
      */
@@ -798,6 +843,7 @@ public class MoneyWiseTransaction
 
     /**
      * Set a new Reference.
+     *
      * @param pReference the new reference
      * @throws OceanusException on error
      */
@@ -807,6 +853,7 @@ public class MoneyWiseTransaction
 
     /**
      * Set new Comments.
+     *
      * @param pComments the new comments
      * @throws OceanusException on error
      */
@@ -816,6 +863,7 @@ public class MoneyWiseTransaction
 
     /**
      * Set a new ReturnedCasah Account.
+     *
      * @param pAccount the new returned cash account
      * @throws OceanusException on error
      */
@@ -825,6 +873,7 @@ public class MoneyWiseTransaction
 
     /**
      * Set the transaction tags.
+     *
      * @param pTags the tags
      * @throws OceanusException on error
      */
@@ -840,8 +889,9 @@ public class MoneyWiseTransaction
 
     /**
      * Set an infoSet value.
+     *
      * @param pInfoClass the class of info to set
-     * @param pValue the value to set
+     * @param pValue     the value to set
      * @throws OceanusException on error
      */
     private void setInfoSetValue(final MoneyWiseTransInfoClass pInfoClass,
@@ -866,6 +916,7 @@ public class MoneyWiseTransaction
 
     /**
      * Update base transaction from an edited transaction.
+     *
      * @param pTrans the edited transaction
      * @return whether changes have been made
      */
@@ -945,6 +996,7 @@ public class MoneyWiseTransaction
 
         /**
          * Construct an empty CORE list.
+         *
          * @param pData the DataSet for the list
          */
         public MoneyWiseTransactionList(final MoneyWiseDataSet pData) {
@@ -953,6 +1005,7 @@ public class MoneyWiseTransaction
 
         /**
          * Constructor for a cloned List.
+         *
          * @param pSource the source List
          */
         protected MoneyWiseTransactionList(final MoneyWiseTransactionList pSource) {
@@ -976,6 +1029,7 @@ public class MoneyWiseTransaction
 
         /**
          * Obtain the transactionInfoList.
+         *
          * @return the transaction info list
          */
         public MoneyWiseTransInfoList getTransactionInfo() {
@@ -987,6 +1041,7 @@ public class MoneyWiseTransaction
 
         /**
          * Set the transactionInfoTypeList.
+         *
          * @param pInfoList the info type list
          */
         protected void setTransactionInfo(final MoneyWiseTransInfoList pInfoList) {
@@ -995,6 +1050,7 @@ public class MoneyWiseTransaction
 
         /**
          * Obtain the transactionInfoTypeList.
+         *
          * @return the transaction info type list
          */
         public MoneyWiseTransInfoTypeList getTransInfoTypes() {
@@ -1006,6 +1062,7 @@ public class MoneyWiseTransaction
 
         /**
          * Set the transactionInfoTypeList.
+         *
          * @param pInfoTypeList the info type list
          */
         protected void setTransInfoTypes(final MoneyWiseTransInfoTypeList pInfoTypeList) {
@@ -1014,6 +1071,7 @@ public class MoneyWiseTransaction
 
         /**
          * Obtain editSet.
+         *
          * @return the editSet
          */
         public PrometheusEditSet getEditSet() {
@@ -1022,6 +1080,7 @@ public class MoneyWiseTransaction
 
         /**
          * Set the editSet.
+         *
          * @param pEditSet the editSet
          */
         public void setEditSet(final PrometheusEditSet pEditSet) {
@@ -1037,6 +1096,7 @@ public class MoneyWiseTransaction
 
         /**
          * Derive Edit list.
+         *
          * @param pEditSet the editSet
          * @return the edit list
          * @throws OceanusException on error
@@ -1083,6 +1143,7 @@ public class MoneyWiseTransaction
 
         /**
          * Relink LastEvent etc. for assets.
+         *
          * @throws OceanusException on error
          */
         public void relinkEditAssetEvents() throws OceanusException {
@@ -1099,6 +1160,7 @@ public class MoneyWiseTransaction
 
         /**
          * Add a new item to the list.
+         *
          * @param pItem the item to add
          * @return the newly added item
          */
@@ -1114,6 +1176,7 @@ public class MoneyWiseTransaction
 
         /**
          * Add a new item to the edit list.
+         *
          * @return the newly added item
          */
         @Override

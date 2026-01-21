@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Metis: Java Data Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,10 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.metis.field;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.data.MetisDataType;
@@ -23,7 +24,6 @@ import net.sourceforge.joceanus.metis.exc.MetisDataException;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldDef;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldSetDef;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldVersionedDef;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 import java.util.Iterator;
 
@@ -78,6 +78,7 @@ public class MetisFieldVersionValues {
 
     /**
      * Constructor.
+     *
      * @param pItem the associated item
      */
     protected MetisFieldVersionValues(final MetisFieldVersionedItem pItem) {
@@ -90,6 +91,7 @@ public class MetisFieldVersionValues {
 
     /**
      * Obtain the field definitions.
+     *
      * @return the field definitions
      */
     public MetisFieldSetDef getFields() {
@@ -98,6 +100,7 @@ public class MetisFieldVersionValues {
 
     /**
      * Obtain the underlying item.
+     *
      * @return the item
      */
     protected MetisFieldVersionedItem getItem() {
@@ -106,6 +109,7 @@ public class MetisFieldVersionValues {
 
     /**
      * Obtain the version # of the values.
+     *
      * @return the version #
      */
     public int getVersion() {
@@ -114,6 +118,7 @@ public class MetisFieldVersionValues {
 
     /**
      * Set the version # of the values.
+     *
      * @param pVersion the version #
      */
     public void setVersion(final int pVersion) {
@@ -122,6 +127,7 @@ public class MetisFieldVersionValues {
 
     /**
      * Determine if this object is a record of a deletion event.
+     *
      * @return true/false
      */
     public boolean isDeletion() {
@@ -130,6 +136,7 @@ public class MetisFieldVersionValues {
 
     /**
      * Adjust deletion flag.
+     *
      * @param pDeletion true/false
      */
     public void setDeletion(final boolean pDeletion) {
@@ -138,6 +145,7 @@ public class MetisFieldVersionValues {
 
     /**
      * Clone this ValueSet.
+     *
      * @return the cloned set
      */
     public MetisFieldVersionValues cloneIt() {
@@ -149,6 +157,7 @@ public class MetisFieldVersionValues {
 
     /**
      * Initialise values from a previous set.
+     *
      * @param pPrevious the previous valueSet
      */
     public void copyFrom(final MetisFieldVersionValues pPrevious) {
@@ -169,8 +178,9 @@ public class MetisFieldVersionValues {
 
     /**
      * Set the value.
+     *
      * @param pFieldId the fieldId
-     * @param pValue the value
+     * @param pValue   the value
      * @throws OceanusException on error
      */
     public void setValue(final MetisDataFieldId pFieldId,
@@ -181,6 +191,7 @@ public class MetisFieldVersionValues {
 
     /**
      * Set the value.
+     *
      * @param pField the field
      * @param pValue the value
      * @throws OceanusException on error
@@ -201,8 +212,9 @@ public class MetisFieldVersionValues {
 
     /**
      * Set the value.
+     *
      * @param pFieldId the fieldId
-     * @param pValue the value
+     * @param pValue   the value
      */
     public void setUncheckedValue(final MetisDataFieldId pFieldId,
                                   final Object pValue) {
@@ -212,6 +224,7 @@ public class MetisFieldVersionValues {
 
     /**
      * Set the unchecked value.
+     *
      * @param pField the field
      * @param pValue the value
      */
@@ -228,6 +241,7 @@ public class MetisFieldVersionValues {
 
     /**
      * Get the value.
+     *
      * @param pFieldId the fieldId
      * @return the value
      */
@@ -238,6 +252,7 @@ public class MetisFieldVersionValues {
 
     /**
      * Get the value.
+     *
      * @param pField the field
      * @return the value
      */
@@ -253,9 +268,10 @@ public class MetisFieldVersionValues {
 
     /**
      * Get the value.
-     * @param <X> the required type
+     *
+     * @param <X>      the required type
      * @param pFieldId the fieldId
-     * @param pClazz the class
+     * @param pClazz   the class
      * @return the value
      */
     public <X> X getValue(final MetisDataFieldId pFieldId,
@@ -266,7 +282,8 @@ public class MetisFieldVersionValues {
 
     /**
      * Get the value as an object type.
-     * @param <X> the required type
+     *
+     * @param <X>    the required type
      * @param pField the field
      * @param pClazz the class
      * @return the value
@@ -300,7 +317,7 @@ public class MetisFieldVersionValues {
 
         /* Check for deletion flag and # of values */
         if (isDeletion != mySet.isDeletion
-            || theNumValues != mySet.theNumValues) {
+                || theNumValues != mySet.theNumValues) {
             return false;
         }
 
@@ -329,8 +346,8 @@ public class MetisFieldVersionValues {
     public int hashCode() {
         /* Use deletion flag in hash Code */
         int iHashCode = isDeletion
-                                   ? DELETION_HASH
-                                   : 1;
+                ? DELETION_HASH
+                : 1;
 
         /* Loop through the values */
         final Iterator<MetisFieldDef> myIterator = theFields.fieldIterator();
@@ -359,6 +376,7 @@ public class MetisFieldVersionValues {
 
     /**
      * Check for differences.
+     *
      * @param pOriginal the object to check for differences
      * @return the difference
      */
@@ -367,7 +385,7 @@ public class MetisFieldVersionValues {
 
         /* Check for deletion flag and # of values */
         if (isDeletion != pOriginal.isDeletion
-            || theNumValues != pOriginal.theNumValues) {
+                || theNumValues != pOriginal.theNumValues) {
             return MetisDataDifference.DIFFERENT;
         }
 
@@ -377,7 +395,7 @@ public class MetisFieldVersionValues {
             /* Ignore non-equality and non-versioned fields */
             final MetisFieldDef myField = myIterator.next();
             if (!(myField instanceof MetisFieldVersionedDef myVersioned)
-                 || !myVersioned.isEquality()) {
+                    || !myVersioned.isEquality()) {
                 continue;
             }
 
@@ -394,13 +412,14 @@ public class MetisFieldVersionValues {
 
         /* Determine the difference */
         return isSecureDiff
-                            ? MetisDataDifference.SECURITY
-                            : MetisDataDifference.IDENTICAL;
+                ? MetisDataDifference.SECURITY
+                : MetisDataDifference.IDENTICAL;
     }
 
     /**
      * Check for a difference in a particular field.
-     * @param pFieldId the field to check for differences
+     *
+     * @param pFieldId  the field to check for differences
      * @param pOriginal the original value set
      * @return the difference
      */
@@ -412,7 +431,8 @@ public class MetisFieldVersionValues {
 
     /**
      * Check for a difference in a particular field.
-     * @param pField the field to check for differences
+     *
+     * @param pField    the field to check for differences
      * @param pOriginal the original value set
      * @return the difference
      */
@@ -431,6 +451,7 @@ public class MetisFieldVersionValues {
 
     /**
      * Check the value.
+     *
      * @param pField the field
      * @param pValue the value
      * @throws OceanusException on error
@@ -439,14 +460,14 @@ public class MetisFieldVersionValues {
                                   final Object pValue) throws OceanusException {
         /* Null/String is always allowed */
         if (pValue == null
-            || pValue instanceof String) {
+                || pValue instanceof String) {
             return;
         }
 
         /* Integer is allowed for Link type */
         final MetisDataType myDataType = pField.getDataType();
         if (MetisDataType.LINK.equals(myDataType)
-            && pValue instanceof Integer) {
+                && pValue instanceof Integer) {
             return;
         }
 

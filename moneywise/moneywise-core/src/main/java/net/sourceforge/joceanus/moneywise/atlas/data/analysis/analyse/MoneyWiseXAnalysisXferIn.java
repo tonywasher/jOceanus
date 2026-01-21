@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,10 +13,12 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.atlas.data.analysis.analyse;
 
-import net.sourceforge.joceanus.moneywise.exc.MoneyWiseLogicException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioBucket.MoneyWiseXAnalysisPortfolioBucketList;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisSecurityBucket;
@@ -32,10 +34,8 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurity.MoneyWise
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePortfolioClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseSecurityClass;
+import net.sourceforge.joceanus.moneywise.exc.MoneyWiseLogicException;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
 
 /**
  * Credit XferIn Analysis.
@@ -78,6 +78,7 @@ public class MoneyWiseXAnalysisXferIn {
 
     /**
      * Constructor.
+     *
      * @param pAnalyser the event analyser
      * @param pSecurity the securityAnalyser
      * @throws OceanusException on error
@@ -97,11 +98,12 @@ public class MoneyWiseXAnalysisXferIn {
 
     /**
      * Obtain statePension bucket.
+     *
      * @param pEditSet the editSet
      * @return the statePension bucket
      * @throws OceanusException on error
      */
-    private MoneyWiseXAnalysisSecurityBucket getStatePension(final PrometheusEditSet pEditSet) throws OceanusException  {
+    private MoneyWiseXAnalysisSecurityBucket getStatePension(final PrometheusEditSet pEditSet) throws OceanusException {
         /* Access the singular portfolio and security */
         final MoneyWisePortfolioList myPortfolioList = pEditSet.getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class);
         final MoneyWisePortfolio myPensionPort = myPortfolioList.getSingularClass(MoneyWisePortfolioClass.PENSION);
@@ -120,7 +122,8 @@ public class MoneyWiseXAnalysisXferIn {
 
     /**
      * Process a transaction that is a transferIn.
-     * @param pTrans  the transaction
+     *
+     * @param pTrans the transaction
      */
     void processTransferIn(final MoneyWiseXAnalysisTransaction pTrans) {
         /* Record the transaction */
@@ -147,7 +150,8 @@ public class MoneyWiseXAnalysisXferIn {
 
     /**
      * Process the credit side of a transfer in transaction.
-     * @param pTrans  the transaction
+     *
+     * @param pTrans the transaction
      */
     void processCreditXferIn(final MoneyWiseXAnalysisTransaction pTrans) {
         /* Record the transaction */
@@ -160,6 +164,7 @@ public class MoneyWiseXAnalysisXferIn {
 
     /**
      * Process the credit side of a transfer in transaction.
+     *
      * @param pHolding the credit holding
      */
     private void processCreditXferIn(final MoneyWiseSecurityHolding pHolding) {
@@ -198,6 +203,7 @@ public class MoneyWiseXAnalysisXferIn {
 
     /**
      * Process statePension contribution.
+     *
      * @param pAmount the statePension contribution
      */
     void processStatePensionContribution(final OceanusMoney pAmount) {

@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,11 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.data.basic;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataNamedItem;
@@ -23,8 +25,6 @@ import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataValidator.MoneyWiseDataValidatorParentDefaults;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCategoryInterface;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInstanceMap;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
@@ -64,7 +64,8 @@ public abstract class MoneyWiseCategoryBase
 
     /**
      * Copy Constructor.
-     * @param pList the list
+     *
+     * @param pList     the list
      * @param pCategory The Category to copy
      */
     protected MoneyWiseCategoryBase(final MoneyWiseCategoryBaseList<?> pList,
@@ -75,7 +76,8 @@ public abstract class MoneyWiseCategoryBase
 
     /**
      * Values constructor.
-     * @param pList the List to add to
+     *
+     * @param pList   the List to add to
      * @param pValues the values constructor
      * @throws OceanusException on error
      */
@@ -122,6 +124,7 @@ public abstract class MoneyWiseCategoryBase
 
     /**
      * Edit Constructor.
+     *
      * @param pList the list
      */
     protected MoneyWiseCategoryBase(final MoneyWiseCategoryBaseList<?> pList) {
@@ -163,6 +166,7 @@ public abstract class MoneyWiseCategoryBase
 
     /**
      * Obtain Encrypted name.
+     *
      * @return the bytes
      */
     public byte[] getNameBytes() {
@@ -171,6 +175,7 @@ public abstract class MoneyWiseCategoryBase
 
     /**
      * Obtain Encrypted Name Field.
+     *
      * @return the Field
      */
     private PrometheusEncryptedPair getNameField() {
@@ -179,6 +184,7 @@ public abstract class MoneyWiseCategoryBase
 
     /**
      * Obtain Description.
+     *
      * @return the description
      */
     public String getDesc() {
@@ -187,6 +193,7 @@ public abstract class MoneyWiseCategoryBase
 
     /**
      * Obtain Encrypted description.
+     *
      * @return the bytes
      */
     public byte[] getDescBytes() {
@@ -195,6 +202,7 @@ public abstract class MoneyWiseCategoryBase
 
     /**
      * Obtain Encrypted Description Field.
+     *
      * @return the Field
      */
     private PrometheusEncryptedPair getDescField() {
@@ -203,12 +211,14 @@ public abstract class MoneyWiseCategoryBase
 
     /**
      * Obtain Category Type.
+     *
      * @return the type
      */
     public abstract PrometheusStaticDataItem getCategoryType();
 
     /**
      * Obtain categoryTypeId.
+     *
      * @return the categoryTypeId
      */
     public Integer getCategoryTypeId() {
@@ -220,6 +230,7 @@ public abstract class MoneyWiseCategoryBase
 
     /**
      * Obtain CategoryTypeName.
+     *
      * @return the categoryTypeName
      */
     public String getCategoryTypeName() {
@@ -231,18 +242,21 @@ public abstract class MoneyWiseCategoryBase
 
     /**
      * Obtain CategoryTypeClass.
+     *
      * @return the categoryTypeClass
      */
     public abstract MoneyWiseCategoryInterface getCategoryTypeClass();
 
     /**
      * Obtain Cash Category Parent.
+     *
      * @return the parent
      */
     public abstract MoneyWiseCategoryBase getParentCategory();
 
     /**
      * Obtain parentId.
+     *
      * @return the parentId
      */
     public Integer getParentCategoryId() {
@@ -254,6 +268,7 @@ public abstract class MoneyWiseCategoryBase
 
     /**
      * Obtain parentName.
+     *
      * @return the parentName
      */
     public String getParentCategoryName() {
@@ -265,6 +280,7 @@ public abstract class MoneyWiseCategoryBase
 
     /**
      * Obtain subCategory.
+     *
      * @return the subCategory
      */
     public String getSubCategory() {
@@ -273,6 +289,7 @@ public abstract class MoneyWiseCategoryBase
 
     /**
      * Set name value.
+     *
      * @param pValue the value
      * @throws OceanusException on error
      */
@@ -282,6 +299,7 @@ public abstract class MoneyWiseCategoryBase
 
     /**
      * Set name value.
+     *
      * @param pBytes the value
      * @throws OceanusException on error
      */
@@ -291,6 +309,7 @@ public abstract class MoneyWiseCategoryBase
 
     /**
      * Set name value.
+     *
      * @param pValue the value
      */
     private void setValueName(final PrometheusEncryptedPair pValue) {
@@ -299,6 +318,7 @@ public abstract class MoneyWiseCategoryBase
 
     /**
      * Set description value.
+     *
      * @param pValue the value
      * @throws OceanusException on error
      */
@@ -308,6 +328,7 @@ public abstract class MoneyWiseCategoryBase
 
     /**
      * Set description value.
+     *
      * @param pBytes the value
      * @throws OceanusException on error
      */
@@ -317,6 +338,7 @@ public abstract class MoneyWiseCategoryBase
 
     /**
      * Set description value.
+     *
      * @param pValue the value
      */
     private void setValueDesc(final PrometheusEncryptedPair pValue) {
@@ -325,6 +347,7 @@ public abstract class MoneyWiseCategoryBase
 
     /**
      * Set parent value.
+     *
      * @param pValue the value
      */
     private void setValueParent(final MoneyWiseCategoryBase pValue) {
@@ -333,14 +356,16 @@ public abstract class MoneyWiseCategoryBase
 
     /**
      * Set parent id.
+     *
      * @param pValue the value
      */
     private void setValueParent(final Integer pValue) {
         getValues().setUncheckedValue(PrometheusDataResource.DATAGROUP_PARENT, pValue);
-     }
+    }
 
     /**
      * Set parent name.
+     *
      * @param pValue the value
      */
     private void setValueParent(final String pValue) {
@@ -349,6 +374,7 @@ public abstract class MoneyWiseCategoryBase
 
     /**
      * Set subCategory name.
+     *
      * @param pValue the value
      */
     private void setValueSubCategory(final String pValue) {
@@ -392,6 +418,7 @@ public abstract class MoneyWiseCategoryBase
 
     /**
      * Resolve links within an edit set.
+     *
      * @throws OceanusException on error
      */
     protected abstract void resolveEditSetLinks() throws OceanusException;
@@ -418,6 +445,7 @@ public abstract class MoneyWiseCategoryBase
 
     /**
      * Set a new category name.
+     *
      * @param pName the new name
      * @throws OceanusException on error
      */
@@ -430,6 +458,7 @@ public abstract class MoneyWiseCategoryBase
 
     /**
      * Set a new category name.
+     *
      * @param pParentName the parent name
      * @param pSubCatName the subCategory name
      * @throws OceanusException on error
@@ -441,6 +470,7 @@ public abstract class MoneyWiseCategoryBase
 
     /**
      * Set a new category name.
+     *
      * @param pName the new name
      * @throws OceanusException on error
      */
@@ -480,12 +510,14 @@ public abstract class MoneyWiseCategoryBase
 
     /**
      * Set a new category type.
+     *
      * @param pType the new type
      */
     public abstract void setCategoryType(PrometheusStaticDataItem pType);
 
     /**
      * Set a new description.
+     *
      * @param pDesc the description
      * @throws OceanusException on error
      */
@@ -495,6 +527,7 @@ public abstract class MoneyWiseCategoryBase
 
     /**
      * Set a new parent category.
+     *
      * @param pParent the new parent
      * @throws OceanusException on error
      */
@@ -520,6 +553,7 @@ public abstract class MoneyWiseCategoryBase
 
     /**
      * Update base category from an edited category.
+     *
      * @param pCategory the edited category
      */
     public void applyBasicChanges(final MoneyWiseCategoryBase pCategory) {
@@ -561,6 +595,7 @@ public abstract class MoneyWiseCategoryBase
 
     /**
      * The Category Base List class.
+     *
      * @param <T> the Category Data type
      */
     public abstract static class MoneyWiseCategoryBaseList<T extends MoneyWiseCategoryBase>
@@ -574,8 +609,9 @@ public abstract class MoneyWiseCategoryBase
 
         /**
          * Construct an empty CORE Category list.
-         * @param pData the DataSet for the list
-         * @param pClass the class of the item
+         *
+         * @param pData     the DataSet for the list
+         * @param pClass    the class of the item
          * @param pItemType the item type
          */
         protected MoneyWiseCategoryBaseList(final MoneyWiseDataSet pData,
@@ -586,6 +622,7 @@ public abstract class MoneyWiseCategoryBase
 
         /**
          * Constructor for a cloned List.
+         *
          * @param pSource the source List
          */
         protected MoneyWiseCategoryBaseList(final MoneyWiseCategoryBaseList<T> pSource) {
@@ -638,6 +675,7 @@ public abstract class MoneyWiseCategoryBase
 
         /**
          * Update Children.
+         *
          * @param pParent the parent item
          * @throws OceanusException on error
          */
@@ -664,6 +702,7 @@ public abstract class MoneyWiseCategoryBase
 
         /**
          * Resolve update set links.
+         *
          * @throws OceanusException on error
          */
         public void resolveUpdateSetLinks() throws OceanusException {
@@ -683,6 +722,7 @@ public abstract class MoneyWiseCategoryBase
 
     /**
      * The dataMap class.
+     *
      * @param <T> the Category Data type
      */
     public static class MoneyWiseCategoryDataMap<T extends MoneyWiseCategoryBase>
@@ -699,6 +739,7 @@ public abstract class MoneyWiseCategoryBase
 
         /**
          * find item by name.
+         *
          * @param pName the name to look up
          * @return the matching item
          */
@@ -708,6 +749,7 @@ public abstract class MoneyWiseCategoryBase
 
         /**
          * Check validity of name.
+         *
          * @param pName the name to look up
          * @return true/false
          */
@@ -717,6 +759,7 @@ public abstract class MoneyWiseCategoryBase
 
         /**
          * Check availability of name.
+         *
          * @param pName the key to look up
          * @return true/false
          */

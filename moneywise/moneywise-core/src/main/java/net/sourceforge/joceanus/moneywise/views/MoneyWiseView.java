@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,32 +13,32 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.views;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerEntry;
-import net.sourceforge.joceanus.moneywise.data.validate.MoneyWiseValidatorFactory;
-import net.sourceforge.joceanus.moneywise.lethe.data.analysis.analyse.MoneyWiseAnalysisTransAnalyser;
-import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
-import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisManager;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTax.MoneyWiseTaxFactory;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
+import net.sourceforge.joceanus.moneywise.data.validate.MoneyWiseValidatorFactory;
 import net.sourceforge.joceanus.moneywise.database.MoneyWiseDataStore;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.analyse.MoneyWiseAnalysisTransAnalyser;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisManager;
 import net.sourceforge.joceanus.moneywise.sheets.MoneyWiseSheet;
-import net.sourceforge.joceanus.prometheus.toolkit.PrometheusToolkit;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
 import net.sourceforge.joceanus.prometheus.database.PrometheusDBConfig;
 import net.sourceforge.joceanus.prometheus.database.PrometheusDataStore;
 import net.sourceforge.joceanus.prometheus.database.PrometheusDatabase.PrometheusDatabasePreferenceKey;
 import net.sourceforge.joceanus.prometheus.database.PrometheusDatabase.PrometheusDatabasePreferences;
 import net.sourceforge.joceanus.prometheus.sheets.PrometheusSpreadSheet;
+import net.sourceforge.joceanus.prometheus.toolkit.PrometheusToolkit;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataControl;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 import net.sourceforge.joceanus.prometheus.views.PrometheusViewerEntryId;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
-import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 
 /**
  * Data Control for MoneyWiseApp.
@@ -77,6 +77,7 @@ public class MoneyWiseView
 
     /**
      * Constructor.
+     *
      * @param pUtilitySet the utility set
      * @param pTaxFactory the tax factory
      */
@@ -100,6 +101,7 @@ public class MoneyWiseView
 
     /**
      * Obtain the date range.
+     *
      * @return the date range
      */
     public OceanusDateRange getRange() {
@@ -108,6 +110,7 @@ public class MoneyWiseView
 
     /**
      * Obtain the analysis manager.
+     *
      * @return the analyser.
      */
     public MoneyWiseAnalysisManager getAnalysisManager() {
@@ -116,6 +119,7 @@ public class MoneyWiseView
 
     /**
      * Do we have active securities?
+     *
      * @return true/false.
      */
     public boolean hasActiveSecurities() {
@@ -124,6 +128,7 @@ public class MoneyWiseView
 
     /**
      * Do we have multiple currencies?
+     *
      * @return true/false.
      */
     public boolean hasMultipleCurrencies() {
@@ -132,6 +137,7 @@ public class MoneyWiseView
 
     /**
      * Obtain a new DataSet.
+     *
      * @return new DataSet
      */
     @Override
@@ -163,6 +169,7 @@ public class MoneyWiseView
 
     /**
      * Obtain a Database interface.
+     *
      * @return new DataSet
      */
     @Override
@@ -172,6 +179,7 @@ public class MoneyWiseView
 
     /**
      * Update the data for a view.
+     *
      * @param pData the new data set
      */
     @Override
@@ -192,6 +200,7 @@ public class MoneyWiseView
 
     /**
      * Analyse the data.
+     *
      * @param pData the data
      * @return the analysis
      * @throws OceanusException on error
@@ -267,6 +276,7 @@ public class MoneyWiseView
 
     /**
      * Set the reporting currency.
+     *
      * @param pCurrency the new reporting currency
      */
     public void setReportingCurrency(final MoneyWiseCurrency pCurrency) {

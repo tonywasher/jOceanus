@@ -1,33 +1,33 @@
-/*******************************************************************************
+/*
  * Themis: Java Project Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package net.sourceforge.joceanus.themis.lethe.analysis;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.themis.exc.ThemisDataException;
+import net.sourceforge.joceanus.themis.lethe.analysis.ThemisAnalysisScanner.ThemisAnalysisSource;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
-
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.exc.ThemisDataException;
-import net.sourceforge.joceanus.themis.lethe.analysis.ThemisAnalysisScanner.ThemisAnalysisSource;
 
 /**
  * Stack of Analysis Elements.
  */
 public class ThemisAnalysisStack
-    implements ThemisAnalysisSource {
+        implements ThemisAnalysisSource {
     /**
      * The stack of lines.
      */
@@ -35,6 +35,7 @@ public class ThemisAnalysisStack
 
     /**
      * Constructor.
+     *
      * @param pStack the stack
      */
     ThemisAnalysisStack(final Deque<ThemisAnalysisElement> pStack) {
@@ -43,6 +44,7 @@ public class ThemisAnalysisStack
 
     /**
      * Constructor.
+     *
      * @param pElement the element
      */
     ThemisAnalysisStack(final ThemisAnalysisElement pElement) {
@@ -74,6 +76,7 @@ public class ThemisAnalysisStack
 
     /**
      * Is the stack empty?
+     *
      * @return true/false
      */
     public boolean isEmpty() {
@@ -83,6 +86,7 @@ public class ThemisAnalysisStack
 
     /**
      * Obtain the last line in the stack.
+     *
      * @return the line
      */
     ThemisAnalysisElement peekLastLine() {
@@ -91,6 +95,7 @@ public class ThemisAnalysisStack
 
     /**
      * Obtain the size of the stack.
+     *
      * @return the size
      */
     public int size() {
@@ -99,6 +104,7 @@ public class ThemisAnalysisStack
 
     /**
      * Strip parentheses.
+     *
      * @return a new stack with stripped parentheses
      * @throws OceanusException on error
      */
@@ -119,6 +125,7 @@ public class ThemisAnalysisStack
 
     /**
      * Strip parentheses.
+     *
      * @return a new stack with stripped parentheses
      * @throws OceanusException on error
      */
@@ -139,6 +146,7 @@ public class ThemisAnalysisStack
 
     /**
      * Does the stack start with this character?
+     *
      * @param pChar the character
      * @return true/false
      */
@@ -149,6 +157,7 @@ public class ThemisAnalysisStack
 
     /**
      * Strip the starting character.
+     *
      * @param pChar the character
      */
     public void stripStartChar(final char pChar) {
@@ -159,6 +168,7 @@ public class ThemisAnalysisStack
 
     /**
      * Strip the ending character.
+     *
      * @param pChar the character
      */
     public void stripEndChar(final char pChar) {
@@ -169,6 +179,7 @@ public class ThemisAnalysisStack
 
     /**
      * Rebuild the stack.
+     *
      * @param pSource the source to rebuild from
      */
     public void rebuild(final Deque<ThemisAnalysisElement> pSource) {

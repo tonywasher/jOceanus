@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Prometheus: Application Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,11 +13,11 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.prometheus.service.sheet.hssf;
 
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCellPosition;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCellStyleType;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetException;
@@ -119,6 +119,7 @@ public class PrometheusExcelHSSFWorkBook
 
     /**
      * Constructor.
+     *
      * @param pInput the input stream
      * @throws OceanusException on error
      */
@@ -192,6 +193,7 @@ public class PrometheusExcelHSSFWorkBook
 
     /**
      * evaluate the formula for a cell.
+     *
      * @param pCell the cell to evaluate
      * @return the calculated value
      */
@@ -201,6 +203,7 @@ public class PrometheusExcelHSSFWorkBook
 
     /**
      * Format the cell value.
+     *
      * @param pCell the cell to evaluate
      * @return the formatted value
      */
@@ -210,6 +213,7 @@ public class PrometheusExcelHSSFWorkBook
 
     /**
      * Obtain the data formatter.
+     *
      * @return the formatter
      */
     protected OceanusDataFormatter getDataFormatter() {
@@ -248,6 +252,7 @@ public class PrometheusExcelHSSFWorkBook
 
     /**
      * Is the sheet hidden?
+     *
      * @param pSheetIndex the sheet index
      * @return true/false
      */
@@ -257,8 +262,9 @@ public class PrometheusExcelHSSFWorkBook
 
     /**
      * Set the sheet's hidden status.
+     *
      * @param pSheetIndex the sheet index
-     * @param isHidden true/false
+     * @param isHidden    true/false
      */
     void setSheetHidden(final int pSheetIndex,
                         final boolean isHidden) {
@@ -291,7 +297,8 @@ public class PrometheusExcelHSSFWorkBook
 
     /**
      * Declare the named range.
-     * @param pName the name of the range
+     *
+     * @param pName  the name of the range
      * @param pRange the range to declare
      * @throws OceanusException on error
      */
@@ -301,8 +308,8 @@ public class PrometheusExcelHSSFWorkBook
         Name myName = theBook.getName(pName);
         if (myName != null) {
             throw new PrometheusSheetException("Name "
-                                          + pName
-                                          + " already exists in workbook");
+                    + pName
+                    + " already exists in workbook");
         }
 
         /* Build the basic name */
@@ -316,8 +323,9 @@ public class PrometheusExcelHSSFWorkBook
 
     /**
      * Apply Data Validation.
-     * @param pSheet the workSheet containing the cells
-     * @param pCells the Cells to apply validation to
+     *
+     * @param pSheet      the workSheet containing the cells
+     * @param pCells      the Cells to apply validation to
      * @param pValidRange the name of the validation range
      */
     void applyDataValidation(final HSSFSheet pSheet,
@@ -338,8 +346,9 @@ public class PrometheusExcelHSSFWorkBook
 
     /**
      * Apply Data Validation.
-     * @param pSheet the workSheet containing the cells
-     * @param pCells the Cells to apply validation to
+     *
+     * @param pSheet     the workSheet containing the cells
+     * @param pCells     the Cells to apply validation to
      * @param pValueList the list of valid values
      */
     protected void applyDataValidation(final HSSFSheet pSheet,
@@ -360,6 +369,7 @@ public class PrometheusExcelHSSFWorkBook
 
     /**
      * Apply Data Filter.
+     *
      * @param pSheet the sheet to filter
      * @param pRange the range to apply the filter to
      */
@@ -371,6 +381,7 @@ public class PrometheusExcelHSSFWorkBook
 
     /**
      * Obtain alignment for a cell.
+     *
      * @param pType the cell type
      * @return the alignment
      */
@@ -389,6 +400,7 @@ public class PrometheusExcelHSSFWorkBook
 
     /**
      * Obtain font for a cell.
+     *
      * @param pType the cell type
      * @return the font
      */
@@ -406,6 +418,7 @@ public class PrometheusExcelHSSFWorkBook
 
     /**
      * Obtain the required CellStyle.
+     *
      * @param pType the CellStyleType
      * @return the required CellStyle
      */
@@ -438,6 +451,7 @@ public class PrometheusExcelHSSFWorkBook
 
     /**
      * Obtain the required CellStyle.
+     *
      * @param pValue the Cell Value
      * @return the required CellStyle
      */
@@ -461,7 +475,7 @@ public class PrometheusExcelHSSFWorkBook
 
         /* If we have a data format */
         if (myType != PrometheusSheetCellStyleType.BOOLEAN
-            && PrometheusSheetFormats.hasDataFormat(myType)) {
+                && PrometheusSheetFormats.hasDataFormat(myType)) {
             /* Determine the format */
             final String myFormat = PrometheusSheetFormats.getDataFormatString(pValue);
             myStyle.setDataFormat(theStyleEngine.getFormat(myFormat));
@@ -474,6 +488,7 @@ public class PrometheusExcelHSSFWorkBook
 
     /**
      * Obtain the required alternate CellStyle.
+     *
      * @param pValue the Cell Value
      * @return the required CellStyle
      */
@@ -505,7 +520,7 @@ public class PrometheusExcelHSSFWorkBook
 
         /* If we have a data format */
         if (myType != PrometheusSheetCellStyleType.BOOLEAN
-            && PrometheusSheetFormats.hasDataFormat(myType)) {
+                && PrometheusSheetFormats.hasDataFormat(myType)) {
             /* Determine the format */
             final String myFormat = PrometheusSheetFormats.getAlternateFormatString(pValue);
             myStyle.setDataFormat(theStyleEngine.getFormat(myFormat));

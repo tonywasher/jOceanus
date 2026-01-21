@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Metis: Java Data Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,15 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.metis.toolkit;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
+import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.metis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.metis.help.MetisHelpWindow;
 import net.sourceforge.joceanus.metis.preference.MetisPreferenceEvent;
@@ -27,12 +33,6 @@ import net.sourceforge.joceanus.metis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerStandardEntry;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerWindow;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
-import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
-import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
-import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIProgram;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIValueSet;
 import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
@@ -100,6 +100,7 @@ public class MetisToolkit {
 
     /**
      * Constructor.
+     *
      * @param pFactory the GUI factory
      * @throws OceanusException on error
      */
@@ -109,7 +110,8 @@ public class MetisToolkit {
 
     /**
      * Constructor.
-     * @param pFactory the GUI factory
+     *
+     * @param pFactory    the GUI factory
      * @param pPreference creat preference manager
      * @throws OceanusException on error
      */
@@ -151,6 +153,7 @@ public class MetisToolkit {
 
     /**
      * Set up colors.
+     *
      * @param pPreferenceMgr the preference manager
      */
     public void setUpColors(final MetisPreferenceManager pPreferenceMgr) {
@@ -168,6 +171,7 @@ public class MetisToolkit {
 
     /**
      * Obtain the Program Definitions.
+     *
      * @return the definitions
      */
     public TethysUIProgram getProgramDefinitions() {
@@ -176,6 +180,7 @@ public class MetisToolkit {
 
     /**
      * Obtain the Data Formatter.
+     *
      * @return the formatter
      */
     public OceanusDataFormatter getFormatter() {
@@ -184,6 +189,7 @@ public class MetisToolkit {
 
     /**
      * Obtain the Viewer Manager.
+     *
      * @return the viewer
      */
     public MetisViewerManager getViewerManager() {
@@ -192,6 +198,7 @@ public class MetisToolkit {
 
     /**
      * Obtain the Preference Manager.
+     *
      * @return the preferences
      */
     public MetisPreferenceManager getPreferenceManager() {
@@ -200,6 +207,7 @@ public class MetisToolkit {
 
     /**
      * Obtain the GUI Factory.
+     *
      * @return the factory
      */
     public TethysUIFactory<?> getGuiFactory() {
@@ -208,6 +216,7 @@ public class MetisToolkit {
 
     /**
      * Obtain the Thread Manager.
+     *
      * @return the factory
      */
     public TethysUIThreadManager getThreadManager() {
@@ -216,6 +225,7 @@ public class MetisToolkit {
 
     /**
      * Create a Help Window.
+     *
      * @return the help Window
      */
     public MetisHelpWindow newHelpWindow() {
@@ -224,6 +234,7 @@ public class MetisToolkit {
 
     /**
      * Create an ErrorPanel.
+     *
      * @param pParent the parent viewer entry
      * @return the error panel
      */
@@ -233,6 +244,7 @@ public class MetisToolkit {
 
     /**
      * Create a Viewer Window.
+     *
      * @return the viewer Window
      * @throws OceanusException on error
      */
@@ -242,6 +254,7 @@ public class MetisToolkit {
 
     /**
      * Create a new Preference View.
+     *
      * @return the view
      */
     public MetisPreferenceView newPreferenceView() {
@@ -260,6 +273,7 @@ public class MetisToolkit {
 
     /**
      * Set profile.
+     *
      * @param pProfile the profile
      */
     private void setProfile(final OceanusProfile pProfile) {
@@ -269,6 +283,7 @@ public class MetisToolkit {
 
     /**
      * Create new profile.
+     *
      * @param pTask the name of the task
      * @return the new profile
      */
@@ -283,6 +298,7 @@ public class MetisToolkit {
 
     /**
      * Obtain the active profile.
+     *
      * @return the active profile
      */
     public OceanusProfile getActiveProfile() {
@@ -291,6 +307,7 @@ public class MetisToolkit {
 
     /**
      * Obtain the active task.
+     *
      * @return the active task
      */
     public OceanusProfile getActiveTask() {
@@ -299,6 +316,7 @@ public class MetisToolkit {
 
     /**
      * Delete a file on error exit.
+     *
      * @param pFile the file to delete
      */
     public static void cleanUpFile(final File pFile) {

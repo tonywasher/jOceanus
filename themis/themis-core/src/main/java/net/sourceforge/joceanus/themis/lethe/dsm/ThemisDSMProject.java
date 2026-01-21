@@ -1,20 +1,24 @@
-/*******************************************************************************
+/*
  * Themis: Java Project Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package net.sourceforge.joceanus.themis.lethe.dsm;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.themis.exc.ThemisIOException;
+import net.sourceforge.joceanus.themis.lethe.analysis.ThemisAnalysisMaven;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -23,10 +27,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.exc.ThemisIOException;
-import net.sourceforge.joceanus.themis.lethe.analysis.ThemisAnalysisMaven;
 
 /**
  * DSM Project.
@@ -54,6 +54,7 @@ public class ThemisDSMProject {
 
     /**
      * Constructor.
+     *
      * @param pLocation the location of the project
      */
     public ThemisDSMProject(final File pLocation) {
@@ -68,6 +69,7 @@ public class ThemisDSMProject {
 
     /**
      * Return the location of the project.
+     *
      * @return the location
      */
     File getLocation() {
@@ -76,6 +78,7 @@ public class ThemisDSMProject {
 
     /**
      * Return the project name.
+     *
      * @return the name
      */
     String getProjectName() {
@@ -84,6 +87,7 @@ public class ThemisDSMProject {
 
     /**
      * Obtain the default module.
+     *
      * @return the default
      */
     public ThemisDSMModule getDefaultModule() {
@@ -93,6 +97,7 @@ public class ThemisDSMProject {
 
     /**
      * Does the project have modules.
+     *
      * @return true/false
      */
     public boolean hasModules() {
@@ -101,6 +106,7 @@ public class ThemisDSMProject {
 
     /**
      * Obtain the error.
+     *
      * @return error
      */
     public OceanusException getError() {
@@ -114,6 +120,7 @@ public class ThemisDSMProject {
 
     /**
      * Obtain a list of all modules and submodules that contain packages.
+     *
      * @return the list
      */
     public List<ThemisDSMModule> listModules() {
@@ -138,6 +145,7 @@ public class ThemisDSMProject {
 
     /**
      * Parse the maven top-level project file.
+     *
      * @param pPom the project file
      */
     private void parseProjectFile(final File pPom) {
@@ -153,7 +161,7 @@ public class ThemisDSMProject {
 
             /* Loop through the modules */
             for (final String myModuleName : myPom.getModules()) {
-                 final File myModuleDir = new File(pPom.getParentFile(), myModuleName);
+                final File myModuleDir = new File(pPom.getParentFile(), myModuleName);
                 final ThemisDSMModule myModule = new ThemisDSMModule(myModuleDir);
                 theModules.add(myModule);
                 myModule.processModulesAndPackages();
@@ -171,7 +179,7 @@ public class ThemisDSMProject {
 
             /* Catch exceptions */
         } catch (IOException
-                | OceanusException e) {
+                 | OceanusException e) {
             /* Save Exception */
             theModules.clear();
             theError = new ThemisIOException("Failed to parse Project file", e);

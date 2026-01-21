@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,11 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.test.data.trans;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisAccountBucket;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPayeeBucket;
@@ -38,8 +40,6 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrencyClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import org.junit.jupiter.api.Assertions;
 
 /**
@@ -47,7 +47,7 @@ import org.junit.jupiter.api.Assertions;
  */
 public abstract class MoneyWiseDataTestCase {
     /**
-     *  The accountBuilder.
+     * The accountBuilder.
      */
     private final MoneyWiseDataTestAccounts theBuilder;
 
@@ -63,6 +63,7 @@ public abstract class MoneyWiseDataTestCase {
 
     /**
      * Constructor.
+     *
      * @param pBuilder the builder
      */
     MoneyWiseDataTestCase(final MoneyWiseDataTestAccounts pBuilder) {
@@ -75,24 +76,28 @@ public abstract class MoneyWiseDataTestCase {
 
     /**
      * Obtain testCase name.
+     *
      * @return the name
      */
     public abstract String getName();
 
     /**
      * Obtain testCase title.
+     *
      * @return the title
      */
     public abstract String getTitle();
 
     /**
      * Obtain testCase description.
+     *
      * @return the description
      */
     public abstract String getDesc();
 
     /**
      * Obtain transaction builder.
+     *
      * @return the builder
      */
     MoneyWiseTransactionBuilder getTransBuilder() {
@@ -101,6 +106,7 @@ public abstract class MoneyWiseDataTestCase {
 
     /**
      * Set analysis.
+     *
      * @param pAnalysis the analysis
      */
     public void setAnalysis(final MoneyWiseXAnalysis pAnalysis) {
@@ -109,6 +115,7 @@ public abstract class MoneyWiseDataTestCase {
 
     /**
      * Get analysis.
+     *
      * @return the analysis
      */
     public MoneyWiseXAnalysis getAnalysis() {
@@ -117,6 +124,7 @@ public abstract class MoneyWiseDataTestCase {
 
     /**
      * Setup accounts.
+     *
      * @throws OceanusException on error
      */
     public void setUpAccounts() throws OceanusException {
@@ -124,6 +132,7 @@ public abstract class MoneyWiseDataTestCase {
 
     /**
      * Define Prices.
+     *
      * @throws OceanusException on error
      */
     public void definePrices() throws OceanusException {
@@ -131,6 +140,7 @@ public abstract class MoneyWiseDataTestCase {
 
     /**
      * Define Rates.
+     *
      * @throws OceanusException on error
      */
     public void defineRates() throws OceanusException {
@@ -138,6 +148,7 @@ public abstract class MoneyWiseDataTestCase {
 
     /**
      * Define transactions.
+     *
      * @throws OceanusException on error
      */
     public void defineTransactions() throws OceanusException {
@@ -157,6 +168,7 @@ public abstract class MoneyWiseDataTestCase {
 
     /**
      * Use infoClass.
+     *
      * @param pInfoClass the infoClass
      * @return true/false
      */
@@ -166,7 +178,8 @@ public abstract class MoneyWiseDataTestCase {
 
     /**
      * Use infoClass.
-     * @param pAttr the security attribute
+     *
+     * @param pAttr    the security attribute
      * @param pHolding the holding
      * @return true/false
      */
@@ -179,7 +192,7 @@ public abstract class MoneyWiseDataTestCase {
             case RESIDUALCOST:
             case REALISEDGAINS:
             case UNREALISEDGAINS:
-                 return true;
+                return true;
             case VALUE:
                 final MoneyWiseCurrency myReporting = getAnalysis().getData().getReportingCurrency();
                 return myReporting.equals(pHolding.getSecurity().getAssetCurrency());
@@ -190,6 +203,7 @@ public abstract class MoneyWiseDataTestCase {
 
     /**
      * Create payees.
+     *
      * @param pPayees the payees to create
      * @throws OceanusException on error
      */
@@ -199,6 +213,7 @@ public abstract class MoneyWiseDataTestCase {
 
     /**
      * Create deposits.
+     *
      * @param pDeposits the deposits to create
      * @throws OceanusException on error
      */
@@ -208,6 +223,7 @@ public abstract class MoneyWiseDataTestCase {
 
     /**
      * Create cash.
+     *
      * @param pCash the cash to create
      * @throws OceanusException on error
      */
@@ -217,6 +233,7 @@ public abstract class MoneyWiseDataTestCase {
 
     /**
      * Create loans.
+     *
      * @param pLoans the loans to create
      * @throws OceanusException on error
      */
@@ -226,6 +243,7 @@ public abstract class MoneyWiseDataTestCase {
 
     /**
      * Create portfolios.
+     *
      * @param pPortfolios the portfolios to create
      * @throws OceanusException on error
      */
@@ -235,6 +253,7 @@ public abstract class MoneyWiseDataTestCase {
 
     /**
      * Create securities.
+     *
      * @param pSecurities the securities to create
      * @throws OceanusException on error
      */
@@ -244,9 +263,10 @@ public abstract class MoneyWiseDataTestCase {
 
     /**
      * Create secPrice.
+     *
      * @param pSecurity the currency
-     * @param pDate the date
-     * @param pPrice the price
+     * @param pDate     the date
+     * @param pPrice    the price
      * @throws OceanusException on error
      */
     void createSecPrice(final String pSecurity,
@@ -257,9 +277,10 @@ public abstract class MoneyWiseDataTestCase {
 
     /**
      * Create xchgRate.
+     *
      * @param pCurrency the currency
-     * @param pDate the date
-     * @param pRate the rate
+     * @param pDate     the date
+     * @param pRate     the rate
      * @throws OceanusException on error
      */
     void createXchgRate(final MoneyWiseCurrencyClass pCurrency,
@@ -270,8 +291,9 @@ public abstract class MoneyWiseDataTestCase {
 
     /**
      * Check account valuation.
+     *
      * @param pAccount the account
-     * @param pValue the expected value
+     * @param pValue   the expected value
      */
     void checkAccountValue(final String pAccount,
                            final String pValue) {
@@ -285,8 +307,9 @@ public abstract class MoneyWiseDataTestCase {
 
     /**
      * Check payee income/expense.
-     * @param pPayee the payee
-     * @param pIncome the expected income
+     *
+     * @param pPayee   the payee
+     * @param pIncome  the expected income
      * @param pExpense the expected expense
      */
     void checkPayeeValue(final String pPayee,
@@ -305,9 +328,10 @@ public abstract class MoneyWiseDataTestCase {
 
     /**
      * Check category income/expense.
+     *
      * @param pCategory the category
-     * @param pIncome the expected income
-     * @param pExpense the expected expense
+     * @param pIncome   the expected income
+     * @param pExpense  the expected expense
      */
     void checkCategoryValue(final String pCategory,
                             final String pIncome,
@@ -325,8 +349,9 @@ public abstract class MoneyWiseDataTestCase {
 
     /**
      * Check taxBasis value.
+     *
      * @param pTaxBasis the taxBasis
-     * @param pValue the expected value
+     * @param pValue    the expected value
      */
     void checkTaxBasisValue(final MoneyWiseTaxClass pTaxBasis,
                             final String pValue) {
@@ -339,6 +364,7 @@ public abstract class MoneyWiseDataTestCase {
 
     /**
      * Obtain Account bucket for asset.
+     *
      * @param pAsset the asset
      * @return the bucket
      */

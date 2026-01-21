@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,12 +13,12 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.quicken.file;
 
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurity;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,6 +26,7 @@ import java.util.List;
 
 /**
  * Security Price List.
+ *
  * @author Tony Washer
  */
 public class MoneyWiseQIFSecurityPrices
@@ -47,7 +48,8 @@ public class MoneyWiseQIFSecurityPrices
 
     /**
      * Constructor.
-     * @param pFile the QIF File
+     *
+     * @param pFile     the QIF File
      * @param pSecurity the security.
      */
     protected MoneyWiseQIFSecurityPrices(final MoneyWiseQIFFile pFile,
@@ -57,7 +59,8 @@ public class MoneyWiseQIFSecurityPrices
 
     /**
      * Constructor.
-     * @param pFile the QIF File
+     *
+     * @param pFile     the QIF File
      * @param pSecurity the security.
      */
     protected MoneyWiseQIFSecurityPrices(final MoneyWiseQIFFile pFile,
@@ -72,6 +75,7 @@ public class MoneyWiseQIFSecurityPrices
 
     /**
      * Obtain the security.
+     *
      * @return the security
      */
     public MoneyWiseQIFSecurity getSecurity() {
@@ -80,6 +84,7 @@ public class MoneyWiseQIFSecurityPrices
 
     /**
      * Obtain the prices.
+     *
      * @return the prices
      */
     public List<MoneyWiseQIFPrice> getPrices() {
@@ -88,6 +93,7 @@ public class MoneyWiseQIFSecurityPrices
 
     /**
      * Add price.
+     *
      * @param pPrice the price to add
      */
     protected void addPrice(final MoneyWiseSecurityPrice pPrice) {
@@ -100,6 +106,7 @@ public class MoneyWiseQIFSecurityPrices
 
     /**
      * Add price.
+     *
      * @param pPrice the price to add
      */
     protected void addPrice(final MoneyWiseQIFPrice pPrice) {
@@ -116,8 +123,9 @@ public class MoneyWiseQIFSecurityPrices
 
     /**
      * Format prices.
+     *
      * @param pFormatter the formatter
-     * @param pBuilder the string builder
+     * @param pBuilder   the string builder
      */
     protected void formatPrices(final OceanusDataFormatter pFormatter,
                                 final StringBuilder pBuilder) {

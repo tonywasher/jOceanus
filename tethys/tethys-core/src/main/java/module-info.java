@@ -23,7 +23,7 @@ module net.sourceforge.joceanus.tethys.core {
     requires org.jsoup;
 
     /* Oceanus */
-    requires net.sourceforge.joceanus.oceanus;
+    requires io.github.tonywasher.joceanus.oceanus;
 
     /* New exports */
     exports net.sourceforge.joceanus.tethys.api.base;

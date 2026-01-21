@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,12 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.tax.uk;
 
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
@@ -25,9 +28,6 @@ import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBa
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxConfig;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxResource;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxSource;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 
 /**
  * Tax configuration.
@@ -131,9 +131,10 @@ public class MoneyWiseUKTaxConfig
 
     /**
      * Constructor.
-     * @param pTaxYear the taxYear
+     *
+     * @param pTaxYear   the taxYear
      * @param pTaxSource the tax source
-     * @param pBirthday the client birthday
+     * @param pBirthday  the client birthday
      */
     protected MoneyWiseUKTaxConfig(final MoneyWiseUKTaxYear pTaxYear,
                                    final MoneyWiseTaxSource pTaxSource,
@@ -168,6 +169,7 @@ public class MoneyWiseUKTaxConfig
 
     /**
      * Constructor.
+     *
      * @param pSource the source configuration
      */
     private MoneyWiseUKTaxConfig(final MoneyWiseUKTaxConfig pSource) {
@@ -194,6 +196,7 @@ public class MoneyWiseUKTaxConfig
 
     /**
      * Obtain the tax year.
+     *
      * @return the tax year
      */
     public MoneyWiseUKTaxYear getTaxYear() {
@@ -202,6 +205,7 @@ public class MoneyWiseUKTaxConfig
 
     /**
      * Obtain the tax bases.
+     *
      * @return the bases
      */
     public MoneyWiseTaxSource getTaxSource() {
@@ -210,6 +214,7 @@ public class MoneyWiseUKTaxConfig
 
     /**
      * Obtain the gross preSavings income.
+     *
      * @return the gross preSavings
      */
     public OceanusMoney getGrossPreSavings() {
@@ -218,6 +223,7 @@ public class MoneyWiseUKTaxConfig
 
     /**
      * Obtain the gross taxable income.
+     *
      * @return the gross taxable
      */
     public OceanusMoney getGrossTaxable() {
@@ -226,6 +232,7 @@ public class MoneyWiseUKTaxConfig
 
     /**
      * Obtain the client birthday.
+     *
      * @return the birthday
      */
     public OceanusDate getBirthday() {
@@ -234,6 +241,7 @@ public class MoneyWiseUKTaxConfig
 
     /**
      * Obtain the client age.
+     *
      * @return the gross taxable
      */
     public Integer getClientAge() {
@@ -242,6 +250,7 @@ public class MoneyWiseUKTaxConfig
 
     /**
      * Do we have an age related allowance?
+     *
      * @return true/false
      */
     public boolean hasAgeRelatedAllowance() {
@@ -250,6 +259,7 @@ public class MoneyWiseUKTaxConfig
 
     /**
      * Set whether we have an age related allowance?
+     *
      * @param pFlag true/false
      */
     protected void setHasAgeRelatedAllowance(final boolean pFlag) {
@@ -258,6 +268,7 @@ public class MoneyWiseUKTaxConfig
 
     /**
      * Obtain the allowance.
+     *
      * @return the allowance
      */
     public OceanusMoney getAllowance() {
@@ -266,6 +277,7 @@ public class MoneyWiseUKTaxConfig
 
     /**
      * Obtain the rental allowance.
+     *
      * @return the rental allowance
      */
     public OceanusMoney getRentalAllowance() {
@@ -274,6 +286,7 @@ public class MoneyWiseUKTaxConfig
 
     /**
      * Obtain the savings allowance.
+     *
      * @return the allowance
      */
     public OceanusMoney getSavingsAllowance() {
@@ -282,6 +295,7 @@ public class MoneyWiseUKTaxConfig
 
     /**
      * Obtain the dividend allowance.
+     *
      * @return the allowance
      */
     public OceanusMoney getDividendAllowance() {
@@ -290,6 +304,7 @@ public class MoneyWiseUKTaxConfig
 
     /**
      * Obtain the capital allowance.
+     *
      * @return the allowance
      */
     public OceanusMoney getCapitalAllowance() {
@@ -298,6 +313,7 @@ public class MoneyWiseUKTaxConfig
 
     /**
      * Obtain the tax bands.
+     *
      * @return the tax bands
      */
     public MoneyWiseTaxBandSet getTaxBands() {
@@ -306,6 +322,7 @@ public class MoneyWiseUKTaxConfig
 
     /**
      * Obtain the low savings band.
+     *
      * @return the low savings band
      */
     public MoneyWiseTaxBand getLoSavingsBand() {
@@ -329,6 +346,7 @@ public class MoneyWiseUKTaxConfig
 
     /**
      * Determine the gross taxable income.
+     *
      * @return the gross taxable income
      */
     private OceanusMoney determineGrossTaxableIncome() {
@@ -361,6 +379,7 @@ public class MoneyWiseUKTaxConfig
 
     /**
      * Determine the gross preSavings income.
+     *
      * @return the gross preSavings income
      */
     private OceanusMoney determineGrossPreSavings() {

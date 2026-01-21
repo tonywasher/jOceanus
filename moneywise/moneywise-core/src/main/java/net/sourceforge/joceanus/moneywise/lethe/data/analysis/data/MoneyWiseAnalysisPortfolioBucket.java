@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,14 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.lethe.data.analysis.data;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
@@ -35,11 +40,6 @@ import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAn
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisAccountValues;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisSecurityAttr;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisSecurityValues;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 
 import java.util.Currency;
 import java.util.Iterator;
@@ -113,7 +113,8 @@ public final class MoneyWiseAnalysisPortfolioBucket
 
     /**
      * Constructor.
-     * @param pAnalysis the analysis
+     *
+     * @param pAnalysis  the analysis
      * @param pPortfolio the portfolio account
      */
     private MoneyWiseAnalysisPortfolioBucket(final MoneyWiseAnalysis pAnalysis,
@@ -145,8 +146,9 @@ public final class MoneyWiseAnalysisPortfolioBucket
 
     /**
      * Constructor.
+     *
      * @param pAnalysis the analysis
-     * @param pBase the underlying bucket
+     * @param pBase     the underlying bucket
      */
     private MoneyWiseAnalysisPortfolioBucket(final MoneyWiseAnalysis pAnalysis,
                                              final MoneyWiseAnalysisPortfolioBucket pBase) {
@@ -173,9 +175,10 @@ public final class MoneyWiseAnalysisPortfolioBucket
 
     /**
      * Constructor.
+     *
      * @param pAnalysis the analysis
-     * @param pBase the underlying bucket
-     * @param pDate the date for the bucket
+     * @param pBase     the underlying bucket
+     * @param pDate     the date for the bucket
      */
     private MoneyWiseAnalysisPortfolioBucket(final MoneyWiseAnalysis pAnalysis,
                                              final MoneyWiseAnalysisPortfolioBucket pBase,
@@ -202,9 +205,10 @@ public final class MoneyWiseAnalysisPortfolioBucket
 
     /**
      * Constructor.
+     *
      * @param pAnalysis the analysis
-     * @param pBase the underlying bucket
-     * @param pRange the date range for the bucket
+     * @param pBase     the underlying bucket
+     * @param pRange    the date range for the bucket
      */
     private MoneyWiseAnalysisPortfolioBucket(final MoneyWiseAnalysis pAnalysis,
                                              final MoneyWiseAnalysisPortfolioBucket pBase,
@@ -246,6 +250,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
 
     /**
      * Is this a foreign currency?
+     *
      * @return true/false
      */
     public Boolean isForeignCurrency() {
@@ -254,6 +259,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
 
     /**
      * Does this portfolio hold foreign currency accounts/securities?
+     *
      * @return true/false
      */
     public Boolean hasForeignCurrency() {
@@ -262,6 +268,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
 
     /**
      * Obtain the name.
+     *
      * @return the name
      */
     public String getName() {
@@ -277,6 +284,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
 
     /**
      * Obtain the portfolio.
+     *
      * @return the portfolio
      */
     public MoneyWisePortfolio getPortfolio() {
@@ -285,6 +293,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
 
     /**
      * Obtain the currency.
+     *
      * @return the currency
      */
     public MoneyWiseCurrency getCurrency() {
@@ -293,6 +302,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
 
     /**
      * Obtain the portfolio cash bucket.
+     *
      * @return the bucket
      */
     public MoneyWiseAnalysisPortfolioCashBucket getPortfolioCash() {
@@ -301,6 +311,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
 
     /**
      * Obtain the security buckets.
+     *
      * @return the buckets
      */
     public MoneyWiseAnalysisSecurityBucketList getSecurities() {
@@ -309,6 +320,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
 
     /**
      * Obtain the security bucket iterator.
+     *
      * @return the iterator
      */
     public Iterator<MoneyWiseAnalysisSecurityBucket> securityIterator() {
@@ -317,6 +329,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
 
     /**
      * Obtain the values.
+     *
      * @return the values
      */
     public MoneyWiseAnalysisSecurityValues getValues() {
@@ -325,6 +338,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
 
     /**
      * Obtain the base values.
+     *
      * @return the base values
      */
     public MoneyWiseAnalysisSecurityValues getBaseValues() {
@@ -333,7 +347,8 @@ public final class MoneyWiseAnalysisPortfolioBucket
 
     /**
      * Set Value.
-     * @param pAttr the attribute
+     *
+     * @param pAttr  the attribute
      * @param pValue the value of the attribute
      */
     void setValue(final MoneyWiseAnalysisSecurityAttr pAttr,
@@ -344,6 +359,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
 
     /**
      * Get an attribute value.
+     *
      * @param pAttr the attribute
      * @return the value to set
      */
@@ -359,6 +375,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
 
     /**
      * Obtain an attribute value.
+     *
      * @param pAttr the attribute
      * @return the value of the attribute or null
      */
@@ -392,6 +409,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
 
     /**
      * Obtain the SecurityBucket from this portfolio for a security holding.
+     *
      * @param pHolding the security holding
      * @return the bucket
      */
@@ -402,6 +420,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
 
     /**
      * Obtain the SecurityBucket from this portfolio for a security.
+     *
      * @param pSecurity the security
      * @return the bucket
      */
@@ -451,6 +470,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
 
     /**
      * Add bucket to totals.
+     *
      * @param pBucket the underlying bucket
      */
     void addValues(final MoneyWiseAnalysisSecurityBucket pBucket) {
@@ -466,6 +486,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
 
     /**
      * Add bucket to totals.
+     *
      * @param pBucket the underlying bucket
      */
     void addValues(final MoneyWiseAnalysisPortfolioCashBucket pBucket) {
@@ -478,6 +499,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
 
     /**
      * Add bucket to totals.
+     *
      * @param pTotals the totals
      * @param pSource the values to add
      */
@@ -491,6 +513,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
 
     /**
      * Add bucket to totals.
+     *
      * @param pTotals the totals
      * @param pSource the values to add
      */
@@ -557,6 +580,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
 
     /**
      * Is the portfolio bucket active?
+     *
      * @return true/false
      */
     public boolean isActive() {
@@ -582,6 +606,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
 
     /**
      * Is the portfolio bucket idle?
+     *
      * @return true/false
      */
     public boolean isIdle() {
@@ -607,6 +632,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
 
     /**
      * Obtain cash valuation.
+     *
      * @param pBase get base valuation - true/false
      * @return the valuation minus the cash value
      */
@@ -620,6 +646,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
 
     /**
      * Obtain non-cash valuation.
+     *
      * @param pBase get base valuation - true/false
      * @return the valuation minus the cash value
      */
@@ -678,6 +705,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
 
         /**
          * Construct a top-level List.
+         *
          * @param pAnalysis the analysis
          */
         MoneyWiseAnalysisPortfolioBucketList(final MoneyWiseAnalysis pAnalysis) {
@@ -690,8 +718,9 @@ public final class MoneyWiseAnalysisPortfolioBucket
 
         /**
          * Construct a dated List.
+         *
          * @param pAnalysis the analysis
-         * @param pBase the base list
+         * @param pBase     the base list
          */
         MoneyWiseAnalysisPortfolioBucketList(final MoneyWiseAnalysis pAnalysis,
                                              final MoneyWiseAnalysisPortfolioBucketList pBase) {
@@ -716,9 +745,10 @@ public final class MoneyWiseAnalysisPortfolioBucket
 
         /**
          * Construct a dated List.
+         *
          * @param pAnalysis the analysis
-         * @param pBase the base list
-         * @param pDate the Date
+         * @param pBase     the base list
+         * @param pDate     the Date
          */
         MoneyWiseAnalysisPortfolioBucketList(final MoneyWiseAnalysis pAnalysis,
                                              final MoneyWiseAnalysisPortfolioBucketList pBase,
@@ -744,9 +774,10 @@ public final class MoneyWiseAnalysisPortfolioBucket
 
         /**
          * Construct a ranged List.
+         *
          * @param pAnalysis the analysis
-         * @param pBase the base list
-         * @param pRange the Date Range
+         * @param pBase     the base list
+         * @param pRange    the Date Range
          */
         MoneyWiseAnalysisPortfolioBucketList(final MoneyWiseAnalysis pAnalysis,
                                              final MoneyWiseAnalysisPortfolioBucketList pBase,
@@ -787,6 +818,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
 
         /**
          * Obtain the analysis.
+         *
          * @return the analysis
          */
         MoneyWiseAnalysis getAnalysis() {
@@ -795,6 +827,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
 
         /**
          * Obtain the Totals.
+         *
          * @return the totals
          */
         public MoneyWiseAnalysisPortfolioBucket getTotals() {
@@ -803,6 +836,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
 
         /**
          * Do we have a foreign currency?
+         *
          * @return true/false
          */
         public Boolean haveForeignCurrency() {
@@ -811,6 +845,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
 
         /**
          * Do we have active securities?
+         *
          * @return true/false
          */
         public Boolean haveActiveSecurities() {
@@ -819,6 +854,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
 
         /**
          * Obtain item by id.
+         *
          * @param pId the id to lookup
          * @return the item (or null if not present)
          */
@@ -829,6 +865,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
 
         /**
          * Obtain the PortfolioBucket for a given portfolio.
+         *
          * @param pPortfolio the portfolio
          * @return the bucket
          */
@@ -851,6 +888,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
 
         /**
          * Obtain the PortfolioBucket for a given portfolio.
+         *
          * @param pPortfolio the portfolio
          * @return the bucket
          */
@@ -864,6 +902,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
 
         /**
          * Obtain the SecurityBucket for a given security holding.
+         *
          * @param pHolding the holding
          * @return the bucket
          */
@@ -878,6 +917,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
 
         /**
          * Obtain the matching PortfolioBucket.
+         *
          * @param pPortfolio the portfolio
          * @return the matching bucket
          */
@@ -891,6 +931,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
 
         /**
          * Obtain the matching SecurityBucket.
+         *
          * @param pSecurity the security
          * @return the matching bucket
          */
@@ -907,6 +948,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
 
         /**
          * Obtain the default PortfolioBucket.
+         *
          * @return the default bucket
          */
         public MoneyWiseAnalysisPortfolioBucket getDefaultPortfolio() {
@@ -918,6 +960,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
 
         /**
          * Obtain the default SecurityBucket.
+         *
          * @return the default bucket
          */
         public MoneyWiseAnalysisSecurityBucket getDefaultSecurityHolding() {
@@ -940,6 +983,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
 
         /**
          * Allocate the Totals PortfolioBucket.
+         *
          * @return the bucket
          */
         private MoneyWiseAnalysisPortfolioBucket allocateTotalsBucket() {
@@ -949,6 +993,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
 
         /**
          * Analyse securities.
+         *
          * @param pMarket the market analysis
          */
         void analyseSecurities(final MoneyWiseAnalysisMarket pMarket) {
@@ -1018,6 +1063,7 @@ public final class MoneyWiseAnalysisPortfolioBucket
 
         /**
          * Mark active securities.
+         *
          * @throws OceanusException on error
          */
         public void markActiveSecurities() throws OceanusException {

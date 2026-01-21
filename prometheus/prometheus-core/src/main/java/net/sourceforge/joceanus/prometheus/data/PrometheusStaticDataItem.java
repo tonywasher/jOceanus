@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Prometheus: Application Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,16 +13,16 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.prometheus.data;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataNamedItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.metis.list.MetisListKey;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.exc.PrometheusDataException;
 
 import java.util.ArrayList;
@@ -33,6 +33,7 @@ import java.util.Map;
 
 /**
  * Template for a Static Data item and List.
+ *
  * @author Tony Washer
  */
 public abstract class PrometheusStaticDataItem
@@ -71,7 +72,8 @@ public abstract class PrometheusStaticDataItem
 
     /**
      * Copy Constructor.
-     * @param pList The list to associate the Static Data with
+     *
+     * @param pList   The list to associate the Static Data with
      * @param pSource The static data to copy
      */
     protected PrometheusStaticDataItem(final PrometheusStaticList<?> pList,
@@ -83,7 +85,8 @@ public abstract class PrometheusStaticDataItem
 
     /**
      * Basic Constructor.
-     * @param pList The list to associate the Static Data with
+     *
+     * @param pList  The list to associate the Static Data with
      * @param pValue the name of the new item
      * @throws OceanusException on error
      */
@@ -103,7 +106,8 @@ public abstract class PrometheusStaticDataItem
 
     /**
      * Basic Constructor.
-     * @param pList The list to associate the Static Data with
+     *
+     * @param pList  The list to associate the Static Data with
      * @param pClass the class of the new item
      * @throws OceanusException on error
      */
@@ -135,7 +139,8 @@ public abstract class PrometheusStaticDataItem
 
     /**
      * Values constructor.
-     * @param pList the List to add to
+     *
+     * @param pList   the List to add to
      * @param pValues the values constructor
      * @throws OceanusException on error
      */
@@ -244,6 +249,7 @@ public abstract class PrometheusStaticDataItem
 
     /**
      * Return the encrypted name of the Static Data.
+     *
      * @return the encrypted name
      */
     public final byte[] getNameBytes() {
@@ -252,6 +258,7 @@ public abstract class PrometheusStaticDataItem
 
     /**
      * Return the encrypted name field of the Static Data.
+     *
      * @return the encrypted field
      */
     private PrometheusEncryptedPair getNameField() {
@@ -260,6 +267,7 @@ public abstract class PrometheusStaticDataItem
 
     /**
      * Return the description of the Static Data.
+     *
      * @return the description
      */
     public final String getDesc() {
@@ -268,6 +276,7 @@ public abstract class PrometheusStaticDataItem
 
     /**
      * Return the encrypted description of the Static Data.
+     *
      * @return the encrypted description
      */
     public final byte[] getDescBytes() {
@@ -276,6 +285,7 @@ public abstract class PrometheusStaticDataItem
 
     /**
      * Return the encrypted description field of the Static Data.
+     *
      * @return the encrypted name
      */
     private PrometheusEncryptedPair getDescField() {
@@ -284,6 +294,7 @@ public abstract class PrometheusStaticDataItem
 
     /**
      * Return the sort order of the Static Data.
+     *
      * @return the order
      */
     public final Integer getOrder() {
@@ -292,6 +303,7 @@ public abstract class PrometheusStaticDataItem
 
     /**
      * Return the Static class of the Static Data.
+     *
      * @return the class
      */
     public final PrometheusStaticDataClass getStaticClass() {
@@ -300,6 +312,7 @@ public abstract class PrometheusStaticDataItem
 
     /**
      * Is the Static item enabled.
+     *
      * @return <code>true/false</code>
      */
     public final boolean getEnabled() {
@@ -313,6 +326,7 @@ public abstract class PrometheusStaticDataItem
 
     /**
      * Obtain the Enum class of this Static Data.
+     *
      * @return the class
      */
     protected final Class<? extends PrometheusStaticDataClass> getEnumClass() {
@@ -321,6 +335,7 @@ public abstract class PrometheusStaticDataItem
 
     /**
      * Set the Name.
+     *
      * @param pValue the name
      * @throws OceanusException on error
      */
@@ -330,6 +345,7 @@ public abstract class PrometheusStaticDataItem
 
     /**
      * Set the Name.
+     *
      * @param pBytes the encrypted name
      * @throws OceanusException on error
      */
@@ -339,6 +355,7 @@ public abstract class PrometheusStaticDataItem
 
     /**
      * Set the Name field.
+     *
      * @param pField the encrypted name
      */
     private void setValueName(final PrometheusEncryptedPair pField) {
@@ -347,6 +364,7 @@ public abstract class PrometheusStaticDataItem
 
     /**
      * Set the Description.
+     *
      * @param pValue the description
      * @throws OceanusException on error
      */
@@ -356,6 +374,7 @@ public abstract class PrometheusStaticDataItem
 
     /**
      * Set the Description.
+     *
      * @param pBytes the encrypted description
      * @throws OceanusException on error
      */
@@ -365,6 +384,7 @@ public abstract class PrometheusStaticDataItem
 
     /**
      * Set the Description field.
+     *
      * @param pField the encrypted description
      */
     private void setValueDesc(final PrometheusEncryptedPair pField) {
@@ -373,6 +393,7 @@ public abstract class PrometheusStaticDataItem
 
     /**
      * Set the Enabled flag.
+     *
      * @param isEnabled TRUE/FALSE
      */
     protected final void setValueEnabled(final Boolean isEnabled) {
@@ -381,6 +402,7 @@ public abstract class PrometheusStaticDataItem
 
     /**
      * Set the Order.
+     *
      * @param pOrder the order
      */
     private void setValueOrder(final Integer pOrder) {
@@ -389,6 +411,7 @@ public abstract class PrometheusStaticDataItem
 
     /**
      * Set the Class.
+     *
      * @param pClass the class
      */
     private void setValueClass(final PrometheusStaticDataClass pClass) {
@@ -418,6 +441,7 @@ public abstract class PrometheusStaticDataItem
 
     /**
      * Parse enum type.
+     *
      * @param pValue the value
      * @throws OceanusException on error
      */
@@ -447,6 +471,7 @@ public abstract class PrometheusStaticDataItem
 
     /**
      * Parse enum type.
+     *
      * @param pValue the value
      * @throws OceanusException on error
      */
@@ -476,6 +501,7 @@ public abstract class PrometheusStaticDataItem
 
     /**
      * Set a new name.
+     *
      * @param pName the name
      * @throws OceanusException on error
      */
@@ -485,6 +511,7 @@ public abstract class PrometheusStaticDataItem
 
     /**
      * Set a new description.
+     *
      * @param pDesc the description
      * @throws OceanusException on error
      */
@@ -495,6 +522,7 @@ public abstract class PrometheusStaticDataItem
 
     /**
      * Set Enabled indicator.
+     *
      * @param isEnabled TRUE/FALSE
      */
     public void setEnabled(final boolean isEnabled) {
@@ -504,6 +532,7 @@ public abstract class PrometheusStaticDataItem
 
     /**
      * Set Order indicator.
+     *
      * @param iOrder the order
      */
     public void setOrder(final int iOrder) {
@@ -533,6 +562,7 @@ public abstract class PrometheusStaticDataItem
 
     /**
      * Apply basic changes.
+     *
      * @param pData the changed element
      */
     protected void applyBasicChanges(final PrometheusStaticDataItem pData) {
@@ -566,6 +596,7 @@ public abstract class PrometheusStaticDataItem
 
     /**
      * Represents a list of StaticData objects.
+     *
      * @param <T> the item type
      */
     public abstract static class PrometheusStaticList<T extends PrometheusStaticDataItem>
@@ -579,10 +610,11 @@ public abstract class PrometheusStaticDataItem
 
         /**
          * Construct a generic static data list.
+         *
          * @param pBaseClass the class of the underlying object
-         * @param pData the dataSet
-         * @param pItemType the item type
-         * @param pStyle the style of the list
+         * @param pData      the dataSet
+         * @param pItemType  the item type
+         * @param pStyle     the style of the list
          */
         protected PrometheusStaticList(final Class<T> pBaseClass,
                                        final PrometheusDataSet pData,
@@ -593,6 +625,7 @@ public abstract class PrometheusStaticDataItem
 
         /**
          * Constructor for a cloned List.
+         *
          * @param pSource the source List
          */
         protected PrometheusStaticList(final PrometheusStaticList<T> pSource) {
@@ -601,6 +634,7 @@ public abstract class PrometheusStaticDataItem
 
         /**
          * Obtain the enumClass.
+         *
          * @return the enumClass
          */
         protected abstract Class<? extends PrometheusStaticDataClass> getEnumClass();
@@ -613,6 +647,7 @@ public abstract class PrometheusStaticDataItem
 
         /**
          * Search for a particular item by class.
+         *
          * @param eClass The class of the item to search for
          * @return The Item if present (or <code>null</code> if not found)
          */
@@ -629,6 +664,7 @@ public abstract class PrometheusStaticDataItem
 
         /**
          * Is the list full?
+         *
          * @return true/false
          */
         public boolean isFull() {
@@ -655,6 +691,7 @@ public abstract class PrometheusStaticDataItem
 
         /**
          * Obtain a list of classes that are missing/deleted.
+         *
          * @return The List of classes
          */
         public List<PrometheusStaticDataClass> getMissingClasses() {
@@ -680,6 +717,7 @@ public abstract class PrometheusStaticDataItem
 
         /**
          * Add Item for class.
+         *
          * @param pClass the class to add
          * @return the added class
          * @throws OceanusException on error
@@ -691,6 +729,7 @@ public abstract class PrometheusStaticDataItem
 
         /**
          * Create new Item for class.
+         *
          * @param pClass the class to create
          * @return the created class
          * @throws OceanusException on error
@@ -699,6 +738,7 @@ public abstract class PrometheusStaticDataItem
 
         /**
          * Populate default values.
+         *
          * @throws OceanusException on error
          */
         public void populateDefaults() throws OceanusException {
@@ -728,6 +768,7 @@ public abstract class PrometheusStaticDataItem
 
     /**
      * The dataMap class.
+     *
      * @param <T> the item type
      */
     public static class PrometheusStaticDataMap<T extends PrometheusStaticDataItem>
@@ -771,6 +812,7 @@ public abstract class PrometheusStaticDataItem
 
         /**
          * Obtain the keyMap.
+         *
          * @return the map
          */
         private Map<Integer, Integer> getOrderCountMap() {
@@ -804,6 +846,7 @@ public abstract class PrometheusStaticDataItem
 
         /**
          * find item by name.
+         *
          * @param pName the name to look up
          * @return the matching item
          */
@@ -813,6 +856,7 @@ public abstract class PrometheusStaticDataItem
 
         /**
          * Check validity of name.
+         *
          * @param pName the name to look up
          * @return true/false
          */
@@ -822,6 +866,7 @@ public abstract class PrometheusStaticDataItem
 
         /**
          * Check availability of name.
+         *
          * @param pName the key to look up
          * @return true/false
          */
@@ -831,6 +876,7 @@ public abstract class PrometheusStaticDataItem
 
         /**
          * Check validity of order.
+         *
          * @param pOrder the order to look up
          * @return true/false
          */

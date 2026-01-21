@@ -20,7 +20,7 @@
  */
 module net.sourceforge.joceanus.prometheus.sheet.api {
     /* Oceanus */
-    requires net.sourceforge.joceanus.oceanus;
+    requires io.github.tonywasher.joceanus.oceanus;
 
     /* Exports */
     exports net.sourceforge.joceanus.prometheus.service.sheet;

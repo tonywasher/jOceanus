@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,15 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.ui.panel;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEvent;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
+import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.metis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerManager;
@@ -30,18 +36,12 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurity;
 import net.sourceforge.joceanus.moneywise.ui.MoneyWiseGoToId;
 import net.sourceforge.joceanus.moneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.prometheus.ui.PrometheusActionButtons;
 import net.sourceforge.joceanus.prometheus.ui.PrometheusGoToEvent;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 import net.sourceforge.joceanus.prometheus.views.PrometheusUIEvent;
 import net.sourceforge.joceanus.prometheus.views.PrometheusViewerEntryId;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.event.OceanusEvent;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.api.button.TethysUIButtonFactory;
@@ -177,6 +177,7 @@ public class MoneyWiseAccountPanel
 
     /**
      * Constructor.
+     *
      * @param pView the data view
      */
     MoneyWiseAccountPanel(final MoneyWiseView pView) {
@@ -295,6 +296,7 @@ public class MoneyWiseAccountPanel
 
     /**
      * setChildListeners.
+     *
      * @param pRegistrar the registrar
      */
     private void setChildListeners(final OceanusEventRegistrar<PrometheusDataEvent> pRegistrar) {
@@ -334,6 +336,7 @@ public class MoneyWiseAccountPanel
 
     /**
      * Show locked accounts.
+     *
      * @param pShow true/false
      */
     public void showLocked(final boolean pShow) {
@@ -361,6 +364,7 @@ public class MoneyWiseAccountPanel
 
     /**
      * Refresh data.
+     *
      * @throws OceanusException on error
      */
     public void refreshData() throws OceanusException {
@@ -422,6 +426,7 @@ public class MoneyWiseAccountPanel
 
     /**
      * Does this panel have updates?
+     *
      * @return true/false
      */
     public boolean hasUpdates() {
@@ -449,6 +454,7 @@ public class MoneyWiseAccountPanel
 
     /**
      * Has this set of panels got the session focus?
+     *
      * @return true/false
      */
     public boolean hasSession() {
@@ -476,6 +482,7 @@ public class MoneyWiseAccountPanel
 
     /**
      * Does this panel have errors?
+     *
      * @return true/false
      */
     public boolean hasErrors() {
@@ -503,6 +510,7 @@ public class MoneyWiseAccountPanel
 
     /**
      * Does this panel have item editing occurring?
+     *
      * @return true/false
      */
     public boolean isItemEditing() {
@@ -530,6 +538,7 @@ public class MoneyWiseAccountPanel
 
     /**
      * Select account.
+     *
      * @param pAccount the account to select
      */
     public void selectAccount(final MoneyWiseAssetBase pAccount) {
@@ -557,6 +566,7 @@ public class MoneyWiseAccountPanel
 
     /**
      * Show panel.
+     *
      * @param pName the panel name
      */
     private void showPanel(final PanelName pName) {
@@ -625,6 +635,7 @@ public class MoneyWiseAccountPanel
 
     /**
      * handle Action Buttons.
+     *
      * @param pEvent the event
      */
     private void handleActionButtons(final OceanusEvent<PrometheusUIEvent> pEvent) {
@@ -637,12 +648,12 @@ public class MoneyWiseAccountPanel
 
     /**
      * handle GoTo Event.
+     *
      * @param pEvent the event
      */
     private void handleGoToEvent(final OceanusEvent<PrometheusDataEvent> pEvent) {
         /* Access details */
-        @SuppressWarnings("unchecked")
-        final PrometheusGoToEvent<MoneyWiseGoToId> myEvent = pEvent.getDetails(PrometheusGoToEvent.class);
+        @SuppressWarnings("unchecked") final PrometheusGoToEvent<MoneyWiseGoToId> myEvent = pEvent.getDetails(PrometheusGoToEvent.class);
 
         /* Access event and obtain details */
         switch (myEvent.getId()) {
@@ -705,6 +716,7 @@ public class MoneyWiseAccountPanel
 
         /**
          * Constructor.
+         *
          * @param pDataType the dataType
          */
         PanelName(final MoneyWiseBasicDataType pDataType) {

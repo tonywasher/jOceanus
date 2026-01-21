@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,13 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.data.basic;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
@@ -26,10 +30,6 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAssetCategory;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInstanceMap;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataList.PrometheusListStyle;
@@ -98,7 +98,8 @@ public abstract class MoneyWiseAssetBase
 
     /**
      * Copy Constructor.
-     * @param pList the list
+     *
+     * @param pList  the list
      * @param pAsset The Asset to copy
      */
     protected MoneyWiseAssetBase(final MoneyWiseAssetBaseList<?> pList,
@@ -120,7 +121,8 @@ public abstract class MoneyWiseAssetBase
 
     /**
      * Values constructor.
-     * @param pList the List to add to
+     *
+     * @param pList   the List to add to
      * @param pValues the values constructor
      * @throws OceanusException on error
      */
@@ -193,6 +195,7 @@ public abstract class MoneyWiseAssetBase
 
     /**
      * Edit Constructor.
+     *
      * @param pList the list
      */
     protected MoneyWiseAssetBase(final MoneyWiseAssetBaseList<?> pList) {
@@ -229,6 +232,7 @@ public abstract class MoneyWiseAssetBase
 
     /**
      * Obtain Category.
+     *
      * @return the category
      */
     public abstract MoneyWiseAssetCategory getCategory();
@@ -240,6 +244,7 @@ public abstract class MoneyWiseAssetBase
 
     /**
      * Obtain ParentId.
+     *
      * @return the parentId
      */
     public Integer getParentId() {
@@ -251,6 +256,7 @@ public abstract class MoneyWiseAssetBase
 
     /**
      * Obtain ParentName.
+     *
      * @return the parentName
      */
     public String getParentName() {
@@ -263,10 +269,11 @@ public abstract class MoneyWiseAssetBase
     @Override
     public MoneyWiseCurrency getAssetCurrency() {
         return getValues().getValue(MoneyWiseStaticDataType.CURRENCY, MoneyWiseCurrency.class);
-     }
+    }
 
     /**
      * Obtain CurrencyId.
+     *
      * @return the currencyId
      */
     public Integer getAssetCurrencyId() {
@@ -276,6 +283,7 @@ public abstract class MoneyWiseAssetBase
 
     /**
      * Obtain CurrencyName.
+     *
      * @return the currencyName
      */
     public String getAssetCurrencyName() {
@@ -294,6 +302,7 @@ public abstract class MoneyWiseAssetBase
 
     /**
      * Obtain Opening Balance.
+     *
      * @return the Opening balance
      */
     public OceanusMoney getOpeningBalance() {
@@ -317,6 +326,7 @@ public abstract class MoneyWiseAssetBase
 
     /**
      * Get the close Date of the account.
+     *
      * @return the closeDate
      */
     public OceanusDate getCloseDate() {
@@ -325,6 +335,7 @@ public abstract class MoneyWiseAssetBase
 
     /**
      * Obtain Earliest transaction.
+     *
      * @return the event
      */
     public MoneyWiseTransaction getEarliest() {
@@ -333,6 +344,7 @@ public abstract class MoneyWiseAssetBase
 
     /**
      * Obtain Latest Transaction.
+     *
      * @return the event
      */
     public MoneyWiseTransaction getLatest() {
@@ -341,6 +353,7 @@ public abstract class MoneyWiseAssetBase
 
     /**
      * Is the account relevant (i.e. non-closeable)?
+     *
      * @return true/false
      */
     public boolean isRelevant() {
@@ -394,6 +407,7 @@ public abstract class MoneyWiseAssetBase
 
     /**
      * Obtain Encrypted name.
+     *
      * @return the bytes
      */
     public byte[] getNameBytes() {
@@ -402,6 +416,7 @@ public abstract class MoneyWiseAssetBase
 
     /**
      * Obtain Encrypted Name Field.
+     *
      * @return the Field
      */
     private PrometheusEncryptedPair getNameField() {
@@ -410,6 +425,7 @@ public abstract class MoneyWiseAssetBase
 
     /**
      * Obtain Description.
+     *
      * @return the description
      */
     public String getDesc() {
@@ -418,6 +434,7 @@ public abstract class MoneyWiseAssetBase
 
     /**
      * Obtain Encrypted description.
+     *
      * @return the bytes
      */
     public byte[] getDescBytes() {
@@ -426,6 +443,7 @@ public abstract class MoneyWiseAssetBase
 
     /**
      * Obtain Encrypted Description Field.
+     *
      * @return the Field
      */
     private PrometheusEncryptedPair getDescField() {
@@ -444,6 +462,7 @@ public abstract class MoneyWiseAssetBase
 
     /**
      * Set name value.
+     *
      * @param pValue the value
      * @throws OceanusException on error
      */
@@ -453,6 +472,7 @@ public abstract class MoneyWiseAssetBase
 
     /**
      * Set name value.
+     *
      * @param pBytes the value
      * @throws OceanusException on error
      */
@@ -462,6 +482,7 @@ public abstract class MoneyWiseAssetBase
 
     /**
      * Set name value.
+     *
      * @param pValue the value
      */
     private void setValueName(final PrometheusEncryptedPair pValue) {
@@ -470,6 +491,7 @@ public abstract class MoneyWiseAssetBase
 
     /**
      * Set description value.
+     *
      * @param pValue the value
      * @throws OceanusException on error
      */
@@ -479,6 +501,7 @@ public abstract class MoneyWiseAssetBase
 
     /**
      * Set description value.
+     *
      * @param pBytes the value
      * @throws OceanusException on error
      */
@@ -488,6 +511,7 @@ public abstract class MoneyWiseAssetBase
 
     /**
      * Set description value.
+     *
      * @param pValue the value
      */
     private void setValueDesc(final PrometheusEncryptedPair pValue) {
@@ -496,6 +520,7 @@ public abstract class MoneyWiseAssetBase
 
     /**
      * Set category value.
+     *
      * @param pValue the value
      */
     private void setValueCategory(final MoneyWiseAssetCategory pValue) {
@@ -504,6 +529,7 @@ public abstract class MoneyWiseAssetBase
 
     /**
      * Set category id.
+     *
      * @param pValue the value
      */
     private void setValueCategory(final Integer pValue) {
@@ -512,6 +538,7 @@ public abstract class MoneyWiseAssetBase
 
     /**
      * Set category name.
+     *
      * @param pValue the value
      */
     private void setValueCategory(final String pValue) {
@@ -520,6 +547,7 @@ public abstract class MoneyWiseAssetBase
 
     /**
      * Set parent value.
+     *
      * @param pValue the value
      */
     private void setValueParent(final MoneyWisePayee pValue) {
@@ -528,6 +556,7 @@ public abstract class MoneyWiseAssetBase
 
     /**
      * Set parent id.
+     *
      * @param pValue the value
      */
     private void setValueParent(final Integer pValue) {
@@ -536,6 +565,7 @@ public abstract class MoneyWiseAssetBase
 
     /**
      * Set parent name.
+     *
      * @param pValue the value
      */
     private void setValueParent(final String pValue) {
@@ -544,6 +574,7 @@ public abstract class MoneyWiseAssetBase
 
     /**
      * Set currency value.
+     *
      * @param pValue the value
      */
     private void setValueCurrency(final MoneyWiseCurrency pValue) {
@@ -552,6 +583,7 @@ public abstract class MoneyWiseAssetBase
 
     /**
      * Set currency id.
+     *
      * @param pValue the value
      */
     private void setValueCurrency(final Integer pValue) {
@@ -560,6 +592,7 @@ public abstract class MoneyWiseAssetBase
 
     /**
      * Set currency name.
+     *
      * @param pValue the value
      */
     private void setValueCurrency(final String pValue) {
@@ -568,6 +601,7 @@ public abstract class MoneyWiseAssetBase
 
     /**
      * Set closed indication.
+     *
      * @param pValue the value
      */
     private void setValueClosed(final Boolean pValue) {
@@ -598,8 +632,9 @@ public abstract class MoneyWiseAssetBase
 
     /**
      * Obtain detailed category.
+     *
      * @param pCategory current category
-     * @param pYear the taxYear
+     * @param pYear     the taxYear
      * @return detailed category
      */
     public MoneyWiseTransCategory getDetailedCategory(final MoneyWiseTransCategory pCategory,
@@ -610,6 +645,7 @@ public abstract class MoneyWiseAssetBase
 
     /**
      * Adjust closed date.
+     *
      * @throws OceanusException on error
      */
     public void adjustClosed() throws OceanusException {
@@ -633,7 +669,7 @@ public abstract class MoneyWiseAssetBase
     public void touchItem(final PrometheusDataItem pSource) {
         /* If we are being touched by a transaction */
         if (pSource instanceof MoneyWiseTransaction myTrans) {
-           /* Record the transaction */
+            /* Record the transaction */
             if (theEarliest == null) {
                 theEarliest = myTrans;
             }
@@ -681,12 +717,14 @@ public abstract class MoneyWiseAssetBase
 
     /**
      * resolve EditSet links.
+     *
      * @throws OceanusException on error
      */
     protected abstract void resolveEditSetLinks() throws OceanusException;
 
     /**
      * Resolve late edit Set links.
+     *
      * @throws OceanusException on error
      */
     public void resolveLateEditSetLinks() throws OceanusException {
@@ -705,6 +743,7 @@ public abstract class MoneyWiseAssetBase
 
     /**
      * Set a new name.
+     *
      * @param pName the new name
      * @throws OceanusException on error
      */
@@ -714,6 +753,7 @@ public abstract class MoneyWiseAssetBase
 
     /**
      * Set a new description.
+     *
      * @param pDesc the description
      * @throws OceanusException on error
      */
@@ -723,6 +763,7 @@ public abstract class MoneyWiseAssetBase
 
     /**
      * Set a new category.
+     *
      * @param pCategory the new category
      */
     public void setCategory(final MoneyWiseAssetCategory pCategory) {
@@ -731,6 +772,7 @@ public abstract class MoneyWiseAssetBase
 
     /**
      * Set a new currency.
+     *
      * @param pCurrency the new currency
      */
     public void setAssetCurrency(final MoneyWiseCurrency pCurrency) {
@@ -739,6 +781,7 @@ public abstract class MoneyWiseAssetBase
 
     /**
      * Set a new parent.
+     *
      * @param pParent the parent
      */
     public void setParent(final MoneyWisePayee pParent) {
@@ -747,6 +790,7 @@ public abstract class MoneyWiseAssetBase
 
     /**
      * Set a new closed indication.
+     *
      * @param isClosed the new closed indication
      */
     public void setClosed(final Boolean isClosed) {
@@ -755,6 +799,7 @@ public abstract class MoneyWiseAssetBase
 
     /**
      * Update base asset from an edited asset.
+     *
      * @param pAsset the edited asset
      */
     protected void applyBasicChanges(final MoneyWiseAssetBase pAsset) {
@@ -791,6 +836,7 @@ public abstract class MoneyWiseAssetBase
 
     /**
      * The Asset List class.
+     *
      * @param <T> the dataType
      */
     public abstract static class MoneyWiseAssetBaseList<T extends MoneyWiseAssetBase>
@@ -809,8 +855,9 @@ public abstract class MoneyWiseAssetBase
 
         /**
          * Construct an empty CORE list.
-         * @param pData the DataSet for the list
-         * @param pClass the class of the item
+         *
+         * @param pData     the DataSet for the list
+         * @param pClass    the class of the item
          * @param pItemType the item type
          */
         protected MoneyWiseAssetBaseList(final MoneyWiseDataSet pData,
@@ -821,6 +868,7 @@ public abstract class MoneyWiseAssetBase
 
         /**
          * Constructor for a cloned List.
+         *
          * @param pSource the source List
          */
         protected MoneyWiseAssetBaseList(final MoneyWiseAssetBaseList<T> pSource) {
@@ -840,6 +888,7 @@ public abstract class MoneyWiseAssetBase
 
         /**
          * Obtain editSet.
+         *
          * @return the editSet
          */
         public PrometheusEditSet getEditSet() {
@@ -848,6 +897,7 @@ public abstract class MoneyWiseAssetBase
 
         /**
          * Set editSet.
+         *
          * @param pEditSet the editSet
          */
         protected void setEditSet(final PrometheusEditSet pEditSet) {
@@ -859,6 +909,7 @@ public abstract class MoneyWiseAssetBase
 
         /**
          * Check whether a name is available for use.
+         *
          * @param pName Name of item
          * @return true/false
          */
@@ -866,6 +917,7 @@ public abstract class MoneyWiseAssetBase
 
         /**
          * Check whether a name is validly used.
+         *
          * @param pName Name of item
          * @return true/false
          */
@@ -883,6 +935,7 @@ public abstract class MoneyWiseAssetBase
 
         /**
          * Resolve late edit Set links.
+         *
          * @throws OceanusException on error
          */
         public void resolveLateEditSetLinks() throws OceanusException {
@@ -910,6 +963,7 @@ public abstract class MoneyWiseAssetBase
 
         /**
          * find item by name.
+         *
          * @param pName the name to look up
          * @return the matching item
          */
@@ -919,6 +973,7 @@ public abstract class MoneyWiseAssetBase
 
         /**
          * Check validity of name.
+         *
          * @param pName the name to look up
          * @return true/false
          */

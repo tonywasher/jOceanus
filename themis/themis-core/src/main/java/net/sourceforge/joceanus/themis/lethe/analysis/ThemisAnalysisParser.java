@@ -1,27 +1,27 @@
-/*******************************************************************************
+/*
  * Themis: Java Project Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package net.sourceforge.joceanus.themis.lethe.analysis;
 
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.themis.exc.ThemisDataException;
 import net.sourceforge.joceanus.themis.lethe.analysis.ThemisAnalysisDataMap.ThemisAnalysisDataType;
 import net.sourceforge.joceanus.themis.lethe.analysis.ThemisAnalysisEmbedded.ThemisAnalysisEmbedType;
 import net.sourceforge.joceanus.themis.lethe.analysis.ThemisAnalysisGeneric.ThemisAnalysisGenericBase;
 import net.sourceforge.joceanus.themis.lethe.analysis.ThemisAnalysisScanner.ThemisAnalysisSource;
-import net.sourceforge.joceanus.themis.exc.ThemisDataException;
 
 import java.util.ArrayList;
 import java.util.Deque;
@@ -34,7 +34,7 @@ import java.util.Map;
  * Parser.
  */
 public class ThemisAnalysisParser
-    implements ThemisAnalysisSource {
+        implements ThemisAnalysisSource {
     /**
      * The keyWordMap.
      */
@@ -67,8 +67,9 @@ public class ThemisAnalysisParser
 
     /**
      * Constructor.
-     * @param pLines the source lines.
-     * @param pContents the processed contents
+     *
+     * @param pLines     the source lines.
+     * @param pContents  the processed contents
      * @param pContainer the container
      */
     ThemisAnalysisParser(final Deque<ThemisAnalysisElement> pLines,
@@ -86,7 +87,8 @@ public class ThemisAnalysisParser
 
     /**
      * Constructor.
-     * @param pParser the source parser.
+     *
+     * @param pParser    the source parser.
      * @param pProcessed the processed output
      */
     ThemisAnalysisParser(final ThemisAnalysisParser pParser,
@@ -96,6 +98,7 @@ public class ThemisAnalysisParser
 
     /**
      * Temporary parser constructor.
+     *
      * @param pParser the base parser.
      */
     ThemisAnalysisParser(final ThemisAnalysisParser pParser) {
@@ -116,6 +119,7 @@ public class ThemisAnalysisParser
 
     /**
      * Is this a temporary parser?
+     *
      * @return true/false
      */
     boolean isTemporary() {
@@ -124,6 +128,7 @@ public class ThemisAnalysisParser
 
     /**
      * Obtain the parent container.
+     *
      * @return the parent
      */
     ThemisAnalysisContainer getParent() {
@@ -132,6 +137,7 @@ public class ThemisAnalysisParser
 
     /**
      * Obtain the dataTypes map.
+     *
      * @return the dataTypesMap
      */
     ThemisAnalysisDataMap getDataMap() {
@@ -151,6 +157,7 @@ public class ThemisAnalysisParser
 
     /**
      * Peek next line from list.
+     *
      * @return the next line
      * @throws OceanusException on error
      */
@@ -172,6 +179,7 @@ public class ThemisAnalysisParser
 
     /**
      * Process a potential comment/blank line.
+     *
      * @param pLine the line
      * @return have we processed the line?
      * @throws OceanusException on error
@@ -211,6 +219,7 @@ public class ThemisAnalysisParser
 
     /**
      * Process a potential import line.
+     *
      * @param pLine the line
      * @return have we processed the line?
      * @throws OceanusException on error
@@ -230,6 +239,7 @@ public class ThemisAnalysisParser
 
     /**
      * Process a class/enum/interface line.
+     *
      * @param pLine the line
      * @return have we processed the line?
      * @throws OceanusException on error
@@ -275,6 +285,7 @@ public class ThemisAnalysisParser
 
     /**
      * Process language constructs.
+     *
      * @param pLine the line
      * @return have we processed the line?
      * @throws OceanusException on error
@@ -341,6 +352,7 @@ public class ThemisAnalysisParser
 
     /**
      * Process blocks.
+     *
      * @param pLine the line
      * @return have we processed the line?
      * @throws OceanusException on error
@@ -375,8 +387,9 @@ public class ThemisAnalysisParser
 
     /**
      * Process a case/default line.
+     *
      * @param pOwner the owning switch
-     * @param pLine the line
+     * @param pLine  the line
      * @return have we processed the line?
      * @throws OceanusException on error
      */
@@ -397,6 +410,7 @@ public class ThemisAnalysisParser
 
     /**
      * Process a case/default line.
+     *
      * @param pLine the line
      * @return have we processed the line?
      */
@@ -434,7 +448,8 @@ public class ThemisAnalysisParser
 
     /**
      * Process extra constructs.
-     * @param pOwner the owning construct
+     *
+     * @param pOwner   the owning construct
      * @param pKeyWord the keyWord
      * @return have we processed the line?
      * @throws OceanusException on error
@@ -485,6 +500,7 @@ public class ThemisAnalysisParser
 
     /**
      * Process embedded block construct.
+     *
      * @param pEmbedded the embedded block
      * @return the field/statement
      * @throws OceanusException on error
@@ -508,6 +524,7 @@ public class ThemisAnalysisParser
 
     /**
      * Process methodBody construct.
+     *
      * @param pMethod the methodBody
      * @return the method
      * @throws OceanusException on error
@@ -532,6 +549,7 @@ public class ThemisAnalysisParser
 
     /**
      * Process field and method constructs.
+     *
      * @param pLine the line
      * @return the field/method or null
      * @throws OceanusException on error
@@ -557,6 +575,7 @@ public class ThemisAnalysisParser
 
     /**
      * Process a statement.
+     *
      * @param pLine the line
      * @return the statement
      * @throws OceanusException on error
@@ -569,6 +588,7 @@ public class ThemisAnalysisParser
 
     /**
      * Process a statement.
+     *
      * @param pLine the line
      * @return the statement
      */
@@ -599,6 +619,7 @@ public class ThemisAnalysisParser
 
     /**
      * Parse a possible dataType.
+     *
      * @param pLine the line
      * @return the dataType or null
      * @throws OceanusException on error
@@ -638,8 +659,9 @@ public class ThemisAnalysisParser
 
     /**
      * Parse a dataType.
+     *
      * @param pDataMap the dataMap
-     * @param pLine the line
+     * @param pLine    the line
      * @return the dataType or null
      * @throws OceanusException on error
      */
@@ -671,9 +693,10 @@ public class ThemisAnalysisParser
 
     /**
      * Create the reference.
+     *
      * @param pDataMap the dataMap
-     * @param pLine the line
-     * @param pType the dataType
+     * @param pLine    the line
+     * @param pType    the dataType
      * @return the dataType or null
      * @throws OceanusException on error
      */
@@ -682,11 +705,11 @@ public class ThemisAnalysisParser
                                                           final ThemisAnalysisDataType pType) throws OceanusException {
         /* Access any generic/array detail */
         final ThemisAnalysisGeneric myGeneric = ThemisAnalysisGeneric.isGeneric(pLine)
-                                                ? new ThemisAnalysisGenericBase(pLine)
-                                                : null;
+                ? new ThemisAnalysisGenericBase(pLine)
+                : null;
         final ThemisAnalysisArray myArray = ThemisAnalysisArray.isArray(pLine)
-                                            ? new ThemisAnalysisArray(pLine)
-                                            : null;
+                ? new ThemisAnalysisArray(pLine)
+                : null;
 
         /* Return the reference */
         final ThemisAnalysisReference myRef = new ThemisAnalysisReference(pType, myGeneric, myArray);
@@ -696,6 +719,7 @@ public class ThemisAnalysisParser
 
     /**
      * process the lines.
+     *
      * @throws OceanusException on error
      */
     void processLines() throws OceanusException {
@@ -720,6 +744,7 @@ public class ThemisAnalysisParser
 
     /**
      * Create the keyWordMap.
+     *
      * @return the new map
      */
     private static Map<String, Object> createKeyWordMap() {
@@ -742,6 +767,7 @@ public class ThemisAnalysisParser
 
     /**
      * Parse ancestors.
+     *
      * @param pHeaders the headers
      * @return the list of ancestors
      * @throws OceanusException on error
@@ -752,7 +778,7 @@ public class ThemisAnalysisParser
         final ThemisAnalysisLine myHeader = new ThemisAnalysisLine(pHeaders);
 
         /* Loop through the line */
-        for (;;) {
+        for (; ; ) {
             /* Strip leading comma */
             if (myHeader.startsWithChar(ThemisAnalysisChar.COMMA)) {
                 myHeader.stripStartChar(ThemisAnalysisChar.COMMA);
@@ -779,6 +805,7 @@ public class ThemisAnalysisParser
 
     /**
      * Parse parameters.
+     *
      * @param pParams the parameters
      * @return the parameter map
      * @throws OceanusException on error
@@ -788,7 +815,7 @@ public class ThemisAnalysisParser
         final Map<String, ThemisAnalysisReference> myParams = new LinkedHashMap<>();
 
         /* Loop through the line */
-        for (;;) {
+        for (; ; ) {
             /* Strip leading comma */
             if (pParams.startsWithChar(ThemisAnalysisChar.COMMA)) {
                 pParams.stripStartChar(ThemisAnalysisChar.COMMA);

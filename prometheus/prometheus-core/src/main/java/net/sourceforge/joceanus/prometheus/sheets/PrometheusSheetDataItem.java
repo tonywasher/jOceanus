@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Prometheus: Application Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,16 +13,22 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.prometheus.sheets;
 
-import java.util.Iterator;
-
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 import net.sourceforge.joceanus.metis.data.MetisDataResource;
-import net.sourceforge.joceanus.prometheus.exc.PrometheusIOException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataList;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
+import net.sourceforge.joceanus.prometheus.exc.PrometheusIOException;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCell;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCellPosition;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCellStyleType;
@@ -30,20 +36,15 @@ import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetRow;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetSheet;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetView;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetWorkBook;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
 import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
+
+import java.util.Iterator;
 
 /**
  * SheetDataItem class for accessing a sheet that is related to a data type.
- * @author Tony Washer
+ *
  * @param <T> the data type
+ * @author Tony Washer
  */
 public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
     /**
@@ -108,8 +109,9 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
 
     /**
      * Constructor for a load operation.
+     *
      * @param pReader the spreadsheet reader
-     * @param pRange the range to load
+     * @param pRange  the range to load
      */
     protected PrometheusSheetDataItem(final PrometheusSheetReader pReader,
                                       final String pRange) {
@@ -121,8 +123,9 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
 
     /**
      * Constructor for a write operation.
+     *
      * @param pWriter the spreadsheet writer
-     * @param pRange the range to create
+     * @param pRange  the range to create
      */
     protected PrometheusSheetDataItem(final PrometheusSheetWriter pWriter,
                                       final String pRange) {
@@ -134,6 +137,7 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
 
     /**
      * Obtain the last loaded item.
+     *
      * @return the item
      */
     protected T getLastItem() {
@@ -147,6 +151,7 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
 
     /**
      * Set the DataList.
+     *
      * @param pList the Data list
      */
     protected void setDataList(final PrometheusDataList<T> pList) {
@@ -156,6 +161,7 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
 
     /**
      * Load the DataItems from a spreadsheet.
+     *
      * @throws OceanusException on error
      */
     public void loadSpreadSheet() throws OceanusException {
@@ -205,6 +211,7 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
 
     /**
      * Write the DataItems to a spreadsheet.
+     *
      * @throws OceanusException on error
      */
     protected void writeSpreadSheet() throws OceanusException {
@@ -259,6 +266,7 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
 
     /**
      * Load secure item from spreadsheet.
+     *
      * @return the secure values
      * @throws OceanusException on error
      */
@@ -266,6 +274,7 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
 
     /**
      * Insert secure item into spreadsheet.
+     *
      * @param pItem the item
      * @throws OceanusException on error
      */
@@ -276,6 +285,7 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
 
     /**
      * PostProcess on load.
+     *
      * @throws OceanusException on error
      */
     protected void postProcessOnLoad() throws OceanusException {
@@ -285,6 +295,7 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
 
     /**
      * Determine last active column.
+     *
      * @return the last active column
      */
     protected abstract int getLastColumn();
@@ -299,6 +310,7 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
 
     /**
      * Name the basic range.
+     *
      * @throws OceanusException on error
      */
     protected void nameRange() throws OceanusException {
@@ -313,8 +325,9 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
 
     /**
      * Name the column range.
+     *
      * @param pOffset offset of column
-     * @param pName name of range
+     * @param pName   name of range
      * @throws OceanusException on error
      */
     protected void nameColumnRange(final int pOffset,
@@ -327,8 +340,9 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
 
     /**
      * Apply Data Validation.
+     *
      * @param pOffset offset of column
-     * @param pList name of validation range
+     * @param pList   name of validation range
      * @throws OceanusException on error
      */
     public void applyDataValidation(final int pOffset,
@@ -350,6 +364,7 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
 
     /**
      * Freeze titles.
+     *
      * @param pOffset column offset to freeze at
      * @throws OceanusException on error
      */
@@ -361,6 +376,7 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
 
     /**
      * Set Hidden column.
+     *
      * @param pOffset the offset of the column
      */
     protected void setHiddenColumn(final int pOffset) {
@@ -370,6 +386,7 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
 
     /**
      * Set Date column.
+     *
      * @param pOffset the offset of the column
      */
     protected void setDateColumn(final int pOffset) {
@@ -379,6 +396,7 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
 
     /**
      * Set String column.
+     *
      * @param pOffset the offset of the column
      */
     protected void setStringColumn(final int pOffset) {
@@ -388,6 +406,7 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
 
     /**
      * Set Money column.
+     *
      * @param pOffset the offset of the column
      */
     protected void setMoneyColumn(final int pOffset) {
@@ -397,6 +416,7 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
 
     /**
      * Set Price column.
+     *
      * @param pOffset the offset of the column
      */
     protected void setPriceColumn(final int pOffset) {
@@ -406,6 +426,7 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
 
     /**
      * Set Units column.
+     *
      * @param pOffset the offset of the column
      */
     protected void setUnitsColumn(final int pOffset) {
@@ -415,6 +436,7 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
 
     /**
      * Set Rate column.
+     *
      * @param pOffset the offset of the column
      */
     protected void setRateColumn(final int pOffset) {
@@ -424,6 +446,7 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
 
     /**
      * Set Ratio column.
+     *
      * @param pOffset the offset of the column
      */
     protected void setRatioColumn(final int pOffset) {
@@ -433,6 +456,7 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
 
     /**
      * Set Boolean column.
+     *
      * @param pOffset the offset of the column
      */
     protected void setBooleanColumn(final int pOffset) {
@@ -442,6 +466,7 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
 
     /**
      * Set Integer column.
+     *
      * @param pOffset the offset of the column
      */
     protected void setIntegerColumn(final int pOffset) {
@@ -451,6 +476,7 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
 
     /**
      * Access an integer from the WorkSheet.
+     *
      * @param pOffset the column offset
      * @return the integer
      * @throws OceanusException on error
@@ -467,6 +493,7 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
 
     /**
      * Access a long from the WorkSheet.
+     *
      * @param pOffset the column offset
      * @return the long
      * @throws OceanusException on error
@@ -483,6 +510,7 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
 
     /**
      * Access a boolean from the WorkSheet.
+     *
      * @param pOffset the column offset
      * @return the date
      */
@@ -498,6 +526,7 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
 
     /**
      * Access a date from the WorkSheet.
+     *
      * @param pOffset the column offset
      * @return the date
      * @throws OceanusException on error
@@ -514,6 +543,7 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
 
     /**
      * Access a money value from the WorkSheet.
+     *
      * @param pOffset the column offset
      * @return the money
      * @throws OceanusException on error
@@ -530,6 +560,7 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
 
     /**
      * Access a price value from the WorkSheet.
+     *
      * @param pOffset the column offset
      * @return the price
      * @throws OceanusException on error
@@ -546,6 +577,7 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
 
     /**
      * Access a rate value from the WorkSheet.
+     *
      * @param pOffset the column offset
      * @return the rate
      * @throws OceanusException on error
@@ -562,6 +594,7 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
 
     /**
      * Access a units value from the WorkSheet.
+     *
      * @param pOffset the column offset
      * @return the units
      * @throws OceanusException on error
@@ -578,6 +611,7 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
 
     /**
      * Access a ratio value from the WorkSheet.
+     *
      * @param pOffset the column offset
      * @return the ratio
      * @throws OceanusException on error
@@ -594,6 +628,7 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
 
     /**
      * Access a string from the WorkSheet.
+     *
      * @param pOffset the column offset
      * @return the string
      */
@@ -609,6 +644,7 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
 
     /**
      * Access a byte array from the WorkSheet.
+     *
      * @param pOffset the column offset
      * @return the byte array
      */
@@ -624,6 +660,7 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
 
     /**
      * Access a char array from the WorkSheet.
+     *
      * @param pOffset the column offset
      * @return the char array
      * @throws OceanusException on error
@@ -640,8 +677,9 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
 
     /**
      * Write an integer to the WorkSheet.
+     *
      * @param pOffset the column offset
-     * @param pValue the integer
+     * @param pValue  the integer
      * @throws OceanusException on error
      */
     protected void writeInteger(final int pOffset,
@@ -656,8 +694,9 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
 
     /**
      * Write an integer to the WorkSheet.
+     *
      * @param pOffset the column offset
-     * @param pValue the integer
+     * @param pValue  the integer
      * @throws OceanusException on error
      */
     protected void writeLong(final int pOffset,
@@ -672,8 +711,9 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
 
     /**
      * Write a boolean to the WorkSheet.
+     *
      * @param pOffset the column offset
-     * @param pValue the boolean
+     * @param pValue  the boolean
      * @throws OceanusException on error
      */
     protected void writeBoolean(final int pOffset,
@@ -688,8 +728,9 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
 
     /**
      * Write a date to the WorkSheet.
+     *
      * @param pOffset the column offset
-     * @param pValue the date
+     * @param pValue  the date
      * @throws OceanusException on error
      */
     protected void writeDate(final int pOffset,
@@ -704,8 +745,9 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
 
     /**
      * Write a decimal to the WorkSheet.
+     *
      * @param pOffset the column offset
-     * @param pValue the number
+     * @param pValue  the number
      * @throws OceanusException on error
      */
     protected void writeDecimal(final int pOffset,
@@ -720,6 +762,7 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
 
     /**
      * Write a Header to the WorkSheet.
+     *
      * @param pOffset the column offset
      * @param pHeader the header text
      * @throws OceanusException on error
@@ -736,8 +779,9 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
 
     /**
      * Write a string to the WorkSheet.
+     *
      * @param pOffset the column offset
-     * @param pValue the string
+     * @param pValue  the string
      * @throws OceanusException on error
      */
     protected void writeString(final int pOffset,
@@ -752,8 +796,9 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
 
     /**
      * Write a byte array to the WorkSheet.
+     *
      * @param pOffset the column offset
-     * @param pBytes the byte array
+     * @param pBytes  the byte array
      * @throws OceanusException on error
      */
     protected void writeBytes(final int pOffset,
@@ -768,8 +813,9 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
 
     /**
      * Write a char array to the WorkSheet.
+     *
      * @param pOffset the column offset
-     * @param pChars the char array
+     * @param pChars  the char array
      * @throws OceanusException on error
      */
     protected void writeChars(final int pOffset,
@@ -784,6 +830,7 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
 
     /**
      * Obtain row values.
+     *
      * @param pName the name of the item
      * @return the row values.
      * @throws OceanusException on error

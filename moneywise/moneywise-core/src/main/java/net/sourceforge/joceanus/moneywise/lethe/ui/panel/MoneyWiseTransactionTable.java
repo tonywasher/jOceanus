@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,19 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.lethe.ui.panel;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateConfig;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEvent;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
+import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.ui.MetisAction;
@@ -43,16 +53,6 @@ import net.sourceforge.joceanus.moneywise.ui.MoneyWiseIcon;
 import net.sourceforge.joceanus.moneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.moneywise.ui.base.MoneyWiseBaseTable;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateConfig;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
-import net.sourceforge.joceanus.oceanus.event.OceanusEvent;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
-import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.prometheus.ui.PrometheusActionButtons;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
@@ -142,10 +142,11 @@ public class MoneyWiseTransactionTable
 
     /**
      * Constructor.
-     * @param pView the view
-     * @param pEditSet the editSet
-     * @param pError the error panel
-     * @param pFilter the filter viewer entry
+     *
+     * @param pView     the view
+     * @param pEditSet  the editSet
+     * @param pError    the error panel
+     * @param pFilter   the filter viewer entry
      * @param pAnalysis the analysis viewer entry
      */
     MoneyWiseTransactionTable(final MoneyWiseView pView,
@@ -411,6 +412,7 @@ public class MoneyWiseTransactionTable
 
     /**
      * Obtain the selection panel.
+     *
      * @return the select panel
      */
     MoneyWiseAnalysisSelect getSelect() {
@@ -419,6 +421,7 @@ public class MoneyWiseTransactionTable
 
     /**
      * Obtain the action buttons.
+     *
      * @return the action buttons
      */
     PrometheusActionButtons getActionButtons() {
@@ -427,7 +430,8 @@ public class MoneyWiseTransactionTable
 
     /**
      * Delete row.
-     * @param pRow the row
+     *
+     * @param pRow   the row
      * @param pValue the value (ignored)
      * @throws OceanusException on error
      */
@@ -443,6 +447,7 @@ public class MoneyWiseTransactionTable
 
     /**
      * handle Date event.
+     *
      * @param pConfig the dateConfig
      */
     private void handleDateEvent(final OceanusDateConfig pConfig) {
@@ -463,10 +468,11 @@ public class MoneyWiseTransactionTable
             return false;
         }
         return super.isFieldChanged(pField, pItem);
-     }
+    }
 
     /**
      * Determine reconciled state.
+     *
      * @param pTrans the transaction
      * @return the state
      */
@@ -476,6 +482,7 @@ public class MoneyWiseTransactionTable
 
     /**
      * Determine direction state.
+     *
      * @param pTrans the transaction
      * @return the state
      */
@@ -493,6 +500,7 @@ public class MoneyWiseTransactionTable
 
     /**
      * Obtain filtered debit for transaction.
+     *
      * @param pTrans the transaction
      * @return the debit
      */
@@ -502,6 +510,7 @@ public class MoneyWiseTransactionTable
 
     /**
      * Obtain filtered debit for transaction.
+     *
      * @param pTrans the transaction
      * @return the debit
      */
@@ -511,6 +520,7 @@ public class MoneyWiseTransactionTable
 
     /**
      * Obtain filtered debit for transaction.
+     *
      * @param pTrans the transaction
      * @return the debit
      */
@@ -520,6 +530,7 @@ public class MoneyWiseTransactionTable
 
     /**
      * Obtain date value.
+     *
      * @param pTrans the transaction
      * @return the date value
      */
@@ -529,6 +540,7 @@ public class MoneyWiseTransactionTable
 
     /**
      * Obtain date value.
+     *
      * @param pTrans the transaction
      * @return the date value
      */
@@ -538,6 +550,7 @@ public class MoneyWiseTransactionTable
 
     /**
      * Obtain direction value.
+     *
      * @param pTrans the transaction
      * @return the direction value
      */
@@ -547,6 +560,7 @@ public class MoneyWiseTransactionTable
 
     /**
      * Obtain date value.
+     *
      * @param pTrans the transaction
      * @return the date value
      */
@@ -562,6 +576,7 @@ public class MoneyWiseTransactionTable
 
     /**
      * Select Statement.
+     *
      * @param pSelect the selection
      */
     void selectStatement(final MoneyWiseStatementSelect pSelect) {
@@ -725,6 +740,7 @@ public class MoneyWiseTransactionTable
 
     /**
      * Select transaction.
+     *
      * @param pTran the transaction to select
      */
     void selectTran(final MoneyWiseTransaction pTran) {
@@ -747,6 +763,7 @@ public class MoneyWiseTransactionTable
 
     /**
      * handle Action Buttons.
+     *
      * @param pEvent the event
      */
     private void handleActionButtons(final OceanusEvent<PrometheusUIEvent> pEvent) {
@@ -785,8 +802,9 @@ public class MoneyWiseTransactionTable
 
     /**
      * Obtain the popUpMenu for Accounts.
+     *
      * @param pTrans the transaction
-     * @param pMenu the menu to build
+     * @param pMenu  the menu to build
      */
     private void buildAccountMenu(final MoneyWiseTransaction pTrans,
                                   final TethysUIScrollMenu<MoneyWiseTransAsset> pMenu) {
@@ -796,8 +814,9 @@ public class MoneyWiseTransactionTable
 
     /**
      * Obtain the popUpMenu for Partner Accounts.
+     *
      * @param pTrans the transaction
-     * @param pMenu the menu to build
+     * @param pMenu  the menu to build
      */
     private void buildPartnerMenu(final MoneyWiseTransaction pTrans,
                                   final TethysUIScrollMenu<MoneyWiseTransAsset> pMenu) {
@@ -807,8 +826,9 @@ public class MoneyWiseTransactionTable
 
     /**
      * Build the popUpMenu for categories.
+     *
      * @param pTrans the transaction
-     * @param pMenu the menu to build
+     * @param pMenu  the menu to build
      */
     private void buildCategoryMenu(final MoneyWiseTransaction pTrans,
                                    final TethysUIScrollMenu<MoneyWiseTransCategory> pMenu) {
@@ -818,8 +838,9 @@ public class MoneyWiseTransactionTable
 
     /**
      * Build the popUpMenu for categories.
+     *
      * @param pTrans the transaction
-     * @param pMenu the menu to build
+     * @param pMenu  the menu to build
      */
     private void buildReturnedMenu(final MoneyWiseTransaction pTrans,
                                    final TethysUIScrollMenu<MoneyWiseTransAsset> pMenu) {
@@ -869,6 +890,7 @@ public class MoneyWiseTransactionTable
 
     /**
      * Adjust columns.
+     *
      * @param pSet the set to display.
      */
     private void adjustColumns(final MoneyWiseAnalysisColumnSet pSet) {
@@ -987,6 +1009,7 @@ public class MoneyWiseTransactionTable
 
         /**
          * Constructor.
+         *
          * @param pList the Transaction list
          */
         protected AnalysisHeader(final MoneyWiseTransactionList pList) {
@@ -1023,6 +1046,7 @@ public class MoneyWiseTransactionTable
 
         /**
          * Constructor.
+         *
          * @param pKeyName the key name
          */
         MoneyWiseTransDataId(final MetisDataFieldId pKeyName) {
@@ -1160,6 +1184,7 @@ public class MoneyWiseTransactionTable
 
         /**
          * Select Statement.
+         *
          * @param pSelect the selection
          */
         public void selectStatement(final MoneyWiseStatementSelect pSelect) {
@@ -1185,6 +1210,7 @@ public class MoneyWiseTransactionTable
 
         /**
          * handle Action Buttons.
+         *
          * @param pEvent the event
          */
         private void handleActionButtons(final OceanusEvent<PrometheusUIEvent> pEvent) {
@@ -1219,6 +1245,7 @@ public class MoneyWiseTransactionTable
 
         /**
          * Does the panel have updates?
+         *
          * @return true/false
          */
         public boolean hasUpdates() {
@@ -1227,6 +1254,7 @@ public class MoneyWiseTransactionTable
 
         /**
          * Does the panel have a session?
+         *
          * @return true/false
          */
         public boolean hasSession() {
@@ -1235,6 +1263,7 @@ public class MoneyWiseTransactionTable
 
         /**
          * Does the panel have errors?
+         *
          * @return true/false
          */
         public boolean hasErrors() {

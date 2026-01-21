@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,15 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.data.builder;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetDirection;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePortfolio;
@@ -25,12 +31,6 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransTag;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -161,6 +161,7 @@ public class MoneyWiseTransactionBuilder {
 
     /**
      * Constructor.
+     *
      * @param pDataSet the dataSet
      */
     public MoneyWiseTransactionBuilder(final MoneyWiseDataSet pDataSet) {
@@ -171,6 +172,7 @@ public class MoneyWiseTransactionBuilder {
 
     /**
      * Set Date.
+     *
      * @param pDate the date of the transaction.
      * @return the builder
      */
@@ -181,6 +183,7 @@ public class MoneyWiseTransactionBuilder {
 
     /**
      * Set the date.
+     *
      * @param pDate the Date of the rate.
      * @return the builder
      */
@@ -190,6 +193,7 @@ public class MoneyWiseTransactionBuilder {
 
     /**
      * Set Account.
+     *
      * @param pAccount the account.
      * @return the builder
      */
@@ -200,6 +204,7 @@ public class MoneyWiseTransactionBuilder {
 
     /**
      * Set Account.
+     *
      * @param pAccount the account.
      * @return the builder
      */
@@ -210,6 +215,7 @@ public class MoneyWiseTransactionBuilder {
 
     /**
      * Set Partner.
+     *
      * @param pPartner the partner.
      * @return the builder
      */
@@ -220,6 +226,7 @@ public class MoneyWiseTransactionBuilder {
 
     /**
      * Set Partner.
+     *
      * @param pPartner the partner.
      * @return the builder
      */
@@ -230,6 +237,7 @@ public class MoneyWiseTransactionBuilder {
 
     /**
      * Set To.
+     *
      * @return the builder
      */
     public MoneyWiseTransactionBuilder to() {
@@ -239,6 +247,7 @@ public class MoneyWiseTransactionBuilder {
 
     /**
      * Set From.
+     *
      * @return the builder
      */
     public MoneyWiseTransactionBuilder from() {
@@ -248,6 +257,7 @@ public class MoneyWiseTransactionBuilder {
 
     /**
      * Set category.
+     *
      * @param pCategory the category.
      * @return the builder
      */
@@ -258,6 +268,7 @@ public class MoneyWiseTransactionBuilder {
 
     /**
      * Set category.
+     *
      * @param pCategory the category.
      * @return the builder
      */
@@ -267,6 +278,7 @@ public class MoneyWiseTransactionBuilder {
 
     /**
      * Set the amount.
+     *
      * @param pAmount the amount of the transaction.
      * @return the builder
      */
@@ -277,6 +289,7 @@ public class MoneyWiseTransactionBuilder {
 
     /**
      * Set the amount.
+     *
      * @param pAmount the amount of the transaction.
      * @return the builder
      */
@@ -286,6 +299,7 @@ public class MoneyWiseTransactionBuilder {
 
     /**
      * Set the taxCredit.
+     *
      * @param pTaxCredit the taxCredit of the transaction.
      * @return the builder
      */
@@ -296,6 +310,7 @@ public class MoneyWiseTransactionBuilder {
 
     /**
      * Set the taxCredit.
+     *
      * @param pTaxCredit the taxCredit of the transaction.
      * @return the builder
      */
@@ -305,6 +320,7 @@ public class MoneyWiseTransactionBuilder {
 
     /**
      * Set the EmployersNI.
+     *
      * @param pNI the EmployersNI of the transaction.
      * @return the builder
      */
@@ -315,6 +331,7 @@ public class MoneyWiseTransactionBuilder {
 
     /**
      * Set the EmployersNI.
+     *
      * @param pNI the EmployersNI of the transaction.
      * @return the builder
      */
@@ -324,6 +341,7 @@ public class MoneyWiseTransactionBuilder {
 
     /**
      * Set the EmployeesNI.
+     *
      * @param pNI the EmployeesNI of the transaction.
      * @return the builder
      */
@@ -334,6 +352,7 @@ public class MoneyWiseTransactionBuilder {
 
     /**
      * Set the EmployeesNI.
+     *
      * @param pNI the EmployeesNI of the transaction.
      * @return the builder
      */
@@ -343,6 +362,7 @@ public class MoneyWiseTransactionBuilder {
 
     /**
      * Set the benefit.
+     *
      * @param pBenefit the benefit of the transaction.
      * @return the builder
      */
@@ -353,6 +373,7 @@ public class MoneyWiseTransactionBuilder {
 
     /**
      * Set the benefit.
+     *
      * @param pBenefit the benefit of the transaction.
      * @return the builder
      */
@@ -362,6 +383,7 @@ public class MoneyWiseTransactionBuilder {
 
     /**
      * Set the withheld.
+     *
      * @param pWithheld the withheld of the transaction.
      * @return the builder
      */
@@ -372,6 +394,7 @@ public class MoneyWiseTransactionBuilder {
 
     /**
      * Set the withheld.
+     *
      * @param pWithheld the withheld of the transaction.
      * @return the builder
      */
@@ -381,6 +404,7 @@ public class MoneyWiseTransactionBuilder {
 
     /**
      * Set the partner amount.
+     *
      * @param pAmount the partner amount of the transaction.
      * @return the builder
      */
@@ -391,6 +415,7 @@ public class MoneyWiseTransactionBuilder {
 
     /**
      * Set the partner amount.
+     *
      * @param pAmount the partner amount of the transaction.
      * @return the builder
      */
@@ -400,6 +425,7 @@ public class MoneyWiseTransactionBuilder {
 
     /**
      * Set the account units.
+     *
      * @param pUnits the account units.
      * @return the builder
      */
@@ -410,6 +436,7 @@ public class MoneyWiseTransactionBuilder {
 
     /**
      * Set the account units.
+     *
      * @param pUnits the account units.
      * @return the builder
      */
@@ -419,6 +446,7 @@ public class MoneyWiseTransactionBuilder {
 
     /**
      * Set the partner units.
+     *
      * @param pUnits the partner units.
      * @return the builder
      */
@@ -429,6 +457,7 @@ public class MoneyWiseTransactionBuilder {
 
     /**
      * Set the partner units.
+     *
      * @param pUnits the partner units.
      * @return the builder
      */
@@ -438,6 +467,7 @@ public class MoneyWiseTransactionBuilder {
 
     /**
      * Set the dilution.
+     *
      * @param pDilution the dilution of the transaction.
      * @return the builder
      */
@@ -448,6 +478,7 @@ public class MoneyWiseTransactionBuilder {
 
     /**
      * Set the dilution.
+     *
      * @param pDilution the dilution of the transaction.
      * @return the builder
      */
@@ -457,6 +488,7 @@ public class MoneyWiseTransactionBuilder {
 
     /**
      * Set the qualifyYears.
+     *
      * @param pYears the qualifyYears of the transaction.
      * @return the builder
      */
@@ -467,7 +499,8 @@ public class MoneyWiseTransactionBuilder {
 
     /**
      * Set the returnedCash.
-     * @param pCash the returnedCash.
+     *
+     * @param pCash    the returnedCash.
      * @param pAccount the account to which the cash was returned
      * @return the builder
      */
@@ -480,7 +513,8 @@ public class MoneyWiseTransactionBuilder {
 
     /**
      * Set the returnedCash.
-     * @param pCash the returnedCash.
+     *
+     * @param pCash    the returnedCash.
      * @param pAccount the account to which the cash was returned
      * @return the builder
      */
@@ -492,6 +526,7 @@ public class MoneyWiseTransactionBuilder {
 
     /**
      * Set the price.
+     *
      * @param pPrice the price of the transaction.
      * @return the builder
      */
@@ -502,6 +537,7 @@ public class MoneyWiseTransactionBuilder {
 
     /**
      * Set the price.
+     *
      * @param pPrice the price of the transaction.
      * @return the builder
      */
@@ -511,6 +547,7 @@ public class MoneyWiseTransactionBuilder {
 
     /**
      * Set a tag.
+     *
      * @param pTag the tag for the transaction.
      * @return the builder
      */
@@ -523,6 +560,7 @@ public class MoneyWiseTransactionBuilder {
 
     /**
      * Set a tag.
+     *
      * @param pTag the tag for the transaction.
      * @return the builder
      */
@@ -532,6 +570,7 @@ public class MoneyWiseTransactionBuilder {
 
     /**
      * Set reconciled.
+     *
      * @return the builder
      */
     public MoneyWiseTransactionBuilder reconciled() {
@@ -541,6 +580,7 @@ public class MoneyWiseTransactionBuilder {
 
     /**
      * Set reference.
+     *
      * @param pRef the reference
      * @return the builder
      */
@@ -551,6 +591,7 @@ public class MoneyWiseTransactionBuilder {
 
     /**
      * Set comment.
+     *
      * @param pComment the comment
      * @return the builder
      */
@@ -561,6 +602,7 @@ public class MoneyWiseTransactionBuilder {
 
     /**
      * Build the transaction.
+     *
      * @return the new Transaction
      * @throws OceanusException on error
      */
@@ -639,6 +681,7 @@ public class MoneyWiseTransactionBuilder {
 
     /**
      * Resolve transactionAsset.
+     *
      * @param pAsset the asset name
      * @return the asset
      */

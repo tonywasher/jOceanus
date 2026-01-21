@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,40 +13,40 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.ui.panel;
 
-import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.metis.ui.MetisErrorPanel;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEvent;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
+import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.ui.MetisAction;
+import net.sourceforge.joceanus.metis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.metis.ui.MetisIcon;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePortfolio;
+import net.sourceforge.joceanus.moneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.moneywise.ui.base.MoneyWiseBaseTable;
 import net.sourceforge.joceanus.moneywise.ui.controls.MoneyWiseSpotPricesSelect;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseSpotSecurityPrice;
-import net.sourceforge.joceanus.moneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseSpotSecurityPrice.MoneyWiseSpotSecurityList;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseViewResource;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseYQLDownloader;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.prometheus.ui.PrometheusActionButtons;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 import net.sourceforge.joceanus.prometheus.views.PrometheusUIEvent;
 import net.sourceforge.joceanus.prometheus.views.PrometheusViewerEntryId;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.event.OceanusEvent;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.button.TethysUIButton;
 import net.sourceforge.joceanus.tethys.api.control.TethysUIControl.TethysUIIconMapSet;
@@ -82,9 +82,10 @@ public class MoneyWiseMarketPricesTable
 
     /**
      * Constructor.
-     * @param pView the view
+     *
+     * @param pView    the view
      * @param pEditSet the editSet
-     * @param pError the error panel
+     * @param pError   the error panel
      */
     MoneyWiseMarketPricesTable(final MoneyWiseView pView,
                                final PrometheusEditSet pEditSet,
@@ -155,6 +156,7 @@ public class MoneyWiseMarketPricesTable
 
     /**
      * Obtain the selection panel.
+     *
      * @return the select panel
      */
     MoneyWiseSpotPricesSelect getSelect() {
@@ -182,8 +184,9 @@ public class MoneyWiseMarketPricesTable
 
     /**
      * Set Selection to the specified portfolio and date.
+     *
      * @param pPortfolio the portfolio
-     * @param pDate the Date for the extract
+     * @param pDate      the Date for the extract
      */
     public void setSelection(final MoneyWisePortfolio pPortfolio,
                              final OceanusDate pDate) {
@@ -414,6 +417,7 @@ public class MoneyWiseMarketPricesTable
 
         /**
          * handle Action Buttons.
+         *
          * @param pEvent the event
          */
         private void handleActionButtons(final OceanusEvent<PrometheusUIEvent> pEvent) {
@@ -455,6 +459,7 @@ public class MoneyWiseMarketPricesTable
 
         /**
          * Does the panel have updates?
+         *
          * @return true/false
          */
         public boolean hasUpdates() {
@@ -463,6 +468,7 @@ public class MoneyWiseMarketPricesTable
 
         /**
          * Does the panel have a session?
+         *
          * @return true/false
          */
         public boolean hasSession() {
@@ -471,6 +477,7 @@ public class MoneyWiseMarketPricesTable
 
         /**
          * Does the panel have errors?
+         *
          * @return true/false
          */
         public boolean hasErrors() {

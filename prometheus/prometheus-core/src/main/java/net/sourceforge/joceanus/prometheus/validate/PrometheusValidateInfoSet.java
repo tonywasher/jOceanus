@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Prometheus: Application Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,11 +13,11 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.prometheus.validate;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.metis.field.MetisFieldRequired;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoClass;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoSet;
@@ -28,6 +28,7 @@ import java.util.Iterator;
 
 /**
  * Validate InfoSet.
+ *
  * @param <T> the infoItem type
  */
 public abstract class PrometheusValidateInfoSet<T extends PrometheusDataInfoItem> {
@@ -54,6 +55,7 @@ public abstract class PrometheusValidateInfoSet<T extends PrometheusDataInfoItem
 
     /**
      * Obtain the owner.
+     *
      * @return the owner
      */
     public PrometheusEditSet getEditSet() {
@@ -62,6 +64,7 @@ public abstract class PrometheusValidateInfoSet<T extends PrometheusDataInfoItem
 
     /**
      * Obtain the infoSet.
+     *
      * @return the infoSet
      */
     public PrometheusDataInfoSet<T> getInfoSet() {
@@ -70,6 +73,7 @@ public abstract class PrometheusValidateInfoSet<T extends PrometheusDataInfoItem
 
     /**
      * Obtain the owner.
+     *
      * @return the owner
      */
     public PrometheusDataItem getOwner() {
@@ -78,6 +82,7 @@ public abstract class PrometheusValidateInfoSet<T extends PrometheusDataInfoItem
 
     /**
      * Store EditSet details.
+     *
      * @param pEditSet the editSet
      */
     public void storeEditSet(final PrometheusEditSet pEditSet) {
@@ -86,6 +91,7 @@ public abstract class PrometheusValidateInfoSet<T extends PrometheusDataInfoItem
 
     /**
      * Store InfoSet details.
+     *
      * @param pInfoSet the infoSet
      */
     public void storeInfoSet(final PrometheusDataInfoSet<T> pInfoSet) {
@@ -96,6 +102,7 @@ public abstract class PrometheusValidateInfoSet<T extends PrometheusDataInfoItem
 
     /**
      * Validate the infoSet.
+     *
      * @param pInfoSet the infoSet
      */
     public void validate(final PrometheusDataInfoSet<T> pInfoSet) {
@@ -122,7 +129,8 @@ public abstract class PrometheusValidateInfoSet<T extends PrometheusDataInfoItem
 
     /**
      * Perform basic class validation.
-     * @param pInfo the info (or null)
+     *
+     * @param pInfo  the info (or null)
      * @param pClass the infoClass
      * @return continue checks true/false
      */
@@ -156,6 +164,7 @@ public abstract class PrometheusValidateInfoSet<T extends PrometheusDataInfoItem
 
     /**
      * Determine if an infoSet class is required.
+     *
      * @param pClass the infoSet class
      * @return the status
      */
@@ -163,7 +172,8 @@ public abstract class PrometheusValidateInfoSet<T extends PrometheusDataInfoItem
 
     /**
      * Validate the class.
-     * @param pInfo the info
+     *
+     * @param pInfo  the info
      * @param pClass the infoClass
      */
     public abstract void validateClass(T pInfo,
@@ -171,6 +181,7 @@ public abstract class PrometheusValidateInfoSet<T extends PrometheusDataInfoItem
 
     /**
      * autoCorrect values after change.
+     *
      * @param pInfoSet the infoSet
      * @throws OceanusException on error
      */
@@ -213,6 +224,7 @@ public abstract class PrometheusValidateInfoSet<T extends PrometheusDataInfoItem
 
     /**
      * Set default value for a class.
+     *
      * @param pClass the class to autoCorrect
      * @throws OceanusException on error
      */
@@ -222,6 +234,7 @@ public abstract class PrometheusValidateInfoSet<T extends PrometheusDataInfoItem
 
     /**
      * AutoCorrect an existing value (if necessary).
+     *
      * @param pClass the class to autoCorrect
      * @throws OceanusException on error
      */

@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,10 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.atlas.views;
 
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEvent;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
@@ -47,7 +48,6 @@ import net.sourceforge.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter.M
 import net.sourceforge.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter.MoneyWiseXAnalysisTagFilter;
 import net.sourceforge.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter.MoneyWiseXAnalysisTaxBasisFilter;
 import net.sourceforge.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter.MoneyWiseXAnalysisTransCategoryFilter;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -75,9 +75,10 @@ public class MoneyWiseXTransactionFilters
 
     /**
      * Constructor.
-     * @param pAnalysis the analysis
+     *
+     * @param pAnalysis  the analysis
      * @param pDateRange the dateRange
-     * @param pEvent the event
+     * @param pEvent     the event
      */
     public MoneyWiseXTransactionFilters(final MoneyWiseXAnalysis pAnalysis,
                                         final OceanusDateRange pDateRange,
@@ -117,6 +118,7 @@ public class MoneyWiseXTransactionFilters
 
     /**
      * Add relevant deposit filters.
+     *
      * @param pDeposits the deposit buckets
      */
     private void analyseDeposits(final MoneyWiseXAnalysisDepositBucketList pDeposits) {
@@ -137,6 +139,7 @@ public class MoneyWiseXTransactionFilters
 
     /**
      * Add relevant cash filters.
+     *
      * @param pCash the cash buckets
      */
     private void analyseCash(final MoneyWiseXAnalysisCashBucketList pCash) {
@@ -157,6 +160,7 @@ public class MoneyWiseXTransactionFilters
 
     /**
      * Add relevant loan filters.
+     *
      * @param pLoans the loan buckets
      */
     private void analyseLoans(final MoneyWiseXAnalysisLoanBucketList pLoans) {
@@ -177,6 +181,7 @@ public class MoneyWiseXTransactionFilters
 
     /**
      * Add relevant portfolio filters.
+     *
      * @param pPortfolios the portfolio buckets
      */
     private void analysePortfolios(final MoneyWiseXAnalysisPortfolioBucketList pPortfolios) {
@@ -201,6 +206,7 @@ public class MoneyWiseXTransactionFilters
 
     /**
      * Add relevant security filters.
+     *
      * @param pSecurities the security buckets
      */
     private void analyseSecurities(final MoneyWiseXAnalysisSecurityBucketList pSecurities) {
@@ -221,6 +227,7 @@ public class MoneyWiseXTransactionFilters
 
     /**
      * Add relevant payee filters.
+     *
      * @param pPayees the payee buckets
      */
     private void analysePayees(final MoneyWiseXAnalysisPayeeBucketList pPayees) {
@@ -241,6 +248,7 @@ public class MoneyWiseXTransactionFilters
 
     /**
      * Add relevant category filters.
+     *
      * @param pCategories the category buckets
      */
     private void analyseCategories(final MoneyWiseXAnalysisTransCategoryBucketList pCategories) {
@@ -261,6 +269,7 @@ public class MoneyWiseXTransactionFilters
 
     /**
      * Add relevant taxBasis filters.
+     *
      * @param pBases the taxBasis buckets
      */
     private void analyseTaxBasis(final MoneyWiseXAnalysisTaxBasisBucketList pBases) {
@@ -281,6 +290,7 @@ public class MoneyWiseXTransactionFilters
 
     /**
      * Add relevant transaction tag filters.
+     *
      * @param pTags the trqansactionTag buckets
      */
     private void analyseTags(final MoneyWiseXAnalysisTransTagBucketList pTags) {

@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,11 +13,11 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.data.statics;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * Enumeration of TransactionCategory Classes.
@@ -387,7 +387,8 @@ public enum MoneyWiseTransCategoryClass
 
     /**
      * Constructor.
-     * @param uId the id
+     *
+     * @param uId    the id
      * @param uOrder the default order.
      */
     MoneyWiseTransCategoryClass(final int uId,
@@ -420,6 +421,7 @@ public enum MoneyWiseTransCategoryClass
 
     /**
      * get value from id.
+     *
      * @param id the id value
      * @return the corresponding enum object
      * @throws OceanusException on error
@@ -435,6 +437,7 @@ public enum MoneyWiseTransCategoryClass
 
     /**
      * Determine whether the CategoryType is hidden type.
+     *
      * @return <code>true</code> if the category is hidden, <code>false</code> otherwise.
      */
     public boolean isHiddenType() {
@@ -471,6 +474,7 @@ public enum MoneyWiseTransCategoryClass
 
     /**
      * Determine whether the Account is a secret payee.
+     *
      * @return <code>true</code> if the category uses parent payee, <code>false</code> otherwise.
      */
     public boolean isSecretPayee() {
@@ -493,6 +497,7 @@ public enum MoneyWiseTransCategoryClass
 
     /**
      * Determine whether the Account is a secret payee.
+     *
      * @return <code>true</code> if the category uses parent payee, <code>false</code> otherwise.
      */
     public boolean isSwitchDirection() {
@@ -514,6 +519,7 @@ public enum MoneyWiseTransCategoryClass
 
     /**
      * Determine whether the category type is singular.
+     *
      * @return <code>true</code> if the event category type is singular, <code>false</code>
      * otherwise.
      */
@@ -523,6 +529,7 @@ public enum MoneyWiseTransCategoryClass
 
     /**
      * Determine whether the CategoryType is an income.
+     *
      * @return <code>true</code> if the category is income, <code>false</code> otherwise.
      */
     public boolean isIncome() {
@@ -566,6 +573,7 @@ public enum MoneyWiseTransCategoryClass
 
     /**
      * Determine whether the CategoryType is an expense.
+     *
      * @return <code>true</code> if the category is expense, <code>false</code> otherwise.
      */
     public boolean isExpense() {
@@ -574,6 +582,7 @@ public enum MoneyWiseTransCategoryClass
 
     /**
      * Determine whether the CategoryType is dilutable.
+     *
      * @return <code>true</code> if the category is dilutable, <code>false</code> otherwise.
      */
     public boolean isDilutable() {
@@ -588,6 +597,7 @@ public enum MoneyWiseTransCategoryClass
 
     /**
      * Determine whether the CategoryType is dividend.
+     *
      * @return <code>true</code> if the category is dividend, <code>false</code> otherwise.
      */
     public boolean isDividend() {
@@ -605,6 +615,7 @@ public enum MoneyWiseTransCategoryClass
 
     /**
      * Determine whether the CategoryType is interest.
+     *
      * @return <code>true</code> if the category is interest, <code>false</code> otherwise.
      */
     public boolean isInterest() {
@@ -622,6 +633,7 @@ public enum MoneyWiseTransCategoryClass
 
     /**
      * Determine whether the CategoryType needs debit and credit both to have units.
+     *
      * @return <code>true</code> if the category needs dual units, <code>false</code> otherwise.
      */
     public boolean isStockAdjustment() {
@@ -643,6 +655,7 @@ public enum MoneyWiseTransCategoryClass
 
     /**
      * Determine whether the CategoryType has null Amount.
+     *
      * @return <code>true</code> if the category needs null amount, <code>false</code> otherwise.
      */
     public boolean needsNullAmount() {
@@ -664,6 +677,7 @@ public enum MoneyWiseTransCategoryClass
 
     /**
      * Determine whether the EventCategoryType can be parent categories.
+     *
      * @return <code>true</code> if the event category type can parent categories,
      * <code>false</code> otherwise.
      */
@@ -681,6 +695,7 @@ public enum MoneyWiseTransCategoryClass
 
     /**
      * Determine whether the EventCategoryType is a subTotal.
+     *
      * @return <code>true</code> if the event category type is a subTotal, <code>false</code>
      * otherwise.
      */
@@ -697,6 +712,7 @@ public enum MoneyWiseTransCategoryClass
 
     /**
      * Is this event category a transfer?
+     *
      * @return true/false
      */
     public boolean isTransfer() {
@@ -705,6 +721,7 @@ public enum MoneyWiseTransCategoryClass
 
     /**
      * Is this event category a NatInsurance event?
+     *
      * @return true/false
      */
     public boolean isNatInsurance() {
@@ -719,6 +736,7 @@ public enum MoneyWiseTransCategoryClass
 
     /**
      * Is this event category a security transfer?
+     *
      * @return true/false
      */
     public boolean isSecurityTransfer() {
@@ -745,6 +763,7 @@ public enum MoneyWiseTransCategoryClass
 
     /**
      * Is this event category a security closure?
+     *
      * @return true/false
      */
     public boolean isSecurityClosure() {

@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,11 +13,11 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.quicken.file;
 
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 
@@ -69,9 +69,10 @@ public class MoneyWiseQIFWriter {
 
     /**
      * Constructor.
+     *
      * @param pFactory the factory
-     * @param pReport the report
-     * @param pFile the QIF file.
+     * @param pReport  the report
+     * @param pFile    the QIF file.
      */
     public MoneyWiseQIFWriter(final TethysUIFactory<?> pFactory,
                               final TethysUIThreadStatusReport pReport,
@@ -87,6 +88,7 @@ public class MoneyWiseQIFWriter {
 
     /**
      * Write to Stream.
+     *
      * @param pStream the output stream
      * @throws OceanusException on error
      */
@@ -115,6 +117,7 @@ public class MoneyWiseQIFWriter {
 
     /**
      * Write Classes.
+     *
      * @param pStream the output stream
      * @throws OceanusException on error
      */
@@ -157,6 +160,7 @@ public class MoneyWiseQIFWriter {
 
     /**
      * Write Categories.
+     *
      * @param pStream the output stream
      * @throws OceanusException on error
      */
@@ -194,6 +198,7 @@ public class MoneyWiseQIFWriter {
 
     /**
      * Write Accounts.
+     *
      * @param pStream the output stream
      * @throws OceanusException on error
      */
@@ -233,6 +238,7 @@ public class MoneyWiseQIFWriter {
 
     /**
      * Write Securities.
+     *
      * @param pStream the output stream
      * @throws OceanusException on error
      */
@@ -286,6 +292,7 @@ public class MoneyWiseQIFWriter {
 
     /**
      * Write Prices.
+     *
      * @param pStream the output stream
      * @throws OceanusException on error
      */
@@ -336,6 +343,7 @@ public class MoneyWiseQIFWriter {
 
     /**
      * Write Prices.
+     *
      * @param pStream the output stream
      * @throws OceanusException on error
      */

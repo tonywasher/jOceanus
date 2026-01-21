@@ -1,20 +1,24 @@
-/*******************************************************************************
+/*
  * Themis: Java Project Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package net.sourceforge.joceanus.themis.lethe.dsm;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.themis.exc.ThemisIOException;
+import net.sourceforge.joceanus.themis.lethe.analysis.ThemisAnalysisMaven;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -25,10 +29,6 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
-
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.exc.ThemisIOException;
-import net.sourceforge.joceanus.themis.lethe.analysis.ThemisAnalysisMaven;
 
 /**
  * DSM Module.
@@ -66,6 +66,7 @@ public class ThemisDSMModule {
 
     /**
      * Constructor.
+     *
      * @param pLocation the location of the project
      */
     ThemisDSMModule(final File pLocation) {
@@ -77,6 +78,7 @@ public class ThemisDSMModule {
 
     /**
      * Return the location of the module.
+     *
      * @return the location
      */
     File getLocation() {
@@ -85,6 +87,7 @@ public class ThemisDSMModule {
 
     /**
      * Return the module name.
+     *
      * @return the name
      */
     String getModuleName() {
@@ -93,6 +96,7 @@ public class ThemisDSMModule {
 
     /**
      * Add a package to the list.
+     *
      * @param pPackage the package
      */
     void registerPackage(final ThemisDSMPackage pPackage) {
@@ -106,6 +110,7 @@ public class ThemisDSMModule {
 
     /**
      * Obtain an iterator of the imports.
+     *
      * @return the iterator
      */
     Iterator<ThemisDSMModule> moduleIterator() {
@@ -114,6 +119,7 @@ public class ThemisDSMModule {
 
     /**
      * Does the module have subModules?
+     *
      * @return true/false
      */
     boolean hasSubModules() {
@@ -122,6 +128,7 @@ public class ThemisDSMModule {
 
     /**
      * Does the module have packages?
+     *
      * @return true/false
      */
     boolean hasPackages() {
@@ -130,6 +137,7 @@ public class ThemisDSMModule {
 
     /**
      * Obtain the count of packages.
+     *
      * @return the count
      */
     int getPackageCount() {
@@ -138,6 +146,7 @@ public class ThemisDSMModule {
 
     /**
      * Obtain the error.
+     *
      * @return error
      */
     public OceanusException getError() {
@@ -146,6 +155,7 @@ public class ThemisDSMModule {
 
     /**
      * Obtain an iterator of the imports.
+     *
      * @return the iterator
      */
     Iterator<ThemisDSMPackage> packageIterator() {
@@ -154,6 +164,7 @@ public class ThemisDSMModule {
 
     /**
      * Obtain an iterator of the imports.
+     *
      * @return the iterator
      */
     public ThemisDSMPackage getDefaultPackage() {
@@ -163,6 +174,7 @@ public class ThemisDSMModule {
 
     /**
      * Obtain an indexed package.
+     *
      * @param pIndex the index of the package
      * @return the package
      */
@@ -173,6 +185,7 @@ public class ThemisDSMModule {
 
     /**
      * Obtain a list of all modules and submodules that contain packages.
+     *
      * @return the list
      */
     List<ThemisDSMModule> listModules() {
@@ -242,11 +255,12 @@ public class ThemisDSMModule {
 
     /**
      * process packages.
+     *
      * @param pPath the location of the package
      */
     void processPackages(final File pPath) {
         /* Loop through the entries in the directory */
-        for (File myFile: Objects.requireNonNull(pPath.listFiles())) {
+        for (File myFile : Objects.requireNonNull(pPath.listFiles())) {
             /* Ignore files */
             if (!myFile.isDirectory()) {
                 continue;
@@ -285,6 +299,7 @@ public class ThemisDSMModule {
 
     /**
      * Find a class reference.
+     *
      * @param pReference the class name
      * @return the found class or null
      */
@@ -310,6 +325,7 @@ public class ThemisDSMModule {
 
     /**
      * Does this module contain circular package references?
+     *
      * @return true/false
      */
     public boolean isCircular() {
@@ -324,6 +340,7 @@ public class ThemisDSMModule {
 
     /**
      * Obtain a list of all packages that have dependencies.
+     *
      * @return the list
      */
     public List<ThemisDSMPackage> listPackages() {
@@ -339,6 +356,7 @@ public class ThemisDSMModule {
 
     /**
      * Compare this package to another module for sort order.
+     *
      * @param pThat the other module to compare to
      * @return true/false
      */
@@ -359,6 +377,7 @@ public class ThemisDSMModule {
 
     /**
      * Parse the maven project file.
+     *
      * @param pPom the project file
      */
     private void parseProjectFile(final File pPom) {
@@ -379,7 +398,7 @@ public class ThemisDSMModule {
                 final ThemisDSMModule myModule = new ThemisDSMModule(myModuleDir);
                 myModule.processModulesAndPackages();
                 if (myModule.getPackageCount() > 1
-                      || myModule.hasSubModules()) {
+                        || myModule.hasSubModules()) {
                     theSubModules.add(myModule);
                 }
             }
@@ -389,7 +408,7 @@ public class ThemisDSMModule {
 
             /* Catch exceptions */
         } catch (IOException
-                | OceanusException e) {
+                 | OceanusException e) {
             /* Save Exception */
             theSubModules.clear();
             theError = new ThemisIOException("Failed to parse Project file", e);

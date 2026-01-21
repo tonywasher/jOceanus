@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Metis: Java Data Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,16 +13,16 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.metis.report;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
 import net.sourceforge.joceanus.metis.exc.MetisIOException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
-import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
-import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 import net.sourceforge.joceanus.tethys.api.control.TethysUIHTMLManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -43,6 +43,7 @@ import java.util.Map;
  * Provides functionality to hide and restore sections of an HTML document. This is useful for
  * displaying HTML documents in a jEditorPane, allowing a click to open/close sections of the
  * document.
+ *
  * @param <F> the filter type
  */
 public class MetisReportManager<F>
@@ -89,6 +90,7 @@ public class MetisReportManager<F>
 
     /**
      * Constructor.
+     *
      * @param pBuilder the HTML builder
      * @throws OceanusException on error
      */
@@ -124,6 +126,7 @@ public class MetisReportManager<F>
 
     /**
      * Obtain the builder.
+     *
      * @return the HTML builder
      */
     public MetisReportHTMLBuilder getBuilder() {
@@ -132,6 +135,7 @@ public class MetisReportManager<F>
 
     /**
      * Set Report.
+     *
      * @param pReport the report
      */
     public void setReport(final MetisReportBase<?, F> pReport) {
@@ -145,6 +149,7 @@ public class MetisReportManager<F>
 
     /**
      * Set Document.
+     *
      * @param pDocument the document
      */
     public void setDocument(final Document pDocument) {
@@ -154,6 +159,7 @@ public class MetisReportManager<F>
 
     /**
      * fire action event.
+     *
      * @param pFilter the filter
      */
     protected void fireActionEvent(final F pFilter) {
@@ -162,6 +168,7 @@ public class MetisReportManager<F>
 
     /**
      * check whether id is currently hidden.
+     *
      * @param pId the id to check
      * @return true/false
      */
@@ -171,6 +178,7 @@ public class MetisReportManager<F>
 
     /**
      * Hide section.
+     *
      * @param pId the id of the section to hide.
      * @return the modified text
      * @throws OceanusException on error
@@ -178,7 +186,7 @@ public class MetisReportManager<F>
     protected String hideSection(final String pId) throws OceanusException {
         /* Ignore if we have no document or transformer */
         if (theDocument == null
-            || theXformer == null) {
+                || theXformer == null) {
             /* Return no change */
             return null;
         }
@@ -208,6 +216,7 @@ public class MetisReportManager<F>
 
     /**
      * Obtain element with the given id attribute.
+     *
      * @param pId the id
      * @return the relevant element (or null)
      */
@@ -236,8 +245,9 @@ public class MetisReportManager<F>
 
     /**
      * Obtain element with the given id attribute.
+     *
      * @param pElement the element to search
-     * @param pId the id
+     * @param pId      the id
      * @return the element or null if not found
      */
     private static Element checkElementForId(final Element pElement,
@@ -270,6 +280,7 @@ public class MetisReportManager<F>
 
     /**
      * Restore section.
+     *
      * @param pId the id of the section to restore.
      * @return the modified text
      * @throws OceanusException on error
@@ -277,7 +288,7 @@ public class MetisReportManager<F>
     String restoreSection(final String pId) throws OceanusException {
         /* Ignore if we have no document or transformer */
         if (theDocument == null
-            || theXformer == null) {
+                || theXformer == null) {
             /* Return current text */
             return theText;
         }
@@ -301,6 +312,7 @@ public class MetisReportManager<F>
 
     /**
      * Format XML.
+     *
      * @return the formatted XML
      * @throws OceanusException on error
      */
@@ -321,7 +333,8 @@ public class MetisReportManager<F>
 
     /**
      * Process link reference.
-     * @param pId the id of the reference.
+     *
+     * @param pId       the id of the reference.
      * @param pHTMLPane the HTML pane
      */
     public void processReference(final String pId,
@@ -334,13 +347,14 @@ public class MetisReportManager<F>
             /* Set it into the window and adjust the scroll */
             pHTMLPane.setHTMLContent(myText, "");
             final String myId = MetisReportHTMLBuilder.REF_ID
-                                + pId.substring(MetisReportHTMLBuilder.REF_TAB.length());
+                    + pId.substring(MetisReportHTMLBuilder.REF_TAB.length());
             pHTMLPane.scrollToReference(myId);
         }
     }
 
     /**
      * Process link reference.
+     *
      * @param pId the id of the reference.
      * @return the new text
      */
@@ -410,6 +424,7 @@ public class MetisReportManager<F>
 
         /**
          * Constructor.
+         *
          * @param pElement the element.
          */
         private HiddenElement(final Element pElement) {

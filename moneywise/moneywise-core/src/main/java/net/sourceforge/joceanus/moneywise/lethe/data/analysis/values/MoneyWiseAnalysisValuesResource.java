@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,14 +13,14 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.lethe.data.analysis.values;
 
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleLoader;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticResource;
-import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
-import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -274,6 +274,7 @@ public enum MoneyWiseAnalysisValuesResource
 
     /**
      * Constructor.
+     *
      * @param pKeyName the key name
      */
     MoneyWiseAnalysisValuesResource(final String pKeyName) {
@@ -282,6 +283,7 @@ public enum MoneyWiseAnalysisValuesResource
 
     /**
      * Constructor.
+     *
      * @param pResource the underlying resource
      */
     MoneyWiseAnalysisValuesResource(final OceanusBundleId pResource) {
@@ -318,6 +320,7 @@ public enum MoneyWiseAnalysisValuesResource
 
     /**
      * Build account map.
+     *
      * @return the map
      */
     private static Map<MoneyWiseAnalysisAccountAttr, OceanusBundleId> buildAccountMap() {
@@ -339,6 +342,7 @@ public enum MoneyWiseAnalysisValuesResource
 
     /**
      * Obtain key for account attribute.
+     *
      * @param pValue the Value
      * @return the resource key
      */
@@ -348,6 +352,7 @@ public enum MoneyWiseAnalysisValuesResource
 
     /**
      * Build transaction map.
+     *
      * @return the map
      */
     private static Map<MoneyWiseAnalysisTransAttr, OceanusBundleId> buildTransMap() {
@@ -361,6 +366,7 @@ public enum MoneyWiseAnalysisValuesResource
 
     /**
      * Obtain key for transaction attribute.
+     *
      * @param pValue the Value
      * @return the resource key
      */
@@ -370,6 +376,7 @@ public enum MoneyWiseAnalysisValuesResource
 
     /**
      * Build payee map.
+     *
      * @return the map
      */
     private static Map<MoneyWiseAnalysisPayeeAttr, OceanusBundleId> buildPayeeMap() {
@@ -383,6 +390,7 @@ public enum MoneyWiseAnalysisValuesResource
 
     /**
      * Obtain key for Payee attribute.
+     *
      * @param pValue the Value
      * @return the resource key
      */
@@ -392,6 +400,7 @@ public enum MoneyWiseAnalysisValuesResource
 
     /**
      * Build security map.
+     *
      * @return the map
      */
     private static Map<MoneyWiseAnalysisSecurityAttr, OceanusBundleId> buildSecurityMap() {
@@ -430,6 +439,7 @@ public enum MoneyWiseAnalysisValuesResource
 
     /**
      * Obtain key for security attribute.
+     *
      * @param pValue the Value
      * @return the resource key
      */
@@ -439,6 +449,7 @@ public enum MoneyWiseAnalysisValuesResource
 
     /**
      * Build taxBasis map.
+     *
      * @return the map
      */
     private static Map<MoneyWiseAnalysisTaxBasisAttr, OceanusBundleId> buildTaxMap() {
@@ -452,6 +463,7 @@ public enum MoneyWiseAnalysisValuesResource
 
     /**
      * Obtain key for tax attribute.
+     *
      * @param pValue the Value
      * @return the resource key
      */

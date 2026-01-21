@@ -1,30 +1,28 @@
-/*******************************************************************************
- * Tethys: Java Utilities
- * Copyright 2012-2026 Tony Washer
+/*
+ * Tethys: GUI Utilities
+ * Copyright 2012-2026. Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package net.sourceforge.joceanus.tethys.javafx.launch.util;
 
-import java.util.Arrays;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import javafx.application.Platform;
 import javafx.application.Preloader.StateChangeNotification;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIIconId;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIProgram;
 import net.sourceforge.joceanus.tethys.api.factory.TethysUILaunchProgram;
@@ -34,6 +32,8 @@ import net.sourceforge.joceanus.tethys.javafx.base.TethysUIFXNode;
 import net.sourceforge.joceanus.tethys.javafx.base.TethysUIFXUtils;
 import net.sourceforge.joceanus.tethys.javafx.factory.TethysUIFXFactory;
 import net.sourceforge.joceanus.tethys.javafx.menu.TethysUIFXMenuBarManager;
+
+import java.util.Arrays;
 
 /**
  * State for javaFX program.
@@ -45,6 +45,7 @@ public class TethysUIFXLaunchState {
     public interface TethysUIFXSetState {
         /**
          * Set program state.
+         *
          * @param pState the state
          */
         void setProgramState(TethysUIFXLaunchState pState);
@@ -77,6 +78,7 @@ public class TethysUIFXLaunchState {
 
     /**
      * Constructor.
+     *
      * @param pProgram the program
      * @throws OceanusException on error
      */
@@ -88,6 +90,7 @@ public class TethysUIFXLaunchState {
 
     /**
      * Obtain the program definitions.
+     *
      * @return the program definitions
      */
     TethysUIProgram getProgramDefinitions() {
@@ -107,6 +110,7 @@ public class TethysUIFXLaunchState {
 
     /**
      * Start the preLoader.
+     *
      * @param pStage the preLoader stage
      */
     public void startPreLoader(final Stage pStage) {
@@ -120,6 +124,7 @@ public class TethysUIFXLaunchState {
 
     /**
      * Initialise the main program.
+     *
      * @throws OceanusException on error
      */
     public void createMain() throws OceanusException {
@@ -137,6 +142,7 @@ public class TethysUIFXLaunchState {
 
     /**
      * Create the main panel.
+     *
      * @param pProgram the program state
      * @param pFactory the factory
      * @return the main panel
@@ -150,6 +156,7 @@ public class TethysUIFXLaunchState {
 
     /**
      * Start the main panel.
+     *
      * @param pStage the main stage
      */
     public void startMain(final Stage pStage) {
@@ -173,6 +180,7 @@ public class TethysUIFXLaunchState {
 
     /**
      * Attach to stage.
+     *
      * @param pStage the stage
      */
     protected void attachToStage(final Stage pStage) {
@@ -199,6 +207,7 @@ public class TethysUIFXLaunchState {
 
     /**
      * handle the state notification change.
+     *
      * @param pEvent the event
      */
     public void handleStateChangeNotification(final StateChangeNotification pEvent) {

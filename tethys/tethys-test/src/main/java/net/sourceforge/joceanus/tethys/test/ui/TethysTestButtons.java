@@ -1,27 +1,27 @@
-/*******************************************************************************
- * Tethys: Java Utilities
- * Copyright 2012-2026 Tony Washer
+/*
+ * Tethys: GUI Utilities
+ * Copyright 2012-2026. Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package net.sourceforge.joceanus.tethys.test.ui;
 
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.tethys.test.ui.TethysTestHelper.TethysIconState;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIAlignment;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.api.button.TethysUIButtonFactory;
+import net.sourceforge.joceanus.tethys.api.button.TethysUIColorPicker;
 import net.sourceforge.joceanus.tethys.api.button.TethysUIDateButtonManager;
 import net.sourceforge.joceanus.tethys.api.button.TethysUIIconButtonManager;
 import net.sourceforge.joceanus.tethys.api.button.TethysUIListButtonManager;
@@ -29,7 +29,6 @@ import net.sourceforge.joceanus.tethys.api.button.TethysUIScrollButtonManager;
 import net.sourceforge.joceanus.tethys.api.control.TethysUIControl.TethysUIIconMapSet;
 import net.sourceforge.joceanus.tethys.api.control.TethysUIControlFactory;
 import net.sourceforge.joceanus.tethys.api.control.TethysUILabel;
-import net.sourceforge.joceanus.tethys.api.button.TethysUIColorPicker;
 import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.tethys.api.menu.TethysUIMenuFactory;
 import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollItem;
@@ -37,6 +36,7 @@ import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollMenu;
 import net.sourceforge.joceanus.tethys.api.pane.TethysUIBoxPaneManager;
 import net.sourceforge.joceanus.tethys.api.pane.TethysUIGridPaneManager;
 import net.sourceforge.joceanus.tethys.api.pane.TethysUIPaneFactory;
+import net.sourceforge.joceanus.tethys.test.ui.TethysTestHelper.TethysIconState;
 
 import java.util.Map;
 
@@ -141,6 +141,7 @@ public class TethysTestButtons {
 
     /**
      * Constructor.
+     *
      * @param pFactory the factory
      */
     public TethysTestButtons(final TethysUIFactory<?> pFactory) {
@@ -176,6 +177,7 @@ public class TethysTestButtons {
 
     /**
      * Obtain the component.
+     *
      * @return the component
      */
     TethysUIComponent getComponent() {
@@ -329,6 +331,7 @@ public class TethysTestButtons {
 
     /**
      * Set the active value.
+     *
      * @param pValue the value to set
      */
     private void setContextValue(final String pValue) {
@@ -338,6 +341,7 @@ public class TethysTestButtons {
 
     /**
      * Set the scroll value.
+     *
      * @param pValue the value to set
      */
     private void setScrollValue(final String pValue) {
@@ -347,6 +351,7 @@ public class TethysTestButtons {
 
     /**
      * Set the date value.
+     *
      * @param pValue the value to set
      */
     private void setDateValue(final OceanusDate pValue) {
@@ -366,6 +371,7 @@ public class TethysTestButtons {
 
     /**
      * Set the simple icon value.
+     *
      * @param pValue the value to set
      */
     private void setSimpleIconValue(final Boolean pValue) {
@@ -375,6 +381,7 @@ public class TethysTestButtons {
 
     /**
      * Set the state icon value.
+     *
      * @param pValue the value to set
      */
     private void setStateIconValue(final Boolean pValue) {
@@ -384,6 +391,7 @@ public class TethysTestButtons {
 
     /**
      * Set the colour value.
+     *
      * @param pValue the value to set
      */
     private void setColorValue(final String pValue) {

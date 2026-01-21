@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,10 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.data.basic;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.data.MetisDataResource;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
@@ -26,7 +27,6 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoType;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoType.MoneyWiseTransInfoTypeList;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoClass;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
@@ -39,6 +39,7 @@ import java.util.Iterator;
 
 /**
  * Representation of an information extension of an event.
+ *
  * @author Tony Washer
  */
 public class MoneyWiseTransInfo
@@ -60,6 +61,7 @@ public class MoneyWiseTransInfo
 
     /**
      * Copy Constructor.
+     *
      * @param pList the list
      * @param pInfo The Info to copy
      */
@@ -71,9 +73,10 @@ public class MoneyWiseTransInfo
 
     /**
      * Edit Constructor.
-     * @param pList the list
+     *
+     * @param pList        the list
      * @param pTransaction the transaction
-     * @param pType the type
+     * @param pType        the type
      */
     private MoneyWiseTransInfo(final MoneyWiseTransInfoList pList,
                                final MoneyWiseTransaction pTransaction,
@@ -89,7 +92,8 @@ public class MoneyWiseTransInfo
 
     /**
      * Values constructor.
-     * @param pList the List to add to
+     *
+     * @param pList   the List to add to
      * @param pValues the values constructor
      * @throws OceanusException on error
      */
@@ -143,6 +147,7 @@ public class MoneyWiseTransInfo
 
     /**
      * Obtain Deposit.
+     *
      * @return the Deposit
      */
     public MoneyWiseTransAsset getTransAsset() {
@@ -151,6 +156,7 @@ public class MoneyWiseTransInfo
 
     /**
      * Obtain Transaction Tag.
+     *
      * @return the Transaction Tag
      */
     public MoneyWiseTransTag getTransactionTag() {
@@ -203,6 +209,7 @@ public class MoneyWiseTransInfo
 
     /**
      * Compare this data to another to establish sort order.
+     *
      * @param pThat The EventInfo to compare to
      * @return (-1,0,1) depending of whether this object is before, equal, or after the passed
      * object in the sort order
@@ -247,6 +254,7 @@ public class MoneyWiseTransInfo
 
     /**
      * resolve editSet links.
+     *
      * @param pEditSet the edit set
      * @throws OceanusException on error
      */
@@ -264,6 +272,7 @@ public class MoneyWiseTransInfo
 
     /**
      * Resolve link reference.
+     *
      * @param pEditSet the edit set
      * @throws OceanusException on error
      */
@@ -299,6 +308,7 @@ public class MoneyWiseTransInfo
 
     /**
      * Update transactionInfo from a transactionInfo extract.
+     *
      * @param pTransInfo the changed transInfo
      * @return whether changes have been made
      */
@@ -357,6 +367,7 @@ public class MoneyWiseTransInfo
 
         /**
          * Construct an empty CORE list.
+         *
          * @param pData the DataSet for the list
          */
         protected MoneyWiseTransInfoList(final MoneyWiseDataSet pData) {
@@ -365,6 +376,7 @@ public class MoneyWiseTransInfo
 
         /**
          * Constructor for a cloned List.
+         *
          * @param pSource the source List
          */
         private MoneyWiseTransInfoList(final MoneyWiseTransInfoList pSource) {
@@ -393,6 +405,7 @@ public class MoneyWiseTransInfo
 
         /**
          * Set base list for Edit InfoList.
+         *
          * @param pBase the base list
          */
         protected void setBase(final MoneyWiseTransInfoList pBase) {
@@ -495,6 +508,7 @@ public class MoneyWiseTransInfo
 
         /**
          * Resolve ValueLinks.
+         *
          * @throws OceanusException on error
          */
         public void resolveValueLinks() throws OceanusException {

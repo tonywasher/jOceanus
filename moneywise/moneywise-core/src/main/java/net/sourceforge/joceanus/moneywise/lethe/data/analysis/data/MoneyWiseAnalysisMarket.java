@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,11 +13,13 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.lethe.data.analysis.data;
 
-import java.util.Currency;
-
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePayeeClass;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisPayeeBucket.MoneyWiseAnalysisPayeeBucketList;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisTaxBasisBucket.MoneyWiseAnalysisTaxBasisBucketList;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisTransCategoryBucket.MoneyWiseAnalysisTransCategoryBucketList;
@@ -25,10 +27,8 @@ import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAn
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisAccountValues;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisSecurityAttr;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisSecurityValues;
-import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
-import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePayeeClass;
-import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+
+import java.util.Currency;
 
 /**
  * Market analysis.
@@ -71,6 +71,7 @@ public class MoneyWiseAnalysisMarket {
 
     /**
      * Constructor.
+     *
      * @param pAnalysis the analysis.
      */
     protected MoneyWiseAnalysisMarket(final MoneyWiseAnalysis pAnalysis) {
@@ -94,6 +95,7 @@ public class MoneyWiseAnalysisMarket {
 
     /**
      * Process account bucket.
+     *
      * @param pBucket the account bucket.
      */
     protected void processAccount(final MoneyWiseAnalysisAccountBucket<?> pBucket) {
@@ -121,6 +123,7 @@ public class MoneyWiseAnalysisMarket {
 
     /**
      * Process security bucket.
+     *
      * @param pBucket the security bucket.
      */
     protected void processSecurity(final MoneyWiseAnalysisSecurityBucket pBucket) {

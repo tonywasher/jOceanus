@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,15 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.ui.panel;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEvent;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
+import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.metis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
 import net.sourceforge.joceanus.moneywise.quicken.definitions.MoneyWiseQIFPreference.MoneyWiseQIFPreferences;
@@ -23,23 +29,18 @@ import net.sourceforge.joceanus.moneywise.ui.MoneyWiseGoToId;
 import net.sourceforge.joceanus.moneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
 import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataItem;
-import net.sourceforge.joceanus.prometheus.preference.PrometheusBackup.PrometheusBackupPreferences;
 import net.sourceforge.joceanus.prometheus.database.PrometheusDatabase.PrometheusDatabasePreferences;
+import net.sourceforge.joceanus.prometheus.preference.PrometheusBackup.PrometheusBackupPreferences;
 import net.sourceforge.joceanus.prometheus.preference.PrometheusPreferenceView;
 import net.sourceforge.joceanus.prometheus.ui.PrometheusGoToEvent;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.event.OceanusEvent;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
-import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.pane.TethysUITabPaneManager;
 import net.sourceforge.joceanus.tethys.api.pane.TethysUITabPaneManager.TethysUITabItem;
 
 /**
  * Maintenance Tab panel.
+ *
  * @author Tony Washer
  */
 public class MoneyWiseMaintenance
@@ -106,6 +107,7 @@ public class MoneyWiseMaintenance
 
     /**
      * Constructor.
+     *
      * @param pView the view
      */
     MoneyWiseMaintenance(final MoneyWiseView pView) {
@@ -171,6 +173,7 @@ public class MoneyWiseMaintenance
 
     /**
      * setChildListeners.
+     *
      * @param pRegistrar the registrar
      */
     private void setChildListeners(final OceanusEventRegistrar<PrometheusDataEvent> pRegistrar) {
@@ -184,6 +187,7 @@ public class MoneyWiseMaintenance
 
     /**
      * Obtain the view.
+     *
      * @return the view
      */
     protected MoneyWiseView getView() {
@@ -216,6 +220,7 @@ public class MoneyWiseMaintenance
 
     /**
      * Has this set of tables got updates.
+     *
      * @return true/false
      */
     public boolean hasUpdates() {
@@ -237,6 +242,7 @@ public class MoneyWiseMaintenance
 
     /**
      * Has this set of panels got the session focus?
+     *
      * @return true/false
      */
     public boolean hasSession() {
@@ -258,6 +264,7 @@ public class MoneyWiseMaintenance
 
     /**
      * Select maintenance.
+     *
      * @param pEvent the action request
      */
     public void selectMaintenance(final PrometheusGoToEvent<MoneyWiseGoToId> pEvent) {
@@ -321,6 +328,7 @@ public class MoneyWiseMaintenance
 
     /**
      * Goto the specific tab.
+     *
      * @param pTabName the tab name
      */
     private void gotoNamedTab(final String pTabName) {
@@ -390,6 +398,7 @@ public class MoneyWiseMaintenance
 
     /**
      * handle GoTo Event.
+     *
      * @param pEvent the event
      */
     @SuppressWarnings("unchecked")

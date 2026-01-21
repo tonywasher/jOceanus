@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,12 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.tax.uk;
 
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseChargeableGainSlice;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxBandSet;
@@ -23,9 +26,6 @@ import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBa
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxDueBucket;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxResource;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxSource;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 
 import java.util.Iterator;
 
@@ -95,7 +95,8 @@ public class MoneyWiseUKChargeableGainsScheme
 
         /**
          * Constructor.
-         * @param pBase the underlying bucket
+         *
+         * @param pBase   the underlying bucket
          * @param pSource the tax source
          */
         protected MoneyWiseUKSlicedTaxDueBucket(final MoneyWiseTaxDueBucket pBase,
@@ -125,6 +126,7 @@ public class MoneyWiseUKChargeableGainsScheme
 
         /**
          * Obtain the total gains.
+         *
          * @return the gains
          */
         public OceanusMoney getTotalGains() {
@@ -133,6 +135,7 @@ public class MoneyWiseUKChargeableGainsScheme
 
         /**
          * Obtain the total slices.
+         *
          * @return the slices
          */
         public OceanusMoney getTotalSlices() {
@@ -141,6 +144,7 @@ public class MoneyWiseUKChargeableGainsScheme
 
         /**
          * Obtain the ratio.
+         *
          * @return the ratio
          */
         public OceanusRatio getRatio() {
@@ -149,6 +153,7 @@ public class MoneyWiseUKChargeableGainsScheme
 
         /**
          * Obtain the taxed slices.
+         *
          * @return the taxed slices
          */
         public MoneyWiseTaxDueBucket getTaxedSlices() {
@@ -157,6 +162,7 @@ public class MoneyWiseUKChargeableGainsScheme
 
         /**
          * Obtain the tax due.
+         *
          * @return the tax due
          */
         public OceanusMoney getNettTaxDue() {
@@ -165,6 +171,7 @@ public class MoneyWiseUKChargeableGainsScheme
 
         /**
          * Obtain the tax relief.
+         *
          * @return the tax relief
          */
         public OceanusMoney getTaxRelief() {
@@ -173,6 +180,7 @@ public class MoneyWiseUKChargeableGainsScheme
 
         /**
          * Process slice.
+         *
          * @param pSlice the slice
          */
         private void processSlice(final MoneyWiseChargeableGainSlice pSlice) {
@@ -183,6 +191,7 @@ public class MoneyWiseUKChargeableGainsScheme
 
         /**
          * build slice bucket.
+         *
          * @return the slice bucket
          */
         private MoneyWiseTaxDueBucket buildSliceBucket() {

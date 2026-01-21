@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,11 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.data.validate;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
 import net.sourceforge.joceanus.metis.field.MetisFieldRequired;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDepositInfoSet;
@@ -29,8 +31,6 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityInfoSet;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseSecurityClass;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoClass;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.validate.PrometheusValidateInfoSet;
@@ -129,6 +129,7 @@ public class MoneyWiseValidateSecurityInfoSet
 
     /**
      * Validate the Notes info.
+     *
      * @param pInfo the info
      */
     private void validateNotes(final MoneyWiseSecurityInfo pInfo) {
@@ -140,6 +141,7 @@ public class MoneyWiseValidateSecurityInfoSet
 
     /**
      * Validate the Symbol info.
+     *
      * @param pInfo the info
      */
     private void validateSymbol(final MoneyWiseSecurityInfo pInfo) {
@@ -151,6 +153,7 @@ public class MoneyWiseValidateSecurityInfoSet
 
     /**
      * Validate the UnderlyingStock info.
+     *
      * @param pInfo the info
      */
     private void validateUnderlyingStock(final MoneyWiseSecurityInfo pInfo) {
@@ -165,6 +168,7 @@ public class MoneyWiseValidateSecurityInfoSet
 
     /**
      * Validate the OptionPrice info.
+     *
      * @param pInfo the info
      */
     private void validateOptionPrice(final MoneyWiseSecurityInfo pInfo) {
@@ -202,6 +206,7 @@ public class MoneyWiseValidateSecurityInfoSet
 
     /**
      * Obtain unique symbol for new tag.
+     *
      * @return The new symbol
      */
     private String getUniqueSymbol() {
@@ -214,7 +219,7 @@ public class MoneyWiseValidateSecurityInfoSet
 
         /* Loop until we found a symbol */
         String mySymbol = myBase;
-        for (;;) {
+        for (; ; ) {
             /* try out the symbol */
             if (mySecurities.findItemBySymbol(mySymbol) == null) {
                 return mySymbol;
@@ -227,6 +232,7 @@ public class MoneyWiseValidateSecurityInfoSet
 
     /**
      * Obtain default region for security.
+     *
      * @return the default region
      */
     private MoneyWiseRegion getDefaultRegion() {
@@ -251,6 +257,7 @@ public class MoneyWiseValidateSecurityInfoSet
 
     /**
      * Obtain default underlying stock.
+     *
      * @return the default underlying stock
      */
     private MoneyWiseSecurity getDefaultUnderlyingStock() {
@@ -279,6 +286,7 @@ public class MoneyWiseValidateSecurityInfoSet
 
     /**
      * Obtain default option price.
+     *
      * @return the default underlying stock
      */
     private OceanusPrice getDefaultOptionPrice() {
@@ -311,6 +319,7 @@ public class MoneyWiseValidateSecurityInfoSet
 
     /**
      * AutoCorrect underlying stock.
+     *
      * @throws OceanusException on error
      */
     private void autoCorrectUnderlyingStock() throws OceanusException {
@@ -327,6 +336,7 @@ public class MoneyWiseValidateSecurityInfoSet
 
     /**
      * AutoCorrect option price.
+     *
      * @throws OceanusException on error
      */
     private void autoCorrectOptionPrice() throws OceanusException {

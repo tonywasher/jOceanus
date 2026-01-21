@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,11 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.quicken.file;
 
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCategoryBase;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDeposit;
@@ -34,8 +36,6 @@ import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnal
 import net.sourceforge.joceanus.moneywise.quicken.definitions.MoneyWiseQIFPreference.MoneyWiseQIFPreferenceKey;
 import net.sourceforge.joceanus.moneywise.quicken.definitions.MoneyWiseQIFPreference.MoneyWiseQIFPreferences;
 import net.sourceforge.joceanus.moneywise.quicken.definitions.MoneyWiseQIFType;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -134,6 +134,7 @@ public class MoneyWiseQIFFile {
 
     /**
      * Constructor.
+     *
      * @param pType the file type
      */
     public MoneyWiseQIFFile(final MoneyWiseQIFType pType) {
@@ -159,6 +160,7 @@ public class MoneyWiseQIFFile {
 
     /**
      * Obtain the file type.
+     *
      * @return the file type
      */
     public MoneyWiseQIFType getFileType() {
@@ -167,6 +169,7 @@ public class MoneyWiseQIFFile {
 
     /**
      * Does the file have classes?
+     *
      * @return true/false
      */
     protected boolean hasClasses() {
@@ -175,6 +178,7 @@ public class MoneyWiseQIFFile {
 
     /**
      * Obtain the number of class.
+     *
      * @return the number
      */
     protected int numClasses() {
@@ -183,6 +187,7 @@ public class MoneyWiseQIFFile {
 
     /**
      * Obtain the classes iterator.
+     *
      * @return the iterator
      */
     protected Iterator<MoneyWiseQIFClass> classIterator() {
@@ -191,6 +196,7 @@ public class MoneyWiseQIFFile {
 
     /**
      * Obtain the number of categories.
+     *
      * @return the number
      */
     protected int numCategories() {
@@ -199,6 +205,7 @@ public class MoneyWiseQIFFile {
 
     /**
      * Obtain the category iterator.
+     *
      * @return the iterator
      */
     protected Iterator<MoneyWiseQIFParentCategory> categoryIterator() {
@@ -207,6 +214,7 @@ public class MoneyWiseQIFFile {
 
     /**
      * Obtain the number of accounts.
+     *
      * @return the number
      */
     protected int numAccounts() {
@@ -215,6 +223,7 @@ public class MoneyWiseQIFFile {
 
     /**
      * Obtain the account iterator.
+     *
      * @return the iterator
      */
     protected Iterator<MoneyWiseQIFAccountEvents> accountIterator() {
@@ -223,6 +232,7 @@ public class MoneyWiseQIFFile {
 
     /**
      * Does the file have securities?
+     *
      * @return true/false
      */
     protected boolean hasSecurities() {
@@ -231,6 +241,7 @@ public class MoneyWiseQIFFile {
 
     /**
      * Obtain the number of securities.
+     *
      * @return the number
      */
     protected int numSecurities() {
@@ -239,6 +250,7 @@ public class MoneyWiseQIFFile {
 
     /**
      * Obtain the account iterator.
+     *
      * @return the iterator
      */
     protected Iterator<MoneyWiseQIFSecurityPrices> securityIterator() {
@@ -288,8 +300,9 @@ public class MoneyWiseQIFFile {
 
     /**
      * Build QIF File from data.
-     * @param pData the data
-     * @param pAnalysis the analysis
+     *
+     * @param pData        the data
+     * @param pAnalysis    the analysis
      * @param pPreferences the preferences
      * @return the QIF File
      */
@@ -313,6 +326,7 @@ public class MoneyWiseQIFFile {
 
     /**
      * Register class.
+     *
      * @param pClass the class
      * @return the QIFClass representation
      */
@@ -328,6 +342,7 @@ public class MoneyWiseQIFFile {
 
     /**
      * Register class.
+     *
      * @param pClass the class
      */
     public void registerClass(final MoneyWiseQIFClass pClass) {
@@ -341,6 +356,7 @@ public class MoneyWiseQIFFile {
 
     /**
      * Register category.
+     *
      * @param pCategory the category
      * @return the QIFEventCategory representation
      */
@@ -356,7 +372,8 @@ public class MoneyWiseQIFFile {
 
     /**
      * Register parent category.
-     * @param pParent the parent category
+     *
+     * @param pParent   the parent category
      * @param pCategory the QIFEventCategory to register
      */
     private void registerCategoryToParent(final MoneyWiseTransCategory pParent,
@@ -375,6 +392,7 @@ public class MoneyWiseQIFFile {
 
     /**
      * Register category.
+     *
      * @param pCategory the category
      */
     public void registerCategory(final MoneyWiseQIFEventCategory pCategory) {
@@ -411,6 +429,7 @@ public class MoneyWiseQIFFile {
 
     /**
      * Register account.
+     *
      * @param pAccount the account
      * @return the QIFAccount representation
      */
@@ -426,6 +445,7 @@ public class MoneyWiseQIFFile {
 
     /**
      * Register holding account.
+     *
      * @param pPortfolio the portfolio
      * @return the QIFAccount representation
      */
@@ -441,6 +461,7 @@ public class MoneyWiseQIFFile {
 
     /**
      * Register account.
+     *
      * @param pAccount the account
      * @return the QIFAccount representation
      */
@@ -456,6 +477,7 @@ public class MoneyWiseQIFFile {
 
     /**
      * Register payee.
+     *
      * @param pPayee the payee
      * @return the QIFPayee representation
      */
@@ -471,6 +493,7 @@ public class MoneyWiseQIFFile {
 
     /**
      * Register payee.
+     *
      * @param pPayee the payee
      * @return the QIFPayee representation
      */
@@ -485,6 +508,7 @@ public class MoneyWiseQIFFile {
 
     /**
      * Register security.
+     *
      * @param pSecurity the security
      * @return the QIFSecurity representation
      */
@@ -504,13 +528,14 @@ public class MoneyWiseQIFFile {
 
     /**
      * Register security.
+     *
      * @param pSecurity the security
      */
     public void registerSecurity(final MoneyWiseQIFSecurity pSecurity) {
         /* Locate an existing security */
         final String myName = pSecurity.getName();
         theSecurityMap.computeIfAbsent(myName, n -> {
-             final MoneyWiseQIFSecurityPrices mySecurity = new MoneyWiseQIFSecurityPrices(this, pSecurity);
+            final MoneyWiseQIFSecurityPrices mySecurity = new MoneyWiseQIFSecurityPrices(this, pSecurity);
             theSymbolMap.put(pSecurity.getSymbol(), mySecurity.getSecurity());
             theSecurities.add(mySecurity);
             return mySecurity;
@@ -519,6 +544,7 @@ public class MoneyWiseQIFFile {
 
     /**
      * Register price.
+     *
      * @param pPrice the price
      */
     public void registerPrice(final MoneyWiseSecurityPrice pPrice) {
@@ -533,6 +559,7 @@ public class MoneyWiseQIFFile {
 
     /**
      * Register price.
+     *
      * @param pPrice the price
      */
     public void registerPrice(final MoneyWiseQIFPrice pPrice) {
@@ -553,6 +580,7 @@ public class MoneyWiseQIFFile {
 
     /**
      * Obtain category.
+     *
      * @param pName the name of the category
      * @return the category
      */
@@ -563,6 +591,7 @@ public class MoneyWiseQIFFile {
 
     /**
      * Obtain account.
+     *
      * @param pName the name of the account
      * @return the account
      */
@@ -576,6 +605,7 @@ public class MoneyWiseQIFFile {
 
     /**
      * Obtain account events.
+     *
      * @param pName the name of the account
      * @return the account
      */
@@ -586,6 +616,7 @@ public class MoneyWiseQIFFile {
 
     /**
      * Obtain security.
+     *
      * @param pName the name of the security
      * @return the security
      */
@@ -599,6 +630,7 @@ public class MoneyWiseQIFFile {
 
     /**
      * Obtain security by Symbol.
+     *
      * @param pSymbol the symbol of the security
      * @return the security
      */
@@ -609,6 +641,7 @@ public class MoneyWiseQIFFile {
 
     /**
      * Obtain security prices.
+     *
      * @param pName the name of the security
      * @return the security
      */
@@ -619,6 +652,7 @@ public class MoneyWiseQIFFile {
 
     /**
      * Obtain class.
+     *
      * @param pName the name of the class
      * @return the class
      */
@@ -629,7 +663,8 @@ public class MoneyWiseQIFFile {
 
     /**
      * Build data.
-     * @param pData the data
+     *
+     * @param pData     the data
      * @param pAnalysis the analysis
      * @param pLastDate the last date
      */
@@ -668,7 +703,8 @@ public class MoneyWiseQIFFile {
 
     /**
      * Build opening balances.
-     * @param pBuilder the builder
+     *
+     * @param pBuilder     the builder
      * @param pDepositList the deposit list
      */
     private void buildOpeningBalances(final MoneyWiseQIFBuilder pBuilder,
@@ -691,6 +727,7 @@ public class MoneyWiseQIFFile {
 
     /**
      * Build prices.
+     *
      * @param pPriceList the price list
      */
     private void buildPrices(final MoneyWiseSecurityPriceList pPriceList) {

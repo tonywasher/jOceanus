@@ -1,27 +1,23 @@
-/*******************************************************************************
- * Tethys: Java Utilities
- * Copyright 2012-2026 Tony Washer
+/*
+ * Tethys: GUI Utilities
+ * Copyright 2012-2026. Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package net.sourceforge.joceanus.tethys.core.field;
 
-import java.util.EnumMap;
-import java.util.Map;
-import java.util.function.Consumer;
-
-import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.api.field.TethysUIDataEditField;
 import net.sourceforge.joceanus.tethys.api.field.TethysUIFieldAttribute;
@@ -30,8 +26,13 @@ import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollMenu;
 import net.sourceforge.joceanus.tethys.core.base.TethysUICoreComponent;
 import net.sourceforge.joceanus.tethys.core.factory.TethysUICoreFactory;
 
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.function.Consumer;
+
 /**
  * DataEditConverter interface.
+ *
  * @param <T> the data type
  */
 public abstract class TethysUICoreDataEditField<T>
@@ -75,6 +76,7 @@ public abstract class TethysUICoreDataEditField<T>
 
     /**
      * Constructor.
+     *
      * @param pFactory the GUI factory
      */
     protected TethysUICoreDataEditField(final TethysUICoreFactory<?> pFactory) {
@@ -106,6 +108,7 @@ public abstract class TethysUICoreDataEditField<T>
 
     /**
      * Set the value.
+     *
      * @param pValue the value
      */
     protected void setTheValue(final T pValue) {
@@ -144,6 +147,7 @@ public abstract class TethysUICoreDataEditField<T>
 
     /**
      * Obtain the command menu.
+     *
      * @return the command menu
      */
     protected TethysUIScrollMenu<String> getCmdMenu() {
@@ -162,6 +166,7 @@ public abstract class TethysUICoreDataEditField<T>
 
     /**
      * Fire event.
+     *
      * @param pEventId the eventId
      */
     protected void fireEvent(final TethysUIEvent pEventId) {
@@ -170,8 +175,9 @@ public abstract class TethysUICoreDataEditField<T>
 
     /**
      * Fire event.
+     *
      * @param pEventId the eventId
-     * @param pValue the relevant value
+     * @param pValue   the relevant value
      */
     protected void fireEvent(final TethysUIEvent pEventId, final Object pValue) {
         theEventManager.fireEvent(pEventId, pValue);
@@ -210,6 +216,7 @@ public abstract class TethysUICoreDataEditField<T>
 
     /**
      * Declare command menu.
+     *
      * @param pMenu the menu
      */
     protected void declareCmdMenu(final TethysUIScrollMenu<String> pMenu) {

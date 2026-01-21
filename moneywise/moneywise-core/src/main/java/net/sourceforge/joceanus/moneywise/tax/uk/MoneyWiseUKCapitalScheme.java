@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,15 +13,15 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.tax.uk;
 
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxResource;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -109,6 +109,7 @@ public abstract class MoneyWiseUKCapitalScheme
 
         /**
          * Constructor.
+         *
          * @param pRate the base rate
          */
         protected MoneyWiseUKCapitalFlatRateScheme(final OceanusRate pRate) {
@@ -117,6 +118,7 @@ public abstract class MoneyWiseUKCapitalScheme
 
         /**
          * Obtain the base rate.
+         *
          * @return the base rate
          */
         protected OceanusRate getBasicRate() {
@@ -166,7 +168,8 @@ public abstract class MoneyWiseUKCapitalScheme
 
         /**
          * Constructor.
-         * @param pRate the base rate
+         *
+         * @param pRate     the base rate
          * @param pHighRate the high rate
          */
         protected MoneyWiseUKCapitalSplitRateScheme(final OceanusRate pRate,
@@ -177,6 +180,7 @@ public abstract class MoneyWiseUKCapitalScheme
 
         /**
          * Obtain the high rate.
+         *
          * @return the high rate
          */
         protected OceanusRate getHighRate() {
@@ -253,9 +257,10 @@ public abstract class MoneyWiseUKCapitalScheme
 
         /**
          * Constructor.
-         * @param pRate the base rate
-         * @param pHighRate the high rate
-         * @param pResRate the base rate
+         *
+         * @param pRate        the base rate
+         * @param pHighRate    the high rate
+         * @param pResRate     the base rate
          * @param pHighResRate the high rate
          */
         protected MoneyWiseUKCapitalResidentialScheme(final OceanusRate pRate,
@@ -268,6 +273,7 @@ public abstract class MoneyWiseUKCapitalScheme
 
         /**
          * Obtain the high rate.
+         *
          * @return the high rate
          */
         protected MoneyWiseUKCapitalSplitRateScheme getResidentialScheme() {

@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,17 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.lethe.ui.dialog;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateConfig;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.field.MetisFieldRequired;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
@@ -53,14 +61,6 @@ import net.sourceforge.joceanus.moneywise.ui.MoneyWiseIcon;
 import net.sourceforge.joceanus.moneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.moneywise.ui.base.MoneyWiseBaseTable;
 import net.sourceforge.joceanus.moneywise.ui.base.MoneyWiseItemPanel;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateConfig;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
 import net.sourceforge.joceanus.prometheus.ui.fieldset.PrometheusFieldSet;
 import net.sourceforge.joceanus.prometheus.ui.fieldset.PrometheusFieldSetEvent;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
@@ -139,10 +139,11 @@ public class MoneyWiseTransactionDialog
 
     /**
      * Constructor.
-     * @param pFactory the GUI factory
-     * @param pEditSet the edit set
+     *
+     * @param pFactory        the GUI factory
+     * @param pEditSet        the edit set
      * @param pAnalysisSelect the analysis selection panel
-     * @param pOwner the owning table
+     * @param pOwner          the owning table
      */
     public MoneyWiseTransactionDialog(final TethysUIFactory<?> pFactory,
                                       final PrometheusEditSet pEditSet,
@@ -173,6 +174,7 @@ public class MoneyWiseTransactionDialog
 
     /**
      * Build Main subPanel.
+     *
      * @param pFactory the GUI factory
      */
     private void buildMainPanel(final TethysUIFactory<?> pFactory) {
@@ -211,6 +213,7 @@ public class MoneyWiseTransactionDialog
 
     /**
      * Build info subPanel.
+     *
      * @param pFactory the GUI factory
      */
     private void buildInfoPanel(final TethysUIFactory<?> pFactory) {
@@ -243,6 +246,7 @@ public class MoneyWiseTransactionDialog
 
     /**
      * Build tax subPanel.
+     *
      * @param pFactory the GUI factory
      */
     private void buildTaxPanel(final TethysUIFactory<?> pFactory) {
@@ -276,6 +280,7 @@ public class MoneyWiseTransactionDialog
 
     /**
      * Build securities subPanel.
+     *
      * @param pFactory the GUI factory
      */
     private void buildSecuritiesPanel(final TethysUIFactory<?> pFactory) {
@@ -304,6 +309,7 @@ public class MoneyWiseTransactionDialog
 
     /**
      * Build returned subPanel.
+     *
      * @param pFactory the GUI factory
      */
     private void buildReturnedPanel(final TethysUIFactory<?> pFactory) {
@@ -343,6 +349,7 @@ public class MoneyWiseTransactionDialog
 
     /**
      * Update editors.
+     *
      * @param pRange the date range.
      */
     public void updateEditors(final OceanusDateRange pRange) {
@@ -352,6 +359,7 @@ public class MoneyWiseTransactionDialog
 
     /**
      * Handle dateConfig.
+     *
      * @param pConfig the dateConfig
      */
     private void handleDateConfig(final OceanusDateConfig pConfig) {
@@ -503,6 +511,7 @@ public class MoneyWiseTransactionDialog
 
     /**
      * Is the field editable?
+     *
      * @param pTrans the transaction
      * @param pField the field class
      * @return true/false
@@ -652,6 +661,7 @@ public class MoneyWiseTransactionDialog
 
     /**
      * Handle goto declarations for TransactionAssets.
+     *
      * @param pAsset the asset
      */
     private void buildAssetGoTo(final MoneyWiseTransAsset pAsset) {
@@ -667,6 +677,7 @@ public class MoneyWiseTransactionDialog
 
     /**
      * Resolve Asset.
+     *
      * @param pAsset the asset to resolve
      * @return the resolved asset
      */
@@ -688,7 +699,8 @@ public class MoneyWiseTransactionDialog
 
     /**
      * Build the account menu for an item.
-     * @param pMenu the menu
+     *
+     * @param pMenu  the menu
      * @param pTrans the transaction to build for
      */
     public void buildAccountMenu(final TethysUIScrollMenu<MoneyWiseTransAsset> pMenu,
@@ -706,7 +718,8 @@ public class MoneyWiseTransactionDialog
 
     /**
      * Build the partner menu for an item.
-     * @param pMenu the menu
+     *
+     * @param pMenu  the menu
      * @param pTrans the transaction to build for
      */
     public void buildPartnerMenu(final TethysUIScrollMenu<MoneyWiseTransAsset> pMenu,
@@ -725,11 +738,12 @@ public class MoneyWiseTransactionDialog
 
     /**
      * Build the asset menu for an item.
-     * @param <T> the Asset type
-     * @param pMenu the menu
+     *
+     * @param <T>        the Asset type
+     * @param pMenu      the menu
      * @param pIsAccount is this item the account rather than partner
-     * @param pList the asset list
-     * @param pTrans the transaction to build for
+     * @param pList      the asset list
+     * @param pTrans     the transaction to build for
      */
     private static <T extends MoneyWiseAssetBase> void buildAssetMenu(final TethysUIScrollMenu<MoneyWiseTransAsset> pMenu,
                                                                       final MoneyWiseAssetBaseList<T> pList,
@@ -785,9 +799,10 @@ public class MoneyWiseTransactionDialog
 
     /**
      * Build the holding asset menu for an item.
-     * @param pMenu the menu
+     *
+     * @param pMenu      the menu
      * @param pIsAccount is this item the account rather than partner
-     * @param pTrans the transaction to build for
+     * @param pTrans     the transaction to build for
      */
     private static void buildHoldingMenu(final TethysUIScrollMenu<MoneyWiseTransAsset> pMenu,
                                          final boolean pIsAccount,
@@ -904,7 +919,8 @@ public class MoneyWiseTransactionDialog
 
     /**
      * Build the category menu for an item.
-     * @param pMenu the menu
+     *
+     * @param pMenu  the menu
      * @param pTrans the transaction to build for
      */
     public void buildCategoryMenu(final TethysUIScrollMenu<MoneyWiseTransCategory> pMenu,
@@ -971,7 +987,8 @@ public class MoneyWiseTransactionDialog
 
     /**
      * Build the ReturnedAccount menu for an item.
-     * @param pMenu the menu
+     *
+     * @param pMenu  the menu
      * @param pTrans the transaction to build for
      */
     public void buildReturnedAccountMenu(final TethysUIScrollMenu<MoneyWiseTransAsset> pMenu,
@@ -986,6 +1003,7 @@ public class MoneyWiseTransactionDialog
 
     /**
      * Build the possible TransactionTag list.
+     *
      * @return the transaction tag iterator
      */
     public Iterator<MoneyWiseTransTag> buildTransactionTags() {

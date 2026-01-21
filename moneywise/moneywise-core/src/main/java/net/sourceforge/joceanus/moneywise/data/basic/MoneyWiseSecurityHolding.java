@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,10 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.data.basic;
 
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataMap;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataObjectFormat;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
@@ -24,7 +25,6 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePortfolio.MoneyWis
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurity.MoneyWiseSecurityList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseSecurityClass;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
@@ -84,8 +84,9 @@ public final class MoneyWiseSecurityHolding
 
     /**
      * Constructor.
+     *
      * @param pPortfolio the portfolio
-     * @param pSecurity the security
+     * @param pSecurity  the security
      */
     private MoneyWiseSecurityHolding(final MoneyWisePortfolio pPortfolio,
                                      final MoneyWiseSecurity pSecurity) {
@@ -125,6 +126,7 @@ public final class MoneyWiseSecurityHolding
 
     /**
      * Is the holding deleted?
+     *
      * @return true/false
      */
     public boolean isDeleted() {
@@ -184,6 +186,7 @@ public final class MoneyWiseSecurityHolding
 
     /**
      * Obtain Portfolio.
+     *
      * @return the portfolio
      */
     public MoneyWisePortfolio getPortfolio() {
@@ -192,6 +195,7 @@ public final class MoneyWiseSecurityHolding
 
     /**
      * Obtain Security.
+     *
      * @return the security
      */
     public MoneyWiseSecurity getSecurity() {
@@ -221,6 +225,7 @@ public final class MoneyWiseSecurityHolding
 
     /**
      * Generate the name.
+     *
      * @return the name.
      */
     private String generateName() {
@@ -234,6 +239,7 @@ public final class MoneyWiseSecurityHolding
 
     /**
      * Obtain the security class.
+     *
      * @return the security class.
      */
     private MoneyWiseSecurityClass getSecurityTypeClass() {
@@ -243,6 +249,7 @@ public final class MoneyWiseSecurityHolding
 
     /**
      * Is this holding the required security class.
+     *
      * @param pClass the required security class.
      * @return true/false
      */
@@ -318,6 +325,7 @@ public final class MoneyWiseSecurityHolding
 
     /**
      * Are the currencies the same?
+     *
      * @return true/false
      */
     protected boolean validCurrencies() {
@@ -346,6 +354,7 @@ public final class MoneyWiseSecurityHolding
 
         /**
          * Constructor.
+         *
          * @param pData the dataSet
          */
         public MoneyWiseSecurityHoldingMap(final MoneyWiseDataSet pData) {
@@ -357,6 +366,7 @@ public final class MoneyWiseSecurityHolding
 
         /**
          * Constructor.
+         *
          * @param pEditSet the editSet
          */
         public MoneyWiseSecurityHoldingMap(final PrometheusEditSet pEditSet) {
@@ -385,6 +395,7 @@ public final class MoneyWiseSecurityHolding
 
         /**
          * Look up a security holding.
+         *
          * @param pId the id of the security holding
          * @return the security holding
          */
@@ -402,6 +413,7 @@ public final class MoneyWiseSecurityHolding
 
         /**
          * Look up a security holding.
+         *
          * @param pName the name of the security holding
          * @return the security holding
          */
@@ -419,6 +431,7 @@ public final class MoneyWiseSecurityHolding
 
         /**
          * Obtain portfolio name from composite name.
+         *
          * @param pName the composite name
          * @return the portfolio name
          */
@@ -431,6 +444,7 @@ public final class MoneyWiseSecurityHolding
 
         /**
          * Obtain security name from composite name.
+         *
          * @param pName the composite name
          * @return the security name
          */
@@ -443,6 +457,7 @@ public final class MoneyWiseSecurityHolding
 
         /**
          * Obtain portfolio id from composite id.
+         *
          * @param pId the composite id
          * @return the portfolio id
          */
@@ -452,6 +467,7 @@ public final class MoneyWiseSecurityHolding
 
         /**
          * Obtain security id from composite id.
+         *
          * @param pId the composite id
          * @return the security id
          */
@@ -461,8 +477,9 @@ public final class MoneyWiseSecurityHolding
 
         /**
          * Declare holding.
+         *
          * @param pPortfolio the portfolio
-         * @param pSecurity the security
+         * @param pSecurity  the security
          * @return the holding
          */
         public MoneyWiseSecurityHolding declareHolding(final MoneyWisePortfolio pPortfolio,
@@ -481,6 +498,7 @@ public final class MoneyWiseSecurityHolding
 
         /**
          * Obtain or allocate the map for the portfolio.
+         *
          * @param pId the id of the portfolio
          * @return the map
          */
@@ -510,6 +528,7 @@ public final class MoneyWiseSecurityHolding
 
         /**
          * Obtain or allocate the map for the portfolio.
+         *
          * @param pName the name of the portfolio
          * @return the map
          */
@@ -529,6 +548,7 @@ public final class MoneyWiseSecurityHolding
 
         /**
          * DeRegister Portfolio.
+         *
          * @param pPortfolio the portfolio
          */
         public void deRegister(final MoneyWisePortfolio pPortfolio) {
@@ -539,6 +559,7 @@ public final class MoneyWiseSecurityHolding
 
         /**
          * DeRegister Security.
+         *
          * @param pSecurity the security
          */
         public void deRegister(final MoneyWiseSecurity pSecurity) {
@@ -557,6 +578,7 @@ public final class MoneyWiseSecurityHolding
 
         /**
          * Obtain existing holding list for Portfolio.
+         *
          * @param pPortfolio the portfolio
          * @return the iterator
          */
@@ -572,6 +594,7 @@ public final class MoneyWiseSecurityHolding
 
         /**
          * Obtain new holding list for Portfolio.
+         *
          * @param pPortfolio the portfolio
          * @return the iterator
          */
@@ -581,8 +604,9 @@ public final class MoneyWiseSecurityHolding
 
         /**
          * Obtain new holding list for Portfolio.
+         *
          * @param pPortfolio the portfolio
-         * @param pClass the class of holdings or null for all
+         * @param pClass     the class of holdings or null for all
          * @return the iterator
          */
         public Iterator<MoneyWiseSecurityHolding> newIterator(final MoneyWisePortfolio pPortfolio,
@@ -598,8 +622,9 @@ public final class MoneyWiseSecurityHolding
 
         /**
          * Obtain new holding list for Portfolio.
+         *
          * @param pPortfolio the portfolio
-         * @param pClass the class of holdings or null for all
+         * @param pClass     the class of holdings or null for all
          * @return the iterator
          */
         private Iterator<MoneyWiseSecurityHolding> fullIterator(final MoneyWisePortfolio pPortfolio,
@@ -666,7 +691,8 @@ public final class MoneyWiseSecurityHolding
 
         /**
          * Constructor.
-         * @param pPortfolio the portfolio
+         *
+         * @param pPortfolio  the portfolio
          * @param pSecurities the security list
          */
         private MoneyWisePortfolioHoldingsMap(final MoneyWisePortfolio pPortfolio,
@@ -693,6 +719,7 @@ public final class MoneyWiseSecurityHolding
 
         /**
          * Obtain or allocate the holding for the security.
+         *
          * @param pId the id of the security
          * @return the holding
          */
@@ -721,6 +748,7 @@ public final class MoneyWiseSecurityHolding
 
         /**
          * Obtain or allocate the holding for the security.
+         *
          * @param pName the name of the security
          * @return the holding
          */
@@ -740,6 +768,7 @@ public final class MoneyWiseSecurityHolding
 
         /**
          * Obtain existing holding list for Portfolio.
+         *
          * @return the iterator
          */
         private Iterator<MoneyWiseSecurityHolding> existingIterator() {
@@ -780,6 +809,7 @@ public final class MoneyWiseSecurityHolding
 
         /**
          * Obtain new holding list for Portfolio.
+         *
          * @param pClass the class of holdings or null for all
          * @return the iterator
          */

@@ -1,29 +1,29 @@
-/*******************************************************************************
- * Tethys: Java Utilities
- * Copyright 2012-2026 Tony Washer
+/*
+ * Tethys: GUI Utilities
+ * Copyright 2012-2026. Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package net.sourceforge.joceanus.tethys.test.ui;
 
-import java.util.List;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
+import java.util.List;
 
 /**
  * Tethys Table item.
@@ -111,8 +111,9 @@ public class TethysTestTableItem {
 
     /**
      * Constructor.
+     *
      * @param pHelper the Helper
-     * @param pName the Name
+     * @param pName   the Name
      */
     TethysTestTableItem(final TethysTestHelper pHelper,
                         final String pName) {
@@ -134,6 +135,7 @@ public class TethysTestTableItem {
 
     /**
      * Obtain the name property.
+     *
      * @return the name property
      */
     public String getName() {
@@ -142,6 +144,7 @@ public class TethysTestTableItem {
 
     /**
      * Set the name property.
+     *
      * @param pValue the new value
      */
     public void setName(final String pValue) {
@@ -150,6 +153,7 @@ public class TethysTestTableItem {
 
     /**
      * Obtain the password property.
+     *
      * @return the password property
      */
     public char[] getPassword() {
@@ -158,6 +162,7 @@ public class TethysTestTableItem {
 
     /**
      * Set the password property.
+     *
      * @param pValue the new value
      */
     public void setPassword(final char[] pValue) {
@@ -166,6 +171,7 @@ public class TethysTestTableItem {
 
     /**
      * Obtain the boolean property.
+     *
      * @return the boolean property
      */
     public Boolean getBoolean() {
@@ -174,6 +180,7 @@ public class TethysTestTableItem {
 
     /**
      * Set the boolean property.
+     *
      * @param pValue the new value
      */
     public void setBoolean(final Boolean pValue) {
@@ -182,6 +189,7 @@ public class TethysTestTableItem {
 
     /**
      * Obtain the extra boolean property.
+     *
      * @return the boolean property
      */
     public Boolean getXtraBoolean() {
@@ -190,6 +198,7 @@ public class TethysTestTableItem {
 
     /**
      * Set the extra boolean property.
+     *
      * @param pValue the new value
      */
     public void setXtraBoolean(final Boolean pValue) {
@@ -198,6 +207,7 @@ public class TethysTestTableItem {
 
     /**
      * Obtain the short property.
+     *
      * @return the short property
      */
     public Short getShort() {
@@ -206,6 +216,7 @@ public class TethysTestTableItem {
 
     /**
      * Set the short property.
+     *
      * @param pValue the new value
      */
     public void setShort(final Short pValue) {
@@ -214,6 +225,7 @@ public class TethysTestTableItem {
 
     /**
      * Obtain the integer property.
+     *
      * @return the integer property
      */
     public Integer getInteger() {
@@ -222,6 +234,7 @@ public class TethysTestTableItem {
 
     /**
      * Set the integer property.
+     *
      * @param pValue the new value
      */
     public void setInteger(final Integer pValue) {
@@ -230,6 +243,7 @@ public class TethysTestTableItem {
 
     /**
      * Obtain the long property.
+     *
      * @return the long property
      */
     public Long getLong() {
@@ -238,6 +252,7 @@ public class TethysTestTableItem {
 
     /**
      * Set the long property.
+     *
      * @param pValue the new value
      */
     public void setLong(final Long pValue) {
@@ -246,6 +261,7 @@ public class TethysTestTableItem {
 
     /**
      * Obtain the money property.
+     *
      * @return the money property
      */
     public OceanusMoney getMoney() {
@@ -254,6 +270,7 @@ public class TethysTestTableItem {
 
     /**
      * Set the money property.
+     *
      * @param pValue the new value
      */
     public void setMoney(final OceanusMoney pValue) {
@@ -262,6 +279,7 @@ public class TethysTestTableItem {
 
     /**
      * Obtain the price property.
+     *
      * @return the price property
      */
     public OceanusPrice getPrice() {
@@ -270,6 +288,7 @@ public class TethysTestTableItem {
 
     /**
      * Set the price property.
+     *
      * @param pValue the new value
      */
     public void setPrice(final OceanusPrice pValue) {
@@ -278,6 +297,7 @@ public class TethysTestTableItem {
 
     /**
      * Obtain the units property.
+     *
      * @return the units property
      */
     public OceanusUnits getUnits() {
@@ -286,6 +306,7 @@ public class TethysTestTableItem {
 
     /**
      * Set the units property.
+     *
      * @param pValue the new value
      */
     public void setUnits(final OceanusUnits pValue) {
@@ -294,6 +315,7 @@ public class TethysTestTableItem {
 
     /**
      * Obtain the rate property.
+     *
      * @return the rate property
      */
     public OceanusRate getRate() {
@@ -302,6 +324,7 @@ public class TethysTestTableItem {
 
     /**
      * Set the rate property.
+     *
      * @param pValue the new value
      */
     public void setRate(final OceanusRate pValue) {
@@ -310,6 +333,7 @@ public class TethysTestTableItem {
 
     /**
      * Obtain the ratio property.
+     *
      * @return the ratio property
      */
     public OceanusRatio getRatio() {
@@ -318,6 +342,7 @@ public class TethysTestTableItem {
 
     /**
      * Set the ratio property.
+     *
      * @param pValue the new value
      */
     public void setRatio(final OceanusRatio pValue) {
@@ -327,6 +352,7 @@ public class TethysTestTableItem {
 
     /**
      * Obtain the date property.
+     *
      * @return the date property
      */
     public OceanusDate getDate() {
@@ -335,6 +361,7 @@ public class TethysTestTableItem {
 
     /**
      * Set the date property.
+     *
      * @param pValue the new value
      */
     public void setDate(final OceanusDate pValue) {
@@ -343,6 +370,7 @@ public class TethysTestTableItem {
 
     /**
      * Obtain the scroll property.
+     *
      * @return the scroll property
      */
     public String getScroll() {
@@ -351,6 +379,7 @@ public class TethysTestTableItem {
 
     /**
      * Set the scroll property.
+     *
      * @param pValue the new value
      */
     public void setScroll(final String pValue) {
@@ -359,6 +388,7 @@ public class TethysTestTableItem {
 
     /**
      * Obtain the list property.
+     *
      * @return the list property
      */
     public List<TethysTestListId> getList() {
@@ -367,6 +397,7 @@ public class TethysTestTableItem {
 
     /**
      * Set the list property.
+     *
      * @param pValue the new value
      */
     public void setList(final List<TethysTestListId> pValue) {
@@ -375,6 +406,7 @@ public class TethysTestTableItem {
 
     /**
      * Obtain the updates property.
+     *
      * @return the updates property
      */
     public Integer getUpdates() {

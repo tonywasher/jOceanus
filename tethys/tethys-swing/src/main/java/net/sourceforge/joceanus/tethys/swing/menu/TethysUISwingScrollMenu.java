@@ -1,23 +1,23 @@
-/*******************************************************************************
+/*
  * Tethys: GUI Utilities
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package net.sourceforge.joceanus.tethys.swing.menu;
 
-import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIArrowIconId;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIConstant;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
@@ -64,6 +64,7 @@ import java.util.TimerTask;
  * Scroll-able version of ContextMenu.
  * <p>
  * Implemented as Stage since ContextMenu does not allow control of individual elements.
+ *
  * @param <T> the value type
  */
 public class TethysUISwingScrollMenu<T>
@@ -172,6 +173,7 @@ public class TethysUISwingScrollMenu<T>
 
     /**
      * Constructor.
+     *
      * @param pMaxDisplayItems the maximum number of items to display
      */
     TethysUISwingScrollMenu(final int pMaxDisplayItems) {
@@ -180,6 +182,7 @@ public class TethysUISwingScrollMenu<T>
 
     /**
      * Constructor.
+     *
      * @param pParent the parent scroll menu
      */
     TethysUISwingScrollMenu(final TethysUISwingScrollSubMenu<T> pParent) {
@@ -188,7 +191,8 @@ public class TethysUISwingScrollMenu<T>
 
     /**
      * Constructor.
-     * @param pParent the parent scroll menu
+     *
+     * @param pParent          the parent scroll menu
      * @param pMaxDisplayItems the maximum number of items to display
      */
     TethysUISwingScrollMenu(final TethysUISwingScrollSubMenu<T> pParent,
@@ -242,6 +246,7 @@ public class TethysUISwingScrollMenu<T>
 
     /**
      * Obtain the maximum # of items in the displayed PopUp window.
+     *
      * @return the # of items
      */
     public int getMaxDisplayItems() {
@@ -250,6 +255,7 @@ public class TethysUISwingScrollMenu<T>
 
     /**
      * Obtain the timer.
+     *
      * @return the timer
      */
     Timer getTimer() {
@@ -258,6 +264,7 @@ public class TethysUISwingScrollMenu<T>
 
     /**
      * Obtain the dialog.
+     *
      * @return the dialog
      */
     JDialog getDialog() {
@@ -305,8 +312,9 @@ public class TethysUISwingScrollMenu<T>
 
     /**
      * Show the menu at position.
+     *
      * @param pAnchor the anchor node
-     * @param pSide the side of the anchor node
+     * @param pSide   the side of the anchor node
      */
     public void showMenuAtPosition(final Component pAnchor,
                                    final int pSide) {
@@ -330,8 +338,9 @@ public class TethysUISwingScrollMenu<T>
 
     /**
      * Show the menu at position.
+     *
      * @param pAnchor the anchor node
-     * @param pSide the side of the anchor node
+     * @param pSide   the side of the anchor node
      */
     public void showMenuAtPosition(final Rectangle pAnchor,
                                    final int pSide) {
@@ -355,9 +364,10 @@ public class TethysUISwingScrollMenu<T>
 
     /**
      * Show the menu at position.
+     *
      * @param pAnchor the anchor node
-     * @param pX the relative X position
-     * @param pY the relative Y position
+     * @param pX      the relative X position
+     * @param pY      the relative Y position
      */
     public void showMenuAtPosition(final Component pAnchor,
                                    final double pX,
@@ -383,6 +393,7 @@ public class TethysUISwingScrollMenu<T>
 
     /**
      * Show the menu at location.
+     *
      * @param pLocation the location
      */
     private void showMenuAtLocation(final Point pLocation) {
@@ -453,6 +464,7 @@ public class TethysUISwingScrollMenu<T>
 
     /**
      * Create subDialog.
+     *
      * @param pOwner the owner component
      */
     void ensureSubDialog(final TethysUISwingScrollSubMenu<T> pOwner) {
@@ -466,6 +478,7 @@ public class TethysUISwingScrollMenu<T>
 
     /**
      * Create dialog.
+     *
      * @param pOwner the owner component
      */
     private void createDialog(final Component pOwner) {
@@ -558,6 +571,7 @@ public class TethysUISwingScrollMenu<T>
 
     /**
      * Set the selected item.
+     *
      * @param pItem the selected item
      */
     void setSelectedItem(final TethysUISwingScrollItem<T> pItem) {
@@ -629,6 +643,7 @@ public class TethysUISwingScrollMenu<T>
 
     /**
      * Handle activeItem.
+     *
      * @param pItem the item
      */
     void handleActiveItem(final TethysUISwingScrollItem<T> pItem) {
@@ -641,6 +656,7 @@ public class TethysUISwingScrollMenu<T>
 
     /**
      * Handle activeMenu.
+     *
      * @param pMenu the menu
      */
     void handleActiveMenu(final TethysUISwingScrollSubMenu<T> pMenu) {
@@ -682,6 +698,7 @@ public class TethysUISwingScrollMenu<T>
 
     /**
      * Obtain count of menu Items.
+     *
      * @return the count
      */
     protected int getItemCount() {
@@ -802,6 +819,7 @@ public class TethysUISwingScrollMenu<T>
 
     /**
      * Ensure item at index will be visible when displayed.
+     *
      * @param pIndex the index to show
      */
     void scrollToIndex(final int pIndex) {
@@ -816,6 +834,7 @@ public class TethysUISwingScrollMenu<T>
 
     /**
      * Ensure index shown.
+     *
      * @param pIndex the index to show
      */
     private void showIndex(final int pIndex) {
@@ -1012,6 +1031,7 @@ public class TethysUISwingScrollMenu<T>
 
     /**
      * request scroll.
+     *
      * @param pDelta the delta to scroll.
      */
     void requestScroll(final int pDelta) {
@@ -1072,7 +1092,8 @@ public class TethysUISwingScrollMenu<T>
 
         /**
          * Constructor.
-         * @param pName the display name
+         *
+         * @param pName    the display name
          * @param pGraphic the icon for the item
          */
         private TethysUISwingScrollElement(final String pName,
@@ -1104,6 +1125,7 @@ public class TethysUISwingScrollMenu<T>
 
         /**
          * Constructor.
+         *
          * @param pGraphic the icon for the item
          */
         private TethysUISwingScrollElement(final TethysUIIcon pGraphic) {
@@ -1124,6 +1146,7 @@ public class TethysUISwingScrollMenu<T>
 
         /**
          * Obtain the panel.
+         *
          * @return the panel
          */
         protected JPanel getPanel() {
@@ -1132,6 +1155,7 @@ public class TethysUISwingScrollMenu<T>
 
         /**
          * Obtain the text.
+         *
          * @return the text
          */
         public String getText() {
@@ -1140,6 +1164,7 @@ public class TethysUISwingScrollMenu<T>
 
         /**
          * Set the graphic.
+         *
          * @param pGraphic the graphic
          */
         protected void setIcon(final TethysUIIcon pGraphic) {
@@ -1148,6 +1173,7 @@ public class TethysUISwingScrollMenu<T>
 
         /**
          * Set the active indication.
+         *
          * @param pActive true/false
          */
         protected void setActive(final boolean pActive) {
@@ -1175,6 +1201,7 @@ public class TethysUISwingScrollMenu<T>
 
     /**
      * Scroll item.
+     *
      * @param <T> the value type
      */
     protected static class TethysUISwingScrollItem<T>
@@ -1197,9 +1224,10 @@ public class TethysUISwingScrollMenu<T>
 
         /**
          * Constructor.
+         *
          * @param pContext the parent context menu
-         * @param pValue the value
-         * @param pName the display name
+         * @param pValue   the value
+         * @param pName    the display name
          * @param pGraphic the icon for the item
          */
         protected TethysUISwingScrollItem(final TethysUISwingScrollMenu<T> pContext,
@@ -1264,6 +1292,7 @@ public class TethysUISwingScrollMenu<T>
 
     /**
      * Scroll item.
+     *
      * @param <T> the value type
      */
     private static final class TethysUISwingScrollToggle<T>
@@ -1276,9 +1305,10 @@ public class TethysUISwingScrollMenu<T>
 
         /**
          * Constructor.
+         *
          * @param pContext the parent context menu
-         * @param pValue the value
-         * @param pName the display name
+         * @param pValue   the value
+         * @param pName    the display name
          */
         TethysUISwingScrollToggle(final TethysUISwingScrollMenu<T> pContext,
                                   final T pValue,
@@ -1308,6 +1338,7 @@ public class TethysUISwingScrollMenu<T>
 
     /**
      * Scroll menu.
+     *
      * @param <T> the value type
      */
     public static final class TethysUISwingScrollSubMenu<T>
@@ -1330,8 +1361,9 @@ public class TethysUISwingScrollMenu<T>
 
         /**
          * Constructor.
+         *
          * @param pContext the parent context menu
-         * @param pName the name
+         * @param pName    the name
          * @param pGraphic the icon for the menu
          */
         TethysUISwingScrollSubMenu(final TethysUISwingScrollMenu<T> pContext,
@@ -1381,6 +1413,7 @@ public class TethysUISwingScrollMenu<T>
 
         /**
          * Obtain the parent.
+         *
          * @return the parent
          */
         TethysUISwingScrollMenu<T> getContext() {
@@ -1394,6 +1427,7 @@ public class TethysUISwingScrollMenu<T>
 
         /**
          * Obtain the index.
+         *
          * @return the index
          */
         int getIndex() {
@@ -1409,6 +1443,7 @@ public class TethysUISwingScrollMenu<T>
 
         /**
          * Obtain the dialog.
+         *
          * @return the dialog
          */
         private JDialog getDialog() {
@@ -1417,6 +1452,7 @@ public class TethysUISwingScrollMenu<T>
 
         /**
          * Set the number of items in the scrolling portion of the menu.
+         *
          * @param pMaxDisplayItems the maximum number of items to display
          * @throws IllegalArgumentException if pMaxDisplayItems is 0 or negative
          */
@@ -1450,7 +1486,8 @@ public class TethysUISwingScrollMenu<T>
 
         /**
          * Constructor.
-         * @param pIcon the icon
+         *
+         * @param pIcon      the icon
          * @param pIncrement the increment
          */
         ScrollControl(final TethysUIIcon pIcon,

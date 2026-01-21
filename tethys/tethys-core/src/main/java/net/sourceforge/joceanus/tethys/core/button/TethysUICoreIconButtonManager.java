@@ -1,23 +1,23 @@
-/*******************************************************************************
- * Tethys: Java Utilities
- * Copyright 2012-2026 Tony Washer
+/*
+ * Tethys: GUI Utilities
+ * Copyright 2012-2026. Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package net.sourceforge.joceanus.tethys.core.button;
 
-import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIConstant;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIIcon;
@@ -43,6 +43,7 @@ import java.util.function.Supplier;
  * <dd>fired when a new value is selected. <br>
  * Detail is new value
  * </dl>
+ *
  * @param <T> the object type
  */
 public abstract class TethysUICoreIconButtonManager<T>
@@ -90,8 +91,9 @@ public abstract class TethysUICoreIconButtonManager<T>
 
     /**
      * Constructor.
+     *
      * @param pFactory the GUI factory
-     * @param pClazz the value class
+     * @param pClazz   the value class
      */
     protected TethysUICoreIconButtonManager(final TethysUICoreFactory<?> pFactory,
                                             final Class<T> pClazz) {
@@ -133,6 +135,7 @@ public abstract class TethysUICoreIconButtonManager<T>
 
     /**
      * Obtain button.
+     *
      * @return the button
      */
     protected TethysUIButton getButton() {
@@ -146,6 +149,7 @@ public abstract class TethysUICoreIconButtonManager<T>
 
     /**
      * Check the icon size.
+     *
      * @param pSize the iconSize
      */
     private void checkSize(final int pSize) {
@@ -212,6 +216,7 @@ public abstract class TethysUICoreIconButtonManager<T>
 
     /**
      * ResolveIcon.
+     *
      * @param pIconId the iconId
      * @return the icon
      */
@@ -255,6 +260,7 @@ public abstract class TethysUICoreIconButtonManager<T>
 
     /**
      * has value changed?
+     *
      * @param pNew the new value
      * @return true/false
      */
@@ -264,6 +270,7 @@ public abstract class TethysUICoreIconButtonManager<T>
 
     /**
      * MapSet.
+     *
      * @param <T> the object type
      */
     public static class TethysUICoreIconMapSet<T>
@@ -297,6 +304,7 @@ public abstract class TethysUICoreIconButtonManager<T>
 
         /**
          * Constructor.
+         *
          * @param pSize the icon Size
          */
         public TethysUICoreIconMapSet(final int pSize) {

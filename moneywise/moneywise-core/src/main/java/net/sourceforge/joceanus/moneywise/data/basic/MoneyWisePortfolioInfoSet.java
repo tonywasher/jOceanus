@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,16 +13,16 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.data.basic;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.metis.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePortfolioInfo.MoneyWisePortfolioInfoList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoType.MoneyWiseAccountInfoTypeList;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoClass;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoSet;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
@@ -33,6 +33,7 @@ import java.util.Map;
 
 /**
  * PortfolioInfoSet class.
+ *
  * @author Tony Washer
  */
 public class MoneyWisePortfolioInfoSet
@@ -54,7 +55,8 @@ public class MoneyWisePortfolioInfoSet
 
     /**
      * Constructor.
-     * @param pOwner the Owner to which this Set belongs
+     *
+     * @param pOwner    the Owner to which this Set belongs
      * @param pTypeList the infoTypeList for the set
      * @param pInfoList the InfoList for the set
      */
@@ -77,6 +79,7 @@ public class MoneyWisePortfolioInfoSet
 
     /**
      * Obtain fieldValue for infoSet.
+     *
      * @param pFieldId the fieldId
      * @return the value
      */
@@ -93,6 +96,7 @@ public class MoneyWisePortfolioInfoSet
 
     /**
      * Get an infoSet value.
+     *
      * @param pInfoClass the class of info to get
      * @return the value to set
      */
@@ -106,6 +110,7 @@ public class MoneyWisePortfolioInfoSet
 
     /**
      * Obtain the class of the field if it is an infoSet field.
+     *
      * @param pField the field
      * @return the class
      */
@@ -116,6 +121,7 @@ public class MoneyWisePortfolioInfoSet
 
     /**
      * Obtain the field for the infoSet class.
+     *
      * @param pClass the class
      * @return the field
      */
@@ -137,6 +143,7 @@ public class MoneyWisePortfolioInfoSet
 
     /**
      * Clone the dataInfoSet.
+     *
      * @param pSource the InfoSet to clone
      */
     protected void cloneDataInfoSet(final MoneyWisePortfolioInfoSet pSource) {
@@ -146,6 +153,7 @@ public class MoneyWisePortfolioInfoSet
 
     /**
      * Resolve editSetLinks.
+     *
      * @param pEditSet the editSet
      * @throws OceanusException on error
      */

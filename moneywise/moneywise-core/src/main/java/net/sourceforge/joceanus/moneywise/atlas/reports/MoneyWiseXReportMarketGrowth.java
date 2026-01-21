@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,13 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.atlas.reports;
 
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
 import net.sourceforge.joceanus.metis.report.MetisReportBase;
 import net.sourceforge.joceanus.metis.report.MetisReportHTMLBuilder;
 import net.sourceforge.joceanus.metis.report.MetisReportHTMLBuilder.MetisHTMLTable;
@@ -31,10 +35,6 @@ import net.sourceforge.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXA
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisValuesResource;
 import net.sourceforge.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter;
 import net.sourceforge.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter.MoneyWiseXAnalysisSecurityFilter;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
-import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
-import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -92,6 +92,7 @@ public class MoneyWiseXReportMarketGrowth
 
     /**
      * Constructor.
+     *
      * @param pManager the Report Manager
      */
     MoneyWiseXReportMarketGrowth(final MetisReportManager<MoneyWiseXAnalysisFilter<?, ?>> pManager) {
@@ -198,6 +199,7 @@ public class MoneyWiseXReportMarketGrowth
 
     /**
      * Create a delayed portfolio table.
+     *
      * @param pParent the parent table
      * @param pSource the source bucket
      * @return the new document fragment
@@ -252,59 +254,58 @@ public class MoneyWiseXReportMarketGrowth
     // * @param pBucket the portfolio bucket
     // */
     //private static void checkPortfolioGrowth(final MoneyWiseXAnalysisPortfolioBucket pBucket) {
-        /* Check market profit */
-        //final MoneyWiseXAnalysisSecurityValues myValues = pBucket.getValues();
-        //final TethysMoney myAdjust = myValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.GAINSADJUST);
-        //final TethysMoney myCalcGrowth = pBucket.getNonCashValue(false);
-        //myCalcGrowth.subtractAmount(pBucket.getNonCashValue(true));
-        //myCalcGrowth.subtractAmount(myValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.INVESTED));
-        //myCalcGrowth.addAmount(myAdjust);
-        //final TethysMoney myProfit = myValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.MARKETPROFIT);
-        //if (!myProfit.equals(myCalcGrowth)) {
-        //    LOGGER.error("Incorrect profit calculation for security <%s> of <%s>", pBucket.getName(), myCalcGrowth);
-        //}
-
-        /* Check market growth */
-        //myCalcGrowth.subtractAmount(myValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.REALISEDGAINS));
-        //myCalcGrowth.subtractAmount(myAdjust);
-        //myCalcGrowth.subtractAmount(myValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.CURRENCYFLUCT));
-        //final TethysMoney myGrowth = myValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.MARKETGROWTH);
-        //if (!myGrowth.equals(myCalcGrowth)) {
-        //    LOGGER.error("Incorrect growth calculation for portfolio <%s> of <%s>", pBucket.getName(), myCalcGrowth);
-        //}
+    /* Check market profit */
+    //final MoneyWiseXAnalysisSecurityValues myValues = pBucket.getValues();
+    //final TethysMoney myAdjust = myValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.GAINSADJUST);
+    //final TethysMoney myCalcGrowth = pBucket.getNonCashValue(false);
+    //myCalcGrowth.subtractAmount(pBucket.getNonCashValue(true));
+    //myCalcGrowth.subtractAmount(myValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.INVESTED));
+    //myCalcGrowth.addAmount(myAdjust);
+    //final TethysMoney myProfit = myValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.MARKETPROFIT);
+    //if (!myProfit.equals(myCalcGrowth)) {
+    //    LOGGER.error("Incorrect profit calculation for security <%s> of <%s>", pBucket.getName(), myCalcGrowth);
     //}
 
-    ///**
+    /* Check market growth */
+    //myCalcGrowth.subtractAmount(myValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.REALISEDGAINS));
+    //myCalcGrowth.subtractAmount(myAdjust);
+    //myCalcGrowth.subtractAmount(myValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.CURRENCYFLUCT));
+    //final TethysMoney myGrowth = myValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.MARKETGROWTH);
+    //if (!myGrowth.equals(myCalcGrowth)) {
+    //    LOGGER.error("Incorrect growth calculation for portfolio <%s> of <%s>", pBucket.getName(), myCalcGrowth);
+    //}
+    //}
+
+    /// **
     // * Check security portfolio profit calculation.
     // * @param pBucket the security bucket
     //*/
     //private static void checkSecurityGrowth(final MoneyWiseXAnalysisSecurityBucket pBucket) {
-        /* Check market profit */
-        //final MoneyWiseXAnalysisSecurityValues myValues = pBucket.getValues();
-        //final MoneyWiseXAnalysisSecurityValues myBaseValues = pBucket.getBaseValues();
-        //final TethysMoney myAdjust = myValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.GAINSADJUST);
-        //final TethysMoney myCalcGrowth = new TethysMoney(myValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.VALUATION));
-        //myCalcGrowth.subtractAmount(myBaseValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.VALUATION));
-        //myCalcGrowth.subtractAmount(myValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.INVESTED));
-        //myCalcGrowth.addAmount(myAdjust);
-        //final TethysMoney myProfit = myValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.MARKETPROFIT);
-        //if (!myProfit.equals(myCalcGrowth)) {
-        //    LOGGER.error("Incorrect profit calculation for security <%s> of <%s>", pBucket.getDecoratedName(), myCalcGrowth);
-        //}
-
-        /* Check market growth */
-        //myCalcGrowth.subtractAmount(myValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.REALISEDGAINS));
-        //myCalcGrowth.subtractAmount(myAdjust);
-        //final TethysMoney myFluct = myValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.CURRENCYFLUCT);
-        //if (myFluct != null) {
-        //    myCalcGrowth.subtractAmount(myFluct);
-        //}
-        //final TethysMoney myGrowth = myValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.MARKETGROWTH);
-        //if (!myGrowth.equals(myCalcGrowth)) {
-        //    LOGGER.error("Incorrect growth calculation for security <%s> of <%s>", pBucket.getDecoratedName(), myCalcGrowth);
-        //}
+    /* Check market profit */
+    //final MoneyWiseXAnalysisSecurityValues myValues = pBucket.getValues();
+    //final MoneyWiseXAnalysisSecurityValues myBaseValues = pBucket.getBaseValues();
+    //final TethysMoney myAdjust = myValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.GAINSADJUST);
+    //final TethysMoney myCalcGrowth = new TethysMoney(myValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.VALUATION));
+    //myCalcGrowth.subtractAmount(myBaseValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.VALUATION));
+    //myCalcGrowth.subtractAmount(myValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.INVESTED));
+    //myCalcGrowth.addAmount(myAdjust);
+    //final TethysMoney myProfit = myValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.MARKETPROFIT);
+    //if (!myProfit.equals(myCalcGrowth)) {
+    //    LOGGER.error("Incorrect profit calculation for security <%s> of <%s>", pBucket.getDecoratedName(), myCalcGrowth);
     //}
 
+    /* Check market growth */
+    //myCalcGrowth.subtractAmount(myValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.REALISEDGAINS));
+    //myCalcGrowth.subtractAmount(myAdjust);
+    //final TethysMoney myFluct = myValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.CURRENCYFLUCT);
+    //if (myFluct != null) {
+    //    myCalcGrowth.subtractAmount(myFluct);
+    //}
+    //final TethysMoney myGrowth = myValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.MARKETGROWTH);
+    //if (!myGrowth.equals(myCalcGrowth)) {
+    //    LOGGER.error("Incorrect growth calculation for security <%s> of <%s>", pBucket.getDecoratedName(), myCalcGrowth);
+    //}
+    //}
     @Override
     public MoneyWiseXAnalysisSecurityFilter processFilter(final Object pSource) {
         /* If this is a SecurityBucket */

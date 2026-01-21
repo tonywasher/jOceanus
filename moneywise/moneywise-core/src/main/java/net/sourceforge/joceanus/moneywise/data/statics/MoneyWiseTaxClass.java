@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,12 +13,12 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.data.statics;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataClass;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * Enumeration of Tax Basis Classes.
@@ -132,7 +132,8 @@ public enum MoneyWiseTaxClass
 
     /**
      * Constructor.
-     * @param uId the id
+     *
+     * @param uId    the id
      * @param uOrder the order
      */
     MoneyWiseTaxClass(final int uId,
@@ -166,6 +167,7 @@ public enum MoneyWiseTaxClass
 
     /**
      * get value from id.
+     *
      * @param id the id value
      * @return the corresponding enum object
      * @throws OceanusException on error
@@ -181,6 +183,7 @@ public enum MoneyWiseTaxClass
 
     /**
      * Should we analyse accounts?
+     *
      * @return true/false
      */
     public boolean analyseAccounts() {
@@ -207,6 +210,7 @@ public enum MoneyWiseTaxClass
 
     /**
      * Is the basis an expense basis?
+     *
      * @return true/false
      */
     public boolean isExpense() {

@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Metis: Java Data Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,13 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.metis.viewer;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.metis.data.MetisDataDelta;
 import net.sourceforge.joceanus.metis.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataList;
@@ -27,10 +31,6 @@ import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldVersionedDe
 import net.sourceforge.joceanus.metis.field.MetisFieldValidation;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionHistory;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionedItem;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
-import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 
 import java.util.Iterator;
 import java.util.List;
@@ -88,6 +88,7 @@ public class MetisViewerFormatter {
 
     /**
      * Constructor.
+     *
      * @param pFormatter the data formatter
      * @throws OceanusException on error
      */
@@ -97,6 +98,7 @@ public class MetisViewerFormatter {
 
     /**
      * Build HTML table describing Object.
+     *
      * @param pPage the viewer page
      */
     protected void formatPage(final MetisViewerPage pPage) {
@@ -124,13 +126,14 @@ public class MetisViewerFormatter {
 
     /**
      * Build HTML table.
+     *
      * @param pObject the object
      */
     private void formatHTMLObject(final Object pObject) {
         /* handle DataDifference */
         final Object myObject = pObject instanceof MetisDataDelta myDelta
-                                                                  ? myDelta.getObject()
-                                                                  : pObject;
+                ? myDelta.getObject()
+                : pObject;
 
         /* If we are FieldItem */
         if (myObject instanceof MetisFieldItem myField) {
@@ -156,15 +159,16 @@ public class MetisViewerFormatter {
 
     /**
      * Build HTML collection.
+     *
      * @param pObject the object
-     * @param pStart the start index for the section
+     * @param pStart  the start index for the section
      */
     private void formatHTMLCollection(final Object pObject,
                                       final int pStart) {
         /* handle DataDifference */
         Object myObject = pObject instanceof MetisDataDelta myDelta
-                                                            ? myDelta.getObject()
-                                                            : pObject;
+                ? myDelta.getObject()
+                : pObject;
 
         /* handle embedded objects */
         if (myObject instanceof MetisDataList<?> myList) {
@@ -185,15 +189,16 @@ public class MetisViewerFormatter {
 
     /**
      * Build HTML item.
+     *
      * @param pObject the object
-     * @param pIndex index of the item
+     * @param pIndex  index of the item
      */
     private void formatHTMLItem(final Object pObject,
                                 final int pIndex) {
         /* handle DataDifference */
         Object myObject = pObject instanceof MetisDataDelta myDelta
-                                                            ? myDelta.getObject()
-                                                            : pObject;
+                ? myDelta.getObject()
+                : pObject;
 
         /* handle embedded objects */
         if (myObject instanceof MetisDataList<?> myList) {
@@ -208,6 +213,7 @@ public class MetisViewerFormatter {
 
     /**
      * Build HTML table describing DataEosFieldItem.
+     *
      * @param pItem the item
      */
     private void formatHTMLEosFieldItem(final MetisFieldItem pItem) {
@@ -215,8 +221,8 @@ public class MetisViewerFormatter {
         final MetisFieldSetDef myFields = pItem.getDataFieldSet();
         final boolean isVersioned = pItem instanceof MetisFieldVersionedItem;
         final MetisFieldVersionedItem myItem = isVersioned
-                                                           ? (MetisFieldVersionedItem) pItem
-                                                           : null;
+                ? (MetisFieldVersionedItem) pItem
+                : null;
 
         /* Initialise the document */
         theBuilder.newTitle(myFields.getName());
@@ -232,8 +238,8 @@ public class MetisViewerFormatter {
 
             /* Access the value */
             final Object myValue = myField.isCalculated()
-                                                            ? MetisDataFieldValue.SKIP
-                                                            : myField.getFieldValue(pItem);
+                    ? MetisDataFieldValue.SKIP
+                    : myField.getFieldValue(pItem);
 
             /* Skip value if required */
             if (skipValue(myValue)) {
@@ -244,8 +250,8 @@ public class MetisViewerFormatter {
             theBuilder.newTableRow();
             theBuilder.newDataCell(myField.getFieldId().getId());
             if (myItem != null
-                && myField instanceof MetisFieldVersionedDef
-                && myItem.fieldChanged(myField).isDifferent()) {
+                    && myField instanceof MetisFieldVersionedDef
+                    && myItem.fieldChanged(myField).isDifferent()) {
                 theBuilder.newDataCell(myValue, true);
             } else {
                 theBuilder.newDataCell(myValue);
@@ -255,6 +261,7 @@ public class MetisViewerFormatter {
 
     /**
      * Should we skip the value.
+     *
      * @param pValue the value
      * @return true/false
      */
@@ -301,12 +308,13 @@ public class MetisViewerFormatter {
 
         /* Skip value if required */
         return myValue == null
-               || MetisDataFieldValue.SKIP.equals(myValue);
+                || MetisDataFieldValue.SKIP.equals(myValue);
     }
 
     /**
      * Build HTML table describing list item.
-     * @param pList the list
+     *
+     * @param pList  the list
      * @param pIndex the index of the item
      */
     private void formatHTMLListItem(final List<?> pList,
@@ -320,7 +328,8 @@ public class MetisViewerFormatter {
 
     /**
      * Build HTML table describing list section.
-     * @param pList the list
+     *
+     * @param pList  the list
      * @param pStart the start index for the section
      */
     private void formatHTMLListSection(final List<?> pList,
@@ -343,7 +352,7 @@ public class MetisViewerFormatter {
             int myCount = ITEMS_PER_PAGE;
             int myIndex = myStart + 1;
             while (myIterator.hasNext()
-                   && myCount-- > 0) {
+                    && myCount-- > 0) {
                 /* Access the key and value */
                 final Object myObject = myIterator.next();
 
@@ -357,7 +366,8 @@ public class MetisViewerFormatter {
 
     /**
      * Build HTML table describing map section.
-     * @param pMap the map
+     *
+     * @param pMap   the map
      * @param pStart the start index for the section
      */
     private void formatHTMLMapSection(final Map<?, ?> pMap,
@@ -381,7 +391,7 @@ public class MetisViewerFormatter {
             if (myCount > 0) {
                 /* Skip leading entries */
                 while (myIterator.hasNext()
-                       && myCount-- > 0) {
+                        && myCount-- > 0) {
                     myIterator.next();
                 }
             }
@@ -389,7 +399,7 @@ public class MetisViewerFormatter {
             /* Loop up to the limit */
             myCount = ITEMS_PER_PAGE;
             while (myIterator.hasNext()
-                   && (myCount-- > 0)) {
+                    && (myCount-- > 0)) {
                 /* Access the key and value */
                 final Entry<?, ?> myEntry = (Entry<?, ?>) myIterator.next();
 
@@ -404,6 +414,7 @@ public class MetisViewerFormatter {
 
     /**
      * Build HTML table describing stack.
+     *
      * @param pStack the stack to describe
      */
     private void formatHTMLStackTrace(final StackTraceElement[] pStack) {
@@ -422,6 +433,7 @@ public class MetisViewerFormatter {
 
     /**
      * Build HTML table describing unknown object.
+     *
      * @param pObject the object to describe
      */
     private void formatHTMLUnknown(final Object pObject) {
@@ -435,8 +447,8 @@ public class MetisViewerFormatter {
         theBuilder.newTableRow();
         theBuilder.newDataCell("Class");
         theBuilder.newDataCell(pObject != null
-                                               ? pObject.getClass()
-                                               : null);
+                ? pObject.getClass()
+                : null);
 
         /* Describe the object */
         theBuilder.newTableRow();

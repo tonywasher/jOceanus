@@ -1,26 +1,26 @@
-/*******************************************************************************
+/*
  * Tethys: GUI Utilities
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package net.sourceforge.joceanus.tethys.swing.button;
 
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateConfig;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateConfig;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.core.base.TethysUIResource;
 import net.sourceforge.joceanus.tethys.swing.base.TethysUISwingArrowIcon;
@@ -126,6 +126,7 @@ public final class TethysUISwingDateDialog
 
     /**
      * Constructor.
+     *
      * @param pConfig the configuration for the dialog
      */
     TethysUISwingDateDialog(final OceanusDateConfig pConfig) {
@@ -184,6 +185,7 @@ public final class TethysUISwingDateDialog
 
     /**
      * Have we selected a date?
+     *
      * @return true/false
      */
     public boolean haveSelected() {
@@ -192,6 +194,7 @@ public final class TethysUISwingDateDialog
 
     /**
      * Obtain Date Configuration.
+     *
      * @return the date configuration
      */
     public OceanusDateConfig getConfig() {
@@ -209,6 +212,7 @@ public final class TethysUISwingDateDialog
 
     /**
      * Set Selected Date.
+     *
      * @param pDay the Selected day
      */
     void setSelected(final int pDay) {
@@ -265,6 +269,7 @@ public final class TethysUISwingDateDialog
 
     /**
      * Show the dialog.
+     *
      * @param pNode the node under which to show the dialog
      */
     public void showDialogUnderNode(final JComponent pNode) {
@@ -279,6 +284,7 @@ public final class TethysUISwingDateDialog
 
     /**
      * Show the dialog.
+     *
      * @param pRect the rectangle under which to show the dialog
      */
     public void showDialogUnderRectangle(final Rectangle pRect) {
@@ -307,6 +313,7 @@ public final class TethysUISwingDateDialog
 
     /**
      * Handle Escape to close dialog.
+     *
      * @param pPane the panel to handle keys for
      */
     private void handleEscapeKey(final JPanel pPane) {
@@ -431,6 +438,7 @@ public final class TethysUISwingDateDialog
 
         /**
          * Constructor.
+         *
          * @param pDialog the owning dialog
          */
         PanelNavigation(final TethysUISwingDateDialog pDialog) {
@@ -497,6 +505,7 @@ public final class TethysUISwingDateDialog
 
         /**
          * Obtain the panel.
+         *
          * @return the panel
          */
         JPanel getPanel() {
@@ -583,6 +592,7 @@ public final class TethysUISwingDateDialog
 
         /**
          * Constructor.
+         *
          * @param pDialog the owning dialog
          */
         PanelMonth(final TethysUISwingDateDialog pDialog) {
@@ -628,6 +638,7 @@ public final class TethysUISwingDateDialog
 
         /**
          * Obtain the panel.
+         *
          * @return the panel
          */
         JPanel getPanel() {
@@ -636,6 +647,7 @@ public final class TethysUISwingDateDialog
 
         /**
          * ReSize the number of visible rows.
+         *
          * @param iNumRows number of visible rows
          */
         private void reSizeRows(final int iNumRows) {
@@ -669,6 +681,7 @@ public final class TethysUISwingDateDialog
 
         /**
          * Is the DayOfWeek a Weekend day.
+         *
          * @param pDoW the day of the week
          * @return true/false
          */
@@ -684,6 +697,7 @@ public final class TethysUISwingDateDialog
 
         /**
          * obtain column number for DayOfWeek.
+         *
          * @param pDoW the day of the week
          * @return the column number
          */
@@ -928,6 +942,7 @@ public final class TethysUISwingDateDialog
 
         /**
          * Constructor.
+         *
          * @param pDialog the owning dialog
          */
         PanelDay(final TethysUISwingDateDialog pDialog) {
@@ -945,6 +960,7 @@ public final class TethysUISwingDateDialog
 
         /**
          * Obtain the label.
+         *
          * @return the label
          */
         JLabel getLabel() {
@@ -953,7 +969,8 @@ public final class TethysUISwingDateDialog
 
         /**
          * Set day for label.
-         * @param pDay the Day number
+         *
+         * @param pDay        the Day number
          * @param pSelectable is the day select-able
          */
         void setDay(final int pDay,
@@ -982,6 +999,7 @@ public final class TethysUISwingDateDialog
 
         /**
          * Reset a Day Label.
+         *
          * @param isActive true/false
          */
         void resetDay(final boolean isActive) {

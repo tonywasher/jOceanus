@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Prometheus: Application Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,11 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.prometheus.data;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
@@ -26,8 +28,6 @@ import net.sourceforge.joceanus.metis.data.MetisDataResource;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionedSet;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataKeySet.PrometheusDataKeySetList;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataList.PrometheusListStyle;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet.PrometheusCryptographyDataType;
@@ -41,6 +41,7 @@ import java.util.Objects;
 
 /**
  * ControlKeySet definition and list. The controlKeySet secures a set of dataKeySets.
+ *
  * @author Tony Washer
  */
 public class PrometheusControlKeySet
@@ -82,7 +83,8 @@ public class PrometheusControlKeySet
 
     /**
      * Copy Constructor.
-     * @param pList the list the copy belongs to
+     *
+     * @param pList   the list the copy belongs to
      * @param pSource The Key to copy
      */
     protected PrometheusControlKeySet(final PrometheusControlKeySetList pList,
@@ -99,7 +101,8 @@ public class PrometheusControlKeySet
 
     /**
      * Values constructor.
-     * @param pList the List to add to
+     *
+     * @param pList   the List to add to
      * @param pValues the values constructor
      * @throws OceanusException on error
      */
@@ -153,7 +156,8 @@ public class PrometheusControlKeySet
 
     /**
      * Constructor for a new DataKeySet.
-     * @param pList the list to which to add the keySet to
+     *
+     * @param pList       the list to which to add the keySet to
      * @param pControlKey the control key
      * @throws OceanusException on error
      */
@@ -184,7 +188,7 @@ public class PrometheusControlKeySet
 
             /* Catch Exceptions */
         } catch (GordianException
-                | OceanusException e) {
+                 | OceanusException e) {
             /* Pass on exception */
             throw new PrometheusDataException(this, ERROR_CREATEITEM, e);
         }
@@ -197,6 +201,7 @@ public class PrometheusControlKeySet
 
     /**
      * Obtain the security factory.
+     *
      * @return the security factory
      */
     GordianFactory getSecurityFactory() {
@@ -206,6 +211,7 @@ public class PrometheusControlKeySet
 
     /**
      * Obtain the dataKeySetCache.
+     *
      * @return the dataKeySets
      */
     private DataKeySetCache getDataKeySets() {
@@ -214,6 +220,7 @@ public class PrometheusControlKeySet
 
     /**
      * Obtain the next DataKeySet.
+     *
      * @return the next dataKeySet
      */
     PrometheusDataKeySet getNextDataKeySet() {
@@ -222,6 +229,7 @@ public class PrometheusControlKeySet
 
     /**
      * Get the ControlKey.
+     *
      * @return the controlKey
      */
     public final PrometheusControlKey getControlKey() {
@@ -230,6 +238,7 @@ public class PrometheusControlKeySet
 
     /**
      * Get the ControlKeyId for this item.
+     *
      * @return the ControlKeyId
      */
     public Integer getControlKeyId() {
@@ -241,6 +250,7 @@ public class PrometheusControlKeySet
 
     /**
      * Get the securedKeySetDef.
+     *
      * @return the securedKeySetDef
      */
     public final byte[] getSecuredKeySetDef() {
@@ -249,6 +259,7 @@ public class PrometheusControlKeySet
 
     /**
      * Get the KeySet.
+     *
      * @return the keySet
      */
     public GordianKeySet getKeySet() {
@@ -257,6 +268,7 @@ public class PrometheusControlKeySet
 
     /**
      * Set the ControlKey Id.
+     *
      * @param pId the controlKey id
      * @throws OceanusException on error
      */
@@ -266,6 +278,7 @@ public class PrometheusControlKeySet
 
     /**
      * Set the ControlKey.
+     *
      * @param pKey the controlKey
      * @throws OceanusException on error
      */
@@ -275,6 +288,7 @@ public class PrometheusControlKeySet
 
     /**
      * Set the securedKeySetDef.
+     *
      * @param pValue the securedKeySetDef
      */
     private void setValueSecuredKeySetDef(final byte[] pValue) {
@@ -283,6 +297,7 @@ public class PrometheusControlKeySet
 
     /**
      * Set the keySet.
+     *
      * @param pValue the keySet
      */
     private void setValueKeySet(final GordianKeySet pValue) {
@@ -318,6 +333,7 @@ public class PrometheusControlKeySet
 
     /**
      * Allocate a new DataKeySet.
+     *
      * @param pData the DataSet
      * @throws OceanusException on error
      */
@@ -352,6 +368,7 @@ public class PrometheusControlKeySet
 
     /**
      * Register DataKeySet.
+     *
      * @param pKeySet the DataKeySet to register
      */
     void registerDataKeySet(final PrometheusDataKeySet pKeySet) {
@@ -371,6 +388,7 @@ public class PrometheusControlKeySet
 
         /**
          * Construct an empty CORE list.
+         *
          * @param pData the DataSet for the list
          */
         protected PrometheusControlKeySetList(final PrometheusDataSet pData) {
@@ -379,16 +397,18 @@ public class PrometheusControlKeySet
 
         /**
          * Construct an empty generic ControlKey list.
-         * @param pData the DataSet for the list
+         *
+         * @param pData  the DataSet for the list
          * @param pStyle the style of the list
          */
         protected PrometheusControlKeySetList(final PrometheusDataSet pData,
-                                           final PrometheusListStyle pStyle) {
+                                              final PrometheusListStyle pStyle) {
             super(PrometheusControlKeySet.class, pData, PrometheusCryptographyDataType.CONTROLKEYSET, pStyle);
         }
 
         /**
          * Constructor for a cloned List.
+         *
          * @param pSource the source List
          */
         private PrometheusControlKeySetList(final PrometheusControlKeySetList pSource) {
@@ -471,8 +491,9 @@ public class PrometheusControlKeySet
 
         /**
          * Clone KeySet from a DataBase.
+         *
          * @param pControlKey the ControlKey to clone
-         * @param pKeySet the DataKeySet to clone
+         * @param pKeySet     the DataKeySet to clone
          * @return the new DataKeySet
          * @throws OceanusException on error
          */
@@ -563,6 +584,7 @@ public class PrometheusControlKeySet
 
         /**
          * Register the KeySet.
+         *
          * @param pKeySet the KeySet to register
          */
         private void registerDataKeySet(final PrometheusDataKeySet pKeySet) {
@@ -580,6 +602,7 @@ public class PrometheusControlKeySet
 
         /**
          * Get next DataKeySet.
+         *
          * @return the next KeySet
          */
         private PrometheusDataKeySet getNextDataKeySet() {
@@ -614,8 +637,9 @@ public class PrometheusControlKeySet
 
         /**
          * Clone dataKeySet Cache from a DataBase.
+         *
          * @param pControlKeySet the ControlKeySet to clone
-         * @param pKeySets the DataKeySetList
+         * @param pKeySets       the DataKeySetList
          * @return the new DataKeySetCache
          * @throws OceanusException on error
          */

@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Metis: Java Data Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,12 +13,12 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.metis.preference;
 
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleLoader;
 import net.sourceforge.joceanus.metis.data.MetisDataResource;
-import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
-import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -201,6 +201,7 @@ public enum MetisPreferenceResource implements OceanusBundleId {
 
     /**
      * Constructor.
+     *
      * @param pKeyName the key name
      */
     MetisPreferenceResource(final String pKeyName) {
@@ -231,6 +232,7 @@ public enum MetisPreferenceResource implements OceanusBundleId {
 
     /**
      * Build preference map.
+     *
      * @return the map
      */
     private static Map<MetisPreferenceType, OceanusBundleId> buildPreferenceMap() {
@@ -249,6 +251,7 @@ public enum MetisPreferenceResource implements OceanusBundleId {
 
     /**
      * Obtain key for prefType.
+     *
      * @param pType the type
      * @return the resource key
      */

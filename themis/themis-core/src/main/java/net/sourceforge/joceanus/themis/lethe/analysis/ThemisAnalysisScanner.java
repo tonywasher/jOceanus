@@ -1,22 +1,22 @@
-/*******************************************************************************
+/*
  * Themis: Java Project Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package net.sourceforge.joceanus.themis.lethe.analysis;
 
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.exc.ThemisDataException;
 
 import java.util.ArrayDeque;
@@ -33,6 +33,7 @@ public class ThemisAnalysisScanner {
     private interface ThemisScannerTerminator {
         /**
          * Handle Terminator.
+         *
          * @param pTerminator the terminator
          * @throws OceanusException on error
          */
@@ -105,7 +106,7 @@ public class ThemisAnalysisScanner {
         initialiseScan(pLine);
 
         /* Loop through the line */
-        for (;;) {
+        for (; ; ) {
             /* If we have finished the line */
             if (theCurPos == theLength) {
                 /* Shift to the next line */
@@ -143,7 +144,7 @@ public class ThemisAnalysisScanner {
         initialiseScan((ThemisAnalysisLine) theSource.popNextLine());
 
         /* Loop through the line */
-        for (;;) {
+        for (; ; ) {
             /* If we have finished the line */
             if (theCurPos == theLength) {
                 /* Shift to the next line */
@@ -183,7 +184,7 @@ public class ThemisAnalysisScanner {
         initialiseScan((ThemisAnalysisLine) theSource.popNextLine());
 
         /* Loop through the line */
-        for (;;) {
+        for (; ; ) {
             /* If we have finished the line */
             if (theCurPos == theLength) {
                 /* Shift to the next line */
@@ -212,7 +213,7 @@ public class ThemisAnalysisScanner {
     /**
      * Initialise scan.
      *
-     * @param pLine       the current line
+     * @param pLine the current line
      */
     private void initialiseScan(final ThemisAnalysisLine pLine) {
         /* Clear the results array */
@@ -229,6 +230,7 @@ public class ThemisAnalysisScanner {
 
     /**
      * Check for comment.
+     *
      * @param pChar the current character
      * @return reloop true/false
      * @throws OceanusException on error
@@ -257,9 +259,9 @@ public class ThemisAnalysisScanner {
     /**
      * Scan For Terminator.
      *
-     * @param pChar the current character
+     * @param pChar       the current character
      * @param pTerminator the terminator
-     * @param pHandler the handler
+     * @param pHandler    the handler
      * @return terminator found true/false
      * @throws OceanusException on error
      */
@@ -306,6 +308,7 @@ public class ThemisAnalysisScanner {
 
     /**
      * Handle Terminator at End of Line.
+     *
      * @param pTerminator the terminator
      * @throws OceanusException on error
      */
@@ -322,6 +325,7 @@ public class ThemisAnalysisScanner {
 
     /**
      * Handle Separator (possible mid-line).
+     *
      * @param pTerminator the terminator
      */
     private void handleSeparator(final char pTerminator) {
@@ -347,6 +351,7 @@ public class ThemisAnalysisScanner {
 
     /**
      * Restore the stack.
+     *
      * @param pTerminator the terminator
      */
     private void restoreStack(final char pTerminator) {
@@ -430,6 +435,7 @@ public class ThemisAnalysisScanner {
 
     /**
      * Shift to next line.
+     *
      * @param pErrorOnEmpty throw exception on empty
      * @return empty true/false
      * @throws OceanusException on error
@@ -490,12 +496,14 @@ public class ThemisAnalysisScanner {
     public interface ThemisAnalysisSource {
         /**
          * Are there more lines to process?
+         *
          * @return true/false
          */
         boolean hasLines();
 
         /**
          * Pop next line from list.
+         *
          * @return the next line
          * @throws OceanusException on error
          */
@@ -503,6 +511,7 @@ public class ThemisAnalysisScanner {
 
         /**
          * Push line back onto stack.
+         *
          * @param pLine to line to push onto stack
          */
         void pushLine(ThemisAnalysisElement pLine);

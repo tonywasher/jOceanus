@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,11 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.test.data.xdoc;
 
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEvent;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEventList;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEventType;
@@ -26,8 +28,6 @@ import net.sourceforge.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXA
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisPayeeValues;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee;
 import net.sourceforge.joceanus.moneywise.test.data.trans.MoneyWiseDataTestCase;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -55,8 +55,9 @@ public class MoneyWiseDataXDocPayee {
 
     /**
      * Constructor.
+     *
      * @param pReport the report
-     * @param pTest the test case
+     * @param pTest   the test case
      */
     MoneyWiseDataXDocPayee(final MoneyWiseDataXDocReport pReport,
                            final MoneyWiseDataTestCase pTest) {
@@ -66,6 +67,7 @@ public class MoneyWiseDataXDocPayee {
 
     /**
      * Declare parent payees.
+     *
      * @param pPayees the parent payees
      */
     void declareParentPayees(final List<MoneyWisePayee> pPayees) {
@@ -122,7 +124,7 @@ public class MoneyWiseDataXDocPayee {
             theReport.newCell();
             theReport.setCellValue(myPayee.getCategoryName());
             theReport.addRowToTable();
-       }
+        }
     }
 
     /**
@@ -203,6 +205,7 @@ public class MoneyWiseDataXDocPayee {
 
     /**
      * Calculate profit.
+     *
      * @param pValues the values
      * @return the profit
      */

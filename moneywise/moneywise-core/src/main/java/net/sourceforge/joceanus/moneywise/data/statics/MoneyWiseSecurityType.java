@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,10 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.data.statics;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.metis.data.MetisDataResource;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
@@ -24,7 +25,6 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
 import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataClass;
 import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataItem;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * SecurityType data type.
@@ -54,7 +54,8 @@ public class MoneyWiseSecurityType
 
     /**
      * Copy Constructor.
-     * @param pList The list to associate the SecurityType with
+     *
+     * @param pList    The list to associate the SecurityType with
      * @param pSecType The SecurityType to copy
      */
     protected MoneyWiseSecurityType(final MoneyWiseSecurityTypeList pList,
@@ -64,6 +65,7 @@ public class MoneyWiseSecurityType
 
     /**
      * Basic constructor.
+     *
      * @param pList The list to associate the SecurityType with
      * @param pName Name of SecurityType
      * @throws OceanusException on error
@@ -75,7 +77,8 @@ public class MoneyWiseSecurityType
 
     /**
      * Basic constructor.
-     * @param pList The list to associate the SecurityType with
+     *
+     * @param pList  The list to associate the SecurityType with
      * @param pClass Class of SecurityType
      * @throws OceanusException on error
      */
@@ -86,7 +89,8 @@ public class MoneyWiseSecurityType
 
     /**
      * Values constructor.
-     * @param pList The list to associate the item with
+     *
+     * @param pList   The list to associate the item with
      * @param pValues the values
      * @throws OceanusException on error
      */
@@ -102,6 +106,7 @@ public class MoneyWiseSecurityType
 
     /**
      * Return the SecurityTypeClass of the SecurityType.
+     *
      * @return the class
      */
     public MoneyWiseSecurityClass getSecurityClass() {
@@ -130,6 +135,7 @@ public class MoneyWiseSecurityType
 
         /**
          * Construct an empty CORE securityType list.
+         *
          * @param pData the DataSet for the list
          */
         public MoneyWiseSecurityTypeList(final PrometheusDataSet pData) {
@@ -138,6 +144,7 @@ public class MoneyWiseSecurityType
 
         /**
          * Constructor for a cloned List.
+         *
          * @param pSource the source List
          */
         private MoneyWiseSecurityTypeList(final MoneyWiseSecurityTypeList pSource) {
@@ -190,6 +197,7 @@ public class MoneyWiseSecurityType
 
         /**
          * Obtain the type of the item.
+         *
          * @return the type of the item
          */
         public String itemType() {
@@ -198,6 +206,7 @@ public class MoneyWiseSecurityType
 
         /**
          * Add a SecurityType to the list.
+         *
          * @param pSecType the Name of the security type
          * @return the new type
          * @throws OceanusException on error

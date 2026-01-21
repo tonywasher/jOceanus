@@ -1,6 +1,6 @@
-/* *****************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,12 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.test.data;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.data.validate.MoneyWiseValidatorFactory;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.analyse.MoneyWiseAnalysisTransAnalyser;
@@ -41,9 +44,6 @@ import net.sourceforge.joceanus.moneywise.test.data.storage.MoneyWiseDataTestODS
 import net.sourceforge.joceanus.moneywise.test.data.storage.MoneyWiseDataTestXMLFile;
 import net.sourceforge.joceanus.moneywise.test.data.storage.MoneyWiseNullThreadMgr;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.prometheus.toolkit.PrometheusToolkit;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadManager;
@@ -63,6 +63,7 @@ import java.util.stream.Stream;
 public class MoneyWiseDataTest {
     /**
      * Create the keySet test suite.
+     *
      * @return the test stream
      * @throws OceanusException on error
      */
@@ -85,6 +86,7 @@ public class MoneyWiseDataTest {
 
     /**
      * Populate local data.
+     *
      * @param pData the dataSet to populate
      * @param pView the view
      * @throws OceanusException on error
@@ -98,6 +100,7 @@ public class MoneyWiseDataTest {
 
     /**
      * Analyse the data.
+     *
      * @param pData the dataSet to analyse
      * @param pView the view
      * @throws OceanusException on error
@@ -129,7 +132,7 @@ public class MoneyWiseDataTest {
         /* Add in cash totals */
         final MoneyWiseAnalysisCashCategoryBucket myCashCat = myAnalysis.getCashCategories().getTotals();
         final OceanusMoney myCashTotal = myCashCat.getValues().getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUEDELTA);
-        if (myCashTotal != null)  {
+        if (myCashTotal != null) {
             myDepTotal.addAmount(myCashTotal);
         }
 
@@ -171,6 +174,7 @@ public class MoneyWiseDataTest {
 
     /**
      * Create the archiveData tests.
+     *
      * @param pView the view
      * @return the testStream
      */
@@ -190,6 +194,7 @@ public class MoneyWiseDataTest {
 
     /**
      * Create the storage tests.
+     *
      * @param pData the dataSet to populate
      * @param pView the view
      * @return the testStream

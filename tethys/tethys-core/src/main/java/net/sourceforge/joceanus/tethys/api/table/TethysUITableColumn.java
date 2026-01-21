@@ -1,20 +1,35 @@
-/*******************************************************************************
+/*
  * Tethys: GUI Utilities
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package net.sourceforge.joceanus.tethys.api.table;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateConfig;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
+import net.sourceforge.joceanus.tethys.api.control.TethysUIControl.TethysUIIconMapSet;
+import net.sourceforge.joceanus.tethys.api.field.TethysUIFieldType;
+import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollMenu;
 
 import java.util.Currency;
 import java.util.Iterator;
@@ -25,23 +40,9 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.ToIntFunction;
 
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateConfig;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
-import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
-import net.sourceforge.joceanus.tethys.api.control.TethysUIControl.TethysUIIconMapSet;
-import net.sourceforge.joceanus.tethys.api.field.TethysUIFieldType;
-import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollMenu;
-
 /**
  * Column Definition.
+ *
  * @param <T> the data type
  * @param <C> the column identity
  * @param <R> the row type
@@ -50,30 +51,35 @@ public interface TethysUITableColumn<T, C, R>
         extends OceanusEventProvider<TethysUIEvent> {
     /**
      * Obtain the table manager.
+     *
      * @return the table manager
      */
     TethysUITableManager<C, R> getTable();
 
     /**
      * Obtain the id of the column.
+     *
      * @return the column id
      */
     C getId();
 
     /**
      * Obtain the type of the column.
+     *
      * @return the column type
      */
     TethysUIFieldType getCellType();
 
     /**
      * Obtain the name of the column.
+     *
      * @return the column name
      */
     String getName();
 
     /**
      * Set the name of the column.
+     *
      * @param pName the column name
      * @return the column
      */
@@ -81,6 +87,7 @@ public interface TethysUITableColumn<T, C, R>
 
     /**
      * Set the column width.
+     *
      * @param pWidth the width
      * @return the column
      */
@@ -88,12 +95,14 @@ public interface TethysUITableColumn<T, C, R>
 
     /**
      * Is the column visible?
+     *
      * @return true/false
      */
     boolean isVisible();
 
     /**
      * Set the visibility of the column.
+     *
      * @param pVisible true/false
      * @return the column
      */
@@ -101,12 +110,14 @@ public interface TethysUITableColumn<T, C, R>
 
     /**
      * Is the column editable?
+     *
      * @return true/false
      */
     boolean isEditable();
 
     /**
      * Set the edit-ability of the column.
+     *
      * @param pEditable true/false
      * @return the column
      */
@@ -130,6 +141,7 @@ public interface TethysUITableColumn<T, C, R>
 
     /**
      * Set the cell-editable tester.
+     *
      * @param pEditable the editable tester
      * @return the column
      */
@@ -137,12 +149,14 @@ public interface TethysUITableColumn<T, C, R>
 
     /**
      * Get the cell-editable tester.
+     *
      * @return the current tester
      */
     Predicate<R> getCellEditable();
 
     /**
      * Set the on-commit consumer.
+     *
      * @param pOnCommit the consumer
      * @return the column
      */
@@ -150,12 +164,14 @@ public interface TethysUITableColumn<T, C, R>
 
     /**
      * do we rePaintColumn on commit?
+     *
      * @return true/false
      */
     boolean doRePaintColumnOnCommit();
 
     /**
      * Set repaintColumn on Commit.
+     *
      * @param pRePaint the flag
      * @return the column
      */
@@ -163,12 +179,14 @@ public interface TethysUITableColumn<T, C, R>
 
     /**
      * get the column id which forces a rePaint.
+     *
      * @return the column id
      */
     C getRePaintColumnId();
 
     /**
      * Set repaintColumnId.
+     *
      * @param pRePaintId the repaint id
      * @return the column
      */
@@ -176,6 +194,7 @@ public interface TethysUITableColumn<T, C, R>
 
     /**
      * OnCell commit callback.
+     *
      * @param <R> the row type
      * @param <T> the value type
      */
@@ -183,20 +202,24 @@ public interface TethysUITableColumn<T, C, R>
     interface TethysUIOnCellCommit<R, T> {
         /**
          * CallBack on a columnCommit.
-         * @param pRow the row that is being committed
+         *
+         * @param pRow   the row that is being committed
          * @param pValue the new value
          * @throws OceanusException on error
          */
         void commitCell(R pRow, T pValue) throws OceanusException;
     }
+
     /**
      * Validated Column Definition.
+     *
      * @param <T> the data type
      * @param <R> the row type
      */
     interface TethysUITableValidatedColumn<T, R> {
         /**
          * Set the validity tester.
+         *
          * @param pValidator the validator
          * @return the column
          */
@@ -205,6 +228,7 @@ public interface TethysUITableColumn<T, C, R>
 
     /**
      * String Column Definition.
+     *
      * @param <C> the column identity
      * @param <R> the row type
      */
@@ -217,6 +241,7 @@ public interface TethysUITableColumn<T, C, R>
 
     /**
      * CharArray Column Definition.
+     *
      * @param <C> the column identity
      * @param <R> the row type
      */
@@ -229,6 +254,7 @@ public interface TethysUITableColumn<T, C, R>
 
     /**
      * Short Column Definition.
+     *
      * @param <C> the column identity
      * @param <R> the row type
      */
@@ -241,6 +267,7 @@ public interface TethysUITableColumn<T, C, R>
 
     /**
      * Integer Column Definition.
+     *
      * @param <C> the column identity
      * @param <R> the row type
      */
@@ -253,6 +280,7 @@ public interface TethysUITableColumn<T, C, R>
 
     /**
      * Long Column Definition.
+     *
      * @param <C> the column identity
      * @param <R> the row type
      */
@@ -265,12 +293,14 @@ public interface TethysUITableColumn<T, C, R>
 
     /**
      * DecimalTableColumn.
+     *
      * @param <R> the row type
      */
     interface TethysUITableDecimalColumn<R>
             extends TethysUITableValidatedColumn<OceanusDecimal, R> {
         /**
          * Set the Number of decimals supplier.
+         *
          * @param pSupplier the supplier
          * @return the column
          */
@@ -279,6 +309,7 @@ public interface TethysUITableColumn<T, C, R>
 
     /**
      * CurrencyTableColumn.
+     *
      * @param <T> the money type
      * @param <R> the row type
      */
@@ -286,6 +317,7 @@ public interface TethysUITableColumn<T, C, R>
             extends TethysUITableValidatedColumn<T, R> {
         /**
          * Set the Deemed Currency supplier.
+         *
          * @param pSupplier the supplier
          * @return the column
          */
@@ -294,6 +326,7 @@ public interface TethysUITableColumn<T, C, R>
 
     /**
      * RawDecimal Column Definition.
+     *
      * @param <C> the column identity
      * @param <R> the row type
      */
@@ -309,6 +342,7 @@ public interface TethysUITableColumn<T, C, R>
 
     /**
      * Money Column Definition.
+     *
      * @param <C> the column identity
      * @param <R> the row type
      */
@@ -324,6 +358,7 @@ public interface TethysUITableColumn<T, C, R>
 
     /**
      * Price Column Definition.
+     *
      * @param <C> the column identity
      * @param <R> the row type
      */
@@ -339,6 +374,7 @@ public interface TethysUITableColumn<T, C, R>
 
     /**
      * Units Column Definition.
+     *
      * @param <C> the column identity
      * @param <R> the row type
      */
@@ -351,6 +387,7 @@ public interface TethysUITableColumn<T, C, R>
 
     /**
      * Rate Column Definition.
+     *
      * @param <C> the column identity
      * @param <R> the row type
      */
@@ -363,6 +400,7 @@ public interface TethysUITableColumn<T, C, R>
 
     /**
      * Ratio Column Definition.
+     *
      * @param <C> the column identity
      * @param <R> the row type
      */
@@ -375,12 +413,14 @@ public interface TethysUITableColumn<T, C, R>
 
     /**
      * IconTableColumn.
+     *
      * @param <T> the data type
      * @param <R> the row type
      */
     interface TethysUITableIconConfig<T, R> {
         /**
          * Set the IconMapSet supplier.
+         *
          * @param pSupplier the supplier
          * @return the configurator
          */
@@ -389,6 +429,7 @@ public interface TethysUITableColumn<T, C, R>
 
     /**
      * IconTableColumn.
+     *
      * @param <T> the data type
      * @param <C> the column identity
      * @param <R> the row type
@@ -402,11 +443,13 @@ public interface TethysUITableColumn<T, C, R>
 
     /**
      * DateTableColumn.
+     *
      * @param <R> the row type
      */
     interface TethysUITableDateConfig<R> {
         /**
          * Set the Date configurator.
+         *
          * @param pConfigurator the configurator
          * @return the configurator
          */
@@ -415,6 +458,7 @@ public interface TethysUITableColumn<T, C, R>
 
     /**
      * DateTableColumn.
+     *
      * @param <C> the column identity
      * @param <R> the row type
      */
@@ -427,12 +471,14 @@ public interface TethysUITableColumn<T, C, R>
 
     /**
      * ScrollTableColumn.
+     *
      * @param <T> the data type
      * @param <R> the row type
      */
     interface TethysUITableScrollConfig<T, R> {
         /**
          * Set the Menu configurator.
+         *
          * @param pConfigurator the configurator
          * @return the configurator
          */
@@ -441,6 +487,7 @@ public interface TethysUITableColumn<T, C, R>
 
     /**
      * ScrollTableColumn.
+     *
      * @param <T> the data type
      * @param <C> the column identity
      * @param <R> the row type
@@ -454,12 +501,14 @@ public interface TethysUITableColumn<T, C, R>
 
     /**
      * ListTableColumn.
+     *
      * @param <T> the data type
      * @param <R> the row type
      */
     interface TethysUITableListConfig<T extends Comparable<? super T>, R> {
         /**
          * Set the selectable supplier.
+         *
          * @param pSelectables the supplier
          * @return the configurator
          */
@@ -468,6 +517,7 @@ public interface TethysUITableColumn<T, C, R>
 
     /**
      * ListTableColumn.
+     *
      * @param <T> the data type
      * @param <C> the column identity
      * @param <R> the row type

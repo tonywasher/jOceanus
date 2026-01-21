@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,15 +13,15 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.tax.uk;
 
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxResource;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -47,6 +47,7 @@ public abstract class MoneyWiseUKInterestScheme
 
     /**
      * Obtain theTaxCredit rate for interest.
+     *
      * @param pTaxYear the taxYear
      * @return the taxCredit rate
      */
@@ -97,6 +98,7 @@ public abstract class MoneyWiseUKInterestScheme
 
     /**
      * Obtain the base rate.
+     *
      * @return the base rate
      */
     protected OceanusRate getBaseRate() {
@@ -202,6 +204,7 @@ public abstract class MoneyWiseUKInterestScheme
 
         /**
          * Constructor.
+         *
          * @param pRate the base rate
          */
         protected MoneyWiseUKInterestBaseRateScheme(final OceanusRate pRate) {
@@ -236,6 +239,7 @@ public abstract class MoneyWiseUKInterestScheme
 
         /**
          * Constructor.
+         *
          * @param pRate the base rate
          */
         protected MoneyWiseUKInterestLoBaseRateScheme(final OceanusRate pRate) {

@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Metis: Java Data Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,8 +13,16 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.metis.http;
+
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.convert.OceanusDataConverter;
+import net.sourceforge.joceanus.metis.exc.MetisDataException;
+import net.sourceforge.joceanus.metis.exc.MetisIOException;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -26,17 +34,9 @@ import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.json.JSONTokener;
-
-import net.sourceforge.joceanus.metis.exc.MetisDataException;
-import net.sourceforge.joceanus.metis.exc.MetisIOException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.convert.OceanusDataConverter;
-
 /**
  * Http client interface.
+ *
  * @author Tony Washer
  */
 public abstract class MetisHTTPDataClient {
@@ -97,6 +97,7 @@ public abstract class MetisHTTPDataClient {
 
     /**
      * Constructor.
+     *
      * @param pBaseAddress the base address for the client.
      */
     protected MetisHTTPDataClient(final String pBaseAddress) {
@@ -105,9 +106,10 @@ public abstract class MetisHTTPDataClient {
 
     /**
      * Constructor.
+     *
      * @param pBaseAddress the base address for the client.
-     * @param pAuthType the authorisation type
-     * @param pAuth the authorisation string
+     * @param pAuthType    the authorisation type
+     * @param pAuth        the authorisation string
      */
     protected MetisHTTPDataClient(final String pBaseAddress,
                                   final MetisHTTPAuthType pAuthType,
@@ -121,6 +123,7 @@ public abstract class MetisHTTPDataClient {
 
     /**
      * Obtain query results from explicit object as JSON object.
+     *
      * @param pURL the URL
      * @return the query results
      * @throws OceanusException on error
@@ -132,6 +135,7 @@ public abstract class MetisHTTPDataClient {
 
     /**
      * Obtain query results from explicit object as JSON array.
+     *
      * @param pURL the URL
      * @return the query results
      * @throws OceanusException on error
@@ -143,7 +147,8 @@ public abstract class MetisHTTPDataClient {
 
     /**
      * Post a request.
-     * @param pHeader the header string
+     *
+     * @param pHeader  the header string
      * @param pRequest the request
      * @return the resulting object
      * @throws OceanusException on error
@@ -160,6 +165,7 @@ public abstract class MetisHTTPDataClient {
 
     /**
      * Obtain query results as JSON object.
+     *
      * @param pHeader the header string
      * @return the query results
      * @throws OceanusException on error
@@ -170,6 +176,7 @@ public abstract class MetisHTTPDataClient {
 
     /**
      * Obtain query results as JSON object.
+     *
      * @param pQuery the query string
      * @return the query results
      * @throws OceanusException on error
@@ -180,8 +187,9 @@ public abstract class MetisHTTPDataClient {
 
     /**
      * Obtain query results as JSON object.
+     *
      * @param pHeader the leading details
-     * @param pQuery the query string
+     * @param pQuery  the query string
      * @return the query results
      * @throws OceanusException on error
      */
@@ -192,7 +200,8 @@ public abstract class MetisHTTPDataClient {
 
     /**
      * Obtain query results as JSON object.
-     * @param pQuery the query string
+     *
+     * @param pQuery   the query string
      * @param pTrailer the trailing details
      * @return the query results
      * @throws OceanusException on error
@@ -204,8 +213,9 @@ public abstract class MetisHTTPDataClient {
 
     /**
      * Obtain query results as JSON object.
-     * @param pHeader the leading details
-     * @param pQuery the query string
+     *
+     * @param pHeader  the leading details
+     * @param pQuery   the query string
      * @param pTrailer the trailing details
      * @return the query results
      * @throws OceanusException on error
@@ -220,6 +230,7 @@ public abstract class MetisHTTPDataClient {
 
     /**
      * Obtain query results as JSON array.
+     *
      * @param pHeader the header string
      * @return the query results
      * @throws OceanusException on error
@@ -230,6 +241,7 @@ public abstract class MetisHTTPDataClient {
 
     /**
      * Obtain query results as JSON array.
+     *
      * @param pQuery the query string
      * @return the query results
      * @throws OceanusException on error
@@ -240,8 +252,9 @@ public abstract class MetisHTTPDataClient {
 
     /**
      * Obtain query results as JSON array.
+     *
      * @param pHeader the leading details
-     * @param pQuery the query string
+     * @param pQuery  the query string
      * @return the query results
      * @throws OceanusException on error
      */
@@ -252,7 +265,8 @@ public abstract class MetisHTTPDataClient {
 
     /**
      * Obtain query results as JSON array.
-     * @param pQuery the query string
+     *
+     * @param pQuery   the query string
      * @param pTrailer the trailing details
      * @return the query results
      * @throws OceanusException on error
@@ -264,8 +278,9 @@ public abstract class MetisHTTPDataClient {
 
     /**
      * Obtain query results as JSON array.
-     * @param pHeader the leading details
-     * @param pQuery the query string
+     *
+     * @param pHeader  the leading details
+     * @param pQuery   the query string
      * @param pTrailer the trailing details
      * @return the query results
      * @throws OceanusException on error
@@ -280,8 +295,9 @@ public abstract class MetisHTTPDataClient {
 
     /**
      * Obtain query results as JSON object.
-     * @param pHeader the leading details
-     * @param pQuery the query string
+     *
+     * @param pHeader  the leading details
+     * @param pQuery   the query string
      * @param pTrailer the trailing details
      * @return the query results
      * @throws OceanusException on error
@@ -298,6 +314,7 @@ public abstract class MetisHTTPDataClient {
 
     /**
      * Obtain query results as JSON object.
+     *
      * @param pURL the location to be queried
      * @return the query results
      * @throws OceanusException on error
@@ -331,15 +348,16 @@ public abstract class MetisHTTPDataClient {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             return performJSONQuery(pURL);
-        } catch (IOException  e) {
+        } catch (IOException e) {
             throw new MetisIOException(HTTPERROR_QUERY, e);
         }
     }
 
     /**
      * Build the requested URL.
-     * @param pHeader the leading details
-     * @param pQuery the query string
+     *
+     * @param pHeader  the leading details
+     * @param pQuery   the query string
      * @param pTrailer the trailing details
      * @return the requested URL
      * @throws OceanusException on error
@@ -374,7 +392,8 @@ public abstract class MetisHTTPDataClient {
 
     /**
      * Obtain query results as JSON object.
-     * @param pURL the location to be posted to
+     *
+     * @param pURL     the location to be posted to
      * @param pRequest the details of the post
      * @return the resulting object
      * @throws OceanusException on error
@@ -413,7 +432,7 @@ public abstract class MetisHTTPDataClient {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             return performJSONPost(pURL, pRequest);
-        } catch (IOException  e) {
+        } catch (IOException e) {
             throw new MetisIOException(HTTPERROR_QUERY, e);
         }
     }
@@ -439,6 +458,7 @@ public abstract class MetisHTTPDataClient {
 
         /**
          * Build authString.
+         *
          * @param pSecret the secret
          * @return the authString
          */

@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,17 +13,17 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.atlas.data.analysis.base;
 
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataMap;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataObjectFormat;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -32,6 +32,7 @@ import java.util.Map.Entry;
 
 /**
  * History for a bucket.
+ *
  * @param <T> the values
  * @param <E> the enum class
  */
@@ -59,6 +60,7 @@ public class MoneyWiseXAnalysisHistory<T extends MoneyWiseXAnalysisValues<T, E>,
 
     /**
      * Constructor.
+     *
      * @param pValues the initial values
      */
     public MoneyWiseXAnalysisHistory(final T pValues) {
@@ -75,6 +77,7 @@ public class MoneyWiseXAnalysisHistory<T extends MoneyWiseXAnalysisValues<T, E>,
 
     /**
      * Constructor.
+     *
      * @param pHistory the base history
      */
     public MoneyWiseXAnalysisHistory(final MoneyWiseXAnalysisHistory<T, E> pHistory) {
@@ -90,8 +93,9 @@ public class MoneyWiseXAnalysisHistory<T extends MoneyWiseXAnalysisValues<T, E>,
 
     /**
      * Constructor.
+     *
      * @param pHistory the base history
-     * @param pDate the date for history cut-off
+     * @param pDate    the date for history cut-off
      */
     public MoneyWiseXAnalysisHistory(final MoneyWiseXAnalysisHistory<T, E> pHistory,
                                      final OceanusDate pDate) {
@@ -137,8 +141,9 @@ public class MoneyWiseXAnalysisHistory<T extends MoneyWiseXAnalysisValues<T, E>,
 
     /**
      * Constructor.
+     *
      * @param pHistory the base history
-     * @param pRange the date range for history cut-off
+     * @param pRange   the date range for history cut-off
      */
     public MoneyWiseXAnalysisHistory(final MoneyWiseXAnalysisHistory<T, E> pHistory,
                                      final OceanusDateRange pRange) {
@@ -223,6 +228,7 @@ public class MoneyWiseXAnalysisHistory<T extends MoneyWiseXAnalysisValues<T, E>,
 
     /**
      * Obtain the entry set iterator.
+     *
      * @return the iterator
      */
     private Iterator<Entry<Integer, MoneyWiseXAnalysisSnapShot<T, E>>> entryIterator() {
@@ -231,6 +237,7 @@ public class MoneyWiseXAnalysisHistory<T extends MoneyWiseXAnalysisValues<T, E>,
 
     /**
      * Are there any entries in the map?
+     *
      * @return true/false
      */
     public boolean isIdle() {
@@ -239,6 +246,7 @@ public class MoneyWiseXAnalysisHistory<T extends MoneyWiseXAnalysisValues<T, E>,
 
     /**
      * Obtain the values.
+     *
      * @return the values
      */
     public T getValues() {
@@ -247,6 +255,7 @@ public class MoneyWiseXAnalysisHistory<T extends MoneyWiseXAnalysisValues<T, E>,
 
     /**
      * Obtain the last values.
+     *
      * @return the last values
      */
     public T getLastValues() {
@@ -255,6 +264,7 @@ public class MoneyWiseXAnalysisHistory<T extends MoneyWiseXAnalysisValues<T, E>,
 
     /**
      * Obtain the base values.
+     *
      * @return the base values
      */
     public T getBaseValues() {
@@ -263,7 +273,8 @@ public class MoneyWiseXAnalysisHistory<T extends MoneyWiseXAnalysisValues<T, E>,
 
     /**
      * Register the event.
-     * @param pEvent the event to register.
+     *
+     * @param pEvent  the event to register.
      * @param pValues the values
      */
     public void registerEvent(final MoneyWiseXAnalysisEvent pEvent,
@@ -279,6 +290,7 @@ public class MoneyWiseXAnalysisHistory<T extends MoneyWiseXAnalysisValues<T, E>,
 
     /**
      * Obtain values for event.
+     *
      * @param pEvent the event
      * @return the values (or null)
      */
@@ -292,6 +304,7 @@ public class MoneyWiseXAnalysisHistory<T extends MoneyWiseXAnalysisValues<T, E>,
 
     /**
      * Obtain previous values for event.
+     *
      * @param pEvent the event
      * @return the values (or null)
      */
@@ -305,8 +318,9 @@ public class MoneyWiseXAnalysisHistory<T extends MoneyWiseXAnalysisValues<T, E>,
 
     /**
      * Obtain delta for event.
+     *
      * @param pEvent the event
-     * @param pAttr the attribute
+     * @param pAttr  the attribute
      * @return the delta (or null)
      */
     public OceanusDecimal getDeltaValue(final MoneyWiseXAnalysisEvent pEvent,
@@ -320,8 +334,9 @@ public class MoneyWiseXAnalysisHistory<T extends MoneyWiseXAnalysisValues<T, E>,
 
     /**
      * Obtain money delta for event.
+     *
      * @param pEvent the event
-     * @param pAttr the attribute
+     * @param pAttr  the attribute
      * @return the delta (or null)
      */
     public OceanusMoney getDeltaMoneyValue(final MoneyWiseXAnalysisEvent pEvent,
@@ -335,8 +350,9 @@ public class MoneyWiseXAnalysisHistory<T extends MoneyWiseXAnalysisValues<T, E>,
 
     /**
      * Obtain units delta for event.
+     *
      * @param pEvent the event
-     * @param pAttr the attribute
+     * @param pAttr  the attribute
      * @return the delta (or null)
      */
     public OceanusUnits getDeltaUnitsValue(final MoneyWiseXAnalysisEvent pEvent,

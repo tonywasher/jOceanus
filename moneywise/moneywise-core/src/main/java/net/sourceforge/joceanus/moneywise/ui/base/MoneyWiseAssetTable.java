@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,10 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.ui.base;
 
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.list.MetisListKey;
 import net.sourceforge.joceanus.metis.ui.MetisAction;
@@ -35,7 +36,6 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.moneywise.ui.MoneyWiseIcon;
 import net.sourceforge.joceanus.moneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
@@ -53,6 +53,7 @@ import java.util.Map;
 
 /**
  * MoneyWise Asset Table.
+ *
  * @param <T> the Asset Data type
  */
 public abstract class MoneyWiseAssetTable<T extends MoneyWiseAssetBase>
@@ -84,10 +85,11 @@ public abstract class MoneyWiseAssetTable<T extends MoneyWiseAssetBase>
 
     /**
      * Constructor.
-     * @param pView      the view
-     * @param pEditSet   the editSet
-     * @param pError     the error panel
-     * @param pDataType  the dataType
+     *
+     * @param pView     the view
+     * @param pEditSet  the editSet
+     * @param pError    the error panel
+     * @param pDataType the dataType
      */
     protected MoneyWiseAssetTable(final MoneyWiseView pView,
                                   final PrometheusEditSet pEditSet,
@@ -150,9 +152,10 @@ public abstract class MoneyWiseAssetTable<T extends MoneyWiseAssetBase>
 
     /**
      * finish the table.
-     * @param pParent create parent column
+     *
+     * @param pParent   create parent column
      * @param pCurrency create currency column
-     * @param pEvent create event column
+     * @param pEvent    create event column
      */
     protected void finishTable(final boolean pParent,
                                final boolean pCurrency,
@@ -217,6 +220,7 @@ public abstract class MoneyWiseAssetTable<T extends MoneyWiseAssetBase>
 
     /**
      * Obtain the filter panel.
+     *
      * @return the filter panel
      */
     public TethysUIBoxPaneManager getFilterPanel() {
@@ -225,6 +229,7 @@ public abstract class MoneyWiseAssetTable<T extends MoneyWiseAssetBase>
 
     /**
      * Declare the closed column.
+     *
      * @param pColumn the column
      */
     protected void declareClosedColumn(final TethysUITableColumn<Boolean, MetisDataFieldId, T> pColumn) {
@@ -233,6 +238,7 @@ public abstract class MoneyWiseAssetTable<T extends MoneyWiseAssetBase>
 
     /**
      * Determine closed state.
+     *
      * @param pAsset the asset
      * @return the state
      */
@@ -242,6 +248,7 @@ public abstract class MoneyWiseAssetTable<T extends MoneyWiseAssetBase>
 
     /**
      * Obtain the date of the latest transaction.
+     *
      * @param pAsset the asset
      * @return the date or null
      */
@@ -252,6 +259,7 @@ public abstract class MoneyWiseAssetTable<T extends MoneyWiseAssetBase>
 
     /**
      * Set the showAll indicator.
+     *
      * @param pShowAll show closed accounts?
      */
     public void setShowAll(final boolean pShowAll) {
@@ -264,6 +272,7 @@ public abstract class MoneyWiseAssetTable<T extends MoneyWiseAssetBase>
 
     /**
      * check whether we need to enable showAll.
+     *
      * @param pAsset the asset to check
      */
     protected void checkShowAll(final T pAsset) {
@@ -278,16 +287,18 @@ public abstract class MoneyWiseAssetTable<T extends MoneyWiseAssetBase>
 
     /**
      * Build the Category list for the item.
+     *
      * @param pAsset the item
-     * @param pMenu the menu to build
+     * @param pMenu  the menu to build
      */
     protected abstract void buildCategoryMenu(T pAsset,
                                               TethysUIScrollMenu<MoneyWiseAssetCategory> pMenu);
 
     /**
      * Build the Parent list for the item.
+     *
      * @param pAsset the item
-     * @param pMenu the menu to build
+     * @param pMenu  the menu to build
      */
     protected void buildParentMenu(final T pAsset,
                                    final TethysUIScrollMenu<MoneyWisePayee> pMenu) {
@@ -296,8 +307,9 @@ public abstract class MoneyWiseAssetTable<T extends MoneyWiseAssetBase>
 
     /**
      * Build the currency list for the item.
+     *
      * @param pAsset the item
-     * @param pMenu the menu to build
+     * @param pMenu  the menu to build
      */
     protected void buildCurrencyMenu(final T pAsset,
                                      final TethysUIScrollMenu<MoneyWiseCurrency> pMenu) {
@@ -322,6 +334,7 @@ public abstract class MoneyWiseAssetTable<T extends MoneyWiseAssetBase>
 
     /**
      * Obtain a new asset nameSpaceIterator.
+     *
      * @return the iterator
      */
     protected Iterator<PrometheusDataItem> assetNameSpaceIterator() {
@@ -335,8 +348,9 @@ public abstract class MoneyWiseAssetTable<T extends MoneyWiseAssetBase>
 
     /**
      * is Valid data?
+     *
      * @param pNewData the new data
-     * @param pClazz the class
+     * @param pClazz   the class
      * @return error message or null
      */
     public String isValidData(final char[] pNewData,
@@ -352,8 +366,9 @@ public abstract class MoneyWiseAssetTable<T extends MoneyWiseAssetBase>
 
     /**
      * is Valid symbol?
+     *
      * @param pNewSymbol the new symbol
-     * @param pRow the row
+     * @param pRow       the row
      * @return error message or null
      */
     public String isValidSymbol(final String pNewSymbol,

@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,17 +13,17 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.quicken.file;
 
-import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
-import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisAccountAttr;
-import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisPortfolioBucket;
-import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisPortfolioBucket.MoneyWiseAnalysisPortfolioBucketList;
-import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisPortfolioCashBucket;
-import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisSecurityAttr;
-import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisSecurityBucket;
-import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisSecurityValues;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDeposit;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee;
@@ -34,16 +34,16 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice.Mone
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisPortfolioBucket;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisPortfolioBucket.MoneyWiseAnalysisPortfolioBucketList;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisPortfolioCashBucket;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisSecurityBucket;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisAccountAttr;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisSecurityAttr;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisSecurityValues;
 import net.sourceforge.joceanus.moneywise.quicken.definitions.MoneyWiseQActionType;
 import net.sourceforge.joceanus.moneywise.quicken.definitions.MoneyWiseQIFType;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
-import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
-import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 
 import java.util.Iterator;
 import java.util.List;
@@ -84,8 +84,9 @@ public class MoneyWiseQIFPortfolioBuilder {
 
     /**
      * Constructor.
-     * @param pBuilder the builder
-     * @param pData the data
+     *
+     * @param pBuilder  the builder
+     * @param pData     the data
      * @param pAnalysis the analysis
      */
     protected MoneyWiseQIFPortfolioBuilder(final MoneyWiseQIFBuilder pBuilder,
@@ -101,8 +102,9 @@ public class MoneyWiseQIFPortfolioBuilder {
 
     /**
      * Obtain latest price for a security.
+     *
      * @param pSecurity the security
-     * @param pDate the date
+     * @param pDate     the date
      * @return the price
      */
     private OceanusPrice getPriceForDate(final MoneyWiseSecurity pSecurity,
@@ -114,8 +116,9 @@ public class MoneyWiseQIFPortfolioBuilder {
 
     /**
      * Obtain resulting units for a security holding event.
+     *
      * @param pHolding the security holding
-     * @param pTrans the transaction
+     * @param pTrans   the transaction
      * @return the units
      */
     private OceanusUnits getUnitsForHoldingEvent(final MoneyWiseSecurityHolding pHolding,
@@ -131,8 +134,9 @@ public class MoneyWiseQIFPortfolioBuilder {
 
     /**
      * Obtain base units for a security holding event.
+     *
      * @param pHolding the security holding
-     * @param pTrans the transaction
+     * @param pTrans   the transaction
      * @return the units
      */
     protected OceanusUnits getBaseUnitsForHolding(final MoneyWiseSecurityHolding pHolding,
@@ -160,8 +164,9 @@ public class MoneyWiseQIFPortfolioBuilder {
 
     /**
      * Obtain delta cost for a security holding.
+     *
      * @param pHolding the security holding
-     * @param pTrans the transaction
+     * @param pTrans   the transaction
      * @return the delta cost
      */
     private OceanusMoney getDeltaCostForHolding(final MoneyWiseSecurityHolding pHolding,
@@ -176,8 +181,9 @@ public class MoneyWiseQIFPortfolioBuilder {
 
     /**
      * Obtain portfolio cash value.
+     *
      * @param pPortfolio the portfolio
-     * @param pTrans the transaction
+     * @param pTrans     the transaction
      * @return the cash value (or null if none)
      */
     private OceanusMoney getPortfolioCashValue(final MoneyWisePortfolio pPortfolio,
@@ -197,9 +203,10 @@ public class MoneyWiseQIFPortfolioBuilder {
 
     /**
      * Process income to a security.
-     * @param pPayee the payee
+     *
+     * @param pPayee   the payee
      * @param pHolding the security holding
-     * @param pTrans the transaction
+     * @param pTrans   the transaction
      */
     protected void processIncomeToSecurity(final MoneyWisePayee pPayee,
                                            final MoneyWiseSecurityHolding pHolding,
@@ -271,9 +278,10 @@ public class MoneyWiseQIFPortfolioBuilder {
 
     /**
      * Process expense from a security.
-     * @param pPayee the payee
+     *
+     * @param pPayee   the payee
      * @param pHolding the security holding
-     * @param pTrans the transaction
+     * @param pTrans   the transaction
      */
     protected void processExpenseFromSecurity(final MoneyWisePayee pPayee,
                                               final MoneyWiseSecurityHolding pHolding,
@@ -350,9 +358,10 @@ public class MoneyWiseQIFPortfolioBuilder {
      * <p>
      * Note that the source cannot be a Security, since that case is handled by
      * {@link #processTransferFromSecurity}
+     *
      * @param pHolding the security holding
-     * @param pDebit the debit account
-     * @param pTrans the transaction
+     * @param pDebit   the debit account
+     * @param pTrans   the transaction
      */
     protected void processTransferToSecurity(final MoneyWiseSecurityHolding pHolding,
                                              final MoneyWiseTransAsset pDebit,
@@ -454,9 +463,10 @@ public class MoneyWiseQIFPortfolioBuilder {
 
     /**
      * Process transfer between securities.
+     *
      * @param pSource the source security holding
      * @param pTarget the target security holding
-     * @param pTrans the transaction
+     * @param pTrans  the transaction
      */
     protected void processTransferBetweenSecurities(final MoneyWiseSecurityHolding pSource,
                                                     final MoneyWiseSecurityHolding pTarget,
@@ -494,9 +504,10 @@ public class MoneyWiseQIFPortfolioBuilder {
 
     /**
      * Process transfer from a security.
+     *
      * @param pHolding the security holding
-     * @param pCredit the credit account
-     * @param pTrans the transaction
+     * @param pCredit  the credit account
+     * @param pTrans   the transaction
      */
     protected void processTransferFromSecurity(final MoneyWiseSecurityHolding pHolding,
                                                final MoneyWiseTransAsset pCredit,
@@ -519,8 +530,9 @@ public class MoneyWiseQIFPortfolioBuilder {
 
     /**
      * Process Stock Split.
+     *
      * @param pHolding the security holding
-     * @param pTrans the transaction
+     * @param pTrans   the transaction
      */
     private void processStockSplit(final MoneyWiseSecurityHolding pHolding,
                                    final MoneyWiseTransaction pTrans) {
@@ -557,8 +569,9 @@ public class MoneyWiseQIFPortfolioBuilder {
 
     /**
      * Process stock adjustment.
+     *
      * @param pHolding the security holding
-     * @param pTrans the transaction
+     * @param pTrans   the transaction
      */
     private void processSecurityAdjust(final MoneyWiseSecurityHolding pHolding,
                                        final MoneyWiseTransaction pTrans) {
@@ -591,9 +604,10 @@ public class MoneyWiseQIFPortfolioBuilder {
 
     /**
      * Process stock dividend.
+     *
      * @param pHolding the security holding
-     * @param pCredit the credit account
-     * @param pTrans the transaction
+     * @param pCredit  the credit account
+     * @param pTrans   the transaction
      */
     private void processStockDividend(final MoneyWiseSecurityHolding pHolding,
                                       final MoneyWiseTransAsset pCredit,
@@ -729,8 +743,9 @@ public class MoneyWiseQIFPortfolioBuilder {
 
     /**
      * Process reinvested dividend.
+     *
      * @param pHolding the security holding
-     * @param pTrans the transaction
+     * @param pTrans   the transaction
      */
     private void processReinvestDividend(final MoneyWiseSecurityHolding pHolding,
                                          final MoneyWiseTransaction pTrans) {
@@ -847,9 +862,10 @@ public class MoneyWiseQIFPortfolioBuilder {
 
     /**
      * Process stock deMerger.
+     *
      * @param pHolding the security holding
-     * @param pCredit the credit account
-     * @param pTrans the transaction
+     * @param pCredit  the credit account
+     * @param pTrans   the transaction
      */
     private void processStockDeMerger(final MoneyWiseSecurityHolding pHolding,
                                       final MoneyWiseSecurityHolding pCredit,
@@ -935,9 +951,10 @@ public class MoneyWiseQIFPortfolioBuilder {
 
     /**
      * Process security Exchange/TakeOver.
+     *
      * @param pSource the source security
      * @param pTarget the target security
-     * @param pTrans the transaction
+     * @param pTrans  the transaction
      */
     private void processStockTakeOver(final MoneyWiseSecurityHolding pSource,
                                       final MoneyWiseSecurityHolding pTarget,
@@ -1024,9 +1041,10 @@ public class MoneyWiseQIFPortfolioBuilder {
 
     /**
      * Process standard transfer out from a security.
+     *
      * @param pHolding the security holding
-     * @param pCredit the credit account
-     * @param pTrans the transaction
+     * @param pCredit  the credit account
+     * @param pTrans   the transaction
      */
     private void processTransferOut(final MoneyWiseSecurityHolding pHolding,
                                     final MoneyWiseTransAsset pCredit,
@@ -1132,9 +1150,10 @@ public class MoneyWiseQIFPortfolioBuilder {
 
     /**
      * Process exchange between securities.
+     *
      * @param pSource the source security holding
      * @param pTarget the target security holding
-     * @param pTrans the transaction
+     * @param pTrans  the transaction
      */
     private void processSecurityExchange(final MoneyWiseSecurityHolding pSource,
                                          final MoneyWiseSecurityHolding pTarget,
@@ -1182,9 +1201,10 @@ public class MoneyWiseQIFPortfolioBuilder {
 
     /**
      * Process transfer between portfolios.
+     *
      * @param pSource the source portfolio
      * @param pTarget the target portfolio
-     * @param pTrans the transaction
+     * @param pTrans  the transaction
      */
     protected void processTransferBetweenPortfolios(final MoneyWisePortfolio pSource,
                                                     final MoneyWisePortfolio pTarget,
@@ -1209,9 +1229,10 @@ public class MoneyWiseQIFPortfolioBuilder {
 
     /**
      * Process PortfolioXfer between portfolios.
+     *
      * @param pSource the source portfolio
      * @param pTarget the target portfolio
-     * @param pTrans the transaction
+     * @param pTrans  the transaction
      */
     protected void processPortfolioXferBetweenPortfolios(final MoneyWisePortfolio pSource,
                                                          final MoneyWisePortfolio pTarget,
@@ -1261,9 +1282,10 @@ public class MoneyWiseQIFPortfolioBuilder {
 
     /**
      * Process PortfolioXfer for Holding.
+     *
      * @param pSource the source holding
      * @param pTarget the target portfolio
-     * @param pTrans the transaction
+     * @param pTrans  the transaction
      */
     protected void processPortfolioXferForHolding(final MoneyWiseSecurityHolding pSource,
                                                   final MoneyWisePortfolio pTarget,
@@ -1352,9 +1374,10 @@ public class MoneyWiseQIFPortfolioBuilder {
 
     /**
      * Process Cash Transfer between portfolios.
+     *
      * @param pSource the source portfolio
      * @param pTarget the target portfolio
-     * @param pTrans the transaction
+     * @param pTrans  the transaction
      */
     protected void processCashTransferBetweenPortfolios(final MoneyWisePortfolio pSource,
                                                         final MoneyWisePortfolio pTarget,
@@ -1388,9 +1411,10 @@ public class MoneyWiseQIFPortfolioBuilder {
 
     /**
      * Process transfer to a portfolio.
+     *
      * @param pPortfolio the portfolio
-     * @param pDebit the source account
-     * @param pTrans the transaction
+     * @param pDebit     the source account
+     * @param pTrans     the transaction
      */
     protected void processTransferToPortfolio(final MoneyWisePortfolio pPortfolio,
                                               final MoneyWiseTransAsset pDebit,
@@ -1408,9 +1432,10 @@ public class MoneyWiseQIFPortfolioBuilder {
 
     /**
      * Process Cash Transfer to portfolio.
+     *
      * @param pPortfolio the target portfolio
-     * @param pSource the source account
-     * @param pTrans the transaction
+     * @param pSource    the source account
+     * @param pTrans     the transaction
      */
     protected void processCashTransferToPortfolio(final MoneyWisePortfolio pPortfolio,
                                                   final MoneyWiseTransAsset pSource,
@@ -1446,9 +1471,10 @@ public class MoneyWiseQIFPortfolioBuilder {
 
     /**
      * Process transfer from a portfolio.
+     *
      * @param pPortfolio the portfolio
-     * @param pCredit the target account
-     * @param pTrans the transaction
+     * @param pCredit    the target account
+     * @param pTrans     the transaction
      */
     protected void processTransferFromPortfolio(final MoneyWisePortfolio pPortfolio,
                                                 final MoneyWiseTransAsset pCredit,
@@ -1466,9 +1492,10 @@ public class MoneyWiseQIFPortfolioBuilder {
 
     /**
      * Process Cash Transfer from portfolio.
+     *
      * @param pPortfolio the source portfolio
-     * @param pTarget the target account
-     * @param pTrans the transaction
+     * @param pTarget    the target account
+     * @param pTrans     the transaction
      */
     protected void processCashTransferFromPortfolio(final MoneyWisePortfolio pPortfolio,
                                                     final MoneyWiseTransAsset pTarget,
@@ -1502,9 +1529,10 @@ public class MoneyWiseQIFPortfolioBuilder {
 
     /**
      * Process expense from a portfolio.
-     * @param pCredit the target payee
+     *
+     * @param pCredit    the target payee
      * @param pPortfolio the portfolio
-     * @param pTrans the transaction
+     * @param pTrans     the transaction
      */
     protected void processExpenseFromPortfolio(final MoneyWisePayee pCredit,
                                                final MoneyWisePortfolio pPortfolio,
@@ -1528,9 +1556,10 @@ public class MoneyWiseQIFPortfolioBuilder {
 
     /**
      * Process income to a portfolio.
-     * @param pDebit the source payee
+     *
+     * @param pDebit     the source payee
      * @param pPortfolio the portfolio
-     * @param pTrans the transaction
+     * @param pTrans     the transaction
      */
     protected void processIncomeToPortfolio(final MoneyWisePayee pDebit,
                                             final MoneyWisePortfolio pPortfolio,

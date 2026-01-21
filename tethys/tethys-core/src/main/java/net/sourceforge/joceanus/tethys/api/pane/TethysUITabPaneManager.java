@@ -1,22 +1,22 @@
-/*******************************************************************************
+/*
  * Tethys: GUI Utilities
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package net.sourceforge.joceanus.tethys.api.pane;
 
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
 
@@ -27,12 +27,14 @@ public interface TethysUITabPaneManager
         extends OceanusEventProvider<TethysUIEvent>, TethysUIComponent {
     /**
      * Obtain selected tab.
+     *
      * @return the selected tab
      */
     TethysUITabItem getSelectedTab();
 
     /**
      * find Item by name.
+     *
      * @param pName the name of the item
      * @return the item (or null)
      */
@@ -40,6 +42,7 @@ public interface TethysUITabPaneManager
 
     /**
      * find visible Item by index.
+     *
      * @param pIndex the index of the item
      * @return the item (or null)
      */
@@ -47,7 +50,8 @@ public interface TethysUITabPaneManager
 
     /**
      * enable Item by name.
-     * @param pName the name of the item
+     *
+     * @param pName    the name of the item
      * @param pEnabled the enabled state
      */
     void enableItemByName(String pName,
@@ -55,6 +59,7 @@ public interface TethysUITabPaneManager
 
     /**
      * Add tab item.
+     *
      * @param pName the name
      * @param pItem the item
      * @return the new tab item
@@ -68,42 +73,49 @@ public interface TethysUITabPaneManager
     interface TethysUITabItem {
         /**
          * Obtain the name.
+         *
          * @return the name
          */
         String getName();
 
         /**
          * Obtain the name.
+         *
          * @return the name
          */
         Integer getId();
 
         /**
          * Obtain the pane.
+         *
          * @return the pane
          */
         TethysUITabPaneManager getPane();
 
         /**
          * Is the item visible?
+         *
          * @return true/false
          */
         boolean isVisible();
 
         /**
          * Is the item enabled?
+         *
          * @return true/false
          */
         boolean isEnabled();
 
         /**
          * Set Enabled status.
+         *
          * @param pEnabled true/false
          */
         void setEnabled(boolean pEnabled);
 
         /**
          * Set Visible.
+         *
          * @param pVisible true/false
          */
         void setVisible(boolean pVisible);

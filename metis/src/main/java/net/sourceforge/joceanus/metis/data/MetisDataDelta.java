@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Metis: Java Data Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,17 +13,17 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.metis.data;
 
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataObjectFormat;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 
 /**
  * Delta class.
  */
 public class MetisDataDelta
-    implements MetisDataObjectFormat {
+        implements MetisDataObjectFormat {
     /**
      * The object itself.
      */
@@ -36,7 +36,8 @@ public class MetisDataDelta
 
     /**
      * Constructor.
-     * @param pObject the object
+     *
+     * @param pObject     the object
      * @param pDifference the difference
      */
     public MetisDataDelta(final Object pObject,
@@ -47,6 +48,7 @@ public class MetisDataDelta
 
     /**
      * Obtain the object.
+     *
      * @return the object
      */
     public Object getObject() {
@@ -55,6 +57,7 @@ public class MetisDataDelta
 
     /**
      * Obtain the difference.
+     *
      * @return the difference
      */
     public MetisDataDifference getDifference() {

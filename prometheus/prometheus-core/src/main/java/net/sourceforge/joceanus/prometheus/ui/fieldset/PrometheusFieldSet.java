@@ -1,6 +1,6 @@
-/* *****************************************************************************
+/*
  * Prometheus: Application Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,8 +13,20 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.prometheus.ui.fieldset;
+
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.prometheus.ui.fieldset.PrometheusFieldSetTableTab.PrometheusFieldSetTable;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
+import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.tethys.api.field.TethysUIDataEditField;
+import net.sourceforge.joceanus.tethys.api.field.TethysUIDataEditField.TethysUICharArrayTextAreaField;
+import net.sourceforge.joceanus.tethys.api.pane.TethysUIGridPaneManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,20 +36,9 @@ import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.prometheus.ui.fieldset.PrometheusFieldSetTableTab.PrometheusFieldSetTable;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
-import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
-import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
-import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
-import net.sourceforge.joceanus.tethys.api.field.TethysUIDataEditField;
-import net.sourceforge.joceanus.tethys.api.field.TethysUIDataEditField.TethysUICharArrayTextAreaField;
-import net.sourceforge.joceanus.tethys.api.pane.TethysUIGridPaneManager;
-
 /**
  * FieldSet.
+ *
  * @param <T> the item type
  */
 public class PrometheusFieldSet<T>
@@ -99,6 +100,7 @@ public class PrometheusFieldSet<T>
 
     /**
      * Constructor.
+     *
      * @param pFactory the gui factory
      */
     public PrometheusFieldSet(final TethysUIFactory<?> pFactory) {
@@ -124,6 +126,7 @@ public class PrometheusFieldSet<T>
 
     /**
      * Obtain the component.
+     *
      * @return the component
      */
     public TethysUIComponent getComponent() {
@@ -137,6 +140,7 @@ public class PrometheusFieldSet<T>
 
     /**
      * Switch to subsidiary panel.
+     *
      * @param pName the name of the tab.
      */
     public void newPanel(final String pName) {
@@ -156,9 +160,10 @@ public class PrometheusFieldSet<T>
 
     /**
      * Add a textArea tab.
-     * @param pName the name of the tab.
-     * @param pFieldId the fieldId
-     * @param pField the edit field
+     *
+     * @param pName         the name of the tab.
+     * @param pFieldId      the fieldId
+     * @param pField        the edit field
      * @param pValueFactory the valueFactory
      */
     public void newTextArea(final String pName,
@@ -184,7 +189,8 @@ public class PrometheusFieldSet<T>
 
     /**
      * Add a table tab.
-     * @param pName the name of the tab.
+     *
+     * @param pName  the name of the tab.
      * @param pTable the table
      */
     public void newTable(final String pName,
@@ -205,8 +211,9 @@ public class PrometheusFieldSet<T>
 
     /**
      * Add field to current panel.
-     * @param pFieldId the fieldId
-     * @param pField the edit field
+     *
+     * @param pFieldId      the fieldId
+     * @param pField        the edit field
      * @param pValueFactory the valueFactory
      */
     public void addField(final MetisDataFieldId pFieldId,
@@ -217,6 +224,7 @@ public class PrometheusFieldSet<T>
 
     /**
      * Set the changed predicate.
+     *
      * @param pChanged the changed predicate
      */
     public void setChanged(final BiPredicate<T, MetisDataFieldId> pChanged) {
@@ -225,7 +233,8 @@ public class PrometheusFieldSet<T>
 
     /**
      * Is the cell changed?
-     * @param pItem the item
+     *
+     * @param pItem  the item
      * @param pField the field id
      * @return true/false
      */
@@ -237,6 +246,7 @@ public class PrometheusFieldSet<T>
 
     /**
      * Set editable item.
+     *
      * @param isEditable true/false
      */
     public void setEditable(final boolean isEditable) {
@@ -258,6 +268,7 @@ public class PrometheusFieldSet<T>
 
     /**
      * Set item.
+     *
      * @param pItem the item.
      */
     public void setItem(final T pItem) {
@@ -280,8 +291,9 @@ public class PrometheusFieldSet<T>
 
     /**
      * Register a field.
+     *
      * @param pFieldId the field.
-     * @param pPanel the panel.
+     * @param pPanel   the panel.
      */
     void registerField(final MetisDataFieldId pFieldId,
                        final PrometheusFieldSetPanel<T> pPanel) {
@@ -290,6 +302,7 @@ public class PrometheusFieldSet<T>
 
     /**
      * Set field visibility.
+     *
      * @param pFieldId the field.
      * @param pVisible is visible true/false?
      */
@@ -313,7 +326,8 @@ public class PrometheusFieldSet<T>
 
     /**
      * Set field editability.
-     * @param pFieldId the fieldId.
+     *
+     * @param pFieldId  the fieldId.
      * @param pEditable is editable true/false?
      */
     public void setFieldEditable(final MetisDataFieldId pFieldId,
@@ -325,7 +339,8 @@ public class PrometheusFieldSet<T>
 
     /**
      * Notify listeners of new data.
-     * @param pFieldId the fieldId.
+     *
+     * @param pFieldId  the fieldId.
      * @param pNewValue the new value
      */
     void newData(final MetisDataFieldId pFieldId,
@@ -342,7 +357,8 @@ public class PrometheusFieldSet<T>
 
     /**
      * Set preferred width and height.
-     * @param pWidth the width.
+     *
+     * @param pWidth  the width.
      * @param pHeight the height
      */
     public void setPreferredWidthAndHeight(final int pWidth,
@@ -371,6 +387,7 @@ public class PrometheusFieldSet<T>
 
     /**
      * Set reporter.
+     *
      * @param pReporter the reporter
      */
     public void setReporter(final Consumer<String> pReporter) {

@@ -1,28 +1,28 @@
-/*******************************************************************************
+/*
  * Themis: Java Project Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package net.sourceforge.joceanus.themis.lethe.analysis;
 
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
-import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
+import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
+import net.sourceforge.joceanus.themis.exc.ThemisDataException;
 import net.sourceforge.joceanus.themis.lethe.analysis.ThemisAnalysisFile.ThemisAnalysisObject;
 import net.sourceforge.joceanus.themis.lethe.analysis.ThemisAnalysisGeneric.ThemisAnalysisGenericVar;
 import net.sourceforge.joceanus.themis.lethe.analysis.ThemisAnalysisImports.ThemisAnalysisImport;
-import net.sourceforge.joceanus.themis.exc.ThemisDataException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -115,6 +115,7 @@ public class ThemisAnalysisDataMap {
 
     /**
      * Nested constructor.
+     *
      * @param pParent the parent dataMap
      */
     ThemisAnalysisDataMap(final ThemisAnalysisDataMap pParent) {
@@ -130,7 +131,8 @@ public class ThemisAnalysisDataMap {
 
     /**
      * lookUp thedataType.
-     * @param pToken the token.
+     *
+     * @param pToken  the token.
      * @param pMethod is this a method call/def?
      * @return the dataType (or null)
      */
@@ -163,6 +165,7 @@ public class ThemisAnalysisDataMap {
 
     /**
      * lookUp dataType.
+     *
      * @param pToken the token.
      * @return the dataType (or null)
      */
@@ -175,12 +178,13 @@ public class ThemisAnalysisDataMap {
 
         /* Pass call on */
         return theParent == null
-               ? BASETYPES.get(pToken)
-               : theParent.lookUpTheDataType(pToken);
+                ? BASETYPES.get(pToken)
+                : theParent.lookUpTheDataType(pToken);
     }
 
     /**
      * Record Object.
+     *
      * @param pObject the object.
      * @throws OceanusException on error
      */
@@ -222,6 +226,7 @@ public class ThemisAnalysisDataMap {
 
     /**
      * Set parent.
+     *
      * @param pParent the parent dataMap.
      */
     void setParent(final ThemisAnalysisDataMap pParent) {
@@ -230,6 +235,7 @@ public class ThemisAnalysisDataMap {
 
     /**
      * declare file.
+     *
      * @param pFile the file
      */
     void declareFile(final ThemisAnalysisFile pFile) {
@@ -238,6 +244,7 @@ public class ThemisAnalysisDataMap {
 
     /**
      * declare import.
+     *
      * @param pImport the import
      */
     void declareImport(final ThemisAnalysisImport pImport) {
@@ -246,6 +253,7 @@ public class ThemisAnalysisDataMap {
 
     /**
      * declare generic variable.
+     *
      * @param pVar the generic variable
      */
     void declareGenericVar(final ThemisAnalysisGenericVar pVar) {
@@ -254,6 +262,7 @@ public class ThemisAnalysisDataMap {
 
     /**
      * declare unknown type.
+     *
      * @param pName the name
      * @return the new type
      */
@@ -265,6 +274,7 @@ public class ThemisAnalysisDataMap {
 
     /**
      * declare reference.
+     *
      * @param pRef the reference
      */
     void declareReference(final ThemisAnalysisReference pRef) {
@@ -273,6 +283,7 @@ public class ThemisAnalysisDataMap {
 
     /**
      * Consolidate the class map.
+     *
      * @throws OceanusException on error
      */
     void consolidateMap() throws OceanusException {
@@ -320,6 +331,7 @@ public class ThemisAnalysisDataMap {
 
     /**
      * Look up actual dataType.
+     *
      * @param pIntermediate the intermediate dataType.
      * @return the actual dataType (or null)
      */
@@ -343,6 +355,7 @@ public class ThemisAnalysisDataMap {
 
     /**
      * Resolve immediate ancestors.
+     *
      * @throws OceanusException on error
      */
     private void resolveImmediateAncestors() throws OceanusException {
@@ -358,6 +371,7 @@ public class ThemisAnalysisDataMap {
 
     /**
      * Resolve ancestors.
+     *
      * @param pAncestor the ancestor
      * @throws OceanusException on error
      */
@@ -415,6 +429,7 @@ public class ThemisAnalysisDataMap {
 
     /**
      * Process implicit imports.
+     *
      * @param pClass the class
      */
     private void processAncestors(final ThemisAnalysisObject pClass) {
@@ -431,6 +446,7 @@ public class ThemisAnalysisDataMap {
 
     /**
      * Process ancestor.
+     *
      * @param pAncestor the ancestor
      */
     private void processAncestor(final ThemisAnalysisObject pAncestor) {
@@ -464,7 +480,8 @@ public class ThemisAnalysisDataMap {
 
     /**
      * Process unknown reference.
-     * @param pEntry the entry
+     *
+     * @param pEntry   the entry
      * @param pUnknown the unknown reference
      */
     private void processUnknown(final Entry<String, ThemisAnalysisDataType> pEntry,
@@ -489,6 +506,7 @@ public class ThemisAnalysisDataMap {
 
     /**
      * Create the dataTypeMap.
+     *
      * @return the new map
      */
     private static Map<String, ThemisAnalysisDataType> createDataTypeMap() {
@@ -514,6 +532,7 @@ public class ThemisAnalysisDataMap {
 
     /**
      * Create hidden dataType map.
+     *
      * @return the map
      */
     private static Map<String, String> createHiddenTypeMap() {
@@ -526,6 +545,7 @@ public class ThemisAnalysisDataMap {
 
     /**
      * Obtain local id.
+     *
      * @param pName the name
      * @return the localId
      */
@@ -547,6 +567,7 @@ public class ThemisAnalysisDataMap {
 
         /**
          * Constructor.
+         *
          * @param pName the name
          */
         ThemisAnalysisDataTypeUnknown(final String pName) {
@@ -576,8 +597,9 @@ public class ThemisAnalysisDataMap {
 
         /**
          * Constructor.
+         *
          * @param pParent the parent
-         * @param pChild the child
+         * @param pChild  the child
          */
         ThemisAnalysisDataTypeChild(final ThemisAnalysisDataType pParent,
                                     final String pChild) {

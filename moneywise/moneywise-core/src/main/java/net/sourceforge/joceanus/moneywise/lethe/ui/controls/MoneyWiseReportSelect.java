@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,11 +13,14 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.lethe.ui.controls;
 
-import java.util.Iterator;
-
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDatePeriod;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.ui.MetisIcon;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
@@ -27,12 +30,7 @@ import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnal
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisSecurityBucket.MoneyWiseAnalysisSecurityBucketList;
 import net.sourceforge.joceanus.moneywise.lethe.reports.MoneyWiseReportType;
 import net.sourceforge.joceanus.moneywise.ui.MoneyWiseUIResource;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
-import net.sourceforge.joceanus.oceanus.date.OceanusDatePeriod;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.api.button.TethysUIButton;
@@ -45,6 +43,8 @@ import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollItem;
 import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollMenu;
 import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollSubMenu;
 import net.sourceforge.joceanus.tethys.api.pane.TethysUIBoxPaneManager;
+
+import java.util.Iterator;
 
 /**
  * Report selection panel.
@@ -113,6 +113,7 @@ public class MoneyWiseReportSelect
 
     /**
      * Constructor.
+     *
      * @param pFactory the GUI factory
      */
     public MoneyWiseReportSelect(final TethysUIFactory<?> pFactory) {
@@ -180,6 +181,7 @@ public class MoneyWiseReportSelect
 
     /**
      * Obtain the report type.
+     *
      * @return the report type
      */
     public MoneyWiseReportType getReportType() {
@@ -188,6 +190,7 @@ public class MoneyWiseReportSelect
 
     /**
      * Obtain the selected date range.
+     *
      * @return the date range
      */
     public OceanusDateRange getDateRange() {
@@ -196,6 +199,7 @@ public class MoneyWiseReportSelect
 
     /**
      * Obtain the securityBucket.
+     *
      * @return the security
      */
     public MoneyWiseAnalysisSecurityBucket getSecurity() {
@@ -204,6 +208,7 @@ public class MoneyWiseReportSelect
 
     /**
      * Obtain the date range selection control.
+     *
      * @return the date range selection
      */
     public TethysUIDateRangeSelector getDateRangeSelector() {
@@ -277,6 +282,7 @@ public class MoneyWiseReportSelect
 
     /**
      * Set the range for the date box.
+     *
      * @param pRange the date range
      */
     public final void setRange(final OceanusDateRange pRange) {
@@ -286,6 +292,7 @@ public class MoneyWiseReportSelect
 
     /**
      * Set securities flag.
+     *
      * @param pSecurities do we have securities?
      */
     public void setSecurities(final boolean pSecurities) {
@@ -294,6 +301,7 @@ public class MoneyWiseReportSelect
 
     /**
      * Set analysis.
+     *
      * @param pAnalysis the analysis.
      */
     public void setAnalysis(final MoneyWiseAnalysis pAnalysis) {
@@ -324,6 +332,7 @@ public class MoneyWiseReportSelect
 
     /**
      * Set security.
+     *
      * @param pSecurity the security.
      */
     public void setSecurity(final MoneyWiseAnalysisSecurityBucket pSecurity) {
@@ -451,6 +460,7 @@ public class MoneyWiseReportSelect
 
         /**
          * Constructor.
+         *
          * @param pState state to copy from
          */
         private MoneyWiseReportState(final MoneyWiseReportState pState) {
@@ -463,6 +473,7 @@ public class MoneyWiseReportSelect
 
         /**
          * Obtain the analysis.
+         *
          * @return the analysis
          */
         private MoneyWiseAnalysis getAnalysis() {
@@ -471,6 +482,7 @@ public class MoneyWiseReportSelect
 
         /**
          * Obtain the selected range.
+         *
          * @return the range
          */
         private OceanusDateRange getRange() {
@@ -479,6 +491,7 @@ public class MoneyWiseReportSelect
 
         /**
          * Do we have securities?
+         *
          * @return true/false
          */
         private boolean hasSecurities() {
@@ -487,6 +500,7 @@ public class MoneyWiseReportSelect
 
         /**
          * Obtain the security bucket.
+         *
          * @return the bucket
          */
         private MoneyWiseAnalysisSecurityBucket getSecurity() {
@@ -495,6 +509,7 @@ public class MoneyWiseReportSelect
 
         /**
          * Obtain the selected report type.
+         *
          * @return the report type
          */
         private MoneyWiseReportType getType() {
@@ -503,6 +518,7 @@ public class MoneyWiseReportSelect
 
         /**
          * Set new Range.
+         *
          * @param pSelect the Panel with the new range
          * @return true/false did a change occur
          */
@@ -518,6 +534,7 @@ public class MoneyWiseReportSelect
 
         /**
          * Set securities flag.
+         *
          * @param pSecurities do we have securities?
          */
         private void setSecurities(final boolean pSecurities) {
@@ -533,6 +550,7 @@ public class MoneyWiseReportSelect
 
         /**
          * Set analysis.
+         *
          * @param pAnalysis the analysis
          */
         private void setAnalysis(final MoneyWiseAnalysis pAnalysis) {
@@ -541,6 +559,7 @@ public class MoneyWiseReportSelect
 
         /**
          * Set security.
+         *
          * @param pSecurity the security
          * @return true/false did a change occur
          */
@@ -555,6 +574,7 @@ public class MoneyWiseReportSelect
 
         /**
          * Set new Report Type.
+         *
          * @param pType the new type
          * @return true/false did a change occur
          */

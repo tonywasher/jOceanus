@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Metis: Java Data Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,16 +13,16 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.metis.list;
 
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionedItem;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -34,7 +34,7 @@ import java.util.Map;
  * Versioned ListSet.
  */
 public class MetisListSetVersioned
-            implements MetisFieldItem, OceanusEventProvider<MetisListEvent> {
+        implements MetisFieldItem, OceanusEventProvider<MetisListEvent> {
     /**
      * Report fields.
      */
@@ -88,6 +88,7 @@ public class MetisListSetVersioned
 
     /**
      * Constructor.
+     *
      * @param pStyle the listSet Style
      */
     public MetisListSetVersioned(final MetisListStyle pStyle) {
@@ -96,8 +97,9 @@ public class MetisListSetVersioned
 
     /**
      * Constructor.
+     *
      * @param pStyle the listSet style
-     * @param pBase the base listSet
+     * @param pBase  the base listSet
      */
     public MetisListSetVersioned(final MetisListStyle pStyle,
                                  final MetisListSetVersioned pBase) {
@@ -137,6 +139,7 @@ public class MetisListSetVersioned
 
     /**
      * Obtain the style.
+     *
      * @return the style
      */
     public MetisListStyle getStyle() {
@@ -145,6 +148,7 @@ public class MetisListSetVersioned
 
     /**
      * Obtain the base listSet.
+     *
      * @return the base listSet
      */
     public MetisListSetVersioned getBase() {
@@ -153,6 +157,7 @@ public class MetisListSetVersioned
 
     /**
      * Obtain the version.
+     *
      * @return the version
      */
     public int getVersion() {
@@ -161,6 +166,7 @@ public class MetisListSetVersioned
 
     /**
      * Set version.
+     *
      * @param pVersion the version
      */
     protected void setVersion(final int pVersion) {
@@ -169,6 +175,7 @@ public class MetisListSetVersioned
 
     /**
      * Obtain the key iterator.
+     *
      * @return the iterator
      */
     public Iterator<MetisListKey> keyIterator() {
@@ -177,6 +184,7 @@ public class MetisListSetVersioned
 
     /**
      * Obtain the reverse key iterator.
+     *
      * @return the iterator
      */
     public Iterator<MetisListKey> reverseKeyIterator() {
@@ -186,6 +194,7 @@ public class MetisListSetVersioned
 
     /**
      * Obtain the List iterator.
+     *
      * @return the iterator
      */
     public Iterator<MetisListVersioned<? extends MetisFieldVersionedItem>> listIterator() {
@@ -194,8 +203,9 @@ public class MetisListSetVersioned
 
     /**
      * Declare list.
+     *
      * @param pItemType the itemType for the list
-     * @param pList the list
+     * @param pList     the list
      */
     protected void declareList(final MetisListKey pItemType,
                                final MetisListVersioned<? extends MetisFieldVersionedItem> pList) {
@@ -208,9 +218,10 @@ public class MetisListSetVersioned
 
     /**
      * Obtain the relevant list.
-     * @param <L> the list type
+     *
+     * @param <L>      the list type
      * @param pListKey the list key
-     * @param pClazz the list class
+     * @param pClazz   the list class
      * @return the list (or null)
      */
     public <L extends MetisListVersioned<?>> L getList(final MetisListKey pListKey,
@@ -220,6 +231,7 @@ public class MetisListSetVersioned
 
     /**
      * Is this an empty listSet?
+     *
      * @return true/false
      */
     public boolean isEmpty() {
@@ -236,6 +248,7 @@ public class MetisListSetVersioned
 
     /**
      * derive differences.
+     *
      * @param pListSet the listSet to compare against
      * @return the differences
      */
@@ -262,6 +275,7 @@ public class MetisListSetVersioned
 
     /**
      * derive updates.
+     *
      * @return the updates
      */
     public MetisListSetVersioned deriveUpdates() {
@@ -286,6 +300,7 @@ public class MetisListSetVersioned
 
     /**
      * Condense history.
+     *
      * @param pNewVersion the new maximum version
      */
     public void condenseHistory(final int pNewVersion) {
@@ -304,6 +319,7 @@ public class MetisListSetVersioned
      * sources. Items that are in this listSet, but not in the base listSet will be viewed as inserted.
      * Items that are in the base listSet but not in this listSet will be viewed as deleted. Items
      * that are in both listSets but differ will be viewed as changed.
+     *
      * @param pBase the base listSet
      */
     public void reBase(final MetisListSetVersioned pBase) {
@@ -351,6 +367,7 @@ public class MetisListSetVersioned
 
     /**
      * Rewind items to the required version.
+     *
      * @param pVersion the version to rewind to
      */
     public void rewindToVersion(final int pVersion) {
@@ -368,6 +385,7 @@ public class MetisListSetVersioned
 
     /**
      * Fire event.
+     *
      * @param pEvent the event
      */
     private void fireEvent(final MetisListSetChange pEvent) {

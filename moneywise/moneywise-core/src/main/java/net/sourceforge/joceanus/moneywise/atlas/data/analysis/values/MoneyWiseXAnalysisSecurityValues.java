@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,12 +13,12 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.atlas.data.analysis.values;
 
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisValues;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
 
 import java.util.Currency;
 
@@ -29,6 +29,7 @@ public final class MoneyWiseXAnalysisSecurityValues
         extends MoneyWiseXAnalysisValues<MoneyWiseXAnalysisSecurityValues, MoneyWiseXAnalysisSecurityAttr> {
     /**
      * Constructor.
+     *
      * @param pCurrency the account currency
      */
     public MoneyWiseXAnalysisSecurityValues(final Currency pCurrency) {
@@ -37,7 +38,8 @@ public final class MoneyWiseXAnalysisSecurityValues
 
     /**
      * Constructor.
-     * @param pCurrency the account currency
+     *
+     * @param pCurrency          the account currency
      * @param pReportingCurrency the reporting currency
      */
     public MoneyWiseXAnalysisSecurityValues(final Currency pCurrency,
@@ -59,6 +61,7 @@ public final class MoneyWiseXAnalysisSecurityValues
 
     /**
      * Constructor.
+     *
      * @param pSource the source map.
      */
     public MoneyWiseXAnalysisSecurityValues(final MoneyWiseXAnalysisSecurityValues pSource) {
@@ -94,6 +97,7 @@ public final class MoneyWiseXAnalysisSecurityValues
 
     /**
      * Set zero money.
+     *
      * @param pAttr the attribute
      */
     public void setZeroMoney(final MoneyWiseXAnalysisSecurityAttr pAttr) {
@@ -105,14 +109,16 @@ public final class MoneyWiseXAnalysisSecurityValues
 
     /**
      * Set zero money.
+     *
      * @param pAttr the attribute
      */
     public void setZeroUnits(final MoneyWiseXAnalysisSecurityAttr pAttr) {
-         setValue(pAttr, new OceanusUnits());
+        setValue(pAttr, new OceanusUnits());
     }
 
     /**
      * Are the values active?
+     *
      * @return true/false
      */
     public boolean isActive() {

@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Prometheus: Application Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,15 +13,15 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.prometheus.maps;
 
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.data.MetisDataResource;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.metis.list.MetisListKey;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 
 import java.util.HashMap;
@@ -82,6 +82,7 @@ public class PrometheusMapsInstanceCtl
 
     /**
      * Obtain the version.
+     *
      * @return the version
      */
     private Integer getVersion() {
@@ -90,6 +91,7 @@ public class PrometheusMapsInstanceCtl
 
     /**
      * Obtain the instance map.
+     *
      * @return the map
      */
     private PrometheusMapsDataSetInstance getInstanceMap() {
@@ -98,6 +100,7 @@ public class PrometheusMapsInstanceCtl
 
     /**
      * Set version.
+     *
      * @param pVersion the version
      */
     void setVersion(final Integer pVersion) {
@@ -116,6 +119,7 @@ public class PrometheusMapsInstanceCtl
 
     /**
      * Declare fieldId map.
+     *
      * @param pListKey the listKey
      * @param pFieldId the fieldId
      */
@@ -126,9 +130,10 @@ public class PrometheusMapsInstanceCtl
 
     /**
      * Declare fieldId map.
+     *
      * @param pListKey the listKey
      * @param pFieldId the fieldId
-     * @param pFilter the filter
+     * @param pFilter  the filter
      */
     void declareFieldIdMap(final MetisListKey pListKey,
                            final MetisDataFieldId pFieldId,
@@ -138,8 +143,9 @@ public class PrometheusMapsInstanceCtl
 
     /**
      * Declare shared fieldId map.
-     * @param pListKey the listKey
-     * @param pFieldId the fieldId
+     *
+     * @param pListKey   the listKey
+     * @param pFieldId   the fieldId
      * @param pSharedKey the shared listKey
      */
     void declareFieldIdMap(final MetisListKey pListKey,
@@ -150,9 +156,10 @@ public class PrometheusMapsInstanceCtl
 
     /**
      * Declare dateId map.
-     * @param pListKey the listKey
-     * @param pOwnerId the ownerId
-     * @param pDateId the dateId
+     *
+     * @param pListKey   the listKey
+     * @param pOwnerId   the ownerId
+     * @param pDateId    the dateId
      * @param pAllowNull do we allow null value?
      */
     void declareDateIdMap(final MetisListKey pListKey,
@@ -164,6 +171,7 @@ public class PrometheusMapsInstanceCtl
 
     /**
      * add item to map.
+     *
      * @param pItem the item
      */
     void addItemToMaps(final PrometheusDataItem pItem) {
@@ -172,20 +180,22 @@ public class PrometheusMapsInstanceCtl
 
     /**
      * Is the key duplicate?
+     *
      * @param pFieldId the fieldId
-     * @param pItem the item
+     * @param pItem    the item
      * @return true/false
      */
     boolean isKeyDuplicate(final MetisDataFieldId pFieldId,
                            final PrometheusDataItem pItem) {
-         return theInstanceMap.isKeyDuplicate(pFieldId, pItem);
+        return theInstanceMap.isKeyDuplicate(pFieldId, pItem);
     }
 
     /**
      * Is the key available?
+     *
      * @param pListKey the listKey
      * @param pFieldId the fieldId
-     * @param pKey the key
+     * @param pKey     the key
      * @return true/false
      */
     boolean isKeyAvailable(final MetisListKey pListKey,
@@ -196,9 +206,10 @@ public class PrometheusMapsInstanceCtl
 
     /**
      * Obtain the item for the key.
+     *
      * @param pListKey the listKey
      * @param pFieldId the fieldId
-     * @param pKey the key
+     * @param pKey     the key
      * @return the item
      */
     PrometheusDataItem getItemForKey(final MetisListKey pListKey,

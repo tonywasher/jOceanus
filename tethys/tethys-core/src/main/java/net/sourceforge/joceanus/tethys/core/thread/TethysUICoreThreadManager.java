@@ -1,35 +1,35 @@
-/*******************************************************************************
- * Tethys: Java Utilities
- * Copyright 2012-2026 Tony Washer
+/*
+ * Tethys: GUI Utilities
+ * Copyright 2012-2026. Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package net.sourceforge.joceanus.tethys.core.thread;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
-import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
+import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.tethys.api.thread.TethysUIThread;
 import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadCancelException;
 import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadEvent;
 import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadManager;
 import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadStatusManager;
 import net.sourceforge.joceanus.tethys.core.factory.TethysUICoreFactory;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Thread Manager.
@@ -93,8 +93,9 @@ public abstract class TethysUICoreThreadManager
 
     /**
      * Constructor.
+     *
      * @param pFactory the factory
-     * @param pSlider use slider status
+     * @param pSlider  use slider status
      */
     protected TethysUICoreThreadManager(final TethysUICoreFactory<?> pFactory,
                                         final boolean pSlider) {
@@ -132,6 +133,7 @@ public abstract class TethysUICoreThreadManager
 
     /**
      * Obtain the GUI factory.
+     *
      * @return the factory
      */
     public TethysUICoreFactory<?> getGuiFactory() {
@@ -189,6 +191,7 @@ public abstract class TethysUICoreThreadManager
 
     /**
      * Prepare task.
+     *
      * @return continue true/false
      */
     private boolean prepareThread() {
@@ -211,7 +214,8 @@ public abstract class TethysUICoreThreadManager
 
     /**
      * Create thread wrapper.
-     * @param <T> the thread result
+     *
+     * @param <T>     the thread result
      * @param pThread the thread to wrap
      * @return the runnable thread
      */
@@ -340,6 +344,7 @@ public abstract class TethysUICoreThreadManager
 
     /**
      * Publish the status.
+     *
      * @param pStatus the status to publish
      * @throws OceanusException on cancellation
      */
@@ -370,6 +375,7 @@ public abstract class TethysUICoreThreadManager
 
     /**
      * Set error.
+     *
      * @param pException the exception
      */
     protected void setError(final Throwable pException) {

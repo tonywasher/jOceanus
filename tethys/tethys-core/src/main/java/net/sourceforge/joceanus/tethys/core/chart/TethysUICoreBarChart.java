@@ -1,35 +1,35 @@
-/*******************************************************************************
- * Tethys: Java Utilities
- * Copyright 2012-2026 Tony Washer
+/*
+ * Tethys: GUI Utilities
+ * Copyright 2012-2026. Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package net.sourceforge.joceanus.tethys.core.chart;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimalFormatter;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimalFormatter;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.api.chart.TethysUIBarChart;
 import net.sourceforge.joceanus.tethys.core.base.TethysUICoreComponent;
 import net.sourceforge.joceanus.tethys.core.chart.TethysUICoreAreaChart.TethysUICoreAreaChartData;
 import net.sourceforge.joceanus.tethys.core.factory.TethysUICoreFactory;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Bar Chart.
@@ -64,6 +64,7 @@ public abstract class TethysUICoreBarChart
 
     /**
      * Constructor.
+     *
      * @param pFactory the Gui Factory
      */
     protected TethysUICoreBarChart(final TethysUICoreFactory<?> pFactory) {
@@ -88,6 +89,7 @@ public abstract class TethysUICoreBarChart
 
     /**
      * Obtain the formatter.
+     *
      * @return the formatter
      */
     protected OceanusDecimalFormatter getFormatter() {
@@ -126,7 +128,8 @@ public abstract class TethysUICoreBarChart
 
     /**
      * Add chart section.
-     * @param pName the name of the bar
+     *
+     * @param pName    the name of the bar
      * @param pSection the section to add
      */
     protected void createSection(final String pName,
@@ -137,6 +140,7 @@ public abstract class TethysUICoreBarChart
 
     /**
      * Obtain tooltip for sectionName.
+     *
      * @param pName the section name
      * @return the tooltip
      */
@@ -148,6 +152,7 @@ public abstract class TethysUICoreBarChart
 
     /**
      * handle selection.
+     *
      * @param pName the section name
      */
     protected void selectSection(final String pName) {
@@ -192,6 +197,7 @@ public abstract class TethysUICoreBarChart
 
         /**
          * Constructor.
+         *
          * @param pTitle the title
          */
         TethysUICoreBarChartData(final String pTitle) {
@@ -200,7 +206,8 @@ public abstract class TethysUICoreBarChart
 
         /**
          * Constructor.
-         * @param pTitle the title
+         *
+         * @param pTitle      the title
          * @param pXAxisLabel the XAxis label
          * @param pYAxisLabel the YAxis label
          */
@@ -273,6 +280,7 @@ public abstract class TethysUICoreBarChart
 
         /**
          * Constructor.
+         *
          * @param pName the name
          */
         TethysUICoreBarChartSeries(final String pName) {
@@ -331,15 +339,16 @@ public abstract class TethysUICoreBarChart
 
         /**
          * Constructor.
+         *
          * @param pSeries the series
-         * @param pRef the reference
-         * @param pValue the value
+         * @param pRef    the reference
+         * @param pValue  the value
          * @param pSource the source
          */
         TethysUICoreBarChartDataSection(final TethysUIBarChartSeries pSeries,
                                         final String pRef,
                                         final OceanusMoney pValue,
-                                       final Object pSource) {
+                                        final Object pSource) {
             theSeries = pSeries;
             theRef = pRef;
             theValue = pValue;

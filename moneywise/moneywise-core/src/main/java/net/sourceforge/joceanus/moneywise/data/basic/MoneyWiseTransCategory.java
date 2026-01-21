@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,11 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.data.basic;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.data.MetisDataResource;
@@ -27,8 +29,6 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryTyp
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryType.MoneyWiseTransCategoryTypeList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
@@ -69,7 +69,8 @@ public final class MoneyWiseTransCategory
 
     /**
      * Copy Constructor.
-     * @param pList the list
+     *
+     * @param pList     the list
      * @param pCategory The Category to copy
      */
     MoneyWiseTransCategory(final MoneyWiseTransCategoryList pList,
@@ -80,7 +81,8 @@ public final class MoneyWiseTransCategory
 
     /**
      * Values constructor.
-     * @param pList the List to add to
+     *
+     * @param pList   the List to add to
      * @param pValues the values constructor
      * @throws OceanusException on error
      */
@@ -100,6 +102,7 @@ public final class MoneyWiseTransCategory
 
     /**
      * Edit Constructor.
+     *
      * @param pList the list
      */
     public MoneyWiseTransCategory(final MoneyWiseTransCategoryList pList) {
@@ -147,6 +150,7 @@ public final class MoneyWiseTransCategory
 
     /**
      * Set category type value.
+     *
      * @param pValue the value
      */
     private void setValueType(final MoneyWiseTransCategoryType pValue) {
@@ -155,6 +159,7 @@ public final class MoneyWiseTransCategory
 
     /**
      * Set category type id.
+     *
      * @param pValue the value
      */
     private void setValueType(final Integer pValue) {
@@ -163,6 +168,7 @@ public final class MoneyWiseTransCategory
 
     /**
      * Set category type name.
+     *
      * @param pValue the value
      */
     private void setValueType(final String pValue) {
@@ -176,6 +182,7 @@ public final class MoneyWiseTransCategory
 
     /**
      * Is this event category the required class.
+     *
      * @param pClass the required category class.
      * @return true/false
      */
@@ -186,6 +193,7 @@ public final class MoneyWiseTransCategory
 
     /**
      * Is this event category a transfer?
+     *
      * @return true/false
      */
     public boolean isTransfer() {
@@ -197,6 +205,7 @@ public final class MoneyWiseTransCategory
 
     /**
      * Set defaults.
+     *
      * @param pParent the parent
      * @throws OceanusException on error
      */
@@ -233,6 +242,7 @@ public final class MoneyWiseTransCategory
 
     /**
      * Update base category from an edited category.
+     *
      * @param pCategory the edited category
      * @return whether changes have been made
      */
@@ -261,6 +271,7 @@ public final class MoneyWiseTransCategory
 
     /**
      * Is the category hidden?
+     *
      * @return true/false
      */
     public boolean isHidden() {
@@ -286,6 +297,7 @@ public final class MoneyWiseTransCategory
 
         /**
          * Construct an empty CORE Category list.
+         *
          * @param pData the DataSet for the list
          */
         public MoneyWiseTransCategoryList(final MoneyWiseDataSet pData) {
@@ -294,6 +306,7 @@ public final class MoneyWiseTransCategory
 
         /**
          * Constructor for a cloned List.
+         *
          * @param pSource the source List
          */
         protected MoneyWiseTransCategoryList(final MoneyWiseTransCategoryList pSource) {
@@ -317,6 +330,7 @@ public final class MoneyWiseTransCategory
 
         /**
          * Obtain editSet.
+         *
          * @return the editSet
          */
         public PrometheusEditSet getEditSet() {
@@ -337,6 +351,7 @@ public final class MoneyWiseTransCategory
 
         /**
          * Derive Edit list.
+         *
          * @param pEditSet the editSet
          * @return the edit list
          * @throws OceanusException on error
@@ -376,6 +391,7 @@ public final class MoneyWiseTransCategory
 
         /**
          * Add a new item to the core list.
+         *
          * @param pCategory item
          * @return the newly added item
          */
@@ -393,6 +409,7 @@ public final class MoneyWiseTransCategory
 
         /**
          * Add a new item to the edit list.
+         *
          * @return the new item
          */
         @Override
@@ -404,6 +421,7 @@ public final class MoneyWiseTransCategory
 
         /**
          * Obtain the first category for the specified class.
+         *
          * @param pClass the category class
          * @return the category
          */
@@ -414,6 +432,7 @@ public final class MoneyWiseTransCategory
 
         /**
          * Obtain singular category for EventInfoClass.
+         *
          * @param pInfoClass the Event info class
          * @return the corresponding category.
          */
@@ -508,6 +527,7 @@ public final class MoneyWiseTransCategory
 
         /**
          * Obtain the categoryMap.
+         *
          * @return the map
          */
         private Map<Integer, MoneyWiseTransCategory> getSingularMap() {
@@ -516,6 +536,7 @@ public final class MoneyWiseTransCategory
 
         /**
          * Obtain the categoryCountMap.
+         *
          * @return the map
          */
         private Map<Integer, Integer> getSingularCountMap() {
@@ -556,6 +577,7 @@ public final class MoneyWiseTransCategory
 
         /**
          * find singular item.
+         *
          * @param pClass the class to look up
          * @return the matching item
          */
@@ -565,6 +587,7 @@ public final class MoneyWiseTransCategory
 
         /**
          * Check validity of singular count.
+         *
          * @param pClass the class to look up
          * @return true/false
          */

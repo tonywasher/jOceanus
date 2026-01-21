@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,19 +13,19 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.lethe.data.analysis.data;
 
-import java.util.HashMap;
-import java.util.ListIterator;
-import java.util.Map;
-
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseExchangeRate;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseExchangeRate.MoneyWiseExchangeRateDataMap;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
+
+import java.util.HashMap;
+import java.util.ListIterator;
+import java.util.Map;
 
 /**
  * Quick access to dated exchange Rates on an analysis pass.
@@ -43,6 +43,7 @@ public class MoneyWiseAnalysisExchangeRateCursor {
 
     /**
      * Constructor.
+     *
      * @param pData the dataSet
      */
     protected MoneyWiseAnalysisExchangeRateCursor(final MoneyWiseDataSet pData) {
@@ -55,8 +56,9 @@ public class MoneyWiseAnalysisExchangeRateCursor {
 
     /**
      * Obtain exchange rate for currency and date.
+     *
      * @param pCurrency the currency
-     * @param pDate the date
+     * @param pDate     the date
      * @return the exchange rate
      */
     public OceanusRatio getExchangeRate(final MoneyWiseCurrency pCurrency,
@@ -68,6 +70,7 @@ public class MoneyWiseAnalysisExchangeRateCursor {
 
     /**
      * Obtain currency cursor.
+     *
      * @param pCurrency the currency
      * @return the cursor
      */
@@ -112,6 +115,7 @@ public class MoneyWiseAnalysisExchangeRateCursor {
 
         /**
          * Constructor.
+         *
          * @param pCurrency the currency
          */
         private CurrencyCursor(final MoneyWiseCurrency pCurrency) {
@@ -143,6 +147,7 @@ public class MoneyWiseAnalysisExchangeRateCursor {
 
         /**
          * Obtain exchange rate for date.
+         *
          * @param pDate the date
          * @return the exchange rate
          */

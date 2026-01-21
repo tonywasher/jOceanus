@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,13 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.tax;
 
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataObjectFormat;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
@@ -24,10 +28,6 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticResource;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,8 +81,9 @@ public final class MoneyWiseChargeableGainSlice
 
     /**
      * Constructor.
+     *
      * @param pTrans the transaction
-     * @param pGain the gain
+     * @param pGain  the gain
      */
     private MoneyWiseChargeableGainSlice(final MoneyWiseTransaction pTrans,
                                          final OceanusMoney pGain) {
@@ -99,8 +100,9 @@ public final class MoneyWiseChargeableGainSlice
 
     /**
      * Constructor.
+     *
      * @param pTrans the transaction
-     * @param pGain the gain
+     * @param pGain  the gain
      * @param pSlice the slice
      * @param pYears the years
      */
@@ -118,6 +120,7 @@ public final class MoneyWiseChargeableGainSlice
 
     /**
      * Obtain the date.
+     *
      * @return the date
      */
     public OceanusDate getDate() {
@@ -126,6 +129,7 @@ public final class MoneyWiseChargeableGainSlice
 
     /**
      * Obtain the gain.
+     *
      * @return the gain
      */
     public OceanusMoney getGain() {
@@ -134,6 +138,7 @@ public final class MoneyWiseChargeableGainSlice
 
     /**
      * Obtain the years.
+     *
      * @return the years
      */
     public Integer getYears() {
@@ -142,6 +147,7 @@ public final class MoneyWiseChargeableGainSlice
 
     /**
      * Obtain the slice.
+     *
      * @return the slice
      */
     public OceanusMoney getSlice() {
@@ -150,6 +156,7 @@ public final class MoneyWiseChargeableGainSlice
 
     /**
      * Obtain the transaction.
+     *
      * @return the transaction
      */
     public MoneyWiseTransaction getTransaction() {
@@ -185,8 +192,9 @@ public final class MoneyWiseChargeableGainSlice
 
         /**
          * Constructor.
+         *
          * @param pSource the source list.
-         * @param pRange the range of events to copy
+         * @param pRange  the range of events to copy
          */
         public MoneyWiseChargeableGainSliceList(final MoneyWiseChargeableGainSliceList pSource,
                                                 final OceanusDateRange pRange) {
@@ -218,6 +226,7 @@ public final class MoneyWiseChargeableGainSlice
 
         /**
          * Add Chargeable Transaction to List.
+         *
          * @param pTrans the base transaction
          * @param pGains the gains
          */
@@ -232,6 +241,7 @@ public final class MoneyWiseChargeableGainSlice
 
         /**
          * Add Chargeable Transaction to List.
+         *
          * @param pTrans the base transaction
          * @param pGains the gains
          * @param pSlice the slice

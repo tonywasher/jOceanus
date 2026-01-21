@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,11 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.test.data;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalysisBuilder;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
@@ -35,8 +37,6 @@ import net.sourceforge.joceanus.moneywise.test.data.trans.MoneyWiseDataTestShare
 import net.sourceforge.joceanus.moneywise.test.data.trans.MoneyWiseDataTestTransfers;
 import net.sourceforge.joceanus.moneywise.test.data.xdoc.MoneyWiseDataXDocBuilder;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import org.junit.jupiter.api.DynamicContainer;
 import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.DynamicTest;
@@ -204,8 +204,8 @@ public class MoneyWiseDataTestRunner {
 
     /**
      * Run the storage tests.
-     * @return the test stream
      *
+     * @return the test stream
      * @throws OceanusException on error
      */
     public Stream<DynamicNode> createStorageTests() throws OceanusException {
@@ -219,6 +219,7 @@ public class MoneyWiseDataTestRunner {
 
     /**
      * Prepare full data for test.
+     *
      * @throws OceanusException on error
      */
     private void prepareFullData() throws OceanusException {
@@ -243,6 +244,7 @@ public class MoneyWiseDataTestRunner {
 
     /**
      * Ensure output directory.
+     *
      * @throws OceanusException on error
      */
     private static void createOutputDirectory() throws OceanusException {

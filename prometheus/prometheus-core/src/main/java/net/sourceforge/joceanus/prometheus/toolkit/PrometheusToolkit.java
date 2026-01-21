@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Prometheus: Application Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,13 +13,13 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.prometheus.toolkit;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
 import net.sourceforge.joceanus.metis.toolkit.MetisToolkit;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.prometheus.preference.PrometheusPreferenceManager;
 import net.sourceforge.joceanus.prometheus.preference.PrometheusPreferenceSecurity.PrometheusSecurityPreferences;
 import net.sourceforge.joceanus.prometheus.preference.PrometheusPreferenceView;
@@ -50,6 +50,7 @@ public class PrometheusToolkit {
 
     /**
      * Constructor.
+     *
      * @param pFactory the GUI factory
      * @throws OceanusException on error
      */
@@ -72,6 +73,7 @@ public class PrometheusToolkit {
 
     /**
      * Obtain the preference manager.
+     *
      * @return the preference manager
      */
     public PrometheusPreferenceManager getPreferenceManager() {
@@ -80,6 +82,7 @@ public class PrometheusToolkit {
 
     /**
      * Obtain the password manager.
+     *
      * @return the password manager
      */
     public PrometheusSecurityPasswordManager getPasswordManager() {
@@ -88,6 +91,7 @@ public class PrometheusToolkit {
 
     /**
      * Obtain the Program Definitions.
+     *
      * @return the definitions
      */
     public TethysUIProgram getProgramDefinitions() {
@@ -96,6 +100,7 @@ public class PrometheusToolkit {
 
     /**
      * Obtain the Toolkit.
+     *
      * @return the toolkit
      */
     public MetisToolkit getToolkit() {
@@ -104,8 +109,9 @@ public class PrometheusToolkit {
 
     /**
      * Create a Password Manager.
+     *
      * @param pFactoryType the factoryType
-     * @param pLockSpec the lockSpec
+     * @param pLockSpec    the lockSpec
      * @return the manager
      * @throws OceanusException on error
      */
@@ -116,6 +122,7 @@ public class PrometheusToolkit {
 
     /**
      * Create a new Preference View.
+     *
      * @return the view
      */
     public PrometheusPreferenceView newPreferenceView() {

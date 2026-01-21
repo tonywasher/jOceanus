@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,12 +13,12 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.data.statics;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataClass;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * Enumeration of Payee Type Classes.
@@ -105,7 +105,8 @@ public enum MoneyWisePayeeClass
 
     /**
      * Constructor.
-     * @param uId the Id
+     *
+     * @param uId    the Id
      * @param uOrder the default order.
      */
     MoneyWisePayeeClass(final int uId,
@@ -138,6 +139,7 @@ public enum MoneyWisePayeeClass
 
     /**
      * get value from id.
+     *
      * @param id the id value
      * @return the corresponding enum object
      * @throws OceanusException on error
@@ -153,6 +155,7 @@ public enum MoneyWisePayeeClass
 
     /**
      * Determine whether the payeeType is hidden type.
+     *
      * @return <code>true</code> if the payee is hidden, <code>false</code> otherwise.
      */
     public boolean isHiddenType() {
@@ -161,6 +164,7 @@ public enum MoneyWisePayeeClass
 
     /**
      * Determine whether the payeeType is hidden type.
+     *
      * @return <code>true</code> if the payee is hidden, <code>false</code> otherwise.
      */
     public boolean isAnnuity() {
@@ -169,6 +173,7 @@ public enum MoneyWisePayeeClass
 
     /**
      * Determine whether the payee type is singular.
+     *
      * @return <code>true</code> if the payee type is singular, <code>false</code> otherwise.
      */
     public boolean isSingular() {
@@ -184,6 +189,7 @@ public enum MoneyWisePayeeClass
 
     /**
      * Determine whether the PayeeType can parent the deposit type.
+     *
      * @param pClass the Deposit type
      * @return <code>true</code> if the payee type can the deposit type, <code>false</code>
      * otherwise.
@@ -207,6 +213,7 @@ public enum MoneyWisePayeeClass
 
     /**
      * Determine whether the PayeeType can parent the loan type.
+     *
      * @param pClass the Loan type
      * @return <code>true</code> if the payee type can the loan type, <code>false</code> otherwise.
      */
@@ -229,6 +236,7 @@ public enum MoneyWisePayeeClass
 
     /**
      * Determine whether the PayeeType can parent the security type.
+     *
      * @param pClass the Security type
      * @return <code>true</code> if the payee type can parent the security type, <code>false</code>
      * otherwise.
@@ -253,6 +261,7 @@ public enum MoneyWisePayeeClass
 
     /**
      * Determine whether the PayeeType can parent a portfolio.
+     *
      * @return <code>true</code> if the payee type can parent a portfolio, <code>false</code>
      * otherwise.
      */
@@ -274,6 +283,7 @@ public enum MoneyWisePayeeClass
 
     /**
      * Determine whether the PayeeType can contribute to a pension.
+     *
      * @return <code>true</code> if the payee type can contribute to a pension, <code>false</code>
      * otherwise.
      */
@@ -295,6 +305,7 @@ public enum MoneyWisePayeeClass
 
     /**
      * Determine whether the PayeeType can provide a taxedIncome.
+     *
      * @return <code>true</code> if the payee type can parent a portfolio, <code>false</code>
      * otherwise.
      */

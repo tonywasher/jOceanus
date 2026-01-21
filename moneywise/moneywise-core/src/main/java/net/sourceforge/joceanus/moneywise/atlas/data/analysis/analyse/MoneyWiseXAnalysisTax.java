@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,12 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.atlas.data.analysis.analyse;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisInterfaces.MoneyWiseXAnalysisCursor;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPayeeBucket;
@@ -31,9 +34,6 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseLogicException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
 
 /**
  * Tax Analysis.
@@ -136,6 +136,7 @@ public class MoneyWiseXAnalysisTax {
 
     /**
      * Constructor.
+     *
      * @param pAnalyser the analyser
      */
     MoneyWiseXAnalysisTax(final MoneyWiseXAnalysisEventAnalyser pAnalyser) {
@@ -165,6 +166,7 @@ public class MoneyWiseXAnalysisTax {
 
     /**
      * Declare the Security analyser.
+     *
      * @param pSecurity the securityAnalyser
      */
     void declareSecurityAnalyser(final MoneyWiseXAnalysisSecurity pSecurity) {
@@ -173,6 +175,7 @@ public class MoneyWiseXAnalysisTax {
 
     /**
      * Adjust basis buckets.
+     *
      * @param pTrans the transaction
      */
     void adjustTaxBasis(final MoneyWiseXAnalysisTransaction pTrans) throws OceanusException {
@@ -198,6 +201,7 @@ public class MoneyWiseXAnalysisTax {
 
     /**
      * Record active payee bucket.
+     *
      * @param pPayee the payee bucket
      */
     void recordPayeeBucket(final MoneyWiseXAnalysisPayeeBucket pPayee) {
@@ -206,6 +210,7 @@ public class MoneyWiseXAnalysisTax {
 
     /**
      * Process an autoExpense amount.
+     *
      * @param pAmount the amount
      */
     void processAutoExpense(final OceanusMoney pAmount) {
@@ -216,6 +221,7 @@ public class MoneyWiseXAnalysisTax {
 
     /**
      * Adjust for additional transaction elements.
+     *
      * @throws OceanusException on error
      */
     private void adjustForAdditionalTax() throws OceanusException {
@@ -233,6 +239,7 @@ public class MoneyWiseXAnalysisTax {
 
     /**
      * Adjust Buckets for taxCredit.
+     *
      * @throws OceanusException on error
      */
     private void adjustForTaxCredit() throws OceanusException {
@@ -298,6 +305,7 @@ public class MoneyWiseXAnalysisTax {
 
     /**
      * Adjust Buckets for taxCredit.
+     *
      * @throws OceanusException on error
      */
     private void adjustForTaxRelief() throws OceanusException {
@@ -367,6 +375,7 @@ public class MoneyWiseXAnalysisTax {
 
     /**
      * Adjust Buckets for employeeNI.
+     *
      * @throws OceanusException on error
      */
     private void adjustForEmployeeNI() throws OceanusException {
@@ -425,6 +434,7 @@ public class MoneyWiseXAnalysisTax {
 
     /**
      * Adjust Buckets for employerNI.
+     *
      * @throws OceanusException on error
      */
     private void adjustForEmployerNI() throws OceanusException {
@@ -486,6 +496,7 @@ public class MoneyWiseXAnalysisTax {
 
     /**
      * Adjust Buckets for benefit.
+     *
      * @throws OceanusException on error
      */
     private void adjustForBenefit() throws OceanusException {
@@ -551,6 +562,7 @@ public class MoneyWiseXAnalysisTax {
 
     /**
      * Adjust Buckets for withheld.
+     *
      * @throws OceanusException on error
      */
     private void adjustForWithheld() throws OceanusException {
@@ -615,6 +627,7 @@ public class MoneyWiseXAnalysisTax {
 
     /**
      * Convert infoAmount to reporting currency if necessary.
+     *
      * @param pAmount the relevant amount
      * @return the reportingAmount
      */
@@ -633,6 +646,7 @@ public class MoneyWiseXAnalysisTax {
 
     /**
      * Check validity of additional items.
+     *
      * @throws OceanusException on error
      */
     private void checkForValidAdditional() throws OceanusException {
@@ -643,6 +657,7 @@ public class MoneyWiseXAnalysisTax {
 
     /**
      * Record the account for a transaction.
+     *
      * @param pTrans the transaction
      * @throws OceanusException on error
      */
@@ -661,6 +676,7 @@ public class MoneyWiseXAnalysisTax {
 
     /**
      * Obtain tax basis bucket for transaction.
+     *
      * @param pTrans the transaction
      * @return the taxBasis bucket
      * @throws OceanusException on error
@@ -672,6 +688,7 @@ public class MoneyWiseXAnalysisTax {
 
     /**
      * Obtain tax class for transaction.
+     *
      * @param pTrans the transaction
      * @return the taxClass
      * @throws OceanusException on error

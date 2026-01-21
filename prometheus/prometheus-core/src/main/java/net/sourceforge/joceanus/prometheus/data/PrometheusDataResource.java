@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Prometheus: Application Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,12 +13,12 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.prometheus.data;
 
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleLoader;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
-import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet.PrometheusCryptographyDataType;
 
 import java.util.EnumMap;
@@ -518,6 +518,7 @@ public enum PrometheusDataResource
 
     /**
      * Constructor.
+     *
      * @param pKeyName the key name
      */
     PrometheusDataResource(final String pKeyName) {
@@ -558,6 +559,7 @@ public enum PrometheusDataResource
 
     /**
      * Build item map.
+     *
      * @return the map
      */
     private static Map<PrometheusCryptographyDataType, OceanusBundleId> buildNameMap() {
@@ -572,6 +574,7 @@ public enum PrometheusDataResource
 
     /**
      * Obtain key for name.
+     *
      * @param pValue the Value
      * @return the resource key
      */
@@ -581,6 +584,7 @@ public enum PrometheusDataResource
 
     /**
      * Build list map.
+     *
      * @return the map
      */
     private static Map<PrometheusCryptographyDataType, OceanusBundleId> buildListMap() {
@@ -595,6 +599,7 @@ public enum PrometheusDataResource
 
     /**
      * Obtain key for cryptography list.
+     *
      * @param pValue the Value
      * @return the resource key
      */

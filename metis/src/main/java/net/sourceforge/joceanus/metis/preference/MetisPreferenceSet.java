@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Metis: Java Data Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,16 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.metis.preference;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.exc.MetisDataException;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
@@ -23,13 +30,6 @@ import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerStandardEntry;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
-import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -41,6 +41,7 @@ import java.util.prefs.Preferences;
 
 /**
  * Wrapper class for java preferences.
+ *
  * @author Tony Washer
  */
 public abstract class MetisPreferenceSet
@@ -113,8 +114,9 @@ public abstract class MetisPreferenceSet
 
     /**
      * Constructor.
+     *
      * @param pManager the preference manager
-     * @param pId the resource id for the set name
+     * @param pId      the resource id for the set name
      * @throws OceanusException on error
      */
     protected MetisPreferenceSet(final MetisPreferenceManager pManager,
@@ -124,8 +126,9 @@ public abstract class MetisPreferenceSet
 
     /**
      * Constructor.
+     *
      * @param pManager the preference manager
-     * @param pName the set name
+     * @param pName    the set name
      * @throws OceanusException on error
      */
     protected MetisPreferenceSet(final MetisPreferenceManager pManager,
@@ -170,6 +173,7 @@ public abstract class MetisPreferenceSet
 
     /**
      * Obtain the preference manager.
+     *
      * @return the manager
      */
     public MetisPreferenceManager getPreferenceManager() {
@@ -188,6 +192,7 @@ public abstract class MetisPreferenceSet
 
     /**
      * Declare preference.
+     *
      * @param pPref the preference to declare
      */
     void declarePreference(final MetisPreferenceItem pPref) {
@@ -202,6 +207,7 @@ public abstract class MetisPreferenceSet
 
     /**
      * Hook to enable preferenceSets to define their preferences.
+     *
      * @throws OceanusException on error
      */
     protected abstract void definePreferences() throws OceanusException;
@@ -216,6 +222,7 @@ public abstract class MetisPreferenceSet
 
     /**
      * Obtain the name of the set.
+     *
      * @return the name
      */
     public String getName() {
@@ -224,6 +231,7 @@ public abstract class MetisPreferenceSet
 
     /**
      * Is this a hidden preferenceSet?
+     *
      * @return true/false
      */
     public boolean isHidden() {
@@ -239,6 +247,7 @@ public abstract class MetisPreferenceSet
 
     /**
      * Obtain the collection of preferences.
+     *
      * @return the preferences
      */
     public Collection<MetisPreferenceItem> getPreferences() {
@@ -261,6 +270,7 @@ public abstract class MetisPreferenceSet
 
     /**
      * Derive handle for node.
+     *
      * @return the class name
      */
     private Preferences deriveHandle() {
@@ -281,6 +291,7 @@ public abstract class MetisPreferenceSet
 
     /**
      * Define new String preference.
+     *
      * @param pKey the key for the preference
      * @return the preference item
      */
@@ -297,6 +308,7 @@ public abstract class MetisPreferenceSet
 
     /**
      * Define new File preference.
+     *
      * @param pKey the key for the preference
      * @return the preference item
      */
@@ -313,6 +325,7 @@ public abstract class MetisPreferenceSet
 
     /**
      * Define new Directory preference.
+     *
      * @param pKey the key for the preference
      * @return the preference item
      */
@@ -329,6 +342,7 @@ public abstract class MetisPreferenceSet
 
     /**
      * Define new Colour preference.
+     *
      * @param pKey the key for the preference
      * @return the preference item
      */
@@ -345,6 +359,7 @@ public abstract class MetisPreferenceSet
 
     /**
      * Define new Integer preference.
+     *
      * @param pKey the key for the preference
      * @return the preference item
      */
@@ -361,6 +376,7 @@ public abstract class MetisPreferenceSet
 
     /**
      * Define new Boolean preference.
+     *
      * @param pKey the key for the preference
      * @return the preference item
      */
@@ -377,6 +393,7 @@ public abstract class MetisPreferenceSet
 
     /**
      * Define new Date preference.
+     *
      * @param pKey the key for the preference
      * @return the preference item
      */
@@ -393,8 +410,9 @@ public abstract class MetisPreferenceSet
 
     /**
      * Define new Enum preference.
-     * @param <E> the Enum type
-     * @param pKey the key for the preference
+     *
+     * @param <E>    the Enum type
+     * @param pKey   the key for the preference
      * @param pClazz the Enum class
      * @return the newly created preference
      */
@@ -412,6 +430,7 @@ public abstract class MetisPreferenceSet
 
     /**
      * Define a preference for the node.
+     *
      * @param pPreference the preference to define
      */
     protected void definePreference(final MetisPreferenceItem pPreference) {
@@ -421,8 +440,8 @@ public abstract class MetisPreferenceSet
         /* Reject if the name is already present */
         if (theNameMap.get(myName) != null) {
             throw new IllegalArgumentException("preference "
-                                               + myName
-                                               + " is already defined");
+                    + myName
+                    + " is already defined");
         }
 
         /* Add the preference to the map */
@@ -432,6 +451,7 @@ public abstract class MetisPreferenceSet
 
     /**
      * Obtain preference by key.
+     *
      * @param pKey the key of the preference
      * @return the preference
      */
@@ -441,6 +461,7 @@ public abstract class MetisPreferenceSet
 
     /**
      * Obtain preference.
+     *
      * @param pName the name of the preference
      * @return the preference
      */
@@ -450,6 +471,7 @@ public abstract class MetisPreferenceSet
 
     /**
      * Obtain String preference.
+     *
      * @param pKey the key of the preference
      * @return the String preference
      */
@@ -460,13 +482,13 @@ public abstract class MetisPreferenceSet
         /* Reject if not found */
         if (myPref == null) {
             throw new IllegalArgumentException(ERROR_UNKNOWN
-                                               + pKey);
+                    + pKey);
         }
 
         /* Reject if wrong type */
         if (!(myPref instanceof MetisStringPreference)) {
             throw new IllegalArgumentException(ERROR_INVALID
-                                               + pKey);
+                    + pKey);
         }
 
         /* Return the preference */
@@ -475,6 +497,7 @@ public abstract class MetisPreferenceSet
 
     /**
      * Obtain String value.
+     *
      * @param pKey the key of the preference
      * @return the String value
      */
@@ -488,6 +511,7 @@ public abstract class MetisPreferenceSet
 
     /**
      * Obtain Integer preference.
+     *
      * @param pKey the key of the preference
      * @return the Integer preference
      */
@@ -498,13 +522,13 @@ public abstract class MetisPreferenceSet
         /* Reject if not found */
         if (myPref == null) {
             throw new IllegalArgumentException(ERROR_UNKNOWN
-                                               + pKey);
+                    + pKey);
         }
 
         /* Reject if wrong type */
         if (!(myPref instanceof MetisPreferenceSet.MetisIntegerPreference)) {
             throw new IllegalArgumentException(ERROR_INVALID
-                                               + pKey);
+                    + pKey);
         }
 
         /* Return the preference */
@@ -513,6 +537,7 @@ public abstract class MetisPreferenceSet
 
     /**
      * Obtain Integer value.
+     *
      * @param pKey the key of the preference
      * @return the Integer value
      */
@@ -526,6 +551,7 @@ public abstract class MetisPreferenceSet
 
     /**
      * Obtain Boolean preference.
+     *
      * @param pKey the key of the preference
      * @return the Boolean preference
      */
@@ -536,13 +562,13 @@ public abstract class MetisPreferenceSet
         /* Reject if not found */
         if (myPref == null) {
             throw new IllegalArgumentException(ERROR_UNKNOWN
-                                               + pKey);
+                    + pKey);
         }
 
         /* Reject if wrong type */
         if (!(myPref instanceof MetisBooleanPreference)) {
             throw new IllegalArgumentException(ERROR_INVALID
-                                               + pKey);
+                    + pKey);
         }
 
         /* Return the preference */
@@ -551,6 +577,7 @@ public abstract class MetisPreferenceSet
 
     /**
      * Obtain Boolean value.
+     *
      * @param pKey the key of the preference
      * @return the Boolean value
      */
@@ -564,6 +591,7 @@ public abstract class MetisPreferenceSet
 
     /**
      * Obtain Date preference.
+     *
      * @param pKey the key of the preference
      * @return the Date preference
      */
@@ -574,13 +602,13 @@ public abstract class MetisPreferenceSet
         /* Reject if not found */
         if (myPref == null) {
             throw new IllegalArgumentException(ERROR_UNKNOWN
-                                               + pKey);
+                    + pKey);
         }
 
         /* Reject if wrong type */
         if (!(myPref instanceof MetisDatePreference)) {
             throw new IllegalArgumentException(ERROR_INVALID
-                                               + pKey);
+                    + pKey);
         }
 
         /* Return the preference */
@@ -589,6 +617,7 @@ public abstract class MetisPreferenceSet
 
     /**
      * Obtain Date value.
+     *
      * @param pKey the key of the preference
      * @return the Date value
      */
@@ -602,8 +631,9 @@ public abstract class MetisPreferenceSet
 
     /**
      * Obtain Enum preference.
-     * @param <E> the EnumType
-     * @param pKey the key of the preference
+     *
+     * @param <E>    the EnumType
+     * @param pKey   the key of the preference
      * @param pClazz the Enum class
      * @return the Enum preference
      */
@@ -615,21 +645,20 @@ public abstract class MetisPreferenceSet
         /* Reject if not found */
         if (myPref == null) {
             throw new IllegalArgumentException(ERROR_UNKNOWN
-                                               + pKey);
+                    + pKey);
         }
 
         /* Reject if wrong type */
         if (!(myPref instanceof MetisEnumPreference)) {
             throw new IllegalArgumentException(ERROR_INVALID
-                                               + pKey);
+                    + pKey);
         }
 
         /* Access as Enum preference */
-        @SuppressWarnings("unchecked")
-        final MetisEnumPreference<E> myEnumPref = (MetisEnumPreference<E>) myPref;
+        @SuppressWarnings("unchecked") final MetisEnumPreference<E> myEnumPref = (MetisEnumPreference<E>) myPref;
         if (!myEnumPref.theClazz.equals(pClazz)) {
             throw new IllegalArgumentException(ERROR_INVALID
-                                               + pKey);
+                    + pKey);
         }
 
         /* Return the preference */
@@ -638,8 +667,9 @@ public abstract class MetisPreferenceSet
 
     /**
      * Obtain Enum value.
-     * @param <E> the EnumType
-     * @param pKey the key of the preference
+     *
+     * @param <E>    the EnumType
+     * @param pKey   the key of the preference
      * @param pClazz the Enum class
      * @return the Enum value
      */
@@ -665,6 +695,7 @@ public abstract class MetisPreferenceSet
 
     /**
      * Store preference changes.
+     *
      * @throws OceanusException on error
      */
     public final void storeChanges() throws OceanusException {
@@ -689,6 +720,7 @@ public abstract class MetisPreferenceSet
 
     /**
      * Does the preference set have changes.
+     *
      * @return true/false
      */
     public boolean hasChanges() {
@@ -706,6 +738,7 @@ public abstract class MetisPreferenceSet
 
     /**
      * Check whether a preference exists.
+     *
      * @param pKey the key of the preference
      * @return whether the preference already exists
      */
@@ -776,8 +809,9 @@ public abstract class MetisPreferenceSet
 
         /**
          * Constructor.
-         * @param pSet the preference Set
-         * @param pKey the key of the preference
+         *
+         * @param pSet  the preference Set
+         * @param pKey  the key of the preference
          * @param pType the type of the preference
          */
         protected MetisPreferenceItem(final MetisPreferenceSet pSet,
@@ -798,16 +832,18 @@ public abstract class MetisPreferenceSet
 
         /**
          * Obtain viewer value.
+         *
          * @return the value
          */
         Object getViewerValue() {
             return isHidden
-                            ? null
-                            : getValue();
+                    ? null
+                    : getValue();
         }
 
         /**
          * Obtain the preferenceSet.
+         *
          * @return the set
          */
         protected MetisPreferenceSet getSet() {
@@ -816,6 +852,7 @@ public abstract class MetisPreferenceSet
 
         /**
          * Obtain the preference handle.
+         *
          * @return the preference handle
          */
         protected Preferences getHandle() {
@@ -824,6 +861,7 @@ public abstract class MetisPreferenceSet
 
         /**
          * Obtain the key of the preference.
+         *
          * @return the key of the preference
          */
         protected MetisPreferenceKey getKey() {
@@ -832,6 +870,7 @@ public abstract class MetisPreferenceSet
 
         /**
          * Obtain the name of the preference.
+         *
          * @return the name of the preference
          */
         protected String getPreferenceName() {
@@ -840,6 +879,7 @@ public abstract class MetisPreferenceSet
 
         /**
          * Obtain the display name of the preference.
+         *
          * @return the display name of the preference
          */
         public String getDisplay() {
@@ -848,6 +888,7 @@ public abstract class MetisPreferenceSet
 
         /**
          * Obtain the type of the preference.
+         *
          * @return the type of the preference
          */
         public MetisPreferenceId getType() {
@@ -856,17 +897,19 @@ public abstract class MetisPreferenceSet
 
         /**
          * Obtain the value of the preference.
+         *
          * @return the value of the preference
          */
         protected Object getValue() {
             /* Return the active value */
             return isChanged
-                             ? theNewValue
-                             : theValue;
+                    ? theNewValue
+                    : theValue;
         }
 
         /**
          * Is the preference available?
+         *
          * @return true/false
          */
         public boolean isAvailable() {
@@ -875,6 +918,7 @@ public abstract class MetisPreferenceSet
 
         /**
          * Is the preference changed?
+         *
          * @return true/false
          */
         public boolean isChanged() {
@@ -883,6 +927,7 @@ public abstract class MetisPreferenceSet
 
         /**
          * Is the preference hidden?
+         *
          * @return true/false
          */
         public boolean isHidden() {
@@ -891,6 +936,7 @@ public abstract class MetisPreferenceSet
 
         /**
          * Set hidden.
+         *
          * @param pHidden true/false
          */
         public void setHidden(final boolean pHidden) {
@@ -899,6 +945,7 @@ public abstract class MetisPreferenceSet
 
         /**
          * Set value.
+         *
          * @param pValue the value
          */
         protected void setTheValue(final Object pValue) {
@@ -907,6 +954,7 @@ public abstract class MetisPreferenceSet
 
         /**
          * Set new value.
+         *
          * @param pNewValue the new value
          */
         protected void setNewValue(final Object pNewValue) {
@@ -925,6 +973,7 @@ public abstract class MetisPreferenceSet
 
         /**
          * Store preference.
+         *
          * @throws OceanusException on error
          */
         private void storePreference() throws OceanusException {
@@ -951,6 +1000,7 @@ public abstract class MetisPreferenceSet
 
         /**
          * Store the value of the preference.
+         *
          * @param pNewValue the new value to store
          * @throws OceanusException on error
          */
@@ -964,6 +1014,7 @@ public abstract class MetisPreferenceSet
             extends MetisPreferenceItem {
         /**
          * Constructor.
+         *
          * @param pSet the preference Set
          * @param pKey the key of the preference
          */
@@ -974,8 +1025,9 @@ public abstract class MetisPreferenceSet
 
         /**
          * Constructor.
-         * @param pSet the preference Set
-         * @param pKey the key of the preference
+         *
+         * @param pSet  the preference Set
+         * @param pKey  the key of the preference
          * @param pType the type of the preference
          */
         private MetisStringPreference(final MetisPreferenceSet pSet,
@@ -1001,6 +1053,7 @@ public abstract class MetisPreferenceSet
 
         /**
          * Set value.
+         *
          * @param pNewValue the new value
          */
         public void setValue(final String pNewValue) {
@@ -1030,6 +1083,7 @@ public abstract class MetisPreferenceSet
 
         /**
          * Constructor.
+         *
          * @param pSet the preference Set
          * @param pKey the key of the preference
          */
@@ -1055,6 +1109,7 @@ public abstract class MetisPreferenceSet
 
         /**
          * Obtain the minimum value.
+         *
          * @return the minimum
          */
         public Integer getMinimum() {
@@ -1063,6 +1118,7 @@ public abstract class MetisPreferenceSet
 
         /**
          * Obtain the maximum value.
+         *
          * @return the maximum
          */
         public Integer getMaximum() {
@@ -1071,6 +1127,7 @@ public abstract class MetisPreferenceSet
 
         /**
          * Set value.
+         *
          * @param pNewValue the new value
          */
         public void setValue(final Integer pNewValue) {
@@ -1079,6 +1136,7 @@ public abstract class MetisPreferenceSet
 
         /**
          * Set range.
+         *
          * @param pMinimum the minimum value
          * @param pMaximum the maximum value
          */
@@ -1090,17 +1148,18 @@ public abstract class MetisPreferenceSet
 
         /**
          * Validate the range.
+         *
          * @return true/false
          */
         public boolean validate() {
             if (isAvailable()) {
                 final Integer myValue = getValue();
                 if ((theMinimum != null)
-                    && theMinimum > myValue) {
+                        && theMinimum > myValue) {
                     return false;
                 }
                 if ((theMaximum != null)
-                    && theMaximum < myValue) {
+                        && theMaximum < myValue) {
                     return false;
                 }
             }
@@ -1120,6 +1179,7 @@ public abstract class MetisPreferenceSet
             extends MetisPreferenceItem {
         /**
          * Constructor.
+         *
          * @param pSet the preference Set
          * @param pKey the key of the preference
          */
@@ -1135,8 +1195,8 @@ public abstract class MetisPreferenceSet
 
                 /* Set as initial value */
                 setTheValue(myValue
-                                    ? Boolean.TRUE
-                                    : Boolean.FALSE);
+                        ? Boolean.TRUE
+                        : Boolean.FALSE);
             }
         }
 
@@ -1147,6 +1207,7 @@ public abstract class MetisPreferenceSet
 
         /**
          * Set value.
+         *
          * @param pNewValue the new value
          */
         public void setValue(final Boolean pNewValue) {
@@ -1155,8 +1216,8 @@ public abstract class MetisPreferenceSet
             /* Take a copy if not null */
             if (myNewValue != null) {
                 myNewValue = myNewValue
-                                        ? Boolean.TRUE
-                                        : Boolean.FALSE;
+                        ? Boolean.TRUE
+                        : Boolean.FALSE;
             }
 
             /* Set the new value */
@@ -1176,6 +1237,7 @@ public abstract class MetisPreferenceSet
             extends MetisPreferenceItem {
         /**
          * Constructor.
+         *
          * @param pSet the preference Set
          * @param pKey the key of the preference
          */
@@ -1204,6 +1266,7 @@ public abstract class MetisPreferenceSet
 
         /**
          * Set value.
+         *
          * @param pNewValue the new value
          */
         public void setValue(final OceanusDate pNewValue) {
@@ -1226,6 +1289,7 @@ public abstract class MetisPreferenceSet
 
     /**
      * Enum preference.
+     *
      * @param <E> the Enum type
      */
     public static class MetisEnumPreference<E extends Enum<E>>
@@ -1247,8 +1311,9 @@ public abstract class MetisPreferenceSet
 
         /**
          * Constructor.
-         * @param pSet the preference Set
-         * @param pKey the key of the preference
+         *
+         * @param pSet   the preference Set
+         * @param pKey   the key of the preference
          * @param pClazz the class of the preference
          */
         public MetisEnumPreference(final MetisPreferenceSet pSet,
@@ -1282,6 +1347,7 @@ public abstract class MetisPreferenceSet
 
         /**
          * Obtain the values of the preference.
+         *
          * @return the values of the preference
          */
         public E[] getValues() {
@@ -1290,6 +1356,7 @@ public abstract class MetisPreferenceSet
 
         /**
          * Obtain the filter.
+         *
          * @return the filter
          */
         public Predicate<E> getFilter() {
@@ -1298,6 +1365,7 @@ public abstract class MetisPreferenceSet
 
         /**
          * Set value.
+         *
          * @param pNewValue the new value
          * @return the Enum value
          */
@@ -1317,6 +1385,7 @@ public abstract class MetisPreferenceSet
 
         /**
          * Set value.
+         *
          * @param pNewValue the new value
          */
         public final void setValue(final String pNewValue) {
@@ -1327,6 +1396,7 @@ public abstract class MetisPreferenceSet
 
         /**
          * Set value.
+         *
          * @param pNewValue the new value
          */
         public void setValue(final E pNewValue) {
@@ -1335,12 +1405,13 @@ public abstract class MetisPreferenceSet
 
         /**
          * Set filter.
+         *
          * @param pFilter the new filter
          */
         public void setFilter(final Predicate<E> pFilter) {
             theFilter = theFilter == null
-                                          ? p -> true
-                                          : pFilter;
+                    ? p -> true
+                    : pFilter;
         }
 
         @Override

@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,18 +13,18 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets;
 
-import java.util.Iterator;
-
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDeposit;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDepositCategory;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+
+import java.util.Iterator;
 
 /**
  * The Deposit Bucket class.
@@ -50,8 +50,9 @@ public final class MoneyWiseXAnalysisDepositBucket
 
     /**
      * Constructor.
+     *
      * @param pAnalysis the analysis
-     * @param pDeposit the deposit
+     * @param pDeposit  the deposit
      */
     private MoneyWiseXAnalysisDepositBucket(final MoneyWiseXAnalysis pAnalysis,
                                             final MoneyWiseDeposit pDeposit) {
@@ -65,8 +66,9 @@ public final class MoneyWiseXAnalysisDepositBucket
 
     /**
      * Constructor.
+     *
      * @param pAnalysis the analysis
-     * @param pBase the underlying bucket
+     * @param pBase     the underlying bucket
      */
     private MoneyWiseXAnalysisDepositBucket(final MoneyWiseXAnalysis pAnalysis,
                                             final MoneyWiseXAnalysisDepositBucket pBase) {
@@ -80,9 +82,10 @@ public final class MoneyWiseXAnalysisDepositBucket
 
     /**
      * Constructor.
+     *
      * @param pAnalysis the analysis
-     * @param pBase the underlying bucket
-     * @param pDate the date for the bucket
+     * @param pBase     the underlying bucket
+     * @param pDate     the date for the bucket
      */
     private MoneyWiseXAnalysisDepositBucket(final MoneyWiseXAnalysis pAnalysis,
                                             final MoneyWiseXAnalysisDepositBucket pBase,
@@ -97,9 +100,10 @@ public final class MoneyWiseXAnalysisDepositBucket
 
     /**
      * Constructor.
+     *
      * @param pAnalysis the analysis
-     * @param pBase the underlying bucket
-     * @param pRange the range for the bucket
+     * @param pBase     the underlying bucket
+     * @param pRange    the range for the bucket
      */
     private MoneyWiseXAnalysisDepositBucket(final MoneyWiseXAnalysis pAnalysis,
                                             final MoneyWiseXAnalysisDepositBucket pBase,
@@ -122,6 +126,7 @@ public final class MoneyWiseXAnalysisDepositBucket
 
     /**
      * Obtain the deposit category.
+     *
      * @return the deposit category
      */
     public MoneyWiseDepositCategory getCategory() {
@@ -145,6 +150,7 @@ public final class MoneyWiseXAnalysisDepositBucket
 
         /**
          * Construct a top-level List.
+         *
          * @param pAnalysis the analysis
          */
         MoneyWiseXAnalysisDepositBucketList(final MoneyWiseXAnalysis pAnalysis) {
@@ -154,9 +160,10 @@ public final class MoneyWiseXAnalysisDepositBucket
 
         /**
          * Construct a dated List.
+         *
          * @param pAnalysis the analysis
-         * @param pBase the base list
-         * @param pDate the Date
+         * @param pBase     the base list
+         * @param pDate     the Date
          */
         MoneyWiseXAnalysisDepositBucketList(final MoneyWiseXAnalysis pAnalysis,
                                             final MoneyWiseXAnalysisDepositBucketList pBase,
@@ -170,9 +177,10 @@ public final class MoneyWiseXAnalysisDepositBucket
 
         /**
          * Construct a ranged List.
+         *
          * @param pAnalysis the analysis
-         * @param pBase the base list
-         * @param pRange the Date Range
+         * @param pBase     the base list
+         * @param pRange    the Date Range
          */
         MoneyWiseXAnalysisDepositBucketList(final MoneyWiseXAnalysis pAnalysis,
                                             final MoneyWiseXAnalysisDepositBucketList pBase,
@@ -191,6 +199,7 @@ public final class MoneyWiseXAnalysisDepositBucket
 
         /**
          * Obtain the matching DepositBucket.
+         *
          * @param pDeposit the deposit
          * @return the matching bucket
          */
@@ -204,6 +213,7 @@ public final class MoneyWiseXAnalysisDepositBucket
 
         /**
          * Obtain the default Deposit.
+         *
          * @return the bucket
          */
         public MoneyWiseXAnalysisDepositBucket getDefaultDeposit() {
@@ -215,6 +225,7 @@ public final class MoneyWiseXAnalysisDepositBucket
 
         /**
          * Obtain the default Deposit for the category.
+         *
          * @param pCategory the category
          * @return the bucket
          */
@@ -239,6 +250,7 @@ public final class MoneyWiseXAnalysisDepositBucket
 
         /**
          * Obtain an orphan DepositBucket for a given deposit account.
+         *
          * @param pDeposit the deposit account
          * @return the bucket
          */

@@ -24,7 +24,7 @@ module net.sourceforge.joceanus.prometheus.core {
     requires java.xml;
 
     /* Oceanus */
-    requires net.sourceforge.joceanus.oceanus;
+    requires io.github.tonywasher.joceanus.oceanus;
     requires net.sourceforge.joceanus.tethys.core;
     requires net.sourceforge.joceanus.gordianknot;
     requires net.sourceforge.joceanus.metis;

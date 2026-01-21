@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,11 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.atlas.data.analysis.analyse;
 
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEvent;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetDirection;
@@ -26,8 +28,6 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
 
 /**
  * Transaction details.
@@ -90,6 +90,7 @@ public class MoneyWiseXAnalysisTransaction {
 
     /**
      * Constructor.
+     *
      * @param pEvent the event
      */
     MoneyWiseXAnalysisTransaction(final MoneyWiseXAnalysisEvent pEvent) {
@@ -129,6 +130,7 @@ public class MoneyWiseXAnalysisTransaction {
 
     /**
      * Obtain the event.
+     *
      * @return the event
      */
     MoneyWiseXAnalysisEvent getEvent() {
@@ -137,6 +139,7 @@ public class MoneyWiseXAnalysisTransaction {
 
     /**
      * Obtain the transaction.
+     *
      * @return the transaction
      */
     MoneyWiseTransaction getTransaction() {
@@ -145,6 +148,7 @@ public class MoneyWiseXAnalysisTransaction {
 
     /**
      * Is this transaction Account -> partner?
+     *
      * @return true/false
      */
     boolean isTo() {
@@ -153,6 +157,7 @@ public class MoneyWiseXAnalysisTransaction {
 
     /**
      * Obtain the debit account.
+     *
      * @return the debit account
      */
     MoneyWiseTransAsset getDebitAccount() {
@@ -161,6 +166,7 @@ public class MoneyWiseXAnalysisTransaction {
 
     /**
      * Obtain the credit account.
+     *
      * @return the credit account
      */
     MoneyWiseTransAsset getCreditAccount() {
@@ -169,6 +175,7 @@ public class MoneyWiseXAnalysisTransaction {
 
     /**
      * Obtain the child account.
+     *
      * @return the child account
      */
     public MoneyWiseTransAsset getChildAccount() {
@@ -177,6 +184,7 @@ public class MoneyWiseXAnalysisTransaction {
 
     /**
      * Obtain the category.
+     *
      * @return the category
      */
     MoneyWiseTransCategory getCategory() {
@@ -185,6 +193,7 @@ public class MoneyWiseXAnalysisTransaction {
 
     /**
      * Obtain the categoryClass.
+     *
      * @return the categoryClass
      */
     MoneyWiseTransCategoryClass getCategoryClass() {
@@ -193,6 +202,7 @@ public class MoneyWiseXAnalysisTransaction {
 
     /**
      * Obtain the debit unitsDelta.
+     *
      * @return the delta
      */
     OceanusUnits getDebitUnitsDelta() {
@@ -201,6 +211,7 @@ public class MoneyWiseXAnalysisTransaction {
 
     /**
      * Obtain the credit unitsDelta.
+     *
      * @return the delta
      */
     OceanusUnits getCreditUnitsDelta() {
@@ -209,6 +220,7 @@ public class MoneyWiseXAnalysisTransaction {
 
     /**
      * is this an income Category?
+     *
      * @return true/false
      */
     boolean isIncomeCategory() {
@@ -218,6 +230,7 @@ public class MoneyWiseXAnalysisTransaction {
 
     /**
      * is this an expense Category?
+     *
      * @return true/false
      */
     boolean isExpenseCategory() {
@@ -227,6 +240,7 @@ public class MoneyWiseXAnalysisTransaction {
 
     /**
      * is this a refund?
+     *
      * @return true/false
      */
     boolean isRefund() {
@@ -235,6 +249,7 @@ public class MoneyWiseXAnalysisTransaction {
 
     /**
      * Obtain the transaction value.
+     *
      * @return the value
      */
     OceanusMoney getTransactionValue() {
@@ -243,6 +258,7 @@ public class MoneyWiseXAnalysisTransaction {
 
     /**
      * Obtain the debit amount.
+     *
      * @return the debit amount
      */
     OceanusMoney getDebitAmount() {
@@ -251,6 +267,7 @@ public class MoneyWiseXAnalysisTransaction {
 
     /**
      * Obtain the credit amount.
+     *
      * @return the credit amount
      */
     OceanusMoney getCreditAmount() {
@@ -259,6 +276,7 @@ public class MoneyWiseXAnalysisTransaction {
 
     /**
      * Set the debit amount.
+     *
      * @param pAmount the amount
      */
     void setDebitAmount(final OceanusMoney pAmount) {
@@ -271,6 +289,7 @@ public class MoneyWiseXAnalysisTransaction {
 
     /**
      * Set the credit amount.
+     *
      * @param pAmount the amount
      */
     void setCreditAmount(final OceanusMoney pAmount) {

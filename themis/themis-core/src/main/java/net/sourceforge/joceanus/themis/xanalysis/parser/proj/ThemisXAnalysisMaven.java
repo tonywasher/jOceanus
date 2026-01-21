@@ -1,23 +1,23 @@
-/*******************************************************************************
+/*
  * Themis: Java Project Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package net.sourceforge.joceanus.themis.xanalysis.parser.proj;
 
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.base.OceanusSystem;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusSystem;
 import net.sourceforge.joceanus.themis.exc.ThemisDataException;
 import net.sourceforge.joceanus.themis.exc.ThemisIOException;
 import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisChar;
@@ -146,7 +146,8 @@ public class ThemisXAnalysisMaven {
 
     /**
      * Constructor.
-     * @param pParent the parent pom
+     *
+     * @param pParent      the parent pom
      * @param pInputStream the input stream to read
      * @throws OceanusException on error
      */
@@ -192,6 +193,7 @@ public class ThemisXAnalysisMaven {
 
     /**
      * Obtain the list of modules.
+     *
      * @return the list
      */
     public ThemisXAnalysisMavenId getMavenId() {
@@ -200,6 +202,7 @@ public class ThemisXAnalysisMaven {
 
     /**
      * Obtain the list of modules.
+     *
      * @return the modules
      */
     public List<String> getModules() {
@@ -208,6 +211,7 @@ public class ThemisXAnalysisMaven {
 
     /**
      * Obtain the list of dependencies.
+     *
      * @return the dependencies
      */
     public List<ThemisXAnalysisMavenId> getDependencies() {
@@ -216,6 +220,7 @@ public class ThemisXAnalysisMaven {
 
     /**
      * Obtain the list of extra directories.
+     *
      * @return the modules
      */
     public List<String> getXtraDirs() {
@@ -224,6 +229,7 @@ public class ThemisXAnalysisMaven {
 
     /**
      * Parse the project file.
+     *
      * @return the MavenId
      * @throws OceanusException on error
      */
@@ -264,8 +270,9 @@ public class ThemisXAnalysisMaven {
 
     /**
      * Obtain element value.
+     *
      * @param pElement the element
-     * @param pValue the value name
+     * @param pValue   the value name
      * @return the value
      */
     String getElementValue(final Element pElement,
@@ -292,6 +299,7 @@ public class ThemisXAnalysisMaven {
 
     /**
      * Obtain the XPath node.
+     *
      * @param pPath the Path
      * @return the Node (or null if not found)
      * @throws OceanusException on error
@@ -307,6 +315,7 @@ public class ThemisXAnalysisMaven {
 
     /**
      * Process properties.
+     *
      * @throws OceanusException on error
      */
     private void processProperties() throws OceanusException {
@@ -323,6 +332,7 @@ public class ThemisXAnalysisMaven {
 
     /**
      * Process modules.
+     *
      * @throws OceanusException on error
      */
     private void processModules() throws OceanusException {
@@ -335,7 +345,7 @@ public class ThemisXAnalysisMaven {
                  myChild = myChild.getNextSibling()) {
                 /* Return result if we have a match */
                 if (myChild instanceof Element
-                    && EL_MODULE.equals(myChild.getNodeName())) {
+                        && EL_MODULE.equals(myChild.getNodeName())) {
                     theModules.add(myChild.getTextContent());
                 }
             }
@@ -344,6 +354,7 @@ public class ThemisXAnalysisMaven {
 
     /**
      * Process dependencies.
+     *
      * @param pParent the parentId
      * @throws OceanusException on error
      */
@@ -357,7 +368,7 @@ public class ThemisXAnalysisMaven {
                  myChild = myChild.getNextSibling()) {
                 /* Return result if we have a match */
                 if (myChild instanceof Element myElement
-                    && EL_DEPENDENCY.equals(myChild.getNodeName())) {
+                        && EL_DEPENDENCY.equals(myChild.getNodeName())) {
                     final ThemisXAnalysisMavenId myId = new ThemisXAnalysisMavenId(myElement, pParent);
                     if (!myId.isSkippable()) {
                         theDependencies.add(new ThemisXAnalysisMavenId(myElement, pParent));
@@ -369,6 +380,7 @@ public class ThemisXAnalysisMaven {
 
     /**
      * Process extra directories.
+     *
      * @throws OceanusException on error
      */
     private void processXtraDirs() throws OceanusException {
@@ -390,6 +402,7 @@ public class ThemisXAnalysisMaven {
 
     /**
      * Replace property.
+     *
      * @param pValue the value
      * @return the value or the replaced property
      */
@@ -477,6 +490,7 @@ public class ThemisXAnalysisMaven {
 
         /**
          * Constructor.
+         *
          * @param pElement the element containing the values
          */
         private ThemisXAnalysisMavenId(final Element pElement) {
@@ -491,21 +505,22 @@ public class ThemisXAnalysisMaven {
 
         /**
          * Constructor.
+         *
          * @param pElement the element containing the values
-         * @param pParent the parentId
+         * @param pParent  the parentId
          */
-       private ThemisXAnalysisMavenId(final Element pElement,
-                                      final ThemisXAnalysisMavenId pParent) {
+        private ThemisXAnalysisMavenId(final Element pElement,
+                                       final ThemisXAnalysisMavenId pParent) {
             /* Process as much as we can */
             this(pElement);
 
             /* Handle missing groupId/version */
             if (PARENT_GROUP.equals(theGroupId)
-                || (!idFound && theGroupId == null)) {
+                    || (!idFound && theGroupId == null)) {
                 theGroupId = pParent.getGroupId();
             }
             if (PARENT_VERSION.equals(theVersion)
-                || (!idFound && theVersion == null)) {
+                    || (!idFound && theVersion == null)) {
                 theVersion = pParent.getVersion();
             }
 
@@ -518,6 +533,7 @@ public class ThemisXAnalysisMaven {
 
         /**
          * Obtain the groupId.
+         *
          * @return the groupId
          */
         public String getGroupId() {
@@ -526,6 +542,7 @@ public class ThemisXAnalysisMaven {
 
         /**
          * Obtain the artifactId.
+         *
          * @return the artifactId
          */
         public String getArtifactId() {
@@ -534,6 +551,7 @@ public class ThemisXAnalysisMaven {
 
         /**
          * Obtain the version.
+         *
          * @return the version
          */
         public String getVersion() {
@@ -542,6 +560,7 @@ public class ThemisXAnalysisMaven {
 
         /**
          * Obtain the scope.
+         *
          * @return the scope
          */
         public String getScope() {
@@ -550,6 +569,7 @@ public class ThemisXAnalysisMaven {
 
         /**
          * Obtain the classifier.
+         *
          * @return the classifier
          */
         public String getClassifier() {
@@ -558,6 +578,7 @@ public class ThemisXAnalysisMaven {
 
         /**
          * Obtain the optional.
+         *
          * @return the optional
          */
         public String isOptional() {
@@ -566,6 +587,7 @@ public class ThemisXAnalysisMaven {
 
         /**
          * is the dependency skippable?
+         *
          * @return true/false
          */
         public boolean isSkippable() {
@@ -612,6 +634,7 @@ public class ThemisXAnalysisMaven {
 
         /**
          * Obtain the mavenBase.
+         *
          * @return the mavenBase path
          */
         private File getMavenBasePath() {
@@ -627,6 +650,7 @@ public class ThemisXAnalysisMaven {
 
         /**
          * Obtain the mavenJar.
+         *
          * @return the mavenJar path
          */
         public File getMavenJarPath() {
@@ -642,6 +666,7 @@ public class ThemisXAnalysisMaven {
 
         /**
          * Obtain the mavenJar.
+         *
          * @return the mavenJar path
          */
         public File getMavenPomPath() {

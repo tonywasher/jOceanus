@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Metis: Java Data Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,15 +13,15 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.metis.viewer;
 
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.event.OceanusEvent;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistration;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEvent;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistration;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.api.control.TethysUIHTMLManager;
 import net.sourceforge.joceanus.tethys.api.control.TethysUISplitTreeManager;
@@ -112,7 +112,8 @@ public class MetisViewerWindow
 
     /**
      * Constructor.
-     * @param pFactory the GUI factory
+     *
+     * @param pFactory     the GUI factory
      * @param pDataManager the viewer data manager
      * @throws OceanusException on error
      */
@@ -157,6 +158,7 @@ public class MetisViewerWindow
 
     /**
      * Obtain the SplitTree Manager.
+     *
      * @return the tree manager
      */
     public TethysUISplitTreeManager<MetisViewerEntry> getSplitTreeManager() {
@@ -165,6 +167,7 @@ public class MetisViewerWindow
 
     /**
      * Obtain the Tree Manager.
+     *
      * @return the tree manager
      */
     public TethysUITreeManager<MetisViewerEntry> getTreeManager() {
@@ -173,6 +176,7 @@ public class MetisViewerWindow
 
     /**
      * Obtain the HTML Manager.
+     *
      * @return the HTML manager
      */
     public TethysUIHTMLManager getHTMLManager() {
@@ -236,6 +240,7 @@ public class MetisViewerWindow
 
     /**
      * create child items.
+     *
      * @param pItem the parent of the child items
      */
     private void createChildEntries(final TethysUITreeItem<MetisViewerEntry> pItem) {
@@ -258,6 +263,7 @@ public class MetisViewerWindow
 
     /**
      * Handle focus event.
+     *
      * @param pEvent the event
      */
     private void handleFocusEvent(final OceanusEvent<MetisViewerEvent> pEvent) {
@@ -274,6 +280,7 @@ public class MetisViewerWindow
 
     /**
      * Handle visibility event.
+     *
      * @param pEvent the event
      */
     private void handleVisibilityEvent(final OceanusEvent<MetisViewerEvent> pEvent) {
@@ -287,6 +294,7 @@ public class MetisViewerWindow
 
     /**
      * Handle value event.
+     *
      * @param pEvent the event
      */
     private void handleValueEvent(final OceanusEvent<MetisViewerEvent> pEvent) {
@@ -308,6 +316,7 @@ public class MetisViewerWindow
 
     /**
      * Handle entry event.
+     *
      * @param pEvent the event
      */
     private void handleEntryEvent(final OceanusEvent<MetisViewerEvent> pEvent) {
@@ -330,8 +339,9 @@ public class MetisViewerWindow
 
     /**
      * Fire event.
+     *
      * @param pEventId the eventId
-     * @param pValue the relevant value
+     * @param pValue   the relevant value
      */
     protected void fireEvent(final TethysUIEvent pEventId,
                              final Object pValue) {
@@ -376,7 +386,7 @@ public class MetisViewerWindow
     public void hideDialog() {
         /* If the dialog exists */
         if (theDialog != null
-            && theDialog.isShowing()) {
+                && theDialog.isShowing()) {
             /* Make sure that the dialog is hidden */
             theDialog.hideDialog();
 
@@ -397,6 +407,7 @@ public class MetisViewerWindow
 
     /**
      * Handle the split tree action event.
+     *
      * @param pEvent the event
      */
     protected void handleSplitTreeAction(final OceanusEvent<TethysUIEvent> pEvent) {
@@ -415,6 +426,7 @@ public class MetisViewerWindow
 
     /**
      * Handle the new tree item.
+     *
      * @param pEntry the new entry
      */
     private void handleNewTreeItem(final MetisViewerEntry pEntry) {
@@ -455,6 +467,7 @@ public class MetisViewerWindow
 
     /**
      * Handle the explicit page.
+     *
      * @param pIndex the index of the page
      */
     protected void handleExplicitPage(final int pIndex) {
@@ -465,6 +478,7 @@ public class MetisViewerWindow
 
     /**
      * Handle the mode.
+     *
      * @param pMode the new mode
      */
     protected void handleMode(final MetisViewerMode pMode) {
@@ -475,6 +489,7 @@ public class MetisViewerWindow
 
     /**
      * Handle the link.
+     *
      * @param pLink the name of the link
      */
     private void handleLink(final String pLink) {

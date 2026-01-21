@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Prometheus: Application Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,17 +13,13 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.prometheus.service.sheet.odf;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-import java.util.zip.ZipOutputStream;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetException;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
@@ -34,12 +30,14 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
-
-import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 /**
  * Loader and Archiver for Odf files.
@@ -88,6 +86,7 @@ public final class PrometheusOdfLoader {
 
     /**
      * load spreadSheet from stream.
+     *
      * @param pInput the input stream
      * @return the contents
      * @throws OceanusException on error
@@ -105,6 +104,7 @@ public final class PrometheusOdfLoader {
 
     /**
      * load initial spreadSheet from resource.
+     *
      * @return the contents
      * @throws OceanusException on error
      */
@@ -122,8 +122,9 @@ public final class PrometheusOdfLoader {
 
     /**
      * Write new spreadSheet.
+     *
      * @param pContents the contents
-     * @param pOutput the output stream
+     * @param pOutput   the output stream
      * @throws OceanusException on error
      */
     static void writeNewSpreadSheet(final Document pContents,
@@ -140,8 +141,9 @@ public final class PrometheusOdfLoader {
 
     /**
      * Write updated spreadSheet.
+     *
      * @param pContents the contents
-     * @param pOutput the output stream
+     * @param pOutput   the output stream
      * @throws OceanusException on error
      */
     static void writeUpdatedSpreadSheet(final Document pContents,
@@ -160,6 +162,7 @@ public final class PrometheusOdfLoader {
 
     /**
      * Load an ODF spreadSheet.
+     *
      * @param pInput the input stream
      * @return the parsed document
      * @throws OceanusException on error
@@ -176,7 +179,7 @@ public final class PrometheusOdfLoader {
             final DocumentBuilder myBuilder = myFactory.newDocumentBuilder();
 
             /* Loop through the Zip file entries */
-            for (;;) {
+            for (; ; ) {
                 /* Read next entry */
                 final ZipEntry myEntry = myZipStream.getNextEntry();
 
@@ -193,8 +196,8 @@ public final class PrometheusOdfLoader {
             }
 
         } catch (ParserConfigurationException
-                | SAXException
-                | IOException e) {
+                 | SAXException
+                 | IOException e) {
             throw new PrometheusSheetException(ERROR_READ, e);
         }
 
@@ -203,7 +206,8 @@ public final class PrometheusOdfLoader {
 
     /**
      * create an ODF spreadSheet.
-     * @param pDoc the (updated) document
+     *
+     * @param pDoc    the (updated) document
      * @param pOutput the input stream
      * @throws OceanusException on error
      */
@@ -224,14 +228,15 @@ public final class PrometheusOdfLoader {
 
     /**
      * Update an ODF spreadSheet, based on an input spreadSheet.
-     * @param pInput the input stream
+     *
+     * @param pInput    the input stream
      * @param pContents the (updated) contents document
-     * @param pOutput the output stream
+     * @param pOutput   the output stream
      * @throws OceanusException on error
      */
-     private static void updateSpreadSheet(final InputStream pInput,
-                                           final Document pContents,
-                                           final OutputStream pOutput) throws OceanusException {
+    private static void updateSpreadSheet(final InputStream pInput,
+                                          final Document pContents,
+                                          final OutputStream pOutput) throws OceanusException {
         /* Protect against exceptions */
         try (ZipInputStream myInStream = new ZipInputStream(pInput);
              ZipOutputStream myOutStream = new ZipOutputStream(pOutput)) {
@@ -243,7 +248,7 @@ public final class PrometheusOdfLoader {
             final Transformer myXformer = myXformFactory.newTransformer();
 
             /* Loop through the Zip file entries */
-            for (;;) {
+            for (; ; ) {
                 /* Read next entry */
                 final ZipEntry myEntry = myInStream.getNextEntry();
 
@@ -263,22 +268,23 @@ public final class PrometheusOdfLoader {
                             new StreamResult(new WrapOutputStream(myOutStream)));
 
                     /* Else it is a standard entry, so just copy it */
-                } else  {
+                } else {
                     myInStream.transferTo(myOutStream);
                 }
             }
 
         } catch (TransformerException
-                | IOException e) {
+                 | IOException e) {
             throw new PrometheusSheetException(ERROR_WRITE, e);
         }
     }
 
     /**
      * build a Zip entry from document.
+     *
      * @param pEntryName the entry name
-     * @param pDocument the document
-     * @param pOutput the output stream
+     * @param pDocument  the document
+     * @param pOutput    the output stream
      * @throws OceanusException on error
      */
     private static void documentToZipEntry(final String pEntryName,
@@ -302,16 +308,17 @@ public final class PrometheusOdfLoader {
                     new StreamResult(new WrapOutputStream(pOutput)));
 
         } catch (IOException
-                | TransformerException e) {
+                 | TransformerException e) {
             throw new PrometheusSheetException("Failed to write document to ZipFile", e);
         }
     }
 
     /**
      * build a Zip entry from resource.
-     * @param pEntryName the entry name
+     *
+     * @param pEntryName    the entry name
      * @param pResourceName the resource name
-     * @param pOutput the output stream
+     * @param pOutput       the output stream
      * @throws OceanusException on error
      */
     private static void resourceToZipEntry(final String pEntryName,
@@ -332,9 +339,10 @@ public final class PrometheusOdfLoader {
 
     /**
      * write a Zip entry from string.
+     *
      * @param pEntryName the entry name
-     * @param pContents the contents
-     * @param pOutput the output stream
+     * @param pContents  the contents
+     * @param pOutput    the output stream
      * @throws OceanusException on error
      */
     private static void stringToZipEntry(final String pEntryName,
@@ -342,7 +350,7 @@ public final class PrometheusOdfLoader {
                                          final ZipOutputStream pOutput) throws OceanusException {
         /* Protect against exceptions */
         try {
-           /* Create the new output entry */
+            /* Create the new output entry */
             final ZipEntry myOutEntry = new ZipEntry(pEntryName);
             pOutput.putNextEntry(myOutEntry);
 
@@ -371,6 +379,7 @@ public final class PrometheusOdfLoader {
 
         /**
          * Constructor.
+         *
          * @param pStream the ZipStream
          */
         WrapInputStream(final ZipInputStream pStream) {
@@ -474,6 +483,7 @@ public final class PrometheusOdfLoader {
 
         /**
          * Constructor.
+         *
          * @param pStream the ZipStream
          */
         WrapOutputStream(final ZipOutputStream pStream) {

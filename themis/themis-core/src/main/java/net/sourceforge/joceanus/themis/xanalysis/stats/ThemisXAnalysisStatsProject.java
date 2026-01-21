@@ -1,22 +1,22 @@
-/*******************************************************************************
+/*
  * Themis: Java Project Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package net.sourceforge.joceanus.themis.xanalysis.stats;
 
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.exc.ThemisIOException;
 import net.sourceforge.joceanus.themis.xanalysis.parser.ThemisXAnalysisParser;
 import net.sourceforge.joceanus.themis.xanalysis.parser.proj.ThemisXAnalysisModule;
@@ -51,6 +51,7 @@ public class ThemisXAnalysisStatsProject {
 
     /**
      * Constructor.
+     *
      * @param pParser the project parser
      */
     public ThemisXAnalysisStatsProject(final ThemisXAnalysisParser pParser) {
@@ -79,6 +80,7 @@ public class ThemisXAnalysisStatsProject {
 
     /**
      * Obtain the project.
+     *
      * @return the project
      */
     public ThemisXAnalysisProject getUnderlying() {
@@ -87,6 +89,7 @@ public class ThemisXAnalysisStatsProject {
 
     /**
      * Obtain the stats.
+     *
      * @return the stats
      */
     public ThemisXAnalysisStats getStats() {
@@ -95,6 +98,7 @@ public class ThemisXAnalysisStatsProject {
 
     /**
      * Obtain the modules.
+     *
      * @return the modules
      */
     public List<ThemisXAnalysisStatsModule> getModules() {
@@ -103,6 +107,7 @@ public class ThemisXAnalysisStatsProject {
 
     /**
      * Obtain the error.
+     *
      * @return the error
      */
     public OceanusException getError() {

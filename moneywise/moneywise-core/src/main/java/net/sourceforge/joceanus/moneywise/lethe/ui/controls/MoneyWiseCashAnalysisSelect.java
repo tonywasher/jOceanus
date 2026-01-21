@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,29 +13,25 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.lethe.ui.controls;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCashCategory;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCashCategoryClass;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisCashBucket;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisCashBucket.MoneyWiseAnalysisCashBucketList;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisCashCategoryBucket;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisCashCategoryBucket.MoneyWiseAnalysisCashCategoryBucketList;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCashCategory;
-import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCashCategoryClass;
 import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter;
 import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisCashFilter;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIConstant;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
@@ -48,6 +44,10 @@ import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollItem;
 import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollMenu;
 import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollSubMenu;
 import net.sourceforge.joceanus.tethys.api.pane.TethysUIBoxPaneManager;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Cash Analysis Selection.
@@ -116,6 +116,7 @@ public class MoneyWiseCashAnalysisSelect
 
     /**
      * Constructor.
+     *
      * @param pFactory the GUI factory
      */
     protected MoneyWiseCashAnalysisSelect(final TethysUIFactory<?> pFactory) {
@@ -217,6 +218,7 @@ public class MoneyWiseCashAnalysisSelect
 
     /**
      * Set analysis.
+     *
      * @param pAnalysis the analysis.
      */
     public void setAnalysis(final MoneyWiseAnalysis pAnalysis) {
@@ -260,6 +262,7 @@ public class MoneyWiseCashAnalysisSelect
 
     /**
      * Obtain the default Cash for the category.
+     *
      * @param pCategory the category
      * @return the bucket
      */
@@ -407,6 +410,7 @@ public class MoneyWiseCashAnalysisSelect
 
         /**
          * Constructor.
+         *
          * @param pState state to copy from
          */
         private MoneyWiseCashState(final MoneyWiseCashState pState) {
@@ -419,6 +423,7 @@ public class MoneyWiseCashAnalysisSelect
 
         /**
          * Obtain the Cash Bucket.
+         *
          * @return the Cash
          */
         private MoneyWiseAnalysisCashBucket getCash() {
@@ -427,6 +432,7 @@ public class MoneyWiseCashAnalysisSelect
 
         /**
          * Obtain the Category.
+         *
          * @return the category
          */
         private MoneyWiseCashCategory getCategory() {
@@ -435,6 +441,7 @@ public class MoneyWiseCashAnalysisSelect
 
         /**
          * Obtain the dateRange.
+         *
          * @return the dateRange
          */
         private OceanusDateRange getDateRange() {
@@ -443,6 +450,7 @@ public class MoneyWiseCashAnalysisSelect
 
         /**
          * Obtain the Filter.
+         *
          * @return the filter
          */
         private MoneyWiseAnalysisCashFilter getFilter() {
@@ -451,6 +459,7 @@ public class MoneyWiseCashAnalysisSelect
 
         /**
          * Set new Cash Account.
+         *
          * @param pCash the Cash Account
          * @return true/false did a change occur
          */
@@ -466,6 +475,7 @@ public class MoneyWiseCashAnalysisSelect
 
         /**
          * Set the Cash.
+         *
          * @param pCash the Cash
          */
         private void setTheCash(final MoneyWiseAnalysisCashBucket pCash) {
@@ -478,8 +488,9 @@ public class MoneyWiseCashAnalysisSelect
 
         /**
          * Set the Cash.
+         *
          * @param pCategory the category
-         * @param pCash the Cash
+         * @param pCash     the Cash
          */
         private void setTheCash(final MoneyWiseCashCategory pCategory,
                                 final MoneyWiseAnalysisCashBucket pCash) {
@@ -498,6 +509,7 @@ public class MoneyWiseCashAnalysisSelect
 
         /**
          * Set new Category.
+         *
          * @param pCategory the Category
          * @return true/false did a change occur
          */
@@ -512,6 +524,7 @@ public class MoneyWiseCashAnalysisSelect
 
         /**
          * Set the dateRange.
+         *
          * @param pRange the dateRange
          */
         private void setDateRange(final OceanusDateRange pRange) {

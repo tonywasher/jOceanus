@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * Metis: Java Data Framework
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,10 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.metis.field;
 
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.data.MetisDataEditState;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataDeletableItem;
@@ -25,7 +26,6 @@ import net.sourceforge.joceanus.metis.data.MetisDataState;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldTableItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldUpdatableItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldValidation.MetisFieldError;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 
 /**
  * Data Version Control.
@@ -91,6 +91,7 @@ public abstract class MetisFieldVersionedItem
 
     /**
      * Constructor.
+     *
      * @param pValues the initial values
      */
     protected MetisFieldVersionedItem(final MetisFieldVersionValues pValues) {
@@ -103,6 +104,7 @@ public abstract class MetisFieldVersionedItem
 
     /**
      * Obtain new version values.
+     *
      * @return new values
      */
     protected MetisFieldVersionValues newVersionValues() {
@@ -116,6 +118,7 @@ public abstract class MetisFieldVersionedItem
 
     /**
      * Set Id.
+     *
      * @param pId the Id
      */
     public void setIndexedId(final Integer pId) {
@@ -124,6 +127,7 @@ public abstract class MetisFieldVersionedItem
 
     /**
      * Obtain the itemType.
+     *
      * @return the item type
      */
     public MetisFieldItemType getItemType() {
@@ -132,6 +136,7 @@ public abstract class MetisFieldVersionedItem
 
     /**
      * Set ItemType.
+     *
      * @param pItemType the itemType
      */
     public void setItemType(final MetisFieldItemType pItemType) {
@@ -140,6 +145,7 @@ public abstract class MetisFieldVersionedItem
 
     /**
      * Obtain the State of item.
+     *
      * @return the state
      */
     public MetisDataState getState() {
@@ -148,6 +154,7 @@ public abstract class MetisFieldVersionedItem
 
     /**
      * Obtain the editState of item.
+     *
      * @return the editState
      */
     public MetisDataEditState getEditState() {
@@ -161,6 +168,7 @@ public abstract class MetisFieldVersionedItem
 
     /**
      * Obtain the Validation.
+     *
      * @return the validation
      */
     public MetisFieldValidation getValidation() {
@@ -179,6 +187,7 @@ public abstract class MetisFieldVersionedItem
 
     /**
      * Obtain the Version of item.
+     *
      * @return the version
      */
     public Integer getVersion() {
@@ -187,6 +196,7 @@ public abstract class MetisFieldVersionedItem
 
     /**
      * Obtain the original Version of item.
+     *
      * @return the version
      */
     public Integer getOriginalVersion() {
@@ -220,6 +230,7 @@ public abstract class MetisFieldVersionedItem
 
     /**
      * Set the Edit State.
+     *
      * @param pState the Edit Status
      */
     protected void setEditState(final MetisDataEditState pState) {
@@ -228,6 +239,7 @@ public abstract class MetisFieldVersionedItem
 
     /**
      * Determine whether the item has Errors.
+     *
      * @return <code>true/false</code>
      */
     public boolean hasErrors() {
@@ -236,6 +248,7 @@ public abstract class MetisFieldVersionedItem
 
     /**
      * Determine whether the item has Changes.
+     *
      * @return <code>true/false</code>
      */
     public boolean hasChanges() {
@@ -244,6 +257,7 @@ public abstract class MetisFieldVersionedItem
 
     /**
      * Determine whether the item is Valid.
+     *
      * @return <code>true/false</code>
      */
     public boolean isValid() {
@@ -259,7 +273,8 @@ public abstract class MetisFieldVersionedItem
 
     /**
      * Add an error for this item.
-     * @param pError the error text
+     *
+     * @param pError   the error text
      * @param pFieldId the associated field
      */
     public void addError(final String pError,
@@ -281,6 +296,7 @@ public abstract class MetisFieldVersionedItem
 
     /**
      * Get the first error element for an item.
+     *
      * @return the first error (or <code>null</code>)
      */
     public MetisFieldError getFirstError() {
@@ -306,6 +322,7 @@ public abstract class MetisFieldVersionedItem
 
     /**
      * Initialise the current values.
+     *
      * @param pValues the current values
      */
     public void setValues(final MetisFieldVersionValues pValues) {
@@ -321,6 +338,7 @@ public abstract class MetisFieldVersionedItem
 
     /**
      * Push history to a specific version.
+     *
      * @param pVersion the version
      */
     public void pushHistory(final int pVersion) {
@@ -334,6 +352,7 @@ public abstract class MetisFieldVersionedItem
 
     /**
      * popItem from the history if equal to current.
+     *
      * @return was a change made
      */
     public boolean maybePopHistory() {
@@ -342,6 +361,7 @@ public abstract class MetisFieldVersionedItem
 
     /**
      * Is there any history.
+     *
      * @return whether there are entries in the history list
      */
     public boolean hasHistory() {
@@ -366,6 +386,7 @@ public abstract class MetisFieldVersionedItem
 
     /**
      * Set history explicitly.
+     *
      * @param pBase the base item
      */
     public void setHistory(final MetisFieldVersionValues pBase) {
@@ -380,6 +401,7 @@ public abstract class MetisFieldVersionedItem
 
     /**
      * Condense history.
+     *
      * @param pNewVersion the new maximum version
      */
     public void condenseHistory(final int pNewVersion) {
@@ -388,6 +410,7 @@ public abstract class MetisFieldVersionedItem
 
     /**
      * Rewind item to the required version.
+     *
      * @param pVersion the version to rewind to
      */
     public void rewindToVersion(final int pVersion) {
@@ -400,6 +423,7 @@ public abstract class MetisFieldVersionedItem
 
     /**
      * Determines whether a particular field has changed.
+     *
      * @param pField the field
      * @return the difference
      */
@@ -410,6 +434,7 @@ public abstract class MetisFieldVersionedItem
 
     /**
      * Determines whether a particular field has changed.
+     *
      * @param pField the field
      * @return the difference
      */
@@ -426,6 +451,7 @@ public abstract class MetisFieldVersionedItem
 
     /**
      * Determine dataState of item.
+     *
      * @return the dataState
      */
     private MetisDataState determineState() {
@@ -436,8 +462,8 @@ public abstract class MetisFieldVersionedItem
         if (myOriginal.getVersion() > 0) {
             /* Return status */
             return myCurr.isDeletion()
-                                       ? MetisDataState.DELNEW
-                                       : MetisDataState.NEW;
+                    ? MetisDataState.DELNEW
+                    : MetisDataState.NEW;
         }
 
         /* If we have no changes we are CLEAN */
@@ -456,6 +482,7 @@ public abstract class MetisFieldVersionedItem
 
     /**
      * Determine editState of item.
+     *
      * @return the editState
      */
     private MetisDataEditState determineEditState() {
@@ -467,19 +494,20 @@ public abstract class MetisFieldVersionedItem
 
         /* If we have no changes we are CLEAN */
         return getVersion() == 0
-                                 ? MetisDataEditState.CLEAN
-                                 : MetisDataEditState.DIRTY;
+                ? MetisDataEditState.CLEAN
+                : MetisDataEditState.DIRTY;
     }
 
     /**
      * Obtain a versioned field.
+     *
      * @param pId the field id
      * @return the versioned field
      */
     public MetisFieldVersionedDef getVersionedField(final MetisDataFieldId pId) {
         final MetisFieldDef myField = getDataFieldSet().getField(pId);
         return myField instanceof MetisFieldVersionedDef myVersioned
-                                                         ? myVersioned
-                                                         : null;
+                ? myVersioned
+                : null;
     }
 }

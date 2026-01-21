@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,21 +13,22 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.atlas.data.analysis.base;
 
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusUnits;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
 
 /**
  * History snapShot for a bucket.
+ *
  * @param <T> the values
  * @param <E> the enum class
  */
@@ -77,8 +78,9 @@ public class MoneyWiseXAnalysisSnapShot<T extends MoneyWiseXAnalysisValues<T, E>
 
     /**
      * Constructor.
-     * @param pEvent the event
-     * @param pValues the values
+     *
+     * @param pEvent    the event
+     * @param pValues   the values
      * @param pPrevious the previous snapShot
      */
     protected MoneyWiseXAnalysisSnapShot(final MoneyWiseXAnalysisEvent pEvent,
@@ -96,9 +98,10 @@ public class MoneyWiseXAnalysisSnapShot<T extends MoneyWiseXAnalysisValues<T, E>
 
     /**
      * Constructor.
-     * @param pSnapShot the snapShot
+     *
+     * @param pSnapShot   the snapShot
      * @param pBaseValues the base values
-     * @param pPrevious the previous snapShot
+     * @param pPrevious   the previous snapShot
      */
     protected MoneyWiseXAnalysisSnapShot(final MoneyWiseXAnalysisSnapShot<T, E> pSnapShot,
                                          final T pBaseValues,
@@ -132,6 +135,7 @@ public class MoneyWiseXAnalysisSnapShot<T extends MoneyWiseXAnalysisValues<T, E>
 
     /**
      * Obtain id.
+     *
      * @return the id
      */
     protected Integer getId() {
@@ -140,6 +144,7 @@ public class MoneyWiseXAnalysisSnapShot<T extends MoneyWiseXAnalysisValues<T, E>
 
     /**
      * Obtain event.
+     *
      * @return the event
      */
     protected MoneyWiseXAnalysisEvent getEvent() {
@@ -148,6 +153,7 @@ public class MoneyWiseXAnalysisSnapShot<T extends MoneyWiseXAnalysisValues<T, E>
 
     /**
      * Obtain date.
+     *
      * @return the date
      */
     protected OceanusDate getDate() {
@@ -156,6 +162,7 @@ public class MoneyWiseXAnalysisSnapShot<T extends MoneyWiseXAnalysisValues<T, E>
 
     /**
      * Obtain snapShot.
+     *
      * @return the snapShot
      */
     public T getSnapShot() {
@@ -164,6 +171,7 @@ public class MoneyWiseXAnalysisSnapShot<T extends MoneyWiseXAnalysisValues<T, E>
 
     /**
      * Obtain previous SnapShot.
+     *
      * @return the previous snapShot
      */
     public T getPrevious() {
@@ -172,6 +180,7 @@ public class MoneyWiseXAnalysisSnapShot<T extends MoneyWiseXAnalysisValues<T, E>
 
     /**
      * Obtain new snapShot.
+     *
      * @return the snapShot
      */
     protected T newSnapShot() {
@@ -180,6 +189,7 @@ public class MoneyWiseXAnalysisSnapShot<T extends MoneyWiseXAnalysisValues<T, E>
 
     /**
      * Obtain delta snapShot.
+     *
      * @param pAttr the attribute
      * @return the delta snapShot
      */
@@ -190,6 +200,7 @@ public class MoneyWiseXAnalysisSnapShot<T extends MoneyWiseXAnalysisValues<T, E>
 
     /**
      * Obtain delta snapShot.
+     *
      * @param pAttr the attribute
      * @return the delta snapShot
      */
@@ -200,6 +211,7 @@ public class MoneyWiseXAnalysisSnapShot<T extends MoneyWiseXAnalysisValues<T, E>
 
     /**
      * Obtain delta snapShot.
+     *
      * @param pAttr the attribute
      * @return the delta snapShot
      */

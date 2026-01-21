@@ -1,27 +1,27 @@
-/*******************************************************************************
- * Tethys: Java Utilities
- * Copyright 2012-2026 Tony Washer
+/*
+ * Tethys: GUI Utilities
+ * Copyright 2012-2026. Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package net.sourceforge.joceanus.tethys.test.ui;
 
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateFormatter;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimalFormatter;
-import net.sourceforge.joceanus.oceanus.event.OceanusEvent;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateFormatter;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimalFormatter;
+import io.github.tonywasher.joceanus.oceanus.event.OceanusEvent;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIAlignment;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
@@ -199,6 +199,7 @@ public class TethysTestFields {
 
     /**
      * Constructor.
+     *
      * @param pFactory the factory
      */
     TethysTestFields(final TethysUIFactory<?> pFactory) {
@@ -245,6 +246,7 @@ public class TethysTestFields {
 
     /**
      * Obtain the component.
+     *
      * @return the component
      */
     public TethysUIComponent getComponent() {
@@ -253,6 +255,7 @@ public class TethysTestFields {
 
     /**
      * Build the panel.
+     *
      * @return the panel
      */
     private TethysUIComponent buildPanel() {
@@ -282,6 +285,7 @@ public class TethysTestFields {
 
     /**
      * Build field pane.
+     *
      * @return the field pane
      */
     private TethysUIGridPaneManager buildFieldPane() {
@@ -460,6 +464,7 @@ public class TethysTestFields {
 
     /**
      * Build Result pane.
+     *
      * @return the result pane
      */
     private TethysUIGridPaneManager buildResultsPane() {
@@ -492,6 +497,7 @@ public class TethysTestFields {
 
     /**
      * Build Control pane.
+     *
      * @return the control pane
      */
     private TethysUIBoxPaneManager buildControlPane() {
@@ -533,6 +539,7 @@ public class TethysTestFields {
 
     /**
      * Set edit mode.
+     *
      * @param pDoEdit true/false
      */
     private void setEditMode(final boolean pDoEdit) {
@@ -557,6 +564,7 @@ public class TethysTestFields {
 
     /**
      * Set default currency.
+     *
      * @param pCurrency the default currency
      */
     private void setCurrency(final Currency pCurrency) {
@@ -567,6 +575,7 @@ public class TethysTestFields {
 
     /**
      * Process action.
+     *
      * @param pField the source of the action
      * @param pEvent the event
      */
@@ -590,6 +599,7 @@ public class TethysTestFields {
 
     /**
      * Configure a cmdMenu.
+     *
      * @param pField the command menu to configure
      */
     private static void configureCmdMenu(final TethysUIDataEditField<?> pField) {
@@ -603,7 +613,8 @@ public class TethysTestFields {
 
     /**
      * Set the results.
-     * @param pSource the source of the results
+     *
+     * @param pSource  the source of the results
      * @param pResults the results
      */
     private void setResults(final String pSource,

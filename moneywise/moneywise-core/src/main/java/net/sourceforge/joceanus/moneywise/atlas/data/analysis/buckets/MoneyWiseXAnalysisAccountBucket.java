@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * MoneyWise: Finance Application
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,9 +13,17 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets;
 
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
+import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusDecimal;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRate;
+import io.github.tonywasher.joceanus.oceanus.decimal.OceanusRatio;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataList;
@@ -34,14 +42,6 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDeposit;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 
 import java.util.Currency;
 import java.util.Iterator;
@@ -49,6 +49,7 @@ import java.util.List;
 
 /**
  * The Account Bucket class.
+ *
  * @param <T> the account data type
  */
 public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBase>
@@ -254,6 +255,7 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
 
     /**
      * allocate standard values.
+     *
      * @param pCurrency the asset currency
      * @return the actual currency to use
      */
@@ -263,6 +265,7 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
 
     /**
      * Obtain the name.
+     *
      * @return the name
      */
     public String getName() {
@@ -273,6 +276,7 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
 
     /**
      * Obtain the account.
+     *
      * @return the account
      */
     public T getAccount() {
@@ -281,6 +285,7 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
 
     /**
      * Is this a foreign currency?
+     *
      * @return true/false
      */
     public boolean isForeignCurrency() {
@@ -294,6 +299,7 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
 
     /**
      * Is this bucket idle?
+     *
      * @return true/false
      */
     public boolean isIdle() {
@@ -302,6 +308,7 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
 
     /**
      * Obtain the analysis.
+     *
      * @return the analysis
      */
     protected MoneyWiseXAnalysis getAnalysis() {
@@ -310,6 +317,7 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
 
     /**
      * Obtain date range.
+     *
      * @return the range
      */
     public OceanusDateRange getDateRange() {
@@ -318,6 +326,7 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
 
     /**
      * Obtain the value map.
+     *
      * @return the value map
      */
     public MoneyWiseXAnalysisAccountValues getValues() {
@@ -326,6 +335,7 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
 
     /**
      * Obtain the base value map.
+     *
      * @return the base value map
      */
     public MoneyWiseXAnalysisAccountValues getBaseValues() {
@@ -334,6 +344,7 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
 
     /**
      * Obtain values for event.
+     *
      * @param pEvent the event
      * @return the values (or null)
      */
@@ -343,6 +354,7 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
 
     /**
      * Obtain previous values for event.
+     *
      * @param pEvent the event
      * @return the values (or null)
      */
@@ -352,8 +364,9 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
 
     /**
      * Obtain delta for event.
+     *
      * @param pEvent the event
-     * @param pAttr the attribute
+     * @param pAttr  the attribute
      * @return the delta (or null)
      */
     public OceanusDecimal getDeltaForEvent(final MoneyWiseXAnalysisEvent pEvent,
@@ -364,8 +377,9 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
 
     /**
      * Obtain money delta for event.
+     *
      * @param pEvent the event
-     * @param pAttr the attribute
+     * @param pAttr  the attribute
      * @return the delta (or null)
      */
     public OceanusMoney getMoneyDeltaForEvent(final MoneyWiseXAnalysisEvent pEvent,
@@ -376,6 +390,7 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
 
     /**
      * Obtain the history map.
+     *
      * @return the history map
      */
     private MoneyWiseXAnalysisHistory<MoneyWiseXAnalysisAccountValues, MoneyWiseXAnalysisAccountAttr> getHistoryMap() {
@@ -384,7 +399,8 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
 
     /**
      * Set Value.
-     * @param pAttr the attribute
+     *
+     * @param pAttr  the attribute
      * @param pValue the value of the attribute
      */
     protected void setValue(final MoneyWiseXAnalysisAccountAttr pAttr,
@@ -395,6 +411,7 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
 
     /**
      * Get an attribute value.
+     *
      * @param pAttr the attribute
      * @return the value to set
      */
@@ -410,6 +427,7 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
 
     /**
      * Obtain an attribute value.
+     *
      * @param pAttr the attribute
      * @return the value of the attribute or null
      */
@@ -445,6 +463,7 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
 
     /**
      * Add to balance.
+     *
      * @param pDelta the delta
      */
     public void addToBalance(final OceanusMoney pDelta) {
@@ -456,6 +475,7 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
 
     /**
      * Subtract from balance.
+     *
      * @param pDelta the delta
      */
     public void subtractFromBalance(final OceanusMoney pDelta) {
@@ -467,7 +487,7 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
 
     /**
      * Set maturity.
-      */
+     */
     public void recordMaturity() {
         final OceanusDate myMaturity = ((MoneyWiseDeposit) getAccount()).getMaturity();
         if (myMaturity != null) {
@@ -541,6 +561,7 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
 
     /**
      * Is the bucket active?
+     *
      * @return true/false
      */
     public boolean isActive() {
@@ -549,6 +570,7 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
 
     /**
      * AccountBucket list class.
+     *
      * @param <B> the account bucket data type
      * @param <T> the account data type
      */
@@ -579,6 +601,7 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
 
         /**
          * Construct a top-level List.
+         *
          * @param pAnalysis the analysis
          */
         protected MoneyWiseXAnalysisAccountBucketList(final MoneyWiseXAnalysis pAnalysis) {
@@ -600,6 +623,7 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
 
         /**
          * Obtain the analysis.
+         *
          * @return the analysis
          */
         protected MoneyWiseXAnalysis getAnalysis() {
@@ -608,6 +632,7 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
 
         /**
          * Construct a view bucket.
+         *
          * @param pBase the base bucket
          * @return the new bucket
          */
@@ -615,6 +640,7 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
 
         /**
          * Construct a dated List.
+         *
          * @param pBase the base list
          * @param pDate the Date
          */
@@ -637,6 +663,7 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
 
         /**
          * Construct a dated bucket.
+         *
          * @param pBase the base bucket
          * @param pDate the Date
          * @return the new bucket
@@ -646,7 +673,8 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
 
         /**
          * Construct a ranged List.
-         * @param pBase the base list
+         *
+         * @param pBase  the base list
          * @param pRange the Date Range
          */
         protected void constructFromBase(final MoneyWiseXAnalysisAccountBucketList<B, T> pBase,
@@ -669,6 +697,7 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
 
         /**
          * Obtain item by id.
+         *
          * @param pId the id to lookup
          * @return the item (or null if not present)
          */
@@ -679,7 +708,8 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
 
         /**
          * Construct a ranged bucket.
-         * @param pBase the base bucket
+         *
+         * @param pBase  the base bucket
          * @param pRange the Range
          * @return the new bucket
          */
@@ -688,6 +718,7 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
 
         /**
          * Obtain the AccountBucket for a given account.
+         *
          * @param pAccount the account
          * @return the bucket
          */
@@ -710,6 +741,7 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
 
         /**
          * Construct a standard bucket.
+         *
          * @param pAccount the Account
          * @return the new bucket
          */
@@ -724,6 +756,7 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
 
         /**
          * Mark active accounts.
+         *
          * @throws OceanusException on error
          */
         public void markActiveAccounts() throws OceanusException {
