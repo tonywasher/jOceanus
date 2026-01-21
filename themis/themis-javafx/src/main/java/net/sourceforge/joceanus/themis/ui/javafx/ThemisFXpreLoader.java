@@ -16,8 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.themis.ui.javafx;
 
-import net.sourceforge.joceanus.tethys.api.factory.TethysUILaunchProgram;
-import net.sourceforge.joceanus.tethys.javafx.launch.TethysUIFXPreLoader;
+import io.github.tonywasher.joceanus.tethys.api.factory.TethysUILaunchProgram;
+import io.github.tonywasher.joceanus.tethys.javafx.launch.TethysUIFXPreLoader;
 import net.sourceforge.joceanus.themis.lethe.ui.launch.ThemisApp;
 
 /**

@@ -24,8 +24,8 @@ import io.github.tonywasher.joceanus.prometheus.database.PrometheusDataStore;
 import io.github.tonywasher.joceanus.prometheus.preference.PrometheusBackup.PrometheusBackupPreferences;
 import io.github.tonywasher.joceanus.prometheus.preference.PrometheusPreferenceManager;
 import io.github.tonywasher.joceanus.prometheus.toolkit.PrometheusToolkit;
-import net.sourceforge.joceanus.tethys.api.thread.TethysUIThread;
-import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadManager;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThread;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadManager;
 
 /**
  * LoaderThread extension to load an archive spreadsheet.

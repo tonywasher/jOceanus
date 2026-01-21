@@ -28,7 +28,7 @@ module io.github.tonywasher.joceanus.metis {
 
     /* jOceanus */
     requires io.github.tonywasher.joceanus.oceanus;
-    requires net.sourceforge.joceanus.tethys.core;
+    requires io.github.tonywasher.joceanus.tethys.core;
 
     /* Exports */
     exports io.github.tonywasher.joceanus.metis.data;

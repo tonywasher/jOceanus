@@ -33,11 +33,11 @@ import io.github.tonywasher.joceanus.metis.viewer.MetisViewerEntry;
 import io.github.tonywasher.joceanus.metis.viewer.MetisViewerManager;
 import io.github.tonywasher.joceanus.metis.viewer.MetisViewerStandardEntry;
 import io.github.tonywasher.joceanus.metis.viewer.MetisViewerWindow;
-import net.sourceforge.joceanus.tethys.api.base.TethysUIProgram;
-import net.sourceforge.joceanus.tethys.api.base.TethysUIValueSet;
-import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
-import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadEvent;
-import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadManager;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIProgram;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIValueSet;
+import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadEvent;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadManager;
 
 import java.io.File;
 import java.io.IOException;

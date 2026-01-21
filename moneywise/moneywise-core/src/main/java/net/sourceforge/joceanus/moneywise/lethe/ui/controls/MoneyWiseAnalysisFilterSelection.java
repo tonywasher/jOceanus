@@ -17,7 +17,7 @@
 package net.sourceforge.joceanus.moneywise.lethe.ui.controls;
 
 import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter;
-import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIComponent;
 
 /**
  * Analysis Filter Selection.
@@ -26,18 +26,21 @@ public interface MoneyWiseAnalysisFilterSelection
         extends TethysUIComponent {
     /**
      * Is selection available?
+     *
      * @return true/false
      */
     boolean isAvailable();
 
     /**
      * Obtain analysis filter.
+     *
      * @return the filter
      */
     MoneyWiseAnalysisFilter<?, ?> getFilter();
 
     /**
      * Set analysis filter.
+     *
      * @param pFilter the filter
      */
     void setFilter(MoneyWiseAnalysisFilter<?, ?> pFilter);

@@ -46,14 +46,14 @@ import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
 import io.github.tonywasher.joceanus.prometheus.ui.PrometheusGoToEvent;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusDataEvent;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusViewerEntryId;
-import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
-import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
-import net.sourceforge.joceanus.tethys.api.button.TethysUIDateRangeSelector;
-import net.sourceforge.joceanus.tethys.api.control.TethysUIHTMLManager;
-import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
-import net.sourceforge.joceanus.tethys.api.pane.TethysUIBorderPaneManager;
-import net.sourceforge.joceanus.tethys.api.pane.TethysUIPaneFactory;
-import net.sourceforge.joceanus.tethys.api.pane.TethysUIScrollPaneManager;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIComponent;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIEvent;
+import io.github.tonywasher.joceanus.tethys.api.button.TethysUIDateRangeSelector;
+import io.github.tonywasher.joceanus.tethys.api.control.TethysUIHTMLManager;
+import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
+import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIBorderPaneManager;
+import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIPaneFactory;
+import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIScrollPaneManager;
 import org.w3c.dom.Document;
 
 /**

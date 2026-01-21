@@ -18,7 +18,7 @@
 /**
  * Tethys Core.
  */
-module net.sourceforge.joceanus.tethys.core {
+module io.github.tonywasher.joceanus.tethys.core {
     /* External libraries */
     requires org.jsoup;
 
@@ -26,29 +26,29 @@ module net.sourceforge.joceanus.tethys.core {
     requires io.github.tonywasher.joceanus.oceanus;
 
     /* New exports */
-    exports net.sourceforge.joceanus.tethys.api.base;
-    exports net.sourceforge.joceanus.tethys.api.button;
-    exports net.sourceforge.joceanus.tethys.api.chart;
-    exports net.sourceforge.joceanus.tethys.api.control;
-    exports net.sourceforge.joceanus.tethys.api.dialog;
-    exports net.sourceforge.joceanus.tethys.api.factory;
-    exports net.sourceforge.joceanus.tethys.api.field;
-    exports net.sourceforge.joceanus.tethys.api.menu;
-    exports net.sourceforge.joceanus.tethys.api.pane;
-    exports net.sourceforge.joceanus.tethys.api.table;
-    exports net.sourceforge.joceanus.tethys.api.thread;
-    exports net.sourceforge.joceanus.tethys.helper;
+    exports io.github.tonywasher.joceanus.tethys.api.base;
+    exports io.github.tonywasher.joceanus.tethys.api.button;
+    exports io.github.tonywasher.joceanus.tethys.api.chart;
+    exports io.github.tonywasher.joceanus.tethys.api.control;
+    exports io.github.tonywasher.joceanus.tethys.api.dialog;
+    exports io.github.tonywasher.joceanus.tethys.api.factory;
+    exports io.github.tonywasher.joceanus.tethys.api.field;
+    exports io.github.tonywasher.joceanus.tethys.api.menu;
+    exports io.github.tonywasher.joceanus.tethys.api.pane;
+    exports io.github.tonywasher.joceanus.tethys.api.table;
+    exports io.github.tonywasher.joceanus.tethys.api.thread;
+    exports io.github.tonywasher.joceanus.tethys.helper;
 
     /* Restricted exports */
-    exports net.sourceforge.joceanus.tethys.core.base to net.sourceforge.joceanus.tethys.javafx, net.sourceforge.joceanus.tethys.swing;
-    exports net.sourceforge.joceanus.tethys.core.button to net.sourceforge.joceanus.tethys.javafx, net.sourceforge.joceanus.tethys.swing;
-    exports net.sourceforge.joceanus.tethys.core.chart to net.sourceforge.joceanus.tethys.javafx, net.sourceforge.joceanus.tethys.swing;
-    exports net.sourceforge.joceanus.tethys.core.control to net.sourceforge.joceanus.tethys.javafx, net.sourceforge.joceanus.tethys.swing;
-    exports net.sourceforge.joceanus.tethys.core.dialog to net.sourceforge.joceanus.tethys.javafx, net.sourceforge.joceanus.tethys.swing;
-    exports net.sourceforge.joceanus.tethys.core.factory to net.sourceforge.joceanus.tethys.javafx, net.sourceforge.joceanus.tethys.swing;
-    exports net.sourceforge.joceanus.tethys.core.field to net.sourceforge.joceanus.tethys.javafx, net.sourceforge.joceanus.tethys.swing;
-    exports net.sourceforge.joceanus.tethys.core.menu to net.sourceforge.joceanus.tethys.javafx, net.sourceforge.joceanus.tethys.swing;
-    exports net.sourceforge.joceanus.tethys.core.pane to net.sourceforge.joceanus.tethys.javafx, net.sourceforge.joceanus.tethys.swing;
-    exports net.sourceforge.joceanus.tethys.core.table to net.sourceforge.joceanus.tethys.javafx, net.sourceforge.joceanus.tethys.swing;
-    exports net.sourceforge.joceanus.tethys.core.thread to net.sourceforge.joceanus.tethys.javafx, net.sourceforge.joceanus.tethys.swing;
+    exports io.github.tonywasher.joceanus.tethys.core.base to io.github.tonywasher.joceanus.tethys.javafx, io.github.tonywasher.joceanus.tethys.swing;
+    exports io.github.tonywasher.joceanus.tethys.core.button to io.github.tonywasher.joceanus.tethys.javafx, io.github.tonywasher.joceanus.tethys.swing;
+    exports io.github.tonywasher.joceanus.tethys.core.chart to io.github.tonywasher.joceanus.tethys.javafx, io.github.tonywasher.joceanus.tethys.swing;
+    exports io.github.tonywasher.joceanus.tethys.core.control to io.github.tonywasher.joceanus.tethys.javafx, io.github.tonywasher.joceanus.tethys.swing;
+    exports io.github.tonywasher.joceanus.tethys.core.dialog to io.github.tonywasher.joceanus.tethys.javafx, io.github.tonywasher.joceanus.tethys.swing;
+    exports io.github.tonywasher.joceanus.tethys.core.factory to io.github.tonywasher.joceanus.tethys.javafx, io.github.tonywasher.joceanus.tethys.swing;
+    exports io.github.tonywasher.joceanus.tethys.core.field to io.github.tonywasher.joceanus.tethys.javafx, io.github.tonywasher.joceanus.tethys.swing;
+    exports io.github.tonywasher.joceanus.tethys.core.menu to io.github.tonywasher.joceanus.tethys.javafx, io.github.tonywasher.joceanus.tethys.swing;
+    exports io.github.tonywasher.joceanus.tethys.core.pane to io.github.tonywasher.joceanus.tethys.javafx, io.github.tonywasher.joceanus.tethys.swing;
+    exports io.github.tonywasher.joceanus.tethys.core.table to io.github.tonywasher.joceanus.tethys.javafx, io.github.tonywasher.joceanus.tethys.swing;
+    exports io.github.tonywasher.joceanus.tethys.core.thread to io.github.tonywasher.joceanus.tethys.javafx, io.github.tonywasher.joceanus.tethys.swing;
 }

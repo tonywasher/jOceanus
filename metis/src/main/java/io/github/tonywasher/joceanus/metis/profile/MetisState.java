@@ -16,8 +16,8 @@
  */
 package io.github.tonywasher.joceanus.metis.profile;
 
-import net.sourceforge.joceanus.tethys.api.base.TethysUIProgram;
-import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIProgram;
+import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
 
 /**
  * Program definition.

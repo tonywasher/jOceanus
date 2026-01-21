@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.themis.lethe.ui;
 
 import java.io.InputStream;
 
-import net.sourceforge.joceanus.tethys.api.control.TethysUIHTMLManager.TethysUIStyleSheetId;
+import io.github.tonywasher.joceanus.tethys.api.control.TethysUIHTMLManager.TethysUIStyleSheetId;
 
 /**
  * Report StyleSheets.
@@ -37,6 +37,7 @@ public enum ThemisDSMStyleSheet
 
     /**
      * Constructor.
+     *
      * @param pSource the source
      */
     ThemisDSMStyleSheet(final String pSource) {

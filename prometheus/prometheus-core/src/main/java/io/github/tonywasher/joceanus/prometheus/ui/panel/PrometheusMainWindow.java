@@ -40,18 +40,18 @@ import io.github.tonywasher.joceanus.prometheus.toolkit.PrometheusToolkit;
 import io.github.tonywasher.joceanus.prometheus.ui.PrometheusMenuId;
 import io.github.tonywasher.joceanus.prometheus.ui.PrometheusUIResource;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusDataControl;
-import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
-import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
-import net.sourceforge.joceanus.tethys.api.dialog.TethysUIAlert;
-import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
-import net.sourceforge.joceanus.tethys.api.factory.TethysUIMainPanel;
-import net.sourceforge.joceanus.tethys.api.menu.TethysUIMenuBarManager;
-import net.sourceforge.joceanus.tethys.api.menu.TethysUIMenuBarManager.TethysUIMenuSubMenu;
-import net.sourceforge.joceanus.tethys.api.pane.TethysUIBorderPaneManager;
-import net.sourceforge.joceanus.tethys.api.thread.TethysUIThread;
-import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadEvent;
-import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadManager;
-import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadStatusManager;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIComponent;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIEvent;
+import io.github.tonywasher.joceanus.tethys.api.dialog.TethysUIAlert;
+import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
+import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIMainPanel;
+import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIMenuBarManager;
+import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIMenuBarManager.TethysUIMenuSubMenu;
+import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIBorderPaneManager;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThread;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadEvent;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadManager;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusManager;
 
 /**
  * Main window for application.

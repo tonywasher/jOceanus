@@ -35,7 +35,7 @@ import io.github.tonywasher.joceanus.prometheus.preference.PrometheusPreferenceM
 import io.github.tonywasher.joceanus.prometheus.security.PrometheusSecurityPasswordManager;
 import io.github.tonywasher.joceanus.prometheus.sheets.PrometheusSpreadSheet;
 import io.github.tonywasher.joceanus.prometheus.toolkit.PrometheusToolkit;
-import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
+import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
 
 import java.util.EnumMap;
 import java.util.Map;

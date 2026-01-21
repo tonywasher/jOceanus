@@ -19,7 +19,7 @@ package io.github.tonywasher.joceanus.metis.help;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.resource.OceanusResourceId;
 import io.github.tonywasher.joceanus.oceanus.resource.OceanusResourceLoader;
-import net.sourceforge.joceanus.tethys.api.control.TethysUIHTMLManager.TethysUIStyleSheetId;
+import io.github.tonywasher.joceanus.tethys.api.control.TethysUIHTMLManager.TethysUIStyleSheetId;
 
 import java.util.ArrayList;
 import java.util.List;

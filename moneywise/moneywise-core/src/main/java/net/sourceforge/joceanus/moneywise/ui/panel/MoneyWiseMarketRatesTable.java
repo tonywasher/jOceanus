@@ -46,13 +46,13 @@ import io.github.tonywasher.joceanus.prometheus.views.PrometheusDataEvent;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusUIEvent;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusViewerEntryId;
-import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
-import net.sourceforge.joceanus.tethys.api.button.TethysUIButton;
-import net.sourceforge.joceanus.tethys.api.control.TethysUIControl.TethysUIIconMapSet;
-import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
-import net.sourceforge.joceanus.tethys.api.pane.TethysUIBorderPaneManager;
-import net.sourceforge.joceanus.tethys.api.pane.TethysUIPaneFactory;
-import net.sourceforge.joceanus.tethys.api.table.TethysUITableManager;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIComponent;
+import io.github.tonywasher.joceanus.tethys.api.button.TethysUIButton;
+import io.github.tonywasher.joceanus.tethys.api.control.TethysUIControl.TethysUIIconMapSet;
+import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
+import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIBorderPaneManager;
+import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIPaneFactory;
+import io.github.tonywasher.joceanus.tethys.api.table.TethysUITableManager;
 
 /**
  * MoneyWise SpotRates Table.

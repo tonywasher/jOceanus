@@ -17,10 +17,10 @@
 package net.sourceforge.joceanus.themis.lethe.ui.launch;
 
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.tethys.api.base.TethysUIIconId;
-import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
-import net.sourceforge.joceanus.tethys.api.factory.TethysUILaunchProgram;
-import net.sourceforge.joceanus.tethys.api.factory.TethysUIMainPanel;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIIconId;
+import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
+import io.github.tonywasher.joceanus.tethys.api.factory.TethysUILaunchProgram;
+import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIMainPanel;
 import net.sourceforge.joceanus.themis.lethe.ui.ThemisDSMPanel;
 import net.sourceforge.joceanus.themis.lethe.ui.ThemisIcon;
 

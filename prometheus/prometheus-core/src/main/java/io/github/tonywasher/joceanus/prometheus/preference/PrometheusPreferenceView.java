@@ -19,7 +19,7 @@ package io.github.tonywasher.joceanus.prometheus.preference;
 import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceSet;
 import io.github.tonywasher.joceanus.metis.ui.MetisPreferenceSetView;
 import io.github.tonywasher.joceanus.metis.ui.MetisPreferenceView;
-import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
+import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
 
 /**
  * Panel for editing preference Sets.

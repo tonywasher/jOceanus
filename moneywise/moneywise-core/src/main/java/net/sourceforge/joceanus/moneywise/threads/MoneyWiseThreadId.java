@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.threads;
 
-import net.sourceforge.joceanus.tethys.api.menu.TethysUIMenuBarManager.TethysUIMenuId;
+import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIMenuBarManager.TethysUIMenuId;
 
 /**
  * MoneyWise Thread Ids.
@@ -40,6 +40,7 @@ public enum MoneyWiseThreadId
 
     /**
      * Constructor.
+     *
      * @param pId the id
      */
     MoneyWiseThreadId(final MoneyWiseThreadResource pId) {

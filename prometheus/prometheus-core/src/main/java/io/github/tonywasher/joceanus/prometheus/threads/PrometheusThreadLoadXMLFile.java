@@ -27,9 +27,9 @@ import io.github.tonywasher.joceanus.prometheus.preference.PrometheusBackup.Prom
 import io.github.tonywasher.joceanus.prometheus.security.PrometheusSecurityPasswordManager;
 import io.github.tonywasher.joceanus.prometheus.toolkit.PrometheusToolkit;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusDataControl;
-import net.sourceforge.joceanus.tethys.api.dialog.TethysUIFileSelector;
-import net.sourceforge.joceanus.tethys.api.thread.TethysUIThread;
-import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadManager;
+import io.github.tonywasher.joceanus.tethys.api.dialog.TethysUIFileSelector;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThread;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadManager;
 
 import java.io.File;
 

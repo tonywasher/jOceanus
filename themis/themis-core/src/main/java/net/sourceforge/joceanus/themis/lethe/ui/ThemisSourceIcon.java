@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.themis.lethe.ui;
 
-import net.sourceforge.joceanus.tethys.api.base.TethysUIIconId;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIIconId;
 import net.sourceforge.joceanus.themis.lethe.analysis.ThemisAnalysisAnnotation;
 import net.sourceforge.joceanus.themis.lethe.analysis.ThemisAnalysisAnonClass;
 import net.sourceforge.joceanus.themis.lethe.analysis.ThemisAnalysisArrayInit;
@@ -209,6 +209,7 @@ public enum ThemisSourceIcon
 
     /**
      * Constructor.
+     *
      * @param pSourceName the source name
      */
     ThemisSourceIcon(final String pSourceName) {
@@ -227,21 +228,22 @@ public enum ThemisSourceIcon
 
     /**
      * Obtain the colour for the element.
+     *
      * @param pElement the element
      * @return the color string
      */
     static String getElementColour(final ThemisAnalysisElement pElement) {
         /* Handle statement/Field/Block */
         if (pElement instanceof ThemisAnalysisStatement
-            || pElement instanceof ThemisAnalysisField
-            || pElement instanceof ThemisAnalysisBlock) {
+                || pElement instanceof ThemisAnalysisField
+                || pElement instanceof ThemisAnalysisBlock) {
             return BLUE;
         }
 
         /* Handle method/Lambda */
         if (pElement instanceof ThemisAnalysisMethod
-            || pElement instanceof ThemisAnalysisArrayInit
-            || pElement instanceof ThemisAnalysisLambda) {
+                || pElement instanceof ThemisAnalysisArrayInit
+                || pElement instanceof ThemisAnalysisLambda) {
             return BLUE;
         }
 
@@ -303,6 +305,7 @@ public enum ThemisSourceIcon
 
     /**
      * Obtain the icon for the element.
+     *
      * @param pElement the element
      * @return the icon
      */
@@ -330,6 +333,7 @@ public enum ThemisSourceIcon
 
     /**
      * Obtain the icon for the Blue element.
+     *
      * @param pElement the element
      * @return the icon
      */
@@ -365,6 +369,7 @@ public enum ThemisSourceIcon
 
     /**
      * Obtain the icon for the green element.
+     *
      * @param pElement the element
      * @return the iconId
      */
@@ -425,6 +430,7 @@ public enum ThemisSourceIcon
 
     /**
      * Obtain the iconId for the orange element.
+     *
      * @param pElement the element
      * @return the iconId
      */
@@ -456,7 +462,7 @@ public enum ThemisSourceIcon
 
         /* Handle class */
         if (pElement instanceof ThemisAnalysisClass
-               || pElement instanceof ThemisAnalysisAnonClass) {
+                || pElement instanceof ThemisAnalysisAnonClass) {
             return CLASS;
         }
 
@@ -471,6 +477,7 @@ public enum ThemisSourceIcon
 
     /**
      * Obtain the iconId for the pink element.
+     *
      * @param pElement the element
      * @return the iconId
      */

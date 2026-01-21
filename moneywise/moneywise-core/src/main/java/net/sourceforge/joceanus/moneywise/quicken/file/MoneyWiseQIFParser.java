@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.moneywise.quicken.file;
 
 import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.moneywise.quicken.definitions.MoneyWiseQIFType;
-import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
+import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;

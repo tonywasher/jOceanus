@@ -29,8 +29,8 @@ import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetCel
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetRow;
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetView;
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetWorkBook;
-import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadCancelException;
-import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadCancelException;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 
 /**
  * ArchiveLoader for TransactionCategory.

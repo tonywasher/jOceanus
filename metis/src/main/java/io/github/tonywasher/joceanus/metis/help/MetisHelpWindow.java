@@ -21,15 +21,15 @@ import io.github.tonywasher.joceanus.oceanus.event.OceanusEvent;
 import io.github.tonywasher.joceanus.oceanus.event.OceanusEventManager;
 import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
 import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
-import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
-import net.sourceforge.joceanus.tethys.api.control.TethysUIHTMLManager;
-import net.sourceforge.joceanus.tethys.api.control.TethysUIHTMLManager.TethysUIStyleSheetId;
-import net.sourceforge.joceanus.tethys.api.control.TethysUISplitTreeManager;
-import net.sourceforge.joceanus.tethys.api.control.TethysUITreeManager;
-import net.sourceforge.joceanus.tethys.api.control.TethysUITreeManager.TethysUITreeItem;
-import net.sourceforge.joceanus.tethys.api.dialog.TethysUIChildDialog;
-import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
-import net.sourceforge.joceanus.tethys.api.pane.TethysUIBorderPaneManager;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIEvent;
+import io.github.tonywasher.joceanus.tethys.api.control.TethysUIHTMLManager;
+import io.github.tonywasher.joceanus.tethys.api.control.TethysUIHTMLManager.TethysUIStyleSheetId;
+import io.github.tonywasher.joceanus.tethys.api.control.TethysUISplitTreeManager;
+import io.github.tonywasher.joceanus.tethys.api.control.TethysUITreeManager;
+import io.github.tonywasher.joceanus.tethys.api.control.TethysUITreeManager.TethysUITreeItem;
+import io.github.tonywasher.joceanus.tethys.api.dialog.TethysUIChildDialog;
+import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
+import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIBorderPaneManager;
 
 import java.util.List;
 

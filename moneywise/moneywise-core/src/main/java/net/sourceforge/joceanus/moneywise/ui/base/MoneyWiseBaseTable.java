@@ -35,13 +35,13 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues.Promet
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusDataEvent;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditEntry;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
-import net.sourceforge.joceanus.tethys.api.dialog.TethysUIFileSelector;
-import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
-import net.sourceforge.joceanus.tethys.api.pane.TethysUIBorderPaneManager;
-import net.sourceforge.joceanus.tethys.api.table.TethysUITableColumn;
-import net.sourceforge.joceanus.tethys.api.table.TethysUITableColumn.TethysUIOnCellCommit;
-import net.sourceforge.joceanus.tethys.api.table.TethysUITableManager;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIComponent;
+import io.github.tonywasher.joceanus.tethys.api.dialog.TethysUIFileSelector;
+import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
+import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIBorderPaneManager;
+import io.github.tonywasher.joceanus.tethys.api.table.TethysUITableColumn;
+import io.github.tonywasher.joceanus.tethys.api.table.TethysUITableColumn.TethysUIOnCellCommit;
+import io.github.tonywasher.joceanus.tethys.api.table.TethysUITableManager;
 
 import java.io.File;
 import java.io.IOException;

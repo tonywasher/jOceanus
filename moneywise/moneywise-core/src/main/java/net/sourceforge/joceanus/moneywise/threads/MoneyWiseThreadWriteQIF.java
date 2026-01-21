@@ -31,8 +31,8 @@ import net.sourceforge.joceanus.moneywise.quicken.file.MoneyWiseQIFParser;
 import net.sourceforge.joceanus.moneywise.quicken.file.MoneyWiseQIFStreamWriter;
 import net.sourceforge.joceanus.moneywise.quicken.file.MoneyWiseQIFWriter;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
-import net.sourceforge.joceanus.tethys.api.thread.TethysUIThread;
-import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadManager;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThread;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadManager;
 
 import java.io.BufferedReader;
 import java.io.File;

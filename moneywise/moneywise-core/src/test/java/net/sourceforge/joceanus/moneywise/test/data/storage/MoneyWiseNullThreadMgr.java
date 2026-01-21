@@ -18,10 +18,10 @@ package net.sourceforge.joceanus.moneywise.test.data.storage;
 
 import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar;
 import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
-import net.sourceforge.joceanus.tethys.api.thread.TethysUIThread;
-import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadEvent;
-import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadManager;
-import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadStatusManager;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThread;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadEvent;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadManager;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusManager;
 
 /**
  * ThreadManager stub.

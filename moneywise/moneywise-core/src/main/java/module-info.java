@@ -25,7 +25,7 @@ module net.sourceforge.joceanus.moneywise.core {
     requires io.github.tonywasher.joceanus.prometheus.core;
     requires io.github.tonywasher.joceanus.metis;
     requires net.sourceforge.joceanus.gordianknot;
-    requires net.sourceforge.joceanus.tethys.core;
+    requires io.github.tonywasher.joceanus.tethys.core;
     requires io.github.tonywasher.joceanus.oceanus;
     requires io.github.tonywasher.joceanus.prometheus.sheet.api;
 

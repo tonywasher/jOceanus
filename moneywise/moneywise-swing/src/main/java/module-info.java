@@ -23,6 +23,6 @@ module net.sourceforge.joceanus.moneywise.swing {
 
     /* Exports */
     requires net.sourceforge.joceanus.moneywise.core;
-    requires net.sourceforge.joceanus.tethys.core;
-    requires net.sourceforge.joceanus.tethys.swing;
+    requires io.github.tonywasher.joceanus.tethys.core;
+    requires io.github.tonywasher.joceanus.tethys.swing;
 }

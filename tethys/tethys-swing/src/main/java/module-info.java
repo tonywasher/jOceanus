@@ -17,7 +17,7 @@
 /**
  * Tethys Swing.
  */
-module net.sourceforge.joceanus.tethys.swing {
+module io.github.tonywasher.joceanus.tethys.swing {
     /* Java runTime */
     requires java.desktop;
 
@@ -26,8 +26,8 @@ module net.sourceforge.joceanus.tethys.swing {
 
     /* Oceanus */
     requires io.github.tonywasher.joceanus.oceanus;
-    requires net.sourceforge.joceanus.tethys.core;
+    requires io.github.tonywasher.joceanus.tethys.core;
 
     /* Exports */
-    exports net.sourceforge.joceanus.tethys.swing.launch;
+    exports io.github.tonywasher.joceanus.tethys.swing.launch;
 }

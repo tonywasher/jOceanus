@@ -23,7 +23,7 @@ import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
 import net.sourceforge.joceanus.gordianknot.util.GordianGenerator;
 import io.github.tonywasher.joceanus.prometheus.exc.PrometheusSecurityException;
-import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
+import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
 
 /**
  * Security Generator.

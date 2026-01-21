@@ -19,10 +19,10 @@ package net.sourceforge.joceanus.moneywise.launch;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.moneywise.ui.MoneyWiseIcon;
 import net.sourceforge.joceanus.moneywise.ui.panel.MoneyWiseMainTab;
-import net.sourceforge.joceanus.tethys.api.base.TethysUIIconId;
-import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
-import net.sourceforge.joceanus.tethys.api.factory.TethysUILaunchProgram;
-import net.sourceforge.joceanus.tethys.api.factory.TethysUIMainPanel;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIIconId;
+import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
+import io.github.tonywasher.joceanus.tethys.api.factory.TethysUILaunchProgram;
+import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIMainPanel;
 
 /**
  * MoneyWise Application definition.

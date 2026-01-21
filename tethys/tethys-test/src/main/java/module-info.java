@@ -18,7 +18,7 @@
 /**
  * Tethys Test.
  */
-module net.sourceforge.joceanus.tethys.test.core {
+module io.github.tonywasher.joceanus.tethys.test.core {
     /* Java runTime */
     requires java.desktop;
 
@@ -31,10 +31,10 @@ module net.sourceforge.joceanus.tethys.test.core {
 
     /* jOceanus */
     requires io.github.tonywasher.joceanus.oceanus;
-    requires net.sourceforge.joceanus.tethys.core;
-    requires net.sourceforge.joceanus.tethys.javafx;
-    requires net.sourceforge.joceanus.tethys.swing;
+    requires io.github.tonywasher.joceanus.tethys.core;
+    requires io.github.tonywasher.joceanus.tethys.javafx;
+    requires io.github.tonywasher.joceanus.tethys.swing;
 
     /* Main classes */
-    exports net.sourceforge.joceanus.tethys.test.ui.javafx to javafx.graphics;
+    exports io.github.tonywasher.joceanus.tethys.test.ui.javafx to javafx.graphics;
 }

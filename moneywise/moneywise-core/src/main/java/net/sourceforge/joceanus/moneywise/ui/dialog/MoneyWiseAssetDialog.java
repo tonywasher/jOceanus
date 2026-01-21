@@ -21,7 +21,7 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoClass
 import net.sourceforge.joceanus.moneywise.ui.base.MoneyWiseAssetTable;
 import net.sourceforge.joceanus.moneywise.ui.base.MoneyWiseItemPanel;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
+import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
 
 /**
  * Panel to display/edit/create an asset.

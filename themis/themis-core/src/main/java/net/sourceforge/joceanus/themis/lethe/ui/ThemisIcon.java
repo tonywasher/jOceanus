@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.themis.lethe.ui;
 
 import java.io.InputStream;
 
-import net.sourceforge.joceanus.tethys.api.base.TethysUIIconId;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIIconId;
 
 /**
  * Themis Icon IDs.
@@ -46,6 +46,7 @@ public enum ThemisIcon implements TethysUIIconId {
 
     /**
      * Constructor.
+     *
      * @param pSourceName the source name
      */
     ThemisIcon(final String pSourceName) {

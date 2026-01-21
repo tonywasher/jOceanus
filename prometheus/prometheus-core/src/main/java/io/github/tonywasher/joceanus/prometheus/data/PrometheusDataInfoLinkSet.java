@@ -22,7 +22,7 @@ import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataList;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataObjectFormat;
 import io.github.tonywasher.joceanus.metis.data.MetisDataState;
-import net.sourceforge.joceanus.tethys.api.base.TethysUIConstant;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIConstant;
 
 import java.util.ArrayList;
 import java.util.Iterator;

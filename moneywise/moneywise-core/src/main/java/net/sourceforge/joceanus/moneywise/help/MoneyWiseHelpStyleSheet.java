@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.moneywise.help;
 
 import java.io.InputStream;
 
-import net.sourceforge.joceanus.tethys.api.control.TethysUIHTMLManager.TethysUIStyleSheetId;
+import io.github.tonywasher.joceanus.tethys.api.control.TethysUIHTMLManager.TethysUIStyleSheetId;
 
 /**
  * StyleSheetIds.
@@ -37,6 +37,7 @@ public enum MoneyWiseHelpStyleSheet
 
     /**
      * Constructor.
+     *
      * @param pSource the source
      */
     MoneyWiseHelpStyleSheet(final String pSource) {

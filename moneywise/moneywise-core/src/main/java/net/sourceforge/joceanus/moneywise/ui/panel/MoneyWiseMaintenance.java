@@ -34,9 +34,9 @@ import io.github.tonywasher.joceanus.prometheus.preference.PrometheusBackup.Prom
 import io.github.tonywasher.joceanus.prometheus.preference.PrometheusPreferenceView;
 import io.github.tonywasher.joceanus.prometheus.ui.PrometheusGoToEvent;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusDataEvent;
-import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
-import net.sourceforge.joceanus.tethys.api.pane.TethysUITabPaneManager;
-import net.sourceforge.joceanus.tethys.api.pane.TethysUITabPaneManager.TethysUITabItem;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIComponent;
+import io.github.tonywasher.joceanus.tethys.api.pane.TethysUITabPaneManager;
+import io.github.tonywasher.joceanus.tethys.api.pane.TethysUITabPaneManager.TethysUITabItem;
 
 /**
  * Maintenance Tab panel.

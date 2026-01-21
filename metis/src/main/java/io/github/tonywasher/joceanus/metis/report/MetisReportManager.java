@@ -23,7 +23,7 @@ import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.Oceanus
 import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogManager;
 import io.github.tonywasher.joceanus.oceanus.logger.OceanusLogger;
 import io.github.tonywasher.joceanus.metis.exc.MetisIOException;
-import net.sourceforge.joceanus.tethys.api.control.TethysUIHTMLManager;
+import io.github.tonywasher.joceanus.tethys.api.control.TethysUIHTMLManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;

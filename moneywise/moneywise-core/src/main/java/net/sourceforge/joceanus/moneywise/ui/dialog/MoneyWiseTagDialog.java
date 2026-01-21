@@ -27,9 +27,9 @@ import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
 import io.github.tonywasher.joceanus.prometheus.ui.fieldset.PrometheusFieldSet;
 import io.github.tonywasher.joceanus.prometheus.ui.fieldset.PrometheusFieldSetEvent;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
-import net.sourceforge.joceanus.tethys.api.field.TethysUIDataEditField.TethysUIStringEditField;
-import net.sourceforge.joceanus.tethys.api.field.TethysUIFieldFactory;
+import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
+import io.github.tonywasher.joceanus.tethys.api.field.TethysUIDataEditField.TethysUIStringEditField;
+import io.github.tonywasher.joceanus.tethys.api.field.TethysUIFieldFactory;
 
 /**
  * Panel to display/edit/create a TransactionTag.

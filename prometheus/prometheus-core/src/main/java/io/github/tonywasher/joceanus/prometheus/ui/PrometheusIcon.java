@@ -19,10 +19,10 @@ package io.github.tonywasher.joceanus.prometheus.ui;
 import java.io.InputStream;
 
 import io.github.tonywasher.joceanus.metis.ui.MetisIcon;
-import net.sourceforge.joceanus.tethys.api.base.TethysUIIconId;
-import net.sourceforge.joceanus.tethys.api.button.TethysUIScrollButtonManager;
-import net.sourceforge.joceanus.tethys.api.control.TethysUIControl.TethysUIIconMapSet;
-import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIIconId;
+import io.github.tonywasher.joceanus.tethys.api.button.TethysUIScrollButtonManager;
+import io.github.tonywasher.joceanus.tethys.api.control.TethysUIControl.TethysUIIconMapSet;
+import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
 
 /**
  * Prometheus Icon IDs.

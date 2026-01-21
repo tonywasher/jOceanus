@@ -46,8 +46,8 @@ import net.sourceforge.joceanus.moneywise.test.data.storage.MoneyWiseNullThreadM
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
 import io.github.tonywasher.joceanus.prometheus.toolkit.PrometheusToolkit;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadManager;
-import net.sourceforge.joceanus.tethys.helper.TethysUIHelperFactory;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadManager;
+import io.github.tonywasher.joceanus.tethys.helper.TethysUIHelperFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DynamicContainer;
 import org.junit.jupiter.api.DynamicNode;

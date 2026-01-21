@@ -37,9 +37,9 @@ import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
 import io.github.tonywasher.joceanus.prometheus.ui.fieldset.PrometheusFieldSetTableTab.PrometheusFieldSetTable;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.tethys.api.control.TethysUIControl.TethysUIIconMapSet;
-import net.sourceforge.joceanus.tethys.api.table.TethysUITableColumn;
-import net.sourceforge.joceanus.tethys.api.table.TethysUITableManager;
+import io.github.tonywasher.joceanus.tethys.api.control.TethysUIControl.TethysUIIconMapSet;
+import io.github.tonywasher.joceanus.tethys.api.table.TethysUITableColumn;
+import io.github.tonywasher.joceanus.tethys.api.table.TethysUITableManager;
 
 import java.util.ArrayList;
 import java.util.Iterator;

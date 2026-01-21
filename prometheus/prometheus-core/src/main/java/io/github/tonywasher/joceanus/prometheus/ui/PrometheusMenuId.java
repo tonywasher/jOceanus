@@ -16,7 +16,7 @@
  */
 package io.github.tonywasher.joceanus.prometheus.ui;
 
-import net.sourceforge.joceanus.tethys.api.menu.TethysUIMenuBarManager.TethysUIMenuId;
+import io.github.tonywasher.joceanus.tethys.api.menu.TethysUIMenuBarManager.TethysUIMenuId;
 
 /**
  * Prometheus Thread Ids.

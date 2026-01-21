@@ -17,7 +17,7 @@
 /**
  * Tethys javaFX.
  */
-module net.sourceforge.joceanus.tethys.javafx {
+module io.github.tonywasher.joceanus.tethys.javafx {
     /* Java runTime */
     requires java.xml;
     requires jdk.jsobject;
@@ -29,8 +29,8 @@ module net.sourceforge.joceanus.tethys.javafx {
 
     /* Oceanus */
     requires io.github.tonywasher.joceanus.oceanus;
-    requires net.sourceforge.joceanus.tethys.core;
+    requires io.github.tonywasher.joceanus.tethys.core;
 
     /* Exports */
-    exports net.sourceforge.joceanus.tethys.javafx.launch;
+    exports io.github.tonywasher.joceanus.tethys.javafx.launch;
 }

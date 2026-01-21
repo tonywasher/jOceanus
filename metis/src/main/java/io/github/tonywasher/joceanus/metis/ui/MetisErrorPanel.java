@@ -25,11 +25,11 @@ import io.github.tonywasher.joceanus.metis.viewer.MetisViewerErrorList;
 import io.github.tonywasher.joceanus.metis.viewer.MetisViewerExceptionWrapper;
 import io.github.tonywasher.joceanus.metis.viewer.MetisViewerManager;
 import io.github.tonywasher.joceanus.metis.viewer.MetisViewerStandardEntry;
-import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
-import net.sourceforge.joceanus.tethys.api.button.TethysUIButton;
-import net.sourceforge.joceanus.tethys.api.control.TethysUILabel;
-import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
-import net.sourceforge.joceanus.tethys.api.pane.TethysUIBoxPaneManager;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIComponent;
+import io.github.tonywasher.joceanus.tethys.api.button.TethysUIButton;
+import io.github.tonywasher.joceanus.tethys.api.control.TethysUILabel;
+import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
+import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIBoxPaneManager;
 
 /**
  * Error panel.

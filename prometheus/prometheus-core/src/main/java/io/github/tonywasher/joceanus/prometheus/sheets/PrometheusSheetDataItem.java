@@ -36,7 +36,7 @@ import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetRow
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetSheet;
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetView;
 import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetWorkBook;
-import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 
 import java.util.Iterator;
 

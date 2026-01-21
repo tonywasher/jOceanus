@@ -16,10 +16,10 @@
  */
 package io.github.tonywasher.joceanus.prometheus.security;
 
-import net.sourceforge.joceanus.tethys.api.dialog.TethysUIBusySpinner;
-import net.sourceforge.joceanus.tethys.api.dialog.TethysUIDialogFactory;
-import net.sourceforge.joceanus.tethys.api.dialog.TethysUIPasswordDialog;
-import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
+import io.github.tonywasher.joceanus.tethys.api.dialog.TethysUIBusySpinner;
+import io.github.tonywasher.joceanus.tethys.api.dialog.TethysUIDialogFactory;
+import io.github.tonywasher.joceanus.tethys.api.dialog.TethysUIPasswordDialog;
+import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
 
 /**
  * DialogControl.

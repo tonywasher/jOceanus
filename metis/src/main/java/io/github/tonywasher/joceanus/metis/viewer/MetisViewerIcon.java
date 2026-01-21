@@ -18,7 +18,7 @@ package io.github.tonywasher.joceanus.metis.viewer;
 
 import java.io.InputStream;
 
-import net.sourceforge.joceanus.tethys.api.base.TethysUIIconId;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIIconId;
 
 /**
  * Viewer Icon IDs.

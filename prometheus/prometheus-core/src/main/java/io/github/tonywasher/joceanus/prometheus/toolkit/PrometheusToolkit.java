@@ -25,9 +25,9 @@ import io.github.tonywasher.joceanus.prometheus.preference.PrometheusPreferenceS
 import io.github.tonywasher.joceanus.prometheus.preference.PrometheusPreferenceView;
 import io.github.tonywasher.joceanus.prometheus.security.PrometheusSecurityGenerator;
 import io.github.tonywasher.joceanus.prometheus.security.PrometheusSecurityPasswordManager;
-import net.sourceforge.joceanus.tethys.api.base.TethysUIProgram;
-import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
-import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadManager;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIProgram;
+import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
+import io.github.tonywasher.joceanus.tethys.api.thread.TethysUIThreadManager;
 
 /**
  * Prometheus Toolkit.

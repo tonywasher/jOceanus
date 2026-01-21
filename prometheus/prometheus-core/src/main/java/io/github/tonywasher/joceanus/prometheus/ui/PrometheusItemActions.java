@@ -22,14 +22,14 @@ import io.github.tonywasher.joceanus.oceanus.event.OceanusEventRegistrar.Oceanus
 import io.github.tonywasher.joceanus.metis.ui.MetisIcon;
 import io.github.tonywasher.joceanus.prometheus.ui.PrometheusItemEditActions.PrometheusItemEditParent;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusUIEvent;
-import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
-import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
-import net.sourceforge.joceanus.tethys.api.base.TethysUIGenericWrapper;
-import net.sourceforge.joceanus.tethys.api.button.TethysUIButton;
-import net.sourceforge.joceanus.tethys.api.button.TethysUIButtonFactory;
-import net.sourceforge.joceanus.tethys.api.button.TethysUIScrollButtonManager;
-import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
-import net.sourceforge.joceanus.tethys.api.pane.TethysUIBoxPaneManager;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIComponent;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIEvent;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIGenericWrapper;
+import io.github.tonywasher.joceanus.tethys.api.button.TethysUIButton;
+import io.github.tonywasher.joceanus.tethys.api.button.TethysUIButtonFactory;
+import io.github.tonywasher.joceanus.tethys.api.button.TethysUIScrollButtonManager;
+import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
+import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIBoxPaneManager;
 
 /**
  * Item Action buttons.

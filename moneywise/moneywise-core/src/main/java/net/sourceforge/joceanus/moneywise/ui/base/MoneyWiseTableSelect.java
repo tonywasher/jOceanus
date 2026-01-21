@@ -20,7 +20,7 @@ import java.util.Iterator;
 import java.util.function.Predicate;
 
 import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
-import net.sourceforge.joceanus.tethys.api.table.TethysUITableManager;
+import io.github.tonywasher.joceanus.tethys.api.table.TethysUITableManager;
 
 /**
  * Table Selection control.

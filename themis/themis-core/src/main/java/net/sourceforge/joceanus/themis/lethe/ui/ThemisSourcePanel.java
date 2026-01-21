@@ -17,12 +17,12 @@
 package net.sourceforge.joceanus.themis.lethe.ui;
 
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
-import net.sourceforge.joceanus.tethys.api.control.TethysUIHTMLManager;
-import net.sourceforge.joceanus.tethys.api.control.TethysUISplitTreeManager;
-import net.sourceforge.joceanus.tethys.api.control.TethysUITreeManager;
-import net.sourceforge.joceanus.tethys.api.control.TethysUITreeManager.TethysUITreeItem;
-import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIComponent;
+import io.github.tonywasher.joceanus.tethys.api.control.TethysUIHTMLManager;
+import io.github.tonywasher.joceanus.tethys.api.control.TethysUISplitTreeManager;
+import io.github.tonywasher.joceanus.tethys.api.control.TethysUITreeManager;
+import io.github.tonywasher.joceanus.tethys.api.control.TethysUITreeManager.TethysUITreeItem;
+import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.themis.lethe.analysis.ThemisAnalysisAnonClass;
 import net.sourceforge.joceanus.themis.lethe.analysis.ThemisAnalysisBlock;
 import net.sourceforge.joceanus.themis.lethe.analysis.ThemisAnalysisCase;

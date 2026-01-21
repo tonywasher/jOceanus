@@ -24,9 +24,9 @@ import net.sourceforge.joceanus.moneywise.ui.panel.MoneyWiseMarketPricesTable.Mo
 import net.sourceforge.joceanus.moneywise.ui.panel.MoneyWiseMarketRatesTable.MoneyWiseSpotRatesPanel;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
 import io.github.tonywasher.joceanus.prometheus.views.PrometheusDataEvent;
-import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
-import net.sourceforge.joceanus.tethys.api.pane.TethysUITabPaneManager;
-import net.sourceforge.joceanus.tethys.api.pane.TethysUITabPaneManager.TethysUITabItem;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIComponent;
+import io.github.tonywasher.joceanus.tethys.api.pane.TethysUITabPaneManager;
+import io.github.tonywasher.joceanus.tethys.api.pane.TethysUITabPaneManager.TethysUITabItem;
 
 /**
  * Market Tab panel.

@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.moneywise.atlas.reports;
 
 import java.io.InputStream;
 
-import net.sourceforge.joceanus.tethys.api.control.TethysUIHTMLManager.TethysUIStyleSheetId;
+import io.github.tonywasher.joceanus.tethys.api.control.TethysUIHTMLManager.TethysUIStyleSheetId;
 
 /**
  * Report StyleSheets.
@@ -36,6 +36,7 @@ public enum MoneyWiseXReportStyleSheet implements TethysUIStyleSheetId {
 
     /**
      * Constructor.
+     *
      * @param pSource the source
      */
     MoneyWiseXReportStyleSheet(final String pSource) {

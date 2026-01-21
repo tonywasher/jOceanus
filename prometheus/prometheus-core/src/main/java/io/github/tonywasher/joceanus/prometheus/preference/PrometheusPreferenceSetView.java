@@ -20,12 +20,12 @@ import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceSet.MetisPr
 import io.github.tonywasher.joceanus.metis.ui.MetisPreferenceSetView;
 import io.github.tonywasher.joceanus.prometheus.preference.PrometheusPreferenceSet.PrometheusByteArrayPreference;
 import io.github.tonywasher.joceanus.prometheus.preference.PrometheusPreferenceSet.PrometheusCharArrayPreference;
-import net.sourceforge.joceanus.tethys.api.base.TethysUIAlignment;
-import net.sourceforge.joceanus.tethys.api.control.TethysUILabel;
-import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
-import net.sourceforge.joceanus.tethys.api.field.TethysUIDataEditField.TethysUICharArrayEditField;
-import net.sourceforge.joceanus.tethys.api.field.TethysUIFieldAttribute;
-import net.sourceforge.joceanus.tethys.api.pane.TethysUIGridPaneManager;
+import io.github.tonywasher.joceanus.tethys.api.base.TethysUIAlignment;
+import io.github.tonywasher.joceanus.tethys.api.control.TethysUILabel;
+import io.github.tonywasher.joceanus.tethys.api.factory.TethysUIFactory;
+import io.github.tonywasher.joceanus.tethys.api.field.TethysUIDataEditField.TethysUICharArrayEditField;
+import io.github.tonywasher.joceanus.tethys.api.field.TethysUIFieldAttribute;
+import io.github.tonywasher.joceanus.tethys.api.pane.TethysUIGridPaneManager;
 
 /**
  * Panel for editing a preference Set.
