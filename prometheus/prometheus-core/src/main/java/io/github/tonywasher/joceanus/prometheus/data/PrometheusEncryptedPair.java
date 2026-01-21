@@ -16,12 +16,12 @@
  */
 package io.github.tonywasher.joceanus.prometheus.data;
 
-import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
-import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
+import io.github.tonywasher.joceanus.gordianknot.api.keyset.GordianKeySet;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
 import io.github.tonywasher.joceanus.metis.data.MetisDataDifference.MetisDataDiffers;
 import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataObjectFormat;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
 
 import java.util.Arrays;
 import java.util.Objects;

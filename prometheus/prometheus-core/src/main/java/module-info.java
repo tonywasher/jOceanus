@@ -26,7 +26,7 @@ module io.github.tonywasher.joceanus.prometheus.core {
     /* Oceanus */
     requires io.github.tonywasher.joceanus.oceanus;
     requires io.github.tonywasher.joceanus.tethys.core;
-    requires net.sourceforge.joceanus.gordianknot;
+    requires io.github.tonywasher.joceanus.gordianknot;
     requires io.github.tonywasher.joceanus.metis;
     requires io.github.tonywasher.joceanus.prometheus.sheet.api;
 

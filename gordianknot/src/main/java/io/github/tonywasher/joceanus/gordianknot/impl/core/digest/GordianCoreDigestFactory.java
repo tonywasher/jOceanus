@@ -1,0 +1,206 @@
+/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.core.digest;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianLength;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestFactory;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSubSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestSubSpec.GordianDigestState;
+import io.github.tonywasher.joceanus.gordianknot.api.digest.GordianDigestType;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+/**
+ * Base Digest Factory.
+ */
+public abstract class GordianCoreDigestFactory
+        implements GordianDigestFactory {
+    /**
+     * The factory.
+     */
+    private final GordianBaseFactory theFactory;
+
+    /**
+     * The Digest AlgIds.
+     */
+    private GordianDigestAlgId theDigestAlgIds;
+
+    /**
+     * Constructor.
+     *
+     * @param pFactory the factory.
+     */
+    protected GordianCoreDigestFactory(final GordianBaseFactory pFactory) {
+        theFactory = pFactory;
+    }
+
+    /**
+     * Obtain the factory.
+     *
+     * @return the factory
+     */
+    protected GordianBaseFactory getFactory() {
+        return theFactory;
+    }
+
+
+    /**
+     * Obtain Identifier for DigestSpec.
+     *
+     * @param pSpec the digestSpec.
+     * @return the Identifier
+     */
+    public AlgorithmIdentifier getIdentifierForSpec(final GordianDigestSpec pSpec) {
+        return getDigestAlgIds().getIdentifierForSpec(pSpec);
+    }
+
+    /**
+     * Obtain DigestSpec for Identifier.
+     *
+     * @param pIdentifier the identifier.
+     * @return the digestSpec (or null if not found)
+     */
+    public GordianDigestSpec getDigestSpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
+        return getDigestAlgIds().getSpecForIdentifier(pIdentifier);
+    }
+
+    /**
+     * Obtain the digest algorithm Ids.
+     *
+     * @return the digest Algorithm Ids
+     */
+    private GordianDigestAlgId getDigestAlgIds() {
+        if (theDigestAlgIds == null) {
+            theDigestAlgIds = new GordianDigestAlgId(theFactory);
+        }
+        return theDigestAlgIds;
+    }
+
+    @Override
+    public Predicate<GordianDigestSpec> supportedDigestSpecs() {
+        return this::validDigestSpec;
+    }
+
+    @Override
+    public Predicate<GordianDigestType> supportedDigestTypes() {
+        return t -> theFactory.getValidator().validDigestType(t);
+    }
+
+    /**
+     * Check digestSpec.
+     *
+     * @param pDigestSpec the digestSpec
+     * @throws GordianException on error
+     */
+    public void checkDigestSpec(final GordianDigestSpec pDigestSpec) throws GordianException {
+        /* Check validity of DigestType */
+        if (!supportedDigestSpecs().test(pDigestSpec)) {
+            throw new GordianDataException(GordianBaseData.getInvalidText(pDigestSpec));
+        }
+    }
+
+    /**
+     * Check DigestSpec.
+     *
+     * @param pDigestSpec the digestSpec
+     * @return true/false
+     */
+    public boolean validDigestSpec(final GordianDigestSpec pDigestSpec) {
+        /* Reject invalid digestSpec */
+        if (pDigestSpec == null || !pDigestSpec.isValid()) {
+            return false;
+        }
+
+        /* If we have an explicit Xof, check support */
+        if (pDigestSpec.isXofMode()
+                && !theFactory.getValidator().isXofSupported()) {
+            return false;
+        }
+
+        /* Check validity */
+        return supportedDigestTypes().test(pDigestSpec.getDigestType());
+    }
+
+    @Override
+    public List<GordianDigestSpec> listAllSupportedSpecs() {
+        return listAllPossibleSpecs()
+                .stream()
+                .filter(supportedDigestSpecs())
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    @Override
+    public List<GordianDigestType> listAllSupportedTypes() {
+        return Arrays.stream(GordianDigestType.values())
+                .filter(supportedDigestTypes())
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    @Override
+    public List<GordianDigestSpec> listAllPossibleSpecs() {
+        /* Create the array list */
+        final List<GordianDigestSpec> myList = new ArrayList<>();
+
+        /* For each digest type */
+        for (final GordianDigestType myType : GordianDigestType.values()) {
+            /* For each subSpecType */
+            for (GordianDigestSubSpec mySubSpec : GordianDigestSubSpec.getPossibleSubSpecsForType(myType)) {
+                /* For each length */
+                for (final GordianLength myLength : myType.getSupportedLengths()) {
+                    final GordianDigestSpec mySpec = new GordianDigestSpec(myType, mySubSpec, myLength);
+
+                    /* Add if valid */
+                    if (mySpec.isValid()) {
+                        myList.add(mySpec);
+                    }
+                }
+
+                /* If we have a possible Xof */
+                if (mySubSpec instanceof GordianDigestState myState) {
+                    final GordianDigestSpec mySpec = new GordianDigestSpec(myType, myState, myState.getLength(), Boolean.TRUE);
+
+                    /* Add if valid */
+                    if (mySpec.isValid()) {
+                        myList.add(mySpec);
+                    }
+
+                    /* Else look for null Xof type */
+                } else {
+                    final GordianDigestSpec mySpec = new GordianDigestSpec(myType, null, myType.getDefaultLength(), Boolean.TRUE);
+
+                    /* Add if valid */
+                    if (mySpec.isValid()) {
+                        myList.add(mySpec);
+                    }
+                }
+            }
+        }
+
+        /* Return the list */
+        return myList;
+    }
+}
