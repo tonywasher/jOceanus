@@ -16,13 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.ui.base;
 
-import net.sourceforge.joceanus.metis.data.MetisDataDifference;
-import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataNamedItem;
-import net.sourceforge.joceanus.metis.list.MetisListKey;
-import net.sourceforge.joceanus.metis.ui.MetisAction;
-import net.sourceforge.joceanus.metis.ui.MetisErrorPanel;
-import net.sourceforge.joceanus.metis.ui.MetisIcon;
+import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataNamedItem;
+import io.github.tonywasher.joceanus.metis.list.MetisListKey;
+import io.github.tonywasher.joceanus.metis.ui.MetisAction;
+import io.github.tonywasher.joceanus.metis.ui.MetisErrorPanel;
+import io.github.tonywasher.joceanus.metis.ui.MetisIcon;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCategoryBase;
 import net.sourceforge.joceanus.moneywise.ui.MoneyWiseUIResource;
@@ -47,6 +47,7 @@ import java.util.Objects;
 
 /**
  * MoneyWise Category Table.
+ *
  * @param <T> the Category Data type
  * @param <S> the Static Data type
  */
@@ -79,10 +80,11 @@ public abstract class MoneyWiseCategoryTable<T extends MoneyWiseCategoryBase, S 
 
     /**
      * Constructor.
-     * @param pView the view
-     * @param pEditSet the editSet
-     * @param pError the error panel
-     * @param pClazz the dataType class
+     *
+     * @param pView     the view
+     * @param pEditSet  the editSet
+     * @param pError    the error panel
+     * @param pClazz    the dataType class
      * @param pDataType the dataType
      */
     protected MoneyWiseCategoryTable(final MoneyWiseView pView,
@@ -168,6 +170,7 @@ public abstract class MoneyWiseCategoryTable<T extends MoneyWiseCategoryBase, S 
 
     /**
      * Obtain the filter panel.
+     *
      * @return the filter panel
      */
     public TethysUIBoxPaneManager getFilterPanel() {
@@ -176,6 +179,7 @@ public abstract class MoneyWiseCategoryTable<T extends MoneyWiseCategoryBase, S 
 
     /**
      * Obtain the short name.
+     *
      * @param pCategory the category
      * @return the name
      */
@@ -186,6 +190,7 @@ public abstract class MoneyWiseCategoryTable<T extends MoneyWiseCategoryBase, S 
 
     /**
      * Obtain the parent.
+     *
      * @return the parent
      */
     protected T getParent() {
@@ -194,6 +199,7 @@ public abstract class MoneyWiseCategoryTable<T extends MoneyWiseCategoryBase, S 
 
     /**
      * Update parent.
+     *
      * @param pParent the parent
      */
     protected void updateParent(final T pParent) {
@@ -203,6 +209,7 @@ public abstract class MoneyWiseCategoryTable<T extends MoneyWiseCategoryBase, S 
 
     /**
      * Select parent.
+     *
      * @param pParent the parent category
      */
     protected void selectParent(final T pParent) {
@@ -232,20 +239,23 @@ public abstract class MoneyWiseCategoryTable<T extends MoneyWiseCategoryBase, S 
 
     /**
      * Build the category type list for the item.
+     *
      * @param pCategory the item
-     * @param pMenu the menu to build
+     * @param pMenu     the menu to build
      */
     protected abstract void buildCategoryTypeMenu(T pCategory,
                                                   TethysUIScrollMenu<S> pMenu);
 
     /**
      * Obtain the categories.
+     *
      * @return the categories
      */
     protected abstract List<T> getCategories();
 
     /**
      * Is the categoryType a child category.
+     *
      * @param pCategoryType the categoryType
      * @return true/false
      */
@@ -279,8 +289,7 @@ public abstract class MoneyWiseCategoryTable<T extends MoneyWiseCategoryBase, S 
 
         /* Loop through the available category values */
         for (T myCurr : myCategories) {
-            @SuppressWarnings("unchecked")
-            final S myType = (S) myCurr.getCategoryType();
+            @SuppressWarnings("unchecked") final S myType = (S) myCurr.getCategoryType();
 
             /* Ignore category if it is deleted or a child */
             if (myCurr.isDeleted() || isChildCategory(myType)) {

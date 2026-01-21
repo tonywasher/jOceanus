@@ -17,10 +17,10 @@
 package net.sourceforge.joceanus.prometheus.data;
 
 import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
-import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataList;
-import net.sourceforge.joceanus.metis.data.MetisDataResource;
-import net.sourceforge.joceanus.metis.field.MetisFieldItem;
-import net.sourceforge.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataList;
+import io.github.tonywasher.joceanus.metis.data.MetisDataResource;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 
 import java.util.ArrayList;
 import java.util.Iterator;

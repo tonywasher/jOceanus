@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
@@ -33,6 +33,7 @@ import net.sourceforge.joceanus.tethys.api.pane.TethysUIPaneFactory;
 
 /**
  * FieldSet Panel.
+ *
  * @param <T> the item type
  */
 public class PrometheusFieldSetFields<T>
@@ -79,7 +80,8 @@ public class PrometheusFieldSetFields<T>
 
     /**
      * Constructor.
-     * @param pFactory the factory
+     *
+     * @param pFactory  the factory
      * @param pFieldSet the fieldSet
      */
     PrometheusFieldSetFields(final TethysUIFactory<?> pFactory,
@@ -107,8 +109,9 @@ public class PrometheusFieldSetFields<T>
 
     /**
      * Add field to panel.
-     * @param pFieldId the fieldId
-     * @param pField the edit field
+     *
+     * @param pFieldId      the fieldId
+     * @param pField        the edit field
      * @param pValueFactory the valueFactory
      */
     public void addField(final MetisDataFieldId pFieldId,
@@ -139,13 +142,13 @@ public class PrometheusFieldSetFields<T>
         int myWidth = 0;
 
         /* Loop through the elements getting the max width */
-        for (PrometheusFieldSetElement<?> myElement: theElements.values()) {
+        for (PrometheusFieldSetElement<?> myElement : theElements.values()) {
             final int myLabelWidth = myElement.getLabelWidth();
             myWidth = Math.max(myWidth, myLabelWidth);
         }
 
         /* Loop through the elements setting the width */
-        for (PrometheusFieldSetElement<?> myElement: theElements.values()) {
+        for (PrometheusFieldSetElement<?> myElement : theElements.values()) {
             myElement.setLabelWidth(myWidth);
             myElement.setFieldHeight(FIELD_HEIGHT);
         }
@@ -154,7 +157,7 @@ public class PrometheusFieldSetFields<T>
     @Override
     public boolean isVisible() {
         /* Loop through the elements looking for a visible element */
-        for (PrometheusFieldSetElement<?> myElement: theElements.values()) {
+        for (PrometheusFieldSetElement<?> myElement : theElements.values()) {
             if (myElement.isVisible()) {
                 return true;
             }
@@ -170,7 +173,7 @@ public class PrometheusFieldSetFields<T>
         theItem = pItem;
 
         /* Loop through the elements */
-        for (PrometheusFieldSetElement<?> myElement: theElements.values()) {
+        for (PrometheusFieldSetElement<?> myElement : theElements.values()) {
             /* Obtain the value factory */
             final Function<T, Object> myValueFactory = theValues.get(myElement.getFieldId());
             final Object myValue = myValueFactory.apply(pItem);
@@ -186,7 +189,7 @@ public class PrometheusFieldSetFields<T>
         }
 
         /* Loop through the elements */
-        for (PrometheusFieldSetElement<?> myElement: theElements.values()) {
+        for (PrometheusFieldSetElement<?> myElement : theElements.values()) {
             final boolean isChanged = theFieldSet.isChanged(theItem, myElement.getFieldId());
             myElement.adjustChanged(isChanged);
         }
@@ -195,7 +198,7 @@ public class PrometheusFieldSetFields<T>
     @Override
     public void setEditable(final boolean isEditable) {
         /* Loop through the elements */
-        for (PrometheusFieldSetElement<?> myElement: theElements.values()) {
+        for (PrometheusFieldSetElement<?> myElement : theElements.values()) {
             myElement.setEditable(isEditable);
         }
     }
@@ -219,7 +222,7 @@ public class PrometheusFieldSetFields<T>
     @Override
     public void setReporter(final Consumer<String> pReporter) {
         /* Loop through the elements */
-        for (PrometheusFieldSetElement<?> myElement: theElements.values()) {
+        for (PrometheusFieldSetElement<?> myElement : theElements.values()) {
             myElement.setReporter(pReporter);
         }
     }

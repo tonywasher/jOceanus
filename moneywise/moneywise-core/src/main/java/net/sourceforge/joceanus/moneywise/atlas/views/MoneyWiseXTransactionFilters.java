@@ -17,7 +17,7 @@
 package net.sourceforge.joceanus.moneywise.atlas.views;
 
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
-import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataList;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEvent;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisCashBucket;

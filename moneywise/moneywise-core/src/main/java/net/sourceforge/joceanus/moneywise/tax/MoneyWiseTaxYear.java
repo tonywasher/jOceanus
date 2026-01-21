@@ -18,9 +18,9 @@ package net.sourceforge.joceanus.moneywise.tax;
 
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
 import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
-import net.sourceforge.joceanus.metis.field.MetisFieldItem;
-import net.sourceforge.joceanus.metis.field.MetisFieldSet;
-import net.sourceforge.joceanus.metis.preference.MetisPreferenceManager;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTax.MoneyWiseTaxCredit;
 
 /**

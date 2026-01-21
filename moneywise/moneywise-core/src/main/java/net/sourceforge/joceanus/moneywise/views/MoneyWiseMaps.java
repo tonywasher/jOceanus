@@ -16,9 +16,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.views;
 
-import net.sourceforge.joceanus.metis.list.MetisListKey;
-import net.sourceforge.joceanus.metis.viewer.MetisViewerEntry;
-import net.sourceforge.joceanus.metis.viewer.MetisViewerManager;
+import io.github.tonywasher.joceanus.metis.list.MetisListKey;
+import io.github.tonywasher.joceanus.metis.viewer.MetisViewerEntry;
+import io.github.tonywasher.joceanus.metis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee;
@@ -49,6 +49,7 @@ public class MoneyWiseMaps {
 
     /**
      * Constructor.
+     *
      * @param pView the view
      */
     MoneyWiseMaps(final MoneyWiseView pView) {
@@ -67,6 +68,7 @@ public class MoneyWiseMaps {
 
     /**
      * Adjust for DataSet.
+     *
      * @param pDataSet the dataSet
      */
     public void adjustForDataSet(final PrometheusDataSet pDataSet) {
@@ -76,6 +78,7 @@ public class MoneyWiseMaps {
 
     /**
      * Adjust for EditSet.
+     *
      * @param pEditSet the editSet
      */
     public void adjustForEditSet(final PrometheusEditSet pEditSet) {
@@ -139,6 +142,7 @@ public class MoneyWiseMaps {
 
     /**
      * Build the static map.
+     *
      * @param pKey the key
      */
     private void buildStaticMaps(final MetisListKey pKey) {
@@ -148,6 +152,7 @@ public class MoneyWiseMaps {
 
     /**
      * Deconstruct linkedPair.
+     *
      * @param pPair the linked pair
      * @return the deconstructed items
      */

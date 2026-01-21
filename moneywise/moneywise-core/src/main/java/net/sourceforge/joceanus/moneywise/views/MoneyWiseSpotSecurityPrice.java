@@ -18,9 +18,9 @@ package net.sourceforge.joceanus.moneywise.views;
 
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusPrice;
-import net.sourceforge.joceanus.metis.data.MetisDataEditState;
-import net.sourceforge.joceanus.metis.data.MetisDataState;
-import net.sourceforge.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.metis.data.MetisDataEditState;
+import io.github.tonywasher.joceanus.metis.data.MetisDataState;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;

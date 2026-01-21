@@ -16,9 +16,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.ui.base;
 
-import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.metis.field.MetisFieldVersionValues;
-import net.sourceforge.joceanus.metis.list.MetisListKey;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldVersionValues;
+import io.github.tonywasher.joceanus.metis.list.MetisListKey;
 import net.sourceforge.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCategoryBase;
@@ -46,6 +46,7 @@ import java.util.Map;
 
 /**
  * MoneyWise Data Item Panel.
+ *
  * @param <T> the item type
  */
 public abstract class MoneyWiseItemPanel<T extends PrometheusDataItem>
@@ -72,9 +73,10 @@ public abstract class MoneyWiseItemPanel<T extends PrometheusDataItem>
 
     /**
      * Constructor.
+     *
      * @param pFactory the GUI factory
      * @param pEditSet the edit set
-     * @param pOwner the owning table
+     * @param pOwner   the owning table
      */
     protected MoneyWiseItemPanel(final TethysUIFactory<?> pFactory,
                                  final PrometheusEditSet pEditSet,
@@ -88,6 +90,7 @@ public abstract class MoneyWiseItemPanel<T extends PrometheusDataItem>
 
     /**
      * Obtain the owner.
+     *
      * @return the owner
      */
     protected MoneyWiseBaseTable<T> getOwner() {
@@ -127,6 +130,7 @@ public abstract class MoneyWiseItemPanel<T extends PrometheusDataItem>
 
     /**
      * is Valid name?
+     *
      * @param pNewName the new name
      * @return error message or null
      */
@@ -136,6 +140,7 @@ public abstract class MoneyWiseItemPanel<T extends PrometheusDataItem>
 
     /**
      * is Valid description?
+     *
      * @param pNewDesc the new description
      * @return error message or null
      */
@@ -161,12 +166,14 @@ public abstract class MoneyWiseItemPanel<T extends PrometheusDataItem>
 
     /**
      * Declare GoTo Items.
+     *
      * @param pUpdates are there active updates?
      */
     protected abstract void declareGoToItems(boolean pUpdates);
 
     /**
      * Declare GoTo Item.
+     *
      * @param pItem the item to declare
      */
     protected void declareGoToItem(final PrometheusDataItem pItem) {
@@ -186,6 +193,7 @@ public abstract class MoneyWiseItemPanel<T extends PrometheusDataItem>
 
     /**
      * Declare GoTo Filter.
+     *
      * @param pFilter the filter to declare
      */
     protected void declareGoToFilter(final MoneyWiseAnalysisFilter<?, ?> pFilter) {
@@ -205,6 +213,7 @@ public abstract class MoneyWiseItemPanel<T extends PrometheusDataItem>
 
     /**
      * Declare GoTo Filter.
+     *
      * @param pFilter the filter to declare
      */
     protected void declareGoToFilter(final MoneyWiseXAnalysisFilter<?, ?> pFilter) {
@@ -213,6 +222,7 @@ public abstract class MoneyWiseItemPanel<T extends PrometheusDataItem>
 
     /**
      * Process goTo items.
+     *
      * @param pMenu the menu
      */
     private void processGoToItems(final TethysUIScrollMenu<TethysUIGenericWrapper> pMenu) {
@@ -258,6 +268,7 @@ public abstract class MoneyWiseItemPanel<T extends PrometheusDataItem>
 
     /**
      * Process goTo filters.
+     *
      * @param pMenu the menu
      */
     private void processGoToFilters(final TethysUIScrollMenu<TethysUIGenericWrapper> pMenu) {

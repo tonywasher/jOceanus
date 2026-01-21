@@ -21,7 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-import net.sourceforge.joceanus.metis.data.MetisDataState;
+import io.github.tonywasher.joceanus.metis.data.MetisDataState;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataList;
 
@@ -61,6 +61,7 @@ public class PrometheusBatchControl {
 
     /**
      * Constructor.
+     *
      * @param pBatchSize the batch size
      */
     protected PrometheusBatchControl(final Integer pBatchSize) {
@@ -73,6 +74,7 @@ public class PrometheusBatchControl {
 
     /**
      * Is the batch full.
+     *
      * @return true/false is the batch full
      */
     protected boolean isFull() {
@@ -82,6 +84,7 @@ public class PrometheusBatchControl {
 
     /**
      * Is the batch active.
+     *
      * @return true/false is the batch active
      */
     protected boolean isActive() {
@@ -90,8 +93,9 @@ public class PrometheusBatchControl {
 
     /**
      * Set the currently active state.
+     *
      * @param pTable the Table being operated on
-     * @param pMode the Mode that is in operation
+     * @param pMode  the Mode that is in operation
      */
     protected void setCurrentTable(final PrometheusTableDataItem<?> pTable,
                                    final MetisDataState pMode) {
@@ -222,6 +226,7 @@ public class PrometheusBatchControl {
 
         /**
          * Mark an item in the table as committed.
+         *
          * @param pItem the item to commit
          * @return have we reached the end of the batch?
          */

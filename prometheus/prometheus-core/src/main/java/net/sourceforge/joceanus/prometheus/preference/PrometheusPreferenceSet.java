@@ -18,8 +18,8 @@ package net.sourceforge.joceanus.prometheus.preference;
 
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
-import net.sourceforge.joceanus.metis.preference.MetisPreferenceKey;
-import net.sourceforge.joceanus.metis.preference.MetisPreferenceSet;
+import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceKey;
+import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceSet;
 
 /**
  * Prometheus PreferenceSet.

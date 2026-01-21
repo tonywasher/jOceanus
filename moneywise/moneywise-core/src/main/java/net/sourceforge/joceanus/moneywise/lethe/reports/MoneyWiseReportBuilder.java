@@ -21,8 +21,8 @@ import java.util.Map;
 
 import org.w3c.dom.Document;
 
-import net.sourceforge.joceanus.metis.report.MetisReportBase;
-import net.sourceforge.joceanus.metis.report.MetisReportManager;
+import io.github.tonywasher.joceanus.metis.report.MetisReportBase;
+import io.github.tonywasher.joceanus.metis.report.MetisReportManager;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisDataResource;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisSecurityBucket;
@@ -31,6 +31,7 @@ import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter;
 
 /**
  * Report Classes.
+ *
  * @author Tony Washer
  */
 public class MoneyWiseReportBuilder {
@@ -66,6 +67,7 @@ public class MoneyWiseReportBuilder {
 
     /**
      * Constructor.
+     *
      * @param pManager the report manager
      */
     public MoneyWiseReportBuilder(final MetisReportManager<MoneyWiseAnalysisFilter<?, ?>> pManager) {
@@ -78,8 +80,9 @@ public class MoneyWiseReportBuilder {
 
     /**
      * Build a report of the appropriate type.
+     *
      * @param pAnalysis the analysis
-     * @param pType the report type
+     * @param pType     the report type
      * @param pSecurity the security
      * @return the Web document
      */

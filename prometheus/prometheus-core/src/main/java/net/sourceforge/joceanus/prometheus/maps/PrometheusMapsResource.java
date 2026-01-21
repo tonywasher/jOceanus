@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.prometheus.maps;
 
 import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleLoader;
-import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
 
 import java.util.ResourceBundle;

@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.prometheus.ui.fieldset;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
@@ -30,6 +30,7 @@ import net.sourceforge.joceanus.tethys.api.pane.TethysUIScrollPaneManager;
 
 /**
  * FieldSet TextArea.
+ *
  * @param <T> the item type
  */
 public class PrometheusFieldSetTextArea<T>
@@ -76,7 +77,8 @@ public class PrometheusFieldSetTextArea<T>
 
     /**
      * Constructor.
-     * @param pFactory the factory
+     *
+     * @param pFactory  the factory
      * @param pFieldSet the fieldSet
      */
     PrometheusFieldSetTextArea(final TethysUIFactory<?> pFactory,
@@ -97,8 +99,9 @@ public class PrometheusFieldSetTextArea<T>
 
     /**
      * Add field to panel.
-     * @param pFieldId the fieldId
-     * @param pField the edit field
+     *
+     * @param pFieldId      the fieldId
+     * @param pField        the edit field
      * @param pValueFactory the valueFactory
      */
     public void addField(final MetisDataFieldId pFieldId,

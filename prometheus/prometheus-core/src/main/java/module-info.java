@@ -27,7 +27,7 @@ module net.sourceforge.joceanus.prometheus.core {
     requires io.github.tonywasher.joceanus.oceanus;
     requires net.sourceforge.joceanus.tethys.core;
     requires net.sourceforge.joceanus.gordianknot;
-    requires net.sourceforge.joceanus.metis;
+    requires io.github.tonywasher.joceanus.metis;
     requires net.sourceforge.joceanus.prometheus.sheet.api;
 
     /* Exports */

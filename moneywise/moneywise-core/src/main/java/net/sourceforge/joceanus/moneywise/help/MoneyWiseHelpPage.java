@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.moneywise.help;
 
 import java.io.InputStream;
 
-import net.sourceforge.joceanus.metis.help.MetisHelpModule.MetisHelpId;
+import io.github.tonywasher.joceanus.metis.help.MetisHelpModule.MetisHelpId;
 
 /**
  * Help Page definitions.
@@ -51,6 +51,7 @@ public enum MoneyWiseHelpPage implements MetisHelpId {
 
     /**
      * Constructor.
+     *
      * @param pSource the source
      */
     MoneyWiseHelpPage(final String pSource) {

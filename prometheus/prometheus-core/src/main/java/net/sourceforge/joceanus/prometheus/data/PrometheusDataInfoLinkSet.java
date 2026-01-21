@@ -18,10 +18,10 @@ package net.sourceforge.joceanus.prometheus.data;
 
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
-import net.sourceforge.joceanus.metis.data.MetisDataDifference;
-import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataList;
-import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataObjectFormat;
-import net.sourceforge.joceanus.metis.data.MetisDataState;
+import io.github.tonywasher.joceanus.metis.data.MetisDataDifference;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataList;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataObjectFormat;
+import io.github.tonywasher.joceanus.metis.data.MetisDataState;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIConstant;
 
 import java.util.ArrayList;

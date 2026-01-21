@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.prometheus.data;
 
-import net.sourceforge.joceanus.metis.list.MetisListKey;
+import io.github.tonywasher.joceanus.metis.list.MetisListKey;
 
 /**
  * Item Validator interface.
@@ -24,6 +24,7 @@ import net.sourceforge.joceanus.metis.list.MetisListKey;
 public interface PrometheusDataValidator {
     /**
      * Validate the item.
+     *
      * @param pItem the item
      */
     void validate(PrometheusDataItem pItem);
@@ -34,6 +35,7 @@ public interface PrometheusDataValidator {
     interface PrometheusDataValidatorFactory {
         /**
          * Obtain validator for listItem type.
+         *
          * @param pItemType the itemType
          * @return the validator
          */

@@ -17,7 +17,7 @@
 package net.sourceforge.joceanus.moneywise.ui.dialog;
 
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransTag;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransTag.MoneyWiseTransTagList;

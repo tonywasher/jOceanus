@@ -17,7 +17,7 @@
 package net.sourceforge.joceanus.moneywise.lethe.views;
 
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
-import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataList;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisCashBucket;

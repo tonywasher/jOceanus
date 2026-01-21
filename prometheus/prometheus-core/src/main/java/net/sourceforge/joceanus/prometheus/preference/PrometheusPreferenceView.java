@@ -16,16 +16,16 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.prometheus.preference;
 
-import net.sourceforge.joceanus.metis.preference.MetisPreferenceSet;
-import net.sourceforge.joceanus.metis.ui.MetisPreferenceSetView;
-import net.sourceforge.joceanus.metis.ui.MetisPreferenceView;
+import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceSet;
+import io.github.tonywasher.joceanus.metis.ui.MetisPreferenceSetView;
+import io.github.tonywasher.joceanus.metis.ui.MetisPreferenceView;
 import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
 
 /**
  * Panel for editing preference Sets.
  */
 public class PrometheusPreferenceView
-    extends MetisPreferenceView {
+        extends MetisPreferenceView {
     /**
      * Constructor.
      *
@@ -42,7 +42,7 @@ public class PrometheusPreferenceView
                                                 final MetisPreferenceSet pSet) {
         /* Create the underlying view */
         return (pSet instanceof PrometheusPreferenceSet mySet)
-            ? new PrometheusPreferenceSetView(pFactory, mySet)
-            : super.createView(pFactory, pSet);
+                ? new PrometheusPreferenceSetView(pFactory, mySet)
+                : super.createView(pFactory, pSet);
     }
 }

@@ -17,7 +17,7 @@
 package net.sourceforge.joceanus.prometheus.database;
 
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataKeySet;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;

@@ -17,8 +17,8 @@
 package net.sourceforge.joceanus.moneywise.data.statics;
 
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.metis.data.MetisDataType;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import io.github.tonywasher.joceanus.metis.data.MetisDataType;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoClass;
 

@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.moneywise.data.basic;
 
 import java.util.Currency;
 
-import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataNamedItem;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataNamedItem;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 
@@ -29,6 +29,7 @@ public interface MoneyWiseTransAsset
         extends MetisDataNamedItem {
     /**
      * Obtain the asset id.
+     *
      * @return the id
      */
     Long getExternalId();
@@ -38,78 +39,91 @@ public interface MoneyWiseTransAsset
 
     /**
      * Is the asset closed?
+     *
      * @return true/false
      */
     Boolean isClosed();
 
     /**
      * Obtain Asset Type.
+     *
      * @return the Asset type
      */
     MoneyWiseAssetType getAssetType();
 
     /**
      * Obtain the parent.
+     *
      * @return the parent
      */
     MoneyWiseAssetBase getParent();
 
     /**
      * Is the Asset taxFree?
+     *
      * @return true/false
      */
     boolean isTaxFree();
 
     /**
      * Is the Asset gross?
+     *
      * @return true/false
      */
     boolean isGross();
 
     /**
      * Is the Asset foreign?
+     *
      * @return true/false
      */
     boolean isForeign();
 
     /**
      * Touch underlying item.
+     *
      * @param pItem the object that is touching the item
      */
     void touchItem(PrometheusDataItem pItem);
 
     /**
      * Is the account capital?
+     *
      * @return true/false
      */
     boolean isCapital();
 
     /**
      * Is the account shares?
+     *
      * @return true/false
      */
     boolean isShares();
 
     /**
      * Is the account autoExpense?
+     *
      * @return true/false
      */
     boolean isAutoExpense();
 
     /**
      * Is the asset hidden?
+     *
      * @return true/false
      */
     boolean isHidden();
 
     /**
      * Obtain the currency of the Asset.
+     *
      * @return the currency
      */
     MoneyWiseCurrency getAssetCurrency();
 
     /**
      * Obtain the currency of the Asset.
+     *
      * @return the currency
      */
     Currency getCurrency();

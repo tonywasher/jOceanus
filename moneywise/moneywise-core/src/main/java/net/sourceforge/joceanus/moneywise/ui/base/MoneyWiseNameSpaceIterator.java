@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.ui.base;
 
-import net.sourceforge.joceanus.metis.list.MetisListKey;
+import io.github.tonywasher.joceanus.metis.list.MetisListKey;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataList;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
@@ -48,8 +48,9 @@ public class MoneyWiseNameSpaceIterator
 
     /**
      * Constructor.
+     *
      * @param pEditSet the editSet
-     * @param pKeys the listKeys.
+     * @param pKeys    the listKeys.
      */
     public MoneyWiseNameSpaceIterator(final PrometheusEditSet pEditSet,
                                       final MetisListKey... pKeys) {
@@ -72,7 +73,7 @@ public class MoneyWiseNameSpaceIterator
         }
 
         /* Loop to get an iterator that has an item */
-        for (;;) {
+        for (; ; ) {
             /* No more items if the keys are empty */
             if (theKeys.isEmpty()) {
                 return false;
@@ -82,8 +83,7 @@ public class MoneyWiseNameSpaceIterator
             final MetisListKey myKey = theKeys.pop();
 
             /* Create iterator for next key */
-            @SuppressWarnings("unchecked")
-            final PrometheusDataList<PrometheusDataItem> myList = theEditSet.getDataList(myKey, PrometheusDataList.class);
+            @SuppressWarnings("unchecked") final PrometheusDataList<PrometheusDataItem> myList = theEditSet.getDataList(myKey, PrometheusDataList.class);
             theIterator = myList.iterator();
             if (theIterator.hasNext()) {
                 return true;

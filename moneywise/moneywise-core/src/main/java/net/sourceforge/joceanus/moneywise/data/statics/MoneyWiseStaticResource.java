@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.moneywise.data.statics;
 
 import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleLoader;
-import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 
 import java.util.EnumMap;
 import java.util.Map;

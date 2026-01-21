@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.moneywise.data.validate;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDate;
 import io.github.tonywasher.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.metis.field.MetisFieldRequired;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldRequired;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDeposit;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDepositCategory;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDepositInfo;

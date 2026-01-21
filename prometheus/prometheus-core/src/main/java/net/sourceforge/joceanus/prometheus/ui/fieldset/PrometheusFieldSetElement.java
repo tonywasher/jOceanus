@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.prometheus.ui.fieldset;
 
 import java.util.function.Consumer;
 
-import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIAlignment;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.control.TethysUILabel;
@@ -32,6 +32,7 @@ import net.sourceforge.joceanus.tethys.api.pane.TethysUIPaneFactory;
 
 /**
  * FieldSet Element.
+ *
  * @param <V> the value type
  */
 public class PrometheusFieldSetElement<V> {
@@ -193,6 +194,7 @@ public class PrometheusFieldSetElement<V> {
 
     /**
      * Set reporter.
+     *
      * @param pReporter the reporter
      */
     void setReporter(final Consumer<String> pReporter) {

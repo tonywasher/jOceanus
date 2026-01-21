@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.data.validate;
 
-import net.sourceforge.joceanus.metis.field.MetisFieldRequired;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldRequired;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayeeInfo;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayeeInfoSet;
@@ -86,6 +86,7 @@ public class MoneyWiseValidatePayeeInfoSet
 
     /**
      * Validate the info length.
+     *
      * @param pInfo the info
      */
     private void validateInfoLength(final MoneyWisePayeeInfo pInfo) {

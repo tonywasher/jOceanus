@@ -16,8 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.prometheus.preference;
 
-import net.sourceforge.joceanus.metis.preference.MetisPreferenceSet.MetisPreferenceItem;
-import net.sourceforge.joceanus.metis.ui.MetisPreferenceSetView;
+import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceSet.MetisPreferenceItem;
+import io.github.tonywasher.joceanus.metis.ui.MetisPreferenceSetView;
 import net.sourceforge.joceanus.prometheus.preference.PrometheusPreferenceSet.PrometheusByteArrayPreference;
 import net.sourceforge.joceanus.prometheus.preference.PrometheusPreferenceSet.PrometheusCharArrayPreference;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIAlignment;
@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.tethys.api.pane.TethysUIGridPaneManager;
  * Panel for editing a preference Set.
  */
 public class PrometheusPreferenceSetView
-    extends MetisPreferenceSetView {
+        extends MetisPreferenceSetView {
     /**
      * Constructor.
      *

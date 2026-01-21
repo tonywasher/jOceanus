@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.prometheus.preference;
 
-import net.sourceforge.joceanus.metis.preference.MetisPreferenceSet.MetisPreferenceId;
+import io.github.tonywasher.joceanus.metis.preference.MetisPreferenceSet.MetisPreferenceId;
 
 /**
  * Enum class for preference types.

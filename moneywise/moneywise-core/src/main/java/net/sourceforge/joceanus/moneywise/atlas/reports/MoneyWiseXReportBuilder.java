@@ -16,8 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.atlas.reports;
 
-import net.sourceforge.joceanus.metis.report.MetisReportBase;
-import net.sourceforge.joceanus.metis.report.MetisReportManager;
+import io.github.tonywasher.joceanus.metis.report.MetisReportBase;
+import io.github.tonywasher.joceanus.metis.report.MetisReportManager;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisBucketResource;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisSecurityBucket;
@@ -30,6 +30,7 @@ import java.util.Map;
 
 /**
  * Report Classes.
+ *
  * @author Tony Washer
  */
 public class MoneyWiseXReportBuilder {
@@ -65,6 +66,7 @@ public class MoneyWiseXReportBuilder {
 
     /**
      * Constructor.
+     *
      * @param pManager the report manager
      */
     public MoneyWiseXReportBuilder(final MetisReportManager<MoneyWiseXAnalysisFilter<?, ?>> pManager) {
@@ -77,8 +79,9 @@ public class MoneyWiseXReportBuilder {
 
     /**
      * Build a report of the appropriate type.
+     *
      * @param pAnalysis the analysis
-     * @param pType the report type
+     * @param pType     the report type
      * @param pSecurity the security
      * @return the Web document
      */

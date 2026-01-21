@@ -17,8 +17,8 @@
 package net.sourceforge.joceanus.prometheus.data;
 
 import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
-import net.sourceforge.joceanus.metis.field.MetisFieldItem;
-import net.sourceforge.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
 
 import java.util.HashMap;
 import java.util.Map;

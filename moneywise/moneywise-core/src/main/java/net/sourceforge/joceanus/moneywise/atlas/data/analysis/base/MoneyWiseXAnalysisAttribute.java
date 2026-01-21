@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.atlas.data.analysis.base;
 
-import net.sourceforge.joceanus.metis.data.MetisDataType;
+import io.github.tonywasher.joceanus.metis.data.MetisDataType;
 
 /**
  * Methods for a Bucket Attribute.
@@ -24,12 +24,14 @@ import net.sourceforge.joceanus.metis.data.MetisDataType;
 public interface MoneyWiseXAnalysisAttribute {
     /**
      * Obtain DataType.
+     *
      * @return the data type
      */
     MetisDataType getDataType();
 
     /**
      * Should this attribute be copied to a snapshot.
+     *
      * @return true/false
      */
     boolean isPreserved();

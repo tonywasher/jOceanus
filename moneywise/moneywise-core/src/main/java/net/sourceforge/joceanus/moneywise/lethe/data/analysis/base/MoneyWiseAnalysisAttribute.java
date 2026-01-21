@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.lethe.data.analysis.base;
 
-import net.sourceforge.joceanus.metis.data.MetisDataType;
+import io.github.tonywasher.joceanus.metis.data.MetisDataType;
 
 /**
  * Methods for a Bucket Attribute.
@@ -24,12 +24,14 @@ import net.sourceforge.joceanus.metis.data.MetisDataType;
 public interface MoneyWiseAnalysisAttribute {
     /**
      * Obtain DataType.
+     *
      * @return the data type
      */
     MetisDataType getDataType();
 
     /**
      * Is this a counter value.
+     *
      * @return true/false
      */
     boolean isCounter();

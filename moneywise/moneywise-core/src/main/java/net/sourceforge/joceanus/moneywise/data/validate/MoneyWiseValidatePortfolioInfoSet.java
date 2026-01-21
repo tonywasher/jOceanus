@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.data.validate;
 
-import net.sourceforge.joceanus.metis.field.MetisFieldRequired;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldRequired;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePortfolio;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePortfolioInfo;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePortfolioInfoSet;
@@ -91,6 +91,7 @@ public class MoneyWiseValidatePortfolioInfoSet
 
     /**
      * Validate the info length.
+     *
      * @param pInfo the info
      */
     private void validateInfoLength(final MoneyWisePortfolioInfo pInfo) {

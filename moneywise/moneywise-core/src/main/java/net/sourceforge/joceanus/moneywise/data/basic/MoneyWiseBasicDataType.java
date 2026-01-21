@@ -16,10 +16,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.data.basic;
 
-import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.metis.field.MetisFieldSimpleId;
-import net.sourceforge.joceanus.metis.field.MetisFieldVersionedItem;
-import net.sourceforge.joceanus.metis.list.MetisListKey;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSimpleId;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldVersionedItem;
+import io.github.tonywasher.joceanus.metis.list.MetisListKey;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 
 /**
@@ -164,6 +164,7 @@ public enum MoneyWiseBasicDataType
 
     /**
      * Constructor.
+     *
      * @param pKey the keyId
      */
     MoneyWiseBasicDataType(final Integer pKey) {
@@ -178,6 +179,7 @@ public enum MoneyWiseBasicDataType
 
     /**
      * Obtain Id of item.
+     *
      * @return the item name
      */
     public MetisDataFieldId getItemId() {
@@ -193,6 +195,7 @@ public enum MoneyWiseBasicDataType
 
     /**
      * Obtain Name of item.
+     *
      * @return the item name
      */
     @Override
@@ -202,6 +205,7 @@ public enum MoneyWiseBasicDataType
 
     /**
      * Obtain Id of associated list.
+     *
      * @return the list name
      */
     public MetisDataFieldId getListId() {
@@ -222,6 +226,7 @@ public enum MoneyWiseBasicDataType
 
     /**
      * Obtain field name.
+     *
      * @return the field name
      */
     public String getFieldName() {

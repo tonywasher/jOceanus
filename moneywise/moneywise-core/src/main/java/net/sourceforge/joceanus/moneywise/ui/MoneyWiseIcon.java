@@ -20,7 +20,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.sourceforge.joceanus.metis.ui.MetisIcon;
+import io.github.tonywasher.joceanus.metis.ui.MetisIcon;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetDirection;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIIconId;
 import net.sourceforge.joceanus.tethys.api.button.TethysUIButtonFactory;
@@ -158,6 +158,7 @@ public enum MoneyWiseIcon implements TethysUIIconId {
 
     /**
      * Constructor.
+     *
      * @param pSourceName the source name
      */
     MoneyWiseIcon(final String pSourceName) {
@@ -176,6 +177,7 @@ public enum MoneyWiseIcon implements TethysUIIconId {
 
     /**
      * Configure locked icon button.
+     *
      * @param pFactory the gui factory
      * @return the mapSet configuration
      */
@@ -202,6 +204,7 @@ public enum MoneyWiseIcon implements TethysUIIconId {
 
     /**
      * Configure reconciled icon button.
+     *
      * @param pFactory the gui factory
      * @return the mapSet configuration
      */
@@ -227,6 +230,7 @@ public enum MoneyWiseIcon implements TethysUIIconId {
 
     /**
      * Configure direction icon button.
+     *
      * @param pFactory the gui factory
      * @return the mapSet configuration
      */
@@ -253,6 +257,7 @@ public enum MoneyWiseIcon implements TethysUIIconId {
 
     /**
      * Configure option icon button.
+     *
      * @param pFactory the gui factory
      * @return the mapSet configuration
      */

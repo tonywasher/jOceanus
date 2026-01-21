@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.moneywise.views;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import io.github.tonywasher.joceanus.oceanus.date.OceanusDateRange;
 import io.github.tonywasher.joceanus.oceanus.profile.OceanusProfile;
-import net.sourceforge.joceanus.metis.viewer.MetisViewerEntry;
+import io.github.tonywasher.joceanus.metis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTax.MoneyWiseTaxFactory;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;

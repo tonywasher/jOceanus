@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.prometheus.ui;
 
 import java.io.InputStream;
 
-import net.sourceforge.joceanus.metis.ui.MetisIcon;
+import io.github.tonywasher.joceanus.metis.ui.MetisIcon;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIIconId;
 import net.sourceforge.joceanus.tethys.api.button.TethysUIScrollButtonManager;
 import net.sourceforge.joceanus.tethys.api.control.TethysUIControl.TethysUIIconMapSet;
@@ -60,6 +60,7 @@ public enum PrometheusIcon implements TethysUIIconId {
 
     /**
      * Constructor.
+     *
      * @param pSourceName the source name
      */
     PrometheusIcon(final String pSourceName) {
@@ -78,6 +79,7 @@ public enum PrometheusIcon implements TethysUIIconId {
 
     /**
      * Configure goto scroll button.
+     *
      * @param pButton the button manager
      */
     public static void configureGoToScrollButton(final TethysUIScrollButtonManager<?> pButton) {
@@ -87,6 +89,7 @@ public enum PrometheusIcon implements TethysUIIconId {
 
     /**
      * Configure enabled icon button.
+     *
      * @param pFactory the factory
      * @return the mapSet configuration
      */

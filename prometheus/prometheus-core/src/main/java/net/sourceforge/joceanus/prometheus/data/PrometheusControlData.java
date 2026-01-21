@@ -17,9 +17,9 @@
 package net.sourceforge.joceanus.prometheus.data;
 
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.metis.data.MetisDataResource;
-import net.sourceforge.joceanus.metis.field.MetisFieldSet;
-import net.sourceforge.joceanus.metis.field.MetisFieldVersionedSet;
+import io.github.tonywasher.joceanus.metis.data.MetisDataResource;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldVersionedSet;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet.PrometheusCryptographyDataType;
 import net.sourceforge.joceanus.prometheus.exc.PrometheusDataException;
 

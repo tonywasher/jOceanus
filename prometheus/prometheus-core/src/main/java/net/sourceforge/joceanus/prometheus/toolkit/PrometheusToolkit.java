@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.prometheus.toolkit;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
-import net.sourceforge.joceanus.metis.toolkit.MetisToolkit;
+import io.github.tonywasher.joceanus.metis.toolkit.MetisToolkit;
 import net.sourceforge.joceanus.prometheus.preference.PrometheusPreferenceManager;
 import net.sourceforge.joceanus.prometheus.preference.PrometheusPreferenceSecurity.PrometheusSecurityPreferences;
 import net.sourceforge.joceanus.prometheus.preference.PrometheusPreferenceView;

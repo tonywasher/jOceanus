@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.prometheus.data;
 
-import net.sourceforge.joceanus.metis.data.MetisDataType;
+import io.github.tonywasher.joceanus.metis.data.MetisDataType;
 
 /**
  * DataInfoClass interface.
@@ -25,18 +25,21 @@ public interface PrometheusDataInfoClass
         extends PrometheusStaticDataClass {
     /**
      * Obtain Data Type.
+     *
      * @return the date type
      */
     MetisDataType getDataType();
 
     /**
      * is this a Link?
+     *
      * @return true/false
      */
     boolean isLink();
 
     /**
      * is this a Link Set?
+     *
      * @return true/false
      */
     boolean isLinkSet();

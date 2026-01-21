@@ -17,8 +17,8 @@
 package net.sourceforge.joceanus.moneywise.help;
 
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.metis.help.MetisHelpEntry;
-import net.sourceforge.joceanus.metis.help.MetisHelpModule;
+import io.github.tonywasher.joceanus.metis.help.MetisHelpEntry;
+import io.github.tonywasher.joceanus.metis.help.MetisHelpModule;
 
 /**
  * Help Module for FinanceApp.

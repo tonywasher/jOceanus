@@ -16,10 +16,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.ui.base;
 
-import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.metis.list.MetisListKey;
-import net.sourceforge.joceanus.metis.ui.MetisErrorPanel;
-import net.sourceforge.joceanus.metis.ui.MetisIcon;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import io.github.tonywasher.joceanus.metis.list.MetisListKey;
+import io.github.tonywasher.joceanus.metis.ui.MetisErrorPanel;
+import io.github.tonywasher.joceanus.metis.ui.MetisIcon;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
@@ -33,6 +33,7 @@ import net.sourceforge.joceanus.tethys.api.table.TethysUITableManager;
 
 /**
  * MoneyWise Dialog Base Table.
+ *
  * @param <T> the data type
  */
 public abstract class MoneyWiseDialogTable<T extends PrometheusDataItem>
@@ -49,10 +50,11 @@ public abstract class MoneyWiseDialogTable<T extends PrometheusDataItem>
 
     /**
      * Constructor.
-     * @param pView      the view
-     * @param pEditSet   the editSet
-     * @param pError     the error panel
-     * @param pDataType  the dataType
+     *
+     * @param pView     the view
+     * @param pEditSet  the editSet
+     * @param pError    the error panel
+     * @param pDataType the dataType
      */
     protected MoneyWiseDialogTable(final MoneyWiseView pView,
                                    final PrometheusEditSet pEditSet,
@@ -91,6 +93,7 @@ public abstract class MoneyWiseDialogTable<T extends PrometheusDataItem>
 
     /**
      * is the table active?
+     *
      * @return true/false
      */
     public boolean isViewActive() {
@@ -107,6 +110,7 @@ public abstract class MoneyWiseDialogTable<T extends PrometheusDataItem>
 
     /**
      * Set whether the table is editable.
+     *
      * @param pEditable true/false
      */
     public void setEditable(final boolean pEditable) {

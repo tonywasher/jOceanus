@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.prometheus.views;
 
 import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleId;
 import io.github.tonywasher.joceanus.oceanus.resource.OceanusBundleLoader;
-import net.sourceforge.joceanus.metis.viewer.MetisViewerResource;
+import io.github.tonywasher.joceanus.metis.viewer.MetisViewerResource;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
 
 import java.util.EnumMap;

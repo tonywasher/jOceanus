@@ -18,37 +18,42 @@ package net.sourceforge.joceanus.prometheus.ui.fieldset;
 
 import java.util.function.Consumer;
 
-import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.tethys.api.pane.TethysUIBorderPaneManager;
 
 /**
  * FieldSet Table.
+ *
  * @param <T> the item type
  */
 public class PrometheusFieldSetTableTab<T>
         implements PrometheusFieldSetPanel<T> {
     /**
      * Table interface.
+     *
      * @param <T> the item type
      */
     public interface PrometheusFieldSetTable<T>
             extends TethysUIComponent {
         /**
          * Are there any visible elements?
+         *
          * @return true/false
          */
         boolean isVisible();
 
         /**
          * Set item.
+         *
          * @param pItem the item
          */
         void setItem(T pItem);
 
         /**
          * Set editable item.
+         *
          * @param isEditable true/false
          */
         void setEditable(boolean isEditable);
@@ -66,8 +71,9 @@ public class PrometheusFieldSetTableTab<T>
 
     /**
      * Constructor.
+     *
      * @param pFactory the factory
-     * @param pTable the table
+     * @param pTable   the table
      */
     PrometheusFieldSetTableTab(final TethysUIFactory<?> pFactory,
                                final PrometheusFieldSetTable<T> pTable) {

@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.data.validate;
 
-import net.sourceforge.joceanus.metis.list.MetisListKey;
+import io.github.tonywasher.joceanus.metis.list.MetisListKey;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet.PrometheusCryptographyDataType;
@@ -45,6 +45,7 @@ public class MoneyWiseValidatorFactory
 
     /**
      * Constructor.
+     *
      * @param pNewValidation true/false
      */
     public MoneyWiseValidatorFactory(final boolean pNewValidation) {

@@ -16,10 +16,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.data.statics;
 
-import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.metis.field.MetisFieldSimpleId;
-import net.sourceforge.joceanus.metis.field.MetisFieldVersionedItem;
-import net.sourceforge.joceanus.metis.list.MetisListKey;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSimpleId;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldVersionedItem;
+import io.github.tonywasher.joceanus.metis.list.MetisListKey;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet.PrometheusCryptographyDataType;
 
 /**
@@ -104,6 +104,7 @@ public enum MoneyWiseStaticDataType
 
     /**
      * Constructor.
+     *
      * @param pKey the keyId
      */
     MoneyWiseStaticDataType(final Integer pKey) {
@@ -118,6 +119,7 @@ public enum MoneyWiseStaticDataType
 
     /**
      * Obtain Id of item.
+     *
      * @return the item name
      */
     public MetisDataFieldId getItemId() {
@@ -133,6 +135,7 @@ public enum MoneyWiseStaticDataType
 
     /**
      * Obtain Name of item.
+     *
      * @return the item name
      */
     @Override
@@ -142,6 +145,7 @@ public enum MoneyWiseStaticDataType
 
     /**
      * Obtain Id of associated list.
+     *
      * @return the list name
      */
     public MetisDataFieldId getListId() {
@@ -162,6 +166,7 @@ public enum MoneyWiseStaticDataType
 
     /**
      * Obtain field name.
+     *
      * @return the field name
      */
     public String getFieldName() {

@@ -18,23 +18,26 @@ package net.sourceforge.joceanus.prometheus.ui.fieldset;
 
 import java.util.function.Consumer;
 
-import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 
 /**
  * FieldSet Panel.
+ *
  * @param <T> the item type
  */
 public interface PrometheusFieldSetPanel<T>
         extends TethysUIComponent {
     /**
      * Are there any visible elements?
+     *
      * @return true/false
      */
     boolean isVisible();
 
     /**
      * Set item.
+     *
      * @param pItem the item
      */
     void setItem(T pItem);
@@ -46,13 +49,15 @@ public interface PrometheusFieldSetPanel<T>
 
     /**
      * Set editable item.
+     *
      * @param isEditable true/false
      */
     void setEditable(boolean isEditable);
 
     /**
      * Set editable.
-     * @param pFieldId the fieldId
+     *
+     * @param pFieldId  the fieldId
      * @param pEditable true/false
      */
     void setEditable(MetisDataFieldId pFieldId,
@@ -60,6 +65,7 @@ public interface PrometheusFieldSetPanel<T>
 
     /**
      * Set visible.
+     *
      * @param pFieldId the fieldId
      * @param pVisible true/false
      */
@@ -75,6 +81,7 @@ public interface PrometheusFieldSetPanel<T>
 
     /**
      * Set reporter.
+     *
      * @param pReporter the reporter
      */
     void setReporter(Consumer<String> pReporter);
