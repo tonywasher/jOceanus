@@ -17,9 +17,9 @@ dependencies {
 
 /* Details */
 description = 'MoneyWise Personal Finance - javaFX'
-mainClass = "net.sourceforge.joceanus.moneywise.ui.javafx.MoneyWise4FX"
-moduleName = "net.sourceforge.joceanus.moneywise.javafx"
-preLoaderClass = "net.sourceforge.joceanus.moneywise.ui.javafx.MoneyWiseFXpreLoader"
+mainClass = "io.github.tonywasher.joceanus.moneywise.ui.javafx.MoneyWise4FX"
+moduleName = "io.github.tonywasher.joceanus.moneywise.javafx"
+preLoaderClass = "io.github.tonywasher.joceanus.moneywise.ui.javafx.MoneyWiseFXpreLoader"
 
 /* Register the project */
 registerProject(project)

@@ -17,12 +17,12 @@
 /**
  * MoneyWise Swing.
  */
-module net.sourceforge.joceanus.moneywise.swing {
+module io.github.tonywasher.joceanus.moneywise.swing {
     /* Java Libraries */
     requires java.desktop;
 
     /* Exports */
-    requires net.sourceforge.joceanus.moneywise.core;
+    requires io.github.tonywasher.joceanus.moneywise.core;
     requires io.github.tonywasher.joceanus.tethys.core;
     requires io.github.tonywasher.joceanus.tethys.swing;
 }

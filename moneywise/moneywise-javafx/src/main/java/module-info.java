@@ -17,15 +17,15 @@
 /**
  * MoneyWise javaFX.
  */
-module net.sourceforge.joceanus.moneywise.javafx {
+module io.github.tonywasher.moneywise.javafx {
     /* JavaFX Libraries */
     requires javafx.graphics;
 
     /* Exports */
-    requires net.sourceforge.joceanus.moneywise.core;
+    requires io.github.tonywasher.joceanus.moneywise.core;
     requires io.github.tonywasher.joceanus.tethys.core;
     requires io.github.tonywasher.joceanus.tethys.javafx;
 
     /* Exports */
-    exports net.sourceforge.joceanus.moneywise.ui.javafx to javafx.graphics;
+    exports io.github.tonywasher.joceanus.moneywise.ui.javafx to javafx.graphics;
 }

@@ -66,7 +66,7 @@
         <snapshotRef>${scmMain}</snapshotRef>
         <tagRef>${currentBranch}-${currentTag}</tagRef>
         <baseRef>${baseBranch}-${baseTag}</baseRef>
-        <packageKey>net.sourceforge.joceanus</packageKey>
+        <packageKey>io.github.tonywasher.joceanus</packageKey>
         <packageMain/>
         <packageName/>
         <moduleName>jOceanus</moduleName>

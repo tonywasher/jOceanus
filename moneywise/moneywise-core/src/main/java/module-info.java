@@ -17,7 +17,7 @@
 /**
  * MoneyWise Core.
  */
-module net.sourceforge.joceanus.moneywise.core {
+module io.github.tonywasher.joceanus.moneywise.core {
     /* Java libraries */
     requires java.xml;
 
@@ -30,7 +30,7 @@ module net.sourceforge.joceanus.moneywise.core {
     requires io.github.tonywasher.joceanus.prometheus.sheet.api;
 
     /* Exports */
-    exports net.sourceforge.joceanus.moneywise.quicken.definitions to io.github.tonywasher.joceanus.metis;
-    exports net.sourceforge.joceanus.moneywise.tax.uk to io.github.tonywasher.joceanus.metis;
-    exports net.sourceforge.joceanus.moneywise.launch;
+    exports io.github.tonywasher.joceanus.moneywise.quicken.definitions to io.github.tonywasher.joceanus.metis;
+    exports io.github.tonywasher.joceanus.moneywise.tax.uk to io.github.tonywasher.joceanus.metis;
+    exports io.github.tonywasher.joceanus.moneywise.launch;
 }
