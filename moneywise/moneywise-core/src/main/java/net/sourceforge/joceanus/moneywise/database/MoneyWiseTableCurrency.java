@@ -21,11 +21,11 @@ import io.github.tonywasher.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticResource;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
-import net.sourceforge.joceanus.prometheus.database.PrometheusDataStore;
-import net.sourceforge.joceanus.prometheus.database.PrometheusTableDefinition;
-import net.sourceforge.joceanus.prometheus.database.PrometheusTableStaticData;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
+import io.github.tonywasher.joceanus.prometheus.database.PrometheusDataStore;
+import io.github.tonywasher.joceanus.prometheus.database.PrometheusTableDefinition;
+import io.github.tonywasher.joceanus.prometheus.database.PrometheusTableStaticData;
 
 /**
  * TableStaticData extension for AccountCategoryType.

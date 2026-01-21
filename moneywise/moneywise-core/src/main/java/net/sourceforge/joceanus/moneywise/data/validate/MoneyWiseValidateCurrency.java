@@ -20,8 +20,8 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency.MoneyWiseCurrencyDataMap;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency.MoneyWiseCurrencyList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticResource;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
-import net.sourceforge.joceanus.prometheus.validate.PrometheusValidateStatic;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
+import io.github.tonywasher.joceanus.prometheus.validate.PrometheusValidateStatic;
 
 /**
  * Validator for Currency.

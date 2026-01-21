@@ -42,7 +42,7 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryType;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
-import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
+import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 
 import java.util.Comparator;
 import java.util.Currency;

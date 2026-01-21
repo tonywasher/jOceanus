@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseExchangeRate;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePortfolio.MoneyWisePortfolioList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding.MoneyWiseSecurityHoldingMap;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice;
-import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
+import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 
 import java.util.Iterator;
 

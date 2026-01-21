@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.moneywise.data.statics;
 
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
-import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataClass;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataClass;
 
 import java.util.Currency;
 

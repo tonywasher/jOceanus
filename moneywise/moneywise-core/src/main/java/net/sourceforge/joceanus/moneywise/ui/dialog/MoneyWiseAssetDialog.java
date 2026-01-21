@@ -20,20 +20,22 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoClass;
 import net.sourceforge.joceanus.moneywise.ui.base.MoneyWiseAssetTable;
 import net.sourceforge.joceanus.moneywise.ui.base.MoneyWiseItemPanel;
-import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
+import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
 
 /**
  * Panel to display/edit/create an asset.
+ *
  * @param <T> the Asset type
  */
 public abstract class MoneyWiseAssetDialog<T extends MoneyWiseAssetBase>
         extends MoneyWiseItemPanel<T> {
     /**
      * Constructor.
+     *
      * @param pFactory the GUI factory
      * @param pEditSet the edit set
-     * @param pOwner the owning table
+     * @param pOwner   the owning table
      */
     protected MoneyWiseAssetDialog(final TethysUIFactory<?> pFactory,
                                    final PrometheusEditSet pEditSet,
@@ -49,6 +51,7 @@ public abstract class MoneyWiseAssetDialog<T extends MoneyWiseAssetBase>
 
     /**
      * is Valid webSite?
+     *
      * @param pNewWebSite the new webSite
      * @return error message or null
      */
@@ -58,6 +61,7 @@ public abstract class MoneyWiseAssetDialog<T extends MoneyWiseAssetBase>
 
     /**
      * is Valid customerNo?
+     *
      * @param pNewCustNo the new customerNo
      * @return error message or null
      */
@@ -67,6 +71,7 @@ public abstract class MoneyWiseAssetDialog<T extends MoneyWiseAssetBase>
 
     /**
      * is Valid userId?
+     *
      * @param pNewUserId the new userId
      * @return error message or null
      */
@@ -76,6 +81,7 @@ public abstract class MoneyWiseAssetDialog<T extends MoneyWiseAssetBase>
 
     /**
      * is Valid password?
+     *
      * @param pNewPassword the new password
      * @return error message or null
      */
@@ -85,6 +91,7 @@ public abstract class MoneyWiseAssetDialog<T extends MoneyWiseAssetBase>
 
     /**
      * is Valid sortCode?
+     *
      * @param pNewSortCode the new sortCode
      * @return error message or null
      */
@@ -94,6 +101,7 @@ public abstract class MoneyWiseAssetDialog<T extends MoneyWiseAssetBase>
 
     /**
      * is Valid account?
+     *
      * @param pNewAccount the new account
      * @return error message or null
      */
@@ -103,6 +111,7 @@ public abstract class MoneyWiseAssetDialog<T extends MoneyWiseAssetBase>
 
     /**
      * is Valid reference?
+     *
      * @param pNewRef the new reference
      * @return error message or null
      */
@@ -112,6 +121,7 @@ public abstract class MoneyWiseAssetDialog<T extends MoneyWiseAssetBase>
 
     /**
      * is Valid notes?
+     *
      * @param pNewNotes the new notes
      * @return error message or null
      */
@@ -121,6 +131,7 @@ public abstract class MoneyWiseAssetDialog<T extends MoneyWiseAssetBase>
 
     /**
      * is Valid symbol?
+     *
      * @param pNewSymbol the new symbol
      * @return error message or null
      */

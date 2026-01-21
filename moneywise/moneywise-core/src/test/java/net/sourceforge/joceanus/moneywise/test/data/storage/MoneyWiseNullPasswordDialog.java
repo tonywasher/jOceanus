@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.test.data.storage;
 
-import net.sourceforge.joceanus.prometheus.security.PrometheusSecurityDialogController;
+import io.github.tonywasher.joceanus.prometheus.security.PrometheusSecurityDialogController;
 
 /**
  * Dialog stub.

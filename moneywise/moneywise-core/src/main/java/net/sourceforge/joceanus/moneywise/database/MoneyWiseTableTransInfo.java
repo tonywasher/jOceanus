@@ -19,10 +19,10 @@ package net.sourceforge.joceanus.moneywise.database;
 import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransInfo;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
-import net.sourceforge.joceanus.prometheus.database.PrometheusDataStore;
-import net.sourceforge.joceanus.prometheus.database.PrometheusTableDataInfo;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
+import io.github.tonywasher.joceanus.prometheus.database.PrometheusDataStore;
+import io.github.tonywasher.joceanus.prometheus.database.PrometheusTableDataInfo;
 
 /**
  * TableDataInfo extension for TransactionInfo.

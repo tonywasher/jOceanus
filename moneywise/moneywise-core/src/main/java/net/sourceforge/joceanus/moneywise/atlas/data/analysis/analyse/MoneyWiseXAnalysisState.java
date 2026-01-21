@@ -43,7 +43,7 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice.Mone
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction.MoneyWiseTransactionList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
-import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
+import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 
 import java.util.ArrayList;
 import java.util.Collections;

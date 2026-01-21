@@ -23,12 +23,13 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataValidator.MoneyWiseDataValidatorAccount;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
-import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
+import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 
 /**
  * Validator for assetBase.
+ *
  * @param <T> the asset type
  */
 public abstract class MoneyWiseValidateAccount<T extends MoneyWiseAssetBase>
@@ -65,6 +66,7 @@ public abstract class MoneyWiseValidateAccount<T extends MoneyWiseAssetBase>
 
     /**
      * Obtain the editSet.
+     *
      * @return the editSet
      */
     PrometheusEditSet getEditSet() {
@@ -99,8 +101,9 @@ public abstract class MoneyWiseValidateAccount<T extends MoneyWiseAssetBase>
 
     /**
      * Validate the name.
+     *
      * @param pAsset the asset
-     * @param pName the name
+     * @param pName  the name
      */
     public void validateName(final MoneyWiseAssetBase pAsset,
                              final String pName) {
@@ -125,6 +128,7 @@ public abstract class MoneyWiseValidateAccount<T extends MoneyWiseAssetBase>
 
     /**
      * Obtain the reporting currency.
+     *
      * @return the reporting currency
      */
     MoneyWiseCurrency getReportingCurrency() {
@@ -134,6 +138,7 @@ public abstract class MoneyWiseValidateAccount<T extends MoneyWiseAssetBase>
 
     /**
      * Obtain unique name for new account.
+     *
      * @param pList the list
      * @param pBase the base name
      * @return The new name
@@ -145,7 +150,7 @@ public abstract class MoneyWiseValidateAccount<T extends MoneyWiseAssetBase>
 
         /* Loop until we found a name */
         String myName = pBase;
-        for (;;) {
+        for (; ; ) {
             /* try out the name */
             if (pList.checkAvailableName(myName)) {
                 return myName;

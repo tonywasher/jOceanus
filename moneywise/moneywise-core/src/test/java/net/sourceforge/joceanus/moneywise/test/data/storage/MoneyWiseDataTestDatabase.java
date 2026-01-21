@@ -20,7 +20,7 @@ import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.database.MoneyWiseDataStore;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
-import net.sourceforge.joceanus.prometheus.database.PrometheusDBConfig;
+import io.github.tonywasher.joceanus.prometheus.database.PrometheusDBConfig;
 import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadManager;
 import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 import org.junit.jupiter.api.Assertions;

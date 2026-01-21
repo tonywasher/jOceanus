@@ -24,8 +24,8 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseDepositCategoryC
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseDepositCategoryType;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseDepositCategoryType.MoneyWiseDepositCategoryTypeList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
 
 /**
  * Validator for DepositCategory.

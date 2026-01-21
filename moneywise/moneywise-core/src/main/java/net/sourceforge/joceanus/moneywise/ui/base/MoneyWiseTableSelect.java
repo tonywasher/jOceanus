@@ -19,11 +19,12 @@ package net.sourceforge.joceanus.moneywise.ui.base;
 import java.util.Iterator;
 import java.util.function.Predicate;
 
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.tethys.api.table.TethysUITableManager;
 
 /**
  * Table Selection control.
+ *
  * @param <T> the item type
  */
 public class MoneyWiseTableSelect<T extends PrometheusDataItem> {
@@ -54,7 +55,8 @@ public class MoneyWiseTableSelect<T extends PrometheusDataItem> {
 
     /**
      * Constructor.
-     * @param pTable the table
+     *
+     * @param pTable  the table
      * @param pFilter the filter
      */
     MoneyWiseTableSelect(final TethysUITableManager<?, T> pTable,
@@ -65,6 +67,7 @@ public class MoneyWiseTableSelect<T extends PrometheusDataItem> {
 
     /**
      * Declare item panel.
+     *
      * @param pPanel the item panel
      */
     void declareItemPanel(final MoneyWiseItemPanel<T> pPanel) {
@@ -73,6 +76,7 @@ public class MoneyWiseTableSelect<T extends PrometheusDataItem> {
 
     /**
      * Record the selected item.
+     *
      * @param pItem the selected item
      */
     public void recordSelection(final T pItem) {
@@ -137,6 +141,7 @@ public class MoneyWiseTableSelect<T extends PrometheusDataItem> {
 
     /**
      * Find the first visible item.
+     *
      * @return the first item
      */
     private T findFirst() {
@@ -157,6 +162,7 @@ public class MoneyWiseTableSelect<T extends PrometheusDataItem> {
 
     /**
      * Find the nearest visible item.
+     *
      * @return the nearest item
      */
     private T findNearest() {

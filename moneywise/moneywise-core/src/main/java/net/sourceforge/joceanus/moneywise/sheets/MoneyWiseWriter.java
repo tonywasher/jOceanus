@@ -18,21 +18,23 @@ package net.sourceforge.joceanus.moneywise.sheets;
 
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
-import net.sourceforge.joceanus.prometheus.sheets.PrometheusSheetDataItem;
-import net.sourceforge.joceanus.prometheus.sheets.PrometheusSheetWriter;
+import io.github.tonywasher.joceanus.prometheus.sheets.PrometheusSheetDataItem;
+import io.github.tonywasher.joceanus.prometheus.sheets.PrometheusSheetWriter;
 import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 
 /**
  * SheetWriter extension for MoneyWiseData.
+ *
  * @author Tony Washer
  */
 public class MoneyWiseWriter
         extends PrometheusSheetWriter {
     /**
      * Constructor.
+     *
      * @param pFactory the gui factory
-     * @param pReport the report
+     * @param pReport  the report
      */
     public MoneyWiseWriter(final TethysUIFactory<?> pFactory,
                            final TethysUIThreadStatusReport pReport) {
@@ -60,6 +62,7 @@ public class MoneyWiseWriter
 
     /**
      * Create new sheet of required type.
+     *
      * @param pDataType the data type
      * @return the new sheet
      */
@@ -95,6 +98,7 @@ public class MoneyWiseWriter
 
     /**
      * Create new sheet of required type.
+     *
      * @param pDataType the data type
      * @return the new sheet
      */

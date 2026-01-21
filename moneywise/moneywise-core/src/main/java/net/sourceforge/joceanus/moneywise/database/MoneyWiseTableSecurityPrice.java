@@ -23,13 +23,13 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
-import net.sourceforge.joceanus.prometheus.database.PrometheusColumnDefinition;
-import net.sourceforge.joceanus.prometheus.database.PrometheusDataStore;
-import net.sourceforge.joceanus.prometheus.database.PrometheusTableDefinition;
-import net.sourceforge.joceanus.prometheus.database.PrometheusTableDefinition.PrometheusSortOrder;
-import net.sourceforge.joceanus.prometheus.database.PrometheusTableEncrypted;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValues;
+import io.github.tonywasher.joceanus.prometheus.database.PrometheusColumnDefinition;
+import io.github.tonywasher.joceanus.prometheus.database.PrometheusDataStore;
+import io.github.tonywasher.joceanus.prometheus.database.PrometheusTableDefinition;
+import io.github.tonywasher.joceanus.prometheus.database.PrometheusTableDefinition.PrometheusSortOrder;
+import io.github.tonywasher.joceanus.prometheus.database.PrometheusTableEncrypted;
 
 /**
  * TableEncrypted extension for SecurityPrice.

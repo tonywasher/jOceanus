@@ -21,12 +21,13 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCategoryBase;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCategoryBase.MoneyWiseCategoryBaseList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCategoryBase.MoneyWiseCategoryDataMap;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataValidator.MoneyWiseDataValidatorCategory;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
-import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
+import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 
 /**
  * Validator for categoryBase.
+ *
  * @param <T> the category type
  */
 public abstract class MoneyWiseValidateCategory<T extends MoneyWiseCategoryBase>
@@ -63,6 +64,7 @@ public abstract class MoneyWiseValidateCategory<T extends MoneyWiseCategoryBase>
 
     /**
      * Obtain the editSet.
+     *
      * @return the editSet
      */
     PrometheusEditSet getEditSet() {
@@ -106,7 +108,8 @@ public abstract class MoneyWiseValidateCategory<T extends MoneyWiseCategoryBase>
 
     /**
      * Obtain unique name for new category.
-     * @param pList the owning list
+     *
+     * @param pList   the owning list
      * @param pParent the parent category
      * @return The new name
      */
@@ -123,7 +126,7 @@ public abstract class MoneyWiseValidateCategory<T extends MoneyWiseCategoryBase>
 
         /* Loop until we found a name */
         String myName = myCore;
-        for (;;) {
+        for (; ; ) {
             /* try out the name */
             if (pList.findItemByName(myBase + myName) == null) {
                 return myName;

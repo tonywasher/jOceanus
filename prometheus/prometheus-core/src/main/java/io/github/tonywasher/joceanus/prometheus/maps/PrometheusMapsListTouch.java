@@ -1,0 +1,135 @@
+/*
+ * Prometheus: Application Framework
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.prometheus.maps;
+
+import io.github.tonywasher.joceanus.oceanus.format.OceanusDataFormatter;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldItem;
+import io.github.tonywasher.joceanus.metis.field.MetisFieldSet;
+import io.github.tonywasher.joceanus.metis.list.MetisListKey;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataResource;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+/**
+ * DataTouchMap for List.
+ */
+public class PrometheusMapsListTouch
+        implements MetisFieldItem {
+    /**
+     * Report fields.
+     */
+    private static final MetisFieldSet<PrometheusMapsListTouch> FIELD_DEFS
+            = MetisFieldSet.newFieldSet(PrometheusMapsListTouch.class);
+
+    /*
+     * Declare Fields.
+     */
+    static {
+        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_TYPE, PrometheusMapsListTouch::getListKey);
+        FIELD_DEFS.declareLocalField(PrometheusMapsResource.MAPS_TOUCHMAP, PrometheusMapsListTouch::getTouchMap);
+    }
+
+    /**
+     * listKey.
+     */
+    private final MetisListKey theListKey;
+
+    /**
+     * The map of itemId to touch map.
+     */
+    private final Map<Integer, PrometheusMapsItemTouch> theTouchMap;
+
+    /**
+     * Constructor.
+     *
+     * @param pKey the listKey
+     */
+    PrometheusMapsListTouch(final MetisListKey pKey) {
+        theListKey = pKey;
+        theTouchMap = new LinkedHashMap<>();
+    }
+
+    @Override
+    public MetisFieldSetDef getDataFieldSet() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public String formatObject(final OceanusDataFormatter pFormatter) {
+        return pFormatter.formatObject(theListKey);
+    }
+
+    /**
+     * Obtain the listKey.
+     *
+     * @return the listKey
+     */
+    private MetisListKey getListKey() {
+        return theListKey;
+    }
+
+    /**
+     * Obtain the touchedBy map.
+     *
+     * @return the map
+     */
+    private Map<Integer, PrometheusMapsItemTouch> getTouchMap() {
+        return theTouchMap;
+    }
+
+    /**
+     * Record touchedBy.
+     *
+     * @param pTouchedItem  the item that is touched
+     * @param pTouchingItem the item that touches
+     */
+    void recordTouchedBy(final PrometheusDataItem pTouchedItem,
+                         final PrometheusDataItem pTouchingItem) {
+        /* Access correct touchedBy map */
+        final PrometheusMapsItemTouch myMap = theTouchMap.computeIfAbsent(pTouchedItem.getIndexedId(),
+                i -> new PrometheusMapsItemTouch(pTouchedItem));
+        myMap.touchedByItem(pTouchingItem);
+    }
+
+
+    /**
+     * Record touches.
+     *
+     * @param pTouchedItem  the item that is touched
+     * @param pTouchingItem the item that touches
+     */
+    void recordTouches(final PrometheusDataItem pTouchedItem,
+                       final PrometheusDataItem pTouchingItem) {
+        /* Access correct touches map */
+        final PrometheusMapsItemTouch myMap = theTouchMap.computeIfAbsent(pTouchingItem.getIndexedId(),
+                i -> new PrometheusMapsItemTouch(pTouchingItem));
+        myMap.touchesItem(pTouchedItem);
+    }
+
+    /**
+     * Is the item touched?
+     *
+     * @param pItem the item
+     * @return true/false
+     */
+    boolean isTouched(final PrometheusDataItem pItem) {
+        final PrometheusMapsItemTouch myMap = theTouchMap.get(pItem.getIndexedId());
+        return myMap != null && myMap.isTouched();
+    }
+}

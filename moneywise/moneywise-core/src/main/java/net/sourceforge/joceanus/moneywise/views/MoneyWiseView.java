@@ -29,16 +29,16 @@ import net.sourceforge.joceanus.moneywise.lethe.data.analysis.analyse.MoneyWiseA
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisManager;
 import net.sourceforge.joceanus.moneywise.sheets.MoneyWiseSheet;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
-import net.sourceforge.joceanus.prometheus.database.PrometheusDBConfig;
-import net.sourceforge.joceanus.prometheus.database.PrometheusDataStore;
-import net.sourceforge.joceanus.prometheus.database.PrometheusDatabase.PrometheusDatabasePreferenceKey;
-import net.sourceforge.joceanus.prometheus.database.PrometheusDatabase.PrometheusDatabasePreferences;
-import net.sourceforge.joceanus.prometheus.sheets.PrometheusSpreadSheet;
-import net.sourceforge.joceanus.prometheus.toolkit.PrometheusToolkit;
-import net.sourceforge.joceanus.prometheus.views.PrometheusDataControl;
-import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.prometheus.views.PrometheusViewerEntryId;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet;
+import io.github.tonywasher.joceanus.prometheus.database.PrometheusDBConfig;
+import io.github.tonywasher.joceanus.prometheus.database.PrometheusDataStore;
+import io.github.tonywasher.joceanus.prometheus.database.PrometheusDatabase.PrometheusDatabasePreferenceKey;
+import io.github.tonywasher.joceanus.prometheus.database.PrometheusDatabase.PrometheusDatabasePreferences;
+import io.github.tonywasher.joceanus.prometheus.sheets.PrometheusSpreadSheet;
+import io.github.tonywasher.joceanus.prometheus.toolkit.PrometheusToolkit;
+import io.github.tonywasher.joceanus.prometheus.views.PrometheusDataControl;
+import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
+import io.github.tonywasher.joceanus.prometheus.views.PrometheusViewerEntryId;
 
 /**
  * Data Control for MoneyWiseApp.

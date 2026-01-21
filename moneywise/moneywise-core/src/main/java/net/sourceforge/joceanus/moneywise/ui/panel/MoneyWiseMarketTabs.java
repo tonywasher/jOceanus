@@ -23,7 +23,7 @@ import net.sourceforge.joceanus.moneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.moneywise.ui.panel.MoneyWiseMarketPricesTable.MoneyWiseSpotPricesPanel;
 import net.sourceforge.joceanus.moneywise.ui.panel.MoneyWiseMarketRatesTable.MoneyWiseSpotRatesPanel;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
-import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
+import io.github.tonywasher.joceanus.prometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.pane.TethysUITabPaneManager;
 import net.sourceforge.joceanus.tethys.api.pane.TethysUITabPaneManager.TethysUITabItem;

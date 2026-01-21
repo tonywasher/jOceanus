@@ -31,9 +31,9 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityInfoSet;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseSecurityClass;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoClass;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
-import net.sourceforge.joceanus.prometheus.validate.PrometheusValidateInfoSet;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataInfoClass;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataItem;
+import io.github.tonywasher.joceanus.prometheus.validate.PrometheusValidateInfoSet;
 
 import java.util.Currency;
 import java.util.Iterator;

@@ -49,7 +49,7 @@ import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxAnalysis;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxYear;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxYearCache;
 import net.sourceforge.joceanus.moneywise.tax.uk.MoneyWiseUKTaxYearCache;
-import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
+import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 
 import java.util.Iterator;
 

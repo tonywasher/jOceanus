@@ -15,18 +15,21 @@
  * the License.
  ******************************************************************************/
 
+import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetFactory;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.odf.PrometheusOdfFactory;
+
 /**
  * Prometheus Sheet ODF.
  */
-module net.sourceforge.joceanus.prometheus.sheet.odf {
+module io.github.tonywasher.joceanus.prometheus.sheet.odf {
     /* Java libraries */
     requires java.xml;
 
     /* Oceanus */
     requires io.github.tonywasher.joceanus.oceanus;
-    requires net.sourceforge.joceanus.prometheus.sheet.api;
+    requires io.github.tonywasher.joceanus.prometheus.sheet.api;
 
     /* Services provided */
-    provides net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetFactory
-            with net.sourceforge.joceanus.prometheus.service.sheet.odf.PrometheusOdfFactory;
+    provides PrometheusSheetFactory
+            with PrometheusOdfFactory;
 }

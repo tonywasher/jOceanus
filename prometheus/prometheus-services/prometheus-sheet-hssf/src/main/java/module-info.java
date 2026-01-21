@@ -15,6 +15,9 @@
  * the License.
  ******************************************************************************/
 
+import io.github.tonywasher.joceanus.prometheus.service.sheet.PrometheusSheetFactory;
+import io.github.tonywasher.joceanus.prometheus.service.sheet.hssf.PrometheusExcelHSSFFactory;
+
 /**
  * Prometheus Sheet HSSF.
  */
@@ -24,9 +27,9 @@ module net.sourceforge.joceanus.prometheus.sheet.hssf {
 
     /* Oceanus */
     requires io.github.tonywasher.joceanus.oceanus;
-    requires net.sourceforge.joceanus.prometheus.sheet.api;
+    requires io.github.tonywasher.joceanus.prometheus.sheet.api;
 
     /* Services provided */
-    provides net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetFactory
-            with net.sourceforge.joceanus.prometheus.service.sheet.hssf.PrometheusExcelHSSFFactory;
+    provides PrometheusSheetFactory
+            with PrometheusExcelHSSFFactory;
 }

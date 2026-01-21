@@ -18,22 +18,24 @@ package net.sourceforge.joceanus.moneywise.sheets;
 
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
-import net.sourceforge.joceanus.prometheus.security.PrometheusSecurityPasswordManager;
-import net.sourceforge.joceanus.prometheus.sheets.PrometheusSheetDataItem;
-import net.sourceforge.joceanus.prometheus.sheets.PrometheusSheetReader;
+import io.github.tonywasher.joceanus.prometheus.security.PrometheusSecurityPasswordManager;
+import io.github.tonywasher.joceanus.prometheus.sheets.PrometheusSheetDataItem;
+import io.github.tonywasher.joceanus.prometheus.sheets.PrometheusSheetReader;
 import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 
 /**
  * SheetReader extension for MoneyWiseData.
+ *
  * @author Tony Washer
  */
 public class MoneyWiseReader
         extends PrometheusSheetReader {
     /**
      * Constructor.
-     * @param pFactory the gui factory
-     * @param pReport the report
+     *
+     * @param pFactory     the gui factory
+     * @param pReport      the report
      * @param pPasswordMgr the password manager
      */
     public MoneyWiseReader(final TethysUIFactory<?> pFactory,
@@ -63,6 +65,7 @@ public class MoneyWiseReader
 
     /**
      * Create new sheet of required type.
+     *
      * @param pDataType the data type
      * @return the new sheet
      */
@@ -98,6 +101,7 @@ public class MoneyWiseReader
 
     /**
      * Create new sheet of required type.
+     *
      * @param pDataType the data type
      * @return the new sheet
      */

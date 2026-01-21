@@ -19,12 +19,12 @@ package net.sourceforge.joceanus.moneywise.data.validate;
 import io.github.tonywasher.joceanus.metis.list.MetisListKey;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet.PrometheusCryptographyDataType;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataValidator;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataValidator.PrometheusDataValidatorFactory;
-import net.sourceforge.joceanus.prometheus.validate.PrometheusValidateBasic;
-import net.sourceforge.joceanus.prometheus.validate.PrometheusValidateInfo;
-import net.sourceforge.joceanus.prometheus.validate.PrometheusValidateStatic;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataSet.PrometheusCryptographyDataType;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValidator;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusDataValidator.PrometheusDataValidatorFactory;
+import io.github.tonywasher.joceanus.prometheus.validate.PrometheusValidateBasic;
+import io.github.tonywasher.joceanus.prometheus.validate.PrometheusValidateInfo;
+import io.github.tonywasher.joceanus.prometheus.validate.PrometheusValidateStatic;
 
 /**
  * Validator factory.

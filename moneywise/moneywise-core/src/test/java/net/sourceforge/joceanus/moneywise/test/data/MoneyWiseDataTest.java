@@ -44,8 +44,8 @@ import net.sourceforge.joceanus.moneywise.test.data.storage.MoneyWiseDataTestODS
 import net.sourceforge.joceanus.moneywise.test.data.storage.MoneyWiseDataTestXMLFile;
 import net.sourceforge.joceanus.moneywise.test.data.storage.MoneyWiseNullThreadMgr;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
-import net.sourceforge.joceanus.prometheus.toolkit.PrometheusToolkit;
-import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
+import io.github.tonywasher.joceanus.prometheus.toolkit.PrometheusToolkit;
+import io.github.tonywasher.joceanus.prometheus.views.PrometheusEditSet;
 import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadManager;
 import net.sourceforge.joceanus.tethys.helper.TethysUIHelperFactory;
 import org.junit.jupiter.api.Assertions;

@@ -22,12 +22,12 @@ module net.sourceforge.joceanus.moneywise.core {
     requires java.xml;
 
     /* Oceanus */
-    requires net.sourceforge.joceanus.prometheus.core;
+    requires io.github.tonywasher.joceanus.prometheus.core;
     requires io.github.tonywasher.joceanus.metis;
     requires net.sourceforge.joceanus.gordianknot;
     requires net.sourceforge.joceanus.tethys.core;
     requires io.github.tonywasher.joceanus.oceanus;
-    requires net.sourceforge.joceanus.prometheus.sheet.api;
+    requires io.github.tonywasher.joceanus.prometheus.sheet.api;
 
     /* Exports */
     exports net.sourceforge.joceanus.moneywise.quicken.definitions to io.github.tonywasher.joceanus.metis;

@@ -25,8 +25,8 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.analyse.MoneyWiseAnalysisBuilder;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
-import net.sourceforge.joceanus.prometheus.preference.PrometheusBackup.PrometheusBackupPreferences;
-import net.sourceforge.joceanus.prometheus.preference.PrometheusPreferenceManager;
+import io.github.tonywasher.joceanus.prometheus.preference.PrometheusBackup.PrometheusBackupPreferences;
+import io.github.tonywasher.joceanus.prometheus.preference.PrometheusPreferenceManager;
 import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadManager;
 
 /**

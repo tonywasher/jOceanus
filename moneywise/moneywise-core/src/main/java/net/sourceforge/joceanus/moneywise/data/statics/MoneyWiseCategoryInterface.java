@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.data.statics;
 
-import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataClass;
+import io.github.tonywasher.joceanus.prometheus.data.PrometheusStaticDataClass;
 
 /**
  * Interface for Category statics.
@@ -25,6 +25,7 @@ public interface MoneyWiseCategoryInterface
         extends PrometheusStaticDataClass {
     /**
      * Is this class a totals class?
+     *
      * @return true/false
      */
     boolean isTotals();
