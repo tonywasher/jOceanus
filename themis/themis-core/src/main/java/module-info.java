@@ -18,20 +18,22 @@
 /**
  * Themis code analysis.
  */
-module net.sourceforge.joceanus.themis.core {
+module io.github.tonywasher.joceanus.themis.core {
     /* java */
     requires java.desktop;
     requires java.prefs;
 
-    /* Oceanus */
-    requires net.sourceforge.joceanus.metis;
-    requires net.sourceforge.joceanus.tethys.core;
-    requires net.sourceforge.joceanus.oceanus;
+    /* External libraries */
     requires com.github.javaparser.core;
 
+    /* Oceanus */
+    requires io.github.tonywasher.joceanus.metis;
+    requires io.github.tonywasher.joceanus.tethys.core;
+    requires io.github.tonywasher.joceanus.oceanus;
+
     /* Exports */
-    exports net.sourceforge.joceanus.themis.lethe.ui.launch;
+    exports io.github.tonywasher.joceanus.themis.lethe.ui.launch;
 
     /* Allow properties to be read */
-    opens net.sourceforge.joceanus.themis.lethe.ui to net.sourceforge.joceanus.metis;
+    opens io.github.tonywasher.joceanus.themis.lethe.ui to io.github.tonywasher.joceanus.metis;
 }

@@ -9,6 +9,7 @@ dependencies {
 
 /* Description */
 description = 'Oceanus post-processing'
+//group = 'io.github.tonywasher.joceanus'
 
 /* Register the project */
 registerProject(project)

@@ -17,7 +17,7 @@ allprojects {
     apply plugin: 'signing'
 
     /* general identity */
-    group = 'net.sourceforge.joceanus'
+    group = 'io.github.tonywasher.joceanus'
     version = '1.6.3-SNAPSHOT'
 
     /* Maven repositories */
@@ -239,7 +239,7 @@ String standardizePath(String pPath) {
         /* Obtain directory version of group */
         String myGroup = group.replaceAll("\\.", "/")
 
-        /* Strip of the full prefix to the artifact */
+        /* Strip off the full prefix to the artifact */
         myPath = myPath.substring(projDir.length())
         String bldDir = "/build/libs/"
         int myIndex = myPath.indexOf(bldDir)
@@ -248,6 +248,13 @@ String standardizePath(String pPath) {
         /* Split out artifact name */
         myIndex = myJar.indexOf("-" + version)
         String myArtifact = myJar.substring(0, myIndex)
+
+        /* Handle nested artifacts */
+        String myPrefix = myArtifact
+        myIndex = myPrefix.lastIndexOf("-")
+        if (myIndex != -1) {
+            myGroup = myGroup + "/" + myPrefix.substring(0, myIndex).replaceAll("-", "/")
+        }
 
         /* return required path */
         return myGroup + "/" + myArtifact + "/" + version + "/" + myJar

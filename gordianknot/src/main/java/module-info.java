@@ -17,7 +17,7 @@
 /**
  * GordianKnot.
  */
-module net.sourceforge.joceanus.gordianknot {
+module io.github.tonywasher.joceanus.gordianknot {
     /* Java libraries */
     requires java.xml;
 
@@ -26,22 +26,22 @@ module net.sourceforge.joceanus.gordianknot {
     requires org.bouncycastle.util;
 
     /* Exports */
-    exports net.sourceforge.joceanus.gordianknot.api.agree;
-    exports net.sourceforge.joceanus.gordianknot.api.base;
-    exports net.sourceforge.joceanus.gordianknot.api.cert;
-    exports net.sourceforge.joceanus.gordianknot.api.cipher;
-    exports net.sourceforge.joceanus.gordianknot.api.digest;
-    exports net.sourceforge.joceanus.gordianknot.api.encrypt;
-    exports net.sourceforge.joceanus.gordianknot.api.factory;
-    exports net.sourceforge.joceanus.gordianknot.api.key;
-    exports net.sourceforge.joceanus.gordianknot.api.keypair;
-    exports net.sourceforge.joceanus.gordianknot.api.keyset;
-    exports net.sourceforge.joceanus.gordianknot.api.keystore;
-    exports net.sourceforge.joceanus.gordianknot.api.lock;
-    exports net.sourceforge.joceanus.gordianknot.api.mac;
-    exports net.sourceforge.joceanus.gordianknot.api.random;
-    exports net.sourceforge.joceanus.gordianknot.api.sign;
-    exports net.sourceforge.joceanus.gordianknot.api.zip;
-    exports net.sourceforge.joceanus.gordianknot.util;
+    exports io.github.tonywasher.joceanus.gordianknot.api.agree;
+    exports io.github.tonywasher.joceanus.gordianknot.api.base;
+    exports io.github.tonywasher.joceanus.gordianknot.api.cert;
+    exports io.github.tonywasher.joceanus.gordianknot.api.cipher;
+    exports io.github.tonywasher.joceanus.gordianknot.api.digest;
+    exports io.github.tonywasher.joceanus.gordianknot.api.encrypt;
+    exports io.github.tonywasher.joceanus.gordianknot.api.factory;
+    exports io.github.tonywasher.joceanus.gordianknot.api.key;
+    exports io.github.tonywasher.joceanus.gordianknot.api.keypair;
+    exports io.github.tonywasher.joceanus.gordianknot.api.keyset;
+    exports io.github.tonywasher.joceanus.gordianknot.api.keystore;
+    exports io.github.tonywasher.joceanus.gordianknot.api.lock;
+    exports io.github.tonywasher.joceanus.gordianknot.api.mac;
+    exports io.github.tonywasher.joceanus.gordianknot.api.random;
+    exports io.github.tonywasher.joceanus.gordianknot.api.sign;
+    exports io.github.tonywasher.joceanus.gordianknot.api.zip;
+    exports io.github.tonywasher.joceanus.gordianknot.util;
 }
 

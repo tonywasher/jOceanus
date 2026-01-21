@@ -17,20 +17,20 @@
 /**
  * MoneyWise Core.
  */
-module net.sourceforge.joceanus.moneywise.core {
+module io.github.tonywasher.joceanus.moneywise.core {
     /* Java libraries */
     requires java.xml;
 
     /* Oceanus */
-    requires net.sourceforge.joceanus.prometheus.core;
-    requires net.sourceforge.joceanus.metis;
-    requires net.sourceforge.joceanus.gordianknot;
-    requires net.sourceforge.joceanus.tethys.core;
-    requires net.sourceforge.joceanus.oceanus;
-    requires net.sourceforge.joceanus.prometheus.sheet.api;
+    requires io.github.tonywasher.joceanus.prometheus.core;
+    requires io.github.tonywasher.joceanus.metis;
+    requires io.github.tonywasher.joceanus.gordianknot;
+    requires io.github.tonywasher.joceanus.tethys.core;
+    requires io.github.tonywasher.joceanus.oceanus;
+    requires io.github.tonywasher.joceanus.prometheus.sheet.api;
 
     /* Exports */
-    exports net.sourceforge.joceanus.moneywise.quicken.definitions to net.sourceforge.joceanus.metis;
-    exports net.sourceforge.joceanus.moneywise.tax.uk to net.sourceforge.joceanus.metis;
-    exports net.sourceforge.joceanus.moneywise.launch;
+    exports io.github.tonywasher.joceanus.moneywise.quicken.definitions to io.github.tonywasher.joceanus.metis;
+    exports io.github.tonywasher.joceanus.moneywise.tax.uk to io.github.tonywasher.joceanus.metis;
+    exports io.github.tonywasher.joceanus.moneywise.launch;
 }

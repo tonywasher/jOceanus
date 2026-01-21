@@ -17,31 +17,31 @@
 /**
  * Prometheus Core.
  */
-module net.sourceforge.joceanus.prometheus.core {
+module io.github.tonywasher.joceanus.prometheus.core {
     /* Java Libraries */
     requires java.prefs;
     requires java.sql;
     requires java.xml;
 
     /* Oceanus */
-    requires net.sourceforge.joceanus.oceanus;
-    requires net.sourceforge.joceanus.tethys.core;
-    requires net.sourceforge.joceanus.gordianknot;
-    requires net.sourceforge.joceanus.metis;
-    requires net.sourceforge.joceanus.prometheus.sheet.api;
+    requires io.github.tonywasher.joceanus.oceanus;
+    requires io.github.tonywasher.joceanus.tethys.core;
+    requires io.github.tonywasher.joceanus.gordianknot;
+    requires io.github.tonywasher.joceanus.metis;
+    requires io.github.tonywasher.joceanus.prometheus.sheet.api;
 
     /* Exports */
-    exports net.sourceforge.joceanus.prometheus.data;
-    exports net.sourceforge.joceanus.prometheus.database;
-    exports net.sourceforge.joceanus.prometheus.maps;
-    exports net.sourceforge.joceanus.prometheus.preference;
-    exports net.sourceforge.joceanus.prometheus.security;
-    exports net.sourceforge.joceanus.prometheus.sheets;
-    exports net.sourceforge.joceanus.prometheus.threads;
-    exports net.sourceforge.joceanus.prometheus.toolkit;
-    exports net.sourceforge.joceanus.prometheus.ui;
-    exports net.sourceforge.joceanus.prometheus.ui.fieldset;
-    exports net.sourceforge.joceanus.prometheus.ui.panel;
-    exports net.sourceforge.joceanus.prometheus.validate;
-    exports net.sourceforge.joceanus.prometheus.views;
+    exports io.github.tonywasher.joceanus.prometheus.data;
+    exports io.github.tonywasher.joceanus.prometheus.database;
+    exports io.github.tonywasher.joceanus.prometheus.maps;
+    exports io.github.tonywasher.joceanus.prometheus.preference;
+    exports io.github.tonywasher.joceanus.prometheus.security;
+    exports io.github.tonywasher.joceanus.prometheus.sheets;
+    exports io.github.tonywasher.joceanus.prometheus.threads;
+    exports io.github.tonywasher.joceanus.prometheus.toolkit;
+    exports io.github.tonywasher.joceanus.prometheus.ui;
+    exports io.github.tonywasher.joceanus.prometheus.ui.fieldset;
+    exports io.github.tonywasher.joceanus.prometheus.ui.panel;
+    exports io.github.tonywasher.joceanus.prometheus.validate;
+    exports io.github.tonywasher.joceanus.prometheus.views;
 }

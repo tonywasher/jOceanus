@@ -1,0 +1,56 @@
+/*
+ * Themis: Java Project Framework
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.themis.xanalysis.parser.type;
+
+import com.github.javaparser.ast.type.VoidType;
+import io.github.tonywasher.joceanus.oceanus.base.OceanusException;
+import io.github.tonywasher.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisParserDef;
+
+import java.util.List;
+
+/**
+ * Void Type Declaration.
+ */
+public class ThemisXAnalysisTypeVoid
+        extends ThemisXAnalysisBaseType<VoidType> {
+    /**
+     * The annotations.
+     */
+    private final List<ThemisXAnalysisExpressionInstance> theAnnotations;
+
+    /**
+     * Constructor.
+     *
+     * @param pParser the parser
+     * @param pType   the type
+     * @throws OceanusException on error
+     */
+    ThemisXAnalysisTypeVoid(final ThemisXAnalysisParserDef pParser,
+                            final VoidType pType) throws OceanusException {
+        super(pParser, pType);
+        theAnnotations = pParser.parseExprList(pType.getAnnotations());
+    }
+
+    /**
+     * Obtain the annotations.
+     *
+     * @return the annotations
+     */
+    public List<ThemisXAnalysisExpressionInstance> getAnnotations() {
+        return theAnnotations;
+    }
+}

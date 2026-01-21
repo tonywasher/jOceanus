@@ -17,7 +17,7 @@
 /**
  * Metis.
  */
-module net.sourceforge.joceanus.metis {
+module io.github.tonywasher.joceanus.metis {
     /* Java libraries */
     requires java.prefs;
     requires java.xml;
@@ -27,20 +27,20 @@ module net.sourceforge.joceanus.metis {
     requires org.json;
 
     /* jOceanus */
-    requires net.sourceforge.joceanus.oceanus;
-    requires net.sourceforge.joceanus.tethys.core;
+    requires io.github.tonywasher.joceanus.oceanus;
+    requires io.github.tonywasher.joceanus.tethys.core;
 
     /* Exports */
-    exports net.sourceforge.joceanus.metis.data;
-    exports net.sourceforge.joceanus.metis.field;
-    exports net.sourceforge.joceanus.metis.help;
-    exports net.sourceforge.joceanus.metis.http;
-    exports net.sourceforge.joceanus.metis.parser;
-    exports net.sourceforge.joceanus.metis.preference;
-    exports net.sourceforge.joceanus.metis.profile;
-    exports net.sourceforge.joceanus.metis.report;
-    exports net.sourceforge.joceanus.metis.toolkit;
-    exports net.sourceforge.joceanus.metis.viewer;
-    exports net.sourceforge.joceanus.metis.ui;
-    exports net.sourceforge.joceanus.metis.list;
+    exports io.github.tonywasher.joceanus.metis.data;
+    exports io.github.tonywasher.joceanus.metis.field;
+    exports io.github.tonywasher.joceanus.metis.help;
+    exports io.github.tonywasher.joceanus.metis.http;
+    exports io.github.tonywasher.joceanus.metis.parser;
+    exports io.github.tonywasher.joceanus.metis.preference;
+    exports io.github.tonywasher.joceanus.metis.profile;
+    exports io.github.tonywasher.joceanus.metis.report;
+    exports io.github.tonywasher.joceanus.metis.toolkit;
+    exports io.github.tonywasher.joceanus.metis.viewer;
+    exports io.github.tonywasher.joceanus.metis.ui;
+    exports io.github.tonywasher.joceanus.metis.list;
 }

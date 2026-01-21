@@ -1,0 +1,97 @@
+/*
+ * GordianKnot: Security Suite
+ * Copyright 2012-2026. Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.gordianknot.impl.jca;
+
+import io.github.tonywasher.joceanus.gordianknot.api.base.GordianException;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptor;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianSM2EncryptionSpec;
+import io.github.tonywasher.joceanus.gordianknot.api.encrypt.GordianSM2EncryptionSpec.GordianSM2EncryptionType;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseData;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.encrypt.GordianCompositeEncryptor;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.encrypt.GordianCoreEncryptorFactory;
+import io.github.tonywasher.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaEncryptor.JcaBlockEncryptor;
+import io.github.tonywasher.joceanus.gordianknot.impl.jca.JcaEncryptor.JcaHybridEncryptor;
+
+/**
+ * Jca Encryptor Factory.
+ */
+public class JcaEncryptorFactory
+        extends GordianCoreEncryptorFactory {
+    /**
+     * Constructor.
+     *
+     * @param pFactory the factory
+     */
+    JcaEncryptorFactory(final GordianBaseFactory pFactory) {
+        /* Initialise underlying class */
+        super(pFactory);
+    }
+
+    @Override
+    public GordianEncryptor createEncryptor(final GordianEncryptorSpec pEncryptorSpec) throws GordianException {
+        /* Check validity of encryptor */
+        checkEncryptorSpec(pEncryptorSpec);
+
+        /* Create the encryptor */
+        return getJcaEncryptor(pEncryptorSpec);
+    }
+
+    /**
+     * Create the Jca Encryptor.
+     *
+     * @param pEncryptorSpec the encryptorSpec
+     * @return the Encryptor
+     * @throws GordianException on error
+     */
+    private GordianEncryptor getJcaEncryptor(final GordianEncryptorSpec pEncryptorSpec) throws GordianException {
+        switch (pEncryptorSpec.getKeyPairType()) {
+            case RSA:
+            case ELGAMAL:
+                return new JcaBlockEncryptor(getFactory(), pEncryptorSpec);
+            case SM2:
+                return new JcaHybridEncryptor(getFactory(), pEncryptorSpec);
+            case COMPOSITE:
+                return new GordianCompositeEncryptor(getFactory(), pEncryptorSpec);
+            default:
+                throw new GordianDataException(GordianBaseData.getInvalidText(pEncryptorSpec.getKeyPairType()));
+        }
+    }
+
+    @Override
+    protected boolean validEncryptorSpec(final GordianEncryptorSpec pSpec) {
+        /* validate the encryptorSpec */
+        if (!super.validEncryptorSpec(pSpec)) {
+            return false;
+        }
+
+        /* Switch on KeyType */
+        switch (pSpec.getKeyPairType()) {
+            case RSA:
+            case ELGAMAL:
+            case COMPOSITE:
+                return true;
+            case SM2:
+                final GordianSM2EncryptionSpec mySpec = pSpec.getSM2EncryptionSpec();
+                return mySpec != null && mySpec.getEncryptionType() == GordianSM2EncryptionType.C1C2C3;
+            default:
+                return false;
+        }
+    }
+}

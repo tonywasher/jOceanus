@@ -8,16 +8,16 @@ dependencies {
 
 /* Details */
 description = 'MoneyWise Personal Finance - Swing'
-mainClass = "net.sourceforge.joceanus.moneywise.ui.swing.MoneyWise4Swing"
-moduleName = "net.sourceforge.joceanus.moneywise.swing"
-splashScreen = "net/sourceforge/joceanus/moneywise/ui/icons/swing/MoneyWiseSplash.png"
+mainClass = "io.github.tonywasher.joceanus.moneywise.ui.swing.MoneyWise4Swing"
+moduleName = "io.github.tonywasher.joceanus.moneywise.swing"
+splashScreen = "io/github/tonywasher/joceanus/moneywise/ui/icons/swing/MoneyWiseSplash.png"
 
 /* Register the project */
-registerProject(project) 
+registerProject(project)
 
 /* Specific Manifest details */
 jar {
     manifest {
-        attributes(manifestAttrs)        
+        attributes(manifestAttrs)
     }
 }
