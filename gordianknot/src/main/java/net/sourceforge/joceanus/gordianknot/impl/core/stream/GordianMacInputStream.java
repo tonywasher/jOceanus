@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * GordianKnot: Security Suite
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,7 +13,7 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.gordianknot.impl.core.stream;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
@@ -44,10 +44,16 @@ class GordianMacInputStream
     private byte[] theDigest;
 
     /**
+     * Have we closed the stream?.
+     */
+    private boolean haveClosed;
+
+    /**
      * Constructor.
-     * @param pMac the MAC
+     *
+     * @param pMac      the MAC
      * @param pExpected the expected result
-     * @param pInput the underlying input stream
+     * @param pInput    the underlying input stream
      */
     GordianMacInputStream(final GordianMac pMac,
                           final byte[] pExpected,
@@ -65,6 +71,7 @@ class GordianMacInputStream
 
     /**
      * Obtain the Mac.
+     *
      * @return the Mac
      */
     public GordianMac getMac() {
@@ -73,17 +80,36 @@ class GordianMacInputStream
 
     /**
      * Set the expected digest.
+     *
      * @param pExpected the expected digest
+     * @throws GordianException on error
      */
-    void setExpectedDigest(final byte[] pExpected) {
+    void setExpectedDigest(final byte[] pExpected) throws GordianException {
+        /* Set the expected client */
         theDigest = pExpected;
+
+        /* If we are late reporting the digest, then check result now */
+        if (haveClosed) {
+            checkResult();
+        }
     }
 
     /**
      * Check result.
+     *
      * @throws GordianException on error
      */
     void checkResult() throws GordianException {
+        /*
+         * If we are reading a small file, we may end up closing the input file before the digest stream is created, and
+         *  therefore the digest has not yet been reported. If this is the case, defer processing until the digest is reported
+         */
+        if (theDigest == null) {
+            /* Just note that we have closed and return */
+            haveClosed = true;
+            return;
+        }
+
         /* Record the digest */
         theMac.update(theDigest);
 
@@ -113,6 +139,7 @@ class GordianMacInputStream
 
         /**
          * Constructor.
+         *
          * @param pStream the input stream
          */
         GordianMacBuffer(final GordianMacInputStream pStream) {

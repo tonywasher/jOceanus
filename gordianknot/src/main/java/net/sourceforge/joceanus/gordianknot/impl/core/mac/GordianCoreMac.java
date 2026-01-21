@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * GordianKnot: Security Suite
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,7 +13,7 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.gordianknot.impl.core.mac;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
@@ -87,6 +87,7 @@ public abstract class GordianCoreMac
 
     /**
      * Process macParameters.
+     *
      * @param pParams the mac parameters
      * @throws GordianException on error
      */
@@ -107,12 +108,15 @@ public abstract class GordianCoreMac
         }
 
         /* Process the bytes */
-        doUpdate(pBytes, pOffset, pLength);
+        if (pLength != 0) {
+            doUpdate(pBytes, pOffset, pLength);
+        }
     }
 
     /**
      * Update the mac with a portion of a byte array.
-     * @param pBytes the bytes to update with.
+     *
+     * @param pBytes  the bytes to update with.
      * @param pOffset the offset of the data within the byte array
      * @param pLength the length of the data to use
      */
@@ -134,6 +138,7 @@ public abstract class GordianCoreMac
 
     /**
      * Calculate the Mac, and return it in the buffer provided.
+     *
      * @param pBuffer the buffer to return the digest in.
      * @param pOffset the offset in the buffer to store the digest.
      * @return the number of bytes placed into buffer

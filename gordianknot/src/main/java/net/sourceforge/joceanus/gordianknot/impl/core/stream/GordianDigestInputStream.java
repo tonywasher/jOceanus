@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * GordianKnot: Security Suite
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -13,7 +13,7 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations under
  * the License.
- ******************************************************************************/
+ */
 package net.sourceforge.joceanus.gordianknot.impl.core.stream;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
@@ -45,15 +45,17 @@ class GordianDigestInputStream
 
     /**
      * Constructor.
-     * @param pDigest the digest
-     * @param pExpected the expected result
-     * @param pInput the underlying input stream
+     *
+     * @param pDigest    the digest
+     * @param pExpected  the expected result
+     * @param pInput     the underlying input stream
      * @param pMacStream the MacStream
+     * @throws GordianException on error
      */
     GordianDigestInputStream(final GordianDigest pDigest,
                              final byte[] pExpected,
                              final InputStream pInput,
-                             final GordianMacInputStream pMacStream) {
+                             final GordianMacInputStream pMacStream) throws GordianException {
         /* Initialise underlying class */
         super(pInput);
 
@@ -71,6 +73,7 @@ class GordianDigestInputStream
 
     /**
      * Obtain the Digest.
+     *
      * @return the digest
      */
     public GordianDigest getDigest() {
@@ -79,6 +82,7 @@ class GordianDigestInputStream
 
     /**
      * Check result.
+     *
      * @throws GordianException on error
      */
     void checkResult() throws GordianException {
@@ -108,6 +112,7 @@ class GordianDigestInputStream
 
         /**
          * Constructor.
+         *
          * @param pStream the input stream
          */
         GordianDigestBuffer(final GordianDigestInputStream pStream) {
