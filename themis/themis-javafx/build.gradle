@@ -17,12 +17,12 @@ dependencies {
 
 /* Details */
 description = 'Themis JavaFX Project Framework'
-mainClass = "net.sourceforge.joceanus.themis.ui.javafx.Themis4FX"
-moduleName = "net.sourceforge.joceanus.themis.javafx"
-preLoaderClass = "net.sourceforge.joceanus.themis.ui.javafx.ThemisFXpreLoader"
+mainClass = "io.github.tonywasher.joceanus.themis.ui.javafx.Themis4FX"
+moduleName = "io.github.tonywasher.joceanus.themis.javafx"
+preLoaderClass = "io.github.tonywasher.joceanus.themis.ui.javafx.ThemisFXpreLoader"
 
 /* Register the project */
-registerProject(project) 
+registerProject(project)
 
 /* Specific Manifest details */
 jar {
