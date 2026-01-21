@@ -1,22 +1,22 @@
-/* *****************************************************************************
+/*
  * Astraeus: Post-Processing
- * Copyright 2012-2026 Tony Washer
+ * Copyright 2012-2026. Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
-package net.sourceforge.joceanus.astraeus.jar;
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package io.github.tonywasher.joceanus.astraeus.jar;
 
-import net.sourceforge.joceanus.astraeus.exc.AstraeusException;
+import io.github.tonywasher.joceanus.astraeus.exc.AstraeusException;
 import net.sourceforge.joceanus.oceanus.base.OceanusSystem;
 
 import java.io.BufferedInputStream;
@@ -60,12 +60,13 @@ public final class AstraeusLauncher {
 
     /**
      * Create launchers for jars in directory.
+     *
      * @param pDirectory the directory.
      * @throws AstraeusException on error
      */
     public static void processJarFiles(final File pDirectory) throws AstraeusException {
         /* Loop through the jar files in the directory */
-        for (File myJar: Objects.requireNonNull(pDirectory.listFiles(f -> f.getName().endsWith(".jar")))) {
+        for (File myJar : Objects.requireNonNull(pDirectory.listFiles(f -> f.getName().endsWith(".jar")))) {
             /* Process jar file */
             final Manifest myManifest = loadManifest(myJar);
             writeLauncher(myJar, myManifest.getMainAttributes());
@@ -74,7 +75,8 @@ public final class AstraeusLauncher {
 
     /**
      * Write launcher.
-     * @param pJar the Jar file.
+     *
+     * @param pJar   the Jar file.
      * @param pAttrs the attributes
      * @throws AstraeusException on error
      */
@@ -158,6 +160,7 @@ public final class AstraeusLauncher {
 
     /**
      * Load Manifest.
+     *
      * @param pJar the Jar file.
      * @return the manifest
      * @throws AstraeusException on error
@@ -167,7 +170,7 @@ public final class AstraeusLauncher {
              BufferedInputStream myInBuffer = new BufferedInputStream(myInStream);
              ZipInputStream myZipStream = new ZipInputStream(myInBuffer)) {
             /* Loop through the Zip file entries */
-            for (;;) {
+            for (; ; ) {
                 /* Read next entry */
                 final ZipEntry myEntry = myZipStream.getNextEntry();
 
@@ -190,7 +193,8 @@ public final class AstraeusLauncher {
 
     /**
      * Extract splash file.
-     * @param pJar the Jar file.
+     *
+     * @param pJar    the Jar file.
      * @param pSplash the path to the splash file
      * @throws AstraeusException on error
      */
@@ -200,7 +204,7 @@ public final class AstraeusLauncher {
              BufferedInputStream myInBuffer = new BufferedInputStream(myInStream);
              ZipInputStream myZipStream = new ZipInputStream(myInBuffer)) {
             /* Loop through the Zip file entries */
-            for (;;) {
+            for (; ; ) {
                 /* Read next entry */
                 final ZipEntry myEntry = myZipStream.getNextEntry();
 
@@ -237,8 +241,9 @@ public final class AstraeusLauncher {
 
     /**
      * Write batchFile.
+     *
      * @param pTarget the target batchFile.
-     * @param pText the contents of the batch file
+     * @param pText   the contents of the batch file
      * @throws AstraeusException on error
      */
     private static void writeBatchFile(final File pTarget,
@@ -262,6 +267,7 @@ public final class AstraeusLauncher {
 
     /**
      * Obtain the batch file header.
+     *
      * @return the header.
      */
     private static String getBatchHeader() {
@@ -270,6 +276,7 @@ public final class AstraeusLauncher {
 
     /**
      * Obtain the batch setDirectory command.
+     *
      * @return the command.
      */
     private static String setDirectory() {
@@ -278,6 +285,7 @@ public final class AstraeusLauncher {
 
     /**
      * Obtain the batch file trailer.
+     *
      * @return the trailer.
      */
     private static String getBatchTrailer() {
@@ -286,6 +294,7 @@ public final class AstraeusLauncher {
 
     /**
      * Obtain the batch file comment.
+     *
      * @param pComment the comment
      * @return the comment.
      */
@@ -295,6 +304,7 @@ public final class AstraeusLauncher {
 
     /**
      * Set a variable's value.
+     *
      * @param pVar the variable
      * @return the set clause.
      */
@@ -304,6 +314,7 @@ public final class AstraeusLauncher {
 
     /**
      * Obtain a variable's value.
+     *
      * @param pVar the variable
      * @return the value.
      */
@@ -313,6 +324,7 @@ public final class AstraeusLauncher {
 
     /**
      * Obtain the batch suffix.
+     *
      * @return the suffix.
      */
     private static String getBatchSuffix() {

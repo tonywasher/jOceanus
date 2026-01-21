@@ -18,11 +18,11 @@
 /**
  * Astraeus Post-processing.
  */
-module net.sourceforge.joceanus.astraeus {
+module io.github.tonywasher.joceanus.astraeus {
     /* jOceanus */
     requires net.sourceforge.joceanus.oceanus;
 
     /* Exports */
-    exports net.sourceforge.joceanus.astraeus.exc;
-    exports net.sourceforge.joceanus.astraeus.jar;
+    exports io.github.tonywasher.joceanus.astraeus.exc;
+    exports io.github.tonywasher.joceanus.astraeus.jar;
 }
